@@ -19,11 +19,20 @@
 import Foundation
 
 // sourcery: AutoMockable
-/// Execute url requests to a specific backend.
+/// A service for network communication to a specific backend.
 ///
-/// An `APIService` connects API clients to a target backend, providing
-/// additional services such as attaching an access token if needed.
+/// An api service allows api clients to communicate to a target backend.
+/// It may provide additional functionality, such providing authentication
+/// headers if needed.
 public protocol APIServiceProtocol {
+    
+    /// Execute a request to the backend.
+    ///
+    /// - Parameters:
+    ///   - request: A url request.
+    ///   - requiringAccessToken: Whether the request requires an access token.
+    ///
+    /// - Returns: The response to the request.
 
     func executeRequest(
         _ request: URLRequest,
@@ -31,6 +40,12 @@ public protocol APIServiceProtocol {
     ) async throws -> (Data, HTTPURLResponse)
 
 }
+
+/// A service for network communication to a specific backend.
+///
+/// An api service allows api clients to communicate to a target backend.
+/// It may provide additional functionality, such providing authentication
+/// headers if needed.
 
 public final class APIService: APIServiceProtocol {
 
@@ -46,6 +61,14 @@ public final class APIService: APIServiceProtocol {
     }()
 
     // TODO: document
+    
+    /// Create a new `APIService`.
+    ///
+    /// - Parameters:
+    ///   - backendURL: The url of the target backend.
+    ///   - backendWebSocketURL: The web socket url of the target backend.
+    ///   - authenticationStorage: The storage for authentication objects.
+    ///   - minTLSVersion: The minimum supported TLS version.
 
     public init(
         backendURL: URL,
@@ -58,6 +81,14 @@ public final class APIService: APIServiceProtocol {
         self.authenticationStorage = authenticationStorage
         self.minTLSVersion = minTLSVersion
     }
+
+    /// Execute a request to the backend.
+    ///
+    /// - Parameters:
+    ///   - request: A url request.
+    ///   - requiringAccessToken: Whether the request requires an access token.
+    ///
+    /// - Returns: The response to the request.
 
     public func executeRequest(
         _ request: URLRequest,
@@ -72,47 +103,19 @@ public final class APIService: APIServiceProtocol {
 
         if requiringAccessToken {
             guard let accessToken = authenticationStorage.fetchAccessToken() else {
-                // TODO: try to fetch access token.
                 throw APIServiceError.missingAccessToken
             }
 
-            // TODO: check for access token expiration.
             request.setAccessToken(accessToken)
         }
 
-        print("executing request: \(request)")
-
         let (data, response) = try await urlSession.data(for: request)
-
-        print("go response: \(response)")
 
         guard let httpURLResponse = response as? HTTPURLResponse else {
             throw APIServiceError.notAHTTPURLResponse
         }
 
         return (data, httpURLResponse)
-    }
-
-    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
-        guard let url = request.url else {
-            throw APIServiceError.invalidRequest
-        }
-
-        var request = request
-        request.url = URL(string: url.absoluteString, relativeTo: backendWebSocketURL)
-
-        guard let accessToken = authenticationStorage.fetchAccessToken() else {
-            // TODO: try to fetch access token.
-            throw APIServiceError.missingAccessToken
-        }
-
-        // TODO: check for access token expiration.
-        request.setAccessToken(accessToken)
-
-        return PushChannel(
-            request: request,
-            minTLSVersion: minTLSVersion
-        )
     }
 
 }
