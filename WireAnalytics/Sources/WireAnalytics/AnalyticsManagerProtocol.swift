@@ -23,6 +23,14 @@ public protocol AnalyticsManagerProtocol {
     /// - Returns: A new analytics session for the switched user.
     func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
-    func disable()
+    /// Suspends analytics tracking and reporting.
+    /// This method should be used when analytics tracking needs to be temporarily paused, such as for privacy reasons or during maintenance periods.
+    func suspendTracking()
+
+    /// Enables analytics tracking and reporting.
+    /// This method should be used to re-enable analytics tracking after it has been suspended. Ensure that any necessary state or user context is correctly restored before resuming tracking.
+    /// - Parameter userProfile: The profile of the user to enable analytics for.
+    /// - Returns: A new analytics session for the switched user.
+    func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
 }
