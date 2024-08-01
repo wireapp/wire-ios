@@ -18,7 +18,6 @@
 
 import WireSyncEngine
 
-import Foundation
 final class ChangeEmailViewModel {
 
     // MARK: - Properties
@@ -30,6 +29,7 @@ final class ChangeEmailViewModel {
     var emailValidationError: TextFieldValidator.ValidationError?
 
     // MARK: - Computed Properties
+
     var visibleEmail: String? {
         return newEmail ?? currentEmail
     }
@@ -47,6 +47,7 @@ final class ChangeEmailViewModel {
     }
 
     // MARK: - Initialization
+
     init(currentEmail: String?, userProfile: UserProfile?) {
         self.currentEmail = currentEmail
         self.userProfile = userProfile
@@ -54,6 +55,7 @@ final class ChangeEmailViewModel {
     }
 
     // MARK: - Methods
+
     func updateNewEmail(_ newEmail: String) {
         self.newEmail = newEmail
     }
