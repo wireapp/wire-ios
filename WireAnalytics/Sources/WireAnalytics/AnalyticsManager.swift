@@ -20,7 +20,6 @@ import Countly
 
 /// Struct responsible for managing analytics operations.
 public struct AnalyticsManager: AnalyticsManagerProtocol {
-
     /// The underlying analytics service.
     private let analyticsService: any AnalyticsService
 
@@ -43,7 +42,11 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     ///   - appKey: The key for the analytics application.
     ///   - host: The URL of the analytics host.
     ///   - analyticsService: The analytics service to use.
-    init(appKey: String, host: URL, analyticsService: any AnalyticsService) {
+    init(
+        appKey: String,
+        host: URL,
+        analyticsService: any AnalyticsService
+    ) {
         self.analyticsService = analyticsService
         self.analyticsService.start(appKey: appKey, host: host)
     }
@@ -53,24 +56,54 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     /// - Parameter userProfile: The profile of the user to switch to.
     /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
     public func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+        endCurrentSession()
+        updateUserProfile(userProfile)
+        return startNewSession(for: userProfile)
+    }
+
+    /// Disables tracking by ending the current session and clearing user data.
+    public func disableTracking() {
+        clearUserData()
+        endCurrentSession()
+    }
+
+    /// Enables tracking for a given user profile.
+    ///
+    /// - Parameter userProfile: The profile of the user to enable tracking for.
+    /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
+    public func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+        updateUserProfile(userProfile)
+        return startNewSession(for: userProfile)
+    }
+
+    // MARK: - Private Helper Methods
+
+    private func endCurrentSession() {
         analyticsService.endSession()
+    }
+
+    private func updateUserProfile(_ userProfile: AnalyticsUserProfile) {
         analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
+        setUserValues(for: userProfile)
+    }
+
+    private func setUserValues(for userProfile: AnalyticsUserProfile) {
         analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: "team_team_id")
         analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: "team_user_type")
         analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: "team_team_size")
-        analyticsService.beginSession()
+    }
 
+    private func clearUserData() {
+        ["team_team_id", "team_user_type", "team_team_size"].forEach { key in
+            analyticsService.setUserValue(nil, forKey: key)
+        }
+    }
+
+    private func startNewSession(for userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+        analyticsService.beginSession()
         return AnalyticsSession(
             isSelfTeamMember: userProfile.teamInfo != nil,
             service: analyticsService
         )
     }
-
-    public func disable() {
-        analyticsService.setUserValue(nil, forKey: "team_team_id")
-        analyticsService.setUserValue(nil, forKey: "team_user_type")
-        analyticsService.setUserValue(nil, forKey: "team_team_size")
-        analyticsService.endSession()
-    }
-
 }
