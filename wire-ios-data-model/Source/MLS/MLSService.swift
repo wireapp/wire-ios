@@ -80,6 +80,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subconversationType: SubgroupType
     ) async throws
 
+    func deleteSubgroup(parentQualifiedID: QualifiedID) async throws
+
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
     func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
@@ -1549,6 +1551,7 @@ public final class MLSService: MLSServiceInterface {
             } else if let epochAge = subgroup.epochTimestamp?.ageInDays, epochAge >= 1 {
                 try await deleteSubgroup(
                     parentID: parentQualifiedID,
+                    subgroup: subgroup,
                     context: notificationContext
                 )
                 try await createSubgroup(
@@ -1601,8 +1604,25 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
+    public func deleteSubgroup(parentQualifiedID: QualifiedID) async throws {
+        guard let notificationContext = context?.notificationContext else {
+            logger.error("failed to delete subgroup: missing notification context")
+            throw SubgroupFailure.missingNotificationContext
+        }
+        let subgroup = try await fetchSubgroup(
+            parentID: parentQualifiedID,
+            context: notificationContext
+        )
+
+        try await deleteSubgroup(
+            parentID: parentQualifiedID,
+            subgroup: subgroup,
+            context: notificationContext)
+    }
+
     private func deleteSubgroup(
         parentID: QualifiedID,
+        subgroup: MLSSubgroup,
         context: NotificationContext
     ) async throws {
         do {
@@ -1611,6 +1631,8 @@ public final class MLSService: MLSServiceInterface {
                 conversationID: parentID.uuid,
                 domain: parentID.domain,
                 subgroupType: .conference,
+                epoch: subgroup.epoch,
+                groupID: subgroup.groupID,
                 context: context
             )
         } catch {

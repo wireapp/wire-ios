@@ -451,7 +451,7 @@ extension WireCallCenterV3 {
         }
     }
 
-    /// This is a temporary solution for 1:1 mls calls via SFT.
+    /// This is a temporary solution for 1:1 calls via SFT.
     /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
     /// If the other user hangs up, we should end the call for the self user.
     /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
@@ -462,9 +462,9 @@ extension WireCallCenterV3 {
                 with: conversationId.identifier,
                 domain: conversationId.domain,
                 in: context),
-              conversation.messageProtocol == .mls,
               conversation.conversationType == .oneOnOne,
-              participants.first(where: { $0.audioState == .connecting }) != nil,
+              participants.count == 2,
+              participants[1].audioState == .connecting,
               callSnapshots[conversationId]?.callState == .established
         else {
             return false
@@ -773,6 +773,18 @@ extension WireCallCenterV3 {
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
+
+            guard let viewContext = uiMOC,
+                  let conversation = ZMConversation.fetch(
+                    with: mlsParentIDs.qualifiedID.uuid,
+                    domain: mlsParentIDs.qualifiedID.domain,
+                    in: viewContext),
+                  conversation.conversationType == .group
+            else {
+                deleteSubconversation(conversationID: conversationId)
+                return
+            }
+
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
