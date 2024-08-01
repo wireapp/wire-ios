@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3277,7 +3277,6 @@
 			);
 			mainGroup = 540029AA1918CA8500578793;
 			packageReferences = (
-				EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */,
 				59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */,
 			);
 			productRefGroup = 540029B51918CA8500578793 /* Products */;
@@ -4592,13 +4591,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		EE88B0232BF4D8060013F0BD /* XCLocalSwiftPackageReference "../WireAPI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../WireAPI;
-		};
-/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		59DF0E652C33FEAE0065A979 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */ = {

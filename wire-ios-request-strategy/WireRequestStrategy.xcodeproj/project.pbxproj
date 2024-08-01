@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -2316,7 +2316,6 @@
 			);
 			mainGroup = 166901601D707509000FE4AF;
 			packageReferences = (
-				EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */,
 			);
 			productRefGroup = 1669016B1D707509000FE4AF /* Products */;
 			projectDirPath = "";
@@ -3189,13 +3188,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		EE13BD842BC93A19006561F8 /* XCLocalSwiftPackageReference "../WireAPI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../WireAPI;
-		};
-/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		EE13BD852BC93A19006561F8 /* WireAPI */ = {
