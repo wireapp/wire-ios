@@ -847,29 +847,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         WaitingGroupTask(context: syncContext) { [self] in
-<<<<<<< HEAD
-            do {
-                var getFeatureConfigAction = GetFeatureConfigsAction()
-                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
-
-                try await getFeatureConfigAction.perform(in: notificationContext)
-                try await resolveOneOnOneUseCase.invoke()
-            } catch {
-                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
-            }
-=======
             await fetchAndStoreFeatureConfig()
             await resolveOneOnOneConversationsIfNeeded()
->>>>>>> cb9831dd44 (fix: 1-1 conversations locked - WPB-10416 (#1755))
         }
 
         recurringActionService.performActionsIfNeeded()
-
-        checkExpiredCertificateRevocationLists()
-        checkE2EICertificateExpiryStatus()
+        performPostQuickSyncE2EIActions()
     }
 
-<<<<<<< HEAD
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
         let supportedProtocolService = SupportedProtocolsService(context: context)
         let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
@@ -879,14 +864,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
             supportedProtocolService: supportedProtocolService,
             resolver: resolver
         )
-=======
-        performPostQuickSyncE2EIActions()
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
         guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
         do {
-            try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+            try await resolveOneOnOneUseCase.invoke()
         } catch {
             WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
         }
@@ -895,20 +880,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
     private func performPostQuickSyncE2EIActions() {
         guard DeveloperFlag.enableMLSSupport.isOn else { return }
 
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                checkE2EICertificateExpiryStatus()
-                await cRLsChecker.checkExpiredCRLs()
-            }
-        }
->>>>>>> cb9831dd44 (fix: 1-1 conversations locked - WPB-10416 (#1755))
+        checkExpiredCertificateRevocationLists()
+        checkE2EICertificateExpiryStatus()
     }
 
     private func fetchAndStoreFeatureConfig() async {
         do {
             var getFeatureConfigAction = GetFeatureConfigsAction()
-            try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+            try await getFeatureConfigAction.perform(in: notificationContext)
         } catch {
             WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
