@@ -335,6 +335,7 @@
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
+		595D304B2BF923B30064A018 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; };
 		5965B46C2C57AC70000DBF91 /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B46B2C57AC70000DBF91 /* WireSystemPackage */; };
 		5965B46D2C57AC70000DBF91 /* WireSystemPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5965B46B2C57AC70000DBF91 /* WireSystemPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5965B4792C57BF59000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4782C57BF59000DBF91 /* WireAnalytics */; };
@@ -353,6 +354,7 @@
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
+		5993C6112C58E7F4007614B3 /* WireAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 595D304A2BF923B30064A018 /* WireAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */ = {isa = PBXBuildFile; productRef = 59942F172C2BF72C00F65A54 /* WireUITesting */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
@@ -2031,6 +2033,7 @@
 				016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */,
 				5996E8A32C19D066007A52F0 /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
+				5993C6112C58E7F4007614B3 /* WireAPI in Embed Frameworks */,
 				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
 			);
@@ -4001,6 +4004,7 @@
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				EEE25B20297199FC0008B894 /* SwiftProtobuf.xcframework in Frameworks */,
 				EEE25B5629719D840008B894 /* HTMLString.xcframework in Frameworks */,
+				595D304B2BF923B30064A018 /* WireAPI in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
@@ -8684,6 +8688,7 @@
 				407831AC2AC4636F005C2978 /* DifferenceKit */,
 				061F34182B1E2ED50099CBAB /* AppAuth */,
 				061F341A2B1E2ED50099CBAB /* AppAuthCore */,
+				595D304A2BF923B30064A018 /* WireAPI */,
 				592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */,
 				59CD83E42C22CE9800186022 /* WireDesign */,
 				E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */,
@@ -11768,6 +11773,10 @@
 		5945D0292C219F7200D039E3 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDesign;
+		};
+		595D304A2BF923B30064A018 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
 		};
 		5965B46B2C57AC70000DBF91 /* WireSystemPackage */ = {
 			isa = XCSwiftPackageProductDependency;
