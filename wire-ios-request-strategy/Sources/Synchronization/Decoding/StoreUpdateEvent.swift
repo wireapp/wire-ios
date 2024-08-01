@@ -279,6 +279,8 @@ public final class StoredUpdateEvent: NSManagedObject {
                 decryptedEvent.appendDebugInformation(debugInfo)
             }
 
+            decryptedEvent.contentHash = storedEvent.eventHash
+
             return .success(decryptedEvent)
 
         } catch DecryptionFailure.privateKeyUnavailable {
