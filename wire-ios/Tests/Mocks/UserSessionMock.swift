@@ -27,6 +27,8 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var userProfile: UserProfile
+
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
@@ -113,6 +115,7 @@ final class UserSessionMock: UserSession {
         self.editableSelfUser = editableSelfUser
 
         searchUsersCache = .init()
+        userProfile = MockUserProfile()
     }
 
     var lock: SessionLock? = .screen

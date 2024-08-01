@@ -51,10 +51,12 @@ extension ZMConversation {
             if response.httpStatus == 200, let event = response.updateEvent {
                 let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
                 Task {
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [WPB-9089] replace with ConversationEventProcessor
-                    // swiftlint:enable todo_requires_jira_link
-                    try? await userSession.updateEventProcessor?.processEvents([event])
+                    // TODO: [WPB-10283] [F] clean this
+                    await userSession.conversationEventProcessor.processConversationEvents([event])
+                    await userSession.syncContext.perform {
+                        // compared to eventProcessor the conversationEventProcessor does not save the context so we do it here
+                       _ = userSession.syncContext.saveOrRollback()
+                    }
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))
                     }
