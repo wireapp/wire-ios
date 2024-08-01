@@ -19,14 +19,13 @@
 import WireAnalytics
 import Countly
 
-import WireAnalytics
-
 public protocol DisableAnalyticsSharingUseCaseProtocol {
+
     func invoke()
 }
 
 public struct DisableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProtocol {
-    
+
     private let analyticsManager: AnalyticsManagerProtocol?
 
     public init(analyticsManager: AnalyticsManagerProtocol?) {
@@ -34,6 +33,6 @@ public struct DisableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProt
     }
 
     public func invoke() {
-        analyticsManager?.disable()
+        analyticsManager?.disableTracking()
     }
 }
