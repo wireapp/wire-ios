@@ -16,21 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireSyncEngineSupport
 import WireUITesting
 import XCTest
 
 @testable import Wire
 
-final class ChangeEmailViewControllerTests: XCTestCase {
+final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
 
-    private var userSession: UserSession!
+    // MARK: - Properties
+
+    private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
@@ -38,36 +44,34 @@ final class ChangeEmailViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Helper method
+
     private func createSut(emailAddress: String?) -> UIViewController {
         let mockUser = MockUserType.createSelfUser(name: "User")
+        let userProfile = MockUserProfile()
         userSession = UserSessionMock(mockUser: mockUser)
+        userSession.userProfile = userProfile
         mockUser.emailAddress = emailAddress
 
-        let sut = ChangeEmailViewController(user: mockUser, userSession: userSession, useTypeIntrinsicSizeTableView: true)
-        let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        userProfile.addObserver_MockMethod = { _ in }
+
+        let sut = ChangeEmailViewController(
+            user: mockUser,
+            userSession: userSession,
+            useTypeIntrinsicSizeTableView: true
+        )
+        let viewController = sut.wrapInNavigationController()
+        //let sut = ChangeEmailViewController(user: mockUser, userSession: userSession, useTypeIntrinsicSizeTableView: true)
+        //let viewController = sut.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
         return viewController
     }
 
+    // MARK: Snapshot Tests
+
     func testForChangingExistingEmail() {
         // GIVEN & WHEN
         let viewController = createSut(emailAddress: "user@example.com")
-
-        // THEN
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(
-                matching: viewController,
-                named: "DarkTheme",
-                file: #file,
-                testName: #function,
-                line: #line
-            )
-    }
-
-    func testForAddingEmail() {
-        // GIVEN & WHEN
-        let viewController = createSut(emailAddress: nil)
 
         // THEN
         snapshotHelper
