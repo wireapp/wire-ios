@@ -216,6 +216,10 @@ open class ZMUpdateEvent: NSObject {
     open var source: ZMUpdateEventSource
     open var uuid: UUID?
 
+    // A hash of the event content. This is used to keep track of events
+    // that we have already processed.
+    public var contentHash: Int64?
+
     var debugInformationArray: [String] = []
     /// True if the event will not appear in the notification stream
     open var isTransient: Bool
