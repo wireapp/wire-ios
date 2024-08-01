@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 import WireSystem
 
 enum NetworkStatusViewState {
@@ -240,9 +241,9 @@ final class NetworkStatusView: UIView {
             let status = String(describing: networkStatus)
             let logInfo = LogInfo(status: status)
             let data = try JSONEncoder().encode(logInfo)
-            let jsonString = String(data: data, encoding: .utf8)
+            let jsonString = String(decoding: data, as: UTF8.self)
 
-            WireLogger.network.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")")
+            WireLogger.network.debug("NETWORK_STATUS_VIEW_STATE: \(jsonString)")
         } catch {
             WireLogger.network.error("NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)")
         }

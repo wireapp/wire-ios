@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDesign
 import WireSyncEngineSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -27,13 +29,22 @@ final class IncomingConnectionViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private let sutBackgroundColor = SemanticColors.View.backgroundDefault
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        super.tearDown()
     }
 
     // MARK: - Snapshot Tests
@@ -43,7 +54,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithUnconnectedUser() {
@@ -52,7 +63,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = .white
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithUserName_NoHandle() {
@@ -60,7 +71,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let sut = IncomingConnectionView(user: user)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithSecurityClassification_whenClassified() {
@@ -71,7 +82,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithSecurityClassification_whenNotClassified() {
@@ -82,7 +93,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
     func testThatItRendersWithFederatedUser() {
@@ -94,7 +105,7 @@ final class IncomingConnectionViewTests: XCTestCase {
         let sut = IncomingConnectionView(user: user, classificationProvider: mockClassificationProvider)
 
         sut.backgroundColor = sutBackgroundColor
-        verify(matching: sut.layoutForTest())
+        snapshotHelper.verify(matching: sut.layoutForTest())
     }
 
 }

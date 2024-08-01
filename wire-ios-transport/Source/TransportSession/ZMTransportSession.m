@@ -117,7 +117,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
+    ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
 
     NSDictionary* proxyDictionary = [environment.proxy socks5SettingsWithProxyUsername:proxyUsername proxyPassword:proxyPassword];
 
@@ -689,7 +689,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)URLSession:(ZMURLSession *)URLSession taskDidComplete:(NSURLSessionTask *)task transportRequest:(ZMTransportRequest *)request responseData:(NSData *)data;
 {
     NSTimeInterval timeDiff = -[request.startOfUploadTimestamp timeIntervalSinceNow];
-    ZMLogDebug(@"(Almost) bare network time for request %p %@ %@: %@s", request, request.methodAsString, request.path, @(timeDiff));
+    ZMLogDebug(@"(Almost) bare network time for request %@: %@s", [request safeForLoggingDescription], @(timeDiff));
     NSError *error = task.error;
     NSHTTPURLResponse *HTTPResponse = (id)task.response;
     [self processCookieResponse:HTTPResponse];

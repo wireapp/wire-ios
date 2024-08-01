@@ -18,13 +18,10 @@
 
 import UIKit
 
-class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
-
-    // MARK: SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
+class KeyboardAvoidingViewController: UIViewController {
 
     let viewController: UIViewController
-    var disabledWhenInsidePopover: Bool = false
+    var disabledWhenInsidePopover = false
 
     private var animator: UIViewPropertyAnimator?
     private var bottomEdgeConstraint: NSLayoutConstraint?

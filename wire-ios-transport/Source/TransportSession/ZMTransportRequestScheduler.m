@@ -38,7 +38,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 @property (nonatomic, readonly) ZMExponentialBackoff *backoff;
 @property (nonatomic, readonly, weak) id<ZMTransportRequestSchedulerSession> session;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
-@property (nonatomic, readonly) ZMSDispatchGroup *group;
 @property (nonatomic, readonly) dispatch_queue_t countIsolation;
 @property (nonatomic, readonly) NSMutableArray *backoffItemQueue;
 @property (nonatomic, readwrite) id<ReachabilityProvider> reachability;

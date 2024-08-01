@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class CollectionsView: UIView {
     var collectionViewLayout: CollectionViewLeftAlignedFlowLayout!
@@ -78,16 +79,6 @@ final class CollectionsView: UIView {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    static func closeButton() -> IconButton {
-        let button = IconButton()
-        button.setIcon(.cross, size: .tiny, for: .normal)
-        button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-        button.frame = CGRect(x: 0, y: 0, width: 48, height: 32)
-        button.accessibilityIdentifier = "close"
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -24)
-        return button
     }
 
     static func backButton() -> IconButton {

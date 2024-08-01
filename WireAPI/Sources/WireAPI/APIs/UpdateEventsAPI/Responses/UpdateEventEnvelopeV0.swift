@@ -20,14 +20,14 @@ import Foundation
 
 struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
 
-    var id: UUID
-    var payload: [UpdateEvent]?
-    var transient: Bool?
+    let id: UUID
+    let payload: [UpdateEventDecodingProxy]?
+    let transient: Bool?
 
     func toAPIModel() -> UpdateEventEnvelope {
         UpdateEventEnvelope(
             id: id,
-            payloads: payload ?? [],
+            events: (payload ?? []).map(\.updateEvent),
             isTransient: transient ?? false
         )
     }

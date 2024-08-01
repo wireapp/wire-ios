@@ -19,6 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 enum ConversationListState {
@@ -30,6 +32,8 @@ enum ConversationListState {
 final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
+    let mainCoordinator: MainCoordinating
+    weak var zClientViewController: ZClientViewController?
 
     /// internal View Model
     var state: ConversationListState = .conversationList
@@ -73,6 +77,8 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
+        zClientViewController: ZClientViewController,
+        mainCoordinator: MainCoordinating,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
@@ -81,11 +87,14 @@ final class ConversationListViewController: UIViewController {
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
+            mainCoordinator: mainCoordinator
         )
         self.init(
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            zClientViewController: zClientViewController,
+            mainCoordinator: mainCoordinator,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
     }
@@ -93,15 +102,21 @@ final class ConversationListViewController: UIViewController {
     required init(
         viewModel: ViewModel,
         isFolderStatePersistenceEnabled: Bool,
+        zClientViewController: ZClientViewController,
+        mainCoordinator: MainCoordinating,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
+        self.mainCoordinator = mainCoordinator
+        self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
-            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
+            mainCoordinator: mainCoordinator,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
@@ -129,7 +144,7 @@ final class ConversationListViewController: UIViewController {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -161,7 +176,7 @@ final class ConversationListViewController: UIViewController {
 
         shouldAnimateNetworkStatusView = true
 
-        ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
+        zClientViewController?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
 
@@ -172,7 +187,7 @@ final class ConversationListViewController: UIViewController {
 
             tabBarController?.delegate = self
 
-            ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
+            zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
     }
 
@@ -289,7 +304,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
+        let startUIViewController = StartUIViewController(
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
         startUIViewController.delegate = viewModel
         return startUIViewController
     }
@@ -300,13 +318,12 @@ final class ConversationListViewController: UIViewController {
         setState(.peoplePicker, animated: true, completion: completion)
     }
 
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
+    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
         listContentController.select(
             conversation,
             scrollTo: message,
             focusOnView: focus,
-            animated: animated,
-            completion: completion
+            animated: animated
         )
     }
 

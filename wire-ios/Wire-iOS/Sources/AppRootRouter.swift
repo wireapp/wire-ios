@@ -19,6 +19,7 @@
 import avs
 import UIKit
 import WireCommonComponents
+import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter
@@ -322,6 +323,7 @@ extension AppRootRouter {
             self.authenticationCoordinator == nil ||
                 error?.userSessionErrorCode == .addAccountRequested ||
                 error?.userSessionErrorCode == .accountDeleted ||
+                error?.userSessionErrorCode == .canNotRegisterMoreClients ||
                 error?.userSessionErrorCode == .needsAuthenticationAfterMigration,
             let sessionManager = SessionManager.shared
         else {
@@ -329,7 +331,7 @@ extension AppRootRouter {
             return
         }
 
-        let navigationController = SpinnerCapableNavigationController(
+        let navigationController = UINavigationController(
             navigationBarClass: AuthenticationNavigationBar.self,
             toolbarClass: nil
         )
@@ -417,7 +419,6 @@ extension AppRootRouter {
             return
         }
 
-        TrackingManager.shared.disableCrashSharing = false
         TrackingManager.shared.disableAnalyticsSharing = false
         Analytics.shared.provider?.selfUser = selfUser
     }

@@ -58,7 +58,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         for account: Account,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
         let mockContextStorage = MockLAContextStorable()
         mockContextStorage.clear_MockMethod = { }
@@ -93,7 +94,8 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: isDeveloperModeEnabled
         )
 
         return userSession
@@ -851,20 +853,6 @@ public class MockLoginDelegate: NSObject, LoginDelegate {
     public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
         currentError = error
         didCallClientRegistrationDidFail = true
-    }
-}
-
-// MARK: - Configure default APIVersion
-
-@objc
-extension IntegrationTest {
-
-    func configureDefaultAPIVersion() {
-        setCurrentAPIVersion(.v0)
-    }
-
-    func overrideAPIVersion(_ version: APIVersion) {
-        setCurrentAPIVersion(version)
     }
 }
 

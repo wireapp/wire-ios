@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireDesign
 import WireSyncEngine
 
 typealias MatcherConversation = Conversation & ConversationStatusProvider & TypingStatusProvider & VoiceChannelProvider
@@ -219,7 +220,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         return cellSize
     }
 
-    class func invalidateCachedCellSize() {
+    static func invalidateCachedCellSize() {
         cachedSize = CGSize.zero
     }
 

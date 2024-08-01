@@ -17,14 +17,23 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
+
 final class ChangeEmailViewControllerTests: XCTestCase {
 
-    var userSession: UserSession!
+    private var userSession: UserSession!
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
 
     override func tearDown() {
+        snapshotHelper = nil
         userSession = nil
         super.tearDown()
     }
@@ -43,19 +52,33 @@ final class ChangeEmailViewControllerTests: XCTestCase {
     func testForChangingExistingEmail() {
         // GIVEN & WHEN
         let viewController = createSut(emailAddress: "user@example.com")
-        viewController.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: viewController)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: viewController,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testForAddingEmail() {
         // GIVEN & WHEN
         let viewController = createSut(emailAddress: nil)
-        viewController.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: viewController)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(
+                matching: viewController,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
 }

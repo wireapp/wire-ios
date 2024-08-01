@@ -19,6 +19,7 @@
 import Down
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol PasscodeSetupUserInterface: AnyObject {
     var createButtonEnabled: Bool { get set }
@@ -249,21 +250,14 @@ final class PasscodeSetupViewController: UIViewController {
     // MARK: - close button
 
     lazy var closeItem: UIBarButtonItem = {
-        let closeItem = UIBarButtonItem.createCloseItem()
-        closeItem.accessibilityIdentifier = "closeButton"
 
-        closeItem.target = self
-        closeItem.action = #selector(PasscodeSetupViewController.closeTapped)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+            self?.appLockSetupViewControllerDismissed()
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
         return closeItem
     }()
-
-    @objc
-    private func closeTapped() {
-        dismiss(animated: true)
-
-        appLockSetupViewControllerDismissed()
-    }
 
     private func appLockSetupViewControllerDismissed() {
         callback?(false)

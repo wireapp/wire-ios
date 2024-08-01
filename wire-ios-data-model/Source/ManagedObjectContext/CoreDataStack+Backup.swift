@@ -180,7 +180,7 @@ extension CoreDataStack {
             from: backupDirectory,
             applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup,
-            messagingMigrator: CoreDataMessagingMigrator(isInMemoryStore: false),
+            messagingMigrator: CoreDataMigrator<CoreDataMessagingMigrationVersion>(isInMemoryStore: false),
             completion: { result in
                 completion(result)
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
@@ -230,7 +230,7 @@ extension CoreDataStack {
                 WireLogger.localStorage.debug("backup: import prepare", attributes: .safePublic)
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
-                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
+                let tp = TimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
                 try messagingMigrator.migrateStore(at: backupStoreFile, toVersion: .current)
                 if tp.warnIfLongerThanInterval() == false {

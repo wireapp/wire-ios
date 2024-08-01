@@ -30,7 +30,11 @@ extension NSManagedObjectContext {
 
         proteusService = nil
         mlsService = nil
-        try? coreCrypto?.tearDown()
+        do {
+            try coreCrypto?.tearDown()
+        } catch {
+            WireLogger.coreCrypto.error("tearing down corecrypto failed with error: \(error)")
+        }
         coreCrypto = nil
     }
 

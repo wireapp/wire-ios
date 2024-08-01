@@ -64,18 +64,14 @@ ZM_EMPTY_ASSERTING_INIT()
     return [self.objectToTimerMap count];
 }
 
-- (void)startTimerForMessageIfNeeded:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo
+- (void)startTimerForMessage:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo
 {
-    if ( ![self isTimerRunningForMessage:message] ) {
-        ZMTimer *timer = [ZMTimer timerWithTarget:self];
-        NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo ?: @{}];
-        info[@"message"] = message;
-        timer.userInfo = [NSDictionary dictionaryWithDictionary:info];
-        [self.objectToTimerMap setObject:timer forKey:message];
-        
-        [timer fireAtDate:fireDate];
-    }
-
+    ZMTimer *timer = [ZMTimer timerWithTarget:self];
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo ?: @{}];
+    info[@"message"] = message;
+    timer.userInfo = [NSDictionary dictionaryWithDictionary:info];
+    [self.objectToTimerMap setObject:timer forKey:message];
+    [timer fireAtDate:fireDate];
 }
 
 - (BOOL)isTimerRunningForMessage:(ZMMessage *)message

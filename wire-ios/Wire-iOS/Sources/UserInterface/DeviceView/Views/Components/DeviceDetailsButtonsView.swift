@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireDesign
 
 struct DeviceDetailsButtonsView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel

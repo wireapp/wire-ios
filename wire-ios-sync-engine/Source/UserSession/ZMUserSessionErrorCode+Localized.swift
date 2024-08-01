@@ -18,7 +18,8 @@
 
 import Foundation
 
-extension ZMUserSessionErrorCode: LocalizedError {
+extension UserSessionErrorCode: LocalizedError {
+
     public var errorDescription: String? {
         let bundle = Bundle(for: ZMUserSession.self)
         switch self {

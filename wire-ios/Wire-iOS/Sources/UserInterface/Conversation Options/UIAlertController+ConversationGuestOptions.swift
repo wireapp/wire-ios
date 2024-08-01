@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 enum GuestLinkType {
     case secure
@@ -71,10 +72,12 @@ extension UIAlertController {
         return controller
     }
 
-    static func confirmController(title: String,
-                                  message: String? = nil,
-                                  confirmTitle: String,
-                                  completion: @escaping (Bool) -> Void) -> UIAlertController {
+    static func confirmController(
+        title: String,
+        message: String? = nil,
+        confirmTitle: String,
+        completion: @escaping (Bool) -> Void
+    ) -> UIAlertController {
         let confirmAction = UIAlertAction(title: confirmTitle, style: .destructive) { _ in
             completion(true)
         }

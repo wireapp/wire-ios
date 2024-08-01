@@ -77,7 +77,7 @@ enum DebugActions {
         guard let userSession = ZMUserSession.shared() else { return }
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
-        if let convo = (ZMConversationList.conversations(inUserSession: userSession) as! [ZMConversation])
+        if let convo = ConversationList.conversations(inUserSession: userSession).items
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
@@ -103,15 +103,13 @@ enum DebugActions {
     static func sendBrokenMessage(_ type: SettingsCellDescriptorType) {
         guard
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
             else {
                 return
         }
 
         var external = External()
-        if let otr = "broken_key".data(using: .utf8) {
-             external.otrKey = otr
-        }
+        external.otrKey = Data("broken_key".utf8)
         let genericMessage = GenericMessage(content: external)
 
         userSession.enqueue {
@@ -124,7 +122,7 @@ enum DebugActions {
         guard
             amount > 0,
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
             else {
                 return
         }
@@ -260,14 +258,14 @@ enum DebugActions {
                 let action = UpdateAccessRolesAction(conversation: $0,
                                                      accessMode: ConversationAccessMode.value(forAllowGuests: true),
                                                      accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
-                action.send(in: syncContext.notificationContext)
+                action.send(in: userSession.notificationContext)
             }
         }
     }
 
     static func appendMessagesToDatabase(count: Int) {
         guard let userSession = ZMUserSession.shared() else { return }
-        let conversation = ZMConversationList.conversations(inUserSession: userSession).firstObject! as! ZMConversation
+        let conversation = ConversationList.conversations(inUserSession: userSession).items.first!
         let conversationId = conversation.objectID
 
         let syncContext = userSession.syncManagedObjectContext

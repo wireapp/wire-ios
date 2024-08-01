@@ -39,7 +39,7 @@ class UsersAPIV4: UsersAPIV3 {
     }
 
     override func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIds: userIDs))
+        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
         let request = HTTPRequest(
             path: "\(pathPrefix)/list-users",
             method: .post,
@@ -63,10 +63,10 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 
     /// List of user IDs for which a user couldn't be retrieved.
     ///
-    let failed: [UserID]
+    let failed: [UserID]?
 
     func toAPIModel() -> UserList {
-        UserList(found: found.map { $0.toAPIModel() }, failed: failed)
+        UserList(found: found.map { $0.toAPIModel() }, failed: failed ?? [])
     }
 }
 
@@ -75,12 +75,12 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
     let id: UserID
     let name: String
     let handle: String?
-    let teamID: UUID
+    let teamID: UUID?
     let accentID: Int
     let assets: [UserAsset]
     let deleted: Bool?
     let email: String?
-    let expiresAt: String?
+    let expiresAt: UTCTimeMillis?
     let service: ServiceResponseV0?
     let supportedProtocols: Set<SupportedProtocol>?
     let legalholdStatus: LegalholdStatusV0
@@ -111,10 +111,9 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
              assets: assets,
              deleted: deleted,
              email: email,
-             expiresAt: expiresAt,
+             expiresAt: expiresAt?.date,
              service: service?.toAPIModel(),
              supportedProtocols: supportedProtocols,
-             legalholdStatus: legalholdStatus.toAPIModel()
-        )
+             legalholdStatus: legalholdStatus.toAPIModel())
     }
 }

@@ -17,11 +17,12 @@
 //
 
 import UIKit
+import WireDesign
 import WireSyncEngine
 
 typealias DismissAction = (_ completion: Completion?) -> Void
 
-final class ConversationImagesViewController: TintColorCorrectedViewController {
+final class ConversationImagesViewController: UIViewController {
 
     typealias ButtonColors = SemanticColors.Button
 
@@ -32,7 +33,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
                                                                         options: [:])
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
-    var shareButton: IconButton?
     let overlay = FeedbackOverlayView()
     let separator: UIView = {
         let view = UIView()
@@ -77,6 +77,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     }
 
     let userSession: UserSession
+    let mainCoordinator: MainCoordinating
 
     var dismissAction: DismissAction? = .none {
         didSet {
@@ -86,13 +87,20 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
-    init(collection: AssetCollectionWrapper, initialMessage: ZMConversationMessage, inverse: Bool = false, userSession: UserSession) {
+    init(
+        collection: AssetCollectionWrapper,
+        initialMessage: ZMConversationMessage,
+        inverse: Bool = false,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         assert(initialMessage.isImage)
 
         self.inverse = inverse
         self.collection = collection
         self.currentMessage = initialMessage
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
 
         super.init(nibName: .none, bundle: .none)
         let imagesMatch = CategoryMatch(including: .image, excluding: .GIF)
@@ -230,8 +238,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             return #selector(copyCurrent(_:))
         case .save:
             return #selector(saveCurrent(_:))
-        case .forward:
-            return #selector(shareCurrent(_:))
         case .sketchDraw:
             return #selector(sketchCurrent(_:))
         case .sketchEmoji:
@@ -268,17 +274,15 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
 
             let saveButton = iconButton(messageAction: .save)
 
-            let shareButton = iconButton(messageAction: .forward)
-
             let sketchButton = iconButton(messageAction: .sketchDraw)
 
             let emojiSketchButton = iconButton(messageAction: .sketchEmoji)
 
             let revealButton = iconButton(messageAction: .showInConversation)
             if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canDownloadMedia {
-                buttons = [shareButton, sketchButton, emojiSketchButton, revealButton]
+                buttons = [sketchButton, emojiSketchButton, revealButton]
             } else {
-                buttons = [shareButton, sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
+                buttons = [sketchButton, emojiSketchButton, copyButton, saveButton, revealButton]
             }
         }
 
@@ -339,7 +343,11 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     }
 
     private func imageController(for message: ZMConversationMessage) -> FullscreenImageViewController {
-        let imageViewController = FullscreenImageViewController(message: message, userSession: userSession)
+        let imageViewController = FullscreenImageViewController(
+            message: message,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         imageViewController.delegate = self
         imageViewController.swipeToDismiss = self.swipeToDismiss
         imageViewController.showCloseButton = false
@@ -406,11 +414,6 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
             currentController?.performSaveImageAnimation(from: sender)
         }
         perform(action: .save, sender: sender)
-    }
-
-    @objc
-    func shareCurrent(_ sender: AnyObject!) {
-        perform(action: .forward, sender: sender)
     }
 
     @objc

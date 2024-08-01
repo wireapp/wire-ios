@@ -20,6 +20,7 @@ import CoreLocation
 import MapKit
 import UIKit
 import WireDataModel
+import WireDesign
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
 
@@ -92,7 +93,7 @@ final class LocationSelectionViewController: UIViewController {
             mapViewController.mapView.restoreLocation(animated: animated)
         }
         appLocationManager.requestLocationAuthorization()
-        endEditing()
+        view.window?.endEditing(true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

@@ -21,7 +21,7 @@ import Foundation
 struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
 
     let notifications: [UpdateEventEnvelopeV0]
-    let time: Date?
+    let time: UTCTime?
     let hasMore: Bool?
 
     enum CodingKeys: String, CodingKey {

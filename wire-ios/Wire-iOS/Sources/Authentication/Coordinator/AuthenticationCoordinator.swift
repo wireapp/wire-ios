@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireReusableUIComponents
 import WireSyncEngine
 
 /**
@@ -49,10 +50,14 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     let log = ZMSLog(tag: "Authentication")
 
     /// The navigation controller that presents the authentication interface.
-    weak var presenter: (UINavigationController & SpinnerCapable)?
+    weak var presenter: UINavigationController? {
+        didSet { activityIndicator = presenter.map { .init(view: $0.view) } }
+    }
 
     /// The object receiving updates from the authentication state and providing state.
     weak var delegate: AuthenticationCoordinatorDelegate?
+
+    private var activityIndicator: BlockingActivityIndicator?
 
     // MARK: - Event Handling Properties
 
@@ -101,7 +106,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var postLoginObservers: [Any] = []
     private var pendingAlert: AuthenticationCoordinatorAlert?
     private var registrationStatus: RegistrationStatus {
-        return unauthenticatedSession.registrationStatus
+        unauthenticatedSession.registrationStatus
     }
 
     private var isTornDown = false
@@ -110,16 +115,18 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     /// The user session to use before authentication has finished.
     var unauthenticatedSession: UnauthenticatedSession {
-        return sessionManager.activeUnauthenticatedSession
+        sessionManager.activeUnauthenticatedSession
     }
 
     // MARK: - Initialization
 
     /// Creates a new authentication coordinator with the required supporting objects.
-    init(presenter: UINavigationController & SpinnerCapable,
-         sessionManager: ObservableSessionManager,
-         featureProvider: AuthenticationFeatureProvider,
-         statusProvider: AuthenticationStatusProvider) {
+    init(
+        presenter: UINavigationController,
+        sessionManager: ObservableSessionManager,
+        featureProvider: AuthenticationFeatureProvider,
+        statusProvider: AuthenticationStatusProvider
+    ) {
         self.presenter = presenter
         self.sessionManager = sessionManager
         self.statusProvider = statusProvider
@@ -152,6 +159,19 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         isTornDown = true
     }
 
+    // MARK: - Blocking Activity Indicator
+
+    func startActivityIndicator() {
+        Task { @MainActor in
+            activityIndicator?.start()
+        }
+    }
+
+    func stopActivityIndicator() {
+        Task { @MainActor in
+            activityIndicator?.stop()
+        }
+    }
 }
 
 // MARK: - State Management
@@ -166,9 +186,11 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
         }
     }
 
-    func stateDidChange(_ newState: AuthenticationFlowStep,
-                        mode: AuthenticationStateController.StateChangeMode) {
-        guard let presenter = self.presenter, newState.needsInterface else {
+    func stateDidChange(
+        _ newState: AuthenticationFlowStep,
+        mode: AuthenticationStateController.StateChangeMode
+    ) {
+        guard let presenter, newState.needsInterface else {
             return
         }
 
@@ -273,10 +295,10 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         for action in actions {
             switch action {
             case .showLoadingView:
-                presenter?.isLoadingViewVisible = true
+                startActivityIndicator()
 
             case .hideLoadingView:
-                presenter?.isLoadingViewVisible = false
+                stopActivityIndicator()
 
             case .completeBackupStep:
                 unauthenticatedSession.continueAfterBackupImportStep()
@@ -499,7 +521,7 @@ extension AuthenticationCoordinator {
         let browser = BrowserViewController(url: url)
         browser.onDismiss = {
             if let alertModel = self.pendingAlert {
-                self.presenter?.isLoadingViewVisible = false
+                self.stopActivityIndicator()
                 self.presentAlert(for: alertModel)
                 self.pendingAlert = nil
             }
@@ -562,14 +584,14 @@ extension AuthenticationCoordinator {
 
     /// Sends the registration activation code.
     private func sendActivationCode(_ unverifiedEmail: String, _ user: UnregisteredUser, isResend: Bool) {
-        presenter?.isLoadingViewVisible = true
+        startActivityIndicator()
         stateController.transition(to: .sendActivationCode(unverifiedEmail: unverifiedEmail, user: user, isResend: isResend))
         registrationStatus.sendActivationCode(to: unverifiedEmail)
     }
 
     /// Asks the registration status to activate the credentials with the code provided by the user.
     private func activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String) {
-        presenter?.isLoadingViewVisible = true
+        startActivityIndicator()
         stateController.transition(to: .activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code))
         registrationStatus.checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
     }
@@ -647,7 +669,7 @@ extension AuthenticationCoordinator {
             switch request {
             case .email(let address, let password):
                 let credentials = UserEmailCredentials(email: address, password: password)
-                self?.presenter?.isLoadingViewVisible = true
+                self?.startActivityIndicator()
                 self?.stateController.transition(to: .authenticateEmailCredentials(credentials))
                 self?.unauthenticatedSession.login(with: credentials)
             }
@@ -678,7 +700,7 @@ extension AuthenticationCoordinator {
     }
 
     private func requestEmailLogin(with credentials: UserEmailCredentials) {
-        presenter?.isLoadingViewVisible = true
+        startActivityIndicator()
         stateController.transition(to: .authenticateEmailCredentials(credentials))
         unauthenticatedSession.login(with: credentials)
     }
@@ -729,12 +751,12 @@ extension AuthenticationCoordinator {
         }
 
         stateController.transition(to: .registerEmailCredentials(credentials, isResend: false))
-        presenter?.isLoadingViewVisible = true
+        startActivityIndicator()
 
         let result = setCredentialsWithProfile(profile, credentials: credentials) && sessionManager.update(credentials: credentials) == true
 
         if !result {
-            let error = NSError(code: .invalidEmail, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .invalidEmail, userInfo: nil)
             emailUpdateDidFail(error)
         }
     }
@@ -849,9 +871,9 @@ extension AuthenticationCoordinator {
     /// Call this method when ready to use network sessions : first login
     private func activateNetworkSessions(before action: @escaping (Error?) -> Void) {
         sessionManager.markNetworkSessionsAsReady(true)
-        self.presenter?.isLoadingViewVisible = true
+        startActivityIndicator()
         sessionManager.resolveAPIVersion { [weak self] error in
-            self?.presenter?.isLoadingViewVisible = false
+            self?.stopActivityIndicator()
             if error != nil {
                 self?.sessionManager.markNetworkSessionsAsReady(false)
             }

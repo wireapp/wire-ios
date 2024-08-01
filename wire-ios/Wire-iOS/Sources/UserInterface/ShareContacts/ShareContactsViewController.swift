@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 // MARK: - String Extension
 
@@ -185,7 +186,7 @@ final class ShareContactsViewController: UIViewController {
     // MARK: - AddressBook Access Denied ViewController
 
     func displayContactsAccessDeniedMessage(animated: Bool) {
-        endEditing()
+        view.window?.endEditing(true)
 
         showingAddressBookAccessDeniedViewController = true
 

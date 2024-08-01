@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngine
 import XCTest
 
 @testable import Wire
@@ -114,7 +115,7 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnSessionManagerWillLogout() {
 
         // GIVEN
-        let error = NSError(code: ZMUserSessionErrorCode.unknownError, userInfo: nil)
+        let error = NSError(userSessionErrorCode: UserSessionErrorCode.unknownError, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
@@ -128,7 +129,7 @@ final class AppStateCalculatorTests: XCTestCase {
     func testThatAppStateChanges_OnDidFailToLogin() {
 
         // GIVEN
-        let error = NSError(code: ZMUserSessionErrorCode.invalidCredentials, userInfo: nil)
+        let error = NSError(userSessionErrorCode: UserSessionErrorCode.invalidCredentials, userInfo: nil)
         sut.applicationDidBecomeActive()
 
         // WHEN
@@ -137,6 +138,18 @@ final class AppStateCalculatorTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.appState, .unauthenticated(error: error))
         XCTAssertEqual(delegate.appStateCalculatorDidCalculateCompletion_Invocations.count, 1)
+    }
+
+    func testThatAppStateChanges_OnDidFailToLogin_CanNotRegisterMoreClients() {
+        // GIVEN
+        let error = NSError(userSessionErrorCode: UserSessionErrorCode.canNotRegisterMoreClients, userInfo: nil)
+        sut.applicationDidBecomeActive()
+
+        // WHEN
+        sut.sessionManagerDidFailToLogin(error: error)
+
+        // THEN
+        XCTAssertEqual(sut.appState, .unauthenticated(error: error))
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {

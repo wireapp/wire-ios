@@ -20,13 +20,13 @@ import Foundation
 
 /// A configuration for the *Classified Domains* feature.
 
-public struct ClassifiedDomainsFeatureConfig: Equatable {
+public struct ClassifiedDomainsFeatureConfig: Equatable, Codable {
 
     /// The feature's status.
 
     public let status: FeatureConfigStatus
 
-    /// The list of domains that are trusted by the 
+    /// The list of domains that are trusted by the
     /// self backend and are considered to be safe
     /// for classified communication.
 

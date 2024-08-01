@@ -52,7 +52,8 @@ final class EventProcessorTests: MessagingTest {
             eventProcessingTracker: eventProcessingTracker,
             earService: earService,
             eventConsumers: mockEventsConsumers,
-            eventAsyncConsumers: mockEventAsyncConsumers
+            eventAsyncConsumers: mockEventAsyncConsumers,
+            lastEventIDRepository: lastEventIDRepository
         )
     }
 
@@ -76,8 +77,8 @@ final class EventProcessorTests: MessagingTest {
                                                 "nonce": messageNonce],
                                        "conversation": conversationID]
 
-        let event1 = ZMUpdateEvent(fromEventStreamPayload: payload1 as ZMTransportData, uuid: nil)!
-        let event2 = ZMUpdateEvent(fromEventStreamPayload: payload2 as ZMTransportData, uuid: nil)!
+        let event1 = ZMUpdateEvent(fromEventStreamPayload: payload1 as ZMTransportData, uuid: UUID())!
+        let event2 = ZMUpdateEvent(fromEventStreamPayload: payload2 as ZMTransportData, uuid: UUID())!
 
         return [event1, event2]
     }

@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 @objc
 public protocol LastEventIDRepositoryInterface {
 
@@ -61,6 +62,7 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
     }
 
     public func storeLastEventID(_ id: UUID?) {
+        WireLogger.sync.info("store last event id", attributes: [.lastEventID: String(describing: id?.safeForLoggingDescription ?? "<nil>")])
         storage.setUUID(id, forKey: .lastEventID)
     }
 

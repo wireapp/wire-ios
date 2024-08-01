@@ -53,25 +53,34 @@ rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 echo "ℹ️  Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
-else 
+else
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""
 
+echo "ℹ️  Resolve Swift Packages for Scripts..."
+xcrun --sdk macosx swift package --package-path scripts resolve
+xcrun --sdk macosx swift package --package-path SourceryPlugin resolve
+echo ""
+
 echo "ℹ️  Installing ImageMagick..."
-if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
-    echo "Skipping ImageMagick install because not running on CI"
-else
+if [[ -n "${CI-}" ]]; then
+    # CI
     which identify || brew install ImageMagick
-fi 
+else
+    # Local Machine
+    echo "Skipping ImageMagick install because not running on CI"
+fi
 echo ""
 
 echo "ℹ️  Installing AWS CLI..."
-if [[ -z "${CI-}" ]]; then # skip cache bootstrap for CI
-    echo "Skipping AWS CLI install because not running on CI"
-else
+if [[ -n "${CI-}" ]]; then
+    # CI
     which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
-fi 
+else
+    # Local Machine
+    echo "Skipping AWS CLI install because not running on CI"
+fi
 echo ""
 
 echo "ℹ️  Fetching submodules..."
@@ -80,9 +89,11 @@ echo "ℹ️  Fetching submodules..."
 echo ""
 
 echo "ℹ️  Installing bundler and Ruby dependencies..."
-if [[ -n "${CI-}" ]]; then # skip cache bootstrap for CI
+if [[ -n "${CI-}" ]]; then
+    # CI
     echo "Skipping install since CI is defined"
 else
+    # Local machine
     which bundle || gem install bundler
     bundle check || bundle install
 fi
@@ -90,14 +101,19 @@ echo ""
 
 echo "ℹ️  Overriding configuration if specified..."
 scripts/override-configuration_if_needed.sh "$@"
-echo "" 
-
-echo "ℹ️  Doing additional postprocessing..."
-scripts/postprocess.sh
 echo ""
 
-echo "ℹ️ Install Git hook"
-scripts/githooks-install.sh
+echo "ℹ️  Generate Licenses"
+if [[ -n "${CI-}" ]]; then
+    # CI
+    scripts/generate-licenses.sh
+else
+    # Local Machine
+    # Skipped on local machines, because updating sdks, libraries etc. causes
+    # Git changes when running this script, that can be easily forgotten.
+    # We decided that the CI should always generate the latest licenses include it in delivered builds.
+    echo "Skipping as CI is not is defined"
+fi
 echo ""
 
 (
@@ -106,10 +122,7 @@ echo ""
     echo "ℹ️  [CodeGen] Update StyleKit Icons..."
     swift run --package-path ./Scripts/updateStylekit
     echo ""
-
-    echo "ℹ️ Update Licenses File..."
-    swift run --package-path ./Scripts/updateLicenses
-    echo ""
 )
 
 echo "✅  Wire project was set up, you can now open wire-ios-mono.xcworkspace"
+

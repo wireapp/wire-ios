@@ -18,7 +18,6 @@
 
 // Public
 #import <WireSyncEngine/NSError+ZMUserSession.h>
-#import <WireSyncEngine/ZMNetworkState.h>
 
 // PRIVATE
 #import <WireSyncEngine/ZMBlacklistVerificator.h>

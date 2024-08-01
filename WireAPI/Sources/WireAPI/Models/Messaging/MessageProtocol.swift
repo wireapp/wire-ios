@@ -23,7 +23,7 @@ import Foundation
 
 public enum MessageProtocol: String, Codable {
 
-    /// The Proetus messaging protocol.
+    /// The Proteus messaging protocol.
 
     case proteus
 

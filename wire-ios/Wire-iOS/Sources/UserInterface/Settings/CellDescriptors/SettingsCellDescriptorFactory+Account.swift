@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 extension ZMUser {
@@ -349,11 +350,10 @@ extension SettingsCellDescriptorFactory {
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
         return dataUsagePermissionsGroup(isTeamMember: isTeamMember)
     }
-
     func resetPasswordElement() -> SettingsCellDescriptorType {
         let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            return BrowserViewController(url: URL.wr_passwordReset.appendingLocaleParameter)
+            return BrowserViewController(url: WireURLs.shared.passwordReset)
         }, previewGenerator: .none)
     }
 

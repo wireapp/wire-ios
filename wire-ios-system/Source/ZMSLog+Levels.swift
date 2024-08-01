@@ -22,14 +22,14 @@ import os.log
 // MARK: - Log level management
 
 /// Map of the level set for each log tag
-private var logTagToLevel: [String: ZMLogLevel_t] = [:]
+private var logTagToLevel: [String: ZMLogLevel] = [:]
 private var logTagToLogger: [String: OSLog] = [:]
 
 @objc extension ZMSLog {
 
     /// Sets the minimum logging level for the tag
     /// - note: switches to the log queue
-    public static func set(level: ZMLogLevel_t, tag: String) {
+    public static func set(level: ZMLogLevel, tag: String) {
         logQueue.sync {
             logTagToLevel[tag] = level
         }
@@ -37,8 +37,8 @@ private var logTagToLogger: [String: OSLog] = [:]
 
     /// Gets the minimum logging level for the tag
     /// - note: switches to the log queue
-    public static func getLevel(tag: String) -> ZMLogLevel_t {
-        var level = ZMLogLevel_t.warn
+    public static func getLevel(tag: String) -> ZMLogLevel {
+        var level = ZMLogLevel.warn
         logQueue.sync {
             level = getLevelNoLock(tag: tag)
         }
@@ -47,7 +47,7 @@ private var logTagToLogger: [String: OSLog] = [:]
 
     /// Gets the minimum logging level for the tag
     /// - note: Does not switch to the log queue
-    static func getLevelNoLock(tag: String) -> ZMLogLevel_t {
+    static func getLevelNoLock(tag: String) -> ZMLogLevel {
         return logTagToLevel[tag] ?? .warn
     }
 
@@ -55,7 +55,7 @@ private var logTagToLogger: [String: OSLog] = [:]
     /// - note: Does not switch to the log queue
     static func register(tag: String) {
         if logTagToLevel[tag] == nil {
-            logTagToLevel[tag] = ZMLogLevel_t.warn
+            logTagToLevel[tag] = .warn
         }
     }
 

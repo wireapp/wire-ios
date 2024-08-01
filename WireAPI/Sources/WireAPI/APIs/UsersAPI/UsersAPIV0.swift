@@ -47,7 +47,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList {
-        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIds: userIDs))
+        let body = try JSONEncoder.defaultEncoder.encode(ListUsersRequestV0(qualifiedIDs: userIDs))
         let request = HTTPRequest(
             path: "\(pathPrefix)/list-users",
             method: .post,
@@ -67,12 +67,12 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let id: UserID
     let name: String
     let handle: String?
-    let teamID: UUID
+    let teamID: UUID?
     let accentID: Int
     let assets: [UserAsset]
     let deleted: Bool?
     let email: String?
-    let expiresAt: String?
+    let expiresAt: UTCTimeMillis?
     let service: ServiceResponseV0?
     let legalholdStatus: LegalholdStatusV0
 
@@ -102,7 +102,7 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             assets: assets,
             deleted: deleted,
             email: email,
-            expiresAt: expiresAt,
+            expiresAt: expiresAt?.date,
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus],
             legalholdStatus: legalholdStatus.toAPIModel()
@@ -112,11 +112,11 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 
 struct ListUsersRequestV0: Encodable {
 
-    let qualifiedIds: [QualifiedID]
+    let qualifiedIDs: [QualifiedID]
 
     enum CodingKeys: String, CodingKey {
 
-        case qualifiedIds = "qualified_ids"
+        case qualifiedIDs = "qualified_ids"
 
     }
 }
@@ -125,7 +125,7 @@ typealias ListUsersResponseV0 = [UserResponseV0]
 
 extension ListUsersResponseV0: ToAPIModelConvertible {
     func toAPIModel() -> UserList {
-        UserList(found: map({ $0.toAPIModel() }), failed: [])
+        UserList(found: map { $0.toAPIModel() }, failed: [])
     }
 }
 

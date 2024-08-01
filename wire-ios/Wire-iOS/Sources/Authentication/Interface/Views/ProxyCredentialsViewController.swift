@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class ProxyCredentialsViewController: UIViewController {
 
@@ -40,13 +41,13 @@ final class ProxyCredentialsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    lazy var titleLabel: DynamicFontLabel = {
+    lazy var titleLabel = {
         let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerSemiboldFont, color: SemanticColors.Label.textCellSubtitle)
         label.text = Credentials.title
         return label
     }()
 
-    lazy var captionLabel: DynamicFontLabel = {
+    lazy var captionLabel = {
         let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerRegularFont, color: SemanticColors.Label.textCellSubtitle)
         label.numberOfLines = 0
         return label
