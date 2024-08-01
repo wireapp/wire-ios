@@ -24,9 +24,9 @@ final class ChangeEmailViewModel {
 
     private weak var userProfile: UserProfile?
 
-    let currentEmail: String?
+    private let currentEmail: String?
     var newEmail: String?
-    var emailValidationError: TextFieldValidator.ValidationError?
+    private var emailValidationError: TextFieldValidator.ValidationError?
 
     // MARK: - Computed Properties
 
