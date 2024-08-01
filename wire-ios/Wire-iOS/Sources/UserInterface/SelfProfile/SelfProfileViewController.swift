@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 /**
@@ -42,13 +43,15 @@ final class SelfProfileViewController: UIViewController {
     let userSession: UserSession
     private let accountSelector: AccountSelector?
 
+    private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
+
     // MARK: - AppLock
     private var callback: ResultHandler?
 
     // MARK: - Configuration
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     // MARK: - Initialization
@@ -242,17 +245,17 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
 
-    private var topViewController: SpinnerCapableViewController? {
-        navigationController?.topViewController as? SpinnerCapableViewController
+    private var topViewController: UIViewController! {
+        navigationController!.topViewController
     }
 
     func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        // topViewController is SettingsTableViewController
-        topViewController?.isLoadingViewVisible = true
+        // shown on SettingsTableViewController
+        activityIndicator.start()
     }
 
     func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        topViewController?.isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     /// Create or delete custom passcode when appLock option did change

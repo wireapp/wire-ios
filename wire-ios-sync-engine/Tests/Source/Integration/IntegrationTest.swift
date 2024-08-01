@@ -857,20 +857,6 @@ public class MockLoginDelegate: NSObject, LoginDelegate {
     }
 }
 
-// MARK: - Configure default APIVersion
-
-@objc
-extension IntegrationTest {
-
-    func configureDefaultAPIVersion() {
-        setCurrentAPIVersion(.v0)
-    }
-
-    func overrideAPIVersion(_ version: APIVersion) {
-        setCurrentAPIVersion(version)
-    }
-}
-
 // MARK: - Account Helper
 
 extension IntegrationTest {

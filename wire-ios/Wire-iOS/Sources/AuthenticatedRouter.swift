@@ -130,10 +130,10 @@ final class AuthenticatedRouter {
     }
 
     private func notifyRevokedCertificate() {
-        guard let session = SessionManager.shared else { return }
+        guard let sessionManager = SessionManager.shared else { return }
 
         let alert = UIAlertController.revokedCertificateWarning {
-            session.logoutCurrentSession()
+            sessionManager.logoutCurrentSession()
         }
 
         _viewController?.presentAlert(alert)

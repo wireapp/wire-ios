@@ -21,13 +21,14 @@ import DifferenceKit
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
 }
 
-final class CallGridViewController: SpinnerCapableViewController {
+final class CallGridViewController: UIViewController {
     // MARK: - Statics
 
     static let isCoveredKey = "isCovered"
@@ -98,7 +99,7 @@ final class CallGridViewController: SpinnerCapableViewController {
         }
     }
 
-    var dismissSpinner: SpinnerCompletion?
+    private var activityIndicator: BlockingActivityIndicator!
 
     weak var delegate: CallGridViewControllerDelegate?
 
@@ -130,6 +131,8 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
         updateHint(for: .viewDidLoad)
         displayNetworkConditionViewIfNeeded(for: networkQuality)
     }
@@ -310,17 +313,15 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     private func displaySpinnerIfNeeded() {
-        let subViewStackWithSpinner = self.view.subviews.filter { $0 is LoadingSpinnerView }
         guard
             configuration.presentationMode == .activeSpeakers,
-            configuration.streams.isEmpty,
-            subViewStackWithSpinner.isEmpty
+            configuration.streams.isEmpty
         else {
-            dismissSpinner?()
+            activityIndicator.stop()
             return
         }
 
-        showLoadingView(title: L10n.Localizable.Call.Grid.noActiveSpeakers)
+        activityIndicator.start(text: L10n.Localizable.Call.Grid.noActiveSpeakers)
     }
 
     private func updateSelfCallParticipantView() {

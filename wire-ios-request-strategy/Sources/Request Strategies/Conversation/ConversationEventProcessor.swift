@@ -57,6 +57,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     // MARK: - Methods
 
     public func processPayload(_ payload: ZMTransportData) {
+        // here's no uuid is needed since we process it directly it's just convenience to get the payload
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
             Task {
                 await processConversationEvents([event])
