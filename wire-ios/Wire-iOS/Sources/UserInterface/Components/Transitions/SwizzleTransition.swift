@@ -77,6 +77,7 @@ final class SwizzleTransition: NSObject, UIViewControllerAnimatedTransitioning {
                 toView?.alpha = 1
             }, completion: { _ in
                 fromView?.transform = .identity
+                fromView?.alpha = 1
                 transitionContext.completeTransition(true)
             })
         })
