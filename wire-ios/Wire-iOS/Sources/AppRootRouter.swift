@@ -423,7 +423,7 @@ extension AppRootRouter {
             return
         }
 
-        trackingManager.disableAnalyticsSharing = false
+        trackingManager.disableAnalyticsSharing = true
     }
 
     @MainActor
