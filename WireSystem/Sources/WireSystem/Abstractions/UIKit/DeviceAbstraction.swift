@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+import UIKit
 
-final class MockDevice: DeviceProtocol {
-    var orientation: UIDeviceOrientation = .unknown
-    var userInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
+// sourcery: AutoMockable
+/// A protocol which allows for abstracting `UIDevice`.
+public protocol DeviceAbstraction {
+    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
+    var orientation: UIDeviceOrientation { get }
+    var model: String { get }
 }

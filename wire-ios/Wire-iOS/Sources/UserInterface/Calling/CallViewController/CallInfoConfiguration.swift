@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
+import WireSystemPackage
 
 extension VoiceChannel {
     func accessoryType() -> CallInfoViewControllerAccessoryType {
@@ -67,7 +68,8 @@ extension VoiceChannel {
     }
 
     func mediaState(with permissions: CallPermissionsConfiguration) -> MediaState {
-        let isPadOrPod = UIDevice.current.type == .iPad || UIDevice.current.type == .iPod
+        let device = DeviceWrapper(device: .current)
+        let isPadOrPod = device.userInterfaceIdiom == .pad || device.model.contains("iPod")
         let speakerEnabled = AVSMediaManager.sharedInstance().isSpeakerEnabled
         let speakerState = MediaState.SpeakerState(
             isEnabled: speakerEnabled || isPadOrPod,

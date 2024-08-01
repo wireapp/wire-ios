@@ -17,19 +17,18 @@
 //
 
 import Foundation
-import XCTest
 
-private var previousApiVersion: APIVersion?
+/// Computes an hash to compare UpdateEvent and StoredUpdateEvent
+enum EventHasher {
 
-extension XCTestCase {
+    static func hash(eventId: String, payload: [AnyHashable: Any]) -> Int? {
+        guard let payloadData = try? NSKeyedArchiver.archivedData(withRootObject: payload as NSDictionary, requiringSecureCoding: true) else {
+            return nil
+        }
+        var hasher = Hasher()
+        hasher.combine(payloadData)
+        hasher.combine(eventId)
+        return hasher.finalize()
 
-    func setCurrentAPIVersion(_ version: APIVersion?) {
-        previousApiVersion = BackendInfo.apiVersion
-        BackendInfo.apiVersion = version
-        XCTAssertEqual(BackendInfo.apiVersion, version)
-    }
-
-    func resetCurrentAPIVersion() {
-        BackendInfo.apiVersion = previousApiVersion
     }
 }
