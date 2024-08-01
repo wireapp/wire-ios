@@ -230,10 +230,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func joinMLSGroupIfNeeded(_ groupID: MLSGroupID, mlsService: MLSServiceInterface) async throws {
-        if await mlsService.conversationExists(groupID: groupID) {
-            return
-        }
-
+        guard try await !mlsService.conversationExists(groupID: groupID) else { return }
         try await mlsService.joinGroup(with: groupID)
     }
 

@@ -73,7 +73,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        return try block(coreCrypto)
+        try block(coreCrypto)
     }
 
     private func restoreFromDisk() async {

@@ -586,7 +586,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     // swiftlint:disable todo_requires_jira_link
-    // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
+    // TODO: [WPB-5917] re-enable and fix calling `legalHoldClient.deleteClientAndEndSession()`
     // swiftlint:enable todo_requires_jira_link
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given

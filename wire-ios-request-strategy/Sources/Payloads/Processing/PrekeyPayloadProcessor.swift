@@ -72,7 +72,7 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
         for (userID, prekeyByClientID) in payload {
             for (clientID, prekey) in prekeyByClientID {
                 // swiftlint:disable todo_requires_jira_link
-                // TODO: [jacob] refactor so that we can fetch all clients inside a single perform block
+                // TODO: [WPB-9090] refactor so that we can fetch all clients inside a single perform block
                 // swiftlint:enable todo_requires_jira_link
                 guard let missingClient = await context.perform({
                     if let userID = UUID(uuidString: userID),

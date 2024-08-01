@@ -271,7 +271,7 @@
 {
     // given
 
-    // FIXME: [jacob] use a mock sync status
+    // FIXME: [WPB-9091] use a mock sync status
     // simulate being online
     [self.syncStatus pushChannelDidOpen];
     while (self.syncStatus.isSyncing) {
