@@ -33,10 +33,10 @@ public enum TLSVersion {
     var secValue: tls_protocol_version_t {
         switch self {
         case .v1_2:
-            return .TLSv12
+            .TLSv12
 
         case .v1_3:
-            return .TLSv13
+            .TLSv13
         }
     }
 

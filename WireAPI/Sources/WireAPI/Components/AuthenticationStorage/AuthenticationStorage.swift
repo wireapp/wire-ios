@@ -27,13 +27,13 @@ public protocol AuthenticationStorage {
     /// - Parameter accessToken: The token to store.
 
     func storeAccessToken(_ accessToken: AccessToken)
-    
+
     /// Fetch a stored access token.
     ///
     /// - Returns: The stored access token.
 
     func fetchAccessToken() -> AccessToken?
-    
+
     /// Store a cookie.
     ///
     /// - Parameter cookieData: The cookie data to store.

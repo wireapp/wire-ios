@@ -32,7 +32,7 @@ final class BackendInfoAPITests: XCTestCase {
         // Given
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { _, _ in
-            (Data(), HTTPURLResponse())
+            throw "no response needed"
         }
 
         let sut = BackendInfoAPIImpl(apiService: apiService)

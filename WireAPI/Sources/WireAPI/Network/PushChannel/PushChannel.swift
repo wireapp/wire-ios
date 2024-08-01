@@ -81,7 +81,6 @@ final class PushChannel: NSObject, PushChannelProtocol {
         } onCancel: { [weak self] in
             self?.close()
         }
-
     }
 
     func close() {
