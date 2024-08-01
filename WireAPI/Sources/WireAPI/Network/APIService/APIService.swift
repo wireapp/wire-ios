@@ -52,16 +52,8 @@ public final class APIService: APIServiceProtocol {
     private let backendURL: URL
     private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
-    private let minTLSVersion: TLSVersion
+    private let urlSession: any URLSessionProtocol
 
-    private lazy var urlSession: URLSession = {
-        let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
-        let configuration = configFactory.makeRESTAPISessionConfiguration()
-        return URLSession(configuration: configuration)
-    }()
-
-    // TODO: document
-    
     /// Create a new `APIService`.
     ///
     /// - Parameters:
@@ -70,16 +62,34 @@ public final class APIService: APIServiceProtocol {
     ///   - authenticationStorage: The storage for authentication objects.
     ///   - minTLSVersion: The minimum supported TLS version.
 
-    public init(
+    public convenience init(
         backendURL: URL,
         backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
         minTLSVersion: TLSVersion
     ) {
+        let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
+        let configuration = configFactory.makeRESTAPISessionConfiguration()
+        let urlSession = URLSession(configuration: configuration)
+
+        self.init(
+            backendURL: backendURL,
+            backendWebSocketURL: backendWebSocketURL,
+            authenticationStorage: authenticationStorage,
+            urlSession: urlSession
+        )
+    }
+
+    init(
+        backendURL: URL,
+        backendWebSocketURL: URL,
+        authenticationStorage: any AuthenticationStorage,
+        urlSession: any URLSessionProtocol
+    ) {
         self.backendURL = backendURL
         self.backendWebSocketURL = backendWebSocketURL
         self.authenticationStorage = authenticationStorage
-        self.minTLSVersion = minTLSVersion
+        self.urlSession = urlSession
     }
 
     /// Execute a request to the backend.
