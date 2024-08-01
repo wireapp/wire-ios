@@ -189,8 +189,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         launchType = .unknown
-
-        UserDefaults.standard.synchronize()
     }
 
     func application(_ app: UIApplication,
