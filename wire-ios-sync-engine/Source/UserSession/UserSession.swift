@@ -29,6 +29,8 @@ public protocol UserSession: AnyObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
+    var userProfile: UserProfile { get }
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }

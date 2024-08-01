@@ -23,8 +23,24 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
+// sourcery: AutoMockable
+public protocol EventDecoderProtocol {
+
+    func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        publicKeys: EARPublicKeys?
+    ) async throws -> [ZMUpdateEvent]
+
+    func processStoredEvents(
+        with privateKeys: EARPrivateKeys?,
+        callEventsOnly: Bool,
+        _ block: @escaping ([ZMUpdateEvent]) async -> Void
+    ) async
+
+}
+
 /// Decodes and stores events from various sources to be processed later
-@objcMembers public final class EventDecoder: NSObject {
+public final class EventDecoder: NSObject, EventDecoderProtocol {
 
     public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
 
@@ -361,13 +377,16 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
-        await eventMOC.performGrouped {
+        await eventMOC.perform { [eventMOC] in
             storedEvents.forEach { storedEvent in
-                self.eventMOC.delete(storedEvent)
-                WireLogger.eventProcessing.info("delete stored event", attributes: [.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"], .safePublic)
+                eventMOC.delete(storedEvent)
+                WireLogger.eventProcessing.info(
+                    "delete stored event",
+                    attributes: [LogAttributesKey.eventId: storedEvent.uuidString?.redactedAndTruncated() ?? "<nil>"]
+                )
             }
             do {
-                try self.eventMOC.save()
+                try eventMOC.save()
             } catch {
                 WireLogger.eventProcessing.critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
             }
