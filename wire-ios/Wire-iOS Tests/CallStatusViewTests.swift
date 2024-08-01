@@ -395,7 +395,7 @@ final class CallStatusViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testReconnectingDark() {
@@ -431,7 +431,7 @@ final class CallStatusViewTests: XCTestCase {
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testEndingDark() {
