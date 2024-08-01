@@ -112,25 +112,25 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func requestEmailUpdate() {
-    activityIndicator.setIsActive(true)
+        activityIndicator.setIsActive(true)
 
-    do {
-        try viewModel.requestEmailUpdate()
-        handleEmailUpdateSuccess()
-    } catch {
+        do {
+            try viewModel.requestEmailUpdate()
+            handleEmailUpdateSuccess()
+        } catch {
+            activityIndicator.setIsActive(false)
+            showAlert(for: error)
+        }
+    }
+
+    private func handleEmailUpdateSuccess() {
         activityIndicator.setIsActive(false)
-        showAlert(for: error)
+        updateSaveButtonState()
+        if let newEmail = viewModel.newEmail {
+            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            navigationController?.pushViewController(confirmController, animated: true)
+        }
     }
-}
-
-private func handleEmailUpdateSuccess() {
-    activityIndicator.setIsActive(false)
-    updateSaveButtonState()
-    if let newEmail = viewModel.newEmail {
-        let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
-        navigationController?.pushViewController(confirmController, animated: true)
-    }
-}
 
     // MARK: - SettingsBaseTableViewController
 
