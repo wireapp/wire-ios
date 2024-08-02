@@ -868,7 +868,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
-            self.switchAnalyticsUser()
+            self.switchAnalyticsUser(for: session)
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -888,27 +888,24 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func switchAnalyticsUser() {
+    private func switchAnalyticsUser(for userSession: ZMUserSession) {
         guard
             let analyticsManager,
-            let activeUserSession,
-            let userProfile = getUserAnalyticsProfileForActiveUserSession()
+            let userProfile = getUserAnalyticsProfile(for: userSession)
         else {
             return
         }
 
         let analyticsSession = analyticsManager.switchUser(userProfile)
-
-        activeUserSession.analyticsSession = analyticsSession
+        userSession.analyticsSession = analyticsSession
     }
 
-    func getUserAnalyticsProfileForActiveUserSession() -> AnalyticsUserProfile? {
-        guard let activeUserSession else { return nil }
-        let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
+    func getUserAnalyticsProfile(for userSession: ZMUserSession) -> AnalyticsUserProfile? {
+        let selfUser = ZMUser.selfUser(inUserSession: userSession)
 
         // Set the analytics identifier if it's not present
         if selfUser.analyticsIdentifier == nil {
-            let idProvider = AnalyticsIdentifierProvider(selfUser: activeUserSession.selfUser)
+            let idProvider = AnalyticsIdentifierProvider(selfUser: userSession.selfUser)
             idProvider.setIdentifierIfNeeded()
         }
 

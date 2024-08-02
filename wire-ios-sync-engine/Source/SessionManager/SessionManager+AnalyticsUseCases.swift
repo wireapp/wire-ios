@@ -38,18 +38,18 @@ extension SessionManager {
             throw AnalyticsSessionError.analyticsNotAvailable
         }
 
-        guard let analyticsUserProfile = getUserAnalyticsProfileForActiveUserSession() else {
-            throw AnalyticsSessionError.missingAnalyticsUserProfile
+        guard let userSession = self.activeUserSession else {
+            throw AnalyticsSessionError.missingActiveUserSession
         }
 
-        guard let useSession = self.activeUserSession else {
-            throw AnalyticsSessionError.missingActiveUserSession
+        guard let analyticsUserProfile = getUserAnalyticsProfile(for: userSession) else {
+            throw AnalyticsSessionError.missingAnalyticsUserProfile
         }
 
         return EnableAnalyticsUseCase(
             analyticsManager: analyticsManager,
             analyticsUserProfile: analyticsUserProfile,
-            userSession: useSession
+            userSession: userSession
         )
     }
 
