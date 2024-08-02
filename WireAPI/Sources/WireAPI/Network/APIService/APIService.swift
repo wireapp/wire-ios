@@ -25,7 +25,7 @@ import Foundation
 /// It may provide additional functionality, such providing authentication
 /// headers if needed.
 public protocol APIServiceProtocol {
-    
+
     /// Execute a request to the backend.
     ///
     /// - Parameters:

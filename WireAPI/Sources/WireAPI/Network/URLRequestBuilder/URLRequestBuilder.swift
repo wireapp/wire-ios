@@ -76,8 +76,8 @@ struct URLRequestBuilder {
 
 extension URLRequestBuilder {
 
-    func postJSONPayload<Payload: Encodable>(
-        _ payload: Payload,
+    func postJSONPayload(
+        _ payload: some Encodable,
         encoder: JSONEncoder = .defaultEncoder
     ) throws -> Self {
         withMethod(.post).withBody(

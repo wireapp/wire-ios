@@ -101,7 +101,7 @@ final class APIServiceTests: XCTestCase {
             request,
             requiringAccessToken: false
         )
-        
+
         // Then one request was received.
         try XCTAssertCount(urlSession.receivedRequests, count: 1)
 

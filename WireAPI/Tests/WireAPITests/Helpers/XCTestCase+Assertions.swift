@@ -19,7 +19,7 @@
 import XCTest
 
 extension XCTestCase {
-    
+
     /// Assert that a collection is of a certain size.
     ///
     /// - Parameters:
@@ -29,8 +29,8 @@ extension XCTestCase {
     ///   - file: The file name of the invoking test.
     ///   - line: The line number when this assertion is made.
 
-    func XCTAssertCount<C: Collection>(
-        _ collection: C,
+    func XCTAssertCount(
+        _ collection: some Collection,
         count: Int,
         _ message: String? = nil,
         file: StaticString = #filePath,
@@ -39,13 +39,13 @@ extension XCTestCase {
         let actualCount = collection.count
         guard actualCount == count else {
             let message = message ?? "expected count \(count), but got \(actualCount)"
-            
+
             XCTFail(
                 message,
                 file: file,
                 line: line
             )
-            
+
             throw message
         }
     }
