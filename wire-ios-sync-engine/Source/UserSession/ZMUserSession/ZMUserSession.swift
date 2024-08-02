@@ -81,8 +81,6 @@ public final class ZMUserSession: NSObject {
 
     var analyticsSession: (any AnalyticsSessionProtocol)?
 
-    var analyticsManager: (any AnalyticsManagerProtocol)?
-
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
 
