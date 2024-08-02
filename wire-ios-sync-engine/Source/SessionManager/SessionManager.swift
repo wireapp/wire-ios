@@ -903,12 +903,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     func getUserAnalyticsProfileForActiveUserSession() -> AnalyticsUserProfile? {
-        guard
-            let analyticsManager,
-            let activeUserSession
-        else {
-            return nil
-        }
+        guard let activeUserSession else { return nil }
         let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
 
         // Set the analytics identifier if it's not present

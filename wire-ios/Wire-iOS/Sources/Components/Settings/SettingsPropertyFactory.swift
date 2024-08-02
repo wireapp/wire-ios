@@ -235,12 +235,27 @@ final class SettingsPropertyFactory {
                 if var tracking = self.tracking {
                     switch value {
                     case .number(let number):
-                        tracking.disableAnalyticsSharing = number.boolValue
+                        let newValue = number.boolValue
+
+                        // If newValue is false, it means the user wants to enable analytics sharing
+                        if newValue == false {
+                            self.showAnalyticsConsentAlert { accepted in
+                                if accepted {
+                                    tracking.disableAnalyticsSharing = newValue
+                                    AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
+                                }
+                            }
+                        } else {
+                            tracking.disableAnalyticsSharing = newValue
+                            AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
+                        }
                     default:
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
                 }
             }
+
+
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
 
         case .receiveNewsAndOffers:
