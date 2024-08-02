@@ -68,8 +68,8 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
 
     /// Disables tracking by ending the current session and clearing user data.
     public func disableTracking() {
-        clearUserData()
         analyticsService.endSession()
+        clearUserData()
     }
 
     /// Enables tracking for a given user profile.
