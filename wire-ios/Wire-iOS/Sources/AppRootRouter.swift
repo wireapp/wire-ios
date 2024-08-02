@@ -40,11 +40,7 @@ final class AppRootRouter: NSObject {
     private var sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var quickActionsManager: QuickActionsManager
-    private var authenticatedRouter: AuthenticatedRouter? {
-        didSet {
-            setupAnalyticsSharing()
-        }
-    }
+    private var authenticatedRouter: AuthenticatedRouter?
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -413,17 +409,6 @@ extension AppRootRouter {
     private func configureAuthenticatedAppearance() {
         rootViewController.view.window?.tintColor = .accent()
         UIColor.setAccentOverride(nil)
-    }
-
-    private func setupAnalyticsSharing() {
-        guard
-            let selfUser = SelfUser.provider?.providedSelfUser,
-            selfUser.isTeamMember
-        else {
-            return
-        }
-
-        trackingManager.disableAnalyticsSharing = true
     }
 
     @MainActor
