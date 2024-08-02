@@ -60,7 +60,11 @@ final class TrackingManager: NSObject, TrackingInterface {
                     enableUseCase.invoke()
                 }
             } catch {
-                print("Failed to toggle analytics sharing: \(error)")
+                WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")
+
+                // Reset the setting
+                ExtensionSettings.shared.disableAnalyticsSharing = !newValue
+                AVSFlowManager.getInstance()?.setEnableMetrics(newValue)
             }
         }
     }
