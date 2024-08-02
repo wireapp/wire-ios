@@ -623,7 +623,7 @@ struct ConversationEventPayloadProcessor {
         if await context.perform({ conversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
             await context.perform { conversation.ciphersuite = ciphersuite }
-        } else if await !mlsService.conversationExists(groupID: groupID) {
+        } else if try await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
     }

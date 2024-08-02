@@ -758,7 +758,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 // MARK: - UpdateEventProcessor
 
 // swiftlint:disable todo_requires_jira_link
-// TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+// TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 // swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
@@ -804,7 +804,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         if selfClient?.hasRegisteredMLSClient == true {
             Task {
-                await mlsService.repairOutOfSyncConversations()
+                do {
+                    try await mlsService.repairOutOfSyncConversations()
+                } catch {
+                    WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+                }
             }
         }
     }
