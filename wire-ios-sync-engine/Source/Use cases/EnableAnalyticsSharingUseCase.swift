@@ -68,7 +68,7 @@ public struct EnableAnalyticsSharingUseCase: EnableAnalyticsSharingUseCaseProtoc
     /// This method calls the `enableTracking` method on the analytics manager
     /// with the provided user profile. The return value is discarded.
     public func invoke() {
-        let tracking = analyticsManager?.enableTracking(analyticsUserProfile)
-        userSession.analyticsSession = tracking
+        let analyticsSession = analyticsManager?.enableTracking(analyticsUserProfile)
+        userSession.analyticsSession = analyticsSession
     }
 }
