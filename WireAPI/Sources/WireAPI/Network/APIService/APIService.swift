@@ -53,6 +53,7 @@ public final class APIService: APIServiceProtocol {
     private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
     private let urlSession: any URLSessionProtocol
+    private let minTLSVersion: TLSVersion
 
     /// Create a new `APIService`.
     ///
@@ -76,7 +77,8 @@ public final class APIService: APIServiceProtocol {
             backendURL: backendURL,
             backendWebSocketURL: backendWebSocketURL,
             authenticationStorage: authenticationStorage,
-            urlSession: urlSession
+            urlSession: urlSession,
+            minTLSVersion: minTLSVersion
         )
     }
 
@@ -84,12 +86,14 @@ public final class APIService: APIServiceProtocol {
         backendURL: URL,
         backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
-        urlSession: any URLSessionProtocol
+        urlSession: any URLSessionProtocol,
+        minTLSVersion: TLSVersion
     ) {
         self.backendURL = backendURL
         self.backendWebSocketURL = backendWebSocketURL
         self.authenticationStorage = authenticationStorage
         self.urlSession = urlSession
+        self.minTLSVersion = minTLSVersion
     }
 
     /// Execute a request to the backend.
@@ -109,9 +113,13 @@ public final class APIService: APIServiceProtocol {
         }
 
         var request = request
-        request.url = URL(string: url.absoluteString, relativeTo: backendURL)
+        request.url = URL(
+            string: url.absoluteString,
+            relativeTo: backendURL
+        )
 
         if requiringAccessToken {
+            // TODO: [WPB-10448] renew access token if needed
             guard let accessToken = authenticationStorage.fetchAccessToken() else {
                 throw APIServiceError.missingAccessToken
             }
@@ -126,6 +134,30 @@ public final class APIService: APIServiceProtocol {
         }
 
         return (data, httpURLResponse)
+    }
+
+    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol{
+        guard let url = request.url else {
+            throw APIServiceError.invalidRequest
+        }
+
+        var request = request
+        request.url = URL(
+            string: url.absoluteString,
+            relativeTo: backendWebSocketURL
+        )
+
+        // TODO: [WPB-10448] renew access token if needed
+        guard let accessToken = authenticationStorage.fetchAccessToken() else {
+            throw APIServiceError.missingAccessToken
+        }
+
+        request.setAccessToken(accessToken)
+
+        return PushChannel(
+            request: request,
+            minTLSVersion: minTLSVersion
+        )
     }
 
 }
