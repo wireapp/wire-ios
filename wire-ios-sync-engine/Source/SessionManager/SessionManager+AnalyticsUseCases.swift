@@ -26,14 +26,14 @@ extension SessionManager {
 
     }
 
-    public func makeDisableAnalyticsSharingUseCase() throws -> DisableAnalyticsUseCaseProtocol {
+    public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
         guard let analyticsManager else {
             throw AnalyticsSessionError.analyticsNotAvailable
         }
-        return DisableAnalyticsSharingUseCase(analyticsManager: analyticsManager)
+        return DisableAnalyticsUseCase(analyticsManager: analyticsManager)
     }
 
-    public func makeEnableAnalyticsSharingUseCase() throws -> EnableAnalyticsUseCaseProtocol {
+    public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
         guard let analyticsManager else {
             throw AnalyticsSessionError.analyticsNotAvailable
         }
@@ -46,7 +46,7 @@ extension SessionManager {
             throw AnalyticsSessionError.missingActiveUserSession
         }
 
-        return EnableAnalyticsSharingUseCase(
+        return EnableAnalyticsUseCase(
             analyticsManager: analyticsManager,
             analyticsUserProfile: analyticsUserProfile,
             userSession: useSession

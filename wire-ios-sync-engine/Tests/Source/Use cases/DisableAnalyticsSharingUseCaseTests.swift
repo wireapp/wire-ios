@@ -25,7 +25,7 @@ final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: DisableAnalyticsSharingUseCase!
+    private var sut: DisableAnalyticsUseCase!
     private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
 
     // MARK: - setUp
@@ -33,7 +33,7 @@ final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockAnalyticsManager = MockAnalyticsManagerProtocol()
-        sut = DisableAnalyticsSharingUseCase(analyticsManager: mockAnalyticsManager)
+        sut = DisableAnalyticsUseCase(analyticsManager: mockAnalyticsManager)
     }
 
     // MARK: - tearDown

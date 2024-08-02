@@ -27,17 +27,16 @@ public protocol DisableAnalyticsUseCaseProtocol {
     func invoke()
 }
 
-/// Concrete implementation of the DisableAnalyticsSharingUseCaseProtocol.
+/// Concrete implementation of the DisableAnalyticsUseCaseProtocol.
 /// This struct is responsible for disabling analytics sharing.
-public struct DisableAnalyticsSharingUseCase: DisableAnalyticsUseCaseProtocol {
+public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
     /// The analytics manager responsible for handling tracking operations.
     private let analyticsManager: AnalyticsManagerProtocol
 
-    /// Initializes a new instance of DisableAnalyticsSharingUseCase.
+    /// Initializes a new instance of DisableAnalyticsUseCase.
     ///
     /// - Parameter analyticsManager: The analytics manager to use for disabling tracking.
-    ///   This can be nil if analytics are not available or not configured.
     public init(analyticsManager: AnalyticsManagerProtocol) {
         self.analyticsManager = analyticsManager
     }
@@ -45,7 +44,6 @@ public struct DisableAnalyticsSharingUseCase: DisableAnalyticsUseCaseProtocol {
     /// Invokes the use case to disable analytics sharing.
     ///
     /// This method calls the `disableTracking` method on the analytics manager if it exists.
-    /// If the analytics manager is nil, this method will have no effect.
     public func invoke() {
         analyticsManager.disableTracking()
     }

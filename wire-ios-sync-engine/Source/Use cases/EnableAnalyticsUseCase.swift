@@ -29,11 +29,11 @@ public protocol EnableAnalyticsUseCaseProtocol {
     func invoke()
 }
 
-// MARK: - EnableAnalyticsSharingUseCase
+// MARK: - EnableAnalyticsUseCase
 
-/// Concrete implementation of the EnableAnalyticsSharingUseCaseProtocol.
+/// Concrete implementation of the EnableAnalyticsUseCaseProtocol.
 /// This struct is responsible for enabling analytics sharing for a specific user profile.
-public struct EnableAnalyticsSharingUseCase: EnableAnalyticsUseCaseProtocol {
+public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
@@ -47,7 +47,7 @@ public struct EnableAnalyticsSharingUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Initialization
 
-    /// Initializes a new instance of EnableAnalyticsSharingUseCase.
+    /// Initializes a new instance of EnableAnalyticsUseCase.
     ///
     /// - Parameters:
     ///   - analyticsManager: The analytics manager to use for enabling tracking.
@@ -67,7 +67,7 @@ public struct EnableAnalyticsSharingUseCase: EnableAnalyticsUseCaseProtocol {
     /// Invokes the use case to enable analytics sharing for the specified user profile.
     ///
     /// This method calls the `enableTracking` method on the analytics manager
-    /// with the provided user profile. The return value is discarded.
+    /// with the provided user profile.
     public func invoke() {
         let analyticsSession = analyticsManager.enableTracking(analyticsUserProfile)
         userSession.analyticsSession = analyticsSession

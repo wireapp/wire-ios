@@ -53,10 +53,10 @@ final class TrackingManager: NSObject, TrackingInterface {
 
             do {
                 if newValue {
-                    let disableUseCase = try sessionManager.makeDisableAnalyticsSharingUseCase()
+                    let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
                     disableUseCase.invoke()
                 } else {
-                    let enableUseCase = try sessionManager.makeEnableAnalyticsSharingUseCase()
+                    let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
                     enableUseCase.invoke()
                 }
             } catch {
