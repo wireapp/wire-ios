@@ -38,8 +38,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
 
@@ -53,6 +51,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             syncProgress: mockSyncProgress
         )
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 

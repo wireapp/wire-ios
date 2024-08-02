@@ -40,8 +40,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-
         syncMOC.performAndWait { [self] in
             localNotificationDispatcher = MockPushMessageHandler()
             mockApplicationStatus = MockApplicationStatus()
@@ -55,6 +53,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                messageSender: mockMessageSender)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
 
     }

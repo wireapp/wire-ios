@@ -54,7 +54,6 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         sut = AssetV3DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
@@ -64,6 +63,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             self.conversation = self.createGroupConversation(with: self.user)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 

@@ -41,7 +41,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        BackendInfo.enableMocking()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         self.syncMOC.performGroupedAndWait {
@@ -49,6 +48,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             self.conversation = self.createConversation()
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 

@@ -39,8 +39,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
 
@@ -56,6 +54,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
                                         syncProgress: mockSyncProgress,
                                         oneOneOneResolver: mockOneOnOneResolver)
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 

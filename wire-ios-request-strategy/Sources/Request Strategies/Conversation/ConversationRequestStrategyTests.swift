@@ -42,8 +42,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
@@ -62,6 +60,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             removeLocalConversation: mockRemoveLocalConversation
         )
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
