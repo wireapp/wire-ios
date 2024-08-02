@@ -18,9 +18,9 @@
 
 extension SessionManager {
 
-    enum SessionManagerError: Error {
+    enum AnalyticsSessionError: Error {
 
-        case missingAnalyticsManager
+        case analyticsNotAvailable
         case missingAnalyticsUserProfile
         case missingActiveUserSession
 
@@ -28,22 +28,22 @@ extension SessionManager {
 
     public func makeDisableAnalyticsSharingUseCase() throws -> DisableAnalyticsSharingUseCaseProtocol {
         guard let analyticsManager else {
-            throw SessionManagerError.missingAnalyticsManager
+            throw AnalyticsSessionError.analyticsNotAvailable
         }
         return DisableAnalyticsSharingUseCase(analyticsManager: analyticsManager)
     }
 
     public func makeEnableAnalyticsSharingUseCase() throws -> EnableAnalyticsSharingUseCaseProtocol {
         guard let analyticsManager else {
-            throw SessionManagerError.missingAnalyticsManager
+            throw AnalyticsSessionError.analyticsNotAvailable
         }
 
         guard let analyticsUserProfile = getUserAnalyticsProfileForActiveUserSession() else {
-            throw SessionManagerError.missingAnalyticsUserProfile
+            throw AnalyticsSessionError.missingAnalyticsUserProfile
         }
 
         guard let useSession = self.activeUserSession else {
-            throw SessionManagerError.missingActiveUserSession
+            throw AnalyticsSessionError.missingActiveUserSession
         }
 
         return EnableAnalyticsSharingUseCase(
