@@ -896,9 +896,9 @@
 		A90E4AC42381EFCD00468F31 /* ZMButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90E4AC32381EFCD00468F31 /* ZMButton.swift */; };
 		A90F3E08249B978400429BFE /* MessageActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90F3E07249B978400429BFE /* MessageActionTests.swift */; };
 		A9150DB523D1B6B900844185 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9150DB423D1B6B800844185 /* Analytics.swift */; };
-		A918330D241922EB00CBD0B7 /* TokenTextAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330C241922EB00CBD0B7 /* TokenTextAttachmentTests.swift */; };
+		A918330D241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */; };
 		A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330E2419272E00CBD0B7 /* TokenSeparatorAttachment.swift */; };
-		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */; };
+		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */; };
 		A91833132419347F00CBD0B7 /* TokenFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833122419347F00CBD0B7 /* TokenFieldTests.swift */; };
 		A9184F0925C097EF00AE7842 /* MockConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9184F0825C097EE00AE7842 /* MockConversation.swift */; };
 		A923F1C02428C12A003F361F /* URLs+zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1BF2428C12A003F361F /* URLs+zip.swift */; };
@@ -2970,9 +2970,9 @@
 		A90E4AC32381EFCD00468F31 /* ZMButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMButton.swift; sourceTree = "<group>"; };
 		A90F3E07249B978400429BFE /* MessageActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionTests.swift; sourceTree = "<group>"; };
 		A9150DB423D1B6B800844185 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		A918330C241922EB00CBD0B7 /* TokenTextAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTextAttachmentTests.swift; sourceTree = "<group>"; };
+		A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTextAttachmentSnapshotTests.swift; sourceTree = "<group>"; };
 		A918330E2419272E00CBD0B7 /* TokenSeparatorAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachment.swift; sourceTree = "<group>"; };
-		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentTests.swift; sourceTree = "<group>"; };
+		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentSnapshotTests.swift; sourceTree = "<group>"; };
 		A91833122419347F00CBD0B7 /* TokenFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenFieldTests.swift; sourceTree = "<group>"; };
 		A9184F0825C097EE00AE7842 /* MockConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
 		A923F1BF2428C12A003F361F /* URLs+zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLs+zip.swift"; sourceTree = "<group>"; };
@@ -6888,8 +6888,8 @@
 			isa = PBXGroup;
 			children = (
 				A91833122419347F00CBD0B7 /* TokenFieldTests.swift */,
-				A918330C241922EB00CBD0B7 /* TokenTextAttachmentTests.swift */,
-				A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */,
+				A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */,
+				A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */,
 			);
 			path = Token;
 			sourceTree = "<group>";
@@ -10550,7 +10550,7 @@
 				162AE74D219DB1BD00581D98 /* ConversationImageMessageTests.swift in Sources */,
 				E6C25FF72B0355AD00406A1C /* AppLockModuleViewTests.swift in Sources */,
 				4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */,
-				A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift in Sources */,
+				A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift in Sources */,
 				EF15A7B420BC304A00A045C7 /* SavableImageTests.swift in Sources */,
 				5E294597219087CA0045ACFA /* ConversationReplyCellTests.swift in Sources */,
 				EF3371C52216F067005ED048 /* MockUser+SelfUserFromSession.swift in Sources */,
@@ -10572,7 +10572,7 @@
 				D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */,
 				874941CB1DE34DEC006CF32B /* UserConnectionViewSnapshotTests.swift in Sources */,
 				EFD5CF4E2189C68D00BEC99E /* NSMutableAttributedString+ReplaceEmojiTests.swift in Sources */,
-				A918330D241922EB00CBD0B7 /* TokenTextAttachmentTests.swift in Sources */,
+				A918330D241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift in Sources */,
 				EE7F467425B1D0BA001B3EE4 /* AppLockModule.MockView.swift in Sources */,
 				5EBF47C421B2F8710021CFFC /* MessageDetailsActionTests.swift in Sources */,
 				EF4018C02059761D00CFBCB0 /* MockApplication.swift in Sources */,

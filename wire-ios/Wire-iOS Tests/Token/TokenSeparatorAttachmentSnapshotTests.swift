@@ -16,28 +16,40 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
 import XCTest
+import WireUITesting
 
-final class TokenTextAttachmentTests: XCTestCase {
-    var sut: TokenTextAttachment!
+@testable import Wire
+
+final class TokenSeparatorAttachmentSnapshotTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenSeparatorAttachment!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        let token: Token<NSObjectProtocol> = Token(title: "Max Mustermann", representedObject: MockUser())
+        snapshotHelper = .init()
+        let token: Token<NSObjectProtocol> = Token(title: "", representedObject: MockUser())
         let tokenField = TokenField()
-        tokenField.tokenTitleColor = .black
+        tokenField.dotColor = .black
 
-        sut = TokenTextAttachment(token: token, tokenField: tokenField)
+        sut = TokenSeparatorAttachment(token: token, tokenField: tokenField)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
-        super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testTokenAttachmentImage() {
-        verify(matching: sut.image!)
+        snapshotHelper.verify(matching: sut.image!)
     }
 }
