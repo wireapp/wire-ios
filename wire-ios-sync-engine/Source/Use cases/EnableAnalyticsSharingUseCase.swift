@@ -23,7 +23,7 @@ import WireAnalytics
 
 // sourcery: AutoMockable
 /// Protocol defining the interface for enabling analytics sharing.
-public protocol EnableAnalyticsSharingUseCaseProtocol {
+public protocol EnableAnalyticsUseCaseProtocol {
 
     /// Invokes the use case to enable analytics sharing.
     func invoke()
@@ -33,7 +33,7 @@ public protocol EnableAnalyticsSharingUseCaseProtocol {
 
 /// Concrete implementation of the EnableAnalyticsSharingUseCaseProtocol.
 /// This struct is responsible for enabling analytics sharing for a specific user profile.
-public struct EnableAnalyticsSharingUseCase: EnableAnalyticsSharingUseCaseProtocol {
+public struct EnableAnalyticsSharingUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 

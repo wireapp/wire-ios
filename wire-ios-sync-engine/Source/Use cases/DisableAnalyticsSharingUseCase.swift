@@ -21,7 +21,7 @@ import WireAnalytics
 
 // sourcery: AutoMockable
 /// Protocol defining the interface for disabling analytics sharing.
-public protocol DisableAnalyticsSharingUseCaseProtocol {
+public protocol DisableAnalyticsUseCaseProtocol {
 
     /// Invokes the use case to disable analytics sharing.
     func invoke()
@@ -29,7 +29,7 @@ public protocol DisableAnalyticsSharingUseCaseProtocol {
 
 /// Concrete implementation of the DisableAnalyticsSharingUseCaseProtocol.
 /// This struct is responsible for disabling analytics sharing.
-public struct DisableAnalyticsSharingUseCase: DisableAnalyticsSharingUseCaseProtocol {
+public struct DisableAnalyticsSharingUseCase: DisableAnalyticsUseCaseProtocol {
 
     /// The analytics manager responsible for handling tracking operations.
     private let analyticsManager: AnalyticsManagerProtocol

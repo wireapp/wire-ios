@@ -149,7 +149,7 @@ public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationG
 
 }
 
-public class MockDisableAnalyticsSharingUseCaseProtocol: DisableAnalyticsSharingUseCaseProtocol {
+public class MockDisableAnalyticsSharingUseCaseProtocol: DisableAnalyticsUseCaseProtocol {
 
     // MARK: - Life cycle
 
@@ -205,7 +205,7 @@ public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityC
 
 }
 
-public class MockEnableAnalyticsSharingUseCaseProtocol: EnableAnalyticsSharingUseCaseProtocol {
+public class MockEnableAnalyticsSharingUseCaseProtocol: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Life cycle
 
