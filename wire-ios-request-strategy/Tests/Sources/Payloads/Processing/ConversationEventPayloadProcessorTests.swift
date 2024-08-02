@@ -1065,6 +1065,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     // MARK: - MLS: Conversation Create
 
     func testUpdateOrCreateConversation_Group_MLS_AsksToUpdateConversationIfNeeded() async {
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
         // given
         let qualifiedID = await syncMOC.perform {
             self.groupConversation.qualifiedID!
@@ -1236,6 +1240,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     // MARK: - MLS conversation member leave
 
     func test_UpdateConversationMemberLeave_WipesMLSGroup() async {
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
+        defer {
+            DeveloperFlag.storage = .standard
+        }
         // Given
         let wipeGroupExpectation = XCTestExpectation(description: "it wipes group")
         mockMLSEventProcessor.wipeMLSGroupForConversationContext_MockMethod = { _, _ in
