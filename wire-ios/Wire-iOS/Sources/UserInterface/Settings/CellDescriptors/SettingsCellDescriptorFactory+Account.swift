@@ -384,7 +384,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     func signOutElement() -> SettingsCellDescriptorType {
-        return SettingsSignOutCellDescriptor(trackingManager: trackingManager)
+        return SettingsSignOutCellDescriptor()
     }
 
 }

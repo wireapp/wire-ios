@@ -24,15 +24,13 @@ import WireSyncEngine
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
     var requestPasswordController: RequestPasswordController?
-    private let trackingManager: TrackingManager
 
     private lazy var activityIndicator = {
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)!
         return BlockingActivityIndicator(view: topMostViewController.view)
     }()
 
-    init(trackingManager: TrackingManager) {
-        self.trackingManager = trackingManager
+    init() {
         super.init(
             title: L10n.Localizable.Self.signOut,
             isDestructive: true,
@@ -56,7 +54,6 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
             ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? "")) { [weak topMostViewController] result in
                 Task { @MainActor in self.activityIndicator.stop() }
-                self.trackingManager.disableAnalyticsSharing = false
                 if case .failure(let error) = result {
                     topMostViewController?.showAlert(for: error)
                 }
