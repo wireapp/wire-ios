@@ -83,6 +83,7 @@ final class ConversationViewController: UIViewController {
     private var voiceChannelStateObserverToken: Any?
     private var conversationObserverToken: Any?
     private var conversationListObserverToken: Any?
+    var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
 
@@ -393,9 +394,8 @@ final class ConversationViewController: UIViewController {
     // MARK: Resolve 1-1 conversations
 
     private func resolveConversationIfOneOnOne() {
-        guard
-            conversation.conversationType == .oneOnOne,
-            conversation.messageProtocol == .proteus
+        guard conversation.conversationType == .oneOnOne,
+              conversation.messageProtocol == .proteus
         else {
             return
         }

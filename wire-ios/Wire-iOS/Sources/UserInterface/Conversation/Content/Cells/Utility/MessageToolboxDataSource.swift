@@ -121,7 +121,7 @@ final class MessageToolboxDataSource {
                 detailsString = FailedToSendMessage.generalReason
             case .federationRemoteError:
                 detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                                URL.wr_unreachableBackendLearnMore.absoluteString)
+                                                                                WireURLs.shared.unreachableBackendInfo.absoluteString)
             }
 
             content = .sendFailure(detailsString && attributes)
@@ -270,11 +270,9 @@ final class MessageToolboxDataSource {
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if
-            let dateTimeString = message.formattedReceivedDate(),
+        } else if let dateTimeString = message.formattedReceivedDate(),
             let systemMessage = message as? ZMSystemMessage,
-            systemMessage.systemMessageType == .messageDeletedForEveryone
-        {
+            systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 

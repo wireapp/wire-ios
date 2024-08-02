@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -35,11 +36,7 @@ final class SettingsClientViewController: UIViewController,
                                           UITableViewDelegate,
                                           UITableViewDataSource,
                                           UserClientObserver,
-                                          ClientColorVariantProtocol,
-                                          SpinnerCapable {
-
-    // MARK: SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
+                                          ClientColorVariantProtocol {
 
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
@@ -60,6 +57,8 @@ final class SettingsClientViewController: UIViewController,
     var fromConversation: Bool = false
 
     var removalObserver: ClientRemovalObserver?
+
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     convenience init(userClient: UserClient,
                      userSession: UserSession,
@@ -118,14 +117,16 @@ final class SettingsClientViewController: UIViewController,
         setupNavigationTitle()
         // presented modally from conversation
         if let navController = self.navigationController,
-            navController.viewControllers.count > 0 &&
+           navController.viewControllers.count > 0 &&
             navController.viewControllers[0] == self,
-            self.navigationItem.rightBarButtonItem == nil {
-            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-                title: L10n.Localizable.General.done.capitalized,
-                systemImage: false,
-                target: self,
-                action: #selector(SettingsClientViewController.onDonePressed(_:)))
+           self.navigationItem.rightBarButtonItem == nil {
+
+            let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.done,
+                action: UIAction { [weak self] _ in
+                    self?.navigationController?.presentingViewController?.dismiss(animated: true)
+                })
+
             self.navigationItem.rightBarButtonItem = doneButtonItem
             if fromConversation {
                 let barColor = SemanticColors.View.backgroundDefault
@@ -186,10 +187,6 @@ final class SettingsClientViewController: UIViewController,
         }, completionHandler: {
             sender.isOn = self.userClient.verified
         })
-    }
-
-    @objc func onDonePressed(_ sender: AnyObject!) {
-        self.navigationController?.presentingViewController?.dismiss(animated: true, completion: .none)
     }
 
     // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -282,8 +279,8 @@ final class SettingsClientViewController: UIViewController,
 
         switch clientSection {
         case .resetSession:
-            self.userClient.resetSession()
-            isLoadingViewVisible = true
+            userClient.resetSession()
+            activityIndicator.start()
 
         case .removeDevice:
             removalObserver = nil
@@ -294,10 +291,12 @@ final class SettingsClientViewController: UIViewController,
                 }
             }
 
-            removalObserver = ClientRemovalObserver(userClientToDelete: userClient,
-                                                    delegate: self,
-                                                    credentials: credentials,
-                                                    completion: completion)
+            removalObserver = ClientRemovalObserver(
+                userClientToDelete: userClient,
+                delegate: self,
+                credentials: credentials,
+                completion: completion
+            )
 
             removalObserver?.startRemoval()
 
@@ -371,7 +370,7 @@ final class SettingsClientViewController: UIViewController,
         }
 
         if changeInfo.sessionHasBeenReset {
-            isLoadingViewVisible = false
+            activityIndicator.stop()
             let alert = UIAlertController(title: "", message: L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success, preferredStyle: .alert)
             let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { [unowned alert] _ in
                 alert.dismiss(animated: true, completion: .none)
@@ -386,7 +385,7 @@ final class SettingsClientViewController: UIViewController,
 
 extension SettingsClientViewController: ClientRemovalObserverDelegate {
     func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {
-        isLoadingViewVisible = isVisible
+        activityIndicator.setIsActive(isVisible)
     }
 
     func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {

@@ -17,6 +17,7 @@
 //
 
 #import "MockTransportSessionTests.h"
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 @import WireMockTransport;
 @import WireProtos;
 
@@ -278,7 +279,7 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", conversationID];
     NSFetchRequest *fetchRequest = [MockConversation sortedFetchRequestWithPredicate:predicate];
     [self.sut.managedObjectContext performBlockAndWait:^{
-        NSArray *conversations = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *conversations = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
         
         XCTAssertNotNil(conversations);
         XCTAssertEqual(1u, conversations.count);
@@ -328,8 +329,8 @@
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", conversationID];
     NSFetchRequest *fetchRequest = [MockConversation sortedFetchRequestWithPredicate:predicate];
     [self.sut.managedObjectContext performBlockAndWait:^{
-        NSArray *conversations = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *conversations = [self.sut.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         XCTAssertNotNil(conversations);
         XCTAssertEqual(1u, conversations.count);
         

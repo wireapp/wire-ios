@@ -36,7 +36,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite
 
-    func conversationExists(groupID: MLSGroupID) async -> Bool
+    func conversationExists(groupID: MLSGroupID) async throws -> Bool
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -84,7 +84,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
-    func repairOutOfSyncConversations() async
+    func repairOutOfSyncConversations() async throws
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
@@ -764,12 +764,13 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func conversationExists(groupID: MLSGroupID) async -> Bool {
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: [jacob] let it throw
-        // swiftlint:enable todo_requires_jira_link
-        let result = (try? await coreCrypto.perform { await $0.conversationExists(conversationId: groupID.data) }) ?? false
-        logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
+    public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
+
+        logger.info("checking if group (\(groupID)) exists...")
+        let result = try await coreCrypto.perform { coreCrypto in
+            await coreCrypto.conversationExists(conversationId: groupID.data)
+        }
+        logger.info("... group (\(groupID)) " + (result ? "exists!" : "does not exist!"))
         return result
     }
 
@@ -788,7 +789,7 @@ public final class MLSService: MLSServiceInterface {
         // TODO: [WPB-9029] jacob this looks wrong,
         // why would we create the MLS group if doesn't exist? We are about
         // to join it via external commit.
-        if await !conversationExists(groupID: groupID) {
+        if try await !conversationExists(groupID: groupID) {
             try await _ = createGroup(for: groupID)
         }
 
@@ -842,10 +843,10 @@ public final class MLSService: MLSServiceInterface {
 
     /// Fetches and re-joins MLS conversations that are out of sync
     /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
-    public func repairOutOfSyncConversations() async {
+    public func repairOutOfSyncConversations() async throws {
         guard let context = self.context else { return }
 
-        let outOfSyncConversationInfos = await outOfSyncConversations(in: context)
+        let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
 
@@ -900,8 +901,9 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard await isConversationOutOfSync(
+            guard try await isConversationOutOfSync(
                 conversationInfo.conversation,
+                subgroup: nil,
                 context: context
             ) else {
                 logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
@@ -916,7 +918,6 @@ public final class MLSService: MLSServiceInterface {
         } catch {
             logger.warn("failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
         }
-
     }
 
     private func joinGroupAndAppendGapSystemMessage(
@@ -967,7 +968,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard await isConversationOutOfSync(
+            guard try await isConversationOutOfSync(
                 conversationInfo.conversation,
                 subgroup: subgroup,
                 context: context
@@ -1002,32 +1003,27 @@ public final class MLSService: MLSServiceInterface {
 
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
-    // TODO: [jacob] let the func throw instead of returning an empty array // swiftlint:disable:this todo_requires_jira_link
-    private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
+    private func outOfSyncConversations(in context: NSManagedObjectContext) async throws -> [OutOfSyncConversationInfo] {
 
-        do {
-            let conversations = try await coreCrypto.perform { coreCrypto in
+        let conversations = try await coreCrypto.perform { coreCrypto in
 
-                let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
+            let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
-                var outOfSyncConversations = [ZMConversation]()
-                for conversation in allMLSConversations {
-                    guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
-                    outOfSyncConversations.append(conversation)
-                }
-                return outOfSyncConversations
+            var outOfSyncConversations = [ZMConversation]()
+            for conversation in allMLSConversations {
+                guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
+                outOfSyncConversations.append(conversation)
             }
-            return await context.perform {
-                conversations.compactMap {
-                    if let groupId = $0.mlsGroupID {
-                        return (groupId, $0)
-                    } else {
-                        return nil
-                    }
+            return outOfSyncConversations
+        }
+        return await context.perform {
+            conversations.compactMap {
+                if let groupId = $0.mlsGroupID {
+                    return (groupId, $0)
+                } else {
+                    return nil
                 }
             }
-        } catch {
-            return []
         }
     }
 
@@ -1064,18 +1060,18 @@ public final class MLSService: MLSServiceInterface {
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
-        subgroup: MLSSubgroup? = nil,
+        subgroup: MLSSubgroup?,
         context: NSManagedObjectContext
-    ) async -> Bool {
-        return (try? await coreCrypto.perform {
-            return await isConversationOutOfSync(
+    ) async throws -> Bool {
+        try await coreCrypto.perform {
+            await isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
-            ) // swiftlint:disable todo_requires_jira_link
-        }) ?? false // TODO: [jacob] let it throw
-    } // swiftlint: enable todo_requires_jira_link
+            )
+        }
+    }
 
     // MARK: - External Proposals
 
@@ -1550,7 +1546,7 @@ public final class MLSService: MLSServiceInterface {
     ) async throws {
         do {
             logger.info("creating subgroup with id (\(id.safeForLoggingDescription))")
-            try await createGroup(for: id, parentGroupID: parentID)
+            _ = try await createGroup(for: id, parentGroupID: parentID)
             try await updateKeyMaterial(for: id)
         } catch {
             logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
@@ -1608,13 +1604,11 @@ public final class MLSService: MLSServiceInterface {
             )
         }
 
-        if
-            let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
+        if let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            await conversationExists(groupID: subConversationGroupID)
-        {
+            try await conversationExists(groupID: subConversationGroupID) {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {
             let subconversation = try await actionsProvider.fetchSubgroup(
@@ -1751,7 +1745,7 @@ public final class MLSService: MLSServiceInterface {
                     continue
                 }
 
-                try await createGroup(for: mlsGroupID)
+                _ = try await createGroup(for: mlsGroupID)
 
                 do {
 

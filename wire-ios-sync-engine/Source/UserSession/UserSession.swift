@@ -29,6 +29,8 @@ public protocol UserSession: AnyObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
+    var userProfile: UserProfile { get }
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
@@ -235,6 +237,10 @@ public protocol UserSession: AnyObject {
 
     /// Provides a unique context to bind notifications this user session.
     var notificationContext: any NotificationContext { get }
+
+    // MARK: Context provider
+
+    var contextProvider: any ContextProvider { get }
 
     // MARK: Use Cases
 

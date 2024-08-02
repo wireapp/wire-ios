@@ -39,11 +39,11 @@ extension ZMUserSession {
 private class HTTPClientImpl: HTTPClient {
 
     let transportSession: TransportSessionType
-    let queue: ZMSGroupQueue
+    let queue: GroupQueue
 
     public init(
         transportSession: TransportSessionType,
-        queue: ZMSGroupQueue
+        queue: GroupQueue
     ) {
         self.transportSession = transportSession
         self.queue = queue
@@ -69,7 +69,7 @@ private extension HTTPRequest {
         .init(
             path: path,
             method: method.toZMTransportRequestMethod(),
-            payload: body.map { String(data: $0, encoding: .utf8) } as? ZMTransportData,
+            payload: body.map { String(decoding: $0, as: UTF8.self) } as? ZMTransportData,
             apiVersion: 0
         )
     }

@@ -21,6 +21,8 @@ import WireDataModelSupport
 import WireRequestStrategy
 @testable import WireSyncEngine
 import WireSyncEngineSupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 class CallingRequestStrategyTests: MessagingTest {
 
@@ -71,7 +73,6 @@ class CallingRequestStrategyTests: MessagingTest {
         mockRegistrationDelegate = nil
         mockApplicationStatus = nil
         mockFetchUserClientsUseCase = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -162,8 +163,11 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Client List
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_NotFederated() throws {
+        // Given
+        BackendInfo.enableMocking()
+        BackendInfo.isFederationEnabled = false
+
         let (conversation, payload) = try syncMOC.performAndWait {
-            // Given
             let selfClient = createSelfClient()
 
             // One user with two clients connected to self.
@@ -235,12 +239,15 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = true
+
         let (conversation, payload) = try syncMOC.performAndWait {
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -323,6 +330,8 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {
@@ -652,7 +661,7 @@ class CallingRequestStrategyTests: MessagingTest {
                     "resp": false,
                     "type": "REMOTEMUTE"] as [String: Any]
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
-        let content = String(data: data, encoding: .utf8)!
+        let content = String(decoding: data, as: UTF8.self)
         let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
         let text = try? message.serializedData().base64String()
         let payload = [

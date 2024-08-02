@@ -26,37 +26,25 @@ import XCTest
 private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
 
-extension ViewImageConfig: Hashable {
-
-    public static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
-        lhs.size == rhs.size && lhs.traits == rhs.traits
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(size?.width)
-        hasher.combine(size?.height)
-        hasher.combine(traits)
-    }
-}
-
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
 
     /// snapshot file name suffixs
-    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [ViewImageConfig: String] {
-        return [
-            .iPhoneSe(orientation): "iPhone-4_0_Inch",
-            .iPhone8(orientation): "iPhone-4_7_Inch",
-            .iPhone8Plus(orientation): "iPhone-5_5_Inch",
-            .iPhoneX(orientation): "iPhone-5_8_Inch",
-            .iPhoneXsMax(orientation): "iPhone-6_5_Inch"
+    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [(ViewImageConfig, String)] {
+        [
+            (.iPhoneSe(orientation), "iPhone-4_0_Inch"),
+            (.iPhone8(orientation), "iPhone-4_7_Inch"),
+            (.iPhone8Plus(orientation), "iPhone-5_5_Inch"),
+            (.iPhoneX(orientation), "iPhone-5_8_Inch"),
+            (.iPhoneXsMax(orientation), "iPhone-6_5_Inch")
         ]
     }
 
-    static let padConfigNames: [SnapshotTesting.ViewImageConfig: String] = [
-        .iPadMini(.landscape): "iPad-landscape",
-        .iPadMini(.portrait): "iPad-portrait"]
+    static let padConfigNames: [(ViewImageConfig, String)] = [
+        (.iPadMini(.landscape), "iPad-landscape"),
+        (.iPadMini(.portrait), "iPad-portrait")
+    ]
 
     func verifyAllIPhoneSizes(matching value: UIViewController,
                               orientation: ViewImageConfig.Orientation = .portrait,
@@ -74,39 +62,54 @@ extension XCTestCase {
         }
     }
 
-    func verifyAllIPhoneSizes(createSut: (CGSize) -> UIViewController,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
+    func verifyInAllDeviceSizes(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let allDevices = XCTestCase.phoneConfigNames() + XCTestCase.padConfigNames
+        for (config, name) in allDevices {
 
-        for(config, name) in XCTestCase.phoneConfigNames() {
-            verify(matching: createSut(config.size!),
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            verify(
+                matching: value,
+                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
-    func verifyInAllDeviceSizes(matching value: UIViewController,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
+    func verifyInAllDeviceSizes_(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
 
-        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
+        let allDevices: [(ViewImageConfig, String)] = [
 
-        for(config, name) in allDevices {
-            if let deviceMockable = value as? DeviceMockable {
-                (deviceMockable.device as? MockDevice)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
-            }
+            (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
+            (.iPhone8(.portrait), "iPhone-4_7_Inch"),
+            (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
+            (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
+            (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
 
-            verify(matching: value,
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            (.iPadMini(.landscape), "iPad-landscape"),
+            (.iPadMini(.portrait), "iPad-portrait")
+        ]
+
+        for (config, name) in allDevices {
+            verify(
+                matching: value,
+                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
@@ -149,11 +152,13 @@ extension XCTestCase {
             nameWithProperty = "\(width)"
         }
 
-        verify(matching: value,
-               named: nameWithProperty,
-               file: file,
-               testName: testName,
-               line: line)
+        verify(
+            matching: value,
+            named: nameWithProperty,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
     func verifyInAllPhoneWidths(
@@ -219,7 +224,7 @@ extension XCTestCase {
             presentViewController(value)
         }
 
-        let failure = verifySnapshot(matching: value,
+        let failure = verifySnapshot(of: value,
                                      as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
                                      snapshotDirectory: snapshotDirectory(file: file),
                                      file: file, testName: testName, line: line)
@@ -256,7 +261,7 @@ extension XCTestCase {
                 testName: String = #function,
                 line: UInt = #line) {
 
-        let failure = verifySnapshot(matching: value,
+        let failure = verifySnapshot(of: value,
                                      as: .image,
                                      named: name,
                                      snapshotDirectory: snapshotDirectory(file: file),
@@ -274,7 +279,7 @@ extension XCTestCase {
                                testName: String = #function,
                                line: UInt = #line) {
 
-        let failure = verifySnapshot(matching: value,
+        let failure = verifySnapshot(of: value,
                                      as: snapshotting,
                                      named: name,
                                      snapshotDirectory: snapshotDirectory(file: file),

@@ -1,23 +1,14 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 
 import Foundation
 import PackageDescription
 
 let package = Package(
     name: "WireAnalytics",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(
-            name: "WireAnalytics",
-            targets: ["WireAnalytics"]
-        ),
-        .library(
-            name: "WireDatadog",
-            targets: ["WireDatadog"]
-        )
+        .library(name: "WireAnalytics", targets: ["WireAnalytics"]),
+        .library(name: "WireDatadog", targets: ["WireDatadog"])
     ],
     dependencies: [
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.12.0")
@@ -25,7 +16,8 @@ let package = Package(
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies()
+            dependencies: resolveWireAnalyticsDependencies(),
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "WireDatadog",
@@ -35,13 +27,15 @@ let package = Package(
                 .product(name: "DatadogLogs", package: "dd-sdk-ios"),
                 .product(name: "DatadogRUM", package: "dd-sdk-ios"),
                 .product(name: "DatadogTrace", package: "dd-sdk-ios")
-            ]
+            ],
+            swiftSettings: swiftSettings
         )
     ]
 )
 
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
+    // and run File > Packages > Resolve Packages Versions
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
         ["WireDatadog"]
     } else {
@@ -56,3 +50,7 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
         ProcessInfo.processInfo.environment[name] != nil
     }
 }
+
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ExistentialAny")
+]

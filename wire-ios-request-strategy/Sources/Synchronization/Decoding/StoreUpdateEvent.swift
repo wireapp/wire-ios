@@ -32,6 +32,10 @@ public final class StoredUpdateEvent: NSManagedObject {
     // MARK: - Properties
 
     @NSManaged
+    /// hash Value of payload and eventId combined
+    var eventHash: Int64
+
+    @NSManaged
     var uuidString: String?
 
     @NSManaged
@@ -73,19 +77,25 @@ public final class StoredUpdateEvent: NSManagedObject {
         index: Int64,
         publicKeys: EARPublicKeys? = nil
     ) -> StoredUpdateEvent? {
-        guard let storedEvent = StoredUpdateEvent.insertNewObject(context) else {
-            WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
+        guard let eventId = event.uuid?.transportString(),
+              let eventHash = EventHasher.hash(eventId: eventId, payload: event.payload) else {
+            assertionFailure("trying to check storedEvent without id")
             return nil
         }
 
-        storedEvent.debugInformation = event.debugInformation
-        storedEvent.isTransient = event.isTransient
-        storedEvent.source = Int16(event.source.rawValue)
-        storedEvent.sortIndex = index
-        storedEvent.uuidString = event.uuid?.transportString()
-        storedEvent.isCallEvent = event.isCallEvent
-        storedEvent.payload = event.payload as NSDictionary
-        storedEvent.isEncrypted = false
+        guard !storedEventExists(for: eventId, eventHash: eventHash, in: context) else {
+            WireLogger.updateEvent.warn("dropping event as it has already been stored", attributes: event.logAttributes)
+            return nil
+        }
+
+        guard let storedEvent = StoredUpdateEvent.create(from: event,
+                                                         eventId: eventId,
+                                                         eventHash: eventHash,
+                                                         index: index,
+                                                         context: context) else {
+            WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
+            return nil
+        }
 
         encryptIfNeeded(
             storedEvent,
@@ -93,6 +103,41 @@ public final class StoredUpdateEvent: NSManagedObject {
         )
 
         return storedEvent
+    }
+
+    static func create(from event: ZMUpdateEvent,
+                       eventId: String,
+                       eventHash: Int,
+                       index: Int64,
+                       context: NSManagedObjectContext) -> StoredUpdateEvent? {
+        let storedEvent = StoredUpdateEvent.insertNewObject(context)
+
+        storedEvent?.debugInformation = event.debugInformation
+        storedEvent?.isTransient = event.isTransient
+        storedEvent?.source = Int16(event.source.rawValue)
+        storedEvent?.sortIndex = index
+        storedEvent?.uuidString = eventId
+        storedEvent?.isCallEvent = event.isCallEvent
+        storedEvent?.payload = event.payload as NSDictionary
+        storedEvent?.eventHash = Int64(eventHash)
+        storedEvent?.isEncrypted = false
+
+        return storedEvent
+    }
+
+    static private func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
+
+        let eventHash = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
+        let defaultEventHash = NSPredicate(format: "%K = 0", #keyPath(StoredUpdateEvent.eventHash))
+
+        let eventHashOrPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [eventHash, defaultEventHash])
+
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [eventIdPredicate, eventHashOrPredicate])
+
+        let result = context.countOrAssert(request: fetchRequest)
+        return result > 0
     }
 
     private static func encryptIfNeeded(
@@ -233,6 +278,8 @@ public final class StoredUpdateEvent: NSManagedObject {
             if let debugInfo = storedEvent.debugInformation {
                 decryptedEvent.appendDebugInformation(debugInfo)
             }
+
+            decryptedEvent.contentHash = storedEvent.eventHash
 
             return .success(decryptedEvent)
 

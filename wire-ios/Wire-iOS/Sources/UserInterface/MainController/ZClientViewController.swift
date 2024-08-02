@@ -421,7 +421,7 @@ final class ZClientViewController: UIViewController {
                     }
                 }
 
-                presentedViewController.dismiss(animated: false, completion: callback)
+                presentedViewController.dismiss(animated: true, completion: callback)
             } else if self.presentedViewController != nil {
                 self.dismiss(animated: false, completion: callback)
             } else {
@@ -436,9 +436,8 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    // MARK: - Getters/Setters
-
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
+
     private func reloadCurrentConversation() {
         guard let currentConversation else { return }
 
@@ -460,10 +459,24 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Debug logging notifications
+
     @objc
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
-        DebugAlert.showSendLogsMessage(message: "A request loop is going on at \(path)")
+
+        var presentingViewController = self as UIViewController
+        while let presentedViewController = presentingViewController.presentedViewController {
+            presentingViewController = presentedViewController
+        }
+
+        DebugAlert.showSendLogsMessage(
+            message: "A request loop is going on at \(path)",
+            presentingViewController: presentingViewController,
+            fallbackActivityPopoverConfiguration: .sourceView(
+                presentingViewController.view,
+                .init(origin: presentingViewController.view.center, size: .zero)
+            )
+        )
     }
 
     /// Attempt to load the last viewed conversation associated with the current account.
@@ -471,8 +484,6 @@ final class ZClientViewController: UIViewController {
     ///
     ///
     /// - Parameters:
-    ///   - focus: <#focus description#>
-    ///   - animated: <#animated description#>
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
