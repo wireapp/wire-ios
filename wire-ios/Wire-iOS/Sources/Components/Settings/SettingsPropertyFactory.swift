@@ -255,7 +255,6 @@ final class SettingsPropertyFactory {
                 }
             }
 
-
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
 
         case .receiveNewsAndOffers:

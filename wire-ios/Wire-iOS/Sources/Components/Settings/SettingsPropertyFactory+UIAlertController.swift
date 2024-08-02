@@ -19,7 +19,7 @@
 import UIKit
 
 extension SettingsPropertyFactory {
-    
+
     typealias AlertLocale = L10n.Localizable.Self.Settings.PrivacyAnalytics.Alert
 
     func showAnalyticsConsentAlert(completion: @escaping (Bool) -> Void) {
