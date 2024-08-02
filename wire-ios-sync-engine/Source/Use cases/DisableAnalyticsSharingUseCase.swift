@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireAnalytics
 import Countly
+import WireAnalytics
 
 /// Protocol defining the interface for disabling analytics sharing.
 public protocol DisableAnalyticsSharingUseCaseProtocol {

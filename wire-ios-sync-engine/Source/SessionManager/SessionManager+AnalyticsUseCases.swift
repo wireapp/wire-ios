@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 extension SessionManager {
 
     enum SessionManagerError: Error {
@@ -28,14 +27,14 @@ extension SessionManager {
     }
 
     public func makeDisableAnalyticsSharingUseCase() throws -> DisableAnalyticsSharingUseCaseProtocol {
-        guard let analyticsManager = analyticsManager else {
+        guard let analyticsManager else {
             throw SessionManagerError.missingAnalyticsManager
         }
         return DisableAnalyticsSharingUseCase(analyticsManager: analyticsManager)
     }
 
     public func makeEnableAnalyticsSharingUseCase() throws -> EnableAnalyticsSharingUseCaseProtocol {
-        guard let analyticsManager = analyticsManager else {
+        guard let analyticsManager else {
             throw SessionManagerError.missingAnalyticsManager
         }
 

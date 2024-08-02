@@ -44,7 +44,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
-            accountSelector: SessionManager.shared, 
+            accountSelector: SessionManager.shared,
             trackingManager: trackingManager
         )
     }

@@ -22,7 +22,7 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class TrackingManager: NSObject, TrackingInterface {
-    
+
     private let flowManagerObserver: NSObjectProtocol
     private let sessionManager: SessionManager
 

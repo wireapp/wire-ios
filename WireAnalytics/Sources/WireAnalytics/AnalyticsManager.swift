@@ -90,7 +90,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     }
 
     private func clearUserData() {
-        ["team_team_id", "team_user_type", "team_team_size"].forEach { key in
+        for key in ["team_team_id", "team_user_type", "team_team_size"] {
             analyticsService.setUserValue(nil, forKey: key)
         }
     }
