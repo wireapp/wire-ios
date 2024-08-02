@@ -21,6 +21,7 @@ import WireAnalytics
 
 // MARK: - EnableAnalyticsSharingUseCaseProtocol
 
+// sourcery: AutoMockable
 /// Protocol defining the interface for enabling analytics sharing.
 public protocol EnableAnalyticsSharingUseCaseProtocol {
 

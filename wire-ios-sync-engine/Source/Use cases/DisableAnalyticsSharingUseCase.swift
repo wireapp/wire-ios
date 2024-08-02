@@ -19,6 +19,7 @@
 import Countly
 import WireAnalytics
 
+// sourcery: AutoMockable
 /// Protocol defining the interface for disabling analytics sharing.
 public protocol DisableAnalyticsSharingUseCaseProtocol {
 
