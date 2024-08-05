@@ -39,7 +39,8 @@ final class APIServiceTests: XCTestCase {
             backendURL: backendURL,
             backendWebSocketURL: backendWebSocketURL,
             authenticationStorage: authenticationStorage,
-            urlSession: urlSession
+            urlSession: urlSession,
+            minTLSVersion: .v1_2
         )
     }
 
