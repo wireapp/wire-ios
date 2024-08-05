@@ -96,17 +96,8 @@ extension WireCallCenterV3 {
     // Leaves the possibles subconversation for the mls conference.
 
     private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
-
-        guard let viewContext = uiMOC,
-              let conversation = ZMConversation.fetch(
-                with: conversationID.identifier,
-                domain: conversationID.domain,
-                in: viewContext),
-              conversation.conversationType == .group else {
-            return
-        }
-
         guard
+            let viewContext = uiMOC,
             let syncContext = viewContext.zm_sync,
             let selfClient = ZMUser.selfUser(in: viewContext).selfClient(),
             let selfClientID = MLSClientID(userClient: selfClient),
@@ -164,32 +155,6 @@ extension WireCallCenterV3 {
                     )
                 } catch {
                     WireLogger.calling.error("failed to leave subconversation: \(String(reflecting: error))")
-                }
-            }
-        }
-    }
-
-    func deleteSubconversation(conversationID: AVSIdentifier) {
-        guard
-            let viewContext = uiMOC,
-            let syncContext = viewContext.zm_sync,
-            let parentIDs = mlsParentIDS(for: conversationID)
-        else {
-            return
-        }
-
-        syncContext.perform {
-            guard let mlsService = syncContext.mlsService else {
-                WireLogger.calling.error("failed to delete subconversation: mlsService is missing")
-                assertionFailure("mlsService is nil")
-                return
-            }
-
-            Task {
-                do {
-                    try await mlsService.deleteSubgroup(parentQualifiedID: parentIDs.qualifiedID)
-                } catch {
-                    WireLogger.calling.error("failed to delete subconversation: \(String(reflecting: error))")
                 }
             }
         }

@@ -46,14 +46,11 @@ final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
             action.fail(with: .invalidParameters)
             return nil
         }
-        var payload: [String: Any] = [:]
-        payload["epoch"] = action.epoch
-        payload["group_id"] = action.groupID.data.base64EncodedString()
 
         return ZMTransportRequest(
             path: "/conversations/\(domain)/\(conversationID)/subconversations/\(subgroupType)",
             method: .delete,
-            payload: payload as ZMTransportData,
+            payload: nil,
             apiVersion: apiVersion.rawValue
         )
     }

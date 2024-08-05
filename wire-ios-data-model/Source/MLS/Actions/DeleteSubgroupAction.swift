@@ -39,8 +39,6 @@ public final class DeleteSubgroupAction: EntityAction {
     public let conversationID: UUID
     public let domain: String
     public let subgroupType: SubgroupType
-    public let epoch: Int
-    public let groupID: MLSGroupID
     public var resultHandler: ResultHandler?
 
     // MARK: - Life cycle
@@ -49,15 +47,11 @@ public final class DeleteSubgroupAction: EntityAction {
         conversationID: UUID,
         domain: String,
         subgroupType: SubgroupType,
-        epoch: Int,
-        groupID: MLSGroupID,
         resultHandler: ResultHandler? = nil
     ) {
         self.conversationID = conversationID
         self.domain = domain
         self.subgroupType = subgroupType
-        self.epoch = epoch
-        self.groupID = groupID
         self.resultHandler = resultHandler
     }
 

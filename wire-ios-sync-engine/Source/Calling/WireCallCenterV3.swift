@@ -433,7 +433,6 @@ extension WireCallCenterV3 {
     /// Call this method when the callParticipants changed and avs calls the handler `wcall_participant_changed_h`
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
         guard isEnabled else { return }
-
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
         if let participants = callSnapshots[conversationId]?.callParticipants.participants {
@@ -746,18 +745,6 @@ extension WireCallCenterV3 {
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
-
-            guard let viewContext = uiMOC,
-                  let conversation = ZMConversation.fetch(
-                    with: mlsParentIDs.qualifiedID.uuid,
-                    domain: mlsParentIDs.qualifiedID.domain,
-                    in: viewContext),
-                  conversation.conversationType == .group
-            else {
-                deleteSubconversation(conversationID: conversationId)
-                return
-            }
-
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
