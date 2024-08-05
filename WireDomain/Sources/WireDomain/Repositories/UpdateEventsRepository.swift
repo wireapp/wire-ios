@@ -132,13 +132,20 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
             for envelope in envelopes {
                 count += 1
-                WireLogger.sync.debug("decrypting envelope (\(count) of \(batchCount)")
+                
+                WireLogger.sync.debug(
+                    "decrypting envelope (\(count) of \(batchCount))",
+                    attributes: [.eventEnvelopeID: envelope.id]
+                )
 
                 // We can only decrypt once so store the decrypted events for later retrieval.
                 var decryptedEnvelope = envelope
                 decryptedEnvelope.events = try await updateEventDecryptor.decryptEvents(in: envelope)
 
-                WireLogger.sync.debug("persisting envelope (\(count) of \(batchCount)")
+                WireLogger.sync.debug(
+                    "persisting envelope (\(count) of \(batchCount)",
+                    attributes: [.eventEnvelopeID: envelope.id]
+                )
 
                 try await persistEventEnvelope(
                     decryptedEnvelope,
@@ -231,12 +238,18 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
         try await pushChannel.open().compactMap {
             do {
-                WireLogger.sync.debug("decrypting live event")
+                WireLogger.sync.debug(
+                    "decrypting live event",
+                    attributes: [.eventEnvelopeID: $0.id]
+                )
                 var envelope = $0
                 envelope.events = try await self.updateEventDecryptor.decryptEvents(in: envelope)
                 return envelope
             } catch {
-                WireLogger.sync.error("failed to decrypt live event, dropping: \(error)")
+                WireLogger.sync.error(
+                    "failed to decrypt live event, dropping: \(error)",
+                    attributes: [.eventEnvelopeID: $0.id]
+                )
                 return nil
             }
         }.toStream()
@@ -247,7 +260,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {
-        WireLogger.sync.debug("storing last event id")
+        WireLogger.sync.debug(
+            "storing last event id",
+            attributes: [.eventEnvelopeID: id]
+        )
         lastEventIDRepository.storeLastEventID(id)
     }
 
