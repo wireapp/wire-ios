@@ -62,7 +62,7 @@ protocol UpdateEventsRepositoryProtocol {
 
     func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>
 
-    /// Close the piush channel and stop fnish the asynchronous stream of
+    /// Close the push channel and stop the asynchronous stream of
     /// `UpdateEventEnvelope`s returned in `startBufferingLiveEvents`.
 
     func stopReceivingLiveEvents() async
