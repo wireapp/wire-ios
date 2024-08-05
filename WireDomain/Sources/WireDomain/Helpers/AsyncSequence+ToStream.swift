@@ -20,10 +20,10 @@ import Foundation
 
 extension AsyncSequence {
 
-    func toStream() -> AsyncStream<Element> {
+    func toStream() -> AsyncThrowingStream<Element, Error> {
         var iterator = makeAsyncIterator()
-        return AsyncStream {
-            try? await iterator.next()
+        return AsyncThrowingStream {
+            try await iterator.next()
         }
     }
 

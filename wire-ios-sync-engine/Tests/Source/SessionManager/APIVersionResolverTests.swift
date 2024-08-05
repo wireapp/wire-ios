@@ -16,20 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import XCTest
 
-class APIVersionResolverTests: ZMTBaseTest {
+@_spi(MockBackendInfo)
+import WireTransport
+
+@testable import WireSyncEngine
+
+final class APIVersionResolverTests: ZMTBaseTest {
 
     private var transportSession: MockTransportSession!
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
     override func setUp() {
-        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.enableMocking()
+
         mockDelegate = .init()
         transportSession = MockTransportSession(dispatchGroup: dispatchGroup)
-        setCurrentAPIVersion(nil)
 
         super.setUp()
     }
@@ -37,8 +40,9 @@ class APIVersionResolverTests: ZMTBaseTest {
     override func tearDown() {
         mockDelegate = nil
         transportSession = nil
-        resetCurrentAPIVersion()
-        BackendInfo.storage = UserDefaults.standard
+
+        BackendInfo.resetMocking()
+
         super.tearDown()
     }
 
@@ -280,7 +284,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
     func testThatItReportsBlacklistReasonWhenBackendIsObsolete() throws {
         // Given version one was selected.
-        setCurrentAPIVersion(.v1)
+        BackendInfo.apiVersion = .v1
 
         // Given now we only support version 2.
         let sut = createSUT(
@@ -310,7 +314,7 @@ class APIVersionResolverTests: ZMTBaseTest {
 
     func testThatItReportsBlacklistReasonWhenClientIsObsolete() throws {
         // Given version one was selected.
-        setCurrentAPIVersion(.v1)
+        BackendInfo.apiVersion = .v1
 
         // Given we still only support v1.
         let sut = createSUT(

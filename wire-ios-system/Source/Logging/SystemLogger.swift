@@ -88,14 +88,6 @@ struct SystemLogger: LoggerProtocol {
             os_log(osLogType, log: logger, "\(message)")
         }
     }
-
-    private func attributesDescription(from attributes: LogAttributes) -> String {
-        var logAttributes = attributes
-        // drop attributes used for visibility and category
-        logAttributes.removeValue(forKey: .public)
-        logAttributes.removeValue(forKey: .tag)
-        return logAttributes.isEmpty == false ? " - \(logAttributes.description)" : ""
-    }
 }
 
 private var loggers: [String: OSLog] = [:]

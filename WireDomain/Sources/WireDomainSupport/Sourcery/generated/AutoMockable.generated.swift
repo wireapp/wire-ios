@@ -246,10 +246,10 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
 
     var startBufferingLiveEvents_Invocations: [Void] = []
     var startBufferingLiveEvents_MockError: Error?
-    var startBufferingLiveEvents_MockMethod: (() async throws -> AsyncStream<UpdateEventEnvelope>)?
-    var startBufferingLiveEvents_MockValue: AsyncStream<UpdateEventEnvelope>?
+    var startBufferingLiveEvents_MockMethod: (() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>)?
+    var startBufferingLiveEvents_MockValue: AsyncThrowingStream<UpdateEventEnvelope, Error>?
 
-    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope> {
+    func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
         startBufferingLiveEvents_Invocations.append(())
 
         if let error = startBufferingLiveEvents_MockError {

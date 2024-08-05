@@ -303,7 +303,7 @@ final class CollectionsViewController: UIViewController {
 
         navigationItem.titleView = titleViewWrapper
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 
@@ -734,7 +734,7 @@ extension CollectionsViewController: CollectionCellDelegate {
                 backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
                 backButton.accessibilityLabel = L10n.Accessibility.ConversationSearch.BackButton.description
 
-                navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+                navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                     self?.presentingViewController?.dismiss(animated: true)
                 }, accessibilityLabel: L10n.Accessibility.ConversationSearch.CloseButton.description)
 

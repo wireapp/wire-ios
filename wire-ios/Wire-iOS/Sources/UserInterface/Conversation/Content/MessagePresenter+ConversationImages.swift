@@ -75,7 +75,7 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.modalTargetController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
 
