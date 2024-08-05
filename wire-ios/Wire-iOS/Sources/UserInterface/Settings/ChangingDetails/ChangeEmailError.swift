@@ -16,13 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import XCTest
+import Foundation
 
-extension Settings {
-    func reset() {
-        for key in SettingKey.allCases {
-            defaults.removeObject(forKey: key.rawValue)
+enum ChangeEmailError: LocalizedError {
+
+    case invalidEmail
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidEmail:
+            return L10n.Localizable.Error.Email.invalid
         }
     }
 }

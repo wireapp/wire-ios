@@ -588,6 +588,53 @@ public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseC
 
 }
 
+public class MockEventDecoderProtocol: EventDecoderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - decryptAndStoreEvents
+
+    public var decryptAndStoreEventsPublicKeys_Invocations: [(events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)] = []
+    public var decryptAndStoreEventsPublicKeys_MockError: Error?
+    public var decryptAndStoreEventsPublicKeys_MockMethod: (([ZMUpdateEvent], EARPublicKeys?) async throws -> [ZMUpdateEvent])?
+    public var decryptAndStoreEventsPublicKeys_MockValue: [ZMUpdateEvent]?
+
+    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], publicKeys: EARPublicKeys?) async throws -> [ZMUpdateEvent] {
+        decryptAndStoreEventsPublicKeys_Invocations.append((events: events, publicKeys: publicKeys))
+
+        if let error = decryptAndStoreEventsPublicKeys_MockError {
+            throw error
+        }
+
+        if let mock = decryptAndStoreEventsPublicKeys_MockMethod {
+            return try await mock(events, publicKeys)
+        } else if let mock = decryptAndStoreEventsPublicKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptAndStoreEventsPublicKeys`")
+        }
+    }
+
+    // MARK: - processStoredEvents
+
+    public var processStoredEventsWithCallEventsOnly_Invocations: [(privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)] = []
+    public var processStoredEventsWithCallEventsOnly_MockMethod: ((EARPrivateKeys?, Bool, @escaping ([ZMUpdateEvent]) async -> Void) async -> Void)?
+
+    public func processStoredEvents(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool, _ block: @escaping ([ZMUpdateEvent]) async -> Void) async {
+        processStoredEventsWithCallEventsOnly_Invocations.append((privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block))
+
+        guard let mock = processStoredEventsWithCallEventsOnly_MockMethod else {
+            fatalError("no mock for `processStoredEventsWithCallEventsOnly`")
+        }
+
+        await mock(privateKeys, callEventsOnly, block)
+    }
+
+}
+
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 
     // MARK: - Life cycle
