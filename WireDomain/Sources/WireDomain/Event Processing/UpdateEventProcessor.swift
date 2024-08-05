@@ -19,8 +19,8 @@
 import Foundation
 import WireAPI
 
+// sourcery: AutoMockable
 /// Process update events.
-
 protocol UpdateEventProcessorProtocol {
 
     /// Process an update event.
