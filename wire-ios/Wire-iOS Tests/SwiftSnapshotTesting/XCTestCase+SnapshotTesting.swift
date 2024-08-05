@@ -30,33 +30,6 @@ private let perceptualPrecision: Float = 0.98
 
 extension XCTestCase {
 
-    /// snapshot file name suffixs
-    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [(ViewImageConfig, String)] {
-        [
-            (.iPhoneSe(orientation), "iPhone-4_0_Inch"),
-            (.iPhone8(orientation), "iPhone-4_7_Inch"),
-            (.iPhone8Plus(orientation), "iPhone-5_5_Inch"),
-            (.iPhoneX(orientation), "iPhone-5_8_Inch"),
-            (.iPhoneXsMax(orientation), "iPhone-6_5_Inch")
-        ]
-    }
-
-    func verifyAllIPhoneSizes(matching value: UIViewController,
-                              orientation: ViewImageConfig.Orientation = .portrait,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-
-        for(config, name) in XCTestCase.phoneConfigNames(orientation: orientation) {
-            verify(matching: value,
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
-    }
-
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
                         snapshotBackgroundColor: UIColor,
