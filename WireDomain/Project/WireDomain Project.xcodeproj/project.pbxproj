@@ -78,9 +78,9 @@
 		EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */; };
 		EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */; };
 		EEB4FBBB2C48E96000655F56 /* AsyncSequence+ToStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB4FBBA2C48E96000655F56 /* AsyncSequence+ToStream.swift */; };
+		EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC410242C60D48900E89394 /* SyncManagerTests.swift */; };
 		EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A52C2EB6CD00679448 /* SyncManager.swift */; };
 		EECC35A82C2EB70400679448 /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A72C2EB70400679448 /* SyncState.swift */; };
-		EECC35AE2C2EE5D600679448 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -205,9 +205,9 @@
 		EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigUpdateEventProcessor.swift; sourceTree = "<group>"; };
 		EEB4FBBA2C48E96000655F56 /* AsyncSequence+ToStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AsyncSequence+ToStream.swift"; sourceTree = "<group>"; };
+		EEC410242C60D48900E89394 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		EECC35A52C2EB6CD00679448 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		EECC35A72C2EB70400679448 /* SyncState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncState.swift; sourceTree = "<group>"; };
-		EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,8 +258,8 @@
 		017F679A2C20801800B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EEC410252C60D48900E89394 /* Synchronization */,
 				EE0E117C2C2C4076004BBD29 /* Helpers */,
-				EECC35AB2C2EE58200679448 /* Synchronization */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
 				017F67992C20801800B6E02D /* Repositories */,
 			);
@@ -494,19 +494,19 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		EEC410252C60D48900E89394 /* Synchronization */ = {
+			isa = PBXGroup;
+			children = (
+				EEC410242C60D48900E89394 /* SyncManagerTests.swift */,
+			);
+			path = Synchronization;
+			sourceTree = "<group>";
+		};
 		EECC35A42C2EB6C100679448 /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
 				EECC35A52C2EB6CD00679448 /* SyncManager.swift */,
 				EECC35A72C2EB70400679448 /* SyncState.swift */,
-			);
-			path = Synchronization;
-			sourceTree = "<group>";
-		};
-		EECC35AB2C2EE58200679448 /* Synchronization */ = {
-			isa = PBXGroup;
-			children = (
-				EECC35AC2C2EE5A400679448 /* SyncManagerTests.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -765,10 +765,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
-				EECC35AE2C2EE5D600679448 /* SyncManagerTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
