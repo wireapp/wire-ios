@@ -41,11 +41,6 @@ extension XCTestCase {
         ]
     }
 
-    static let padConfigNames: [(ViewImageConfig, String)] = [
-        (.iPadMini(.landscape), "iPad-landscape"),
-        (.iPadMini(.portrait), "iPad-portrait")
-    ]
-
     func verifyAllIPhoneSizes(matching value: UIViewController,
                               orientation: ViewImageConfig.Orientation = .portrait,
                               file: StaticString = #file,
@@ -104,24 +99,6 @@ extension XCTestCase {
         verify(
             matching: value,
             named: nameWithProperty,
-            file: file,
-            testName: testName,
-            line: line
-        )
-    }
-
-    func verifyInAllPhoneWidths(
-        matching value: UIViewController,
-        snapshotBackgroundColor: UIColor? = nil,
-        named name: String? = nil,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        verifyInAllPhoneWidths(
-            matching: value.view,
-            snapshotBackgroundColor: snapshotBackgroundColor,
-            named: name,
             file: file,
             testName: testName,
             line: line
