@@ -19,19 +19,18 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
-final class StartUIViewController: UIViewController, SpinnerCapable {
-
-    var dismissSpinner: SpinnerCompletion?
+final class StartUIViewController: UIViewController {
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
 
     weak var delegate: StartUIDelegate?
 
-    let searchHeaderViewController: SearchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
+    let searchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
 
     let groupSelector: SearchGroupSelector = SearchGroupSelector()
 
@@ -53,6 +52,8 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
+
+    private(set) var activityIndicator: BlockingActivityIndicator!
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -103,10 +104,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         return self.searchResultsViewController
     }
 
-    // MARK: - Overloaded methods
+    // MARK: - Life cycle methods
 
-    override func loadView() {
-        view = StartUIView(frame: CGRect.zero)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -118,9 +121,10 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
         navigationController?.navigationBar.barTintColor = backgroundColor
         navigationController?.navigationBar.isTranslucent = false
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.onDismissPressed()
         }, accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description)
+
     }
 
     private func configGroupSelector() {
@@ -271,7 +275,6 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
             navigationController?.pushViewController(ContactsViewController(), animated: true)
         }
     }
-
 }
 
 extension StartUIViewController: SearchHeaderViewControllerDelegate {

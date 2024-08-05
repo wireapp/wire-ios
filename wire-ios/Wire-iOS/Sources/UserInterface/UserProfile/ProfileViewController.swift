@@ -374,7 +374,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
         if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
+            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
         } else {
             leftViewControllerRevealed = true
         }
@@ -556,7 +556,7 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: { [weak self] _ in
+            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
             navigationItem.leftBarButtonItem = legalHoldItem
