@@ -132,7 +132,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
             for envelope in envelopes {
                 count += 1
-                
+
                 WireLogger.sync.debug(
                     "decrypting envelope (\(count) of \(batchCount))",
                     attributes: [.eventEnvelopeID: envelope.id]
