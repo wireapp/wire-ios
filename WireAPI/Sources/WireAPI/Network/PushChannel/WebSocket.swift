@@ -18,30 +18,6 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-protocol URLSessionWebSocketTaskProtocol {
-
-    var isOpen: Bool { get }
-
-    func resume()
-
-    func cancel(
-        with closeCode: URLSessionWebSocketTask.CloseCode,
-        reason: Data?
-    )
-
-    func receive(completionHandler: @escaping (Result<URLSessionWebSocketTask.Message, any Error>) -> Void)
-
-}
-
-extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
-
-    var isOpen: Bool {
-        closeCode == .invalid
-    }
-
-}
-
 final class WebSocket: AsyncSequence {
 
     typealias Element = Stream.Element
