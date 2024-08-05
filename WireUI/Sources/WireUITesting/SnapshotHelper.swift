@@ -237,6 +237,7 @@ public struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
+    <<<<<<< HEAD
     /// Shared configuration for phone sizes
     private static let phoneConfigs: [(ViewImageConfig, String)] = [
         (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
@@ -292,7 +293,6 @@ public struct SnapshotHelper {
     ///        - testName: The name of the reference image.
     ///        - line: The invoking line number.
 
-
     public func verifyAllIPhoneSizes(
         matching value: UIViewController,
         orientation: ViewImageConfig.Orientation = .portrait,
@@ -315,6 +315,37 @@ public struct SnapshotHelper {
 
             XCTAssertNil(failure, file: file, line: line)
         }
+    }
+
+    ///    Verifiy a`UIImage`.
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIImage` to test.
+    ///        - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    public func verify(
+        matching value: UIImage,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+
+        let failure = verifySnapshot(
+            of: value,
+            as: .image,
+            named: name,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
+
+        XCTAssertNil(failure, file: file, line: line)
+
     }
 
     /// Verifies that a given `UIView` renders correctly across all supported Dynamic Type content size categories.
