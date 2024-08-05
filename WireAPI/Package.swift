@@ -1,32 +1,17 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 
 import PackageDescription
 
 let package = Package(
     name: "WireAPI",
-    platforms: [
-        .iOS(.v15),
-        .macOS(.v12)
-    ],
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(
-            name: "WireAPI",
-            targets: ["WireAPI"]
-        ),
-        .library(
-            name: "WireAPISupport",
-            targets: ["WireAPISupport"]
-        )
+        .library(name: "WireAPI", type: .dynamic, targets: ["WireAPI"]),
+        .library(name: "WireAPISupport", type: .dynamic, targets: ["WireAPISupport"])
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-docc-plugin",
-            from: "1.1.0"
-        ),
-        .package(
-            url: "https://github.com/pointfreeco/swift-snapshot-testing",
-            from: "1.16.0"
-        ),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
         .package(path: "../SourceryPlugin")
     ],
     targets: [
@@ -39,10 +24,7 @@ let package = Package(
             dependencies: ["WireAPI"],
             swiftSettings: swiftSettings,
             plugins: [
-                .plugin(
-                    name: "SourceryPlugin",
-                    package: "SourceryPlugin"
-                )
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
         ),
         .testTarget(
@@ -70,6 +52,5 @@ let package = Package(
 )
 
 let swiftSettings: [SwiftSetting] = [
-    .enableExperimentalFeature("StrictConcurrency"),
-    .enableUpcomingFeature("GlobalConcurrency")
+    .enableUpcomingFeature("ExistentialAny")
 ]
