@@ -62,57 +62,6 @@ extension XCTestCase {
         }
     }
 
-    func verifyInAllDeviceSizes(
-        matching value: UIViewController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        let allDevices = XCTestCase.phoneConfigNames() + XCTestCase.padConfigNames
-        for (config, name) in allDevices {
-
-            verify(
-                matching: value,
-                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                named: name,
-                file: file,
-                testName: testName,
-                line: line
-            )
-        }
-    }
-
-    func verifyInAllDeviceSizes_(
-        matching value: UIViewController,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-
-        let allDevices: [(ViewImageConfig, String)] = [
-
-            (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
-            (.iPhone8(.portrait), "iPhone-4_7_Inch"),
-            (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
-            (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
-            (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
-
-            (.iPadMini(.landscape), "iPad-landscape"),
-            (.iPadMini(.portrait), "iPad-portrait")
-        ]
-
-        for (config, name) in allDevices {
-            verify(
-                matching: value,
-                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                named: name,
-                file: file,
-                testName: testName,
-                line: line
-            )
-        }
-    }
-
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
                         snapshotBackgroundColor: UIColor,

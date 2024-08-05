@@ -237,6 +237,49 @@ public struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
+    ///    Verifiy a`UIViewController`, in all device sizes
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIViewController` to test.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    public func verifyInAllDeviceSizes(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+
+        let allDevices: [(ViewImageConfig, String)] = [
+
+            (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
+            (.iPhone8(.portrait), "iPhone-4_7_Inch"),
+            (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
+            (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
+            (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
+
+            (.iPadMini(.landscape), "iPad-landscape"),
+            (.iPadMini(.portrait), "iPad-portrait")
+        ]
+
+        for (config, name) in allDevices {
+
+            let failure = verifySnapshot(
+                of: value,
+                as: .image(on: config, perceptualPrecision: perceptualPrecision),
+                named: name,
+                snapshotDirectory: snapshotDirectory(file: file),
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+            XCTAssertNil(failure, file: file, line: line)
+        }
+    }
+
     /// Verifies that a given `UIView` renders correctly across all supported Dynamic Type content size categories.
     ///
     /// - Parameters:
