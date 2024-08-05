@@ -18,16 +18,40 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+protocol URLSessionWebSocketTaskProtocol {
+
+    var isOpen: Bool { get }
+
+    func resume()
+
+    func cancel(
+        with closeCode: URLSessionWebSocketTask.CloseCode,
+        reason: Data?
+    )
+
+    func receive(completionHandler: @escaping (Result<URLSessionWebSocketTask.Message, any Error>) -> Void)
+
+}
+
+extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
+
+    var isOpen: Bool {
+        closeCode == .invalid
+    }
+
+}
+
 final class WebSocket: AsyncSequence {
 
     typealias Element = Stream.Element
     typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, Error>
 
-    private let connection: URLSessionWebSocketTask
+    private let connection: any URLSessionWebSocketTaskProtocol
     private lazy var stream = makeStream()
     private var continuation: Stream.Continuation?
 
-    init(connection: URLSessionWebSocketTask) {
+    init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
         connection.resume()
     }
@@ -37,6 +61,7 @@ final class WebSocket: AsyncSequence {
     }
 
     func close() {
+        // TODO: is this the right code?
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
     }
@@ -51,6 +76,7 @@ final class WebSocket: AsyncSequence {
                     return
                 }
 
+                // Note: From iOS 17 we can use the await variant of this. See  https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
                 connection.receive { result in
                     switch result {
                     case .success(let message):
@@ -69,14 +95,6 @@ final class WebSocket: AsyncSequence {
 
     func makeAsyncIterator() -> Stream.AsyncIterator {
         stream.makeAsyncIterator()
-    }
-
-}
-
-private extension URLSessionWebSocketTask {
-
-    var isOpen: Bool {
-        closeCode == .invalid
     }
 
 }

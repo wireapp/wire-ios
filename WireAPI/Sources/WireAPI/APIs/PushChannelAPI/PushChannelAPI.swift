@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
 /// An API access object for endpoints concerning the push channel.
 public protocol PushChannelAPI {
     
