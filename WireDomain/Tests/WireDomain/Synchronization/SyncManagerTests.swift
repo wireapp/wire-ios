@@ -40,7 +40,7 @@ final class SyncManagerTests: XCTestCase {
         )
 
         // Base mocks.
-        updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncStream { _ in }
+        updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncThrowingStream { _ in }
         updateEventsRepository.stopReceivingLiveEvents_MockMethod = {}
         updateEventsRepository.pullPendingEvents_MockMethod = {}
         updateEventsRepository.fetchNextPendingEventsLimit_MockValue = []
@@ -164,8 +164,8 @@ final class SyncManagerTests: XCTestCase {
         var storedEvents = [UpdateEventEnvelope]()
 
         // Mock live event stream.
-        var liveEventsContinuation: AsyncStream<UpdateEventEnvelope>.Continuation?
-        updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncStream { continuation in
+        var liveEventsContinuation: AsyncThrowingStream<UpdateEventEnvelope, Error>.Continuation?
+        updateEventsRepository.startBufferingLiveEvents_MockValue = AsyncThrowingStream { continuation in
             liveEventsContinuation = continuation
         }
 

@@ -60,7 +60,7 @@ protocol UpdateEventsRepositoryProtocol {
     ///
     /// - Returns: An asynchronous stream of `UpdateEventEnvelope`s.
 
-    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope>
+    func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error>
 
     /// Close the piush channel and stop fnish the asynchronous stream of
     /// `UpdateEventEnvelope`s returned in `startBufferingLiveEvents`.
@@ -228,7 +228,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
     // MARK: - Live events
 
-    func startBufferingLiveEvents() async throws -> AsyncStream<UpdateEventEnvelope> {
+    func startBufferingLiveEvents() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
         try await pushChannel.open().compactMap {
             do {
                 WireLogger.sync.debug("decrypting live event")
