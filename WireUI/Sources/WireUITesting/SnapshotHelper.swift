@@ -251,9 +251,7 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-
         let allDevices: [(ViewImageConfig, String)] = [
-
             (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
             (.iPhone8(.portrait), "iPhone-4_7_Inch"),
             (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
@@ -265,7 +263,6 @@ public struct SnapshotHelper {
         ]
 
         for (config, name) in allDevices {
-
             let failure = verifySnapshot(
                 of: value,
                 as: .image(on: config, perceptualPrecision: perceptualPrecision),
@@ -292,12 +289,11 @@ public struct SnapshotHelper {
     }
 
     public func verifyAllIPhoneSizes(matching value: UIViewController,
-                              orientation: ViewImageConfig.Orientation = .portrait,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-
-        for(config, name) in SnapshotHelper.phoneConfigNames(orientation: orientation) {
+                                     orientation: ViewImageConfig.Orientation = .portrait,
+                                     file: StaticString = #file,
+                                     testName: String = #function,
+                                     line: UInt = #line) {
+        for (config, name) in SnapshotHelper.phoneConfigNames(orientation: orientation) {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(
