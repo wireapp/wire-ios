@@ -18,20 +18,18 @@
 
 import Foundation
 
-/// An event where a new self user client was added.
+// sourcery: AutoMockable
+/// Make a direct connection to a server to receive update events.
+public protocol PushChannelProtocol {
 
-public struct UserClientAddEvent: Equatable, Codable {
-
-    /// The new user client.
-
-    public let client: UserClient
-
-    /// Create a new `UserClientAddEvent`.
+    /// Open the push channel and start receiving update events.
     ///
-    /// - Parameter client: The new user client.
+    /// - Returns: A publisher of payloads.
 
-    public init(client: UserClient) {
-        self.client = client
-    }
+    func open() async throws -> AsyncStream<UpdateEventEnvelope>
+
+    /// Close the push channel and stop receiving update events.
+
+    func close() async
 
 }

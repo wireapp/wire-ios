@@ -29,6 +29,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
     var sut: UpdateEventsRepository!
     var updateEventsAPI: MockUpdateEventsAPI!
+    var pushChannel: MockPushChannelProtocol!
     var updateEventDecryptor: MockUpdateEventDecryptorProtocol!
     var lastEventIDRepository: MockLastEventIDRepositoryInterface!
 
@@ -43,11 +44,13 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         updateEventsAPI = MockUpdateEventsAPI()
+        pushChannel = MockPushChannelProtocol()
         updateEventDecryptor = MockUpdateEventDecryptorProtocol()
         lastEventIDRepository = MockLastEventIDRepositoryInterface()
         sut = UpdateEventsRepository(
             selfClientID: Scaffolding.selfClientID,
             updateEventsAPI: updateEventsAPI,
+            pushChannel: pushChannel,
             updateEventDecryptor: updateEventDecryptor,
             eventContext: context,
             lastEventIDRepository: lastEventIDRepository
@@ -61,6 +64,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
     override func tearDown() async throws {
         stack = nil
         updateEventsAPI = nil
+        pushChannel = nil
         updateEventDecryptor = nil
         lastEventIDRepository = nil
         sut = nil
@@ -251,6 +255,116 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedEnvelopes[0], Scaffolding.envelope3)
         XCTAssertEqual(fetchedEnvelopes[1], Scaffolding.envelope4)
         XCTAssertEqual(fetchedEnvelopes[2], Scaffolding.envelope1)
+    }
+
+    // MARK: - Delete next pending events
+
+    func testItDeletesAllStoredEnvelopesIfLimitExceedsTotalNumberOfEnvelopes() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes more than 3.
+        try await sut.deleteNextPendingEvents(limit: 10)
+
+        // Then all stored events were deleted.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.fetchRequest()
+            let result = try context.fetch(request)
+            XCTAssertTrue(result.isEmpty)
+        }
+    }
+
+    func testItDeletesStoredEnvelopesOnlyUpToTheLimit() async throws {
+        // Given there are stored envelopes.
+        try await insertStoredEventEnvelopes([
+            Scaffolding.envelope1,
+            Scaffolding.envelope2,
+            Scaffolding.envelope3
+        ])
+
+        // When it deletes 2 envelopes.
+        try await sut.deleteNextPendingEvents(limit: 2)
+
+        // Then the first 2 envelopes were deleted.
+        try await context.perform { [context] in
+            let request = StoredUpdateEventEnvelope.sortedFetchRequest(asending: true)
+            let result = try context.fetch(request)
+
+            XCTAssertEqual(result.count, 1)
+
+            let envelope = try XCTUnwrap(result.first)
+            XCTAssertEqual(envelope.sortIndex, 2)
+
+            let decoder = JSONDecoder()
+            let decodedEnvelope = try decoder.decode(UpdateEventEnvelope.self, from: envelope.data)
+            XCTAssertEqual(decodedEnvelope, Scaffolding.envelope3)
+        }
+    }
+
+    // MARK: - Live events
+
+    func testItBuffersLiveEventsUntilIterationStarts() async throws {
+        // Mock push channel.
+        var liveEventsContinuation: AsyncStream<UpdateEventEnvelope>.Continuation?
+        pushChannel.open_MockValue = AsyncStream {
+            liveEventsContinuation = $0
+        }
+
+        // Given it starts buffering.
+        let liveEventStream = try await sut.startBufferingLiveEvents()
+
+        // Given live events arrive.
+        liveEventsContinuation?.yield(Scaffolding.envelope1)
+        liveEventsContinuation?.yield(Scaffolding.envelope2)
+        liveEventsContinuation?.yield(Scaffolding.envelope3)
+
+        // When iteration starts.
+        let task = Task {
+            var receivedEnvelopes = [UpdateEventEnvelope]()
+            for try await envelope in liveEventStream {
+                receivedEnvelopes.append(envelope)
+            }
+            return receivedEnvelopes
+        }
+
+        liveEventsContinuation?.finish()
+        let receivedEnvelopes = try await task.value
+
+        // Then all three envelopes are received.
+        guard receivedEnvelopes.count == 3 else {
+            XCTFail("Expected 3 envelopes, got \(receivedEnvelopes.count)")
+            return
+        }
+
+        XCTAssertEqual(receivedEnvelopes[0], Scaffolding.envelope1)
+        XCTAssertEqual(receivedEnvelopes[1], Scaffolding.envelope2)
+        XCTAssertEqual(receivedEnvelopes[2], Scaffolding.envelope3)
+
+        // Then each envelope was decrypted.
+        let decryptionInvocations = updateEventDecryptor.decryptEventsIn_Invocations
+        guard decryptionInvocations.count == 3 else {
+            XCTFail("expected 4 decryption invocations, got \(decryptionInvocations.count)")
+            return
+        }
+
+        XCTAssertEqual(decryptionInvocations[0], Scaffolding.envelope1)
+        XCTAssertEqual(decryptionInvocations[1], Scaffolding.envelope2)
+        XCTAssertEqual(decryptionInvocations[2], Scaffolding.envelope3)
+    }
+
+    func testItStoresLastEventEnvelopeID() throws {
+        // Given
+        let id = UUID()
+
+        // When
+        sut.storeLastEventEnvelopeID(id)
+
+        // Then
+        lastEventIDRepository.storeLastEventID_Invocations = [id]
     }
 
 }

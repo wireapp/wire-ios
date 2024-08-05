@@ -38,4 +38,24 @@ public struct ConversationRenameEvent: Equatable, Codable {
 
     public let newName: String
 
+    /// Create a new `ConversationRenameEvent`.
+    ///
+    /// - Parameters:
+    ///   - conversationID: The id of the conversation.
+    ///   - senderID: The id of the user who renamed the conversation.
+    ///   - timestamp: When the conversation was renamed.
+    ///   - newName: The new name of the conversation.
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        newName: String
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.newName = newName
+    }
+
 }

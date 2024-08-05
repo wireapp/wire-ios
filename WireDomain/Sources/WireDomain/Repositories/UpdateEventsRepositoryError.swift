@@ -23,5 +23,6 @@ enum UpdateEventsRepositoryError: Error {
     case lastEventIDMissing
     case failedToFetchStoredEvents(Error)
     case failedToDecodeStoredEvent(Error)
+    case failedToDeleteStoredEvents(Error)
 
 }
