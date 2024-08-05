@@ -237,6 +237,21 @@ public struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
+    /// Shared configuration for phone sizes
+       private static let phoneConfigs: [(ViewImageConfig, String)] = [
+           (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
+           (.iPhone8(.portrait), "iPhone-4_7_Inch"),
+           (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
+           (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
+           (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch")
+       ]
+
+       /// Shared configuration for iPad sizes
+       private static let iPadConfigs: [(ViewImageConfig, String)] = [
+           (.iPadMini(.landscape), "iPad-landscape"),
+           (.iPadMini(.portrait), "iPad-portrait")
+       ]
+
     ///    Verifiy a`UIViewController`, in all device sizes
     ///
     ///     - Parameters:
@@ -251,16 +266,7 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let allDevices: [(ViewImageConfig, String)] = [
-            (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
-            (.iPhone8(.portrait), "iPhone-4_7_Inch"),
-            (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
-            (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
-            (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
-
-            (.iPadMini(.landscape), "iPad-landscape"),
-            (.iPadMini(.portrait), "iPad-portrait")
-        ]
+        let allDevices = SnapshotHelper.phoneConfigs + SnapshotHelper.iPadConfigs
 
         for (config, name) in allDevices {
             let failure = verifySnapshot(
@@ -277,23 +283,12 @@ public struct SnapshotHelper {
         }
     }
 
-    /// snapshot file name suffixs
-    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [(ViewImageConfig, String)] {
-        [
-            (.iPhoneSe(orientation), "iPhone-4_0_Inch"),
-            (.iPhone8(orientation), "iPhone-4_7_Inch"),
-            (.iPhone8Plus(orientation), "iPhone-5_5_Inch"),
-            (.iPhoneX(orientation), "iPhone-5_8_Inch"),
-            (.iPhoneXsMax(orientation), "iPhone-6_5_Inch")
-        ]
-    }
-
     public func verifyAllIPhoneSizes(matching value: UIViewController,
                                      orientation: ViewImageConfig.Orientation = .portrait,
                                      file: StaticString = #file,
                                      testName: String = #function,
                                      line: UInt = #line) {
-        for (config, name) in SnapshotHelper.phoneConfigNames(orientation: orientation) {
+        for (config, name) in SnapshotHelper.phoneConfigs {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(
