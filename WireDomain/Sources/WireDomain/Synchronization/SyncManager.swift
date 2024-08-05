@@ -85,6 +85,8 @@ final class SyncManager: SyncManagerProtocol {
                 WireLogger.sync.info("live task was cancelled")
             } catch {
                 WireLogger.sync.error("live task encountered error: \(error)")
+                try await suspend()
+                throw error
             }
         }
 

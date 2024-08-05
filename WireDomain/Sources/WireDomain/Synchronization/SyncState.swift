@@ -28,7 +28,7 @@ enum SyncState {
 
     /// The app is processing live events via the push channel.
 
-    case live(Task<Void, Never>)
+    case live(Task<Void, Error>)
 
     /// The app is neither receiving nor processing any events.
 
