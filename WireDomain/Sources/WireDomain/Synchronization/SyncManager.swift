@@ -74,7 +74,10 @@ final class SyncManager: SyncManagerProtocol {
         let liveTask = Task {
             do {
                 for try await envelope in liveEventsStream {
-                    WireLogger.sync.info("received live event")
+                    WireLogger.sync.info(
+                        "received live event",
+                        attributes: [.eventEnvelopeID: envelope.id]
+                    )
                     try Task.checkCancellation()
                     await processLiveEvents(in: envelope)
                 }
