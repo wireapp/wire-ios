@@ -171,23 +171,6 @@ extension XCTestCase {
         XCTAssertNil(failure, file: file, line: line)
     }
 
-    func verify<Value, Format>(matching value: Value,
-                               as snapshotting: Snapshotting<Value, Format>,
-                               named name: String? = nil,
-                               file: StaticString = #file,
-                               testName: String = #function,
-                               line: UInt = #line) {
-
-        let failure = verifySnapshot(of: value,
-                                     as: snapshotting,
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
 }
 
 extension Snapshotting where Value == UIAlertController, Format == UIImage {
