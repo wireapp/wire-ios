@@ -237,7 +237,6 @@ public struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
-    <<<<<<< HEAD
     /// Shared configuration for phone sizes
     private static let phoneConfigs: [(ViewImageConfig, String)] = [
         (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
