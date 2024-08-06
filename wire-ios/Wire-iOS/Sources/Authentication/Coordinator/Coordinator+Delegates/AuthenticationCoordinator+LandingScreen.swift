@@ -56,10 +56,6 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
         executeActions([.startCompanyLogin(code: nil)])
     }
 
-    func landingViewControllerDidChooseSSOLogin() {
-        executeActions([.startSSOFlow])
-    }
-
     func landingViewControllerDidChooseInfoBackend() {
         executeActions([.presentCustomBackendAlert])
     }

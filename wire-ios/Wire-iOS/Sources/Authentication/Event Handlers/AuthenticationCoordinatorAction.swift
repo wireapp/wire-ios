@@ -47,7 +47,6 @@ enum AuthenticationCoordinatorAction {
     case setUserPassword(String)
     case updateBackendEnvironment(url: URL)
     case startCompanyLogin(code: UUID?)
-    case startSSOFlow
     case startBackupFlow
     case signOut(warn: Bool)
     case addEmailAndPassword(UserEmailCredentials)
