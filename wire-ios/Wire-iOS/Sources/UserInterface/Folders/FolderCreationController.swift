@@ -20,10 +20,6 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-protocol FolderCreationValuesConfigurable: AnyObject {
-    func configure(with name: String)
-}
-
 protocol FolderCreationControllerDelegate: AnyObject {
 
     func folderController(
@@ -34,7 +30,6 @@ protocol FolderCreationControllerDelegate: AnyObject {
 
 final class FolderCreationController: UIViewController {
 
-    static let mainViewHeight: CGFloat = 56
     private let collectionViewController = SectionCollectionViewController()
 
     private lazy var nameSection: FolderCreationNameSectionController = {
