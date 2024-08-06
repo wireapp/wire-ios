@@ -843,7 +843,6 @@
 		87C39A90206BF00A008DA100 /* BackupViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C39A8F206BF00A008DA100 /* BackupViewControllerTests.swift */; };
 		87C539561E8E516400084F94 /* BoundsAwareFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C539551E8E516400084F94 /* BoundsAwareFlowLayout.swift */; };
 		87CA886E1DDF0075004101B6 /* UserConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87CA886D1DDF0075004101B6 /* UserConnectionViewController.swift */; };
-		87CB36BA1D74782B007AB4E5 /* LikeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87CB36B91D74782B007AB4E5 /* LikeButton.swift */; };
 		87D21AD71D8A98620075AB7A /* AccentColorPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D21AD61D8A98620075AB7A /* AccentColorPickerController.swift */; };
 		87D38F9C1E5D9EE0004C5730 /* Analytics+Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D38F9B1E5D9EE0004C5730 /* Analytics+Settings.swift */; };
 		87D56DF61E003A5300DFF722 /* CollectionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D56DF51E003A5300DFF722 /* CollectionsViewController.swift */; };
@@ -2900,7 +2899,6 @@
 		87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "Entitlements-Prod.entitlements"; path = "Wire-iOS/Entitlements-Prod.entitlements"; sourceTree = "<group>"; };
 		87CA886D1DDF0075004101B6 /* UserConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConnectionViewController.swift; sourceTree = "<group>"; };
 		87CA886F1DE30AD0004101B6 /* UserConnectionViewSnapshotTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConnectionViewSnapshotTests.swift; sourceTree = "<group>"; };
-		87CB36B91D74782B007AB4E5 /* LikeButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LikeButton.swift; sourceTree = "<group>"; };
 		87D21AD61D8A98620075AB7A /* AccentColorPickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccentColorPickerController.swift; sourceTree = "<group>"; };
 		87D38F9B1E5D9EE0004C5730 /* Analytics+Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Analytics+Settings.swift"; sourceTree = "<group>"; };
 		87D553661C86F0450026573C /* MockUserClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUserClient.swift; sourceTree = "<group>"; };
@@ -5882,7 +5880,6 @@
 				5EBF4A2A21B958F30021CFFC /* MessageToolboxDataSource.swift */,
 				EF32AB0221C15B0E002E4777 /* String+MessageToolBox.swift */,
 				BF69C6C21F0CEBC500649C55 /* EphemeralTimeoutFormatter.swift */,
-				87CB36B91D74782B007AB4E5 /* LikeButton.swift */,
 				87A773CE1DD0B48400ACAA73 /* ObfuscationView.swift */,
 				A90BECF024A23E6500E5C008 /* LinkViewDelegate.swift */,
 				068DCC5C29C0C09B00F7E4F1 /* MessageSendFailureView.swift */,
@@ -9244,7 +9241,6 @@
 				EF22DC7D224BBE3B001EDE8E /* SearchUserViewController.swift in Sources */,
 				87B8C3421DF9788B0015EC89 /* TweetOpening.swift in Sources */,
 				A97FA6FE23B5883A005257A8 /* StartUIDelegate.swift in Sources */,
-				87CB36BA1D74782B007AB4E5 /* LikeButton.swift in Sources */,
 				597949C72BEA7B90008BDB69 /* AccountSelector.swift in Sources */,
 				A9A6506624D1C32300B6A68D /* PasswordValidationResult.swift in Sources */,
 				068F558524321891000DC813 /* DigitalSignatureVerificationViewController.swift in Sources */,
