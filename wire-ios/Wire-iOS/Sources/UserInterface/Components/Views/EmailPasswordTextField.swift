@@ -145,18 +145,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
         emailField.isEnabled = !hasPrefilledValue || allowEditingPrefilledValue
     }
 
-    // MARK: - Appearance
-
-    func setTextColor(_ color: UIColor) {
-        emailField.textColor = color
-        passwordField.textColor = color
-    }
-
-    func setBackgroundColor(_ color: UIColor) {
-        emailField.backgroundColor = color
-        passwordField.backgroundColor = color
-    }
-
     // MARK: - Responder
 
     override var isFirstResponder: Bool {
