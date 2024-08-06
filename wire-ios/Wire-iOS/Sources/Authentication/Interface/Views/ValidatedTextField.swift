@@ -51,7 +51,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     override var text: String? {
         didSet {
             validateInput()
-            boundTextField?.validateInput()
         }
     }
 
@@ -106,20 +105,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         didSet {
             applyColorScheme(colorSchemeVariant)
         }
-    }
-
-    /// The other text field that needs to be valid in order to enable the confirm button.
-    private weak var boundTextField: ValidatedTextField?
-
-    /**
-     * Binds the state of the confirmation button to the validity of another text field.
-     * The button will be enabled when both the current and bound fields are valid.
-     */
-
-    func bindConfirmationButton(to textField: ValidatedTextField) {
-        assert(boundTextField == nil, "A text field cannot be bound to another text field more than once.")
-        self.boundTextField = textField
-        textField.boundTextField = self
     }
 
     var enableConfirmButton: (() -> Bool)?
@@ -324,11 +309,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     private func updateConfirmButton() {
-        if let boundTextField {
-            confirmButton.isEnabled = boundTextField.isInputValid && self.isInputValid
-        } else {
-            confirmButton.isEnabled = isInputValid
-        }
+        confirmButton.isEnabled = isInputValid
     }
 
     // MARK: - text validation
