@@ -38,7 +38,6 @@ final class ConversationCreationController: UIViewController {
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
 
     private let userSession: UserSession
-    static let mainViewHeight: CGFloat = 56
 
     private let collectionViewController = SectionCollectionViewController()
 
