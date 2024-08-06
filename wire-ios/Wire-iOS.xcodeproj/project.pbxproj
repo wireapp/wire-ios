@@ -517,7 +517,6 @@
 		5EA73D8220D900A10001D106 /* GroupDetailsRenameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D7E20D900A10001D106 /* GroupDetailsRenameCell.swift */; };
 		5EA73D8720D901000001D106 /* SeparatorCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8320D900FE0001D106 /* SeparatorCollectionViewCell.swift */; };
 		5EA73D8820D901000001D106 /* DetailsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8420D900FF0001D106 /* DetailsCollectionViewCell.swift */; };
-		5EA73D8920D901000001D106 /* ImageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8520D900FF0001D106 /* ImageContainer.swift */; };
 		5EA73D8A20D901000001D106 /* CheckmarkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8620D901000001D106 /* CheckmarkCell.swift */; };
 		5EA73D8C20D901E80001D106 /* ConversationTimeoutOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8B20D901E70001D106 /* ConversationTimeoutOptionsViewController.swift */; };
 		5EA73D9120D903B90001D106 /* GroupDetailsTimeoutOptionsCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8E20D903900001D106 /* GroupDetailsTimeoutOptionsCellTests.swift */; };
@@ -2537,7 +2536,6 @@
 		5EA73D7E20D900A10001D106 /* GroupDetailsRenameCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupDetailsRenameCell.swift; sourceTree = "<group>"; };
 		5EA73D8320D900FE0001D106 /* SeparatorCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorCollectionViewCell.swift; sourceTree = "<group>"; };
 		5EA73D8420D900FF0001D106 /* DetailsCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsCollectionViewCell.swift; sourceTree = "<group>"; };
-		5EA73D8520D900FF0001D106 /* ImageContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageContainer.swift; sourceTree = "<group>"; };
 		5EA73D8620D901000001D106 /* CheckmarkCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckmarkCell.swift; sourceTree = "<group>"; };
 		5EA73D8B20D901E70001D106 /* ConversationTimeoutOptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationTimeoutOptionsViewController.swift; sourceTree = "<group>"; };
 		5EA73D8D20D9038F0001D106 /* CheckmarkCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckmarkCellTests.swift; sourceTree = "<group>"; };
@@ -5671,7 +5669,6 @@
 				5EA73D8620D901000001D106 /* CheckmarkCell.swift */,
 				5EA73D8420D900FF0001D106 /* DetailsCollectionViewCell.swift */,
 				EF1A461D21ADACF50009B6B9 /* RightIconDetailsCell.swift */,
-				5EA73D8520D900FF0001D106 /* ImageContainer.swift */,
 				5EA73D8320D900FE0001D106 /* SeparatorCollectionViewCell.swift */,
 				5E6280292224090D0039A8AB /* SeparatorTableViewCell.swift */,
 				EF2A8DEC214AA36E002C9058 /* SeparatorViewProtocol.swift */,
@@ -10256,7 +10253,6 @@
 				6636CFDE2C519980001403F9 /* EditingStateControllable.swift in Sources */,
 				EF6E9FE423193439000B7785 /* ConversationListViewController+State.swift in Sources */,
 				16E0FBAA2331119F000E3235 /* SettingsSignOutCellDescriptor.swift in Sources */,
-				5EA73D8920D901000001D106 /* ImageContainer.swift in Sources */,
 				5E8DA768211B2D9A00360979 /* AuthenticationSuccessEventHandler.swift in Sources */,
 				EE01D08525ADA3D5001DB205 /* AppLockModule.swift in Sources */,
 				5E769C5A21AE97E600785EB7 /* MessageDetailsViewController.swift in Sources */,
