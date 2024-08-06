@@ -87,15 +87,6 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
     }
 }
 
-private extension UIDropSession {
-
-    func hasText() -> Bool {
-        // Image dragged from browser can be both NSString and UIImage
-        return canLoadObjects(ofClass: NSString.self) && !canLoadObjects(ofClass: UIImage.self)
-    }
-
-}
-
 private extension NSItemProvider {
 
     func hasText() -> Bool {
