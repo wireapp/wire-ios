@@ -222,7 +222,6 @@ final class CallQualityView: UIStackView {
 
     typealias ViewColors = SemanticColors.View
 
-    let defaultTextColor = SemanticColors.Label.textDefault
     let scoreLabel = DynamicFontLabel(fontSpec: FontSpec.mediumRegularFont,
                                       color: SemanticColors.Label.textDefault)
     let scoreButton = ZMButton()
