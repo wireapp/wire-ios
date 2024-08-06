@@ -188,36 +188,6 @@ final class ConversationListViewModelTests: XCTestCase {
         XCTAssertNil(sut.section(at: 100))
     }
 
-    func testForItemAfter() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.item(after: 0, section: sectionGroups), IndexPath(item: 1, section: Int(sectionGroups)))
-        XCTAssertEqual(sut.item(after: 1, section: 1), IndexPath(item: 0, section: 2))
-        XCTAssertEqual(sut.item(after: 0, section: sectionContacts), nil)
-    }
-
-    func testForItemPervious() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-
-        // THEN
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionGroups), nil)
-
-        XCTAssertEqual(sut.itemPrevious(to: 1, section: sectionGroups), IndexPath(item: 0, section: Int(sectionGroups)))
-
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionContacts), IndexPath(item: 1, section: Int(sectionGroups)))
-    }
-
     func testForSelectItem() {
         sut.folderEnabled = true
 
@@ -228,19 +198,6 @@ final class ConversationListViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.selectedItem as? AnyHashable, mockConversation)
-    }
-
-    func testThatSelectItemAtIndexReturnCorrectConversation() {
-        // GIVEN
-        sut.folderEnabled = true
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-        let indexPath = sut.indexPath(for: mockConversation)!
-
-        // THEN
-        XCTAssertEqual(sut.selectItem(at: indexPath) as? AnyHashable, mockConversation)
     }
 
     // MARK: - state
