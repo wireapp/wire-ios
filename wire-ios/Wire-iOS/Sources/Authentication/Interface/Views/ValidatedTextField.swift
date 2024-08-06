@@ -34,7 +34,7 @@ protocol ValidatedTextFieldDelegate: AnyObject {
     func buttonPressed(_ sender: UIButton)
 }
 
-final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
+final class ValidatedTextField: AccessoryTextField, TextContainer {
     enum Kind: Equatable {
         case email
         case name(isTeam: Bool)
@@ -97,13 +97,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     var showConfirmButton: Bool = true {
         didSet {
             confirmButton.isHidden = !showConfirmButton
-        }
-    }
-
-    @objc
-    dynamic var colorSchemeVariant: ColorSchemeVariant = .light {
-        didSet {
-            applyColorScheme(colorSchemeVariant)
         }
     }
 
@@ -172,7 +165,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         self.style = style
         applyStyle(style)
         configureObservers()
-        applyColorScheme(colorSchemeVariant)
     }
 
     private func configureObservers() {
@@ -228,8 +220,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             passwordRules = rules.textInputPasswordRules
         }
     }
-
-    func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) { }
 
     private func updateLoadingState() {
         updateButtonIcon()

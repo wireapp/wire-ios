@@ -199,7 +199,6 @@
 		1682AEBF20483F73003A052A /* ParticipantsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1682AEBE20483F73003A052A /* ParticipantsSectionController.swift */; };
 		1682AEC120483FA5003A052A /* GroupDetailsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1682AEC020483FA5003A052A /* GroupDetailsSectionController.swift */; };
 		1682AEC3204840E7003A052A /* SectionCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1682AEC2204840E7003A052A /* SectionCollectionViewController.swift */; };
-		1682AEC520484B9B003A052A /* Themeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1682AEC420484B9B003A052A /* Themeable.swift */; };
 		1687C0FC2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1687C0FB2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift */; };
 		1689FD4B2195C8B800A656E2 /* EphemeralCountdownView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */; };
 		168A16AC1D9597C2005CFA6C /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A16AB1D9597C2005CFA6C /* ShareExtensionViewController.swift */; };
@@ -2231,7 +2230,6 @@
 		1682AEBE20483F73003A052A /* ParticipantsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticipantsSectionController.swift; sourceTree = "<group>"; };
 		1682AEC020483FA5003A052A /* GroupDetailsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsSectionController.swift; sourceTree = "<group>"; };
 		1682AEC2204840E7003A052A /* SectionCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCollectionViewController.swift; sourceTree = "<group>"; };
-		1682AEC420484B9B003A052A /* Themeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Themeable.swift; sourceTree = "<group>"; };
 		1687ABA920EBCED80007C240 /* UserType+ProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserType+ProfileImage.swift"; sourceTree = "<group>"; };
 		1687C0FB2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+ShowContentDelegate.swift"; sourceTree = "<group>"; };
 		1689FD4A2195C8B800A656E2 /* EphemeralCountdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EphemeralCountdownView.swift; sourceTree = "<group>"; };
@@ -6471,7 +6469,6 @@
 				8742C2E91E5309FC00329FB6 /* NSAttributedString+Highlight.swift */,
 				162836132016574D0027082D /* ProcessInfo+Tests.swift */,
 				7C4789842021F40E00A38442 /* AddBotError+UIHandler.swift */,
-				1682AEC420484B9B003A052A /* Themeable.swift */,
 				163FB98E20514DB700E74F83 /* UITraitEnvironment+LayoutMargins.swift */,
 				BFB5972220E62EB6008720ED /* CancelableItem.swift */,
 				5E936E8E20B590530060E6AA /* UIDevice+Platform.swift */,
@@ -9511,7 +9508,6 @@
 				5E53534421B14A8A0060DB38 /* MessageDetailsCellDescription.swift in Sources */,
 				EF2A8DEB214A9AFD002C9058 /* ContactsCell.swift in Sources */,
 				E902B3B429ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift in Sources */,
-				1682AEC520484B9B003A052A /* Themeable.swift in Sources */,
 				0667FE312384237E00F75F93 /* UICollectionView+SetMessage.swift in Sources */,
 				06717E5C2865183600AF442C /* Stylable.swift in Sources */,
 				5EA73D8720D901000001D106 /* SeparatorCollectionViewCell.swift in Sources */,
