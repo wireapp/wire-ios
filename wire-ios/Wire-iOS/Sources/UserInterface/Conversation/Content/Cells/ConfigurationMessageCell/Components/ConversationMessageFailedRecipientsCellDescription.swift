@@ -30,7 +30,6 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
-    weak var sectionDelegate: ConversationMessageSectionControllerDelegate?
 
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 5
