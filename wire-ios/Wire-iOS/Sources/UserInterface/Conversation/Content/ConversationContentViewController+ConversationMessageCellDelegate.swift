@@ -78,10 +78,6 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         delegate?.didTap(onUserAvatar: user, view: sourceView, frame: frame)
     }
 
-    func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
-        return delegate?.conversationContentViewController(self, shouldBecomeFirstResponderWhenShowMenuFromCell: cell) ?? false
-    }
-
     func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
         let messageDetailsViewController = MessageDetailsViewController(
             message: message,
