@@ -59,7 +59,6 @@ final class ConversationListViewModelTests: XCTestCase {
     var sut: ConversationListViewModel!
     var mockUserSession: UserSessionMock!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!
-    var mockBar: MockBar!
     var mockConversation: ZMConversation!
     var coreDataFixture: CoreDataFixture!
 
@@ -70,7 +69,6 @@ final class ConversationListViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         removeViewModelState()
-        mockBar = MockBar()
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
 
@@ -85,7 +83,6 @@ final class ConversationListViewModelTests: XCTestCase {
         sut = nil
         mockUserSession = nil
         mockConversationListViewModelDelegate = nil
-        mockBar = nil
         mockConversation = nil
         coreDataFixture = nil
 
@@ -254,13 +251,5 @@ final class ConversationListViewModelTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.jsonString, #"{"collapsed":["groups"],"folderEnabled":true}"#)
-    }
-}
-
-final class MockBar: ConversationListViewModelRestorationDelegate {
-    var folderEnabled: Bool = false
-
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
-        folderEnabled = enabled
     }
 }
