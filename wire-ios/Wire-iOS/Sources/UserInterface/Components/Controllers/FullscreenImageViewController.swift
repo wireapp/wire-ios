@@ -76,11 +76,6 @@ final class FullscreenImageViewController: UIViewController {
     private let longPressGestureRecognizer = UILongPressGestureRecognizer()
 
     private var isShowingChrome = true
-    private var forcePortraitMode = false {
-        didSet {
-            UIViewController.attemptRotationToDeviceOrientation()
-        }
-    }
 
     let userSession: UserSession
     let mainCoordinator: MainCoordinating
