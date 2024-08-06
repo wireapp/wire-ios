@@ -16,59 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// For this to be sendable... the provider needs to be sendable.
+// Should this even be sendable? No
+
 public struct WireLogger: LoggerProtocol {
 
-    private static var provider = AggregatedLogger(loggers: [
-        SystemLogger(),
-        CocoaLumberjackLogger()
-    ])
-
     public let tag: String
+    private let provider: AggregatedLogger
 
     // MARK: - Initialization
 
-    public init(tag: String) {
+    public init(
+        tag: String,
+        provider: AggregatedLogger
+    ) {
         self.tag = tag
+        self.provider = provider
     }
 
     // MARK: - LoggerProtocol
 
-    public var logFiles: [URL] {
-        Self.provider.logFiles
-    }
+//    public var logFiles: [URL] {
+//        Self.provider.logFiles
+//    }
 
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider.addTag(key, value: value)
-    }
+//    public func addTag(_ key: LogAttributesKey, value: String?) {
+//        provider.addTag(key, value: value)
+//    }
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        Self.provider.debug(message, attributes: finalizedAttributes(attributes))
+        provider.debug(message, attributes: finalizedAttributes(attributes))
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        Self.provider.info(message, attributes: finalizedAttributes(attributes))
+        provider.info(message, attributes: finalizedAttributes(attributes))
     }
 
     public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        Self.provider.notice(message, attributes: finalizedAttributes(attributes))
+        provider.notice(message, attributes: finalizedAttributes(attributes))
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        Self.provider.warn(message, attributes: finalizedAttributes(attributes))
+        provider.warn(message, attributes: finalizedAttributes(attributes))
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        Self.provider.error(message, attributes: finalizedAttributes(attributes))
+        provider.error(message, attributes: finalizedAttributes(attributes))
     }
 
     public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
         guard shouldLogMessage(message) else { return }
-        Self.provider.critical(message, attributes: finalizedAttributes(attributes))
+        provider.critical(message, attributes: finalizedAttributes(attributes))
     }
 
     // MARK: - Private Helpers
@@ -78,7 +81,7 @@ public struct WireLogger: LoggerProtocol {
     }
 
     private func finalizedAttributes(_ attributes: [LogAttributes]) -> LogAttributes {
-        var finalizedAttributes = flattenArray(attributes)
+        var finalizedAttributes = attributes.flattened()
 
         if !tag.isEmpty {
             finalizedAttributes[.tag] = tag
@@ -89,11 +92,11 @@ public struct WireLogger: LoggerProtocol {
 
     // MARK: Static Functions
 
-    public static var logFiles: [URL] {
-        provider.logFiles
-    }
-
-    public static func addLogger(_ logger: LoggerProtocol) {
-        provider.addLogger(logger)
-    }
+//    public static var logFiles: [URL] {
+//        provider.logFiles
+//    }
+//
+//    public static func addLogger(_ logger: LoggerProtocol) {
+//        provider.addLogger(logger)
+//    }
 }

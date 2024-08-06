@@ -25,10 +25,13 @@ public protocol LoggerProtocol {
     func error(_ message: any LogConvertible, attributes: LogAttributes...)
     func critical(_ message: any LogConvertible, attributes: LogAttributes...)
 
-    var logFiles: [URL] { get }
+    // Take this from the logger provider
+    // Only Lumberjack has these
+    //var logFiles: [URL] { get }
 
+    // Add this to WireLogger
     /// Add an attribute, value to each logs - DataDog only
-    func addTag(_ key: LogAttributesKey, value: String?)
+    //func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {
@@ -62,4 +65,42 @@ extension LoggerProtocol {
         }
         return mergedAttributes
     }
+}
+
+extension LogAttributes {
+
+    var attributeDescription: String {
+        var logAttributes = self
+
+        // drop attributes used for visibility and category
+        logAttributes.removeValue(forKey: LogAttributesKey.public)
+        logAttributes.removeValue(forKey: LogAttributesKey.tag)
+
+        guard !logAttributes.isEmpty else {
+            return ""
+        }
+
+        var description = " - ["
+        description += logAttributes.keys.sorted().map { key in
+            "\(key.rawValue): \(logAttributes[key] ?? "<nil>")"
+        }.joined(separator: ", ")
+        description += "]"
+
+        return description
+    }
+
+}
+
+extension [LogAttributes] {
+
+    /// helper method to transform attributes array to single LogAttributes
+    /// - note: if same key is contained accross multiple attributes, the latest one is taken
+    func flattened() -> LogAttributes {
+        var mergedAttributes: LogAttributes = [:]
+        self.forEach {
+            mergedAttributes.merge($0) { _, new in new }
+        }
+        return mergedAttributes
+    }
+
 }
