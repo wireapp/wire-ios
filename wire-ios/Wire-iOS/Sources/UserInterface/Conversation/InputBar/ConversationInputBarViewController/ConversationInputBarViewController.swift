@@ -37,8 +37,6 @@ final class ConversationInputBarViewController: UIViewController,
 
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
-    typealias ButtonColors = SemanticColors.Button
-
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
