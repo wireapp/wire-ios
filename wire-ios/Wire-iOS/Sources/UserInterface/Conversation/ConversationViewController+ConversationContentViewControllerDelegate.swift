@@ -63,15 +63,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
     func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,
-        didTriggerResending message: ZMConversationMessage
-    ) {
-        userSession.enqueue({
-            message.resend()
-        })
-    }
-
-    func conversationContentViewController(
-        _ contentViewController: ConversationContentViewController,
         didTriggerEditing message: ZMConversationMessage
     ) {
         guard message.textMessageData?.messageText != nil else { return }
@@ -110,10 +101,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         })
     }
 
-    func conversationContentViewControllerWants(toDismiss controller: ConversationContentViewController) {
-        openConversationList()
-    }
-
     func conversationContentViewController(
         _ controller: ConversationContentViewController,
         presentGuestOptionsFrom sourceView: UIView
@@ -131,26 +118,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         )
         let navigationController = groupDetailsViewController.wrapInNavigationController()
         groupDetailsViewController.presentGuestOptions(animated: false)
-        presentParticipantsViewController(navigationController, from: sourceView)
-    }
-
-    func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        presentServicesOptionFrom sourceView: UIView
-    ) {
-        guard conversation.conversationType == .group else {
-            zmLog.error("Illegal Operation: Trying to show services options for non-group conversation")
-            return
-        }
-
-        let groupDetailsViewController = GroupDetailsViewController(
-            conversation: conversation,
-            userSession: userSession,
-            mainCoordinator: mainCoordinator,
-            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
-        )
-        let navigationController = groupDetailsViewController.wrapInNavigationController()
-        groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }
 
