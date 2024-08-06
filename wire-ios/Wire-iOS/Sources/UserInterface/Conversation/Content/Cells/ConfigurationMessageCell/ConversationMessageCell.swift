@@ -257,7 +257,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
     private let _axIdentifier: AnyConstantProperty<String?>
     private let _axLabel: AnyConstantProperty<String?>
-    private let _supportsActions: AnyConstantProperty<Bool>
 
     init<T: ConversationMessageCellDescription>(_ description: T) {
         registrationBlock = { tableView in
@@ -296,7 +295,6 @@ final class AnyConversationMessageCellDescription: NSObject {
         _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
         _axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
         _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
-        _supportsActions = AnyConstantProperty(description, keyPath: \.supportsActions)
     }
 
     var instance: AnyObject {
@@ -344,11 +342,6 @@ final class AnyConversationMessageCellDescription: NSObject {
     /// The accessibility label of the cell.
     var cellAccessibilityLabel: String? {
         return _axLabel.getter()
-    }
-
-    /// Whether the cell supports actions.
-    var supportsActions: Bool {
-        return _supportsActions.getter()
     }
 
     func configure(cell: UITableViewCell, animated: Bool = false) {
