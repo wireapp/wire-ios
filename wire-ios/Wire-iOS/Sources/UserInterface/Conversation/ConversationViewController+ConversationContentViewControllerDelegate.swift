@@ -88,26 +88,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
     }
 
     func conversationContentViewController(
-        _ controller: ConversationContentViewController,
-        shouldBecomeFirstResponderWhenShowMenuFromCell cell: UIView
-    ) -> Bool {
-        if inputBarController.inputBar.textView.isFirstResponder {
-            inputBarController.inputBar.textView.overrideNextResponder = cell
-
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(menuDidHide(_:)),
-                name: UIMenuController.didHideMenuNotification,
-                object: nil
-            )
-
-            return false
-        }
-
-        return true
-    }
-
-    func conversationContentViewController(
         _ contentViewController: ConversationContentViewController,
         performImageSaveAnimation snapshotView: UIView?,
         sourceRect: CGRect

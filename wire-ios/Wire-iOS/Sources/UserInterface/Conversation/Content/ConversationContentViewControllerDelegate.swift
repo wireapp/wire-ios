@@ -33,8 +33,6 @@ protocol ConversationContentViewControllerDelegate: AnyObject {
 
     func conversationContentViewController(_ contentViewController: ConversationContentViewController, performImageSaveAnimation snapshotView: UIView?, sourceRect: CGRect)
 
-    func conversationContentViewController(_ controller: ConversationContentViewController, shouldBecomeFirstResponderWhenShowMenuFromCell cell: UIView) -> Bool
-
     func conversationContentViewControllerWants(toDismiss controller: ConversationContentViewController)
 
     func conversationContentViewController(_ controller: ConversationContentViewController, presentGuestOptionsFrom sourceView: UIView)
