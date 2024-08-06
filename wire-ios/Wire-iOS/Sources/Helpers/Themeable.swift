@@ -36,18 +36,3 @@ protocol Themeable {
     func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant)
 
 }
-
-extension UIView {
-
-    /// Applies a color scheme to all subviews recursively.
-    func applyColorSchemeOnSubviews(_ colorSchemeVariant: ColorSchemeVariant) {
-        for subview in subviews {
-            if let themable = subview as? Themeable {
-                themable.applyColorScheme(colorSchemeVariant)
-            }
-
-            subview.applyColorSchemeOnSubviews(colorSchemeVariant)
-        }
-    }
-
-}
