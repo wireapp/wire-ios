@@ -21,8 +21,6 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ProfileViewController")
-
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
     case devices
@@ -30,10 +28,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-}
-
-protocol BackButtonTitleDelegate: AnyObject {
-    func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String?
 }
 
 extension ZMConversationType {
