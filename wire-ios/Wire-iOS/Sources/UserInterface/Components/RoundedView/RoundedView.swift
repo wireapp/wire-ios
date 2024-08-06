@@ -24,10 +24,6 @@ class RoundedView: UIView, RoundedViewProtocol {
         ContinuousMaskLayer.self
     }
 
-    func setRelativeCornerRadius(multiplier: CGFloat, dimension: MaskDimension) {
-        shape = .relative(multiplier: multiplier, dimension: dimension)
-    }
-
     func setCornerRadius(_ cornerRadius: CGFloat) {
         shape = .rounded(radius: cornerRadius)
     }
