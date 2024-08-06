@@ -186,12 +186,4 @@ extension ConversationViewController {
                                                       from: sourceView,
                                                       contentViewController: viewController)
     }
-
-    // MARK: - Application Events & Notifications
-
-    @objc
-    func menuDidHide(_ notification: Notification?) {
-        inputBarController.inputBar.textView.overrideNextResponder = nil
-        NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
-    }
 }
