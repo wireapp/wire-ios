@@ -24,10 +24,6 @@ class RoundedView: UIView, RoundedViewProtocol {
         ContinuousMaskLayer.self
     }
 
-    func toggleCircle() {
-        shape = .circle
-    }
-
     func toggleRectangle() {
         shape = .rectangle
     }
