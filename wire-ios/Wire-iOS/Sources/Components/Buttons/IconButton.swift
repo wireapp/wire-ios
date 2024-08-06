@@ -67,12 +67,6 @@ class IconButton: ButtonWithLargerHitArea {
         }
     }
 
-    var hasRoundCorners = false {
-        didSet {
-            updateCustomCornerRadius()
-        }
-    }
-
     var adjustsTitleWhenHighlighted = false
     var adjustsBorderColorWhenHighlighted = false
     var adjustBackgroundImageWhenHighlighted = false
@@ -300,10 +294,6 @@ class IconButton: ButtonWithLargerHitArea {
 
         // When the button has border, set self.layer.cornerRadius to prevent border is covered by icon
         layer.cornerRadius = borderWidth > 0 ? radius : 0
-    }
-
-    func updateCustomCornerRadius() {
-        layer.cornerRadius = hasRoundCorners ? 6 : 0
     }
 
     private func updateForNewStateIfNeeded() {
