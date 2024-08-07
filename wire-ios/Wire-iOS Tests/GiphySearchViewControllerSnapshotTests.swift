@@ -57,8 +57,9 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
             conversation: (mockConversation as Any) as! ZMConversation,
             searchResultsController: resultsController
         )
-        sut.searchBar.placeholderLabel.isHidden = true
-        mockNavigationController = sut.wrapInsideNavigationController()
+
+        mockNavigationController = UINavigationController(rootViewController: sut)
+        mockNavigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         sut.collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
