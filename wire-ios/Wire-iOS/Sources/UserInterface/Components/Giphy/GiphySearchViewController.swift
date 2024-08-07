@@ -131,6 +131,9 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(conversation.displayNameWithFallback)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
         searchController.searchBar.text = searchTerm
     }
 
