@@ -43,7 +43,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         return controller
     }()
 
-
     let noResultsLabel = DynamicFontLabel(
         text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
         style: .body1,
@@ -58,10 +57,10 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         }
     }
 
-    var searchTerm: String
-    var pendingTimer: Timer?
-    var pendingSearchtask: CancelableTask?
-    var pendingFetchTask: CancelableTask?
+    private var searchTerm: String
+    private var pendingTimer: Timer?
+    private var pendingSearchtask: CancelableTask?
+    private var pendingFetchTask: CancelableTask?
 
     // MARK: - Initialization
 
