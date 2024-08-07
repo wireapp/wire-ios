@@ -23,7 +23,7 @@ import XCTest
 
 final class ShareContactsViewControllerSnapshotTests: XCTestCase {
 
-    var sut: ShareContactsViewController!
+    private var sut: ShareContactsViewController!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

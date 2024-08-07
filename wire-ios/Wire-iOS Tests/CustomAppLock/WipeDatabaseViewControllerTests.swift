@@ -38,6 +38,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
@@ -45,7 +46,7 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
 
     func testForAllScreenSizes() {
         sut = WipeDatabaseViewController()
-        verifyInAllDeviceSizes(matching: sut)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 
     func testWipeDatabaseViewController() {
