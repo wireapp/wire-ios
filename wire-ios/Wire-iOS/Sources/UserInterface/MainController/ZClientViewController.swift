@@ -446,11 +446,6 @@ final class ZClientViewController: UIViewController {
         pushContentViewController(currentConversationViewController)
     }
 
-    @objc
-    private func colorSchemeControllerDidApplyChanges(_ notification: Notification?) {
-        reloadCurrentConversation()
-    }
-
     // MARK: - Debug logging notifications
 
     @objc
