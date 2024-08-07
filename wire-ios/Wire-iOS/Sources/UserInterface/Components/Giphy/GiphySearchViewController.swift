@@ -38,7 +38,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
-        controller.obscuresBackgroundDuringPresentation = false
         controller.searchBar.placeholder = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
         controller.searchBar.accessibilityIdentifier = "search input"
         return controller
