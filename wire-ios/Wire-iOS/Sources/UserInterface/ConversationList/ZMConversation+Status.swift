@@ -519,7 +519,7 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
                 }
 
             let resultString = localizedMatchedItems.joined(separator: ", ")
-            return resultString.capitalizingFirstCharacterOnly && type(of: self).regularStyle
+            return resultString && type(of: self).regularStyle
         } else {
             guard let message = status.messagesRequiringAttention.reversed().first(where: {
                     if $0.senderUser != nil,

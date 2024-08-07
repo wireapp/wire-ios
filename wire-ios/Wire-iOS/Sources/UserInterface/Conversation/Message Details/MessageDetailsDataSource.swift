@@ -175,7 +175,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
                 guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
                 let name = emoji.localizedName ?? emoji.name
                 return MessageDetailsSectionDescription(
-                    headerText: "\(emoji.value) \(name.capitalizingFirstCharacterOnly) (\(users.count))",
+                    headerText: "\(emoji.value) \(name.capitalized) (\(users.count))",
                     items: MessageDetailsCellDescription.makeReactionCells(users)
                 )
             }

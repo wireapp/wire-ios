@@ -131,7 +131,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     private func setupNavigationItem() {
         searchBar.searchInput.text = searchTerm
-        searchBar.placeholderString = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
+        searchBar.placeholderString = Giphy.searchPlaceholder
         searchBar.delegate = self
         let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.navigationController?.dismiss(animated: true, completion: nil)
