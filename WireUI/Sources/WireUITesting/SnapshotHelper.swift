@@ -332,7 +332,6 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-
         let failure = verifySnapshot(
             of: value,
             as: .image,
@@ -344,7 +343,6 @@ public struct SnapshotHelper {
         )
 
         XCTAssertNil(failure, file: file, line: line)
-
     }
 
     /// Verifies that a given `UIView` renders correctly across all supported Dynamic Type content size categories.
