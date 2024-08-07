@@ -116,7 +116,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         setupNoResultLabel()
         setupCollectionView()
         createConstraints()
-        applyStyle()
     }
 
     private func setupSearchController() {
@@ -141,6 +140,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     private func setupCollectionView() {
         collectionView?.showsVerticalScrollIndicator = false
+        collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
         collectionView?.accessibilityIdentifier = "giphyCollectionView"
         collectionView?.register(GiphyCollectionViewCell.self, forCellWithReuseIdentifier: GiphyCollectionViewCell.CellIdentifier)
         edgesForExtendedLayout = []
@@ -166,11 +166,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    private func applyStyle() {
-        let searchBarIconColor = SemanticColors.SearchBar.backgroundButton
-        collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
     // MARK: - Presentation
