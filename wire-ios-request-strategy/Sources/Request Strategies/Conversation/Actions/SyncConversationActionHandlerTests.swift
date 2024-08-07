@@ -17,6 +17,8 @@
 //
 
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
@@ -143,6 +145,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
     func test_HandleResponse_200_Success() throws {
         // Given
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v2
         let sut = SyncConversationActionHandler(context: syncMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
@@ -186,6 +189,8 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             XCTAssertNotNil(ZMConversation.fetch(with: id.uuid, domain: id.domain, in: syncMOC))
         }
+
+        BackendInfo.resetMocking()
     }
 
     func test_HandleResponse_400_InvalidBody() throws {

@@ -17,6 +17,8 @@
 //
 
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {
@@ -26,12 +28,13 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         sut = ConnectionPayloadProcessor()
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.storage = .standard
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 

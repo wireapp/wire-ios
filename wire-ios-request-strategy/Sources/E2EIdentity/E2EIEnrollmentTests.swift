@@ -22,6 +22,8 @@ import WireCoreCrypto
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 class E2EIEnrollmentTests: ZMTBaseTest {
 
@@ -30,12 +32,10 @@ class E2EIEnrollmentTests: ZMTBaseTest {
     var mockApiProvider: MockAPIProviderInterface!
     var mockE2eiService: MockE2EIServiceInterface!
     var mockKeyRotator: MockE2EIKeyPackageRotating!
-    var previousApiVersion: APIVersion!
 
     override func setUp() {
         super.setUp()
 
-        previousApiVersion = BackendInfo.apiVersion
         let acmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                           newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
                                           newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
@@ -51,7 +51,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             acmeDirectory: acmeDirectory,
             keyRotator: mockKeyRotator
         )
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
     }
 
     override func tearDown() {
@@ -60,8 +61,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         mockApiProvider = nil
         mockE2eiService = nil
         mockKeyRotator = nil
-        BackendInfo.apiVersion = previousApiVersion
-        BackendInfo.storage = .standard
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }

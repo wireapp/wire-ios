@@ -19,6 +19,8 @@
 import Foundation
 @testable import WireRequestStrategy
 import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
@@ -29,7 +31,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -49,6 +51,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             syncProgress: mockSyncProgress
         )
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
@@ -56,7 +59,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
-        apiVersion = nil
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }

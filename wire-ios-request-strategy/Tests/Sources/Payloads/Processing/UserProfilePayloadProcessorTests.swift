@@ -17,6 +17,8 @@
 //
 
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 final class UserProfilePayloadProcessorTests: MessagingTestBase {
@@ -31,11 +33,13 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             self.otherUser.remoteIdentifier = nil
             self.otherUser.domain = nil
         }
+        BackendInfo.enableMocking()
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.isFederationEnabled = false
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
