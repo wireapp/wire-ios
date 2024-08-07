@@ -81,7 +81,7 @@ public final class DatadogWrapper {
                 .build()
         )
 
-        bundleVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        bundleVersion = Bundle.appMainBundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
 
         defaultLevel = level
         logger = Logger.builder

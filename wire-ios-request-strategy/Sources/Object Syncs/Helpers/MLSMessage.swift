@@ -20,38 +20,31 @@ import Foundation
 
 /// A message that can be sent in an mls group.
 
-public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator, Hashable {
-    var logInformation: LogAttributes { get }
+public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {
+
+    /// Messages can expire, e.g. if network conditions are too slow to send.
+    var shouldExpire: Bool { get }
+
+    /// Sets the expiration date with the default time interval.
+    func setExpirationDate()
 }
 
 extension ZMClientMessage: MLSMessage {}
 
-extension ZMAssetClientMessage: MLSMessage {
-    public var logInformation: LogAttributes {
-
-        return [
-            LogAttributesKey.nonce.rawValue: self.nonce?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.messageType.rawValue: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
-
-    }
-}
+extension ZMAssetClientMessage: MLSMessage {}
 
 extension GenericMessageEntity: MLSMessage {
 
+    // Just required for protocol conformance.
+    public var shouldExpire: Bool { false }
+
     public func encryptForTransport(using encrypt: (Data) async throws -> Data) async throws -> Data {
-        return try await message.encryptForTransport(using: encrypt)
+        try await message.encryptForTransport(using: encrypt)
     }
 
-    public var logInformation: LogAttributes {
-
-        let logAttibutes: LogAttributes = [
-            LogAttributesKey.nonce.rawValue: self.message.safeIdForLoggingDescription,
-            LogAttributesKey.messageType.rawValue: self.message.safeTypeForLoggingDescription,
-            LogAttributesKey.conversationId.rawValue: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
-        ].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
-
-        return logAttibutes
+    public func setExpirationDate() {
+        // Just required for protocol conformance.
+        // Generic messages are used as underlying messages in proteus and mls,
+        // so they don't need to have their own expiration date.
     }
 }

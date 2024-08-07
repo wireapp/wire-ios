@@ -63,21 +63,16 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         var result: T
-        WireLogger.coreCrypto.debug("acquiring directory lock")
         safeContext.acquireDirectoryLock()
-        WireLogger.coreCrypto.debug("acquired lock. performing restoreFromDisk()")
         await restoreFromDisk()
 
         defer {
-            WireLogger.coreCrypto.debug("releasing directory lock")
             safeContext.releaseDirectoryLock()
-            WireLogger.coreCrypto.debug("released lock")
         }
 
         do {
             result = try await block(coreCrypto)
         } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)", attributes: .safePublic)
             throw error
         }
 

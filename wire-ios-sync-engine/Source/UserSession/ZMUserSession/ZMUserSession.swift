@@ -194,6 +194,12 @@ public final class ZMUserSession: NSObject {
             crlAPI: CertificateRevocationListAPI(),
             mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
+            fetchE2EIFeatureConfig: { [weak self] in
+                guard let self else { return nil }
+
+                let featureRepository = FeatureRepository(context: self.coreDataStack.syncContext)
+                return featureRepository.fetchE2EI().config
+            },
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
         )
@@ -937,27 +943,51 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.commitPendingProposalsIfNeeded()
+        if DeveloperFlag.enableMLSSupport.isOn {
+            mlsService.commitPendingProposalsIfNeeded()
+        }
 
         WaitingGroupTask(context: syncContext) { [self] in
-            do {
-                var getFeatureConfigAction = GetFeatureConfigsAction()
-                try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
-            } catch {
-                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
-            }
+            await fetchAndStoreFeatureConfig()
+            await resolveOneOnOneConversationsIfNeeded()
         }
 
         recurringActionService.performActionsIfNeeded()
 
-        Task {
-            await self.cRLsChecker.checkExpiredCRLs()
-        }
-
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
-            self?.checkE2EICertificateExpiryStatus()
+        }
+
+        performPostQuickSyncE2EIActions()
+    }
+
+    private func resolveOneOnOneConversationsIfNeeded() async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+        do {
+            try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+        } catch {
+            WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+        }
+    }
+
+    private func performPostQuickSyncE2EIActions() {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        Task {
+            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+            if isE2EIFeatureEnabled {
+                checkE2EICertificateExpiryStatus()
+                await cRLsChecker.checkExpiredCRLs()
+            }
+        }
+    }
+
+    private func fetchAndStoreFeatureConfig() async {
+        do {
+            var getFeatureConfigAction = GetFeatureConfigsAction()
+            try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
+        } catch {
+            WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
         }
     }
 
@@ -1071,7 +1101,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     func checkE2EICertificateExpiryStatus() {
-        guard e2eiFeature.isEnabled else { return }
         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }

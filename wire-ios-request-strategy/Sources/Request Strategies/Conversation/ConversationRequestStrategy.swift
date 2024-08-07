@@ -376,14 +376,13 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
                                     requestUserInfo: [AnyHashable: Any]? = nil,
                                     response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
-
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),
             let payload = response.payload
         else {
             return false
         }
-
+        // TODO: [WPB-10283] [F] check if we need to wait for the processPayload
         conversationEventProcessor.processPayload(payload)
 
         return false
