@@ -45,9 +45,11 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }()
 
 
-    let noResultsLabel = DynamicFontLabel(text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
-                                          fontSpec: .normalRegularFont,
-                                          color: SemanticColors.Label.textSettingsPasswordPlaceholder)
+    let noResultsLabel = DynamicFontLabel(
+        text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
+        style: .body1,
+        color: SemanticColors.Label.textSettingsPasswordPlaceholder
+    )
     let conversation: ZMConversation
 
     var ziphs: [Ziph] = [] {
