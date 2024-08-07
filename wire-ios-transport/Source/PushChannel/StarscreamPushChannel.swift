@@ -87,7 +87,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         WireLogger.backend.debug("reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)")
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
+
         guard didGoOnline else { return }
+        WireLogger.backend.debug("reachability did change. didGoOnline", attributes: .safePublic)
 
         scheduleOpen()
     }

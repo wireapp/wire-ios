@@ -62,6 +62,36 @@ enum AppState: Equatable {
     }
 }
 
+extension AppState: SafeForLoggingStringConvertible {
+    var safeForLoggingDescription: String {
+        switch self {
+        case .retryStart:
+            return "retryStart"
+        case .headless:
+            return "headless"
+        case .locked(let userSession):
+            return "locked"
+        case .authenticated(let userSession):
+            return "authenticated"
+        case .unauthenticated(let error):
+            return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
+        case .blacklisted(let reason):
+            return "blacklisted \(reason)"
+        case .jailbroken:
+            return "jailbroken"
+        case .certificateEnrollmentRequired:
+            return "certificateEnrollmentRequired"
+        case .databaseFailure(let reason):
+            return "databaseFailure \(reason)"
+        case .migrating:
+            return "migrating"
+        case .loading(let account, let from):
+            return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+        }
+    }
+
+}
+
 protocol AppStateCalculatorDelegate: AnyObject {
     func appStateCalculator(_: AppStateCalculator,
                             didCalculate appState: AppState,
@@ -119,7 +149,7 @@ final class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
-        WireLogger.appState.debug("transitioning to app state: \(appState)")
+        WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
         delegate?.appStateCalculator(self, didCalculate: appState, completion: {
             completion?()
         })

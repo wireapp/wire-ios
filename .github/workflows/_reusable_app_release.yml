@@ -119,6 +119,7 @@ jobs:
       C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+      SZ_SUBFOLDER_PRODUCTION: ${{ secrets.SZ_SUBFOLDER_PRODUCTION }}
       BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
       PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
       COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
@@ -133,6 +134,8 @@ jobs:
         run: |
             echo "::add-mask::${{ secrets.CLIENT_NAME_C1_C2_C3 }}"
             echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
+            echo "::add-mask::${{ secrets.CLIENT_NAME_SZ }}"
+            echo "::add-mask::${{ secrets.CLIENT_ID_SZ }}"
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.SUBMODULE_PAT }}

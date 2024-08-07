@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "lưu trữ";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Bắt đầu cuộc hội thoại ngay đây";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "Thêm địa chỉ email và mật khẩu";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Điều khoản Sử dụng";
 "about.privacy.title" = "Chính sách Riêng tư";
 "about.license.title" = "Thông tin Giấy phép";

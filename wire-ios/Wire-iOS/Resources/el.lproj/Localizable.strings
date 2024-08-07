@@ -167,6 +167,8 @@
 
 // Archived List
 "archived_list.title" = "archive";
+"archived_list.empty_placeholder.headline" = "Nothing archived yet";
+"archived_list.empty_placeholder.subheadline" = "To keep your conversation list tidy, move unused conversations here. You can always unarchive those later.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Οι συνομιλίες ξεκινούν εδώ";
@@ -1040,6 +1042,7 @@
 "self.add_email_password" = "Προσθέστε email και κωδικό πρόσβασης";
 
 // About screen
+"about.legal.title" = "Legal";
 "about.tos.title" = "Όροι Χρήσης";
 "about.privacy.title" = "Πολιτική Απορρήτου";
 "about.license.title" = "Πληροφορίες άδειας χρήσης";
