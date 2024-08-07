@@ -3396,8 +3396,8 @@ internal enum L10n {
       internal enum Error {
         /// no more gifs
         internal static let noMoreResults = L10n.tr("Localizable", "giphy.error.no_more_results", fallback: "no more gifs")
-        /// no gif found
-        internal static let noResult = L10n.tr("Localizable", "giphy.error.no_result", fallback: "no gif found")
+        /// No gif found
+        internal static let noResult = L10n.tr("Localizable", "giphy.error.no_result", fallback: "No gif found")
       }
     }
     internal enum GroupDetails {

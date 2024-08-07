@@ -34,23 +34,24 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     weak var delegate: GiphySearchViewControllerDelegate?
 
-    let searchResultsController: ZiphySearchResultsController
+    private let searchResultsController: ZiphySearchResultsController
 
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
-        controller.searchBar.placeholder = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
+        controller.searchBar.placeholder = Giphy.searchPlaceholder
         controller.searchBar.accessibilityIdentifier = "search input"
         return controller
     }()
 
-    let noResultsLabel = DynamicFontLabel(
+    private let noResultsLabel = DynamicFontLabel(
         text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
         style: .body1,
         color: SemanticColors.Label.textSettingsPasswordPlaceholder
     )
-    let conversation: ZMConversation
 
-    var ziphs: [Ziph] = [] {
+    private let conversation: ZMConversation
+
+    private var ziphs: [Ziph] = [] {
         didSet {
             collectionView?.reloadData()
             noResultsLabel.isHidden = self.ziphs.count > 0
@@ -64,7 +65,11 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     // MARK: - Initialization
 
-    convenience init(searchTerm: String, conversation: ZMConversation, userSession: UserSession) {
+    convenience init(
+        searchTerm: String,
+        conversation: ZMConversation,
+        userSession: UserSession
+    ) {
         let searchResultsController = ZiphySearchResultsController(
             client: ZiphyClient(
                 host: "api.giphy.com",
@@ -74,16 +79,33 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             pageSize: 50,
             maxImageSize: 3
         )
-        self.init(searchTerm: searchTerm, conversation: conversation, searchResultsController: searchResultsController)
+        self.init(
+            searchTerm: searchTerm,
+            conversation: conversation,
+            searchResultsController: searchResultsController
+        )
     }
 
-    init(searchTerm: String, conversation: ZMConversation, searchResultsController: ZiphySearchResultsController) {
+    init(
+        searchTerm: String,
+        conversation: ZMConversation,
+        searchResultsController: ZiphySearchResultsController
+    ) {
         self.conversation = conversation
         self.searchTerm = searchTerm
         self.searchResultsController = searchResultsController
 
-        let columnCount = AdaptiveColumnCount(compact: 2, regular: 3, large: 4)
-        super.init(interItemSpacing: 1, interColumnSpacing: 1, columnCount: columnCount)
+        let columnCount = AdaptiveColumnCount(
+            compact: 2,
+            regular: 3,
+            large: 4
+        )
+
+        super.init(
+            interItemSpacing: 1,
+            interColumnSpacing: 1,
+            columnCount: columnCount
+        )
 
         performSearch()
     }
@@ -118,14 +140,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         createConstraints()
     }
 
-    private func setupSearchController() {
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
-        definesPresentationContext = true
-    }
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(conversation.displayNameWithFallback)
@@ -133,6 +147,16 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Localizable.General.close)
         searchController.searchBar.text = searchTerm
+    }
+
+    // MARK: - Setup UI
+
+    private func setupSearchController() {
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        definesPresentationContext = true
     }
 
     private func setupNoResultLabel() {
