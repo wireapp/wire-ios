@@ -1035,13 +1035,13 @@ private extension ZMConversation {
     }
 
     private var avsConversationTypeForOneOnOne: AVSConversationType {
-//        guard
-//            let context = managedObjectContext,
-//            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
-//            featureConfig.useSFTForOneToOneCalls
-//        else {
-//            return .oneToOne
-//        }
+        guard
+            let context = managedObjectContext,
+            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
+            featureConfig.useSFTForOneToOneCalls
+        else {
+            return .oneToOne
+        }
 
         switch messageProtocol {
         case .mls:
