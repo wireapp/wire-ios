@@ -1255,7 +1255,6 @@
 		E591D01128C7220800C1469C /* SettingsAppearanceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E591D01028C7220800C1469C /* SettingsAppearanceCell.swift */; };
 		E5CCE4E7287C31C000B36B52 /* SearchBarStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5CCE4E6287C31C000B36B52 /* SearchBarStyle.swift */; };
 		E6579E412AFF9CEE004E7FD8 /* TemporaryFileServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */; };
-		E6579E422AFF9D2B004E7FD8 /* StringCapitalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */; };
 		E6579E432AFF9D33004E7FD8 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D25C8627D9FB07007CB532 /* AuthenticationEmailVerificationRequiredErrorHandlerTests.swift */; };
 		E6579E452AFF9FF8004E7FD8 /* MockUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBFE0BF23F1A48D00292088 /* MockUserType.swift */; };
 		E6579E462AFF9FFB004E7FD8 /* MockUserType+CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */; };
@@ -1420,7 +1419,6 @@
 		E9DD582D2C539B3C00645A2F /* ChangeEmailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */; };
 		E9DD582F2C539D0C00645A2F /* ChangeEmailError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582E2C539D0C00645A2F /* ChangeEmailError.swift */; };
 		E9E20AEA2AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */; };
-		E9EC273429D4440C00599D0A /* String+Capitalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EC273329D4440C00599D0A /* String+Capitalization.swift */; };
 		E9F0BC292BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */; };
 		E9F2D63E2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */; };
 		E9F2D6402B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */; };
@@ -3477,8 +3475,6 @@
 		E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModelTests.swift; sourceTree = "<group>"; };
 		E9DD582E2C539D0C00645A2F /* ChangeEmailError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailError.swift; sourceTree = "<group>"; };
 		E9E20AE92AC42ED3005D7E00 /* CreateSecureGuestLinkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecureGuestLinkViewController.swift; sourceTree = "<group>"; };
-		E9EC273329D4440C00599D0A /* String+Capitalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "String+Capitalization.swift"; path = "Wire-iOS/Sources/Helpers/String+Capitalization.swift"; sourceTree = SOURCE_ROOT; };
-		E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringCapitalizationTests.swift; sourceTree = "<group>"; };
 		E9F0BC282BFD4D13008DD6E9 /* SnapshotTesting+UITableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnapshotTesting+UITableViewCell.swift"; sourceTree = "<group>"; };
 		E9F2D63D2B55D2D200133C59 /* ConversationCannotDecryptSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCannotDecryptSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9F2D63F2B55D9CD00133C59 /* ConversationStartedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStartedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
@@ -6549,7 +6545,6 @@
 				87AC33CA2181C6FB00069C79 /* ClientRemovalObserver.swift */,
 				1661674F223A81CB00779AE3 /* MessageKeyPathObserver.swift */,
 				EEC94D4123BF49D6003AF93D /* UserType+Helpers.swift */,
-				E9EC273329D4440C00599D0A /* String+Capitalization.swift */,
 			);
 			path = syncengine;
 			sourceTree = "<group>";
@@ -7685,7 +7680,6 @@
 				63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */,
 				2577CB602B189989007D3443 /* String+FingerprintTests.swift */,
 				EF4FFB3422830BD200B69851 /* String+WholeRangeTests.swift */,
-				E9EC273529D4462000599D0A /* StringCapitalizationTests.swift */,
 				40C69D712A86288800376B1C /* TemporaryFileServiceTests.swift */,
 				5EBF4A3A21BE984E0021CFFC /* TransformTextViewTests.swift */,
 				061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */,
@@ -10206,7 +10200,6 @@
 				7C5836661FD5ABFE001CC843 /* TitleView.swift in Sources */,
 				59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */,
 				7C5DF2CC1FD7DEAD00B793B6 /* AvailabilityExtensions.swift in Sources */,
-				E9EC273429D4440C00599D0A /* String+Capitalization.swift in Sources */,
 				E97661812BDA4D1E0033AACC /* SecureLinkHeaderCell.swift in Sources */,
 				16595CFF20BEE5E000E1340E /* Analytics+CallEvents.swift in Sources */,
 				A92CB35723CDF6D100F12797 /* ConversationContentViewControllerDelegate.swift in Sources */,
@@ -10821,7 +10814,6 @@
 				E6579E702AFFA033004E7FD8 /* MockURLSession.swift in Sources */,
 				E6C25FCA2AFFABD700406A1C /* UITextView+ReplaceTests.swift in Sources */,
 				E6579E5C2AFFA024004E7FD8 /* MockPinchGestureRecognizer.swift in Sources */,
-				E6579E422AFF9D2B004E7FD8 /* StringCapitalizationTests.swift in Sources */,
 				E6579E4D2AFFA024004E7FD8 /* MockCollection.swift in Sources */,
 				E6579E4B2AFFA00A004E7FD8 /* MockServiceUserType.swift in Sources */,
 				E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */,
