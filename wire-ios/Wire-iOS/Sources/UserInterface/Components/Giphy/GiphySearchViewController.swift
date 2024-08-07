@@ -172,14 +172,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         ])
     }
 
-    // MARK: - Presentation
-
-    func wrapInsideNavigationController() -> UINavigationController {
-        let navigationController = self.wrapInNavigationController()
-
-        return navigationController
-    }
-
     // MARK: - Collection View
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
