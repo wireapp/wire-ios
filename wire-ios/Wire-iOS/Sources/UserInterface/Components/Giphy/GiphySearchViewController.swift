@@ -44,7 +44,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }()
 
     private let noResultsLabel = DynamicFontLabel(
-        text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
+        text: Giphy.Error.noResult,
         style: .body1,
         color: SemanticColors.Label.textSettingsPasswordPlaceholder
     )
