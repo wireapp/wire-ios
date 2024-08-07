@@ -201,13 +201,6 @@ final class ZClientViewController: UIViewController {
             restoreStartupState()
         }
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
-            name: .colorSchemeControllerDidApplyColorSchemeChange,
-            object: nil
-        )
-
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
             NotificationCenter.default.addObserver(
