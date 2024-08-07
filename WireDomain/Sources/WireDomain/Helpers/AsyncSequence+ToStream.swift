@@ -16,27 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
-import XCTest
+import Foundation
 
-final class TokenSeparatorAttachmentTests: XCTestCase {
-    var sut: TokenSeparatorAttachment!
+extension AsyncSequence {
 
-    override func setUp() {
-        super.setUp()
-        let token: Token<NSObjectProtocol> = Token(title: "", representedObject: MockUser())
-        let tokenField = TokenField()
-        tokenField.dotColor = .black
-
-        sut = TokenSeparatorAttachment(token: token, tokenField: tokenField)
+    func toStream() -> AsyncThrowingStream<Element, Error> {
+        var iterator = makeAsyncIterator()
+        return AsyncThrowingStream {
+            try await iterator.next()
+        }
     }
 
-    override func tearDown() {
-        sut = nil
-    }
-
-    func testTokenAttachmentImage() {
-        verify(matching: sut.image!)
-    }
 }

@@ -16,48 +16,40 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
 import WireUITesting
 import XCTest
 
 @testable import Wire
 
-final class MessageActionTests: XCTestCase {
+final class TokenSeparatorAttachmentSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenSeparatorAttachment!
 
-    // MARK: setUp
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = .init()
+        let token: Token<NSObjectProtocol> = Token(title: "", representedObject: MockUser())
+        let tokenField = TokenField()
+        tokenField.dotColor = .black
+
+        sut = TokenSeparatorAttachment(token: token, tokenField: tokenField)
     }
 
-    // MARK: tearDown
+    // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
-
-        super.tearDown()
+        sut = nil
     }
 
-    func testForSystemIcons() {
-        MessageAction.allCases.forEach { action in
-            if let image = action.systemIcon() {
-                let imageView = UIImageView(image: image)
-                snapshotHelper.verify(matching: imageView, named: "\(action)")
-            }
-        }
-    }
+    // MARK: - Snapshot Tests
 
-    func testForStyleKitIcons() {
-        MessageAction.allCases.forEach { action in
-            if let icon = action.icon {
-                let image = icon.makeImage(size: .tiny, color: .black)
-                snapshotHelper.verify(matching: image, named: "\(action)")
-            }
-        }
+    func testTokenAttachmentImage() {
+        snapshotHelper.verify(matching: sut.image!)
     }
 }
