@@ -724,7 +724,7 @@ final class ConversationInputBarViewController: UIViewController,
 
         let navigationController = UINavigationController(rootViewController: giphySearchViewController)
         navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationController.navigationBar.tintColor = SemanticColors.Icon.foregroundDefaultBlack
+        navigationController.modalPresentationStyle = .formSheet
         ZClientViewController.shared?.present(navigationController, animated: true)
     }
 
