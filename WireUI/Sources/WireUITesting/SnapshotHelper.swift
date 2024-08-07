@@ -292,7 +292,7 @@ public struct SnapshotHelper {
     ///        - testName: The name of the reference image.
     ///        - line: The invoking line number.
 
-    public func verifyAllIPhoneSizes(
+    public func verifyInAllIPhoneSizes(
         matching value: UIViewController,
         orientation: ViewImageConfig.Orientation = .portrait,
         file: StaticString = #file,

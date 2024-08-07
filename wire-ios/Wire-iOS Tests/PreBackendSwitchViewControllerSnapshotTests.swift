@@ -49,6 +49,6 @@ final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
     func testForInitState() {
         let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
         navigationController.viewControllers = [sut]
-        snapshotHelper.verifyAllIPhoneSizes(matching: navigationController)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: navigationController)
     }
 }

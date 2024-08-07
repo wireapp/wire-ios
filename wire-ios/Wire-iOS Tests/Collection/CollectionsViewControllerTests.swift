@@ -124,7 +124,7 @@ final class CollectionsViewControllerTests: XCTestCase {
             userSession: userSession,
             mainCoordinator: .mock
         )
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testThatLoadingIsShownWhenFetching() {
@@ -135,31 +135,31 @@ final class CollectionsViewControllerTests: XCTestCase {
             mainCoordinator: .mock
         )
         controller.view.layer.speed = 0 // Disable animations so that the spinner would always be in the same phase
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenNotFull() {
         let assetCollection = MockCollection(fileMessages: [fileMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenFull() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, fileMessage, fileMessage, fileMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenNotFull() {
         let assetCollection = MockCollection(linkMessages: [linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenFull() {
         let assetCollection = MockCollection(linkMessages: [linkMessage, linkMessage, linkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     // MARK: - Expiration
@@ -169,25 +169,25 @@ final class CollectionsViewControllerTests: XCTestCase {
             MockCollection.onlyImagesCategory: [expiredImageMessage],
             MockCollection.onlyVideosCategory: [videoMessage, expiredVideoMessage]])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenExpired() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, expiredFileMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testAudioSectionWhenExpired() {
         let assetCollection = MockCollection(fileMessages: [audioMessage, expiredAudioMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenExpired() {
         let assetCollection = MockCollection(linkMessages: [expiredLinkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     // MARK: - Expiration: Deletion
@@ -197,25 +197,25 @@ final class CollectionsViewControllerTests: XCTestCase {
             MockCollection.onlyImagesCategory: [deletedImageMessage],
             MockCollection.onlyVideosCategory: [videoMessage, deletedVideoMessage]])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testFilesSectionWhenDeleted() {
         let assetCollection = MockCollection(fileMessages: [fileMessage, deletedFileMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testAudioSectionWhenDeleted() {
         let assetCollection = MockCollection(fileMessages: [audioMessage, deletedAudioMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
     func testLinksSectionWhenDeleted() {
         let assetCollection = MockCollection(linkMessages: [deletedLinkMessage, linkMessage])
         let controller = createController(showingCollection: assetCollection)
-        snapshotHelper.verifyAllIPhoneSizes(matching: controller)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
 
 }
