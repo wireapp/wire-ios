@@ -35,7 +35,16 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     weak var delegate: GiphySearchViewControllerDelegate?
 
     let searchResultsController: ZiphySearchResultsController
-    let searchBar: TextSearchInputView = TextSearchInputView()
+
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.obscuresBackgroundDuringPresentation = false
+        controller.searchBar.placeholder = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
+        controller.searchBar.accessibilityIdentifier = "search input"
+        return controller
+    }()
+
+
     let noResultsLabel = DynamicFontLabel(text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
                                           fontSpec: .normalRegularFont,
                                           color: SemanticColors.Label.textSettingsPasswordPlaceholder)
@@ -103,23 +112,31 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSearchController()
         setupNoResultLabel()
         setupCollectionView()
         createConstraints()
         applyStyle()
     }
 
+    private func setupSearchController() {
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        definesPresentationContext = true
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(conversation.displayNameWithFallback)
-        setupNavigationItem()
+        searchController.searchBar.text = searchTerm
     }
 
     private func setupNoResultLabel() {
         extendedLayoutIncludesOpaqueBars = true
         noResultsLabel.isHidden = true
         view.addSubview(noResultsLabel)
-        view.addSubview(searchBar)
     }
 
     private func setupCollectionView() {
@@ -130,9 +147,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }
 
     private func setupNavigationItem() {
-        searchBar.searchInput.text = searchTerm
-        searchBar.placeholderString = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
-        searchBar.delegate = self
         let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.navigationController?.dismiss(animated: true, completion: nil)
         }, accessibilityLabel: L10n.Localizable.General.close)
@@ -142,18 +156,12 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     private func createConstraints() {
         noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noResultsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             noResultsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 56),
-
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -163,10 +171,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     private func applyStyle() {
         let searchBarIconColor = SemanticColors.SearchBar.backgroundButton
         collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
-
-        searchBar.iconView.setTemplateIcon(.search, size: .tiny)
-        searchBar.iconView.tintColor = searchBarIconColor
-        searchBar.clearButton.setIconColor(searchBarIconColor, for: .normal)
     }
 
     // MARK: - Presentation
@@ -239,7 +243,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             fetchMoreResults()
         }
 
-        searchBar.resignFirstResponder()
+        searchController.searchBar.resignFirstResponder()
     }
 
 }
@@ -330,18 +334,16 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
 
 }
 
-// MARK: - TextSearchInputViewDelegate
-
-extension GiphySearchViewController: TextSearchInputViewDelegate {
-
-    func searchView(_ searchView: TextSearchInputView, didChangeQueryTo query: String) {
-
-        searchTerm = searchBar.query
+extension GiphySearchViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else { return }
+        searchTerm = searchText
         performSearchAfter(delay: 0.3)
     }
+}
 
-    func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool {
-        return TextSearchQuery.isValid(query: searchBar.query)
+extension GiphySearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        performSearch()
     }
-
 }
