@@ -207,17 +207,17 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .receipts:
             if sections.isEmpty {
-                title = MessageDetails.receiptsTitle.capitalizingFirstCharacterOnly
+                title = MessageDetails.receiptsTitle
             } else {
-                title = MessageDetails.Tabs.seen(count).capitalizingFirstCharacterOnly
+                title = MessageDetails.Tabs.seen(count)
 
             }
 
         case .reactions:
             if sections.isEmpty {
-                title = MessageDetails.reactionsTitle.capitalizingFirstCharacterOnly
+                title = MessageDetails.reactionsTitle
             } else {
-                title = MessageDetails.Tabs.reactions(count).capitalizingFirstCharacterOnly
+                title = MessageDetails.Tabs.reactions(count)
             }
         }
     }
@@ -255,17 +255,17 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .reactions:
             noResultsView.label.accessibilityIdentifier = "placeholder.no_likes"
-            noResultsView.placeholderText = MessageDetails.emptyLikes.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.emptyLikes
             noResultsView.icon = .like
 
         case .receipts(enabled: true):
             noResultsView.label.accessibilityIdentifier = "placeholder.no_read_receipts"
-            noResultsView.placeholderText = MessageDetails.emptyReadReceipts.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.emptyReadReceipts
             noResultsView.icon = .eye
 
         case .receipts(enabled: false):
             noResultsView.label.accessibilityIdentifier = "placeholder.read_receipts_disabled"
-            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled
             noResultsView.icon = .eye
         }
     }

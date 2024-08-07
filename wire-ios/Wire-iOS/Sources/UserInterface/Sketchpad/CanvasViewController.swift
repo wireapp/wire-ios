@@ -96,7 +96,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         separatorLine.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         hintImageView.setIcon(.brush, size: 132, color: SemanticColors.Label.textSettingsPasswordPlaceholder)
         hintImageView.tintColor = SemanticColors.Label.textSettingsPasswordPlaceholder
-        hintLabel.text = L10n.Localizable.Sketchpad.initialHint.capitalizingFirstCharacterOnly
+        hintLabel.text = L10n.Localizable.Sketchpad.initialHint
         hintLabel.numberOfLines = 0
         hintLabel.font = FontSpec.normalRegularFont.font
         hintLabel.textAlignment = .center
