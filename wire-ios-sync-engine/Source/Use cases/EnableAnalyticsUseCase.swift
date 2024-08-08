@@ -37,10 +37,8 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
-    /// The analytics manager responsible for handling tracking operations.
     private let analyticsManager: AnalyticsManagerProtocol
 
-    /// The user profile for which analytics sharing will be enabled.
     private let analyticsUserProfile: AnalyticsUserProfile
 
     private let userSession: ZMUserSession

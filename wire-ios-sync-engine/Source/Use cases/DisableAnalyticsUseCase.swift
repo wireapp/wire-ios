@@ -31,7 +31,6 @@ public protocol DisableAnalyticsUseCaseProtocol {
 /// This struct is responsible for disabling analytics sharing.
 public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
-    /// The analytics manager responsible for handling tracking operations.
     private let analyticsManager: AnalyticsManagerProtocol
 
     /// Initializes a new instance of DisableAnalyticsUseCase.
