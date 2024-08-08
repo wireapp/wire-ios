@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
   "9.8.5": "https://github.com/wireapp/wire-avs/releases/download/9.8.5/avs.xcframework.zip",
+=======
+  "9.7.20": "https://github.com/wireapp/wire-avs/releases/download/9.7.20/avs.xcframework.zip",
+>>>>>>> e1eff962dd (feat: use `useSFTForOneToOneCalls` for 1:1 calls via SFT - WPB-7152 (#1742))
 }
