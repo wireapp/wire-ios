@@ -27,6 +27,7 @@ protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()
     func landingViewControllerDidChooseLogin()
     func landingViewControllerDidChooseEnterpriseLogin()
+    func landingViewControllerDidChooseSSOLogin() // to remove ?
     func landingViewControllerDidChooseInfoBackend()
 }
 

@@ -367,6 +367,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 activateNetworkSessions { [weak self] _ in
                     self?.startCompanyLoginFlowIfPossible(linkCode: code)
                 }
+            case .startSSOFlow:
+                startAutomaticSSOFlow()
 
             case .startLoginFlow(let request, let credentials):
                 startLoginFlow(request: request, proxyCredentials: credentials)
@@ -780,6 +782,11 @@ extension AuthenticationCoordinator {
         } else {
             companyLoginController?.displayCompanyLoginPrompt()
         }
+    }
+
+    /// Automatically start the SSO flow if possible
+    private func startAutomaticSSOFlow() {
+        companyLoginController?.startAutomaticSSOFlow()
     }
 
     /// Call this method when the corrdinated view controller appears, to detect the sso code and display it if needed.
