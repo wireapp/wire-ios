@@ -59,7 +59,6 @@ final class MessageToolboxView: UIView {
     /// The timer for ephemeral messages.
     private var timestampTimer: Timer?
 
-
     private let contentStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal

@@ -50,8 +50,8 @@ extension ZMConversation {
         return ConversationType.type(self)?.analyticsTypeString
     }
 
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to DM
-    // swiftlint:enable todo_requires_jira_link
     /// Whether the conversation includes at least 1 service user.
     var includesServiceUser: Bool {
         let participants = Array(localParticipants)
