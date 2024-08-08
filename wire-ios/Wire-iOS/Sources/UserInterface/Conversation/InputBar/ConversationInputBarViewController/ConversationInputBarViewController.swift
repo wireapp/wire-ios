@@ -825,9 +825,8 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
 
 extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: check this is still necessary on iOS 13?
-    // swiftlint:enable todo_requires_jira_link
     private func statusBarBlinksRedFix() {
         // Workaround http://stackoverflow.com/questions/26651355/
         do {

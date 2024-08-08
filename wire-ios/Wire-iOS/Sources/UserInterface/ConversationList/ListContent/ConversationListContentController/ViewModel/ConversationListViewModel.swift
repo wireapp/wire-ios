@@ -349,9 +349,8 @@ final class ConversationListViewModel: NSObject {
         return items[indexPath.item]
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
-    // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
         guard let item else { return nil }
 

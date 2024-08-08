@@ -80,9 +80,8 @@ final class FolderCreationController: UIViewController {
     }
 
     private func setupViews() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: if keyboard is open, it should scroll.
-        // swiftlint:enable todo_requires_jira_link
         let collectionView = UICollectionView(forGroupedSections: ())
 
         collectionView.contentInsetAdjustmentBehavior = .never
