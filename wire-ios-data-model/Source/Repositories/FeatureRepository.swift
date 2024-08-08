@@ -110,22 +110,51 @@ public class FeatureRepository: FeatureRepositoryInterface {
         guard let feature = Feature.fetch(name: .conferenceCalling, context: context) else {
             return .init()
         }
-        return .init(status: feature.status)
+
+        guard let featureConfig = feature.config else {
+            return .init(status: feature.status)
+        }
+        var config = Feature.ConferenceCalling.Config()
+        do {
+            config = try decoder.decode(Feature.ConferenceCalling.Config.self, from: featureConfig)
+        } catch {
+            logger.error("failed to decode Feature.ConferenceCalling.Config: \(error)")
+        }
+
+        return .init(status: feature.status, config: config)
     }
 
     public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
-        Feature.updateOrCreate(havingName: .conferenceCalling, in: context) {
-            $0.status = conferenceCalling.status
+        func notifyUser() {
+            guard
+                needsToNotifyUser(for: .conferenceCalling),
+                conferenceCalling.status == .enabled
+            else {
+                return
+            }
+
+            notifyChange(.conferenceCallingIsAvailable)
         }
 
-        guard
-            needsToNotifyUser(for: .conferenceCalling),
-            conferenceCalling.status == .enabled
-        else {
+        guard let featureConfig = conferenceCalling.config else {
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: context) {
+                $0.status = conferenceCalling.status
+            }
+            notifyUser()
             return
         }
 
-        notifyChange(.conferenceCallingIsAvailable)
+        do {
+            let config = try encoder.encode(featureConfig)
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: context) {
+                $0.status = conferenceCalling.status
+                $0.config = config
+            }
+
+            notifyUser()
+        } catch {
+            logger.error("failed to encoder Feature.ConferenceCalling.Config: \(error)")
+        }
     }
 
     // MARK: - File sharing
