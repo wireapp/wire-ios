@@ -327,8 +327,8 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItStoresConferenceCalling_V6() {
-        syncMOC.performGroupedBlock {
+    func testThatItStoresConferenceCalling_V6() async {
+        await syncMOC.perform {
             // Given
             let sut = FeatureRepository(context: self.syncMOC)
             let config = Feature.ConferenceCalling.Config(
@@ -359,8 +359,6 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             XCTAssertEqual(feature.status, .disabled)
             XCTAssertEqual(featureConfig, config)
         }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     // MARK: - Conversation guest links
