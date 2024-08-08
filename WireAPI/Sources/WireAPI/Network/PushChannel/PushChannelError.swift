@@ -16,37 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// Errors originating from `PushChannel`.
 
-protocol URLSessionProtocol {
+public enum PushChannelError: Error {
 
-    func data(
-        for request: URLRequest,
-        delegate: (any URLSessionTaskDelegate)?
-    ) async throws -> (Data, URLResponse)
+    /// An unexpected message was received.
 
-    func invalidateAndCancel()
-
-    func webSocket(with request: URLRequest) -> WebSocket
-
-}
-
-extension URLSessionProtocol {
-
-    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
-        try await data(
-            for: request,
-            delegate: nil
-        )
-    }
-
-}
-
-extension URLSession: URLSessionProtocol {
-
-    func webSocket(with request: URLRequest) -> WebSocket {
-        let connection = webSocketTask(with: request)
-        return WebSocket(connection: connection)
-    }
+    case receivedInvalidMessage
 
 }

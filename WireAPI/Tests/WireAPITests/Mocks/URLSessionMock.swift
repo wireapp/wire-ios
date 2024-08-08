@@ -38,4 +38,18 @@ final class URLSessionMock: URLSessionProtocol {
         return try await mockResponse(request)
     }
 
+    var webSocket: WebSocket?
+
+    func webSocket(with request: URLRequest) -> WebSocket {
+        guard let webSocket else {
+            fatalError("URLSessionMock has no webSocket")
+        }
+
+        return webSocket
+    }
+
+    func invalidateAndCancel() {
+        
+    }
+
 }

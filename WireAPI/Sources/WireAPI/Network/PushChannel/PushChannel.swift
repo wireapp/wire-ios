@@ -21,47 +21,51 @@ import Foundation
 final class PushChannel: NSObject, PushChannelProtocol {
 
     private let request: URLRequest
-    private let minTLSVersion: TLSVersion
+    private var urlSession: (any URLSessionProtocol)!
     private var webSocket: WebSocket?
-
-    private lazy var urlSession: URLSession = {
-        let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
-        let configuration = factory.makeWebSocketSessionConfiguration()
-        return URLSession(
-            configuration: configuration,
-            delegate: self,
-            delegateQueue: nil
-        )
-    }()
 
     init(
         request: URLRequest,
         minTLSVersion: TLSVersion
     ) {
         self.request = request
-        self.minTLSVersion = minTLSVersion
         super.init()
+        let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
+        let configuration = factory.makeWebSocketSessionConfiguration()
+        urlSession = URLSession(
+            configuration: configuration,
+            delegate: self,
+            delegateQueue: nil
+        )
+    }
+
+    init(
+        request: URLRequest,
+        urlSession: any URLSessionProtocol
+    ) {
+        self.request = request
+        self.urlSession = urlSession
     }
 
     deinit {
         urlSession.invalidateAndCancel()
     }
 
-    func open() async throws -> AsyncStream<UpdateEventEnvelope> {
+    func open() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
         print("opening new push channel")
-        let connection = urlSession.webSocketTask(with: request)
-        let webSocket = WebSocket(connection: connection)
+        let webSocket = urlSession.webSocket(with: request)
         var iterator = webSocket.makeAsyncIterator()
 
         self.webSocket = webSocket
         let decoder = JSONDecoder()
 
-        return AsyncStream { [weak self] in
+        return AsyncThrowingStream { [weak self] in
             do {
                 guard let message = try await iterator.next() else {
                     print("web socket stream has finished")
                     return nil
                 }
+
                 switch message {
                 case .data(let data):
                     print("received web socket data, decoding...")
@@ -70,20 +74,17 @@ final class PushChannel: NSObject, PushChannelProtocol {
 
                 case .string:
                     print("received web socket string, ignoring...")
-                    return nil
+                    throw PushChannelError.receivedInvalidMessage
 
                 @unknown default:
                     print("received web socket message, ignoring...")
-                    return nil
+                    throw PushChannelError.receivedInvalidMessage
                 }
             } catch {
                 print("failed to get next web socket message: \(error)")
                 self?.close()
-                return nil
+                throw error
             }
-        } onCancel: { [weak self] in
-            print("web socket did cancel")
-            self?.close()
         }
     }
 
