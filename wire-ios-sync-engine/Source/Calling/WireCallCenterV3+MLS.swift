@@ -96,12 +96,15 @@ extension WireCallCenterV3 {
     // Leaves the possibles subconversation for the mls conference.
 
     private func leaveStaleConferenceIfNeeded(conversationID: AVSIdentifier) {
-        guard let viewContext = uiMOC,
-              let conversation = ZMConversation.fetch(
+        guard
+            let viewContext = uiMOC,
+            let conversation = ZMConversation.fetch(
                 with: conversationID.identifier,
                 domain: conversationID.domain,
-                in: viewContext),
-              conversation.conversationType == .group else {
+                in: viewContext
+            ),
+            conversation.conversationType == .group
+        else {
             return
         }
 
