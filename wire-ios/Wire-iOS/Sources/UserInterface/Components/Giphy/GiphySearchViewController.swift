@@ -176,14 +176,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         edgesForExtendedLayout = []
     }
 
-    private func setupNavigationItem() {
-        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.navigationController?.dismiss(animated: true, completion: nil)
-        }, accessibilityLabel: L10n.Localizable.General.close)
-
-        navigationItem.rightBarButtonItem = closeItem
-    }
-
     private func createConstraints() {
         noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false

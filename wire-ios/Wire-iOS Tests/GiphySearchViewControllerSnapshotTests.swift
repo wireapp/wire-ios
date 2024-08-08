@@ -24,21 +24,21 @@ import Ziphy
 @testable import Wire
 
 final class GiphySearchViewControllerSnapshotTests: XCTestCase {
-
+    
     // MARK: - Properties
-
+    
     private var snapshotHelper: SnapshotHelper!
     private var sut: GiphySearchViewController!
-
+    
     private var mockConversation: MockConversation!
     private var mockNavigationController: UINavigationController!
-
+    
     private var client: ZiphyClient!
     private var requester: MockURLSession!
     private var resultsController: ZiphySearchResultsController!
-
+    
     // MARK: - setUp
-
+    
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
@@ -50,22 +50,22 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
             downloadSession: requester
         )
         resultsController = ZiphySearchResultsController(client: client, pageSize: 5)
-
+        
         let searchTerm: String = "apple"
         sut = GiphySearchViewController(
             searchTerm: searchTerm,
             conversation: (mockConversation as Any) as! ZMConversation,
             searchResultsController: resultsController
         )
-
+        
         mockNavigationController = UINavigationController(rootViewController: sut)
         mockNavigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
-
+        
         sut.collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
-
+    
     // MARK: - tearDown
-
+    
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
@@ -74,13 +74,14 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
         client = nil
         requester = nil
         resultsController = nil
-
+        
         super.tearDown()
     }
-
+    
     // MARK: - Snapshot Tests
-
+    
     func testEmptySearchScreenWithKeyword() {
         snapshotHelper.verify(matching: mockNavigationController.view)
     }
+    
 }
