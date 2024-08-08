@@ -19,15 +19,14 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
-final class StartUIViewController: UIViewController, SpinnerCapable {
+final class StartUIViewController: UIViewController {
 
     // MARK: - Properties
-
-    var dismissSpinner: SpinnerCompletion?
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
 
@@ -51,10 +50,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
 
     let isFederationEnabled: Bool
 
-    let quickActionsBar: StartUIInviteActionBar = StartUIInviteActionBar()
+    let quickActionsBar = StartUIInviteActionBar()
 
     let profilePresenter: ProfilePresenter
     private var emptyResultView: EmptySearchResultsView!
+
+    private(set) var activityIndicator: BlockingActivityIndicator!
 
     let backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -107,10 +108,12 @@ final class StartUIViewController: UIViewController, SpinnerCapable {
         fatalError("init(coder:) is not supported")
     }
 
-    // MARK: - Override methods
+    // MARK: - Life cycle methods
 
-    override func loadView() {
-        view = StartUIView(frame: CGRect.zero)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
     }
 
     override func viewWillAppear(_ animated: Bool) {

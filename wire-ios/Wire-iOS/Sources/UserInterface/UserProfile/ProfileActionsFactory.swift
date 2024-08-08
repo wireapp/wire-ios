@@ -19,6 +19,7 @@
 import Foundation
 import WireCommonComponents
 import WireDataModel
+import WireDesign
 import WireSyncEngine
 
 /**

@@ -25,11 +25,10 @@ import WireSyncEngine
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
 
-final class ConversationListContentController: UICollectionViewController, PopoverPresenter {
+final class ConversationListContentController: UICollectionViewController {
 
     private let mainCoordinator: MainCoordinating
-    weak var presentedPopover: UIPopoverPresentationController?
-    weak var popoverPointToView: UIView?
+
     private(set) weak var zClientViewController: ZClientViewController?
 
     weak var contentDelegate: ConversationListContentDelegate?
@@ -267,13 +266,25 @@ final class ConversationListContentController: UICollectionViewController, Popov
                 return nil
         }
 
+        let previewProvider: UIContextMenuContentPreviewProvider = {
+            ConversationPreviewViewController(
+                conversation: conversation,
+                presentingViewController: self,
+                sourceView: collectionView.cellForItem(at: indexPath)!,
+                userSession: self.userSession,
+                mainCoordinator: self.mainCoordinator
+            )
+        }
+
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
                 UIAction(title: action.title, image: nil) { _ in
-                    let actionController = ConversationActionController(conversation: conversation,
-                                                                        target: self,
-                                                                        sourceView: collectionView.cellForItem(at: indexPath), userSession: self.userSession)
-
+                    let actionController = ConversationActionController(
+                        conversation: conversation,
+                        target: self,
+                        sourceView: collectionView.cellForItem(at: indexPath)!,
+                        userSession: self.userSession
+                    )
                     actionController.handleAction(action)
                 }
             }
@@ -281,9 +292,11 @@ final class ConversationListContentController: UICollectionViewController, Popov
             return UIMenu(title: conversation.displayNameWithFallback, children: actions)
         }
 
-        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
-                                          previewProvider: .none,
-                                          actionProvider: actionProvider)
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSIndexPath,
+            previewProvider: .none,
+            actionProvider: actionProvider
+        )
     }
 
     // MARK: - UICollectionViewDataSource
@@ -414,6 +427,40 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         setData: (C?) -> Void
     ) {
         collectionView.reload(using: stagedChangeset, interrupt: interrupt, setData: setData)
+    }
+}
+
+// MARK: iOS 12- peek pop
+extension ConversationListContentController: UIViewControllerPreviewingDelegate {
+
+    @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        guard let previewViewController = viewControllerToCommit as? ConversationPreviewViewController else { return }
+
+        openConversation(conversationListItem: previewViewController.conversation)
+    }
+
+    @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        guard let indexPath = collectionView.indexPathForItem(at: location),
+            let layoutAttributes = collectionView.layoutAttributesForItem(at: indexPath)
+            else {
+                return nil
+        }
+
+        guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
+            return nil
+        }
+
+        previewingContext.sourceRect = layoutAttributes.frame
+
+        return ConversationPreviewViewController(
+            conversation: conversation,
+            presentingViewController: self,
+            sourceView: collectionView.cellForItem(at: indexPath)!,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 }
 

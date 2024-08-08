@@ -20,8 +20,7 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+class SettingsBaseTableViewController: UIViewController {
 
     let useTypeIntrinsicSizeTableView: Bool
     var tableView: UITableView
@@ -206,7 +205,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupTableView()
         setupNavigationBarAccessibility()
     }
@@ -291,8 +289,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let sectionDescriptor = sections[indexPath.section]
         let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath)!
 
-        property.select(SettingsPropertyValue.none)
+        property.select(SettingsPropertyValue.none, sender: cell)
         tableView.deselectRow(at: indexPath, animated: false)
     }
 

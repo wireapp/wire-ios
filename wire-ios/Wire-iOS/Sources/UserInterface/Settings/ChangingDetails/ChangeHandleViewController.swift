@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 fileprivate extension UIView {
@@ -211,6 +212,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var popOnSuccess = true
     private var federationEnabled: Bool
 
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
     convenience init(
         useTypeIntrinsicSizeTableView: Bool
     ) {
@@ -275,20 +278,22 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func setupNavigationBar() {
-        setupNavigationBarTitle(HandleChange.title.capitalized)
-        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(saveButtonTapped))
+        setupNavigationBarTitle(HandleChange.title)
+        let saveButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: HandleChange.save,
+            action: UIAction { [weak self] _ in
+                self?.saveButtonTapped()
+            })
+
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
 
     }
 
-    @objc func saveButtonTapped(sender: UIBarButtonItem) {
+    func saveButtonTapped() {
         guard let handleToSet = state.newHandle else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
-        isLoadingViewVisible = true
+        activityIndicator.start()
     }
 
     fileprivate var attributedFooterTitle: NSAttributedString? {
@@ -396,7 +401,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 
     func didSetHandle() {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         state.availability = .taken
         guard popOnSuccess else { return }
         _ = navigationController?.popViewController(animated: true)
@@ -404,13 +409,13 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 
     func didFailToSetHandle() {
         presentFailureAlert()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     func didFailToSetHandleBecauseExisting() {
         state.availability = .taken
         updateUI()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     private func presentFailureAlert() {

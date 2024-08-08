@@ -28,6 +28,8 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
+    var userProfile: UserProfile
+
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
@@ -79,7 +81,6 @@ final class UserSessionMock: UserSession {
     var mockConversationList: ConversationList?
 
     var searchUsersCache: SearchUsersCache
-    var contextProvider: ContextProvider?
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
@@ -115,6 +116,7 @@ final class UserSessionMock: UserSession {
         self.editableSelfUser = editableSelfUser
 
         searchUsersCache = .init()
+        userProfile = MockUserProfile()
     }
 
     var lock: SessionLock? = .screen
@@ -357,15 +359,24 @@ final class UserSessionMock: UserSession {
     var notificationContext: any NotificationContext {
         viewContext.notificationContext
     }
+
+    // MARK: - Context Provider
+
+    var coreDataStack: CoreDataStack?
+
+    var contextProvider: any ContextProvider {
+        coreDataStack ?? MockContextProvider()
+    }
+
 }
 
 // MARK: - UserSessionMock + ContextProvider
 
 extension UserSessionMock: ContextProvider {
 
-    var account: Account { contextProvider!.account }
-    var viewContext: NSManagedObjectContext { contextProvider!.viewContext }
-    var syncContext: NSManagedObjectContext { contextProvider!.syncContext }
-    var searchContext: NSManagedObjectContext { contextProvider!.searchContext }
-    var eventContext: NSManagedObjectContext { contextProvider!.eventContext }
+    var account: Account { contextProvider.account }
+    var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 }

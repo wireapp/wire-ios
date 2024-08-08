@@ -120,14 +120,10 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     func configureNavigationItems() {
         let undoImage = StyleKitIcon.undo.makeImage(size: .tiny, color: .black)
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: .black)
 
-        let closeButtonItem = UIBarButtonItem(image: closeImage,
-                                              style: .plain,
-                                              target: self,
-                                              action: #selector(CanvasViewController.close))
-        closeButtonItem.accessibilityIdentifier = "closeButton"
-        closeButtonItem.accessibilityLabel = L10n.Accessibility.Sketch.CloseButton.description
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.dismiss(animated: true, completion: nil)
+        }, accessibilityLabel: L10n.Accessibility.Sketch.CloseButton.description)
 
         let undoButtonItem = UIBarButtonItem(image: undoImage,
                                              style: .plain,
@@ -138,7 +134,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         undoButtonItem.accessibilityLabel = L10n.Accessibility.Sketch.UndoButton.description
 
         navigationItem.leftBarButtonItem = undoButtonItem
-        navigationItem.rightBarButtonItem = closeButtonItem
     }
 
     func configureButtons() {
@@ -262,10 +257,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         if let image = canvas.trimmedImage {
             delegate?.canvasViewController(self, didExportImage: image)
         }
-    }
-
-    @objc func close() {
-        self.dismiss(animated: true, completion: nil)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

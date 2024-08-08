@@ -18,11 +18,13 @@
 
 public typealias LogAttributes = [LogAttributesKey: Encodable]
 
-public enum LogAttributesKey: String {
+public enum LogAttributesKey: String, Comparable {
+
     case selfClientId = "self_client_id"
     case selfUserId = "self_user_id"
     case recipientID = "recipient_id"
     case eventId = "event_id"
+    case eventEnvelopeID = "event_envelope_id"
     case senderUserId = "sender_user_id"
     case nonce = "message_nonce"
     case messageType = "message_type"
@@ -32,6 +34,10 @@ public enum LogAttributesKey: String {
     case eventSource = "event_source"
     case `public`
     case tag
+
+    public static func < (lhs: LogAttributesKey, rhs: LogAttributesKey) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
 }
 
 public extension LogAttributes {

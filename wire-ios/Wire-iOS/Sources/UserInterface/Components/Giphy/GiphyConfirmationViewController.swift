@@ -59,11 +59,11 @@ final class GiphyConfirmationViewController: UIViewController {
             imagePreview.animatedImage = previewImage
         }
 
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultBlack)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: closeImage,
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(GiphySearchViewController.onDismiss))
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true, completion: nil)
+        }, accessibilityLabel: L10n.Localizable.General.close)
+
+        navigationItem.rightBarButtonItem = closeItem
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }

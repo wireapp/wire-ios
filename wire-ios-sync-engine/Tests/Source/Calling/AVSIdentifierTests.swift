@@ -19,14 +19,22 @@
 import Foundation
 @testable import WireSyncEngine
 import XCTest
+@_spi(MockBackendInfo)
+import WireTransport
 
 class AVSIdentifierTests: XCTestCase {
 
     let uuid = UUID()
     let domain = "wire.com"
 
-    override func tearDown() {
+    override func setUp() {
+        super.setUp()
+        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = false
+    }
+
+    override func tearDown() {
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 

@@ -21,25 +21,22 @@ import WireSyncEngine
 
 extension ConversationInputBarViewController {
     @objc
-    func locationButtonPressed(_ sender: IconButton?) {
+    func locationButtonPressed(_ sender: IconButton) {
         let checker = PrivacyWarningChecker(conversation: conversation) {
             self.showLocationSelection(from: sender)
         }
         checker.performAction()
     }
 
-    private func showLocationSelection(from sender: IconButton?) {
+    private func showLocationSelection(from sender: IconButton) {
         guard let parentViewController = self.parent else { return }
 
         let locationSelectionViewController = LocationSelectionViewController()
         locationSelectionViewController.modalPresentationStyle = .popover
 
-        if let popover = locationSelectionViewController.popoverPresentationController,
-           let imageView = sender?.imageView {
-
-            popover.config(from: self,
-                           pointToView: imageView,
-                           sourceView: parentViewController.view)
+        if let popover = locationSelectionViewController.popoverPresentationController {
+            popover.sourceView = sender.superview!
+            popover.sourceRect = sender.frame.insetBy(dx: -4, dy: -4)
         }
 
         locationSelectionViewController.title = conversation.displayName

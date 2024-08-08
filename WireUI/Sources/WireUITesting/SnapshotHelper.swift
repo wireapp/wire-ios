@@ -157,7 +157,7 @@ public struct SnapshotHelper {
         line: UInt = #line
     ) {
         let failure = verifySnapshot(
-            matching: value,
+            of: value,
             as: .image(
                 perceptualPrecision: perceptualPrecision,
                 layout: layout,
@@ -195,7 +195,7 @@ public struct SnapshotHelper {
         let config = size.map { ViewImageConfig(safeArea: UIEdgeInsets.zero, size: $0, traits: traits) }
 
         let failure = verifySnapshot(
-            matching: value,
+            of: value,
             as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
             named: name,
             record: recording,
@@ -225,8 +225,116 @@ public struct SnapshotHelper {
         line: UInt = #line
     ) {
         let failure = verifySnapshot(
-            matching: value,
+            of: value,
             as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            named: name,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
+
+        XCTAssertNil(failure, file: file, line: line)
+    }
+
+    /// Shared configuration for phone sizes
+    private static let phoneConfigs: [(ViewImageConfig, String)] = [
+        (.iPhoneSe(.portrait), "iPhone-4_0_Inch"),
+        (.iPhone8(.portrait), "iPhone-4_7_Inch"),
+        (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
+        (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
+        (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch")
+    ]
+
+    /// Shared configuration for iPad sizes
+    private static let iPadConfigs: [(ViewImageConfig, String)] = [
+        (.iPadMini(.landscape), "iPad-landscape"),
+        (.iPadMini(.portrait), "iPad-portrait")
+    ]
+
+    ///    Verifiy a`UIViewController`, in all device sizes
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIViewController` to test.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    public func verifyInAllDeviceSizes(
+        matching value: UIViewController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let allDevices = SnapshotHelper.phoneConfigs + SnapshotHelper.iPadConfigs
+
+        for (config, name) in allDevices {
+            let failure = verifySnapshot(
+                of: value,
+                as: .image(on: config, perceptualPrecision: perceptualPrecision),
+                named: name,
+                snapshotDirectory: snapshotDirectory(file: file),
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+            XCTAssertNil(failure, file: file, line: line)
+        }
+    }
+
+    ///    Verifiy a`UIViewController`, in all phone sizes
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIViewController` to test.
+    ///        - orientation: The orientation to use for the test. Default is portrait.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    public func verifyInAllIPhoneSizes(
+        matching value: UIViewController,
+        orientation: ViewImageConfig.Orientation = .portrait,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        for (config, name) in SnapshotHelper.phoneConfigs {
+            let failure = verifySnapshot(
+                of: value,
+                as: .image(
+                    on: config,
+                    perceptualPrecision: perceptualPrecision
+                ),
+                named: name, snapshotDirectory: snapshotDirectory(file: file),
+                file: file,
+                testName: testName,
+                line: line
+            )
+
+            XCTAssertNil(failure, file: file, line: line)
+        }
+    }
+
+    ///    Verifiy a`UIImage`.
+    ///
+    ///     - Parameters:
+    ///        - value: The `UIImage` to test.
+    ///        - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///        - file: The invoking file name.
+    ///        - testName: The name of the reference image.
+    ///        - line: The invoking line number.
+
+    public func verify(
+        matching value: UIImage,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let failure = verifySnapshot(
+            of: value,
+            as: .image,
             named: name,
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,
@@ -268,7 +376,7 @@ public struct SnapshotHelper {
             "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
         ].forEach { name, contentSize in
             let failure = verifySnapshot(
-                matching: value,
+                of: value,
                 as: .image(
                     traits: .init(preferredContentSizeCategory: contentSize)
                 ),

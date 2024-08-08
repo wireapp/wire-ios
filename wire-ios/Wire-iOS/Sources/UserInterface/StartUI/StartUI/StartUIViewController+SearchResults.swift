@@ -17,10 +17,9 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 import WireSystem
-
-final class StartUIView: UIView { }
 
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
@@ -103,11 +102,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
-        if self.traitCollection.horizontalSizeClass == .compact {
-            self.navigationController?.pushViewController(controller, animated: true)
-        } else {
-            self.navigationController?.pushViewController(controller, animated: true)
-        }
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 
@@ -154,7 +149,7 @@ extension StartUIViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URL.wr_searchSupport.open()
+            WireURLs.shared.searchSupport.open()
         }
     }
 }

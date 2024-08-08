@@ -43,7 +43,6 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
@@ -51,7 +50,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture = .init()
 
         userSession = .init()
-        userSession.contextProvider = coreDataFixture.coreDataStack
+        userSession.coreDataStack = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
