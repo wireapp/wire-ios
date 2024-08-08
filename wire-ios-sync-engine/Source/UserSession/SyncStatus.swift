@@ -20,7 +20,9 @@ private let zmLog = ZMSLog(tag: "SyncStatus")
 
 extension Notification.Name {
 
+    public static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
     public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
+
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
 
 }
@@ -289,8 +291,8 @@ extension SyncStatus {
                                  message: message)
         do {
             let data = try JSONEncoder().encode(info)
-            let jsonString = String(data: data, encoding: .utf8)
-            let message = "SYNC_STATUS: \(jsonString ?? self.description)"
+            let jsonString = String(decoding: data, as: UTF8.self)
+            let message = "SYNC_STATUS: \(jsonString)"
             WireLogger.sync.info(message, attributes: .safePublic)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"

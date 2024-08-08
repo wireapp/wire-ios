@@ -100,261 +100,12 @@
     XCTAssertEqual(selfUser.zmAccentColor, accentColor);
 }
 
-@end
-
-
-@implementation UserProfileTests (ChangeEmailAndPhoneAtSecondLogin)
-
-- (void)testThatItCanSetsThePhoneAtTheSecondLogin
+- (BOOL)loginAndRemoveEmail
 {
-    // given
-    NSString *phone = @"+9912312452";
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail
+                                                                          password:IntegrationTest.SelfUserPassword];
+    BOOL success = [self loginWithCredentials:credentials ignoreAuthenticationFailures:NO];
 
-    XCTAssertTrue([self login]);
-    [self.mockTransportSession resetReceivedRequests];
-
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.phoneNumber, @"");
-    
-    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserving)];
-    id userObserverToken = [UserChangeInfo addObserver:userObserver forUser:selfUser inManagedObjectContext:self.userSession.managedObjectContext];
-    
-    id editableUserObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
-    id editableUserObserverToken = [self.userSession.userProfile addObserver:editableUserObserver];
-
-    [(id<ZMUserObserving>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the phone number was set
-
-    // expect
-    XCTestExpectation *phoneNumberVerificationCodeExpectation = [self customExpectationWithDescription:@"phoneNumberVerificationCodeExpectation"];
-    [[[editableUserObserver expect] andDo:^(NSInvocation *inv) {
-        NOT_USED(inv);
-        [phoneNumberVerificationCodeExpectation fulfill];
-    }] phoneNumberVerificationCodeRequestDidSucceed];
-    
-    // when
-    [self.userSession.userProfile requestPhoneVerificationCodeWithPhoneNumber:phone]; // <- STEP 1
-    
-    if(![self waitForCustomExpectationsWithTimeout:0.5]) {
-        XCTFail(@"phoneNumberVerificationCodeExpectation");
-        return;
-    }
-    
-    // and when
-    [self.userSession.userProfile requestPhoneNumberChangeWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:self.mockTransportSession.phoneVerificationCodeForUpdatingProfile]];  // <- STEP 2
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
-    XCTAssertEqualObjects(selfUser.phoneNumber, phone);
-    
-    // after
-    editableUserObserverToken = nil;
-    userObserverToken = nil;
-}
-
-- (void)testThatItIsNotifiedWhenItConfirmsWithTheWrongCode
-{
-    // given
-    NSString *phone = @"+9912312452";
-    
-    XCTAssertTrue([self login]);
-    [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.phoneNumber, @"");
-    
-    id userObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
-    id token = [self.userSession.userProfile addObserver:userObserver];
-    
-    //expect
-    [[userObserver expect] phoneNumberVerificationCodeRequestDidSucceed];
-    [[userObserver expect] phoneNumberChangeDidFail:OCMOCK_ANY];
-    
-    // when
-    [self.userSession.userProfile requestPhoneVerificationCodeWithPhoneNumber:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self.userSession.userProfile requestPhoneNumberChangeWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:self.mockTransportSession.invalidPhoneVerificationCode]];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
-    
-    // after
-    token = nil;
-}
-
-- (void)testThatItIsNotifiedWhenItFailsToRequestAVerificationCode
-{
-    // given
-    NSString *phone = @"+9912312452";
-    
-    XCTAssertTrue([self login]);
-    [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.phoneNumber, @"");
-    
-    id userObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
-    id token = [self.userSession.userProfile addObserver:userObserver];
-    
-    // expect
-    [[userObserver expect] phoneNumberVerificationCodeRequestDidFail:[OCMArg isNotNil]];
-
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        if([request.path isEqualToString:@"/self/phone"]) {
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-    
-    // when
-    [self.userSession.userProfile requestPhoneVerificationCodeWithPhoneNumber:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-    
-    // after
-    token = nil;
-}
-
-
-- (void)testThatItIsNotifiedWhenItFailsToRequestAVerificationCodeBecausePhoneNumberIsInUse
-{
-    // given
-    NSString *phone = @"+9912312452";
-    
-    XCTAssertTrue([self login]);
-    [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.phoneNumber, @"");
-    
-    id userObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
-    id token = [self.userSession.userProfile addObserver:userObserver];
-    
-    // expect
-    [[userObserver expect] phoneNumberVerificationCodeRequestDidFail:[OCMArg checkWithBlock:^BOOL(NSError *error) {
-        return error.code == ZMUserSessionPhoneNumberIsAlreadyRegistered && [error.domain isEqualToString:NSError.ZMUserSessionErrorDomain];
-    }]];
-    
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        if([request.path isEqualToString:@"/self/phone"]) {
-            return [ZMTransportResponse responseWithPayload:@{@"label":@"key-exists"} HTTPStatus:409 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-    
-    // when
-    [self.userSession.userProfile requestPhoneVerificationCodeWithPhoneNumber:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-    
-    // after
-    token = nil;
-}
-
-
-- (void)testThatItGetsInvalidPhoneNumberErrorWhenItFailsToRequestAVerificationCodeWithBadRequestResponse
-{
-    // given
-    NSString *phone = @"+9912312452";
-    
-    XCTAssertTrue([self login]);
-    [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.phoneNumber, @"");
-    
-    id userObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
-    id token = [self.userSession.userProfile addObserver:userObserver];
-    
-    // expect
-    [[userObserver expect] phoneNumberVerificationCodeRequestDidFail:[OCMArg isNotNil]];
-    
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        if([request.path isEqualToString:@"/self/phone"]) {
-            return [ZMTransportResponse responseWithPayload:@{@"label": @"bad-request"} HTTPStatus:400 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-    
-    // when
-    [self.userSession.userProfile requestPhoneVerificationCodeWithPhoneNumber:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-
-    // after
-    token = nil;
-}
-
-- (void)testThatItGetsInvalidPhoneNumberErrorWhenItFailsToRequestAVerificationCodeWithInvalidPhoneResponse
-{
-    // given
-    NSString *phone = @"+9912312452";
-    
-    XCTAssertTrue([self login]);
-    [self.mockTransportSession resetReceivedRequests];
-    
-    XCTAssertFalse(self.userSession.registeredOnThisDevice);
-    
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.phoneNumber, @"");
-    
-    id userObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
-    id token = [self.userSession.userProfile addObserver:userObserver];
-    
-    // expect
-    [[userObserver expect] phoneNumberVerificationCodeRequestDidFail:[OCMArg isNotNil]];
-    
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        if([request.path isEqualToString:@"/self/phone"]) {
-            return [ZMTransportResponse responseWithPayload:@{@"label": @"invalid-phone"} HTTPStatus:400 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-    
-    // when
-    [self.userSession.userProfile requestPhoneVerificationCodeWithPhoneNumber:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-    
-    // after
-    token = nil;
-}
-
-- (BOOL)loginWithPhoneAndRemoveEmail
-{
-    NSString *phone = @"+99123456789";
-    NSString *code = self.mockTransportSession.phoneVerificationCodeForLogin;
-    
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        self.selfUser.phone = phone;
-        [session whiteListPhone:phone];
-    }];
-    
-    BOOL success = [self loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code] ignoreAuthenticationFailures:NO];
-    
     [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
         NOT_USED(session);
         self.selfUser.email = nil;
@@ -370,8 +121,8 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -410,8 +161,8 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -444,8 +195,8 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -490,9 +241,9 @@
 - (void)testThatItNotifiesWhenFailingToSetTheEmailBecauseOfGenericError
 {
     // given
-    NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:@"foobar@geraterwerwer.dsf.example.com"
+                                                                          password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -508,8 +259,8 @@
         }
         return nil;
     };
-    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionUnknownError userInfo:nil]];
-    
+    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeUnknownError userInfo:nil]];
+
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     WaitForAllGroupsToBeEmpty(5);
@@ -526,8 +277,8 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -543,8 +294,8 @@
         }
         return nil;
     };
-    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmail userInfo:nil]];
-    
+    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeInvalidEmail userInfo:nil]];
+
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     WaitForAllGroupsToBeEmpty(5);
@@ -561,8 +312,8 @@
 {
     // given
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
-    XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
+    XCTAssert([self loginAndRemoveEmail]);
+    UserEmailCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
@@ -578,8 +329,8 @@
         }
         return nil;
     };
-    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil]];
-    
+    [[editiongObserver expect] emailUpdateDidFail:[NSError userSessionErrorWithCode:ZMUserSessionErrorCodeEmailIsAlreadyRegistered userInfo:nil]];
+
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -589,8 +340,6 @@
     
     // after
     token = nil;
-    
 }
 
 @end
-

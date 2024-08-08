@@ -16,22 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
 
+@testable import Wire
+
 final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
+
+    // MARK: - Properties
+
+    private var sut: ClientListViewController!
+    private var mockUser: MockUserType!
+    private var client: UserClient!
+    private var selfClient: UserClient!
+    private weak var clientRemovalObserver: ClientRemovalObserver!
+    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
-    var sut: ClientListViewController!
-    var mockUser: MockUserType!
-    var client: UserClient!
-    var selfClient: UserClient!
-
-    weak var clientRemovalObserver: ClientRemovalObserver!
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
 
         mockUser = SwiftMockLoader.mockUsers().first
@@ -39,7 +45,10 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         client = mockUserClient()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockUser = nil
         client = nil
@@ -50,28 +59,34 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         super.tearDown()
     }
 
+    // MARK: - Helper method
+
     /// Prepare SUT for snapshot tests
     ///
     /// - Parameters:
-    /// - userInterfaceStyle: the color for UIUserInterfaceStyle
     /// - numberOfClients: number of clients other than self device. Default: display 3 cells, to show footer in same screen
-    func prepareSut(
-        userInterfaceStyle: UIUserInterfaceStyle = .light,
-        numberOfClients: Int = 3
-    ) {
-        sut = ClientListViewController(clientsList: Array(repeating: mockUserClient(), count: numberOfClients),
-                                       selfClient: selfClient,
-                                       credentials: nil,
-                                       detailedView: true,
-                                       showTemporary: true)
-        sut.isLoadingViewVisible = false
-        sut.overrideUserInterfaceStyle = userInterfaceStyle
+    @MainActor
+    func prepareSut(numberOfClients: Int = 3) {
+        sut = ClientListViewController(
+            clientsList: Array(
+                repeating: mockUserClient(),
+                count: numberOfClients
+            ),
+            selfClient: selfClient,
+            credentials: nil,
+            detailedView: true,
+            showTemporary: true
+        )
+        sut.activityIndicator.stop()
     }
 
+    // MARK: - Unit Tests
+
+    @MainActor
     func testThatObserverIsNonRetained() {
         prepareSut()
 
-        let emailCredentials = ZMEmailCredentials(email: "foo@bar.com", password: "12345678")
+        let emailCredentials = UserEmailCredentials(email: "foo@bar.com", password: "12345678")
         sut.deleteUserClient(client, credentials: emailCredentials)
 
         clientRemovalObserver = sut.removalObserver
@@ -81,47 +96,58 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
         XCTAssertNil(clientRemovalObserver)
     }
 
+    // MARK: - Snapshot Tests
+
+    @MainActor
     func testForLightTheme() {
         prepareSut()
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
+    @MainActor
     func testForDarkTheme() {
-        prepareSut(userInterfaceStyle: .dark)
-        verify(matching: sut)
+        prepareSut()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
+    @MainActor
     func testForLightThemeWrappedInNavigationController() {
         prepareSut()
         let navWrapperController = sut.wrapInNavigationController()
         navWrapperController.navigationBar.tintColor = UIColor.accent()
 
-        verify(matching: navWrapperController)
+        snapshotHelper.verify(matching: navWrapperController)
     }
 
+    @MainActor
     func testForOneDeviceWithNoEditButton() {
         prepareSut(numberOfClients: 0)
         let navWrapperController = sut.wrapInNavigationController()
 
-        verify(matching: navWrapperController)
+        snapshotHelper.verify(matching: navWrapperController)
     }
 
+    @MainActor
     func testForOneDeviceWithBackButtonAndNoEditButton() {
         prepareSut(numberOfClients: 0)
         let mockRootViewController = UIViewController()
         let navWrapperController = mockRootViewController.wrapInNavigationController()
         navWrapperController.pushViewController(sut, animated: false)
 
-        verify(matching: navWrapperController)
+        snapshotHelper.verify(matching: navWrapperController)
     }
 
+    @MainActor
     func testForEditMode() {
         prepareSut()
         let navWrapperController = sut.wrapInNavigationController()
         navWrapperController.navigationBar.tintColor = UIColor.accent()
-        let editButton = sut.navigationItem.rightBarButtonItem!
-        UIApplication.shared.sendAction(editButton.action!, to: editButton.target, from: nil, for: nil)
 
-        verify(matching: navWrapperController)
+        sut.setEditingState(true)
+
+        snapshotHelper.verify(matching: navWrapperController)
     }
 }

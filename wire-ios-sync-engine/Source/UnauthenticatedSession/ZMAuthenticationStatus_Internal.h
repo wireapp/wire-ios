@@ -19,6 +19,7 @@
 #import <WireSyncEngine/WireSyncEngine.h>
 
 @class ZMCompleteRegistrationUser;
+@class UserCredentials;
 
 @interface ZMAuthenticationStatus () <ZMTimerClient>
 
@@ -26,8 +27,8 @@
 @property (nonatomic, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, copy) NSString *loginEmailThatNeedsAValidationCode;
 
-@property (nonatomic) ZMCredentials *internalLoginCredentials;
-@property (nonatomic) ZMPhoneCredentials *registrationPhoneValidationCredentials;
+@property (nonatomic) UserCredentials *internalLoginCredentials;
+@property (nonatomic) UserPhoneCredentials *registrationPhoneValidationCredentials;
 @property (nonatomic) ZMCompleteRegistrationUser *internalRegistrationUser;
 
 @property (nonatomic) BOOL isWaitingForEmailVerification;
@@ -40,8 +41,7 @@
 @property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) ZMTimer *loginTimer;
 
-- (void)resetLoginAndRegistrationStatus;
-- (void)setLoginCredentials:(ZMCredentials *)credentials;
+- (void)setLoginCredentials:(UserCredentials *)credentials;
 
 @end
 

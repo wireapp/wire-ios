@@ -19,6 +19,7 @@
 import Foundation
 import UniformTypeIdentifiers
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol BackupRestoreControllerDelegate: AnyObject {
@@ -39,24 +40,37 @@ final class BackupRestoreController: NSObject {
 
     static let WireBackupUTIs = ["com.wire.backup-ios-underscore", "com.wire.backup-ios-hyphen"]
 
-    let target: SpinnerCapableViewController
     weak var delegate: BackupRestoreControllerDelegate?
-    var temporaryFilesService: TemporaryFileServiceInterface
+
+    private let target: UIViewController
+    private let activityIndicator: BlockingActivityIndicator
+    private var temporaryFilesService: TemporaryFileServiceInterface
 
     // MARK: - Initialization
 
-    init(target: SpinnerCapableViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
+    init(target: UIViewController, temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()) {
         self.target = target
         self.temporaryFilesService = temporaryFilesService
+        activityIndicator = .init(view: target.view)
         super.init()
     }
 
     // MARK: - Flow
 
     func startBackupFlow() {
-        let controller = UIAlertController.historyImportWarning { [showFilePicker] in
-            showFilePicker()
-        }
+        let controller = UIAlertController(
+            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.title,
+            message: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.message,
+            preferredStyle: .alert
+        )
+        controller.addAction(.cancel())
+        controller.addAction(UIAlertAction(
+            title: L10n.Localizable.Registration.NoHistory.RestoreBackupWarning.proceed,
+            style: .default,
+            handler: { [showFilePicker] _ in
+                showFilePicker()
+            }
+        ))
 
         target.present(controller, animated: true)
     }
@@ -92,7 +106,7 @@ final class BackupRestoreController: NSObject {
               let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "restore backup") else {
             return
         }
-        target.isLoadingViewVisible = true
+        Task { @MainActor in activityIndicator.start() }
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
             guard let self else {
@@ -105,7 +119,7 @@ final class BackupRestoreController: NSObject {
             case .failure(SessionManager.BackupError.decryptionError):
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
-                self.target.isLoadingViewVisible = false
+                Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 self.showWrongPasswordAlert { _ in
                     self.restore(with: url)
@@ -116,7 +130,7 @@ final class BackupRestoreController: NSObject {
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
-                self.target.isLoadingViewVisible = false
+                Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
@@ -131,7 +145,7 @@ final class BackupRestoreController: NSObject {
     // MARK: - Alerts
 
     private func requestPassword(completion: @escaping (String) -> Void) {
-        let controller = UIAlertController.requestRestorePassword { password in
+        let controller = requestRestorePassword { password in
             password.map(completion)
         }
 
@@ -139,17 +153,16 @@ final class BackupRestoreController: NSObject {
     }
 
     private func showWrongPasswordAlert(completion: @escaping (UIAlertAction) -> Void) {
-        let controller = UIAlertController.importWrongPasswordError(completion: completion)
+        let controller = importWrongPasswordError(completion: completion)
         target.present(controller, animated: true, completion: nil)
     }
 
     private func showRestoreError(_ error: Error) {
-        let controller = UIAlertController.restoreBackupFailed(with: error) { [unowned self] action in
-            switch action {
-            case .tryAgain: self.showFilePicker()
-            case .cancel: self.delegate?.backupResoreControllerDidFinishRestoring(self)
-            }
-        }
+        let controller = restoreBackupFailed(
+            error: error,
+            onTryAgain: { [unowned self] in self.showFilePicker() },
+            onCancel: { [unowned self] in self.delegate?.backupResoreControllerDidFinishRestoring(self) }
+        )
 
         target.present(controller, animated: true)
     }
@@ -158,10 +171,11 @@ final class BackupRestoreController: NSObject {
 extension BackupRestoreController: UIDocumentPickerDelegate {
     func documentPicker(
         _ controller: UIDocumentPickerViewController,
-        didPickDocumentAt url: URL) {
-            WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
-            zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
+        didPickDocumentAt url: URL
+    ) {
+        WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+        zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
 
-            self.restore(with: url)
-        }
+        self.restore(with: url)
+    }
 }

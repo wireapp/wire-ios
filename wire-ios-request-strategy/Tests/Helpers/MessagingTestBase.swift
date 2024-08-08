@@ -72,7 +72,7 @@ class MessagingTestBase: ZMTBaseTest {
         setupCaches(in: coreDataStack)
         setupTimers()
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
 
             self.setupUsersAndClients()
@@ -88,7 +88,7 @@ class MessagingTestBase: ZMTBaseTest {
 
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.otherUser = nil
             self.otherClient = nil
             self.selfClient = nil
@@ -160,13 +160,15 @@ extension MessagingTestBase {
     ) async throws -> ZMUpdateEvent {
 
         let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
+        // Note: [F] added info to make it ZMSLog SafeTypes happy - this event conversation.otr-asset-add is deprecated
         let innerPayload = await syncMOC.perform { [self] in
-             [
+            [
                 "recipient": selfClient.remoteIdentifier!,
                 "sender": otherClient.remoteIdentifier!,
                 "id": UUID.create().transportString(),
-                "key": cyphertext.base64String()
-             ]
+                "key": cyphertext.base64String(),
+                "info": cyphertext.base64String()
+            ]
         }
         return try await decryptedUpdateEventFromOtherClient(
             innerPayload: innerPayload,
@@ -456,7 +458,7 @@ extension MessagingTestBase {
         selfClient.remoteIdentifier = "baddeed"
         selfClient.user = user
 
-        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: "PersistedClientId")
+        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         selfClient.type = .permanent
         self.syncMOC.saveOrRollback()
         return selfClient
@@ -468,18 +470,18 @@ extension MessagingTestBase {
 
     func setupTimers() {
         syncMOC.performGroupedAndWait {
-            $0.zm_createMessageObfuscationTimer()
+            syncMOC.zm_createMessageObfuscationTimer()
         }
         uiMOC.zm_createMessageDeletionTimer()
     }
 
     func stopEphemeralMessageTimers() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.uiMOC.performGroupedBlockAndWait {
+        self.uiMOC.performGroupedAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -506,13 +508,17 @@ extension MessagingTestBase {
 extension MessagingTestBase {
 
     private var cacheFolder: URL {
-        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        return FileManager.default.randomCacheURL!
     }
 
     fileprivate func deleteAllFilesInCache() {
         let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
         files?.forEach {
-            try! FileManager.default.removeItem(at: $0)
+            do {
+                try FileManager.default.removeItem(at: $0)
+            } catch {
+                WireLogger.system.error("error deleting file  \($0.absoluteString) in cache: \(error)")
+            }
         }
     }
 }

@@ -82,7 +82,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = "valid-cookue".data(using: .utf8)
+        validCookie = Data("valid-cookue".utf8)
     }
 
     override func tearDown() {
@@ -148,7 +148,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
-            configuration: configuration
+            configuration: configuration,
+            isDeveloperModeEnabled: false
         )
 
         return userSession

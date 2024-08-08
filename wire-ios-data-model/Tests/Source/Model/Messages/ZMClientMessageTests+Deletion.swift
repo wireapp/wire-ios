@@ -99,7 +99,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
     func testThatItDeletesAnAssetMessage_File() {
         // given
-        let data = "Hello World".data(using: String.Encoding.utf8)!
+        let data = Data("Hello World".utf8)
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let url = URL(fileURLWithPath: documents).appendingPathComponent("file.dat")
 
@@ -478,7 +478,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.syncMOC.refresh(self.syncConversation, mergeChanges: false)
             let updateEvent = self.createMessageDeletedUpdateEvent(sut.nonce!, conversationID: self.conversation.remoteIdentifier!, senderID: self.user2.remoteIdentifier!)
             ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil)
@@ -494,7 +494,7 @@ extension ZMClientMessageTests_Deletion {
     }
 
     func testThatIfSenderDeletesGroupEphemeralThenAllUsersAreRecipientsOfDeleteMessage() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.conversationType = .group
             self.syncConversation.setMessageDestructionTimeoutValue(.custom(1000), for: .selfUser)

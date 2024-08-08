@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 final class ProxyCredentialsViewController: UIViewController {
 
@@ -40,13 +41,13 @@ final class ProxyCredentialsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    lazy var titleLabel: DynamicFontLabel = {
+    lazy var titleLabel = {
         let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerSemiboldFont, color: SemanticColors.Label.textCellSubtitle)
         label.text = Credentials.title
         return label
     }()
 
-    lazy var captionLabel: DynamicFontLabel = {
+    lazy var captionLabel = {
         let label = DynamicFontLabel(text: Credentials.title, fontSpec: .headerRegularFont, color: SemanticColors.Label.textCellSubtitle)
         label.numberOfLines = 0
         return label
@@ -65,9 +66,9 @@ final class ProxyCredentialsViewController: UIViewController {
     }()
 
     lazy var passwordInput: ValidatedTextField = {
-        let textField = ValidatedTextField(kind: .password(isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
-        // TODO: .uppercased() when new design is implemented
-        textField.placeholder = Credentials.Password.placeholder.capitalized
+        let textField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), leftInset: 8, accessoryTrailingInset: 0, cornerRadius: 0, style: .default)
+
+        textField.placeholder = Credentials.Password.placeholder.capitalized // TODO: .uppercased() when new design is implemented
         textField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         textField.delegate = self
         textField.addDoneButtonOnKeyboard()

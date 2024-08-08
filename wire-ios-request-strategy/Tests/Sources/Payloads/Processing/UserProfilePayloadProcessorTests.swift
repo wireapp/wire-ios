@@ -17,6 +17,8 @@
 //
 
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 final class UserProfilePayloadProcessorTests: MessagingTestBase {
@@ -27,20 +29,22 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
         super.setUp()
         sut = UserProfilePayloadProcessor()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser.remoteIdentifier = nil
             self.otherUser.domain = nil
         }
+        BackendInfo.enableMocking()
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.isFederationEnabled = false
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
     func testUpdateUserProfile_UpdatesID() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userProfile = Payload.UserProfile(id: UUID())
 
@@ -57,7 +61,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesQualifiedUserID() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             BackendInfo.isFederationEnabled = true
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
@@ -77,7 +81,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_DoesntUpdatesQualifiedUserID_WhenFederationIsDisabled() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             BackendInfo.isFederationEnabled = false
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
@@ -97,7 +101,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesTeamID() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, teamID: UUID())
@@ -115,7 +119,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_TeamIDCanBeDeleted_ByNonAuthoritativeUpdate() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: [.teamID])
@@ -133,7 +137,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_TeamMembershipIsCreated_WhenUserBelongsToSelfUserTeam() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let teamID = UUID()
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -154,7 +158,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesServiceID() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let serviceID = Payload.ServiceID(id: UUID(), provider: UUID())
@@ -174,7 +178,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesSSOID() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let SSOID = Payload.SSOID(tenant: "a", subject: "b", scimExternalID: "c")
@@ -193,7 +197,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesName() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let name = "John Doe"
@@ -212,7 +216,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_NameIsNotUpdated_WhenUserIsDeleted() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let oldName = "John Doe"
             let newName = "Nhoj Eod"
@@ -234,7 +238,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesHandle() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let handle = "johndoe"
@@ -253,7 +257,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_HandleIsNotUpdated_WhenUserIsDeleted() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let oldHandle = "johndoe"
             let newhandle = "eodnhoj"
@@ -275,7 +279,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesPhone() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let phone = "+123456789"
@@ -294,7 +298,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_PhoneCanBeDeleted_ByNonAuthoritativeUpdate() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let updatedKeysSet: Set<Payload.UserProfile.CodingKeys> = [.phone]
@@ -314,7 +318,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_PhoneIsNotUpdated_WhenUserIsDeleted() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let oldPhone = "+123456789"
             let newPhone = "+987654321"
@@ -336,7 +340,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesEmail() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let email = "john.doe@example.com"
@@ -355,7 +359,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_EmailCanBeDeleted_ByNonAuthoritativeUpdate() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let updatedKeysSet: Set<Payload.UserProfile.CodingKeys> = [.email]
@@ -375,7 +379,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_EmailIsNotUpdated_WhenUserIsDeleted() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let oldEmail = "john.doe@example.com"
             let newEmail = "john.eod@example.com"
@@ -397,7 +401,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesAssets() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let previewAsset = Payload.Asset(key: "1", size: .preview, type: .image)
@@ -419,7 +423,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_AssetsIsNotUpdated_WhenAssetsHaveLocalChanges() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let assetsModifiedKeys = [ZMUser.previewProfileAssetIdentifierKey,
                                       ZMUser.completeProfileAssetIdentifierKey]
@@ -449,7 +453,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_AssetsAreRejected_WhenAssetsKeysAreInvalid() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.otherUser.previewProfileAssetIdentifier = "a"
             self.otherUser.completeProfileAssetIdentifier = "b"
@@ -473,7 +477,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesManagedBy() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let managedBy = "wire"
@@ -492,7 +496,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesAccentColor() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let accentColor = AccentColor(rawValue: 5)
@@ -511,7 +515,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesIsDeleted() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, isDeleted: true)
@@ -529,7 +533,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesExpiresAt() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let expiresAt = Date()
@@ -548,7 +552,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfiles_AppliesUpdateOnUserProfileList() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let name = "John Doe"
@@ -569,7 +573,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesIsPendingMetadataRefresh() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.otherUser.isPendingMetadataRefresh = true
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
@@ -588,7 +592,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     }
 
     func testUpdateUserProfile_UpdatesSupportedProtocols() throws {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             XCTAssertEqual(self.otherUser.supportedProtocols, [])
             let userProfile = Payload.UserProfile(supportedProtocols: [.proteus, .mls])

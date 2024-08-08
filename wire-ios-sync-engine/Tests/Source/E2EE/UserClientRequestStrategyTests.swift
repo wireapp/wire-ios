@@ -72,7 +72,8 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
     override func setUp() {
         super.setUp()
-        self.syncMOC.performGroupedBlockAndWait {
+
+        syncMOC.performGroupedAndWait {
             let spyKeyStore = SpyUserClientKeyStore(
                 accountDirectory: self.accountDirectory,
                 applicationContainer: self.sharedContainerURL
@@ -131,7 +132,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatPrekeysAreGeneratedBeforeAttemptingToRegisterClient() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.notifyChangeTrackers(client)
@@ -142,7 +143,7 @@ extension UserClientRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(self.clientRegistrationStatus.prekeys)
             XCTAssertNotNil(self.clientRegistrationStatus.lastResortPrekey)
@@ -150,7 +151,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItReturnsRequestForInsertedObject() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // given
             let prekeys = [(UInt16(1), "prekey1")]
@@ -184,7 +185,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItDoesNotReturnRequestIfThereIsNoInsertedObject() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // given
             self.clientRegistrationStatus.isWaitingForLoginValue = true
@@ -204,7 +205,7 @@ extension UserClientRequestStrategyTests {
 
     func testThatItStoresTheRemoteIdentifierWhenUpdatingAnInsertedObject() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             self.sut.managedObjectContext!.saveOrRollback()
@@ -254,7 +255,7 @@ extension UserClientRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             let maxID_after = UInt16(client.preKeysRangeMax)
             XCTAssertEqual(maxID_after, expectedMaxID)
@@ -283,7 +284,7 @@ extension UserClientRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(client.apsDecryptionKey)
             XCTAssertNotNil(client.apsVerificationKey)
@@ -335,8 +336,8 @@ extension UserClientRequestStrategyTests {
 
         // then
         XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
-        let expectedError = NSError(domain: NSError.ZMUserSessionErrorDomain,
-                                    code: Int(ZMUserSessionErrorCode.invalidCredentials.rawValue),
+        let expectedError = NSError(domain: NSError.userSessionErrorDomain,
+                                    code: UserSessionErrorCode.invalidCredentials.rawValue,
                                     userInfo: nil)
         XCTAssertEqual(self.mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
     }
@@ -366,13 +367,13 @@ extension UserClientRequestStrategyTests {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
-            let expectedError = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.needsPasswordToRegisterClient.rawValue), userInfo: [
+            let expectedError = NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue, userInfo: [
                 ZMEmailCredentialKey: emailAddress,
                 ZMUserHasPasswordKey: true,
                 ZMUserUsesCompanyLoginCredentialKey: false,
-                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, hasPassword: true, usesCompanyLogin: false)
             ])
 
             XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
@@ -401,7 +402,7 @@ extension UserClientRequestStrategyTests {
             let responsePayload = ["code": 403, "message": "Too many clients", "label": "too-many-clients"] as [String: Any]
             let response = ZMTransportResponse(payload: responsePayload as ZMTransportData?, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
-            _ = NSError(domain: NSError.ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.canNotRegisterMoreClients.rawValue), userInfo: nil)
+            _ = NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.canNotRegisterMoreClients.rawValue, userInfo: nil)
 
             // when
             self.clientRegistrationStatus.mockPhase = nil
@@ -409,7 +410,7 @@ extension UserClientRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(self.clientRegistrationStatus.currentPhase, .fetchingClients)
         }
@@ -421,12 +422,13 @@ extension UserClientRequestStrategyTests {
 extension UserClientRequestStrategyTests {
 
     func testThatPrekeysAreGeneratedBeforeRefillingPrekeys() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
             let client = self.createSelfClient(self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
             client.numberOfKeysRemaining = Int32(self.sut.minNumberOfRemainingKeys - 1)
+            client.preKeysRangeMax = 5
             client.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
             self.sut.managedObjectContext!.saveOrRollback()
             self.sut.notifyChangeTrackers(client)
@@ -436,15 +438,16 @@ extension UserClientRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(self.clientUpdateStatus.prekeys)
+            XCTAssertEqual(self.clientUpdateStatus.prekeys?.first?.id, 6)
         }
     }
 
     func testThatItReturnsRequestIfNumberOfRemainingKeysIsLessThanMinimum() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let prekeys = [IdPrekeyTuple(id: 1, prekey: "prekey1")]
             self.clientRegistrationStatus.mockPhase = .registered
@@ -481,7 +484,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItDoesNotReturnsRequestIfNumberOfRemainingKeysIsLessThanMinimum_NoRemoteIdentifier() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -503,7 +506,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItDoesNotReturnRequestIfNumberOfRemainingKeysIsAboveMinimum() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
 
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -527,7 +530,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItResetsNumberOfRemainingKeysAfterNewKeysUploaded() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let client = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             client.remoteIdentifier = UUID.create().transportString()
@@ -594,7 +597,7 @@ extension UserClientRequestStrategyTests {
 
     func testThatItNotifiesWhenFinishingFetchingTheClient() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.clientUpdateStatus.mockPhase = .fetchingClients
             let nextResponse = ZMTransportResponse(payload: self.payloadForClients() as ZMTransportData?, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -619,7 +622,7 @@ extension UserClientRequestStrategyTests {
         var selfClient: UserClient!
         var newClient: UserClient!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             selfClient = self.createSelfClient()
             selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -637,7 +640,7 @@ extension UserClientRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(selfUser.clients.contains(selfClient))
             XCTAssertFalse(selfUser.clients.contains(newClient))
         }
@@ -649,7 +652,7 @@ extension UserClientRequestStrategyTests {
 
     func testThatItCreatesARequestToDeleteAClient_UpdateStatus() {
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.clientRegistrationStatus.mockPhase = .unregistered
             self.clientUpdateStatus.mockPhase = .deletingClients
@@ -701,7 +704,7 @@ extension UserClientRequestStrategyTests {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertTrue(client.isZombieObject)
         }
     }

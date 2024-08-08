@@ -3654,6 +3654,48 @@ public class MockLAContextStorable: LAContextStorable {
 
 }
 
+public class MockLastEventIDRepositoryInterface: LastEventIDRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchLastEventID
+
+    public var fetchLastEventID_Invocations: [Void] = []
+    public var fetchLastEventID_MockMethod: (() -> UUID?)?
+    public var fetchLastEventID_MockValue: UUID??
+
+    public func fetchLastEventID() -> UUID? {
+        fetchLastEventID_Invocations.append(())
+
+        if let mock = fetchLastEventID_MockMethod {
+            return mock()
+        } else if let mock = fetchLastEventID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchLastEventID`")
+        }
+    }
+
+    // MARK: - storeLastEventID
+
+    public var storeLastEventID_Invocations: [UUID?] = []
+    public var storeLastEventID_MockMethod: ((UUID?) -> Void)?
+
+    public func storeLastEventID(_ id: UUID?) {
+        storeLastEventID_Invocations.append(id)
+
+        guard let mock = storeLastEventID_MockMethod else {
+            fatalError("no mock for `storeLastEventID`")
+        }
+
+        mock(id)
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle
@@ -4269,14 +4311,19 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - conversationExists
 
     public var conversationExistsGroupID_Invocations: [MLSGroupID] = []
-    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) async -> Bool)?
+    public var conversationExistsGroupID_MockError: Error?
+    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) async throws -> Bool)?
     public var conversationExistsGroupID_MockValue: Bool?
 
-    public func conversationExists(groupID: MLSGroupID) async -> Bool {
+    public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
         conversationExistsGroupID_Invocations.append(groupID)
 
+        if let error = conversationExistsGroupID_MockError {
+            throw error
+        }
+
         if let mock = conversationExistsGroupID_MockMethod {
-            return await mock(groupID)
+            return try await mock(groupID)
         } else if let mock = conversationExistsGroupID_MockValue {
             return mock
         } else {
@@ -4567,16 +4614,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - repairOutOfSyncConversations
 
     public var repairOutOfSyncConversations_Invocations: [Void] = []
-    public var repairOutOfSyncConversations_MockMethod: (() async -> Void)?
+    public var repairOutOfSyncConversations_MockError: Error?
+    public var repairOutOfSyncConversations_MockMethod: (() async throws -> Void)?
 
-    public func repairOutOfSyncConversations() async {
+    public func repairOutOfSyncConversations() async throws {
         repairOutOfSyncConversations_Invocations.append(())
+
+        if let error = repairOutOfSyncConversations_MockError {
+            throw error
+        }
 
         guard let mock = repairOutOfSyncConversations_MockMethod else {
             fatalError("no mock for `repairOutOfSyncConversations`")
         }
 
-        await mock()
+        try await mock()
     }
 
     // MARK: - fetchAndRepairGroup
@@ -4870,7 +4922,7 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
     public var lastPrekeyID: UInt16 {
         get async {
             lastPrekeyIDCallsCount += 1
-            if let lastPrekeyIDClosure = lastPrekeyIDClosure {
+            if let lastPrekeyIDClosure {
                 return await lastPrekeyIDClosure()
             } else {
                 return underlyingLastPrekeyID

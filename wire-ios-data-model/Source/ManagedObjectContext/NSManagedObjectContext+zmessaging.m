@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireUtilities;
 @import UIKit;
 @import WireCryptobox;
+@import WireUtilities;
 
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "NSManagedObjectContext+tests.h"
@@ -271,9 +271,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
         NSError *error;
         ZMLogDebug(@"Saving <%@: %p>.", self.class, self);
         self.timeOfLastSave = [NSDate date];
-        ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:10 label:[NSString stringWithFormat:@"Saving context %@", self.zm_isSyncContext ? @"sync": @"ui"]];
+        NSString *tpLabel = [NSString stringWithFormat:@"Saving context %@", self.zm_isSyncContext ? @"sync": @"ui"];
+        ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:10 label:tpLabel];
         if (! [self save:&error]) {
-            ZMLogError(@"Failed to save: %@", error);
+            [WireLoggerObjc logSaveCoreDataError:error];
             [self reportSaveErrorWithError:error];
             [self rollbackWithOldMetadata:oldMetadata];
             [tp warnIfLongerThanInterval];

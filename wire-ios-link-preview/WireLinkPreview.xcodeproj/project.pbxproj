@@ -21,8 +21,6 @@
 		5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */; };
 		5E9EA4D022427BBB00D401B2 /* soundcloud_track_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */; };
 		5E9EA4D222427E0300D401B2 /* soundcloud_playlist_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */; };
-		5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
-		5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
 		5EDF03F4224A208E00C04007 /* HTMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03F3224A208E00C04007 /* HTMLDocument.swift */; };
 		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
@@ -118,7 +116,6 @@
 		5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentDetectorTests.swift; sourceTree = "<group>"; };
 		5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_track_head.txt; sourceTree = "<group>"; };
 		5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_playlist_head.txt; sourceTree = "<group>"; };
-		5EDF03F02249287B00C04007 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
 		5EDF03F3224A208E00C04007 /* HTMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLDocument.swift; sourceTree = "<group>"; };
 		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
@@ -144,7 +141,6 @@
 		BF3DD2781D25445600D51DED /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		BF3DD2791D25445600D51DED /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		BF3DD27C1D25445600D51DED /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		BF3DD27D1D25445600D51DED /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		BF3DD27E1D25445600D51DED /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WireLinkPreview.xcconfig; sourceTree = "<group>"; };
 		BF4F2B2C1E925AC9000B22D1 /* ImageDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageDownloader.swift; path = WireLinkPreview/ImageDownloader.swift; sourceTree = SOURCE_ROOT; };
@@ -193,7 +189,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */,
 				EE67F6B2296F0548001D7C88 /* HTMLString.xcframework in Frameworks */,
 				EEE4AB2029548DE5004E26A3 /* WireUtilities.framework in Frameworks */,
 			);
@@ -203,7 +198,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */,
 				BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,7 +210,6 @@
 			children = (
 				EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */,
 				EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */,
-				5EDF03F02249287B00C04007 /* libxml2.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -260,7 +253,6 @@
 				BF3DD2781D25445600D51DED /* project-debug.xcconfig */,
 				BF3DD2791D25445600D51DED /* project.xcconfig */,
 				BF3DD27C1D25445600D51DED /* tests.xcconfig */,
-				BF3DD27D1D25445600D51DED /* warnings-debug.xcconfig */,
 				BF3DD27E1D25445600D51DED /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -309,12 +301,12 @@
 			children = (
 				EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */,
 				54BD49F91D41FDE5006E29D1 /* README.md */,
-				16A5FE0F215A868700AEEBBD /* Frameworks */,
+				BF3DD26D1D25445600D51DED /* Resources */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,
 				BFF057981D25434E004A2C29 /* WireLinkPreviewTests */,
 				5E2BEC52214BA4A600E65B53 /* WireLinkPreviewTestsHost */,
 				BFF0578B1D25434D004A2C29 /* Products */,
-				BF3DD26D1D25445600D51DED /* Resources */,
+				16A5FE0F215A868700AEEBBD /* Frameworks */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -417,7 +409,6 @@
 				BFF057871D25434D004A2C29 /* Headers */,
 				BFF057851D25434D004A2C29 /* Sources */,
 				BFF057861D25434D004A2C29 /* Frameworks */,
-				E9EBFEE1276218B700F0DEBC /* Run SwiftLint */,
 				BFF057881D25434D004A2C29 /* Resources */,
 			);
 			buildRules = (
@@ -540,29 +531,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		E9EBFEE1276218B700F0DEBC /* Run SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../scripts/run-swiftlint.sh",
-			);
-			name = "Run SwiftLint";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "../scripts/run-swiftlint.sh\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5E2BEC4D214BA4A600E65B53 /* Sources */ = {

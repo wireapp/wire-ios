@@ -24,7 +24,6 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 #import "Tests-Swift.h"
 
-#import "ZMCredentials.h"
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 
 extern NSTimeInterval DebugLoginFailureTimerOverride;
@@ -61,7 +60,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
 
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -69,35 +68,6 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationReadyToImportBackup);
     XCTAssertFalse(self.userSession.isLoggedIn);
 }
-
-- (void)testThatItWaitsAfterPhoneLoginToImportBackup
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *code = self.mockTransportSession.phoneVerificationCodeForLogin;
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        NOT_USED(session);
-        self.selfUser.phone = phone;
-    }];
-
-    // when
-    [self.unauthenticatedSession requestPhoneVerificationCodeForLogin:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    XCTAssertTrue(self.mockLoginDelegete.didCallLoginCodeRequestDidSucceed);
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-
-    // and when
-    ZMCredentials *credentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code];
-    [self.unauthenticatedSession loginWithCredentials:credentials];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationReadyToImportBackup);
-    XCTAssertFalse(self.userSession.isLoggedIn);
-}
-
 
 - (void)testThatWeCanLogInWithEmail
 {
@@ -112,7 +82,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
 
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -149,13 +119,13 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     }];
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"wrong-password"];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:@"wrong-password"];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationDidFail);
-    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionInvalidCredentials);
+    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionErrorCodeInvalidCredentials);
 }
 
 - (void)testThatWhenTransportSessionDeletesCookieInResponseToFailedLoginWeDoNotContinueSendingMoreRequests
@@ -188,7 +158,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -229,7 +199,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     };
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:email password:password];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.unauthenticatedSession continueAfterBackupImportStep];
@@ -256,7 +226,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     DebugLoginFailureTimerOverride = 0.2;
     
     // when
-    ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:@"janet@fo.example.com" password:@"::FsdF:#$:fgsdAG"];
+    UserCredentials *credentials = [UserEmailCredentials credentialsWithEmail:@"janet@fo.example.com" password:@"::FsdF:#$:fgsdAG"];
     [self.unauthenticatedSession loginWithCredentials:credentials];
     
     // then
@@ -264,7 +234,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         return self.mockLoginDelegete.didCallAuthenticationDidFail;
     } timeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
-    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionNetworkError);
+    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionErrorCodeNetworkError);
     XCTAssertLessThan(self.mockTransportSession.receivedRequests.count, 2u);
 
     // after
@@ -273,58 +243,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
 
 @end
 
-@implementation LoginFlowTests (PhoneLogin)
-
-- (void)testThatWeCanLogInWithPhoneNumber
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *code = self.mockTransportSession.phoneVerificationCodeForLogin;
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        NOT_USED(session);
-        self.selfUser.phone = phone;
-    }];
-
-    // when
-    [self.unauthenticatedSession requestPhoneVerificationCodeForLogin:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-    
-    // and when
-    [self.unauthenticatedSession loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code]];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self.unauthenticatedSession continueAfterBackupImportStep];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationDidSucceed);
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.name, self.selfUser.name);
-    XCTAssertEqualObjects(selfUser.phoneNumber, phone);
-}
-
-- (void)testThatItNotifiesIfTheLoginCodeCanNotBeRequested
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        if([request.path isEqualToString:@"/login/send"]) {
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-    // when
-    [self.unauthenticatedSession requestPhoneVerificationCodeForLogin:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    XCTAssertTrue(self.mockLoginDelegete.didCallLoginCodeRequestDidFail);
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-}
+@implementation LoginFlowTests (EmailLogin)
 
 - (void)testThatItNotifiesIfTheEmailVerificationLoginCodeCanNotBeRequested
 {
@@ -347,35 +266,9 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
 }
 
-- (void)testThatItNotifiesIfTheLoginFails
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        NOT_USED(session);
-        self.selfUser.phone = phone;
-    }];
-    
-    // when
-    [self.unauthenticatedSession requestPhoneVerificationCodeForLogin:phone];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 1u);
-    
-    // and when
-    ZMCredentials *credentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone
-                                                               verificationCode:self.mockTransportSession.invalidPhoneVerificationCode];
-    [self.unauthenticatedSession loginWithCredentials:credentials];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertTrue(self.mockLoginDelegete.didCallLoginCodeRequestDidSucceed);
-    XCTAssertTrue(self.mockLoginDelegete.didCallAuthenticationDidFail);
-}
-
 @end
 
+// MARK: - ClientRegistration_Errors
 
 @implementation LoginFlowTests (ClientRegistration_Errors)
 
@@ -408,121 +301,6 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertTrue(didFetchSelfUser);
 }
 
-- (void)testThatWeCanLoginAfterRegisteringAnEmailAddressAndClient
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *email = @"email@example.com";
-    NSString *password = @"newPassword";
-    
-    self.selfUser.phone = phone;
-    
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        [session whiteListPhone:phone];
-        self.selfUser.email = nil;
-        self.selfUser.password = nil;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // when
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
-    [self.userSession performChanges:^{
-        [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    }];
-
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        // simulate user click on email
-        NOT_USED(session);
-        self.selfUser.email = email;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    __block BOOL didRun = NO;
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        // when trying to register without email credentials, the BE tells us we need credentials
-        if(!didRun && [request.path isEqualToString:@"/clients"] && request.method == ZMTransportRequestMethodPost) {
-            didRun = YES;
-        }
-        // the user updates the email address (currently does not work in MockTransportsession for some reason)
-        if ([request.path isEqualToString:@"/self/email"]) {
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-    // and when
-    ZMPhoneCredentials *newCredentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone
-                                                                       verificationCode:self.mockTransportSession.phoneVerificationCodeForLogin];
-    XCTAssertTrue([self loginWithCredentials:newCredentials ignoreAuthenticationFailures:YES]);
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.name, self.selfUser.name);
-    XCTAssertEqualObjects(selfUser.phoneNumber, phone);
-    XCTAssertEqualObjects(selfUser.emailAddress, email);
-}
-
-- (void)testThatWeRecoverFromEnteringAWrongEmailAddressWhenRegisteringAClientAfterLoggingInWithPhone
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *wrongPassword = @"wrongPassword";
-
-    self.selfUser.phone = phone;
-    
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        [session whiteListPhone:phone];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    __block NSUInteger runCount = 0;
-    
-    ZM_WEAK(self);
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        ZM_STRONG(self);
-        
-        // when trying to register without email credentials, the BE tells us we need credentials
-        if(runCount <= 1 && [request.path isEqualToString:@"/clients"] && request.method == ZMTransportRequestMethodPost) {
-            NSDictionary *payload;
-            if (runCount == 0) {
-                payload = @{@"label" : @"missing-auth"};
-            } else {
-                payload = @{@"label" : @"invalid-credentials"};
-            }
-            runCount++;
-            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:400 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-
-    // when
-    [self.unauthenticatedSession loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:self.mockTransportSession.phoneVerificationCodeForLogin]];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self.unauthenticatedSession continueAfterBackupImportStep];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionNeedsPasswordToRegisterClient);
-    XCTAssertTrue(self.mockLoginDelegete.didCallClientRegistrationDidFail);
-    
-    // first provide the wrong credentials
-    [self.mockTransportSession resetReceivedRequests];
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:wrongPassword];
-    [self.unauthenticatedSession loginWithCredentials:credentials];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    XCTAssertEqual(self.mockLoginDelegete.currentError.code, (long)ZMUserSessionInvalidCredentials);
-    XCTAssertTrue(self.mockLoginDelegete.didCallClientRegistrationDidFail);
-    
-    // then provide the right password
-    [self.mockTransportSession resetReceivedRequests];
-    ZMEmailCredentials *newCredentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
-    [self.unauthenticatedSession loginWithCredentials:newCredentials];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertTrue(self.mockLoginDelegete.didCallClientRegistrationDidSucceed);
-}
-
 - (void)testThatItCanRegisterNewClientAfterDeletingSelfClient
 {
     // given
@@ -540,52 +318,6 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     
     // then
     XCTAssertTrue(self.mockLoginDelegete.didCallClientRegistrationDidSucceed);
-}
-
-- (void)testThatItCanRegisterNewClientAfterDeletingSelfClientAndReceivingNeedsPasswordToRegisterClient
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *code = self.mockTransportSession.phoneVerificationCodeForLogin;
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        NOT_USED(session);
-        self.selfUser.phone = phone;
-    }];
-    
-    // (1) register client and recreate session
-    {
-        XCTAssertTrue([self login]);
-        
-        // "delete" the self client
-        [self.userSession.managedObjectContext setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
-        [self.userSession.managedObjectContext saveOrRollback];
-        WaitForAllGroupsToBeEmpty(0.5);
-
-        [self destroySessionManager];
-        [self deleteAuthenticationCookie];
-        [self createSessionManager];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }
-
-    // (2) login again after losing our client (BE will ask for password on 2nd client
-    {
-        ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:IntegrationTest.SelfUserEmail password:IntegrationTest.SelfUserPassword];
-        [self.userSession performChanges:^{
-            [self.unauthenticatedSession loginWithCredentials:credentials];
-        }];
-        WaitForAllGroupsToBeEmpty(0.5);
-        
-        
-        // when
-        [self.unauthenticatedSession requestPhoneVerificationCodeForLogin:phone];
-        XCTAssertTrue([self loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code] ignoreAuthenticationFailures:YES]);
-        XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
-        WaitForAllGroupsToBeEmpty(0.5);
-
-        // then
-        ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-        XCTAssertEqualObjects(selfUser.name, self.selfUser.name);
-    }
 }
 
 - (void)testThatItCanRegisterANewClientAfterDeletingClients

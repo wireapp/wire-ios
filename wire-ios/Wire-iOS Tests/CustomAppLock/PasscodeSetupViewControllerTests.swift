@@ -17,25 +17,30 @@
 //
 
 import SnapshotTesting
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class PasscodeSetupViewControllerTests: XCTestCase {
 
     // MARK: Properties
 
     var sut: PasscodeSetupViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
     }
 
     // MARK: tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
     }
 
@@ -49,37 +54,41 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForInitState() {
-        verifyAllIPhoneSizes(createSut: { size in
-            let vc = PasscodeSetupViewController(useCompactLayout: size.height <= CGFloat.iPhone4Inch.height,
-                                                 context: .createPasscode,
-                                                 callback: nil)
-            return vc
-        })
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .createPasscode,
+            callback: nil
+        )
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForInitState_ifForcedApplock() {
-        verifyAllIPhoneSizes(createSut: { size in
-            let vc = PasscodeSetupViewController(useCompactLayout: size.height <= CGFloat.iPhone4Inch.height,
-                                                 context: .forcedForTeam,
-                                                 callback: nil)
-            return vc
-        })
+        sut = PasscodeSetupViewController(
+            useCompactLayout: false,
+            context: .forcedForTeam,
+            callback: nil
+        )
+
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme() {
         sut = PasscodeSetupViewController(useCompactLayout: false,
                                           context: .createPasscode,
                                           callback: nil)
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testForInitStateInDarkTheme_ifForcedApplock() {
         sut = PasscodeSetupViewController(useCompactLayout: false,
                                           context: .forcedForTeam,
                                           callback: nil)
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testForPasscodePassed() {
@@ -95,6 +104,6 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         }
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategy
 import XCTest
 
 final class QuickSyncObserverTests: MessagingTestBase {
@@ -27,12 +28,12 @@ final class QuickSyncObserverTests: MessagingTestBase {
             .arrange()
 
         // then test completes
-        wait(timeout: 0.5) {
-            await quickSyncObserver.waitForQuickSyncToFinish()
-        }
+        let before = Date.now
+        await quickSyncObserver.waitForQuickSyncToFinish()
+        XCTAssert(Date.now.timeIntervalSince(before) < 0.5, "sync duration > 500ms")
     }
 
-    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() throws {
+    func testThatSynchronisationStateIsNotOnline_thenWaitUntilQuickSyncCompletes() {
         // given
         let (_, quickSyncObserver) = Arrangement(coreDataStack: coreDataStack)
             .withSynchronizationState(.quickSyncing)
@@ -40,37 +41,44 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         Task {
             // Sleeping in order to hit the code path where we start observing .quickSyncCompletedNotification
-            try await Task.sleep(nanoseconds: 250_000_000)
+            if #available(iOS 16.0, *) {
+                try? await Task.sleep(for: .seconds(0.25))
+            } else {
+                try? await Task.sleep(nanoseconds: 250_000_000)
+            }
             NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
         }
 
         // then test completes
-        wait(timeout: 0.5) {
+        let expectation = XCTestExpectation(description: "sync is done within 500ms")
+        Task {
             await quickSyncObserver.waitForQuickSyncToFinish()
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 0.5)
+    }
+}
+
+// MARK: -
+
+private struct Arrangement {
+
+    let coreDataStack: CoreDataStack
+    let applicationStatus = MockApplicationStatus()
+
+    func withSynchronizationState(_ state: SynchronizationState) -> Arrangement {
+        applicationStatus.mockSynchronizationState = state
+        return self
     }
 
-    struct Arrangement {
-
-        struct Scaffolding {
-        }
-
-        let coreDataStack: CoreDataStack
-        let applicationStatus = MockApplicationStatus()
-
-        func withSynchronizationState(_ state: SynchronizationState) -> Arrangement {
-            applicationStatus.mockSynchronizationState = state
-            return self
-        }
-
-        func arrange() -> (Arrangement, QuickSyncObserver) {
-            return (self, QuickSyncObserver(
+    func arrange() -> (Arrangement, QuickSyncObserver) {
+        (
+            self,
+            QuickSyncObserver(
                 context: coreDataStack.syncContext,
                 applicationStatus: applicationStatus,
                 notificationContext: coreDataStack.syncContext.notificationContext
-                )
             )
-        }
+        )
     }
-
 }

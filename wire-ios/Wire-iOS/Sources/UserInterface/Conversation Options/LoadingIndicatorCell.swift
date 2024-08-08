@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireDesign
+import WireReusableUIComponents
 
 final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable {
 

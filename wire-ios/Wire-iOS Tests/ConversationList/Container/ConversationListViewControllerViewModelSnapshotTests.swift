@@ -45,9 +45,10 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
         let selfUser = MockUserType.createSelfUser(name: "Bob")
         sut = ConversationListViewController.ViewModel(
             account: account,
-            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
         mockViewController = MockConversationListContainer(viewModel: sut)

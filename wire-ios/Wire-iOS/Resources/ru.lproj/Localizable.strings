@@ -141,12 +141,6 @@
 "conversation_list.bottom_bar.folders.title" = "Папки";
 "conversation_list.bottom_bar.archived.title" = "Архив";
 
-// Conversation List Data Usage Permission Dialog
-"conversation_list.data_usage_permission_alert.title" = "Помогите нам сделать Wire лучше";
-"conversation_list.data_usage_permission_alert.message" = "Я согласен с тем, что Wire может создавать и анализировать анонимные отчеты об использовании и ошибках для улучшения приложения Wire. Я могу отозвать данное согласие в любое время.";
-"conversation_list.data_usage_permission_alert.disagree" = "Нет";
-"conversation_list.data_usage_permission_alert.agree" = "Принять";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
 
@@ -167,6 +161,8 @@
 
 // Archived List
 "archived_list.title" = "архив";
+"archived_list.empty_placeholder.headline" = "В архиве пока ничего нет";
+"archived_list.empty_placeholder.subheadline" = "Для поддержания порядка в списке бесед переместите сюда неиспользуемые. Позже их всегда можно будет разархивировать.";
 
 // Add contact tool tip
 "tool_tip.contacts.title" = "Общение начинается здесь";
@@ -399,6 +395,9 @@
 "location.unauthorized_alert.cancel" = "Отмена";
 "location.unauthorized_alert.settings" = "Настройки";
 
+"location.error.alert.title" = "Местоположение не может быть отправлено.";
+"location.error.alert.description" = "В данный момент Wire не может получить ваше местоположение. Проверьте, разрешили ли вы Wire получать доступ к вашему местоположению в настройках устройства.";
+
 // Twitter
 "twitter_status.on_twitter" = "%@ в Twitter";
 
@@ -622,7 +621,6 @@
 
 "content.message.like" = "Нравится";
 "content.message.unlike" = "Не нравится";
-"content.message.forward" = "Поделиться";
 "content.message.go_to_conversation" = "Показать";
 "content.message.forward.to" = "Поиск…";
 "content.message.open" = "Открыть";
@@ -1011,6 +1009,20 @@
 "group_details.conversation_admins_header.title" = "Администраторы группы";
 "group_details.conversation_members_header.title" = "Участники группы";
 
+// Secured Guest link with password
+"secured_guest_link_with_password.header.title" = "Создание ссылки, защищенной паролем";
+"secured_guest_link_with_password.warning_label.title" = "Пользователям, которые хотят присоединиться к беседе по гостевой ссылке, потребуется ввести этот пароль.\n**Вы не сможете изменить пароль позже. Обязательно скопируйте и сохраните его**.";
+"secured_guest_link_with_password.generate_password_button.title" = "Сгенерировать пароль";
+"secured_guest_link_with_password.textfield.header" = "Установить пароль";
+"secured_guest_link_with_password.textfield.footer" = "Используйте как минимум 15 символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
+"secured_guest_link_with_password.textfield.placeholder" = "Введите пароль";
+"secured_guest_link_with_password.verifyPasswordTextField.header" = "Подтвердить пароль";
+"secured_guest_link_with_password.verifyPasswordTextField.placeholder" = "Подтвердите пароль";
+"secured_guest_link_with_password.createLinkButton.title" = "Создать ссылку";
+
+// Secured Guest link with password and UIAlertController
+"secured_guest_link_with_password.alertController.title" = "Пароль скопирован";
+"secured_guest_link_with_password.alertController.message" = "Пароль скопирован в буфер обмена устройства.";
 "group_details.conversation_verification_status.e2ei" = "Верифицировано (сквозная идентификация)";
 "group_details.conversation_verification_status.proteus" = "Верифицировано (Proteus)";
 
@@ -1041,16 +1053,11 @@
 "self.add_email_password" = "Добавить email и пароль";
 
 // About screen
+"about.legal.title" = "Юридическая информация";
 "about.tos.title" = "Условия использования";
 "about.privacy.title" = "Политика конфиденциальности";
-"about.license.title" = "Информация о лицензии";
 "about.website.title" = "Веб-сайт Wire";
 "about.copyright.title" = "© Wire Swiss GmbH";
-
-// Licenses screen
-"about.license.project_header" = "Профиль";
-"about.license.open_project_button" = "Просмотреть страницу проекта";
-"about.license.license_header" = "Благодарности";
 
 // Self new devices
 "self.new_device_alert.title" = "Ваша учетная запись использовалась на:";
@@ -1145,9 +1152,6 @@
 // Settings - Personal information
 "self.settings.privacy_analytics_section.title" = "Отчеты об использовании и сбоях";
 
-// Crash
-"self.settings.privacy_crash.title" = "Отправка анонимных данных о сбоях";
-"self.settings.privacy_crash_menu.description.title" = "Отправлять анонимные сообщения о сбоях и базовые данные, такие как номер версии и операционная система, чтобы помочь Wire идентифицировать и решить проблемы с приложением.";
 
 // Analytics
 "self.settings.privacy_analytics.title" = "Отправка анонимных данных об использовании";
@@ -1293,16 +1297,17 @@
 "self.settings.advanced.reset_push_token.subtitle" = "При возникновении проблем с push-уведомлениями, служба поддержки Wire может попросить вас обновить токен.";
 "self.settings.advanced.reset_push_token_alert.title" = "Токен Push-уведомлений был обновлен";
 "self.settings.advanced.reset_push_token_alert.message" = "Уведомления будут восстановлены в течение нескольких секунд.";
-"self.settings.advanced.version_technical_details.title" = "Техническая информация о версии";
 
 // data usage permissions options
 "self.settings.account.data_usage_permissions.title" = "Разрешение на использование данных";
 
 // Technical Report
-"self.settings.technical_report_section.title" = "Технический отчет";
-"self.settings.technical_report.send_report" = "Отправить отчет в Wire";
+"self.settings.technical_report_section.title" = "Отладочный отчет";
+"self.settings.technical_report.send_report" = "Отправить отчет";
+"self.settings.technical_report.share_report" = "Поделиться отчетом через Wire";
 "self.settings.technical_report.mail.subject" = "Отладочный отчет Wire";
 "self.settings.technical_report.include_log" = "Включить подробный журнал";
+"self.settings.technical_report.info" = "Если при использовании Wire вы столкнулись с неожиданным поведением или ошибкой, то можете отправить отчет в нашу службу поддержки. Отчет об ошибке может содержать личную информацию. \n\nВы также можете поделиться журналами отладки непосредственно с администратором вашей команды через Wire.";
 "self.settings.technical_report.privacy_warning" = "Подробные журналы могут содержать личные данные";
 "self.settings.technical_report.no_mail_alert" = "Почтовый клиент не обнаружен. Нажмите \"OK\" и отправьте журналы вручную: ";
 
@@ -1417,6 +1422,12 @@
 
 "guest_room.link.button.title" = "Создать ссылку";
 
+"guest_room.secure_link.header.title" = "Ссылка защищена паролем";
+"guest_room.secure_link.header.subtitle" = "Для подключения к беседе по гостевой ссылке необходимо сначала ввести этот пароль. \n\nЗабыли пароль? Аннулируйте ссылку и создайте новую.";
+
+"guest_room.create.link_with_password.action" = "Создание ссылки, защищенной паролем";
+"guest_room.create.link_without_password.action" = "Создание ссылки без пароля";
+
 "guest_room.actions.copy_link" = "Скопировать ссылку";
 "guest_room.actions.copied_link" = "Ссылка скопирована!";
 "guest_room.actions.share_link" = "Поделиться ссылкой";
@@ -1426,6 +1437,13 @@
 
 "guest_room.expiration.hours_left" = "Осталось %@ час.";
 "guest_room.expiration.less_than_minutes_left" = "Осталось менее %@ мин.";
+
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Введите пароль";
+"join.group.conversation.alert.message" = "Эта беседа защищена паролем";
+"join.group.conversation.alert.textfield.placeholder" = "Введите пароль беседы";
+"join.group.conversation.alert.joinAction.title" = "Присоединиться к беседе";
+"join.group.conversation.alert.learnMoreAction.title" = "Узнать больше о гостевых ссылках";
 
 // Services Options
 
@@ -1889,6 +1907,8 @@
 "url_action.join_conversation.error.alert.converation_is_full.message" = "Беседа переполнена.";
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "Ссылка на беседу недействительна.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Узнать больше о гостевых ссылках";
+
+"url_action.join_conversation.error.alert.invalid_password.message" = "Пароль неверен, попробуйте еще раз.";
 
 // Deep Link
 "url_action.invalid_user.title" = "Wire не может найти этого человека.";

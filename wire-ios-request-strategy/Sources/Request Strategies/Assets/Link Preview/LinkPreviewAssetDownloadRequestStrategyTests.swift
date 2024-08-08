@@ -19,6 +19,8 @@
 import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
@@ -29,13 +31,14 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
-        self.syncMOC.performGroupedAndWait { syncMOC in
+
+        syncMOC.performGroupedAndWait {
             self.mockApplicationStatus = MockApplicationStatus()
             self.mockApplicationStatus.mockSynchronizationState = .online
             self.oneToOneconversationOnSync = syncMOC.object(with: self.oneToOneConversation.objectID) as? ZMConversation
@@ -43,18 +46,19 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
     override func tearDown() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             self.sut = nil
             self.mockApplicationStatus = nil
             self.oneToOneconversationOnSync = nil
             try? syncMOC.zm_fileAssetCache.wipeCaches()
         }
         try? uiMOC.zm_fileAssetCache.wipeCaches()
-        apiVersion = nil
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
@@ -124,14 +128,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
@@ -143,7 +147,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     func testThatItGeneratesAnExpectedV3RequestForAWhitelistedEphemeralMessageWithNoImageInCache() {
         let assetID = UUID.create().transportString()
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let linkPreview = self.createLinkPreview(assetID)
             let nonce = UUID.create()
@@ -156,7 +160,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
@@ -176,14 +180,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
@@ -196,7 +200,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         apiVersion = .v1
         let assetID = UUID.create().transportString()
         let assetDomain = UUID().create().transportString()
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let linkPreview = self.createLinkPreview(assetID, assetDomain)
             let nonce = UUID.create()
@@ -210,7 +214,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
@@ -220,32 +224,32 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     }
 
     func testThatItDoesNotGenerateARequestForAMessageWithoutALinkPreview() {
-        let message = syncMOC.performGroupedAndWait { _ -> ZMMessage in
+        let message = syncMOC.performGroupedAndWait { () -> ZMMessage in
             let genericMessage = GenericMessage(content: Text(content: self.name))
             return try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             _ = try? self.syncMOC.obtainPermanentIDs(for: [message])
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     func testThatItDoesNotGenerateARequestForAMessageWithImageInCache() {
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let assetID = UUID.create().transportString()
             let linkPreview = self.createLinkPreview(assetID)
@@ -260,7 +264,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -275,7 +279,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
@@ -284,7 +288,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -308,7 +312,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         var message: ZMMessage!
 
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
 
             message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
@@ -316,7 +320,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             let response = ZMTransportResponse(imageData: encrypted, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
@@ -324,7 +328,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // WHEN
             request.complete(with: response)
         }
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertTrue(syncMOC.zm_fileAssetCache.hasEncryptedMediumImageData(for: message))
             XCTAssertFalse(syncMOC.zm_fileAssetCache.hasMediumImageData(for: message))
@@ -341,7 +345,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         text.linkPreview.append(linkPreview)
         let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
 
             message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
@@ -350,14 +354,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // THEN
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
             let response = ZMTransportResponse(imageData: .secureRandomData(length: 256), httpStatus: 400, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
             // WHEN
             request.complete(with: response)
         }
-        self.syncMOC.performGroupedAndWait { syncMOC in
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(syncMOC.zm_fileAssetCache.mediumImageData(for: message))
             XCTAssertNil(syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message))

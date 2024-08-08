@@ -28,7 +28,7 @@ extension ZMUserSession {
     }
 
     @objc(setEmailCredentials:)
-    func setEmailCredentials(_ emailCredentials: ZMEmailCredentials?) {
+    func setEmailCredentials(_ emailCredentials: UserEmailCredentials?) {
         applicationStatusDirectory.clientRegistrationStatus.emailCredentials = emailCredentials
     }
 
@@ -68,11 +68,7 @@ extension ZMUserSession {
     /// - parameter deleteCookie: If set to true the cookies associated with the session will be deleted
     /// - parameter completion: called after the user session has been closed
 
-    @objc(closeAndDeleteCookie:completion:)
     func close(deleteCookie: Bool, completion: @escaping () -> Void) {
-        UserDefaults.standard.synchronize()
-        UserDefaults.shared()?.synchronize()
-
         // Clear all notifications associated with the account from the notification center
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.cancelAllNotifications()
@@ -88,7 +84,7 @@ extension ZMUserSession {
         }
     }
 
-    public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func logout(credentials: UserEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard
             let accountID = ZMUser.selfUser(inUserSession: self).remoteIdentifier,
             let selfClientIdentifier = ZMUser.selfUser(inUserSession: self).selfClient()?.remoteIdentifier,
@@ -122,7 +118,7 @@ extension ZMUserSession {
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
 
-        var errorCode: ZMUserSessionErrorCode
+        var errorCode: UserSessionErrorCode
         switch response.result {
         case .permanentError:
                 switch response.payload?.asDictionary()?["label"] as? String {
@@ -146,7 +142,7 @@ extension ZMUserSession {
             userInfo = [NSUnderlyingErrorKey: transportSessionError]
         }
 
-        return NSError(code: errorCode, userInfo: userInfo)
+        return NSError(userSessionErrorCode: errorCode, userInfo: userInfo)
     }
 
 }

@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+@import CoreData;
 
 @class ZMMessage;
-
 
 @interface ZMMessageTimer : NSObject <TearDownCapable>
 
@@ -35,12 +34,12 @@
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
 
-
-/// Starts a new timer if there is no existing one
-/// @param fireDate The date at which the timer should fire
-/// @param userInfo Additional info that should be added to the timer
-- (void)startTimerForMessageIfNeeded:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo;
-
+/// Starts a new timer
+/// - Parameters:
+///   - message: message passed to the timer's fireMethod
+///   - fireDate The date at which the timer should fire
+///   - userInfo: Additional info that should be added to the timer
+- (void)startTimerForMessage:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo NS_SWIFT_NAME(startTimer(for:fireDate:userInfo:));
 
 /// Stops an existing timer
 - (void)stopTimerForMessage:(ZMMessage *)message;

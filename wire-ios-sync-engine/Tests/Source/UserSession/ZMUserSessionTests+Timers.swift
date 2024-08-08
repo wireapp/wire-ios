@@ -25,7 +25,7 @@ final class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
         // then
         XCTAssertNotNil(sut.managedObjectContext.zm_messageDeletionTimer)
         sut.syncManagedObjectContext.performGroupedAndWait {
-            XCTAssertNotNil($0.zm_messageObfuscationTimer)
+            XCTAssertNotNil(sut.syncManagedObjectContext.zm_messageObfuscationTimer)
         }
     }
 }

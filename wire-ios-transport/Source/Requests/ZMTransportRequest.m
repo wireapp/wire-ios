@@ -137,8 +137,8 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 @property (nonatomic) ZMTransportAccept acceptedResponseMediaTypes; ///< C.f. RFC 7231 section 5.3.2 <http://tools.ietf.org/html/rfc7231#section-5.3.2>
 @property (nonatomic) NSDate *timeoutDate;
 @property (nonatomic) NSMutableArray<NSString *>* debugInformation;
-/// Hash of the content debug information. This is used to identify the content of the request (e.g. detect repeated requests with the same content)
-@property (nonatomic) NSUInteger contentDebugInformationHash;
+
+@property (nonatomic) NSString *contentHintForRequestLoop;
 @property (nonatomic) BOOL shouldCompress;
 @property (nonatomic) NSURL *fileUploadURL;
 @property (nonatomic) NSDate *startOfUploadTimestamp;
@@ -178,7 +178,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         self.acceptedResponseMediaTypes = ZMTransportAcceptTransportData;
         self.shouldCompress = shouldCompress;
         self.debugInformation = [NSMutableArray array];
-        self.contentDebugInformationHash = payload.hash;
+        self.contentHintForRequestLoop = payload.contentHintForRequestLoop;
         self.apiVersion = apiVersion;
     }
     return self;
@@ -264,7 +264,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         self.acceptedResponseMediaTypes = acceptHeaderType;
         self.shouldCompress = shouldCompress;
         self.debugInformation = [NSMutableArray array];
-        self.contentDebugInformationHash = data.hash;
+        self.contentHintForRequestLoop = [NSString stringWithFormat:@"%lu", data.hash];
         self.apiVersion = apiVersion;
     }
     return self;
@@ -491,7 +491,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
     NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
-    ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
+    ZMSDispatchGroup *handlerGroup = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMTransportRequest task creation handler"];
 
     // TODO Alexis: do not execute if creationActivity is nil
 
@@ -500,7 +500,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         [handlerGroup enter];
         if (nil != queue) {
             [queue performGroupedBlock:^{
-                ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
+                ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:6 label:label];
                 handler.block(taskIdentifier);
                 [tp warnIfLongerThanInterval];
                 [handlerGroup leave];
@@ -535,7 +535,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     response.startOfUploadTimestamp = self.startOfUploadTimestamp;
 
     ZMSDispatchGroup *group = response.dispatchGroup;
-    ZMSDispatchGroup *group2 = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest"];
+    ZMSDispatchGroup *group2 = [[ZMSDispatchGroup alloc] initWithLabel:@"ZMTransportRequest"];
     [group2 enter];
     for(ZMCompletionHandler *handler in self.completionHandlers) {
         id<ZMSGroupQueue> queue = handler.groupQueue;
@@ -550,7 +550,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                                    self.path,
                                    @(response.HTTPStatus)
                 ];
-                ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:6 label:label];
+                ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:6 label:label];
                 handler.block(response);
                 [tp warnIfLongerThanInterval];
                 if (group) {
@@ -721,7 +721,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     if (self.shouldUseOnlyBackgroundSession) {
         return;
     }
-    NSString *activityName = [NSString stringWithFormat:@"Network request: %@ %@", self.methodAsString, self.path];
+    NSString *activityName = [NSString stringWithFormat:@"Network request: %@", self.safeForLoggingDescription];
     self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:activityName];
 }
 
@@ -852,7 +852,6 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 - (void)addContentDebugInformation:(NSString *)debugInformation
 {
     [self.debugInformation addObject:debugInformation];
-    self.contentDebugInformationHash ^= debugInformation.hash;
 }
 
 - (void)markStartOfUploadTimestamp {

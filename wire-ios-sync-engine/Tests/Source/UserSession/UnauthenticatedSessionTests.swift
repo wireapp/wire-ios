@@ -98,7 +98,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
         // no-op
     }
 
-    func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) -> Bool {
+    func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool {
         didUpdateCredentials = true
         return willAcceptUpdatedCredentials
     }
@@ -143,7 +143,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
     func testThatTriesToUpdateCredentials() {
         // given
-        let emailCredentials = ZMEmailCredentials(email: "hello@email.com", password: "123456")
+        let emailCredentials = UserEmailCredentials(email: "hello@email.com", password: "123456")
         mockDelegate.willAcceptUpdatedCredentials = true
 
         // when
@@ -157,35 +157,24 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMCredentials())
+        sut.login(with: UserCredentials())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(code: .needsCredentials, userInfo: nil).localizedDescription)
+        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(userSessionErrorCode: .needsCredentials, userInfo: nil).localizedDescription)
     }
 
     func testThatDuringLoginWithEmailItThrowsErrorWhenOffline() {
         // given
         reachability.mayBeReachable = false
         // when
-        sut.login(with: ZMEmailCredentials(email: "my@mail.com", password: "my-password"))
+        sut.login(with: UserEmailCredentials(email: "my@mail.com", password: "my-password"))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // then
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
         XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription,
-                       NSError(code: .networkError, userInfo: nil).localizedDescription)
-    }
-
-    func testThatDuringLoginWithPhoneNumberItThrowsErrorWhenOffline() {
-        // given
-        reachability.mayBeReachable = false
-        // when
-        sut.login(with: ZMPhoneCredentials(phoneNumber: "+49111111111111", verificationCode: "1234"))
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        // then
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(code: .networkError, userInfo: nil).localizedDescription)
+                       NSError(userSessionErrorCode: .networkError, userInfo: nil).localizedDescription)
     }
 
     func testThatItAsksDelegateIfAccountAlreadyExists() throws {

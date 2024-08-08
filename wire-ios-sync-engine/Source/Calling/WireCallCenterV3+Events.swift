@@ -322,21 +322,33 @@ extension WireCallCenterV3 {
         }
     }
 
-    /// Handles network quality change
-    func handleNetworkQualityChange(conversationId: AVSIdentifier, userId: String, clientId: String, quality: NetworkQuality) {
+    /// This handler is called for 1:1 and conference calls.
+    /// 
+    /// In 1:1 calls, `userId` and `clientId` are the ids of the remote user
+    /// In conference calls, since there is multiple remote users, the ids will be "SFT" and should be ignored
+    /// 
+    /// - Parameters:
+    ///   - conversationId: the AVSIdentifier of the conversation
+    ///   - userId: the remote user's ID for 1:1 calls, defaults to "SFT" for conference calls
+    ///   - clientId: the remote user's client ID for 1:1 calls, defaults to "SFT" for conference calls
+    ///   - quality: the network quality
+    ///
+    func handleNetworkQualityChange(
+        conversationId: AVSIdentifier,
+        userId: String,
+        clientId: String,
+        quality: NetworkQuality
+    ) {
         handleEventInContext("network-quality-change") {
-            if let identifier = AVSIdentifier(string: userId) {
-                self.callParticipantNetworkQualityChanged(
-                    conversationId: conversationId,
-                    client: AVSClient(userId: identifier, clientId: clientId),
-                    quality: quality
-                )
-            }
 
-            if let call = self.callSnapshots[conversationId] {
+            // We ignore the `usedId` and `clientID` because we only need to know the network quality
+
+            if let call = self.callSnapshots[conversationId], call.networkQuality != quality {
                 self.callSnapshots[conversationId] = call.updateNetworkQuality(quality)
-                let notification = WireCallCenterNetworkQualityNotification(conversationId: conversationId,
-                                                                            networkQuality: quality)
+                let notification = WireCallCenterNetworkQualityNotification(
+                    conversationId: conversationId,
+                    networkQuality: quality
+                )
                 notification.post(in: $0.notificationContext)
             }
         }
@@ -369,9 +381,11 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
+        // TODO [WPB-9604]: - refactor to avoid processing call data on the UI context 
         handleEventInContext("active-speakers-change") {
+
             guard let data = data.data(using: .utf8) else {
-                zmLog.safePublic("Invalid active speakers data")
+                WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
                 return
             }
 
@@ -389,14 +403,51 @@ extension WireCallCenterV3 {
 
             do {
                 let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
+
                 if let call = self.callSnapshots[conversationId] {
+
                     self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
+
+                    guard self.isSignificantActiveSpeakersChange(
+                        change: change,
+                        in: call
+                    ) else {
+                        return
+                    }
+
                     WireCallCenterActiveSpeakersNotification().post(in: $0.notificationContext)
                 }
             } catch {
-                zmLog.safePublic("Cannot decode active speakers change JSON")
+                WireLogger.calling.error("Cannot decode active speakers change JSON", attributes: .safePublic)
             }
         }
+    }
+
+    private func isSignificantActiveSpeakersChange(
+        change: AVSActiveSpeakersChange,
+        in call: CallSnapshot
+    ) -> Bool {
+        let currentSpeakers = Set(call.activeSpeakers)
+        let newSpeakers = Set(change.activeSpeakers)
+
+        var isSignificant = false
+
+        for newSpeaker in newSpeakers {
+            let currentSpeaker = currentSpeakers.first {
+                $0.client.avsIdentifier == newSpeaker.client.avsIdentifier
+            }
+
+            if let currentSpeaker {
+                let stoppedTalking = currentSpeaker.audioLevelNow > 0 && newSpeaker.audioLevelNow == 0
+                let startedTalking = currentSpeaker.audioLevelNow == 0 && newSpeaker.audioLevelNow > 0
+
+                isSignificant = stoppedTalking || startedTalking
+            } else {
+                isSignificant = newSpeaker.audioLevelNow > 0
+            }
+        }
+
+        return isSignificant
     }
 
     func handleNewEpochRequest(conversationID: AVSIdentifier) {

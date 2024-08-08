@@ -19,12 +19,12 @@
 @import Foundation;
 @import CoreData;
 
-#import "NSError+ZMUserSession.h"
+#import <WireSyncEngine/NSError+ZMUserSession.h>
 
 @class UserInfo;
-@class ZMCredentials;
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
+@class UserCredentials;
+@class UserEmailCredentials;
+@class UserPhoneCredentials;
 @class ZMPersistentCookieStorage;
 @class ZMTransportResponse;
 @protocol UserInfoParser;
@@ -35,7 +35,7 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 @protocol ZMCredentialProvider <NSObject>
 
 - (void)credentialsMayBeCleared;
-- (ZMEmailCredentials *)emailCredentials;
+- (UserEmailCredentials *)emailCredentials;
 @end
 
 /// Invoked when the credentials are changed
@@ -55,23 +55,21 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
 typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
     ZMAuthenticationPhaseUnauthenticated = 0,
-    ZMAuthenticationPhaseLoginWithPhone,
-    ZMAuthenticationPhaseLoginWithEmail,
-    ZMAuthenticationPhaseWaitingToImportBackup,
-    ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin,
-    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin,
-    ZMAuthenticationPhaseVerifyPhone,
-    ZMAuthenticationPhaseAuthenticated
+    //ZMAuthenticationPhaseLoginWithPhone = 1 __attribute__((deprecated("Use ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin instead"))),
+    ZMAuthenticationPhaseLoginWithEmail = 2,
+    ZMAuthenticationPhaseWaitingToImportBackup = 3,
+    //ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin = 4 __attribute__((deprecated("This phase is deprecated"))),
+    ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin = 5,
+    //ZMAuthenticationPhaseVerifyPhone = 6 __attribute__((deprecated("Use ZMAuthenticationPhaseLoginWithPhone instead"))),
+    ZMAuthenticationPhaseAuthenticated = 7
 };
 
 @interface ZMAuthenticationStatus : NSObject
 
-@property (nonatomic, readonly, copy) NSString *registrationPhoneNumberThatNeedsAValidationCode;
-@property (nonatomic, readonly, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
-@property (nonatomic, readonly) ZMCredentials *loginCredentials;
-@property (nonatomic, readonly) ZMPhoneCredentials *registrationPhoneValidationCredentials;
+
+@property (nonatomic, readonly) UserCredentials *loginCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;
@@ -89,9 +87,8 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (id)addAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;
 
-- (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials;
+- (void)prepareForLoginWithCredentials:(UserCredentials *)credentials;
 - (void)continueAfterBackupImportStep;
-- (void)prepareForRequestingPhoneVerificationCodeForLogin:(NSString *)phone;
 - (void)prepareForRequestingEmailVerificationCodeForLogin:(NSString *)email;
 
 - (void)didCompleteRequestForLoginCodeSuccessfully;
@@ -100,23 +97,15 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)notifyCompanyLoginCodeDidBecomeAvailable:(NSUUID *)uuid;
 
-- (void)didCompletePhoneVerificationSuccessfully;
-
 - (void)startLogin;
 - (void)loginSucceededWithResponse:(ZMTransportResponse *)response;
 - (void)loginSucceededWithUserInfo:(UserInfo *)userInfo;
-- (void)didFailLoginWithPhone:(BOOL)invalidCredentials;
 - (void)didFailLoginWithEmailBecausePendingValidation;
 - (void)didFailLoginWithEmail:(BOOL)invalidCredentials;
 - (void)didFailLoginBecauseAccountSuspended;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsRequired;
 - (void)didFailLoginWithEmailBecauseVerificationCodeIsInvalid;
-- (void)didTimeoutLoginForCredentials:(ZMCredentials *)credentials;
-
-@end
-
-@interface ZMAuthenticationStatus (CredentialProvider) <ZMCredentialProvider>
-
-- (void)credentialsMayBeCleared;
+- (void)didTimeoutLoginForCredentials:(UserCredentials *)credentials;
+- (void)resetLoginAndRegistrationStatus;
 
 @end

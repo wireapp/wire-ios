@@ -24,6 +24,7 @@ import UniformTypeIdentifiers
 import WireCommonComponents
 import WireCoreCrypto
 import WireDataModel
+import WireDesign
 import WireLinkPreview
 import WireShareEngine
 
@@ -121,15 +122,21 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func setup() {
-        setupObserver()
-
-        if let datadog = DatadogWrapper.shared {
-            datadog.startMonitoring()
-        }
+        setUpObserver()
+        setUpDatadog()
     }
 
-    private func setupObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(extensionHostDidEnterBackground), name: .NSExtensionHostDidEnterBackground, object: nil)
+    private func setUpObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(extensionHostDidEnterBackground),
+            name: .NSExtensionHostDidEnterBackground,
+            object: nil
+        )
+    }
+
+    private func setUpDatadog() {
+        WireAnalytics.Datadog.enable()
     }
 
     override func viewDidLoad() {
@@ -318,7 +325,15 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 WireLogger.shareExtension.error("progress event: timed out")
                 self.popConfigurationViewController()
 
-                let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.Timeout.title, message: L10n.ShareExtension.Timeout.message)
+                let alert = UIAlertController(
+                    title: L10n.ShareExtension.Timeout.title,
+                    message: L10n.ShareExtension.Timeout.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
 
                 self.present(alert, animated: true)
 
@@ -326,9 +341,18 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
 
                 if let errorDescription = (error as? UnsentSendableError)?.errorDescription {
-                    let alert = UIAlertController.alertWithOKButton(title: nil, message: errorDescription) { _ in
-                        self.extensionContext?.completeRequest(returningItems: [])
-                    }
+                    let alert = UIAlertController(
+                        title: nil,
+                        message: errorDescription,
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(
+                        title: L10n.General.ok,
+                        style: .cancel,
+                        handler: { _ in
+                            self.extensionContext?.completeRequest(returningItems: [])
+                        }
+                    ))
 
                     self.present(alert, animated: true) {
                         self.popConfigurationViewController()
@@ -336,8 +360,17 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }
             case .fileSharingRestriction:
                 WireLogger.shareExtension.warn("progress event: file sharing restricted")
-                let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.title,
-                                                                message: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.message)
+
+                let alert = UIAlertController(
+                    title: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.title,
+                    message: L10n.ShareExtension.Feature.Flag.FileSharing.Alert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
+
                 self.present(alert, animated: true)
             }
         }
@@ -448,7 +481,15 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         } catch let error as SharingSession.InitializationError {
             guard error == .loggedOut else { return }
 
-            let alert = UIAlertController.alertWithOKButton(title: L10n.ShareExtension.LoggedOut.title, message: L10n.ShareExtension.LoggedOut.message)
+            let alert = UIAlertController(
+                title: L10n.ShareExtension.LoggedOut.title,
+                message: L10n.ShareExtension.LoggedOut.message,
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(
+                title: L10n.General.ok,
+                style: .cancel
+            ))
 
             self.present(alert, animated: true)
             return
@@ -619,7 +660,16 @@ extension ShareExtensionViewController {
         case .needCustomPasscode:
             let isCustomPasscodeSet = sharingSession?.appLockController.isCustomPasscodeSet ?? false
             if !isCustomPasscodeSet {
-                let alert = UIAlertController(title: "", message: L10n.ShareExtension.Unlock.Alert.message, alertAction: .ok(style: .cancel))
+                let alert = UIAlertController(
+                    title: "",
+                    message: L10n.ShareExtension.Unlock.Alert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.General.ok,
+                    style: .cancel
+                ))
+
                 self.present(alert, animated: true, completion: nil)
 
                 localAuthenticationStatus = .denied

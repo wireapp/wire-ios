@@ -34,7 +34,7 @@ final class ZClientViewControllerTests: XCTestCase {
         coreDataFixture = .init()
         imageTransformer = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        userSession.contextProvider = coreDataFixture.coreDataStack
+        userSession.coreDataStack = coreDataFixture.coreDataStack
         sut = ZClientViewController(
             account: Account.mockAccount(imageData: mockImageData),
             userSession: userSession
@@ -47,26 +47,6 @@ final class ZClientViewControllerTests: XCTestCase {
         coreDataFixture = nil
 
         super.tearDown()
-    }
-
-    func testForShowDataUsagePermissionDialogIfNeeded() {
-        // Alert is not shown before the flags are set
-        var alert = sut.createDataUsagePermissionDialogIfNeeded()
-        XCTAssertNil(alert)
-
-        // GIVEN
-        sut.needToShowDataUsagePermissionDialog = true
-        sut.isComingFromRegistration = true
-
-        alert = sut.createDataUsagePermissionDialogIfNeeded()
-        XCTAssertNotNil(alert)
-
-        // WHEN
-        sut.dataUsagePermissionDialogDisplayed = true
-
-        // Should not show alert for the second time
-        alert = sut.createDataUsagePermissionDialogIfNeeded()
-        XCTAssertNil(alert)
     }
 
     func testThatCustomPasscodeWillBeDeleted_AfterUserNotifiedOfDisabledApplock() {

@@ -20,6 +20,8 @@ import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
 
@@ -29,6 +31,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
         conversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
@@ -48,7 +51,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             mlsEventProcessor: mockMLSEventProcessor
         )
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
     }
 
@@ -56,6 +59,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         sut = nil
         conversationService = nil
         mockMLSEventProcessor = nil
+
+        DeveloperFlag.storage = .standard
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
@@ -553,15 +559,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         var event: ZMUpdateEvent!
 
         // GIVEN: local & synced timeouts exist
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.setMessageDestructionTimeoutValue(.oneHour, for: .groupConversation)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             XCTAssertNotNil(self.groupConversation.activeMessageDestructionTimeoutValue)
 
             // "turn off" synced timeout
@@ -597,7 +603,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         var event: ZMUpdateEvent!
 
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

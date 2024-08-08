@@ -20,8 +20,23 @@ import XCTest
 
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 final class MessageSenderTests: MessagingTestBase {
+
+    override func setUp() {
+        super.setUp()
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
+    }
+
+    override func tearDown() {
+        BackendInfo.resetMocking()
+
+        super.tearDown()
+    }
 
     func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
         // given
@@ -393,7 +408,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -430,7 +445,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageSucceeds_thenCommitPendingProposalsInGroup() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -468,7 +483,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageFailsWithPermanentError_thenThrowError() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -500,7 +515,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageWithoutMlsService_thenThrowError() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
             self.groupConversation.messageProtocol = .mls
         }
@@ -524,7 +539,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     func testThatWhenSendingMlsMessageWithoutGroupID_thenThrowError() async throws {
         // given
-        syncMOC.performGroupedBlockAndWait {
+        await syncMOC.performGrouped {
             self.groupConversation.messageProtocol = .mls
         }
         let message = GenericMessageEntity(

@@ -20,41 +20,70 @@ import XCTest
 
 extension XCTestCase {
 
-    /// Assert that a error is thrown when a block is performed.
+    /// Assert that an error is thrown when a block is performed.
+    ///
     /// - Parameters:
     ///   - expectedError: The expected error.
-    ///   - block: The block that should throw the error.
+    ///   - expression: The expression that should throw the error.
+    ///   - message: The error message to show when no error is thrown.
     ///   - file: The file name of the invoking test.
     ///   - line: The line number when this assertion is made.
 
-    func assertAPIError<E: Error & Equatable>(
+    func XCTAssertThrowsError<E: Error & Equatable>(
         _ expectedError: E,
-        when block: () async throws -> Void,
-        file: StaticString = #file,
+        when expression: @escaping () async throws -> some Any,
+        _ message: String? = nil,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async {
+        await XCTAssertThrowsError(
+            expression,
+            message,
+            file: file,
+            line: line
+        ) { error in
+            if let error = error as? E {
+                XCTAssertEqual(
+                    error,
+                    expectedError,
+                    file: file,
+                    line: line
+                )
+            } else {
+                XCTFail(
+                    "unexpected error: \(error)",
+                    file: file,
+                    line: line
+                )
+            }
+        }
+    }
+
+    /// Assert that an error is thrown when a block is performed.
+    ///
+    /// - Parameters:
+    ///   - expression: The expression that should throw the error.
+    ///   - message: The error message to show when no error is thrown.
+    ///   - file: The file name of the invoking test.
+    ///   - line: The line number when this assertion is made.
+    ///   - errorHandler: A handler for the thrown error.
+
+    func XCTAssertThrowsError(
+        _ expression: () async throws -> some Any,
+        _ message: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line,
+        _ errorHandler: (_ error: any Error) -> Void = { _ in }
+    ) async {
         do {
-            // When
-            try await block()
+            _ = try await expression()
             XCTFail(
-                "expected an error but none was thrown",
-                file: file,
-                line: line
-            )
-        } catch let error as E {
-            // Then
-            XCTAssertEqual(
-                error,
-                expectedError,
+                message ?? "expected an error but none was thrown",
                 file: file,
                 line: line
             )
         } catch {
-            XCTFail(
-                "unexpected error: \(error)",
-                file: file,
-                line: line
-            )
+            errorHandler(error)
         }
     }
 

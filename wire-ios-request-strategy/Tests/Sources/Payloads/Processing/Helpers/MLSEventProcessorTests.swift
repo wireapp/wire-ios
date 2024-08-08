@@ -33,7 +33,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
     var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
-    let groupIdString = "identifier".data(using: .utf8)!.base64EncodedString()
+    let groupIdString = Data("identifier".utf8).base64EncodedString()
 
     override func setUp() {
         super.setUp()
@@ -55,7 +55,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
         staleKeyMaterialDetectorMock = .init()
         staleKeyMaterialDetectorMock.keyingMaterialUpdatedFor_MockMethod = { _ in }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.remoteIdentifier = self.qualifiedID.uuid

@@ -38,7 +38,7 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
+        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String { // TODO move constant into shared framework
             return !clientId.isEmpty
         }
 
@@ -476,14 +476,9 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-fileprivate extension ZMConversationList {
-    var writeableConversations: [Conversation] {
-        return self.filter {
-            if let conversation = $0 as? ZMConversation {
-                return !conversation.isReadOnly
-            }
-            return false
-        }.compactMap { $0 as? Conversation }
-    }
+fileprivate extension ConversationList {
 
+    var writeableConversations: [Conversation] {
+        items.filter { !$0.isReadOnly }
+    }
 }

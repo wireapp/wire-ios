@@ -62,6 +62,9 @@
       location = "group:wire-ios/Wire-iOS.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireUI">
+   </FileRef>
+   <FileRef
       location = "group:wire-ios-canvas/WireCanvas.xcodeproj">
    </FileRef>
    <FileRef
@@ -78,6 +81,12 @@
    </FileRef>
    <FileRef
       location = "group:wire-ios-request-strategy/WireRequestStrategy.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireDomain/Project/WireDomain Project.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireDomain">
    </FileRef>
    <FileRef
       location = "group:wire-ios-data-model/WireDataModel.xcodeproj">
@@ -101,13 +110,25 @@
       location = "group:wire-ios-utilities/../wire-ios-images/WireImages.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-utilities/WireUtilities.xcodeproj">
+      location = "group:wire-ios-utilities/WireUtilities Project.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-testing/WireTesting.xcodeproj">
+      location = "group:WireUtilities">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-system/WireSystem.xcodeproj">
+      location = "group:wire-ios-testing/WireTesting Project.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireTesting">
+   </FileRef>
+   <FileRef
+      location = "group:wire-ios-system/WireSystem Project.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:WireSystem">
+   </FileRef>
+   <FileRef
+      location = "group:WireAnalytics">
    </FileRef>
    <FileRef
       location = "group:WireAPI">

@@ -30,7 +30,7 @@ final class SessionManagerTests: IntegrationTest {
     private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
 
     private var cachesDirectoryPath: URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        FileManager.default.randomCacheURL!
     }
 
     var mockDelegate: MockSessionManagerDelegate!
@@ -414,20 +414,25 @@ final class SessionManagerTests: IntegrationTest {
         // GIVEN
         XCTAssertTrue(login())
         let sessionManager = try XCTUnwrap(sessionManager)
+        let account = try XCTUnwrap(sessionManager.accountManager.selectedAccount)
         let observer = MockSessionManagerObserver()
         let token = sessionManager.addSessionManagerDestroyedSessionObserver(observer)
-        let tempUrl = self.cachesDirectoryPath.appendingPathComponent("testFile.txt")
+
+        let cachesDirectory = cachesDirectoryPath
+        try FileManager.default.createDirectory(at: cachesDirectory, withIntermediateDirectories: true)
+        let tempURL = cachesDirectory.appendingPathComponent("testFile.txt")
         let testData = "Test Message"
-        try? testData.write(to: tempUrl, atomically: true, encoding: .utf8)
-        XCTAssertFalse(tempUrl.path.isEmpty)
+        try testData.write(to: tempURL, atomically: true, encoding: .utf8)
+        XCTAssertFalse(tempURL.path.isEmpty)
 
         // WHEN
         withExtendedLifetime(token) {
-            sessionManager.logoutCurrentSession()
+            sessionManager.delete(account: account)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(FileManager.default.fileExists(atPath: self.cachesDirectoryPath.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: tempURL.path))
     }
 
     func testThatItDestroyedTmpDirectoryAfterLoggedOut() throws {
@@ -472,6 +477,47 @@ final class SessionManagerTests: IntegrationTest {
 
         // THEN
         XCTAssertTrue(expirationDatesRepository.fetchAllCRLExpirationDates().isEmpty)
+    }
+
+    func testThatDeleteAccountWhenSingleUserClearsLastEventID() throws {
+        // GIVEN
+        XCTAssertTrue(login())
+        let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
+
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: account.userIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
+        lastEventIDRepository.storeLastEventID(UUID())
+
+        // WHEN
+        sessionManager?.delete(account: account)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertNil(lastEventIDRepository.fetchLastEventID())
+    }
+
+    func testThatDeleteAccountWhenMultipleUsersClearsLastEventID() throws {
+        // GIVEN
+        XCTAssertTrue(login())
+
+        let sut = try XCTUnwrap(sessionManager)
+        let account2 = Account(userName: "Account 2", userIdentifier: UUID.create())
+        sut.accountManager.addAndSelect(account2)
+
+        let lastEventIDRepository = LastEventIDRepository(
+            userID: account2.userIdentifier,
+            sharedUserDefaults: sharedUserDefaults
+        )
+        lastEventIDRepository.storeLastEventID(UUID())
+
+        // WHEN
+        sessionManager?.delete(account: account2)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertNil(lastEventIDRepository.fetchLastEventID())
     }
 
     // FIXME: [WPB-5638] this test will hang - [jacob]

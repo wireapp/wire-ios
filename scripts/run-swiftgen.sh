@@ -20,8 +20,7 @@ set -Eeuo pipefail
 #
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-SCRIPTS_DIR="$REPO_ROOT/scripts"
-SWIFTGEN="$SCRIPTS_DIR/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
+SWIFTGEN="$REPO_ROOT/scripts/.build/artifacts/scripts/swiftgen/swiftgen.artifactbundle/swiftgen/bin/swiftgen"
 
 if [ ! -z "${CI-}" ]; then
     echo "Skipping SwiftGen in CI environment"
@@ -29,7 +28,7 @@ if [ ! -z "${CI-}" ]; then
 fi
 
 if [[ ! -f "$SWIFTGEN" ]]; then
-    xcrun --sdk macosx swift package --package-path "$SCRIPTS_DIR" resolve
+    echo "❌ Executable is missing, please run the setup script!"
 fi
 
 (

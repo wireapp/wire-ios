@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import WireTesting
 
-class ConversationTestsOTR_Swift: ConversationTestsBase {
+final class ConversationTestsOTR_Swift: ConversationTestsBase {
+
     func testThatItSendsFailedOTRMessageAfterMisingClientsAreFetchedButSessionIsNotCreated() {
         // GIVEN
         XCTAssertTrue(self.login())
@@ -34,7 +36,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        "key": "invalid key".data(using: .utf8)!.base64String()
+                        "key": Data("invalid key".utf8).base64String()
                     ]
                 ]
             ]
@@ -63,7 +65,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
 
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
-            if clientEntry?.text == "💣".data(using: .utf8) {
+            if clientEntry?.text == Data("💣".utf8) {
                 messagesReceived += 1
             }
         }
@@ -87,7 +89,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        "key": "invalid key".data(using: .utf8)!.base64String()
+                        "key": Data("invalid key".utf8).base64String()
                     ]
                 ]
             ]
@@ -117,7 +119,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
 
-            if clientEntry?.text == "💣".data(using: .utf8) {
+            if clientEntry?.text == Data("💣".utf8) {
                 bombsReceived += 1
             }
         }
@@ -261,9 +263,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
             message = try! conversation?.appendText(content: "Where's everyone", mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
         }
 
-        XCTAssertTrue(waitOnMainLoop(until: {
-            return message?.isExpired ?? false
-        }, timeout: 0.5))
+        wait(forConditionToBeTrue: message?.isExpired ?? false, timeout: 5)
 
         XCTAssertEqual(message?.deliveryState, ZMDeliveryState.failedToSend)
         ZMMessage.setDefaultExpirationTime(defaultExpirationTime)
@@ -733,7 +733,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.selfToUser1Conversation.insertOTRMessage(
                     from: self.user1.clients.anyObject() as! MockUserClient,
                     to: self.selfUser.clients.anyObject() as! MockUserClient,
-                    data: "foo".data(using: .utf8)!
+                    data: Data("foo".utf8)
                 )
             }
 

@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDesign
 
 extension ShareViewController {
 
@@ -42,6 +43,7 @@ extension ShareViewController {
     }
 
     func createViews() {
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         containerView.backgroundColor = SemanticColors.View.backgroundDefault
         createShareablePreview()
         self.tokenField.tokenTitleVerticalAdjustment = 1

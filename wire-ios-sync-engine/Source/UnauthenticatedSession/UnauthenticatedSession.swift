@@ -21,7 +21,7 @@ import WireUtilities
 
 public protocol UnauthenticatedSessionDelegate: AnyObject {
     /// Update credentials for the corresponding user session. Returns true if the credentials were accepted.
-    func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) -> Bool
+    func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool
     func session(session: UnauthenticatedSession, updatedProfileImage imageData: Data)
     func session(session: UnauthenticatedSession, createdAccount account: Account)
     func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool
@@ -97,7 +97,7 @@ public class UnauthenticatedSession: NSObject {
         if self.reachability.mayBeReachable {
             block()
         } else {
-            let error = NSError(code: .networkError, userInfo: nil)
+            let error = NSError(userSessionErrorCode: .networkError, userInfo: nil)
             authenticationStatus.notifyAuthenticationDidFail(error)
         }
     }
@@ -143,5 +143,4 @@ extension UnauthenticatedSession: UserInfoParser {
         self.authenticationStatus.authenticationCookieData = userInfo.cookieData
         self.delegate?.session(session: self, createdAccount: account)
     }
-
 }

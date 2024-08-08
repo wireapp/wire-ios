@@ -23,6 +23,8 @@ extension ZMUserSession {
 
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
+            guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
             Task { [weak self] in
                 do {
                     try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
@@ -37,7 +39,7 @@ extension ZMUserSession {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
             // TODO: [WPB-6737] check why do we refreshData on main and block main thread here?
             guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait { context in
+            context.performGroupedAndWait {
 
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
@@ -54,12 +56,12 @@ extension ZMUserSession {
         .init(id: #function, interval: 3 * .oneHour) { [weak self] in
 
             guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait { context in
+            context.performGroupedAndWait {
 
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
-                guard let conversations = context.executeFetchRequestOrAssert(fetchRequest) as? [ZMConversation] else {
+                guard let conversations = try! context.fetch(fetchRequest) as? [ZMConversation] else {
                     return
                 }
 
@@ -73,7 +75,7 @@ extension ZMUserSession {
         .init(id: #function, interval: .oneDay) { [weak self] in
 
             guard let context = self?.managedObjectContext else { return }
-            context.performGroupedAndWait { context in
+            context.performGroupedAndWait {
 
                 guard let team = ZMUser.selfUser(in: context).team else { return }
                 team.refreshMetadata()

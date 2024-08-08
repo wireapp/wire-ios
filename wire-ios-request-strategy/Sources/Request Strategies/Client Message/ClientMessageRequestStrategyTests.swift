@@ -18,8 +18,11 @@
 
 import XCTest
 
+@testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -30,7 +33,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     var mockMessageSender: MockMessageSenderInterface!
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -50,6 +53,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                messageSender: mockMessageSender)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
 
     }
@@ -60,7 +64,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         self.sut = nil
-        apiVersion = nil
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -81,7 +85,7 @@ extension ClientMessageRequestStrategyTests {
 
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
@@ -99,7 +103,7 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItNotifiesAttachmentPrepocessorOfChanges() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let text = String(repeating: "Hi", count: 100000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
@@ -118,7 +122,7 @@ extension ClientMessageRequestStrategyTests {
 
         // GIVEN
         var confirmationMessage: ZMMessage!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
@@ -130,7 +134,7 @@ extension ClientMessageRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             XCTAssertTrue(confirmationMessage.isZombieObject)
         }
     }
@@ -147,7 +151,7 @@ extension ClientMessageRequestStrategyTests {
             message: "",
             data: nil)
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
@@ -177,7 +181,7 @@ extension ClientMessageRequestStrategyTests {
 extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromAnEvent() {
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
 
             // GIVEN
             let text = "Everything"
@@ -209,7 +213,8 @@ extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
         // GIVEN
-        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let text = "Everything"
         let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 

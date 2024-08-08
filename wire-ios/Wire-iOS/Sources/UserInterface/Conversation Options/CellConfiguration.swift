@@ -18,26 +18,35 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 protocol CellConfigurationConfigurable: Reusable {
     func configure(with configuration: CellConfiguration)
 }
 
 enum CellConfiguration {
-    typealias Action = (UIView?) -> Void
+    typealias Action = (UIView) -> Void
     case linkHeader
-    case leadingButton(title: String, identifier: String, action: Action)
+    case secureLinkHeader
+    case leadingButton(
+        title: String,
+        identifier: String,
+        action: Action
+    )
     case loading
     case text(String)
     case info(String)
-    case iconAction(title: String,
-                    icon: StyleKitIcon,
-                    color: UIColor?,
-                    action: Action)
+    case iconAction(
+        title: String,
+        icon: StyleKitIcon,
+        color: UIColor?,
+        action: Action
+    )
     case appearance(title: String)
 
     /// For toggle without icon, leave icon and color nil
-    case iconToggle(title: String,
+    case iconToggle(
+        title: String,
         subtitle: String,
         identifier: String,
         titleIdentifier: String,
@@ -45,12 +54,14 @@ enum CellConfiguration {
         color: UIColor?,
         isEnabled: Bool,
         get: () -> Bool,
-        set: (Bool, UIView?) -> Void)
+        set: (Bool, UIView) -> Void
+    )
 
     var cellType: CellConfigurationConfigurable.Type {
         switch self {
         case .iconToggle: return IconToggleSubtitleCell.self
         case .linkHeader: return LinkHeaderCell.self
+        case .secureLinkHeader: return SecureLinkHeaderCell.self
         case .leadingButton: return ActionCell.self
         case .loading: return LoadingIndicatorCell.self
         case .text: return TextCell.self
@@ -64,6 +75,7 @@ enum CellConfiguration {
         switch self {
         case .iconToggle,
              .linkHeader,
+             .secureLinkHeader,
              .loading,
              .text,
              .info,
@@ -79,6 +91,7 @@ enum CellConfiguration {
         return [
             IconToggleSubtitleCell.self,
             LinkHeaderCell.self,
+            SecureLinkHeaderCell.self,
             ActionCell.self,
             LoadingIndicatorCell.self,
             TextCell.self,
@@ -93,5 +106,4 @@ enum CellConfiguration {
             tableView.register($0, forCellReuseIdentifier: $0.reuseIdentifier)
         }
     }
-
 }

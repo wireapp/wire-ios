@@ -19,6 +19,8 @@
 import WireDataModel
 import WireProtos
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import WireUtilities
 import XCTest
 
@@ -26,17 +28,18 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 
     private var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
     override func setUp() {
         super.setUp()
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
     override func tearDown() {
-        apiVersion = nil
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
@@ -46,7 +49,7 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
             let expectedMessage = Proteus_NewOtrMessage(
@@ -79,7 +82,7 @@ extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithDomain() {
         apiVersion = .v1
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let conversationID = UUID()
             let domain = "wire.com"

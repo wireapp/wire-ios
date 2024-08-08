@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModel
+@_spi(MockBackendInfo)
+import WireTransport
 
 extension SearchTests: UserObserving {
 
@@ -33,12 +35,18 @@ final class SearchTests: IntegrationTest {
     override func setUp() {
         super.setUp()
 
+        BackendInfo.enableMocking()
+        BackendInfo.domain = "example.com"
+        BackendInfo.apiVersion = .v0
+        BackendInfo.isFederationEnabled = false
+
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
     }
 
     override func tearDown() {
         userNotifications.removeAll()
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -100,8 +108,8 @@ final class SearchTests: IntegrationTest {
 
         XCTAssertTrue(login())
 
-        let pendingConnections = ZMConversationList.pendingConnectionConversations(inUserSession: userSession!)
-        XCTAssertEqual(pendingConnections.count, 1)
+        let pendingConnections: ConversationList = .pendingConnectionConversations(inUserSession: userSession!)
+        XCTAssertEqual(pendingConnections.items.count, 1)
     }
 
     func testThatItNotifiesObserversWhenTheConnectionStatusChanges_InsertedUser() {

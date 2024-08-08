@@ -17,6 +17,7 @@
 //
 
 import SnapshotTesting
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -25,9 +26,11 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
         accentColor = .blue
 
@@ -42,6 +45,7 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         builder = nil
         featureProvider = nil
 
@@ -131,11 +135,11 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     }
 
     func testTooManyDevicesScreen() {
-        runSnapshotTest(for: .clientManagement(clients: [], credentials: nil))
+        runSnapshotTest(for: .clientManagement(clients: []))
     }
 
     func testClientRemovalScreen() {
-        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()], credentials: nil))
+        runSnapshotTest(for: .deleteClient(clients: [mockUserClient()]))
     }
 
     func testAddEmailPasswordScreen() {
@@ -143,22 +147,22 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     }
 
     func testVerifyEmailLinkTests() {
-        let credentials = ZMEmailCredentials(email: "test@example.com", password: "12345678")
+        let credentials = UserEmailCredentials(email: "test@example.com", password: "12345678")
         runSnapshotTest(for: .pendingEmailLinkVerification(credentials))
     }
 
     func testReauthenticate_Email_TokenExpired() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: .none, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
     func testReauthenticate_Email_DuringLogin() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: .none, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
     }
 
     func testReauthenticate_CompanyLogin() {
-        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: .none, hasPassword: false, usesCompanyLogin: true)
+        let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
@@ -183,8 +187,8 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
             let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
             navigationController.viewControllers = [viewController]
 
-            verify(matching: navigationController,
-                   customSize: customSize,
+            snapshotHelper.verify(matching: navigationController,
+                   size: customSize,
                    file: file,
                    testName: testName,
                    line: line)

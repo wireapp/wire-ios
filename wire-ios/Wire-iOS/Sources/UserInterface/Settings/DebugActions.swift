@@ -77,7 +77,7 @@ enum DebugActions {
         guard let userSession = ZMUserSession.shared() else { return }
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
-        if let convo = (ZMConversationList.conversations(inUserSession: userSession) as! [ZMConversation])
+        if let convo = ConversationList.conversations(inUserSession: userSession).items
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
@@ -103,15 +103,13 @@ enum DebugActions {
     static func sendBrokenMessage(_ type: SettingsCellDescriptorType) {
         guard
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
             else {
                 return
         }
 
         var external = External()
-        if let otr = "broken_key".data(using: .utf8) {
-             external.otrKey = otr
-        }
+        external.otrKey = Data("broken_key".utf8)
         let genericMessage = GenericMessage(content: external)
 
         userSession.enqueue {
@@ -124,7 +122,7 @@ enum DebugActions {
         guard
             amount > 0,
             let userSession = ZMUserSession.shared(),
-            let conversation = ZMConversationList.conversationsIncludingArchived(inUserSession: userSession).firstObject as? ZMConversation
+            let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
             else {
                 return
         }
@@ -169,8 +167,12 @@ enum DebugActions {
         let alert = UIAlertController(
             title: "Analytics identifier",
             message: "\(selfUser.analyticsIdentifier ?? "nil")",
-            alertAction: .ok(style: .cancel)
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -190,8 +192,12 @@ enum DebugActions {
         let alert = UIAlertController(
             title: "API Version info",
             message: message,
-            alertAction: .ok(style: .cancel)
+            preferredStyle: .alert
         )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -209,9 +215,15 @@ enum DebugActions {
 
         CallQualityController.resetSurveyMuteFilter()
 
-        let alert = UIAlertController(title: "Success",
-                                      message: "The call quality survey will be displayed after the next call.",
-                                      alertAction: .ok(style: .cancel))
+        let alert = UIAlertController(
+            title: "Success",
+            message: "The call quality survey will be displayed after the next call.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
 
         controller.present(alert, animated: true)
     }
@@ -246,14 +258,14 @@ enum DebugActions {
                 let action = UpdateAccessRolesAction(conversation: $0,
                                                      accessMode: ConversationAccessMode.value(forAllowGuests: true),
                                                      accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
-                action.send(in: syncContext.notificationContext)
+                action.send(in: userSession.notificationContext)
             }
         }
     }
 
     static func appendMessagesToDatabase(count: Int) {
         guard let userSession = ZMUserSession.shared() else { return }
-        let conversation = ZMConversationList.conversations(inUserSession: userSession).firstObject! as! ZMConversation
+        let conversation = ConversationList.conversations(inUserSession: userSession).items.first!
         let conversationId = conversation.objectID
 
         let syncContext = userSession.syncManagedObjectContext
@@ -286,12 +298,21 @@ enum DebugActions {
             conversations?.forEach({ _ = $0.estimatedUnreadCount })
         }
         userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
-        userSession.syncManagedObjectContext.performGroupedBlockAndWait {
+        userSession.syncManagedObjectContext.performGroupedAndWait {
             conversations = nil
             userSession.syncManagedObjectContext.saveOrRollback()
         }
 
-        let alertController = UIAlertController(title: "Updated", message: "Badge count  has been re-calculated", alertAction: .ok(style: .cancel))
+        let alertController = UIAlertController(
+            title: "Updated",
+            message: "Badge count  has been re-calculated",
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+
         controller.show(alertController, sender: nil)
     }
 
@@ -300,7 +321,7 @@ enum DebugActions {
             if let number = NumberFormatter().number(from: $0) {
                 callback(number.intValue)
             } else {
-              alert("ERROR: not a number")
+                alert("ERROR: not a number")
             }
         }
     }

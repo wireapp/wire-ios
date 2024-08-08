@@ -17,26 +17,30 @@
 //
 
 import WireMockTransport
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
 
-class SlowSyncTests_NotificationsV3: IntegrationTest {
+@_spi(MockBackendInfo)
+import WireTransport
 
-    override func _setUp() {
-        setCurrentAPIVersion(.v3)
-        super._setUp()
-    }
+@testable import WireSyncEngine
+
+final class SlowSyncTests_NotificationsV3: IntegrationTest {
 
     override func setUp() {
         super.setUp()
+
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v3
+
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
     }
 
     override func tearDown() {
+        BackendInfo.resetMocking()
+
         super.tearDown()
-        resetCurrentAPIVersion()
     }
 
     // MARK: - Slow sync with error
@@ -60,9 +64,7 @@ class SlowSyncTests_NotificationsV3: IntegrationTest {
         self.performQuickSync()
 
         // THEN
-        let result = wait(withTimeout: 1) {
-            self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true
-        }
-        XCTAssertTrue(result, "it should perform slow sync")
+        // ensure it performs slow sync
+        wait(forConditionToBeTrue: self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true, timeout: 5)
     }
 }

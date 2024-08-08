@@ -500,7 +500,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         var conversation: ZMConversation!
         var message: ZMMessage!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             conversation = self.syncMOC.object(with: uiConversation.objectID) as? ZMConversation
             message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             message.visibleInConversation = conversation
@@ -518,7 +518,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             conversation.lastReadServerTimeStamp = message.serverTimestamp
             conversation.calculateLastUnreadMessages()
             XCTAssertEqual(conversation.estimatedUnreadCount, 0)
@@ -748,7 +748,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         var conversation: ZMConversation!
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             conversation = self.syncMOC.object(with: uiConversation.objectID) as? ZMConversation
             self.syncMOC.saveOrRollback()
         }
@@ -757,7 +757,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
 
         // when
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait {
             self.addUnreadMissedCall(conversation)
             self.syncMOC.saveOrRollback()
         }
@@ -985,7 +985,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
     }
 
     // swiftlint:disable todo_requires_jira_link
-    // TODO: [jacob] re-enable WPB-5917 and fix calling `legalHoldClient.deleteClientAndEndSession()`
+    // TODO: [WPB-5917] re-enable and fix calling `legalHoldClient.deleteClientAndEndSession()`
     // swiftlint:enable todo_requires_jira_link
     func testThatItNotifiesOfLegalHoldChanges_Disabled() {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

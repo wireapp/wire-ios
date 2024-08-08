@@ -19,6 +19,8 @@
 import WireDataModelSupport
 @testable import WireRequestStrategy
 import XCTest
+@_spi(MockBackendInfo)
+import WireTransport
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
 
@@ -99,7 +101,8 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         successResponsePayloadMLS.mlsGroupID = mlsGroupID.data.base64EncodedString()
         successResponsePayloadMLS.epoch = 0
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
     }
 
@@ -113,7 +116,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
         expectedRequestPayload = nil
         successResponsePayloadProteus = nil
         successResponsePayloadMLS = nil
-        BackendInfo.storage = .standard
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
@@ -357,7 +360,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // Given
             BackendInfo.apiVersion = .v4
             let unreachableDomain = "foma.wire.link"
@@ -409,7 +412,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     func testThatItCallsResultHandler_OnNonFederatingDomainsError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // Given
             BackendInfo.apiVersion = .v4
             let applesDomain = "apples@domain.com"

@@ -57,14 +57,18 @@ final class ConversationMessageActionController {
             guard let title = messageAction.title else { return nil }
 
             let handler: UIActionHandler = { _ in
-                responder?.perform(action: messageAction,
-                                   for: message,
-                                   view: targetView)
+                responder?.perform(
+                    action: messageAction,
+                    for: message!,
+                    view: targetView
+                )
             }
 
-            return UIAction(title: title,
-                            image: messageAction.systemIcon(),
-                            handler: handler)
+            return UIAction(
+                title: title,
+                image: messageAction.systemIcon(),
+                handler: handler
+            )
         }
     }
 
@@ -98,8 +102,6 @@ final class ConversationMessageActionController {
             return message.canCancelDownload
         case .download:
             return message.canBeDownloaded
-        case .forward:
-            return message.canBeForwarded
         case .resend:
             return message.canBeResent
         case .showInConversation:
@@ -218,10 +220,6 @@ final class ConversationMessageActionController {
 
     @objc func saveMessage() {
         perform(action: .save)
-    }
-
-    @objc func forwardMessage() {
-        perform(action: .forward)
     }
 
     @objc func deleteMessage() {
