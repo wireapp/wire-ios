@@ -39,6 +39,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
         controller.searchBar.placeholder = Giphy.searchPlaceholder
+        controller.searchBar.isAccessibilityElement = true
         controller.searchBar.accessibilityLabel = L10n.Accessibility.SearchGifs.SearchBar.accessibilityLabel
         controller.searchBar.accessibilityIdentifier = "search input"
         return controller
@@ -163,6 +164,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     private func setupNoResultLabel() {
         extendedLayoutIncludesOpaqueBars = true
         noResultsLabel.isHidden = true
+        noResultsLabel.isAccessibilityElement = true
         noResultsLabel.accessibilityTraits = .staticText
         noResultsLabel.accessibilityLabel = L10n.Accessibility.SearchGifs.NorResultsLabel.description
         view.addSubview(noResultsLabel)
