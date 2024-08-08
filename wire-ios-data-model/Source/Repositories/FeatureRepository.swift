@@ -125,20 +125,36 @@ public class FeatureRepository: FeatureRepositoryInterface {
     }
 
     public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
-        let config = try? encoder.encode(conferenceCalling.config)
-        Feature.updateOrCreate(havingName: .conferenceCalling, in: context) {
-            $0.status = conferenceCalling.status
-            $0.config = config
+        func notifyUser() {
+            guard
+                needsToNotifyUser(for: .conferenceCalling),
+                conferenceCalling.status == .enabled
+            else {
+                return
+            }
+
+            notifyChange(.conferenceCallingIsAvailable)
         }
 
-        guard
-            needsToNotifyUser(for: .conferenceCalling),
-            conferenceCalling.status == .enabled
-        else {
+        guard let featureConfig = conferenceCalling.config else {
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: context) {
+                $0.status = conferenceCalling.status
+            }
+            notifyUser()
             return
         }
 
-        notifyChange(.conferenceCallingIsAvailable)
+        do {
+            let config = try encoder.encode(featureConfig)
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: context) {
+                $0.status = conferenceCalling.status
+                $0.config = config
+            }
+
+            notifyUser()
+        } catch {
+            logger.error("failed to encoder Feature.ConferenceCalling.Config: \(error)")
+        }
     }
 
     // MARK: - File sharing
