@@ -18,12 +18,19 @@
 
 import Foundation
 @testable import WireRequestStrategy
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 final class AssetDownloadRequestFactoryTests: XCTestCase {
 
+    override func setUp() {
+        super.setUp()
+        BackendInfo.enableMocking()
+    }
+
     override func tearDown() {
-        BackendInfo.domain = nil
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 

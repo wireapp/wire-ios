@@ -20,6 +20,8 @@ import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
 
@@ -29,6 +31,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
+        DeveloperFlag.enableMLSSupport.enable(true, storage: .temporary())
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
         conversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
@@ -48,7 +51,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             mlsEventProcessor: mockMLSEventProcessor
         )
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
     }
 
@@ -56,6 +59,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         sut = nil
         conversationService = nil
         mockMLSEventProcessor = nil
+
+        DeveloperFlag.storage = .standard
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
