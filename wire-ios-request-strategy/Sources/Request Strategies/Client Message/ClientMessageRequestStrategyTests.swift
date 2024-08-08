@@ -21,6 +21,8 @@ import XCTest
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -31,7 +33,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     var mockMessageSender: MockMessageSenderInterface!
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -51,6 +53,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                messageSender: mockMessageSender)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
 
     }
@@ -61,7 +64,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         self.sut = nil
-        apiVersion = nil
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
