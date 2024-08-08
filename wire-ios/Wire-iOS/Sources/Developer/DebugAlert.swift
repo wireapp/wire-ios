@@ -114,15 +114,12 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
 
-    static var debugLogs: [URL] {
+    static var existingDebugLogs: [URL] {
         let oslogs = LogFileDestination.allCases.compactMap { $0.log }
         let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
+        let allLogs = ZMSLog.previousZipLogURLs + oslogs + currentLog
 
-        return ZMSLog.previousZipLogURLs + oslogs + currentLog
-    }
-
-    static var areDebugLogsPresent: Bool {
-        return !debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isEmpty
+        return allLogs.filter { FileManager.default.fileExists(atPath: $0.path) }
     }
 
     /// Sends recorded logs by email
@@ -130,7 +127,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
 
-        guard areDebugLogsPresent else {
+        guard !existingDebugLogs.isEmpty else {
             DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
             return
         }
@@ -144,7 +141,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
 
         guard MFMailComposeViewController.canSendMail() else {
 
-            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: controller)
+            DebugAlert.displayFallbackActivityController(logPaths: existingDebugLogs, email: mail, from: controller)
             return
         }
 

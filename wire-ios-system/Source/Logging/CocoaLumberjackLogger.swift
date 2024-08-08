@@ -60,7 +60,14 @@ public class CocoaLumberjackLogger: LoggerProtocol {
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, level: DDLogLevel) {
-        var entry = "\(message.logDescription)\(attributesDescription(from: attributes))"
+        // TODO: [WPB-6432] enable when ZMSLog is cleaned up
+        /*let isSafe = attributes?["public"] as? Bool == true
+        guard isDebug || isSafe else {
+            // skips logs in production builds with non redacted info
+            return
+        }*/
+
+        var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: attributes))"
 
         if let tag = attributes?["tag"] as? String {
             entry = "[\(tag)] - \(entry)"
@@ -72,5 +79,28 @@ public class CocoaLumberjackLogger: LoggerProtocol {
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
+    }
+
+    private func formattedLevel(_ level: DDLogLevel) -> String {
+        switch level {
+        case .error:
+            "ERROR"
+        case .warning:
+            "WARN"
+        case .info:
+            "INFO"
+        case .debug:
+            "DEBUG"
+        default:
+            "VERBOSE"
+        }
+    }
+
+    private var isDebug: Bool {
+        #if DEBUG
+            return true
+        #else
+            return false
+        #endif
     }
 }

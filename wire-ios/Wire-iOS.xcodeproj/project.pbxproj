@@ -63,6 +63,8 @@
 		06717E592865179000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
 		06717E5C2865183600AF442C /* Stylable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E5B2865183600AF442C /* Stylable.swift */; };
 		06717E5E2865188000AF442C /* SemanticColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06717E582865178F00AF442C /* SemanticColors.swift */; };
+		0679DEDE2C47C48400044FC7 /* Bundle+WireURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DED92C46951B00044FC7 /* Bundle+WireURLs.swift */; };
+		0679DEE12C49729500044FC7 /* URLsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0679DEE02C49729500044FC7 /* URLsTests.swift */; };
 		067EF352288FCAB700B2659A /* Accessibility.strings in Resources */ = {isa = PBXBuildFile; fileRef = 067EF350288FCAB600B2659A /* Accessibility.strings */; };
 		067F605D28B8EC8000FCC334 /* DebugCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F605C28B8EC8000FCC334 /* DebugCommand.swift */; };
 		0685008126B35E7A00721F80 /* AudioMessageRestrictionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0685008026B35E7A00721F80 /* AudioMessageRestrictionView.swift */; };
@@ -2104,6 +2106,8 @@
 		0667FE302384237E00F75F93 /* UICollectionView+SetMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+SetMessage.swift"; sourceTree = "<group>"; };
 		06717E582865178F00AF442C /* SemanticColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemanticColors.swift; sourceTree = "<group>"; };
 		06717E5B2865183600AF442C /* Stylable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylable.swift; sourceTree = "<group>"; };
+		0679DED92C46951B00044FC7 /* Bundle+WireURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+WireURLs.swift"; sourceTree = "<group>"; };
+		0679DEE02C49729500044FC7 /* URLsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLsTests.swift; sourceTree = "<group>"; };
 		067EF351288FCAB600B2659A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF353288FCABF00B2659A /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Accessibility.strings; sourceTree = "<group>"; };
 		067EF354288FCAC100B2659A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Accessibility.strings"; sourceTree = "<group>"; };
@@ -4226,6 +4230,14 @@
 				0665DF7228F01D3B0094482B /* ProfileImagePickerManager.swift */,
 			);
 			path = Image;
+			sourceTree = "<group>";
+		};
+		0679DEDB2C46954F00044FC7 /* Bundle */ = {
+			isa = PBXGroup;
+			children = (
+				0679DED92C46951B00044FC7 /* Bundle+WireURLs.swift */,
+			);
+			path = Bundle;
 			sourceTree = "<group>";
 		};
 		0685007F26B35DFC00721F80 /* Restrictions */ = {
@@ -6453,6 +6465,7 @@
 		8FC85126199245760008B66B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				0679DEDB2C46954F00044FC7 /* Bundle */,
 				40C69D6E2A8627A700376B1C /* TmpFiles */,
 				06B3091126AEDC830057AF9E /* UIAlertController */,
 				064AD4C225DD313C00143D74 /* UIApplication */,
@@ -7118,6 +7131,7 @@
 			isa = PBXGroup;
 			children = (
 				7CCB8F7E229D67BD005BBC10 /* URL+WireTests.swift */,
+				0679DEE02C49729500044FC7 /* URLsTests.swift */,
 				A9E674D924F51A190058FC72 /* WireEmailTests.swift */,
 			);
 			path = Bundle;
@@ -10204,6 +10218,7 @@
 				BFCF31DD1DA52ECE0039B3DC /* KeyboardHeight.swift in Sources */,
 				87A752171E002F6C004317DB /* ConversationRootViewController.swift in Sources */,
 				16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */,
+				0679DEDE2C47C48400044FC7 /* Bundle+WireURLs.swift in Sources */,
 				87CA886E1DDF0075004101B6 /* UserConnectionViewController.swift in Sources */,
 				87D21AD71D8A98620075AB7A /* AccentColorPickerController.swift in Sources */,
 				EF883F2E215144B800B440CC /* Analytics+OptOut.swift in Sources */,
@@ -10502,6 +10517,7 @@
 				F1C9E3601EAE008C006438D7 /* TestSetup.swift in Sources */,
 				EFAFCA822133FB59002B31A6 /* ArchivedNavigationBarTests.swift in Sources */,
 				EFE0439B2149D9CA00BC3079 /* ShareContactsViewControllerSnapshotTests.swift in Sources */,
+				0679DEE12C49729500044FC7 /* URLsTests.swift in Sources */,
 				BFC9149B1D181BE7001F068B /* LocationMessageCellTests.swift in Sources */,
 				E9398D332B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift in Sources */,
 				5EC7C87C21907D94004662AC /* ConversationReplyCellDescriptionTests.swift in Sources */,

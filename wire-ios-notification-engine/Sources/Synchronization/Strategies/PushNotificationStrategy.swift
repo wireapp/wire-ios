@@ -97,6 +97,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 
         for event in events {
             event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
+            WireLogger.updateEvent.info("received event", attributes: event.logAttributes)
         }
 
         Task {

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategy
 import XCTest
 
 final class QuickSyncObserverTests: MessagingTestBase {
@@ -40,7 +41,11 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         Task {
             // Sleeping in order to hit the code path where we start observing .quickSyncCompletedNotification
-            try await Task.sleep(nanoseconds: 250_000_000)
+            if #available(iOS 16.0, *) {
+                try await Task.sleep(for: .seconds(0.25))
+            } else {
+                try await Task.sleep(nanoseconds: 250_000_000)
+            }
             NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
         }
 
@@ -49,28 +54,26 @@ final class QuickSyncObserverTests: MessagingTestBase {
             await quickSyncObserver.waitForQuickSyncToFinish()
         }
     }
+}
 
-    struct Arrangement {
+// MARK: -
 
-        struct Scaffolding {
-        }
+private struct Arrangement {
 
-        let coreDataStack: CoreDataStack
-        let applicationStatus = MockApplicationStatus()
+    let coreDataStack: CoreDataStack
+    let applicationStatus = MockApplicationStatus()
 
-        func withSynchronizationState(_ state: SynchronizationState) -> Arrangement {
-            applicationStatus.mockSynchronizationState = state
-            return self
-        }
-
-        func arrange() -> (Arrangement, QuickSyncObserver) {
-            return (self, QuickSyncObserver(
-                context: coreDataStack.syncContext,
-                applicationStatus: applicationStatus,
-                notificationContext: coreDataStack.syncContext.notificationContext
-                )
-            )
-        }
+    func withSynchronizationState(_ state: SynchronizationState) -> Arrangement {
+        applicationStatus.mockSynchronizationState = state
+        return self
     }
 
+    func arrange() -> (Arrangement, QuickSyncObserver) {
+        return (self, QuickSyncObserver(
+            context: coreDataStack.syncContext,
+            applicationStatus: applicationStatus,
+            notificationContext: coreDataStack.syncContext.notificationContext
+        )
+        )
+    }
 }

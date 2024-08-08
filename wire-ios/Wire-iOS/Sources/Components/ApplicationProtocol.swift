@@ -27,3 +27,18 @@ protocol ApplicationProtocol {
 }
 
 extension UIApplication: ApplicationProtocol {}
+
+extension UIApplication.State: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .active:
+            "active"
+        case .background:
+            "background"
+        case .inactive:
+            "inactive"
+        @unknown default:
+            "unknown"
+        }
+    }
+}
