@@ -138,7 +138,7 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(authorizationHeader, "Bearer some-access-token")
     }
 
-    func testItThrowsIfAuthenticationIsRequiredByNosAccessTokenIsFound() async throws {
+    func testItThrowsIfAuthenticationIsRequiredButNoAccessTokenIsFound() async throws {
         // Given
         let request = Scaffolding.getRequest
         XCTAssertNil(authenticationStorage.fetchAccessToken())

@@ -22,7 +22,7 @@ import Foundation
 /// A service for network communication to a specific backend.
 ///
 /// An api service allows api clients to communicate to a target backend.
-/// It may provide additional functionality, such providing authentication
+/// It may provide additional functionality, such as providing authentication
 /// headers if needed.
 public protocol APIServiceProtocol {
 
