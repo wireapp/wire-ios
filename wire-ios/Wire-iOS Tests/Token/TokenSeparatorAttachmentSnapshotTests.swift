@@ -21,29 +21,35 @@ import XCTest
 
 @testable import Wire
 
-final class ShareContactsViewControllerSnapshotTests: XCTestCase {
+final class TokenSeparatorAttachmentSnapshotTests: XCTestCase {
 
-    private var sut: ShareContactsViewController!
+    // MARK: - Properties
+
     private var snapshotHelper: SnapshotHelper!
+    private var sut: TokenSeparatorAttachment!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
-        sut = ShareContactsViewController()
+        snapshotHelper = .init()
+        let token: Token<NSObjectProtocol> = Token(title: "", representedObject: MockUser())
+        let tokenField = TokenField()
+        tokenField.dotColor = .black
+
+        sut = TokenSeparatorAttachment(token: token, tokenField: tokenField)
     }
+
+    // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
-        super.tearDown()
     }
 
-    func testForInitState() {
-        snapshotHelper.verify(matching: sut)
-    }
+    // MARK: - Snapshot Tests
 
-    func testForContactsPermissionDenied() {
-        sut.displayContactsAccessDeniedMessage(animated: false)
-        snapshotHelper.verify(matching: sut)
+    func testTokenAttachmentImage() {
+        snapshotHelper.verify(matching: sut.image!)
     }
 }

@@ -21,6 +21,8 @@ import WireDataModel
 import WireDataModelSupport
 @testable import WireRequestStrategy
 import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 import XCTest
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -33,7 +35,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -58,6 +60,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             removeLocalConversation: mockRemoveLocalConversation
         )
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
@@ -66,7 +69,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         mockSyncProgress = nil
         mockApplicationStatus = nil
         mockRemoveLocalConversation = nil
-        apiVersion = nil
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }

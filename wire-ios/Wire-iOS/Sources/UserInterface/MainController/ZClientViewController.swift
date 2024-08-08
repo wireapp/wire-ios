@@ -411,7 +411,7 @@ final class ZClientViewController: UIViewController {
                     }
                 }
 
-                presentedViewController.dismiss(animated: false, completion: callback)
+                presentedViewController.dismiss(animated: true, completion: callback)
             } else if self.presentedViewController != nil {
                 self.dismiss(animated: false, completion: callback)
             } else {
