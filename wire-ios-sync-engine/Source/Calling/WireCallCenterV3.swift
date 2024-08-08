@@ -493,6 +493,7 @@ extension WireCallCenterV3 {
     }
 
     private func shouldEndCallForMLS(participants: [AVSCallMember]) -> Bool {
+        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the call should end.
         guard participants.count == 2,
               participants[1].audioState == .connecting else {
             return false
