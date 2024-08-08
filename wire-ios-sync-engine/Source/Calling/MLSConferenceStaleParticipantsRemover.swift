@@ -189,7 +189,8 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             let subconversationMembers = try await mlsService.subconversationMembers(for: groupID)
 
             guard subconversationMembers.contains(clientID) else {
-                return logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
+                logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
+                return
             }
 
             try await mlsService.removeMembersFromConversation(with: [clientID], for: groupID)

@@ -17,14 +17,21 @@
 //
 
 import Foundation
-import WireTransport
-import XCTest
 
-extension XCTestCase {
+/// Describes the apps synchronization state.
 
-    func setCurrentAPIVersion(_ version: APIVersion?) {
-        BackendInfo.apiVersion = version
-        XCTAssertEqual(BackendInfo.apiVersion, version)
-    }
+enum SyncState {
+
+    /// The app is fetching and processing all pending events.
+
+    case quickSync(Task<Void, Error>)
+
+    /// The app is processing live events via the push channel.
+
+    case live(Task<Void, Error>)
+
+    /// The app is neither receiving nor processing any events.
+
+    case suspended
 
 }
