@@ -17,12 +17,18 @@
 //
 
 import UIKit
+import WireSystem
 
 extension SettingsPropertyFactory {
 
     typealias AlertLocale = L10n.Localizable.Self.Settings.PrivacyAnalytics.Alert
 
     func showAnalyticsConsentAlert(completion: @escaping (Bool) -> Void) {
+        guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            WireLogger.ui.error("No topmost view controller found.")
+            return
+        }
+
         let alertController = UIAlertController(
             title: AlertLocale.title,
             message: AlertLocale.message,
@@ -42,13 +48,16 @@ extension SettingsPropertyFactory {
             alertController.addAction(UIAlertAction(title: action.title, style: action.style, handler: action.handler))
         }
 
-        UIApplication.shared.topmostViewController(onlyFullScreen: false)?
-            .present(alertController, animated: true)
+        topViewController.present(alertController, animated: true)
     }
 
     private func presentPrivacyPolicy() {
+        guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            WireLogger.ui.error("No topmost view controller found.")
+            return
+        }
+
         let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
-        UIApplication.shared.topmostViewController(onlyFullScreen: false)?
-            .present(browserViewController, animated: true)
+        topViewController.present(browserViewController, animated: true)
     }
 }
