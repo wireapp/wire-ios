@@ -873,6 +873,26 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "reactionPicker.searchFieldPlaceholder.description", fallback: "Search for emoji")
       }
     }
+    internal enum SearchGifs {
+      internal enum GifItem {
+        /// Tap to select this GIF
+        internal static let accessibilityHint = L10n.tr("Accessibility", "searchGifs.gifItem.accessibilityHint", fallback: "Tap to select this GIF")
+      }
+      internal enum GifItemsLoaded {
+        /// Loaded %@ new GIFs
+        internal static func announcement(_ p1: Any) -> String {
+          return L10n.tr("Accessibility", "searchGifs.gifItems_loaded.announcement", String(describing: p1), fallback: "Loaded %@ new GIFs")
+        }
+      }
+      internal enum NorResultsLabel {
+        /// No Gifs found
+        internal static let description = L10n.tr("Accessibility", "searchGifs.norResultsLabel.description", fallback: "No Gifs found")
+      }
+      internal enum SearchBar {
+        /// Enter text to search for GIFs
+        internal static let accessibilityLabel = L10n.tr("Accessibility", "searchGifs.searchBar.accessibilityLabel", fallback: "Enter text to search for GIFs")
+      }
+    }
     internal enum SearchView {
       internal enum ClearButton {
         /// Clear

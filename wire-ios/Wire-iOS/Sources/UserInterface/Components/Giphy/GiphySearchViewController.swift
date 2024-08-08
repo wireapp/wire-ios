@@ -39,6 +39,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     private lazy var searchController: UISearchController = {
         let controller = UISearchController(searchResultsController: nil)
         controller.searchBar.placeholder = Giphy.searchPlaceholder
+        controller.searchBar.accessibilityLabel = L10n.Accessibility.SearchGifs.SearchBar.accessibilityLabel
         controller.searchBar.accessibilityIdentifier = "search input"
         return controller
     }()
@@ -162,6 +163,8 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     private func setupNoResultLabel() {
         extendedLayoutIncludesOpaqueBars = true
         noResultsLabel.isHidden = true
+        noResultsLabel.accessibilityTraits = .staticText
+        noResultsLabel.accessibilityLabel = L10n.Accessibility.SearchGifs.NorResultsLabel.description
         view.addSubview(noResultsLabel)
     }
 
@@ -215,6 +218,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         cell.isAccessibilityElement = true
         cell.accessibilityTraits.insert(.image)
         cell.accessibilityLabel = ziph.title
+        cell.accessibilityHint = L10n.Accessibility.SearchGifs.GifItem.accessibilityHint
 
         searchResultsController.fetchImageData(for: ziph, imageType: .preview) { result in
             guard case let .success(imageData) = result else {
@@ -324,6 +328,10 @@ extension GiphySearchViewController {
         }
 
         collectionView?.insertItems(at: updatedIndices)
+
+        let newItemsCount = results.count
+        let announcement = L10n.Accessibility.SearchGifs.GifItemsLoaded.announcement(newItemsCount)
+        UIAccessibility.post(notification: .announcement, argument: announcement)
     }
 
     @discardableResult
