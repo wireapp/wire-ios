@@ -24,8 +24,13 @@ import Foundation
 /// success and failure results.
 
 struct ResponseParser<Success> {
+    
+    enum ParsingError: Swift.Error {
+        case noParseBlocksDefined
+        case nothingToParse
+    }
 
-    private typealias ParseBlock = (Int, Data) throws -> Success?
+    private typealias ParseBlock = (Int, Data?) throws -> Success?
 
     private let decoder: JSONDecoder
     private var parseBlocks: [ParseBlock]
@@ -35,15 +40,28 @@ struct ResponseParser<Success> {
         parseBlocks = []
     }
 
+    /// Success with output data
+    
     func success<Payload: Decodable & ToAPIModelConvertible>(
         code: Int,
         type: Payload.Type
     ) -> ResponseParser<Success> where Payload.APIModel == Success {
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code else { return nil }
+            guard actualCode == code, let data else { return nil }
             let payload = try decoder.decode(Payload.self, from: data)
             return payload.toAPIModel()
+        }
+        return copy
+    }
+    
+    /// Success with no output
+    
+    func success(code: Int) -> ResponseParser<Success> where Success == Void {
+        var copy = self
+        copy.parseBlocks.append { actualCode, data in
+            guard actualCode == code, data == nil else { return nil }
+            return ()
         }
         return copy
     }
@@ -55,6 +73,7 @@ struct ResponseParser<Success> {
     ) -> ResponseParser<Success> {
         var copy = self
         copy.parseBlocks.append { _, data in
+            guard let data else { return nil }
             let failure = try decoder.decode(FailureResponse.self, from: data)
             guard failure.code == code, failure.label == label else { return nil }
             throw error
@@ -63,20 +82,26 @@ struct ResponseParser<Success> {
     }
 
     func parse(_ response: HTTPResponse) throws -> Success {
-        let code = response.code
-
-        guard let data = response.payload else {
-            throw ResponseParserError.missingPayload
+        guard !parseBlocks.isEmpty else {
+            throw ParsingError.noParseBlocksDefined
         }
-
+        
+        let code = response.code
+        let data = response.payload
+        
         for matcher in parseBlocks {
             if let success = try matcher(code, data) {
                 return success
             }
         }
-
-        let failure = try decoder.decode(FailureResponse.self, from: data)
-        throw failure
+        
+        if let data {
+            let failure = try decoder.decode(FailureResponse.self, from: data)
+            throw failure
+        } else {
+            throw ParsingError.nothingToParse
+        }
+        
     }
 
 }
