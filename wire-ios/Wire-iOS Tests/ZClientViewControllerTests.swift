@@ -37,7 +37,7 @@ final class ZClientViewControllerTests: XCTestCase {
         userSession.coreDataStack = coreDataFixture.coreDataStack
         sut = ZClientViewController(
             account: Account.mockAccount(imageData: mockImageData),
-            userSession: userSession, 
+            userSession: userSession,
             trackingManager: nil
         )
     }
