@@ -18,26 +18,13 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+extension URLRequest {
 
-public struct BackendInfoAPIBuilder {
-
-    let apiService: any APIServiceProtocol
-
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
-
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
-
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
-
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
+    mutating func setAccessToken(_ accessToken: AccessToken) {
+        setValue(
+            [accessToken.type, accessToken.token].joined(separator: " "),
+            forHTTPHeaderField: "Authorization"
+        )
     }
 
 }

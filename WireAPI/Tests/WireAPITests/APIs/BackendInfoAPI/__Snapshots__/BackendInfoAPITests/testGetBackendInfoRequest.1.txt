@@ -1,4 +1,3 @@
-- HTTPRequest
-  - path: "/api-version"
-  - method: get
-  - body: none
+curl \
+	--header "Accept: application/json" \
+	"/api-version"

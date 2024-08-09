@@ -18,26 +18,30 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+@testable import WireAPI
 
-public struct BackendInfoAPIBuilder {
+extension URLRequest {
 
-    let apiService: any APIServiceProtocol
+    func mockResponse(
+        statusCode: Int,
+        jsonResourceName: String
+    ) throws -> (Data, HTTPURLResponse) {
+        guard let url else {
+            throw "Unable to create mock response, request is missing url"
+        }
 
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
+        guard let response = HTTPURLResponse(
+            url: url,
+            statusCode: statusCode,
+            httpVersion: nil,
+            headerFields: ["Content-Type": HTTPContentType.json.rawValue]
+        ) else {
+            throw "Unable to create mock response"
+        }
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+        let jsonPayload = HTTPClientMock.PredefinedResponse(resourceName: jsonResourceName)
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
-
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
+        return (try jsonPayload.data(), response)
     }
 
 }

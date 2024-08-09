@@ -18,18 +18,17 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol {
+extension URLSession {
 
-    /// Open the push channel and start receiving update events.
+    /// A url session powered by `URLProtocolMock`.
     ///
-    /// - Returns: A publisher of payloads.
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
 
-    func open() async throws -> AsyncStream<UpdateEventEnvelope>
-
-    /// Close the push channel and stop receiving update events.
-
-    func close() async
+    static let mock: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
+    }()
 
 }

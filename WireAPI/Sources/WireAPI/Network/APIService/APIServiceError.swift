@@ -18,26 +18,20 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+/// Errors originating from `APIService`.
 
-public struct BackendInfoAPIBuilder {
+public enum APIServiceError: Error {
 
-    let apiService: any APIServiceProtocol
+    /// An enqueued url request is invalid.
 
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
+    case invalidRequest
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+    /// An access token is required but none is available.
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
+    case missingAccessToken
 
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
-    }
+    /// The response is not an http url response.
+
+    case notAHTTPURLResponse
 
 }

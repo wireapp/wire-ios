@@ -18,26 +18,18 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+// sourcery: AutoMockable
+/// Make a direct connection to a server to receive update events.
+public protocol PushChannelProtocol {
 
-public struct BackendInfoAPIBuilder {
-
-    let apiService: any APIServiceProtocol
-
-    /// Create a new builder.
+    /// Open the push channel and start receiving update events.
     ///
-    /// - Parameter apiService: A service for executing requests.`
+    /// - Returns: An async stream of live update event envelopes.
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+    func open() async throws -> AsyncStream<UpdateEventEnvelope>
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
+    /// Close the push channel and stop receiving update events.
 
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
-    }
+    func close()
 
 }
