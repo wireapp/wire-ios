@@ -62,10 +62,8 @@ final class TextSearchInputView: UIView {
 
         backgroundColor = SemanticColors.View.backgroundDefault
 
-        iconView.setIcon(.search,
-                         size: .tiny,
-                         color: SearchBarColors.backgroundButton)
-
+        iconView.setTemplateIcon(.search, size: .tiny)
+        iconView.tintColor = SearchBarColors.backgroundButton
         iconView.contentMode = .center
         searchInput.delegate = self
         searchInput.autocorrectionType = .no
