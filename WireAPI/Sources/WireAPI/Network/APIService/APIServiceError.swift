@@ -16,4 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+import Foundation
+
+/// Errors originating from `APIService`.
+
+public enum APIServiceError: Error {
+
+    /// An enqueued url request is invalid.
+
+    case invalidRequest
+
+    /// An access token is required but none is available.
+
+    case missingAccessToken
+
+    /// The response is not an http url response.
+
+    case notAHTTPURLResponse
+
+}
