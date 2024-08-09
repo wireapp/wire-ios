@@ -20,6 +20,8 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 import WireTesting
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import WireRequestStrategy
 
@@ -30,7 +32,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -40,9 +42,8 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .online
         sut = FetchingClientRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus)
         NotificationCenter.default.addObserver(self, selector: #selector(FetchClientRequestStrategyTests.didReceiveAuthenticationNotification(_:)), name: NSNotification.Name(rawValue: "ZMUserSessionAuthenticationNotificationName"), object: nil)
-        apiVersion = .v0
 
-        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "local.com"
     }
@@ -52,8 +53,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = nil
         sut = nil
         NotificationCenter.default.removeObserver(self)
-        apiVersion = nil
-        BackendInfo.storage = .standard
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 

@@ -20,6 +20,8 @@ import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
 
@@ -49,7 +51,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             mlsEventProcessor: mockMLSEventProcessor
         )
 
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
     }
 
@@ -59,6 +61,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         mockMLSEventProcessor = nil
 
         DeveloperFlag.storage = .standard
+        BackendInfo.resetMocking()
         super.tearDown()
     }
 
