@@ -32,7 +32,7 @@ public struct SelfUser: Equatable {
     
     /// The sso id of the self user
     ///
-    public let ssoID: SsoID?
+    public let ssoID: SSOID?
 
     /// The self user's full name
 

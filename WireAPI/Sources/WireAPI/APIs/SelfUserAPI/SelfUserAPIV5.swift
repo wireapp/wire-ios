@@ -18,10 +18,28 @@
 
 import Foundation
 
-class SelfUserAPIV5: SelfUserAPIV0 {
+class SelfUserAPIV5: SelfUserAPIV4 {
 
     override var apiVersion: APIVersion {
         .v5
+    }
+    
+    override func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws {
+        let encoder = JSONEncoder.defaultEncoder
+        let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
+        let body = try encoder.encode(payload)
+        
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/self/supported-protocols",
+            method: .put,
+            body: body
+        )
+        
+        let response = try await self.httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: 200)
+            .parse(response)
     }
 
 }

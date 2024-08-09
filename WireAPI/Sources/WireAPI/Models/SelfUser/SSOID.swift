@@ -20,7 +20,7 @@ import Foundation
 
 /// The sso id of the self user
 
-public struct SsoID: Equatable {
+public struct SSOID: Equatable {
     
     /// The self user's scim external id
     

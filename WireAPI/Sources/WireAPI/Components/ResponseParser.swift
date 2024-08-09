@@ -25,9 +25,9 @@ import Foundation
 
 struct ResponseParser<Success> {
     
-    enum ParsingError: Swift.Error {
+    enum ParsingError: Error {
         case noParseBlocksDefined
-        case nothingToParse
+        case noParseResult
     }
 
     private typealias ParseBlock = (Int, Data?) throws -> Success?
@@ -46,6 +46,8 @@ struct ResponseParser<Success> {
         code: Int,
         type: Payload.Type
     ) -> ResponseParser<Success> where Payload.APIModel == Success {
+        precondition(200..<300 ~= code, "Requires a valid success code: 2xx")
+        
         var copy = self
         copy.parseBlocks.append { actualCode, data in
             guard actualCode == code, let data else { return nil }
@@ -58,6 +60,8 @@ struct ResponseParser<Success> {
     /// Success with no output
     
     func success(code: Int) -> ResponseParser<Success> where Success == Void {
+        precondition(200..<300 ~= code, "Requires a valid success code: 2xx")
+        
         var copy = self
         copy.parseBlocks.append { actualCode, data in
             guard actualCode == code, data == nil else { return nil }
@@ -99,7 +103,7 @@ struct ResponseParser<Success> {
             let failure = try decoder.decode(FailureResponse.self, from: data)
             throw failure
         } else {
-            throw ParsingError.nothingToParse
+            throw ParsingError.noParseResult
         }
         
     }

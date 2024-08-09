@@ -16,12 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import enum WireAPI.APIVersion
 
-class SelfUserAPIV3: SelfUserAPIV2 {
-
-    override var apiVersion: APIVersion {
-        .v3
+extension APIVersion {
+    var andNextVersions: [APIVersion] {
+        let apiVersions = APIVersion.allCases
+        let currentVersion = Int(rawValue)
+        let nextVersions = Array(apiVersions.suffix(from: currentVersion))
+        
+        return nextVersions
     }
-
 }

@@ -49,7 +49,8 @@ final class SelfUserAPITests: XCTestCase {
     }
     
     func testPushSupportedProtocolsRequest() async throws {
-        try await apiSnapshotHelper.verifyRequest(for: [.v5, .v6]) { sut in
+        let supportedVersions = APIVersion.v5.andNextVersions
+        try await apiSnapshotHelper.verifyRequest(for: supportedVersions) { sut in
             _ = try await sut.pushSupportedProtocols([.mls])
         }
     }
@@ -64,6 +65,54 @@ final class SelfUserAPITests: XCTestCase {
         )
 
         let sut = SelfUserAPIV0(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+            // When
+            try await sut.pushSupportedProtocols([.mls])
+        }
+    }
+    
+    func testPushSupportedProtocols_UnsupportedVersionError_V1() async throws {
+        // Given
+        let httpClient = HTTPClientMock(
+            code: 200,
+            payload: nil
+        )
+
+        let sut = SelfUserAPIV1(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+            // When
+            try await sut.pushSupportedProtocols([.mls])
+        }
+    }
+    
+    func testPushSupportedProtocols_UnsupportedVersionError_V2() async throws {
+        // Given
+        let httpClient = HTTPClientMock(
+            code: 200,
+            payload: nil
+        )
+
+        let sut = SelfUserAPIV2(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+            // When
+            try await sut.pushSupportedProtocols([.mls])
+        }
+    }
+    
+    func testPushSupportedProtocols_UnsupportedVersionError_V3() async throws {
+        // Given
+        let httpClient = HTTPClientMock(
+            code: 200,
+            payload: nil
+        )
+
+        let sut = SelfUserAPIV3(httpClient: httpClient)
 
         // Then
         await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
@@ -88,6 +137,7 @@ final class SelfUserAPITests: XCTestCase {
         }
     }
 
+
     // MARK: - Response handling
 
     // MARK: - V0
@@ -111,13 +161,13 @@ final class SelfUserAPITests: XCTestCase {
         )
     }
     
-    func testGetSelfUser_FailureResponse_NotFound_V0() async throws {
+    func testGetSelfUser_FailureResponse() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
         let sut = SelfUserAPIV0(httpClient: httpClient)
         
         // Then
-        await XCTAssertThrowsError(SelfUserAPIError.selfUserNotFound) {
+        await XCTAssertThrowsError {
             // When
             try await sut.getSelfUser()
         }
@@ -152,11 +202,7 @@ final class SelfUserAPITests: XCTestCase {
         let sut = SelfUserAPIV5(httpClient: httpClient)
 
         // Then
-        do {
-            try await sut.pushSupportedProtocols([.mls])
-        } catch let error {
-            throw error
-        }
+        try await sut.pushSupportedProtocols([.mls])
     }
     
     func testPushSupportedProtocols_FailureResponse_InvalidRequest_V5() async throws {
@@ -165,7 +211,7 @@ final class SelfUserAPITests: XCTestCase {
         let sut = SelfUserAPIV5(httpClient: httpClient)
 
         // Then
-        await XCTAssertThrowsError(SelfUserAPIError.invalidRequest) {
+        await XCTAssertThrowsError {
             // When
             try await sut.pushSupportedProtocols([.mls])
         }
@@ -182,7 +228,7 @@ extension SelfUserAPITests {
         static let selfUserV0 = SelfUser(
             id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
             qualifiedID: userID,
-            ssoID: SsoID(scimExternalId: "string", subject: "string", tenant: "string"),
+            ssoID: SSOID(scimExternalId: "string", subject: "string", tenant: "string"),
             name: "string",
             handle: "string",
             teamID: teamID,
@@ -207,7 +253,7 @@ extension SelfUserAPITests {
         static let selfUserV5 = SelfUser(
             id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
             qualifiedID: userID,
-            ssoID: SsoID(scimExternalId: "string", subject: "string", tenant: "string"),
+            ssoID: SSOID(scimExternalId: "string", subject: "string", tenant: "string"),
             name: "string",
             handle: "string",
             teamID: teamID,

@@ -26,10 +26,6 @@ public enum SelfUserAPIError: Error {
 
     case selfUserNotFound
     
-    /// Invalid request
-
-    case invalidRequest
-    
     /// Unsupported endpoint for API version
 
     case unsupportedEndpointForAPIVersion

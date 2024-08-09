@@ -40,33 +40,11 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
 
         return try ResponseParser()
             .success(code: 200, type: SelfUserV0.self)
-            .failure(code: 404, label: "not-found", error: SelfUserAPIError.selfUserNotFound)
             .parse(response)
-        
     }
     
     func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws {
-        guard apiVersion >= .v5 else {
-            throw SelfUserAPIError.unsupportedEndpointForAPIVersion
-        }
-        
-        let encoder = JSONEncoder.defaultEncoder
-        let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
-        let body = try encoder.encode(payload)
-        
-        let request = HTTPRequest(
-            path: "\(pathPrefix)/self/supported-protocols",
-            method: .put,
-            body: body
-        )
-        
-        let response = try await self.httpClient.executeRequest(request)
-
-        return try ResponseParser()
-            .success(code: 200)
-            .failure(code: 404, error: SelfUserAPIError.invalidRequest)
-            .parse(response)
-        
+        throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
 }
 
@@ -86,8 +64,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let picture: [String]?
     let qualifiedID: UserID
     let service: ServiceResponseV0?
-    let ssoID: SsoIDV0?
-    let supportedProtocols: Set<SupportedProtocol>?
+    let ssoID: SSOIDV0?
     let teamID: UUID?
     
     enum CodingKeys: String, CodingKey {
@@ -101,7 +78,6 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
         case service
         case ssoID = "sso_id"
         case teamID = "team"
-        case supportedProtocols = "supported_protocols"
     }
     
     func toAPIModel() -> SelfUser {
@@ -119,7 +95,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
                  email: email,
                  expiresAt: expiresAt?.date,
                  service: service?.toAPIModel(),
-                 supportedProtocols: supportedProtocols ?? [.proteus] /// default to Proteus for api versions < v5
+                 supportedProtocols: [.proteus] /// default to Proteus for api versions < v5
         )
     }
 }
@@ -138,7 +114,7 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
     }
 }
 
-struct SsoIDV0: Decodable, ToAPIModelConvertible {
+struct SSOIDV0: Decodable, ToAPIModelConvertible {
     
     let scimExternalId: String
     let subject: String
@@ -149,8 +125,8 @@ struct SsoIDV0: Decodable, ToAPIModelConvertible {
         case subject, tenant
     }
     
-    func toAPIModel() -> SsoID {
-        SsoID(
+    func toAPIModel() -> SSOID {
+        SSOID(
             scimExternalId: scimExternalId,
             subject: subject,
             tenant: tenant

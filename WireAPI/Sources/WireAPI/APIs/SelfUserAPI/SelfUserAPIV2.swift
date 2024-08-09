@@ -18,7 +18,7 @@
 
 import Foundation
 
-class SelfUserAPIV2: SelfUserAPIV0 {
+class SelfUserAPIV2: SelfUserAPIV1 {
 
     override var apiVersion: APIVersion {
         .v2
