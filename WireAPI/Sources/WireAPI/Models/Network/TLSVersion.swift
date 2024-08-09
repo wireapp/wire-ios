@@ -18,18 +18,26 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol {
+/// Supported TLS versions.
 
-    /// Open the push channel and start receiving update events.
-    ///
-    /// - Returns: A publisher of payloads.
+public enum TLSVersion {
 
-    func open() async throws -> AsyncStream<UpdateEventEnvelope>
+    /// TLS version 1.2
 
-    /// Close the push channel and stop receiving update events.
+    case v1_2
 
-    func close() async
+    /// TLS version 1.3
+
+    case v1_3
+
+    var secValue: tls_protocol_version_t {
+        switch self {
+        case .v1_2:
+            .TLSv12
+
+        case .v1_3:
+            .TLSv13
+        }
+    }
 
 }

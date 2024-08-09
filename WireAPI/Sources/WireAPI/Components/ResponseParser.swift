@@ -93,6 +93,13 @@ struct ResponseParser<Success> {
         let code = response.code
         let data = response.payload
 
+        return try parse(
+            code: code,
+            data: data
+        )
+    }
+
+    func parse(code: Int, data: Data?) throws -> Success {
         for matcher in parseBlocks {
             if let success = try matcher(code, data) {
                 return success

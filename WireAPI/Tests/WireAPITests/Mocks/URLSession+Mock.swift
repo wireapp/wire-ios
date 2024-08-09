@@ -17,14 +17,18 @@
 //
 
 import Foundation
-import WireTransport
-import XCTest
 
-extension XCTestCase {
+extension URLSession {
 
-    func setCurrentAPIVersion(_ version: APIVersion?) {
-        BackendInfo.apiVersion = version
-        XCTAssertEqual(BackendInfo.apiVersion, version)
-    }
+    /// A url session powered by `URLProtocolMock`.
+    ///
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
+
+    static let mock: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
+    }()
 
 }

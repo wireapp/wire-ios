@@ -721,7 +721,11 @@ final class ConversationInputBarViewController: UIViewController,
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
         giphySearchViewController.delegate = self
-        ZClientViewController.shared?.present(giphySearchViewController.wrapInsideNavigationController(), animated: true)
+
+        let navigationController = UINavigationController(rootViewController: giphySearchViewController)
+        navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.modalPresentationStyle = .formSheet
+        ZClientViewController.shared?.present(navigationController, animated: true)
     }
 
     // MARK: - Animations
