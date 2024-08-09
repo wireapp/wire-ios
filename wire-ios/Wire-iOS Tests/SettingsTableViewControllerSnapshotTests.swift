@@ -50,7 +50,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
 
         SelfUser.provider = SelfProvider(providedSelfUser: selfUser)
 
-        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, trackingManager: nil, selfUser: selfUser)
 
         settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
@@ -144,7 +144,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         // given
         userSession.isAppLockAvailable = true
 
-        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, trackingManager: nil, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
@@ -156,7 +156,7 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         // given
         userSession.isAppLockAvailable = false
 
-        settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
+        settingsPropertyFactory = .init(userSession: userSession, trackingManager: nil, selfUser: selfUser)
         settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
                                               userRightInterfaceType: MockUserRight.self)
 
