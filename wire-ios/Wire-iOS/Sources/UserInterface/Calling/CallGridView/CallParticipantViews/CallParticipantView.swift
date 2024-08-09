@@ -101,6 +101,7 @@ final class CallParticipantView: BaseCallParticipantView {
             createVideoContainer()
             updateVideoShouldFill(shouldFill)
 
+            WireLogger.calling.debug("animating views")
             executeAnimations(animated: animated, animationBlock: { [weak self] in
                 self?.blurView.effect = nil
                 self?.snapshotView?.alpha = 0
@@ -115,28 +116,33 @@ final class CallParticipantView: BaseCallParticipantView {
     }
 
     private func createVideoContainer() {
+        WireLogger.calling.debug("creating video container")
         let videoContainerView = AVSVideoContainerView()
         videoContainerView.backgroundColor = .clear
         videoContainerView.translatesAutoresizingMaskIntoConstraints = false
         self.videoContainerView?.removeFromSuperview()
         self.videoContainerView = videoContainerView
 
+        WireLogger.calling.debug("creating video view")
         let videoView = makeVideoView()
         self.videoView = videoView
         videoContainerView.setupVideoView(videoView)
 
+        WireLogger.calling.debug("creating scalable view")
         // Adding the preview into a container allows smoother scaling
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
         scalableView.addSubview(videoContainerView)
         self.scalableView?.removeFromSuperview()
         self.scalableView = scalableView
 
+        WireLogger.calling.debug("inserting scalable view")
         if let snapshotView {
             insertSubview(scalableView, belowSubview: snapshotView)
         } else {
             insertSubview(scalableView, belowSubview: userDetailsView)
         }
 
+        WireLogger.calling.debug("fitting views")
         [scalableView, videoContainerView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.fitIn(view: self)

@@ -515,8 +515,10 @@ extension CallGridViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
 
+        WireLogger.calling.debug("creating cell for index path: \(indexPath.row)...")
         let stream = dataSource[indexPath.row]
         cell.add(streamView: streamView(for: stream))
+        WireLogger.calling.debug("cell created")
 
         return cell
     }
@@ -524,9 +526,11 @@ extension CallGridViewController: UICollectionViewDataSource {
     private func streamView(for stream: Stream) -> OrientableView {
         let streamId = stream.streamId
 
-        if let streamView = cachedStreamView(for: stream) {
-            return streamView
-        } else {
+        WireLogger.calling.debug("making stream view")
+//        if let streamView = cachedStreamView(for: stream) {
+//            WireLogger.calling.debug("got cached stream view \(streamView)")
+//            return streamView
+//        } else {
             let view = CallParticipantView(
                 stream: stream,
                 isCovered: isCovered,
@@ -534,9 +538,10 @@ extension CallGridViewController: UICollectionViewDataSource {
                 shouldShowBorderWhenVideoIsStopped: shouldShowBorderWhenVideoIsStopped,
                 pinchToZoomRule: pinchToZoomRule
             )
-            viewCache[streamId] = view
+//            viewCache[streamId] = view
+            WireLogger.calling.debug("created stream view \(view)")
             return view
-        }
+//        }
     }
 }
 
