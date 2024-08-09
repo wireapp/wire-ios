@@ -18,8 +18,11 @@
 
 import Foundation
 
-@objc public protocol AuthenticationStatusProvider {
-    var isAuthenticated: Bool { get }
-}
+extension ZMPersistentCookieStorage {
 
-extension ZMPersistentCookieStorage: AuthenticationStatusProvider {}
+    /// Returns true if `self` has `authenticationCookieData`
+    @objc public var isAuthenticated: Bool {
+        authenticationCookieData != nil
+    }
+
+}

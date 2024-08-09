@@ -30,7 +30,7 @@ extension BackendEnvironmentProvider {
         if let expirationDate = cookieStorage.authenticationCookieExpirationDate {
             return expirationDate.timeIntervalSinceNow > 0
         } else {
-            return cookieStorage.authenticationCookieData != nil
+            return cookieStorage.isAuthenticated
         }
     }
 }

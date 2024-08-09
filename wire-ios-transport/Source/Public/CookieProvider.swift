@@ -24,8 +24,4 @@ public protocol CookieProvider {
     func deleteKeychainItems()
 }
 
-extension ZMPersistentCookieStorage: CookieProvider {
-    public var isAuthenticated: Bool {
-        authenticationCookieData != nil
-    }
-}
+extension ZMPersistentCookieStorage: CookieProvider {}

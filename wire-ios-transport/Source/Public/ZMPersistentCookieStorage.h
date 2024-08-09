@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Looks up if there's any accessible authentication cookie data for any user
 ///
-/// - Returns: True if it's possible acccess any authentication cookie data
+/// - Returns: True if it's possible access any authentication cookie data
 + (BOOL)hasAccessibleAuthenticationCookieData;
 
 /// Delete all keychain items for for all servers and users
@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZMPersistentCookieStorage (HTTPCookie)
 
-//If you try tu set it to something different than NSHTTPCookieAcceptPolicyNever it will be set to NSHTTPCookieAcceptPolicyAlways
+//If you try to set it to something different than NSHTTPCookieAcceptPolicyNever it will be set to NSHTTPCookieAcceptPolicyAlways
 + (void)setCookiesPolicy:(NSHTTPCookieAcceptPolicy)policy;
 + (NSHTTPCookieAcceptPolicy)cookiesPolicy;
 

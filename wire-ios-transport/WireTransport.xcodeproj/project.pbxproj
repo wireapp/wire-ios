@@ -135,6 +135,7 @@
 		BFA7A5C52105E39D00C086A7 /* HTTPCookie+HelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA7A5C42105E39D00C086A7 /* HTTPCookie+HelperTests.swift */; };
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
+		CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
 		E60957882C3E739D0022E41D /* BackendInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60957872C3E739D0022E41D /* BackendInfoTests.swift */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
@@ -362,6 +363,7 @@
 		BFA7A5C42105E39D00C086A7 /* HTTPCookie+HelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPCookie+HelperTests.swift"; sourceTree = "<group>"; };
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
+		CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMPersistentCookieStorage.swift; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
 		E60957872C3E739D0022E41D /* BackendInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfoTests.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
@@ -725,6 +727,7 @@
 				54CA15111B32F2C1008D3787 /* ZMBackgroundable.h */,
 				1671F7552B6BFB5600C2D8A3 /* CookieProvider.swift */,
 				54CA15131B32F2C1008D3787 /* ZMPersistentCookieStorage.h */,
+				CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */,
 				BF3EDB241F2619820015D158 /* ZMPersistentCookieStorage+Label.swift */,
 				54CA15141B32F2C1008D3787 /* ZMReachability.h */,
 				54CA15161B32F2C1008D3787 /* ZMTransportCodec.h */,
@@ -1090,6 +1093,7 @@
 				54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */,
 				F19E555D22B27915005C792D /* ZMTransportResponse.swift in Sources */,
 				16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */,
+				CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */,
 				16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */,
 				5451EFA01B7A138B002F503B /* Collections+ZMTSafeTypes.m in Sources */,
 				F1D1281821C1556E0090045E /* BackendEnvironmentProvider.swift in Sources */,
