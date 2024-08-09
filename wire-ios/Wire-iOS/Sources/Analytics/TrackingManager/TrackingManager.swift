@@ -48,24 +48,35 @@ final class TrackingManager: NSObject, TrackingInterface {
             ExtensionSettings.shared.disableAnalyticsSharing
         }
         set {
-            ExtensionSettings.shared.disableAnalyticsSharing = newValue
-            AVSFlowManager.getInstance()?.setEnableMetrics(!newValue)
-
-            do {
-                if newValue {
-                    let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
-                    disableUseCase.invoke()
+            self.showAnalyticsConsentAlert { userConsented in
+                if userConsented {
+                    self.updateAnalyticsSharing(!newValue)
                 } else {
-                    let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
-                    enableUseCase.invoke()
+                    // User rejected, so we keep analytics disabled
+                    self.updateAnalyticsSharing(true)
                 }
-            } catch {
-                WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")
-
-                // Reset the setting
-                ExtensionSettings.shared.disableAnalyticsSharing = !newValue
-                AVSFlowManager.getInstance()?.setEnableMetrics(newValue)
             }
+        }
+    }
+
+    private func updateAnalyticsSharing(_ disable: Bool) {
+        ExtensionSettings.shared.disableAnalyticsSharing = disable
+        AVSFlowManager.getInstance()?.setEnableMetrics(!disable)
+
+        do {
+            if disable {
+                let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
+                disableUseCase.invoke()
+            } else {
+                let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
+                enableUseCase.invoke()
+            }
+        } catch {
+            WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")
+
+            // Reset the setting
+            ExtensionSettings.shared.disableAnalyticsSharing = !disable
+            AVSFlowManager.getInstance()?.setEnableMetrics(disable)
         }
     }
 

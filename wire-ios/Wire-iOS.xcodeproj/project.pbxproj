@@ -1411,7 +1411,7 @@
 		E9D6C37D289A9DC100861E4C /* StylableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D6C37C289A9DC100861E4C /* StylableButton.swift */; };
 		E9D70C892BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D70C882BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift */; };
 		E9DA4685286C547A00F47C14 /* UIWindow+Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */; };
-		E9DA6FF32C5CCBC600BF8298 /* SettingsPropertyFactory+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA6FF22C5CCBC600BF8298 /* SettingsPropertyFactory+UIAlertController.swift */; };
+		E9DA6FF32C5CCBC600BF8298 /* TrackingManager+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DA6FF22C5CCBC600BF8298 /* TrackingManager+UIAlertController.swift */; };
 		E9DD582B2C53929400645A2F /* ChangeEmailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582A2C53929400645A2F /* ChangeEmailViewModel.swift */; };
 		E9DD582D2C539B3C00645A2F /* ChangeEmailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */; };
 		E9DD582F2C539D0C00645A2F /* ChangeEmailError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DD582E2C539D0C00645A2F /* ChangeEmailError.swift */; };
@@ -3461,7 +3461,7 @@
 		E9D6C37C289A9DC100861E4C /* StylableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylableButton.swift; sourceTree = "<group>"; };
 		E9D70C882BFDDDDB00D77C2C /* BasicReactionPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicReactionPickerSnapshotTests.swift; sourceTree = "<group>"; };
 		E9DA4684286C547A00F47C14 /* UIWindow+Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIWindow+Orientation.swift"; sourceTree = "<group>"; };
-		E9DA6FF22C5CCBC600BF8298 /* SettingsPropertyFactory+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsPropertyFactory+UIAlertController.swift"; sourceTree = "<group>"; };
+		E9DA6FF22C5CCBC600BF8298 /* TrackingManager+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TrackingManager+UIAlertController.swift"; sourceTree = "<group>"; };
 		E9DD582A2C53929400645A2F /* ChangeEmailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModel.swift; sourceTree = "<group>"; };
 		E9DD582C2C539B3C00645A2F /* ChangeEmailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailViewModelTests.swift; sourceTree = "<group>"; };
 		E9DD582E2C539D0C00645A2F /* ChangeEmailError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailError.swift; sourceTree = "<group>"; };
@@ -5544,8 +5544,8 @@
 		871BBFA11D34F56300DF0793 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
+				E9CD10612C66418E0060D40D /* TrackingManager */,
 				A9730DD9250274150061BF36 /* AnalyticsCountlyProvider.swift */,
-				8712134A1FA37881008B6767 /* TrackingManager.swift */,
 				EFBCC90E2152A93F006AAB70 /* AnalyticsProvider.swift */,
 				A9150DB423D1B6B800844185 /* Analytics.swift */,
 				16E2A0A31F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift */,
@@ -5837,7 +5837,6 @@
 				871BC3391D34F94200DF0793 /* SettingsPropertyFactory.swift */,
 				EF207B3822083E8000738E84 /* ZMUserSessionInterface.swift */,
 				060E5335257668EE00BDDEBB /* SettingsPropertyFactory+AppLock.swift */,
-				E9DA6FF22C5CCBC600BF8298 /* SettingsPropertyFactory+UIAlertController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -7892,6 +7891,15 @@
 			path = EphemeralKeyboardViewController;
 			sourceTree = "<group>";
 		};
+		E9CD10612C66418E0060D40D /* TrackingManager */ = {
+			isa = PBXGroup;
+			children = (
+				E9DA6FF22C5CCBC600BF8298 /* TrackingManager+UIAlertController.swift */,
+				8712134A1FA37881008B6767 /* TrackingManager.swift */,
+			);
+			path = TrackingManager;
+			sourceTree = "<group>";
+		};
 		E9D141632AC704E9005EE75D /* CreateSecureGuestLink */ = {
 			isa = PBXGroup;
 			children = (
@@ -9940,7 +9948,7 @@
 				F18993B62241356C00535A74 /* ConversationContentViewController+Scrolling.swift in Sources */,
 				BFBDDBC61DB0D51C00BEED02 /* ConversationInputBarButtonState.swift in Sources */,
 				EE6C2127284118D80031EFB9 /* ConversationCreateEncryptionProtocolCell.swift in Sources */,
-				E9DA6FF32C5CCBC600BF8298 /* SettingsPropertyFactory+UIAlertController.swift in Sources */,
+				E9DA6FF32C5CCBC600BF8298 /* TrackingManager+UIAlertController.swift in Sources */,
 				5E39FC6B225F81FD00C682B8 /* ConversationViewController+GuestBar.swift in Sources */,
 				EE0DE1CD21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift in Sources */,
 				E57917B128999A240063339D /* UIView+Borders.swift in Sources */,

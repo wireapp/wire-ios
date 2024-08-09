@@ -19,7 +19,7 @@
 import UIKit
 import WireSystem
 
-extension SettingsPropertyFactory {
+extension TrackingManager {
 
     typealias AlertLocale = L10n.Localizable.Self.Settings.PrivacyAnalytics.Alert
 
