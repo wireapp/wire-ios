@@ -47,16 +47,16 @@ final class SelfUserAPITests: XCTestCase {
             _ = try await sut.getSelfUser()
         }
     }
-    
+
     func testPushSupportedProtocolsRequest() async throws {
         let supportedVersions = APIVersion.v5.andNextVersions
         try await apiSnapshotHelper.verifyRequest(for: supportedVersions) { sut in
             _ = try await sut.pushSupportedProtocols([.mls])
         }
     }
-    
+
     // MARK: - Request unsupported endpoint
-    
+
     func testPushSupportedProtocols_UnsupportedVersionError_V0() async throws {
         // Given
         let httpClient = HTTPClientMock(
@@ -72,7 +72,7 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
-    
+
     func testPushSupportedProtocols_UnsupportedVersionError_V1() async throws {
         // Given
         let httpClient = HTTPClientMock(
@@ -88,7 +88,7 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
-    
+
     func testPushSupportedProtocols_UnsupportedVersionError_V2() async throws {
         // Given
         let httpClient = HTTPClientMock(
@@ -104,7 +104,7 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
-    
+
     func testPushSupportedProtocols_UnsupportedVersionError_V3() async throws {
         // Given
         let httpClient = HTTPClientMock(
@@ -120,7 +120,7 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
-    
+
     func testPushSupportedProtocols_UnsupportedVersionError_V4() async throws {
         // Given
         let httpClient = HTTPClientMock(
@@ -136,7 +136,6 @@ final class SelfUserAPITests: XCTestCase {
             try await sut.pushSupportedProtocols([.mls])
         }
     }
-
 
     // MARK: - Response handling
 
@@ -160,21 +159,21 @@ final class SelfUserAPITests: XCTestCase {
             Scaffolding.selfUserV0
         )
     }
-    
+
     func testGetSelfUser_FailureResponse() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
         let sut = SelfUserAPIV0(httpClient: httpClient)
-        
+
         // Then
         await XCTAssertThrowsError {
             // When
             try await sut.getSelfUser()
         }
     }
-    
+
     // MARK: - V5
-    
+
     func testGetSelfUser_SuccessResponse_200_V5() async throws {
         // Given
         let httpClient = try HTTPClientMock(
@@ -193,7 +192,7 @@ final class SelfUserAPITests: XCTestCase {
             Scaffolding.selfUserV5
         )
     }
-    
+
     func testPushSupportedProtocols_SuccessResponse_200_V5() async throws {
         // Given
         let httpClient = HTTPClientMock(code: 200, payload: nil)
@@ -204,7 +203,7 @@ final class SelfUserAPITests: XCTestCase {
         // Then
         try await sut.pushSupportedProtocols([.mls])
     }
-    
+
     func testPushSupportedProtocols_FailureResponse_InvalidRequest_V5() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
@@ -233,7 +232,7 @@ extension SelfUserAPITests {
             handle: "string",
             teamID: teamID,
             phone: "string",
-            accentID: 2147483647,
+            accentID: 2_147_483_647,
             managedBy: .wire,
             assets: [UserAsset(
                 key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
@@ -249,7 +248,7 @@ extension SelfUserAPITests {
             ),
             supportedProtocols: [.proteus]
         )
-        
+
         static let selfUserV5 = SelfUser(
             id: UUID(uuidString: "99DB9768-04E3-4B5D-9268-831B6A25C4AB")!,
             qualifiedID: userID,
@@ -258,7 +257,7 @@ extension SelfUserAPITests {
             handle: "string",
             teamID: teamID,
             phone: "string",
-            accentID: 2147483647,
+            accentID: 2_147_483_647,
             managedBy: .wire,
             assets: [UserAsset(
                 key: "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",

@@ -21,17 +21,17 @@ import Foundation
 /// The sso id of the self user
 
 public struct SSOID: Equatable {
-    
+
     /// The self user's scim external id
-    
+
     public let scimExternalId: String
-    
+
     /// The self user's sso subject
-    
+
     public let subject: String
-    
+
     /// The self user's tenant
-    
+
     public let tenant: String
-    
+
 }

@@ -23,7 +23,7 @@ extension APIVersion {
         let apiVersions = APIVersion.allCases
         let currentVersion = Int(rawValue)
         let nextVersions = Array(apiVersions.suffix(from: currentVersion))
-        
+
         return nextVersions
     }
 }

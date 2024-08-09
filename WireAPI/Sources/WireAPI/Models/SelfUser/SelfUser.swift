@@ -25,11 +25,11 @@ public struct SelfUser: Equatable {
     /// The unique id of the self user
 
     public let id: UUID
-    
+
     /// The qualified id of the self user
     ///
     public let qualifiedID: UserID
-    
+
     /// The sso id of the self user
     ///
     public let ssoID: SSOID?
@@ -45,15 +45,15 @@ public struct SelfUser: Equatable {
     /// Team ID if the self user belongs to a team
 
     public let teamID: UUID?
-    
+
     /// The phone of the self user
-    
+
     public let phone: String?
 
     /// Color accent of the self user
 
     public let accentID: Int
-    
+
     /// The self user identity managing system
     ///
     public let managedBy: ManagingSystem?
@@ -79,8 +79,8 @@ public struct SelfUser: Equatable {
     /// Service information associated with this self user
 
     public let service: Service?
-    
+
     /// Messaging protocols which this user supports
-    
+
     public let supportedProtocols: Set<SupportedProtocol>?
 }

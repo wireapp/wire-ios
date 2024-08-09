@@ -29,27 +29,27 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     func getSelfUser() async throws -> SelfUser {
         let request = HTTPRequest(
             path: "\(pathPrefix)/self",
             method: .get
         )
-        
+
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200, type: SelfUserV0.self)
             .parse(response)
     }
-    
-    func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws {
+
+    func pushSupportedProtocols(_: Set<SupportedProtocol>) async throws {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
-    
+
     let accentID: Int
     let assets: [UserAsset]?
     let deleted: Bool?
@@ -66,7 +66,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
     let teamID: UUID?
-    
+
     enum CodingKeys: String, CodingKey {
         case accentID = "accent_id"
         case assets, deleted, email
@@ -79,7 +79,7 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
         case ssoID = "sso_id"
         case teamID = "team"
     }
-    
+
     func toAPIModel() -> SelfUser {
         SelfUser(id: id,
                  qualifiedID: qualifiedID,
@@ -103,28 +103,28 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
 enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
     case wire
     case scim
-    
+
     func toAPIModel() -> ManagingSystem {
         switch self {
         case .wire:
-                .wire
+            .wire
         case .scim:
-                .scim
+            .scim
         }
     }
 }
 
 struct SSOIDV0: Decodable, ToAPIModelConvertible {
-    
+
     let scimExternalId: String
     let subject: String
     let tenant: String
-    
+
     enum CodingKeys: String, CodingKey {
         case scimExternalId = "scim_external_id"
         case subject, tenant
     }
-    
+
     func toAPIModel() -> SSOID {
         SSOID(
             scimExternalId: scimExternalId,

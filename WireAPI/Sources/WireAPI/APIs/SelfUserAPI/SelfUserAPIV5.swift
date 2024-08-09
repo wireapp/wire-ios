@@ -23,19 +23,19 @@ class SelfUserAPIV5: SelfUserAPIV4 {
     override var apiVersion: APIVersion {
         .v5
     }
-    
+
     override func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws {
         let encoder = JSONEncoder.defaultEncoder
         let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
         let body = try encoder.encode(payload)
-        
+
         let request = HTTPRequest(
             path: "\(pathPrefix)/self/supported-protocols",
             method: .put,
             body: body
         )
-        
-        let response = try await self.httpClient.executeRequest(request)
+
+        let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
             .success(code: 200)
@@ -46,7 +46,7 @@ class SelfUserAPIV5: SelfUserAPIV4 {
 
 struct SupportedProtocolsPayloadV5: Encodable {
     let supportedProtocols: Set<SupportedProtocol>
-    
+
     enum CodingKeys: String, CodingKey {
         case supportedProtocols = "supported_protocols"
     }

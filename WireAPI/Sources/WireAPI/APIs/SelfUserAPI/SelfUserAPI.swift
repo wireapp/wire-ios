@@ -21,12 +21,12 @@ import Foundation
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning self user.
 public protocol SelfUserAPI {
-    
+
     /// Get user details for self user
     /// - Returns: The self user.
-    
+
     func getSelfUser() async throws -> SelfUser
-    
+
     /// Push supported protocols for self user
     ///
     /// - Parameter supportedProtocols: list of supported protocols

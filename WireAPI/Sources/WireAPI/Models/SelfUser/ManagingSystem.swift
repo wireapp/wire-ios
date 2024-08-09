@@ -21,13 +21,13 @@ import Foundation
 /// The managing system of the self user identity
 
 public enum ManagingSystem {
-    
+
     /// User identity is managed with Wire
-    
+
     case wire
-    
+
     /// User identity is managed with SCIM
-    
+
     case scim
 
 }

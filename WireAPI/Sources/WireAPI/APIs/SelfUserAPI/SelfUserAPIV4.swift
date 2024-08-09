@@ -19,13 +19,13 @@
 import Foundation
 
 class SelfUserAPIV4: SelfUserAPIV3 {
-    
+
     override func getSelfUser() async throws -> SelfUser {
         let request = HTTPRequest(
             path: "\(pathPrefix)/self",
             method: .get
         )
-        
+
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
@@ -40,7 +40,7 @@ class SelfUserAPIV4: SelfUserAPIV3 {
 }
 
 struct SelfUserV4: Decodable, ToAPIModelConvertible {
-    
+
     let accentID: Int
     let assets: [UserAsset]?
     let deleted: Bool?
@@ -58,7 +58,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let ssoID: SSOIDV0?
     let supportedProtocols: Set<SupportedProtocol>?
     let teamID: UUID?
-    
+
     enum CodingKeys: String, CodingKey {
         case accentID = "accent_id"
         case assets, deleted, email
@@ -72,7 +72,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
         case teamID = "team"
         case supportedProtocols = "supported_protocols"
     }
-    
+
     func toAPIModel() -> SelfUser {
         SelfUser(id: id,
                  qualifiedID: qualifiedID,
@@ -88,7 +88,6 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
                  email: email,
                  expiresAt: expiresAt?.date,
                  service: service?.toAPIModel(),
-                 supportedProtocols: supportedProtocols ?? [.proteus]
-        )
+                 supportedProtocols: supportedProtocols ?? [.proteus])
     }
 }
