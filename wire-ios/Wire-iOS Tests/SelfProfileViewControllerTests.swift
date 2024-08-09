@@ -148,8 +148,6 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
     // MARK: Helper Method
 
     private func createSut(userName: String, teamMember: Bool) {
-        // prevent app crash when checking Analytics.shared.isOptout
-        Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
         sut = SelfProfileViewController(
             selfUser: selfUser,

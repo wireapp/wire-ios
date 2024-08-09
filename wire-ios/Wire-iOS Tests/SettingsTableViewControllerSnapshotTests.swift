@@ -80,8 +80,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForSettingGroup() throws {
-        // prevent app crash when checking Analytics.shared.isOptout
-        Analytics.shared = Analytics(optedOut: true)
         let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
         try verify(group: group)
     }
