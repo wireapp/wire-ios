@@ -35,6 +35,10 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
     func getActionItems() -> [DeveloperToolsViewModel.Item] {
         var items = [makeConversationIdItem()]
 
+        if let groupIdItem = makeConversationGroupIdItem() {
+            items.append(groupIdItem)
+        }
+
         if DeveloperFlag.debugDuplicateObjects.isOn {
             items.append(makeDuplicateConversationItem())
         }
@@ -44,6 +48,18 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         }
 
         return items
+    }
+
+    private func makeConversationGroupIdItem() -> DeveloperToolsViewModel.Item? {
+        switch conversation.messageProtocol {
+        case .mls, .mixed:
+            return .text(DeveloperToolsViewModel.TextItem(
+                title: "Conversation ID",
+                value: conversation.remoteIdentifier.uuidString
+            ))
+        default:
+            return nil
+        }
     }
 
     private func makeConversationIdItem() -> DeveloperToolsViewModel.Item {
