@@ -36,7 +36,7 @@ extension ZMConversation {
         case markUnread
         case remove
         case favorite(isFavorite: Bool)
-        case duplicateConversation
+
     }
 
     var listActions: [Action] {
@@ -122,9 +122,6 @@ extension ZMConversation {
             }
         }
 
-        if DeveloperFlag.debugDuplicateObjects.isOn {
-            actions.append(.duplicateConversation)
-        }
         return actions
     }
 
@@ -183,9 +180,6 @@ extension ZMConversation.Action {
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
         case .favorite(isFavorite: let favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
-        case .duplicateConversation:
-            // no localization needed, this is debug
-            return "⚠️ DEBUG - Duplicate Conversation"
         }
     }
 
