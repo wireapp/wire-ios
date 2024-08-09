@@ -31,14 +31,14 @@ final class AppRootRouter: NSObject {
 
     // MARK: - Private Property
 
-    private var appStateCalculator: AppStateCalculator
-    private var urlActionRouter: URLActionRouter
+    private let appStateCalculator: AppStateCalculator
+    private let urlActionRouter: URLActionRouter
 
     private var authenticationCoordinator: AuthenticationCoordinator?
-    private var switchingAccountRouter: SwitchingAccountRouter
-    private var sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
+    private let switchingAccountRouter: SwitchingAccountRouter
+    private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
-    private var quickActionsManager: QuickActionsManager
+    private let quickActionsManager: QuickActionsManager
     private var authenticatedRouter: AuthenticatedRouter? {
         didSet {
             setupAnalyticsSharing()
@@ -51,11 +51,11 @@ final class AppRootRouter: NSObject {
 
     // MARK: - Private Set Property
 
-    private(set) var sessionManager: SessionManager
+    let sessionManager: SessionManager
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: This should be private
-    private(set) var rootViewController: RootViewController
+    let rootViewController: RootViewController
 
     private var lastLaunchOptions: LaunchOptions?
 
