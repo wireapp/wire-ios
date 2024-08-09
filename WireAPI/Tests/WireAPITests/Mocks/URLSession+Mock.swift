@@ -18,24 +18,17 @@
 
 import Foundation
 
-protocol URLSessionProtocol {
+extension URLSession {
 
-    func data(
-        for request: URLRequest,
-        delegate: (any URLSessionTaskDelegate)?
-    ) async throws -> (Data, URLResponse)
+    /// A url session powered by `URLProtocolMock`.
+    ///
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
 
-}
-
-extension URLSessionProtocol {
-
-    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
-        try await data(
-            for: request,
-            delegate: nil
-        )
-    }
+    static let mock: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
+    }()
 
 }
-
-extension URLSession: URLSessionProtocol {}

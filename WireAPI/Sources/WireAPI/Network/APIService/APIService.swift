@@ -52,7 +52,7 @@ public final class APIService: APIServiceProtocol {
     private let backendURL: URL
     private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
-    private let urlSession: any URLSessionProtocol
+    private let urlSession: URLSession
 
     /// Create a new `APIService`.
     ///
@@ -84,7 +84,7 @@ public final class APIService: APIServiceProtocol {
         backendURL: URL,
         backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
-        urlSession: any URLSessionProtocol
+        urlSession: URLSession
     ) {
         self.backendURL = backendURL
         self.backendWebSocketURL = backendWebSocketURL
