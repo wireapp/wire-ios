@@ -18,26 +18,25 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+final class InMemoryAuthenticationStorage: AuthenticationStorage {
 
-public struct BackendInfoAPIBuilder {
+    private var accessToken: AccessToken?
+    private var cookieData: Data?
 
-    let apiService: any APIServiceProtocol
-
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
-
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
+    func storeAccessToken(_ accessToken: AccessToken) {
+        self.accessToken = accessToken
     }
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
+    func fetchAccessToken() -> AccessToken? {
+        accessToken
+    }
 
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
+    func storeCookieData(_ cookieData: Data?) {
+        self.cookieData = cookieData
+    }
+
+    func fetchCookieData() -> Data? {
+        cookieData
     }
 
 }

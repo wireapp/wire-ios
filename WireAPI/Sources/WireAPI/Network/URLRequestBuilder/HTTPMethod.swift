@@ -16,28 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+enum HTTPMethod: String {
 
-/// A builder of `BackendInfoAPI`.
-
-public struct BackendInfoAPIBuilder {
-
-    let apiService: any APIServiceProtocol
-
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
-
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
-
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
-
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
-    }
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case head = "HEAD"
+    case delete = "DELETE"
 
 }

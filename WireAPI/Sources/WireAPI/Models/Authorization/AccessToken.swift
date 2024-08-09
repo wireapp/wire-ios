@@ -18,26 +18,25 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+/// A token used to make authenticated requests to
+/// the backend.
 
-public struct BackendInfoAPIBuilder {
+public struct AccessToken {
 
-    let apiService: any APIServiceProtocol
+    /// The user id of whom the token belongs.
 
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
+    public let userID: UUID
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+    /// The authentication token.
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
+    public let token: String
 
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
-    }
+    /// The type of token.
+
+    public let type: String
+
+    /// The number of seconds the token is valid.
+
+    public let validityInSeconds: TimeInterval
 
 }

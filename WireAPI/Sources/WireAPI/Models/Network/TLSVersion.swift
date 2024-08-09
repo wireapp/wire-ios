@@ -18,26 +18,26 @@
 
 import Foundation
 
-/// A builder of `BackendInfoAPI`.
+/// Supported TLS versions.
 
-public struct BackendInfoAPIBuilder {
+public enum TLSVersion {
 
-    let apiService: any APIServiceProtocol
+    /// TLS version 1.2
 
-    /// Create a new builder.
-    ///
-    /// - Parameter apiService: A service for executing requests.`
+    case v1_2
 
-    public init(apiService: any APIServiceProtocol) {
-        self.apiService = apiService
-    }
+    /// TLS version 1.3
 
-    /// Make a `BackendInfoAPI`.
-    ///
-    /// - Returns: A `BackendInfoAPI`.
+    case v1_3
 
-    public func makeAPI() -> any BackendInfoAPI {
-        BackendInfoAPIImpl(apiService: apiService)
+    var secValue: tls_protocol_version_t {
+        switch self {
+        case .v1_2:
+            .TLSv12
+
+        case .v1_3:
+            .TLSv13
+        }
     }
 
 }
