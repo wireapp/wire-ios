@@ -353,7 +353,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             assertionFailure("expected available 'user'!")
         }
 
-        cell.showSeparator = indexPath.item != (sections.endIndex - 1)
+        cell.showSeparator = indexPath.item != (sections[indexPath.section].items.count - 1)
         cell.subtitleLabel.accessibilityLabel = description.accessibleSubtitleLabel
         cell.subtitleLabel.accessibilityValue = description.accessibleSubtitleValue
 
