@@ -16,4 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+enum HTTPMethod: String {
+
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case head = "HEAD"
+    case delete = "DELETE"
+
+}
