@@ -24,14 +24,14 @@ final class URLProtocolMock: URLProtocol {
 
     static var mockHandler: ((URLRequest) throws -> (Data?, URLResponse))?
 
-    override class func canInit(with request: URLRequest) -> Bool {
+    override static func canInit(with request: URLRequest) -> Bool {
         // This protocol can handle the request.
         true
     }
 
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+    override static func canonicalRequest(for request: URLRequest) -> URLRequest {
         // Let the request simply pass through.
-        return request
+        request
     }
 
     override func startLoading() {
