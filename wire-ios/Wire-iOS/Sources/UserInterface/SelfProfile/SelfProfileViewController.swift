@@ -67,7 +67,7 @@ final class SelfProfileViewController: UIViewController {
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
         accountSelector: AccountSelector?,
-        trackingManager: TrackingManager
+        trackingManager: TrackingManager?
     ) {
 
         self.userSession = userSession

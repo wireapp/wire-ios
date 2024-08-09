@@ -26,7 +26,7 @@ final class ZClientViewController: UIViewController {
 
     private let account: Account
     let userSession: UserSession
-    let trackingManager: TrackingManager
+    let trackingManager: TrackingManager?
 
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
@@ -94,7 +94,7 @@ final class ZClientViewController: UIViewController {
     required init(
         account: Account,
         userSession: UserSession,
-        trackingManager: TrackingManager
+        trackingManager: TrackingManager?
     ) {
         self.account = account
         self.userSession = userSession

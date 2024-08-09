@@ -26,7 +26,7 @@ struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
     var accountSelector: AccountSelector?
-    var trackingManager: TrackingManager
+    var trackingManager: TrackingManager?
 
     func build() -> SelfProfileViewController {
         .init(
