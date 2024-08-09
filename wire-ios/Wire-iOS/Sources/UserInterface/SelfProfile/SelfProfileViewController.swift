@@ -75,12 +75,15 @@ final class SelfProfileViewController: UIViewController {
 
         // Create the settings hierarchy
 
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, trackingManager: trackingManager, selfUser: selfUser)
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            trackingManager: trackingManager,
+            selfUser: selfUser
+        )
 
         let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
             settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: userRightInterfaceType,
-            trackingManager: trackingManager
+            userRightInterfaceType: userRightInterfaceType
         )
 
         let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)

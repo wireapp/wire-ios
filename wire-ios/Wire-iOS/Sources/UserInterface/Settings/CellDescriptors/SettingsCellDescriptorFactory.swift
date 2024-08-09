@@ -27,7 +27,6 @@ struct SettingsCellDescriptorFactory {
 
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
-    var trackingManager: TrackingManager
 
     func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
