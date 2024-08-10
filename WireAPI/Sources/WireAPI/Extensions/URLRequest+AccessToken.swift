@@ -16,4 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+import Foundation
+
+extension URLRequest {
+
+    mutating func setAccessToken(_ accessToken: AccessToken) {
+        setValue(
+            [accessToken.type, accessToken.token].joined(separator: " "),
+            forHTTPHeaderField: "Authorization"
+        )
+    }
+
+}
