@@ -64,7 +64,7 @@ extension ZMConversation {
 
         let onGranted: (_ granted: Bool ) -> Void = { granted in
             if granted {
-                let joined = self.voiceChannel?.join(video: video, userSession: userSession) ?? false
+                self.voiceChannel?.join(video: video, userSession: userSession)
 
             } else {
                 self.voiceChannel?.leave(userSession: userSession, completion: nil)
