@@ -85,16 +85,9 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     private func updateUserProfile(_ userProfile: AnalyticsUserProfile) {
         analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
 
-        for key in AnalyticsUserKey.allCases {
-            switch key {
-            case .teamID:
-                analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: key.rawValue)
-            case .teamRole:
-                analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: key.rawValue)
-            case .teamSize:
-                analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: key.rawValue)
-            }
-        }
+        analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: AnalyticsUserKey.teamID.rawValue)
+        analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: AnalyticsUserKey.teamRole.rawValue)
+        analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: AnalyticsUserKey.teamSize.rawValue)
     }
 
     private func clearUserData() {
