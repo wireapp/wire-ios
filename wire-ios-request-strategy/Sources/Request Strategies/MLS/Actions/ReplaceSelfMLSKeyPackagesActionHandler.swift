@@ -37,7 +37,7 @@ class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLSKeyPac
         }
 
         return ZMTransportRequest(
-            path: "/mls/key-packages/self/\(action.clientID)",
+            path: "/mls/key-packages/self/\(action.clientID)?ciphersuites=\(action.ciphersuite.rawValue)",
             method: .put,
             payload: ["key_packages": action.keyPackages] as ZMTransportData,
             apiVersion: apiVersion.rawValue
