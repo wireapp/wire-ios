@@ -908,7 +908,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         // Set the analytics identifier if it's not present
         if selfUser.analyticsIdentifier == nil {
-            let idProvider = AnalyticsIdentifierProvider(selfUser: userSession.selfUser)
+            let idProvider = AnalyticsIdentifierProvider(selfUser: selfUser)
             idProvider.setIdentifierIfNeeded()
         }
 
