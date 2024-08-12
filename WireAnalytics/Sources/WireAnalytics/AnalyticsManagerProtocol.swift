@@ -31,7 +31,6 @@ public protocol AnalyticsManagerProtocol {
     /// This method should be used to re-enable analytics tracking after it has been disabled.
     /// - Parameter userProfile: The profile of the user to enable analytics for.
     /// - Returns: A new analytics session for the user.
-    ///
     func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
 }
