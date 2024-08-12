@@ -77,10 +77,9 @@ public final class AccountStore: NSObject {
 
     /// Deletes an `Account` from the account store.
     /// - parameter account: The account which should be deleted.
-    /// - returns: Whether or not the operation was successful.
+    /// - returns: `false` if the account cannot be found or cannot be deleted otherwise `true`.
     @discardableResult func remove(_ account: Account) -> Bool {
         do {
-            guard contains(account) else { return false }
             try fileManager.removeItem(at: url(for: account))
             return true
         } catch {
@@ -102,13 +101,6 @@ public final class AccountStore: NSObject {
             log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
             return false
         }
-    }
-
-    /// Check if an `Account` is already stored in this `AccountStore`.
-    /// - parameter account: The account which should be deleted.
-    /// - returns: Whether or not the account is stored in this `AccountStore`.
-    func contains(_ account: Account) -> Bool {
-        return fileManager.fileExists(atPath: url(for: account).path)
     }
 
     // MARK: - Private Helper

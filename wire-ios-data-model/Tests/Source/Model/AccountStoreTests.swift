@@ -227,32 +227,6 @@ final class AccountStoreTests: ZMConversationTestsBase {
         XCTAssertNil(store.load(.create()))
     }
 
-    func testThatItReturnsTrueForAccountsContainedInTheStore() {
-        // given
-        let store = AccountStore(root: url)
-        let uuid = UUID.create()
-
-        // when
-        let account = Account(userName: "Mike", userIdentifier: uuid)
-        XCTAssert(store.add(account))
-
-        // then
-        XCTAssert(store.contains(account))
-    }
-
-    func testThatItReturnsFalseForAccountsNotContainedInTheStore() {
-        // given
-        let store = AccountStore(root: url)
-
-        // when
-        let account1 = Account(userName: "Jacob", userIdentifier: .create())
-        let account2 = Account(userName: "Dasha", userIdentifier: .create())
-        XCTAssert(store.add(account1))
-
-        // then
-        XCTAssertFalse(store.contains(account2))
-    }
-
     func testThatASecondAccountAtTheSameLocationShowsTheSameAccounts() {
         // given
         let account1 = Account(userName: "John", userIdentifier: .create())
