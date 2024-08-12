@@ -160,7 +160,6 @@ extension ConversationContentViewController {
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
         case .react(let reaction):
-            Analytics.shared.tagReacted(in: conversation)
             userSession.perform {
                 message.react(reaction)
             }

@@ -22,13 +22,6 @@ let conversationMediaCompleteActionEventName = "contributed"
 
 extension Analytics {
 
-    func tagReacted(in conversation: ZMConversation) {
-        var attributes = conversation.ephemeralTrackingAttributes
-        attributes["message_action"] = "reaction"
-        attributes.merge(conversation.attributesForConversation) { _, new in new }
-        tagEvent(conversationMediaCompleteActionEventName, attributes: attributes)
-    }
-
     func tagMediaActionCompleted(_ action: ConversationMediaAction,
                                  inConversation conversation: ZMConversation) {
         var attributes = conversation.ephemeralTrackingAttributes
