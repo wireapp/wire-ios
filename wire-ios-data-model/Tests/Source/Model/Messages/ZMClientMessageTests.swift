@@ -580,9 +580,8 @@ extension ClientMessageTests {
         // given
         let initialText = "initial text"
         let modifiedText = "modified text"
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: `modifiedText` is not used, is the text correct?
-        // swiftlint:enable todo_requires_jira_link
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()

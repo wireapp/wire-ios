@@ -305,14 +305,6 @@ final class ConversationViewController: UIViewController {
         wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
     }
 
-    // MARK: - Getters, setters
-
-    func setCollection(_ collectionController: CollectionsViewController?) {
-        self.collectionController = collectionController
-
-        updateLeftNavigationBarItems()
-    }
-
     // MARK: - Application Events & Notifications
 
     override func accessibilityPerformEscape() -> Bool {
@@ -545,10 +537,6 @@ extension ConversationViewController: ZMConversationObserver {
         if note.mlsVerificationStatusChanged {
             setupNavigatiomItem()
         }
-    }
-
-    func dismissProfileClientViewController(_ sender: UIBarButtonItem?) {
-        dismiss(animated: true)
     }
 }
 
