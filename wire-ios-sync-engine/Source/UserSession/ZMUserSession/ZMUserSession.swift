@@ -345,7 +345,8 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             context: syncContext,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
+            featureRepository: featureRepository
         )
 
         let e2eiRepository = E2EIRepository(
