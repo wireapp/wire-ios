@@ -48,23 +48,26 @@ final class TrackingManager: NSObject, TrackingInterface {
             ExtensionSettings.shared.disableAnalyticsSharing
         }
         set {
-            self.showAnalyticsConsentAlert { userConsented in
-                if userConsented {
-                    self.updateAnalyticsSharing(!newValue)
-                } else {
-                    // User rejected, so we keep analytics disabled
-                    self.updateAnalyticsSharing(true)
+            let isEnabled = !newValue
+
+            if isEnabled {
+                self.showAnalyticsConsentAlert { userConsented in
+                    if userConsented {
+                        self.updateAnalyticsSharing(disabled: !newValue)
+                    } else {
+                        // User rejected, so we keep analytics disabled
+                        self.updateAnalyticsSharing(disabled: true)
+                    }
                 }
+            } else {
+                self.updateAnalyticsSharing(disabled: true)
             }
         }
     }
 
-    private func updateAnalyticsSharing(_ disable: Bool) {
-        ExtensionSettings.shared.disableAnalyticsSharing = disable
-        AVSFlowManager.getInstance()?.setEnableMetrics(!disable)
-
+    private func updateAnalyticsSharing(disabled: Bool) {
         do {
-            if disable {
+            if disabled {
                 let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
                 disableUseCase.invoke()
             } else {
@@ -73,11 +76,11 @@ final class TrackingManager: NSObject, TrackingInterface {
             }
         } catch {
             WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")
-
-            // Reset the setting
-            ExtensionSettings.shared.disableAnalyticsSharing = !disable
-            AVSFlowManager.getInstance()?.setEnableMetrics(disable)
+            return
         }
+
+        ExtensionSettings.shared.disableAnalyticsSharing = disabled
+        AVSFlowManager.getInstance()?.setEnableMetrics(!disabled)
     }
 
 }
