@@ -79,15 +79,6 @@ final class MediaManagerOperation: LaunchSequenceOperation {
     }
 }
 
-// MARK: - TrackingOperation
-final class TrackingOperation: LaunchSequenceOperation {
-    func execute() {
-        let containsConsoleAnalytics = ProcessInfo.processInfo
-            .arguments.contains(AnalyticsProviderFactory.ZMConsoleAnalyticsArgumentKey)
-        AnalyticsProviderFactory.shared.useConsoleAnalytics = containsConsoleAnalytics
-    }
-}
-
 // MARK: - FileBackupExcluderOperation
 final class FileBackupExcluderOperation: LaunchSequenceOperation {
     private let fileBackupExcluder = FileBackupExcluder()

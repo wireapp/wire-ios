@@ -53,7 +53,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private var launchOperations: [LaunchSequenceOperation] = [
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
-        TrackingOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
