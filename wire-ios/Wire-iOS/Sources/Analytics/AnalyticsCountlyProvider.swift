@@ -254,14 +254,6 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         pendingEvents.removeAll()
     }
 
-    func setSuperProperty(_ name: String, value: Any?) {
-        // TODO
-    }
-
-    func flush(completion: Completion?) {
-        completion?()
-    }
-
     private var observerTokens = [Any]()
 }
 
