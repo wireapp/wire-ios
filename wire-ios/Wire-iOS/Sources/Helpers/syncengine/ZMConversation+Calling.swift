@@ -66,9 +66,6 @@ extension ZMConversation {
             if granted {
                 let joined = self.voiceChannel?.join(video: video, userSession: userSession) ?? false
 
-                if joined {
-                    Analytics.shared.tagMediaActionCompleted(video ? .videoCall : .audioCall, inConversation: self)
-                }
             } else {
                 self.voiceChannel?.leave(userSession: userSession, completion: nil)
             }

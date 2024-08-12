@@ -99,19 +99,8 @@ extension ConversationInputBarViewController {
 
                 self.impactFeedbackGenerator.impactOccurred()
 
-                var conversationMediaAction: ConversationMediaAction = .fileTransfer
-
                 do {
                     let message = try conversation.appendFile(with: metadata)
-                    if let fileMessageData = message.fileMessageData {
-                        if fileMessageData.isVideo {
-                            conversationMediaAction = .videoMessage
-                        } else if fileMessageData.isAudio {
-                            conversationMediaAction = .audioMessage
-                        }
-                    }
-
-                    Analytics.shared.tagMediaActionCompleted(conversationMediaAction, inConversation: conversation)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
