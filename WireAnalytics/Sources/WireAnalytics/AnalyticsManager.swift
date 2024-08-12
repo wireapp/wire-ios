@@ -87,11 +87,11 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
 
         for key in AnalyticsUserKey.allCases {
             switch key {
-            case .teamTeamID:
+            case .teamID:
                 analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: key.rawValue)
-            case .teamUserType:
+            case .teamRole:
                 analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: key.rawValue)
-            case .teamTeamSize:
+            case .teamSize:
                 analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: key.rawValue)
             }
         }

@@ -23,11 +23,11 @@ import Foundation
 enum AnalyticsUserKey: String, CaseIterable {
 
     /// The key for the team ID.
-    case teamTeamID = "team_team_id"
+    case teamID = "team_team_id"
 
     /// The key for the user type within the team.
-    case teamUserType = "team_user_type"
+    case teamRole = "team_user_type"
 
     /// The key for the size of the team.
-    case teamTeamSize = "team_team_size"
+    case teamSize = "team_team_size"
 }
