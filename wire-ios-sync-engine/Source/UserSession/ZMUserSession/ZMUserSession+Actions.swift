@@ -160,27 +160,6 @@ import Foundation
         }
     }
 
-    public func handleTrackingOnCallNotification(with userInfo: NotificationUserInfo) {
-
-        guard
-            let conversation = userInfo.conversation(in: managedObjectContext),
-            let conversationId = conversation.avsIdentifier,
-            let callState = conversation.voiceChannel?.state,
-            case .incoming = callState,
-            let callCenter = self.callCenter,
-            callCenter.activeCallConversations(in: self).count == 0
-        else { return }
-
-        let type: ConversationMediaAction = callCenter.isVideoCall(conversationId: conversationId) ? .videoCall : .audioCall
-
-        self.syncManagedObjectContext.performGroupedBlock { [weak self] in
-            guard
-                let self,
-                let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
-                else { return }
-        }
-    }
-
     public func likeMessage(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
         guard
             let conversation = userInfo.conversation(in: managedObjectContext),
