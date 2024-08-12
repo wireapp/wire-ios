@@ -16,21 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-extension ZMConversationType {
-
-     var analyticsType: String {
-        switch self {
-        case .oneOnOne:
-            return "one_to_one"
-        case .group:
-            return "group"
-        default:
-            return ""
-        }
-    }
-}
-
 public enum ConversationMediaAction: UInt {
     case text, photo, audioCall, videoCall, gif, ping, fileTransfer, videoMessage, audioMessage, location
 
