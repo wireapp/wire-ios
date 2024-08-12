@@ -124,9 +124,8 @@ import Foundation
                 if result == .failed {
                     Logging.push.safePublic("failed to reply via push notification action")
                     self.localNotificationDispatcher?.didFailToSendMessage(in: conversationOnSyncContext!)
-                } else {
-                    self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationOnSyncContext, action: .text)
                 }
+
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completionHandler()
             }
@@ -179,8 +178,6 @@ import Foundation
                 let self,
                 let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 else { return }
-
-            self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationInSyncContext, action: type)
         }
     }
 

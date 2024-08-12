@@ -16,20 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-extension AnalyticsType {
-
-    public func tagActionOnPushNotification(conversation: ZMConversation?, action: ConversationMediaAction) {
-        guard let conversation else { return }
-        var attributes = conversation.ephemeralTrackingAttributes
-        attributes["action"] = action.attributeValue
-        attributes["conversation_type"] = conversation.conversationType.analyticsType
-        attributes["with_service"] = conversation.includesServiceUser ? "true" : "false"
-        tagEvent("contributed", attributes: attributes as! [String: NSObject])
-    }
-
-}
 
 public extension ZMConversation {
 
