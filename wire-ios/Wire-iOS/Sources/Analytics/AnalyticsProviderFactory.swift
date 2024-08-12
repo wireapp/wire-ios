@@ -16,20 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import WireSystem
 
 private let zmLog = ZMSLog(tag: "Analytics")
 
-private let ZMEnableConsoleLog = "ZMEnableAnalyticsLog"
-
 final class AnalyticsProviderFactory: NSObject {
     static let shared = AnalyticsProviderFactory(userDefaults: .shared()!)
-    static let ZMConsoleAnalyticsArgumentKey = "-ConsoleAnalytics"
-
-    var useConsoleAnalytics: Bool = false
 
     private let userDefaults: UserDefaults
 
@@ -38,10 +31,7 @@ final class AnalyticsProviderFactory: NSObject {
     }
 
     func analyticsProvider() -> AnalyticsProvider? {
-        if useConsoleAnalytics || UserDefaults.standard.bool(forKey: ZMEnableConsoleLog) {
-            zmLog.info("Creating analyticsProvider: AnalyticsConsoleProvider")
-            return AnalyticsConsoleProvider()
-        } else if AutomationHelper.sharedHelper.useAnalytics {
+        if AutomationHelper.sharedHelper.useAnalytics {
             // Create & return valid provider, when available.
             guard
                 let appKey = Bundle.countlyAppKey,
