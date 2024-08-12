@@ -1823,7 +1823,6 @@
 		EFF9404822414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF9404722414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift */; };
 		EFFE707222F2DB38007CEA38 /* session_manager.json in Resources */ = {isa = PBXBuildFile; fileRef = 161041B622D764C1001109D7 /* session_manager.json */; };
 		F10F46D420288CEB00261449 /* ConversationCreationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10F46D320288CEB00261449 /* ConversationCreationController.swift */; };
-		F112C58620497860007C1E8F /* Analytics+Guests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F112C58520497860007C1E8F /* Analytics+Guests.swift */; };
 		F1141C971F5EB2DC005340B3 /* WireApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1141C961F5EB2DC005340B3 /* WireApplication.swift */; };
 		F1199D371FC8490A0070FAC3 /* AuthenticationStepController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1199D301FC8490A0070FAC3 /* AuthenticationStepController.swift */; };
 		F1199D3F1FC849450070FAC3 /* BackButtonDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1199D3B1FC849440070FAC3 /* BackButtonDescription.swift */; };
@@ -3863,7 +3862,6 @@
 		EFFF9E841FBF335700491F9A /* UIColor+TeamCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+TeamCreation.swift"; sourceTree = "<group>"; };
 		F10D5A6921A83793008BBD29 /* Bundle+Backend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Backend.swift"; sourceTree = "<group>"; };
 		F10F46D320288CEB00261449 /* ConversationCreationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreationController.swift; sourceTree = "<group>"; };
-		F112C58520497860007C1E8F /* Analytics+Guests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Analytics+Guests.swift"; sourceTree = "<group>"; };
 		F1141C961F5EB2DC005340B3 /* WireApplication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireApplication.swift; sourceTree = "<group>"; };
 		F114466821A2F8BC00B5FEBA /* Tests-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Tests-Debug.xcconfig"; sourceTree = "<group>"; };
 		F114466921A56F3200B5FEBA /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
@@ -5549,7 +5547,6 @@
 			children = (
 				F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */,
 				16595CFE20BEE5DF00E1340E /* Analytics+CallEvents.swift */,
-				F112C58520497860007C1E8F /* Analytics+Guests.swift */,
 				D5D89781201A25E000FAF69C /* Analytics+Services.swift */,
 			);
 			path = Events;
@@ -10045,7 +10042,6 @@
 				5E3FB06C206BC7AC0075E910 /* TabBar.swift in Sources */,
 				635BAFE6262DB34400B986A4 /* Array+CallParticipant.swift in Sources */,
 				87B8C3411DF9788B0015EC89 /* MapOpening.swift in Sources */,
-				F112C58620497860007C1E8F /* Analytics+Guests.swift in Sources */,
 				E5337CF128CF48DE00C3F8A3 /* SettingsLinkTableCell.swift in Sources */,
 				875060731E5B3D9E005B21C7 /* FileBackupExcluder.swift in Sources */,
 				5EA73D8820D901000001D106 /* DetailsCollectionViewCell.swift in Sources */,

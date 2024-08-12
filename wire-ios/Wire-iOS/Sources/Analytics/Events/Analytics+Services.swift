@@ -92,3 +92,16 @@ extension Analytics {
         tag(ServiceRemovedEvent(service: serviceUser))
     }
 }
+
+protocol Event {
+    var name: String { get }
+    var attributes: [AnyHashable: Any]? { get }
+}
+
+extension Analytics {
+
+    func tag(_ event: Event) {
+        tagEvent(event.name, attributes: event.attributes as? [String: NSObject] ?? [:])
+    }
+
+}
