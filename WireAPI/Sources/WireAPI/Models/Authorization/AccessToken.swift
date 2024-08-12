@@ -16,4 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+import Foundation
+
+/// A token used to make authenticated requests to
+/// the backend.
+
+public struct AccessToken {
+
+    /// The user id of whom the token belongs.
+
+    public let userID: UUID
+
+    /// The authentication token.
+
+    public let token: String
+
+    /// The type of token.
+
+    public let type: String
+
+    /// The number of seconds the token is valid.
+
+    public let validityInSeconds: TimeInterval
+
+}

@@ -16,4 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+import Foundation
+
+final class InMemoryAuthenticationStorage: AuthenticationStorage {
+
+    private var accessToken: AccessToken?
+    private var cookieData: Data?
+
+    func storeAccessToken(_ accessToken: AccessToken) {
+        self.accessToken = accessToken
+    }
+
+    func fetchAccessToken() -> AccessToken? {
+        accessToken
+    }
+
+    func storeCookieData(_ cookieData: Data?) {
+        self.cookieData = cookieData
+    }
+
+    func fetchCookieData() -> Data? {
+        cookieData
+    }
+
+}

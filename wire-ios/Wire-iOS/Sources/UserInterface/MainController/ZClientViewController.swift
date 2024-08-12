@@ -204,13 +204,6 @@ final class ZClientViewController: UIViewController {
             restoreStartupState()
         }
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
-            name: .colorSchemeControllerDidApplyColorSchemeChange,
-            object: nil
-        )
-
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
             NotificationCenter.default.addObserver(
@@ -454,11 +447,6 @@ final class ZClientViewController: UIViewController {
 
         // Need to reload conversation to apply color scheme changes
         pushContentViewController(currentConversationViewController)
-    }
-
-    @objc
-    private func colorSchemeControllerDidApplyChanges(_ notification: Notification?) {
-        reloadCurrentConversation()
     }
 
     // MARK: - Debug logging notifications

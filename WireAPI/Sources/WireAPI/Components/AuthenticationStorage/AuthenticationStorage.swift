@@ -16,4 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+import Foundation
+
+/// Storage for authentication primitives.
+
+public protocol AuthenticationStorage {
+
+    /// Store an access token.
+    ///
+    /// - Parameter accessToken: The token to store.
+
+    func storeAccessToken(_ accessToken: AccessToken)
+
+    /// Fetch a stored access token.
+    ///
+    /// - Returns: The stored access token.
+
+    func fetchAccessToken() -> AccessToken?
+
+    /// Store a cookie.
+    ///
+    /// - Parameter cookieData: The cookie data to store.
+
+    func storeCookieData(_ cookieData: Data?)
+
+    /// Fetch a stored cookie.
+    ///
+    /// - Returns: The stored cookie data.
+
+    func fetchCookieData() -> Data?
+
+}

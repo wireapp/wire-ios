@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-WIRE_SHORT_VERSION = 3.114.0
+enum URLRequestBuilderError: Error {
+
+    case invalidPath(String)
+
+}
