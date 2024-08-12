@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import WireSystem
 
-private let log = ZMSLog(tag: "Accounts")
+private let log = WireLogger(tag: "Accounts")
 
 /// Persistence layer for `Account` objects.
 /// Objects are stored in files named after their identifier like this:
@@ -67,7 +68,9 @@ public final class AccountStore: NSObject {
             try account.write(to: url(for: account))
             return true
         } catch {
-            log.error("Unable to store account \(account), error: \(error)")
+            let accountDescription = account.safeForLoggingDescription
+            let errorDescription = error.safeForLoggingDescription
+            log.error("Unable to store account \(accountDescription), error: \(errorDescription)")
             return false
         }
     }
@@ -81,7 +84,9 @@ public final class AccountStore: NSObject {
             try fileManager.removeItem(at: url(for: account))
             return true
         } catch {
-            log.error("Unable to delete account \(account), error: \(error)")
+            let accountDescription = account.safeForLoggingDescription
+            let errorDescription = error.safeForLoggingDescription
+            log.error("Unable to delete account \(accountDescription), error: \(errorDescription)")
             return false
         }
     }
@@ -94,7 +99,7 @@ public final class AccountStore: NSObject {
             try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
             return true
         } catch {
-            log.error("Unable to remove all accounts at \(root): \(error)")
+            log.error("Unable to remove all accounts, error: \(error.safeForLoggingDescription)")
             return false
         }
     }
@@ -116,7 +121,7 @@ public final class AccountStore: NSObject {
             let paths = try fileManager.contentsOfDirectory(atPath: directory.path)
             return Set<URL>(paths.filter(uuidName).map(directory.appendingPathComponent))
         } catch {
-            log.error("Unable to load accounts from \(directory), error: \(error)")
+            log.error("Unable to load accounts, error: \(error.safeForLoggingDescription)")
             return []
         }
     }
@@ -134,4 +139,12 @@ public final class AccountStore: NSObject {
     private func url(for uuid: UUID) -> URL {
         return directory.appendingPathComponent(uuid.uuidString)
     }
+}
+
+private extension Error {
+
+    var safeForLoggingDescription: String {
+        (self as NSError).safeForLoggingDescription
+    }
+
 }
