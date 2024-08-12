@@ -81,18 +81,6 @@ extension UIAlertController {
     }
 }
 
-extension AuthenticationCoordinatorAlert {
-
-    static func makeMarketingConsentAlert() -> AuthenticationCoordinatorAlert {
-        typealias Consent = L10n.Localizable.NewsOffers.Consent
-
-        return AuthenticationCoordinatorAlert(title: Consent.title,
-                                              message: Consent.message,
-                                              actions: [.privacyPolicy, .decline, .accept])
-    }
-
-}
-
 private extension AuthenticationCoordinatorAlertAction {
 
     static var privacyPolicy: Self {

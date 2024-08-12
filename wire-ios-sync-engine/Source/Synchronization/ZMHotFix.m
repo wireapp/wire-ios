@@ -90,10 +90,9 @@ NSString * const ZMSkipHotfix = @"ZMSkipHotfix";
     
     ZMLogDebug(@"Applying HotFix with last saved version %@, current version %@.", lastSavedVersion.versionString, currentVersion.versionString);
     [self.syncMOC performGroupedBlock:^{
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: exception here
         [self applyFixesSinceVersion:lastSavedVersion];
-        // swiftlint:enable todo_requires_jira_link
         [self saveNewVersion:currentVersionString];
         [self.syncMOC saveOrRollback];
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];

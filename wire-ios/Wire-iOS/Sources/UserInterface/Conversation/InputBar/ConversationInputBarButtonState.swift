@@ -31,10 +31,6 @@ final class ConversationInputBarButtonState {
         return editing
     }
 
-    var hourglassButtonHidden: Bool {
-        return hasText || editing || ephemeral || isEphemeralSendingDisabled
-    }
-
     var ephemeralIndicatorButtonHidden: Bool {
         return editing || !ephemeral || isEphemeralSendingDisabled
     }

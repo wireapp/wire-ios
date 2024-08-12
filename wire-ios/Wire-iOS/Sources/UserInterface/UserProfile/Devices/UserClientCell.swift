@@ -71,8 +71,6 @@ final class UserClientCell: SeparatorCollectionViewCell {
     }
 
     private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
-    private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
-    }
 
     // MARK: - Initialization
     override init(frame: CGRect) {

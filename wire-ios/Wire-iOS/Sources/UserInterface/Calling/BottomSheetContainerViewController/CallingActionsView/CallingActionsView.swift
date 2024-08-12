@@ -250,10 +250,6 @@ final class CallingActionsView: UIView {
 
     // MARK: - Action Output
 
-    func updateVideoGridPresentationMode(with mode: VideoGridPresentationMode) {
-        delegate?.callingActionsViewPerformAction(.updateVideoGridPresentationMode(mode))
-    }
-
     @objc private func performButtonAction(_ sender: IconLabelButton) {
         delegate?.callingActionsViewPerformAction(action(for: sender))
     }

@@ -28,7 +28,6 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
 
     weak var cell: CreationCell?
 
-    var header = UICollectionReusableView(frame: .zero)
     var headerHeight: CGFloat = 0
 
     var footer = SectionFooter(frame: .zero)

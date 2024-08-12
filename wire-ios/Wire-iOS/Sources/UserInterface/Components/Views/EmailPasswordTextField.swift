@@ -69,13 +69,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     // MARK: - Helpers
 
-    var colorSchemeVariant: ColorSchemeVariant = .light {
-        didSet {
-            passwordField.colorSchemeVariant = colorSchemeVariant
-            emailField.colorSchemeVariant = colorSchemeVariant
-        }
-    }
-
     var isPasswordEmpty: Bool {
         return passwordField.input.isEmpty
     }
@@ -107,7 +100,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
         emailField.placeholder = L10n.Localizable.Email.placeholder.capitalized
         emailField.showConfirmButton = false
         emailField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
-        emailField.colorSchemeVariant = colorSchemeVariant
         emailField.addDoneButtonOnKeyboard()
         emailField.enableConfirmButton = { [weak self] in
             self?.emailValidationError == nil
@@ -119,7 +111,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
         passwordField.textFieldValidationDelegate = self
         passwordField.placeholder = L10n.Localizable.Password.placeholder.capitalized
         passwordField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
-        passwordField.colorSchemeVariant = colorSchemeVariant
         passwordField.addDoneButtonOnKeyboard()
         passwordField.enableConfirmButton = { [weak self] in
             self?.isPasswordEmpty == false
@@ -152,18 +143,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     func updateEmailFieldisEnabled() {
         emailField.isEnabled = !hasPrefilledValue || allowEditingPrefilledValue
-    }
-
-    // MARK: - Appearance
-
-    func setTextColor(_ color: UIColor) {
-        emailField.textColor = color
-        passwordField.textColor = color
-    }
-
-    func setBackgroundColor(_ color: UIColor) {
-        emailField.backgroundColor = color
-        passwordField.backgroundColor = color
     }
 
     // MARK: - Responder

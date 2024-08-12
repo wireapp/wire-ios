@@ -125,9 +125,8 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func createGuestRoom() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-        // swiftlint:enable todo_requires_jira_link
         guard let userSession = userSession as? ZMUserSession else {
             return WireLogger.conversation.error("failed to create guest room: no user session")
         }

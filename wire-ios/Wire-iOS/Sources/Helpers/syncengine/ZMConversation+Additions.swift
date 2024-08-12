@@ -20,9 +20,8 @@ import Foundation
 import WireSyncEngine
 
 extension ZMConversation {
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to DM
-    // swiftlint:enable todo_requires_jira_link
     var firstActiveParticipantOtherThanSelf: ZMUser? {
         guard let selfUser = ZMUser.selfUser() else {
             return localParticipants.first

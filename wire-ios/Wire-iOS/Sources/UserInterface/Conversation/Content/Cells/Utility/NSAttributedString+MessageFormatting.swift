@@ -41,10 +41,6 @@ extension NSAttributedString {
         return previewMarkdownStyle()
     }()
 
-    static var linkDataDetector: NSDataDetector? = {
-        return try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-    }()
-
     /// This method needs to be called as soon as the preferredContentSizeCategory is changed
     @objc
     static func invalidateParagraphStyle() {

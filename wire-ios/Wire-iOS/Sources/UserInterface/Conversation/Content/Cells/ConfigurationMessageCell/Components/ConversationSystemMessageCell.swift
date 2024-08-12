@@ -21,11 +21,6 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-// MARK: Properties
-
-private typealias IconColors = SemanticColors.Icon
-private typealias LabelColors = SemanticColors.Label
-
 // MARK: - ConversationSystemMessageCell
 
 final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {

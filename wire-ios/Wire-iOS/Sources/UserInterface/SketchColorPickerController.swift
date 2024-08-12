@@ -24,8 +24,6 @@ protocol SketchColorPickerControllerDelegate: AnyObject {
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor)
 }
 
-private let zmLog = ZMSLog(tag: "SketchColorPickerController")
-
 /// The color picker for the sketching
 
 final class SketchColorPickerController: UIViewController {

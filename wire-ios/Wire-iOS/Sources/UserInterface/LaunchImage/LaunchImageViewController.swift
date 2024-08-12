@@ -35,12 +35,6 @@ class LaunchImageViewController: UIViewController {
         activityIndicator.startAnimation()
     }
 
-    /// Convenience method for hiding all the animation related functionality
-    func hideLoadingScreen() {
-        activityIndicator.stopAnimation()
-        loadingScreenLabel.isHidden = true
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

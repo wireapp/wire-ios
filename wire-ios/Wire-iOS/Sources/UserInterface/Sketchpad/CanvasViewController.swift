@@ -41,8 +41,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     // MARK: - Properties
 
-    typealias SketchColors = SemanticColors.DrawingColors
-
     weak var delegate: CanvasViewControllerDelegate?
     var canvas = Canvas()
     private lazy var toolbar: SketchToolbar = SketchToolbar(buttons: [photoButton, drawButton, emojiButton, sendButton])

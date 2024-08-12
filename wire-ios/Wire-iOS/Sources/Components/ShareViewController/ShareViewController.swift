@@ -152,10 +152,6 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
         updateClearIndicator(for: tokenField)
     }
 
-    func resetQuery() {
-        tokenField.filterUnwantedAttachments()
-    }
-
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {

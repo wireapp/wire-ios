@@ -90,12 +90,6 @@ final class ParticipantsCellViewModel {
         return isSelfIncludedInUsers ? 14 : 15
     }
 
-    var showInviteButton: Bool {
-        guard case .started = action,
-              let conversation = message.conversationLike as? (ConversationLike & CanManageAccessProvider) else { return false }
-        return conversation.canManageAccess && conversation.allowGuests
-    }
-
     private var showServiceUserWarning: Bool {
         guard case .added = action,
               let messageData = message.systemMessageData,

@@ -47,7 +47,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         mockUsers = nil
         selfUser = nil
         otherUser = nil
-        CallingConfiguration.resetDefaultConfig()
+        CallingConfiguration.testHelper_resetDefaultConfig()
 
         super.tearDown()
     }

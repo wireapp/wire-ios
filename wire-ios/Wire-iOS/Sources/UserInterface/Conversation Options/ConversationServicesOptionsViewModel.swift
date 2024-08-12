@@ -51,12 +51,6 @@ final class ConversationServicesOptionsViewModel {
         var isLoading = false
     }
 
-    private var showLoadingCell = false {
-        didSet {
-            updateRows()
-        }
-    }
-
     var state = State() {
         didSet {
             delegate?.conversationServicesOptionsViewModel(self, didUpdateState: state)

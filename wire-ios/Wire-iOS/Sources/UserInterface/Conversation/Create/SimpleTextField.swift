@@ -53,9 +53,6 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - UI constants
 
-    static let enteredTextFont = FontSpec(.normal, .regular, .inputText)
-    static let placeholderFont = FontSpec(.small, .regular)
-
     var textInsets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 8)
     var placeholderInsets: UIEdgeInsets
 

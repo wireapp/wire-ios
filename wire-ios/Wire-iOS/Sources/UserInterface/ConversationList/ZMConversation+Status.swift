@@ -251,14 +251,9 @@ extension ConversationStatusMatcher {
     }
 }
 
-// Accessors for ObjC
 extension ZMConversation {
     static func statusRegularStyle() -> [NSAttributedString.Key: AnyObject] {
         return statusStyle.regularStyle
-    }
-
-    static func statusEmphasisStyle() -> [NSAttributedString.Key: AnyObject] {
-        return statusStyle.emphasisStyle
     }
 }
 
@@ -364,9 +359,8 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
     }
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: icon for poll message
-        // swiftlint:enable todo_requires_jira_link
         return nil
     }
 

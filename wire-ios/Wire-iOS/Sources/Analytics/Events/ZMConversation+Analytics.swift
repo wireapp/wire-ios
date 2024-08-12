@@ -50,21 +50,8 @@ extension ZMConversation {
         return ConversationType.type(self)?.analyticsTypeString
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: move to DM
-    /// Whether the conversation is a 1-on-1 conversation with a service user
-    var isOneOnOneServiceUserConversation: Bool {
-        guard self.localParticipants.count == 2,
-             let otherUser = firstActiveParticipantOtherThanSelf else {
-            return false
-        }
-
-        return otherUser.serviceIdentifier != nil &&
-                otherUser.providerIdentifier != nil
-    }
-
-    // TODO: move to DM
-    // swiftlint:enable todo_requires_jira_link
     /// Whether the conversation includes at least 1 service user.
     var includesServiceUser: Bool {
         let participants = Array(localParticipants)

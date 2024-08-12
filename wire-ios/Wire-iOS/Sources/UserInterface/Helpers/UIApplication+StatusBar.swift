@@ -20,8 +20,6 @@ import UIKit
 
 extension UIApplication {
 
-    static let wr_statusBarStyleChangeNotification: Notification.Name = Notification.Name("wr_statusBarStyleChangeNotification")
-
     /// return the visible window on the top most which fulfills these conditions:
     /// 1. the windows has rootViewController
     /// 2. the window's rootViewController is RootViewController

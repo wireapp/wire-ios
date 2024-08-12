@@ -464,9 +464,9 @@ public extension UserClient {
             if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
 
                 if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
-                    // swiftlint:disable todo_requires_jira_link
+                    // swiftlint:disable:next todo_requires_jira_link
                     // TODO: Check this flag
-                    // swiftlint:enable todo_requires_jira_link
+
                     client.needsToNotifyUser = true
                 }
             }
@@ -484,9 +484,8 @@ public extension UserClient {
         var isNewClient: Bool
 
         WireLogger.userClient.info("trying to fetch client with id (\(id))")
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: could optimize: look into self user relationship before executing a fetch request
-        // swiftlint:enable todo_requires_jira_link
         if let fetchedClient = fetchExistingUserClient(with: id, in: context) {
             WireLogger.userClient.info("fetched existing user client in context \(context)")
             client = fetchedClient
@@ -636,9 +635,8 @@ public extension UserClient {
         preKey: String
     ) async -> Bool {
         do {
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: check if we should delete session if it exists before creating new one
-            // swiftlint:enable todo_requires_jira_link
             let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
             try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
             return true

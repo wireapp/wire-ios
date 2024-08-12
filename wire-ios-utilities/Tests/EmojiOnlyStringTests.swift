@@ -29,9 +29,8 @@ class EmojiOnlyStringTests: XCTestCase {
                            "👩", "👩🏻", "👩🏼", "👩🏽", "👩🏾", "👩🏿", // Fitzpatrick modifiers
                            "👨‍👩‍👧", "🏳️‍🌈", // Joining
                            "🧘🏿‍♀️", "🧡", "🦒", "🧦", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🧟‍♂️" // Emoji 5.0
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: Test for Emoji 11.0 new emoji "🥮" after iOS 12.1 is released
-            // swiftlint:enable todo_requires_jira_link
         ]
 
         // then

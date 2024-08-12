@@ -121,10 +121,6 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
         }
     }
 
-    var selectionView: UIView! {
-        return transferView
-    }
-
     var selectionRect: CGRect {
         return transferView.bounds
     }

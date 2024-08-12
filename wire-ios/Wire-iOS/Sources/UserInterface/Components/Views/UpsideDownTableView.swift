@@ -50,21 +50,6 @@ final class UpsideDownTableView: UITableView {
         }
     }
 
-    var correctedScrollIndicatorInsets: UIEdgeInsets {
-        get {
-            let verticalInsets = super.verticalScrollIndicatorInsets
-            let horizontalInsets = super.horizontalScrollIndicatorInsets
-            return UIEdgeInsets(top: verticalInsets.bottom, left: horizontalInsets.left, bottom: verticalInsets.top, right: horizontalInsets.right)
-        }
-
-        set {
-            super.scrollIndicatorInsets = UIEdgeInsets(top: newValue.bottom,
-                                                           left: newValue.left,
-                                                           bottom: newValue.top,
-                                                           right: newValue.right)
-        }
-    }
-
     var lockContentOffset: Bool = false
 
     override var contentOffset: CGPoint {

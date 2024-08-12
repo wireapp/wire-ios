@@ -62,7 +62,6 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
 
     // MARK: - Properties
 
-    fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     weak var delegate: ConfirmEmailDelegate?
     typealias SettingsAccountSectionEmailLocalizable = L10n.Localizable.Self.Settings.AccountSection.Email.Change
     let newEmail: String

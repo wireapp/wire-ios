@@ -1113,9 +1113,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertNotNil(imageData);
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO:  [Bill] check why 1 btye is removed from jpegData?
-    // swiftlint:enable todo_requires_jira_link
     XCTAssertEqual(imageData.length, jpegData.length + 1);
 }
 

@@ -52,9 +52,8 @@ extension ConversationStatusLineTests_Muting {
         XCTAssertEqual(status.string, "Replied to your message")
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: move this test to SE
-    // swiftlint:enable todo_requires_jira_link
     func testStatusShowSpecialSummaryForSingleEphemeralReplyWhenOnlyReplies_group() {
         // GIVEN
         let sut = self.createGroupConversation()

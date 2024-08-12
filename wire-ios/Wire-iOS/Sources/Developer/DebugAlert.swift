@@ -33,11 +33,6 @@ final class DebugAlert {
 
     private static var isShown = false
 
-    /// Presents an alert, if in developer mode, otherwise do nothing
-    static func showGeneric(message: String) {
-        self.show(message: message)
-    }
-
     /// Presents an alert to send logs, if in developer mode, otherwise do nothing
     static func showSendLogsMessage(
         message: String,

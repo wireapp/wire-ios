@@ -33,9 +33,8 @@ extension UIPasteboard {
         }
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: get/set
-    // swiftlint:enable todo_requires_jira_link
     func mediaAsset() -> MediaAsset? {
         if contains(pasteboardTypes: [UTType.gif.identifier]) {
             let data: Data? = self.data(forPasteboardType: UTType.gif.identifier)

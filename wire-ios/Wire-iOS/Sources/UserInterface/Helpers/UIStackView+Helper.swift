@@ -24,10 +24,6 @@ extension UIStackView {
         self.axis = axis
     }
 
-    var visibleSubviews: [UIView] {
-        return subviews.filter { !$0.isHidden }
-    }
-
     // factory methods
     static func verticalStackView() -> UIStackView {
         let stackView = UIStackView()

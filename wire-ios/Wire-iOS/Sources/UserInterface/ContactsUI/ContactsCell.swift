@@ -201,19 +201,6 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         ])
     }
 
-    func actionButtonWidth(forTitles actionButtonTitles: [String], textTransform: TextTransform, contentInsets: UIEdgeInsets, textAttributes: [NSAttributedString.Key: Any]?) -> Float {
-        var width: CGFloat = 0
-        for title: String in actionButtonTitles {
-            let transformedTitle = title.applying(transform: textTransform)
-            let titleWidth = transformedTitle.size(withAttributes: textAttributes).width
-
-            if titleWidth > width {
-                width = titleWidth
-            }
-        }
-        return ceilf(Float(contentInsets.left + width + contentInsets.right))
-    }
-
     private func updateTitleLabel() {
         guard let user, let selfUser = ZMUser.selfUser() else {
             return

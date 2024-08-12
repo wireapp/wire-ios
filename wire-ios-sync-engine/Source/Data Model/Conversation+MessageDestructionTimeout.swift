@@ -65,9 +65,8 @@ extension ZMConversation {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 // Process `conversation.message-timer-update` event
-                // swiftlint:disable todo_requires_jira_link
+                // swiftlint:disable:next todo_requires_jira_link
                 // FIXME: [WPB-9089] replace with ConversationEventProcessor
-                // swiftlint:enable todo_requires_jira_link
                 userSession.processConversationEvents([event])
                 completion(.success(()))
             } else {

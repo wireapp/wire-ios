@@ -25,9 +25,8 @@ extension IntegrationTest {
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
-        // swiftlint:enable todo_requires_jira_link
         let previousAPIVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = .v2
 
@@ -65,9 +64,8 @@ extension IntegrationTest {
     public func searchForDirectoryUser(withName name: String, searchQuery: String) -> ZMSearchUser? {
         createSharedSearchDirectory()
         // this only work for v2 and above
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
-        // swiftlint:enable todo_requires_jira_link
         let previousAPIVersion = BackendInfo.apiVersion
         setBackendInfoAPIVersion(.v2)
 

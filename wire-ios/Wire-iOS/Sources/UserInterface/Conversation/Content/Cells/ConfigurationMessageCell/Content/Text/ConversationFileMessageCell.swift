@@ -107,10 +107,6 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         }
     }
 
-    var selectionView: UIView! {
-        return fileTransferView
-    }
-
     var selectionRect: CGRect {
         return fileTransferView.bounds
     }

@@ -21,13 +21,6 @@ import WireDesign
 
 final class Tab: LegacyButton {
 
-    var title: String = "" {
-        didSet {
-            accessibilityLabel = title
-            setTitle(title.localizedUppercase, for: .normal)
-        }
-    }
-
     init() {
         super.init(fontSpec: .bodyTwoSemibold)
 

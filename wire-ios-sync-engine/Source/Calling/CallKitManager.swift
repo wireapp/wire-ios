@@ -230,9 +230,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         var contacts: [INPerson]?
         var video = false
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: handle INStartVideoCallIntent for when CallKit video is toggled.
-        // swiftlint:enable todo_requires_jira_link
         if let startCallIntent = intent as? INStartCallIntent {
           contacts = startCallIntent.contacts
           video = startCallIntent.callCapability == .videoCall
@@ -315,9 +314,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             return
         }
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: do we need to check there doesn't already exist a call?
-        // swiftlint:enable todo_requires_jira_link
         let call = callRegister.registerNewCall(with: handle)
 
         let action = CXStartCallAction(call: call.id, handle: handle.cxHandle)

@@ -26,7 +26,6 @@ struct AccentColorPicker: View {
     @State
     var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
-    private let colorViewCornerRadius: CGFloat = 14
 
     let onColorSelect: ((AccentColor) -> Void)?
 
