@@ -100,7 +100,7 @@ extension ConversationInputBarViewController {
                 self.impactFeedbackGenerator.impactOccurred()
 
                 do {
-                    let message = try conversation.appendFile(with: metadata)
+                    try conversation.appendFile(with: metadata)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
