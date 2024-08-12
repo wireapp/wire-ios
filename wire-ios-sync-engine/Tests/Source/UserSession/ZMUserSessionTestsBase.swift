@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireRequestStrategySupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+@testable import WireTransport
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -82,7 +83,19 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = Data("valid-cookue".utf8)
+        validCookie = HTTPCookie.extractData(
+            from: [
+                HTTPCookie(
+                    properties: [
+                        .name: "zuid",
+                        .value: "value",
+                        .domain: "example.com",
+                        .path: "/",
+                        .expires: Date.distantFuture
+                    ]
+                )!
+            ]
+        )!
     }
 
     override func tearDown() {

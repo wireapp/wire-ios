@@ -263,7 +263,7 @@ extension HTTPCookie {
         return extractData(from: cookies)
     }
 
-    fileprivate static func extractData(from cookies: [HTTPCookie]) -> Data? {
+    static func extractData(from cookies: [HTTPCookie]) -> Data? {
         guard !cookies.isEmpty else { return nil }
         let properties = cookies.compactMap(\.properties)
         guard let name = properties.first?[.name] as? String, name == CookieKey.zetaId.rawValue else { return nil }
