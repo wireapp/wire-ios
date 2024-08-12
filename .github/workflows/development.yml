@@ -5,15 +5,28 @@ on:
   push:
     branches:
       - 'develop'
+  pull_request:
+    types: [ opened, synchronize ]
+    branches: [ 'develop', 'ci/upload-builds-to-s3-on-pr' ]
 
 permissions: 
   checks: write
 
 jobs:
   development:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       datadog_enabled: true
       fastlane_action: development
       is_cloud_build: true
     secrets: inherit
+  pr:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event_name == 'pull_request'
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      datadog_enabled: false
+      fastlane_action: development_pr
+      is_cloud_build: true
+    secrets: inherit
+

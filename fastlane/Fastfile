@@ -59,6 +59,19 @@ platform :ios do
         create_simulator_if_needed
     end
     
+    desc "Build & Upload build for PR targeting develop"
+    lane :development_pr do |options|
+        options[:build_type] = "Development"
+        options[:upload_testflight] = false
+        options[:upload_app_center] = false
+        options[:upload_dsyms_to_datadog] = false
+        options[:upload_dsyms_to_app_center] = false
+        options[:produce_debug_builds] = true
+        options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
+        save_app_name('Development')
+        build_and_upload_app(options)
+    end
+
     desc "Build & Upload Development build"
     lane :development do |options|
         options[:build_type] = "Development"
