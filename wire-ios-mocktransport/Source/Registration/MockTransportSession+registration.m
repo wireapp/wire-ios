@@ -121,13 +121,14 @@
             [self.phoneNumbersWaitingForVerificationForRegistration removeObject:phone];
         }
 
-        NSString *cookiesValue = @"fake cookie";
-        
+        NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:headers apiVersion:request.apiVersion];
+
         if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
-            self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
+            self.cookieStorage.authenticationCookieData = [[response extractUserInfo] cookieData];
         }
 
-        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]} apiVersion:request.apiVersion];
+        return response;
     }
     
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
