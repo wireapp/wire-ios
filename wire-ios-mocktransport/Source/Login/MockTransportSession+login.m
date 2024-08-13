@@ -85,6 +85,12 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             [self.phoneNumbersWaitingForVerificationForLogin removeObject:phone];
         }
         
+        NSString *cookiesValue = @"zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure";
+
+        if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
+            self.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieDataWithString:cookiesValue];
+        }
+
         self.selfUser = user;
         self.clientCompletedLogin = YES;
         
@@ -95,14 +101,8 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                          @"user": user.identifier
         };
 
-        NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-9999 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
-        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers apiVersion:request.apiVersion];
-
-        if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
-            self.cookieStorage.authenticationCookieData = [[response extractUserInfo] cookieData];
-        }
-
-        return response;
+        NSDictionary *headers = @{ @"Set-Cookie": cookiesValue };
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers apiVersion:request.apiVersion];
     }
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }

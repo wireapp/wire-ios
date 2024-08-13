@@ -98,7 +98,7 @@ final class SessionManagerTests: IntegrationTest {
         }
         let manager = AccountManager(sharedDirectory: sharedContainer)
         let account = Account(userName: "", userIdentifier: currentUserIdentifier)
-        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
         manager.addAndSelect(account)
 
         let sut = sessionManagerBuilder.build()
@@ -123,7 +123,7 @@ final class SessionManagerTests: IntegrationTest {
 
         // GIVEN
         let account = self.createAccount()
-        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 
@@ -217,10 +217,10 @@ final class SessionManagerTests: IntegrationTest {
         mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_MockMethod = { _ in }
 
         let account1 = self.createAccount()
-        sessionManager!.environment.cookieStorage(for: account1).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        sessionManager!.environment.cookieStorage(for: account1).authenticationCookieData = HTTPCookie.validCookieData()
 
         let account2 = self.createAccount(with: UUID.create())
-        sessionManager!.environment.cookieStorage(for: account2).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        sessionManager!.environment.cookieStorage(for: account2).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 

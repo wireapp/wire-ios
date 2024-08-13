@@ -83,19 +83,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = HTTPCookie.extractData(
-            from: [
-                HTTPCookie(
-                    properties: [
-                        .name: "zuid",
-                        .value: "value",
-                        .domain: "example.com",
-                        .path: "/",
-                        .expires: Date.distantFuture
-                    ]
-                )!
-            ]
-        )!
+        validCookie = HTTPCookie.validCookieData()
     }
 
     override func tearDown() {
