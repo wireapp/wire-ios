@@ -219,10 +219,6 @@ final class ConversationListContentController: UICollectionViewController {
         return false
     }
 
-    func deselectAll() {
-        selectModelItem(nil)
-    }
-
     func select(_ conversation: ZMConversation?, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
         focusOnNextSelection = focus
 

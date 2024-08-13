@@ -219,9 +219,8 @@ extension OtherUserClientsListViewController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: add clients to userType
-        // swiftlint:enable todo_requires_jira_link
         headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
         clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
         updateCertificatesForUserClients()

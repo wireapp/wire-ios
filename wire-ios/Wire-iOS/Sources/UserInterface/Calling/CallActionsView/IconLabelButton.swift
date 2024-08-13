@@ -129,9 +129,8 @@ class IconLabelButton: ButtonWithLargerHitArea {
         }
     }
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: - [AGIS] Clean this up
-    // swiftlint:enable todo_requires_jira_link
     // The content of this method needs to be deleted and replaced with
     // what's in CallingActionButton
     func apply(_ configuration: CallActionAppearance) {
