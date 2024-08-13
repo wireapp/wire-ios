@@ -44,7 +44,7 @@ public enum HTTPStatusCode: Int {
 
     // MARK: Server Errors - 5xx
 
-    /// forbidden - 503
+    /// service unavailable - 503
 
     case serviceUnavailable = 503
 
