@@ -23,4 +23,14 @@ public protocol AnalyticsManagerProtocol {
     /// - Returns: A new analytics session for the switched user.
     func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
 
+    /// Disables analytics tracking and reporting.
+    /// This method should be used when analytics tracking needs to be disables, such as for privacy reasons.
+    func disableTracking()
+
+    /// Enables analytics tracking and reporting.
+    /// This method should be used to re-enable analytics tracking after it has been disabled.
+    /// - Parameter userProfile: The profile of the user to enable analytics for.
+    /// - Returns: A new analytics session for the user.
+    func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol
+
 }

@@ -42,7 +42,11 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     ///   - appKey: The key for the analytics application.
     ///   - host: The URL of the analytics host.
     ///   - analyticsService: The analytics service to use.
-    init(appKey: String, host: URL, analyticsService: any AnalyticsService) {
+    init(
+        appKey: String,
+        host: URL,
+        analyticsService: any AnalyticsService
+    ) {
         self.analyticsService = analyticsService
         self.analyticsService.start(appKey: appKey, host: host)
     }
@@ -53,10 +57,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
     public func switchUser(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
         analyticsService.endSession()
-        analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
-        analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: "team_team_id")
-        analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: "team_user_type")
-        analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: "team_team_size")
+        updateUserProfile(userProfile)
         analyticsService.beginSession()
 
         return AnalyticsSession(
@@ -64,4 +65,35 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
             service: analyticsService
         )
     }
+
+    /// Disables tracking by ending the current session and clearing user data.
+    public func disableTracking() {
+        analyticsService.endSession()
+        clearUserData()
+    }
+
+    /// Enables tracking for a given user profile.
+    ///
+    /// - Parameter userProfile: The profile of the user to enable tracking for.
+    /// - Returns: An object conforming to AnalyticsSessionProtocol for the new session.
+    public func enableTracking(_ userProfile: AnalyticsUserProfile) -> any AnalyticsSessionProtocol {
+        switchUser(userProfile)
+    }
+
+    // MARK: - Private Helper Methods
+
+    private func updateUserProfile(_ userProfile: AnalyticsUserProfile) {
+        analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
+
+        analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: AnalyticsUserKey.teamID.rawValue)
+        analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: AnalyticsUserKey.teamRole.rawValue)
+        analyticsService.setUserValue(userProfile.teamInfo.map { String($0.size.logRound()) }, forKey: AnalyticsUserKey.teamSize.rawValue)
+    }
+
+    private func clearUserData() {
+        for key in AnalyticsUserKey.allCases {
+            analyticsService.setUserValue(nil, forKey: key.rawValue)
+        }
+    }
+
 }

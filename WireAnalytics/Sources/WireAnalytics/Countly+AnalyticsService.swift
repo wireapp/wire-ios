@@ -23,12 +23,13 @@ extension Countly: AnalyticsService {
     func start(appKey: String, host: URL) {
         let config = CountlyConfig()
         config.appKey = appKey
+        config.manualSessionHandling = true
         config.host = host.absoluteString
         start(with: config)
     }
 
     func changeDeviceID(_ id: String) {
-        changeDeviceID(withMerge: id)
+        changeDeviceIDWithoutMerge(id)
     }
 
     func setUserValue(_ value: String?, forKey key: String) {

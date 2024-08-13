@@ -84,9 +84,7 @@ final class TrackingOperation: LaunchSequenceOperation {
     func execute() {
         let containsConsoleAnalytics = ProcessInfo.processInfo
             .arguments.contains(AnalyticsProviderFactory.ZMConsoleAnalyticsArgumentKey)
-
         AnalyticsProviderFactory.shared.useConsoleAnalytics = containsConsoleAnalytics
-        Analytics.shared = Analytics(optedOut: TrackingManager.shared.disableAnalyticsSharing)
     }
 }
 

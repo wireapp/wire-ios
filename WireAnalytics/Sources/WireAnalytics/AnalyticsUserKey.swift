@@ -16,25 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import WireSyncEngine
+import Foundation
 
-struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
+/// An enumeration representing the keys used for user analytics data.
+/// This enum provides type-safe access to the keys used for setting user values in the analytics service.
+enum AnalyticsUserKey: String, CaseIterable {
 
-    var selfUser: SettingsSelfUser
-    var userRightInterfaceType: UserRightInterface.Type
-    var userSession: UserSession
-    var accountSelector: AccountSelector?
-    var trackingManager: TrackingManager?
+    /// The key for the team ID.
+    case teamID = "team_team_id"
 
-    func build() -> SelfProfileViewController {
-        .init(
-            selfUser: selfUser,
-            userRightInterfaceType: userRightInterfaceType,
-            userSession: userSession,
-            accountSelector: accountSelector,
-            trackingManager: trackingManager
-        )
-    }
+    /// The key for the user type within the team.
+    case teamRole = "team_user_type"
+
+    /// The key for the size of the team.
+    case teamSize = "team_team_size"
 }
