@@ -62,13 +62,9 @@ extension ZMConversation {
     func joinVoiceChannel(video: Bool) {
         guard let userSession = ZMUserSession.shared() else { return }
 
-        let onGranted: (_ granted: Bool ) -> Void = { granted in
+        let onGranted: (_ granted: Bool) -> Void = { granted in
             if granted {
-                let joined = self.voiceChannel?.join(video: video, userSession: userSession) ?? false
-
-                if joined {
-                    Analytics.shared.tagMediaActionCompleted(video ? .videoCall : .audioCall, inConversation: self)
-                }
+                _ = self.voiceChannel?.join(video: video, userSession: userSession)
             } else {
                 self.voiceChannel?.leave(userSession: userSession, completion: nil)
             }

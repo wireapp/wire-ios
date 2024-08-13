@@ -29,8 +29,8 @@ final class Analytics: NSObject {
 
     static var shared: Analytics!
 
-    required init(optedOut: Bool) {
-        provider = optedOut ? nil : AnalyticsProviderFactory.shared.analyticsProvider()
+    required override init() {
+        provider = nil
 
         super.init()
 
