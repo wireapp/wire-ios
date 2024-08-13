@@ -805,6 +805,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// removed. See [WPB-10404].
     fileprivate func logoutCurrentSession(deleteCookie: Bool, deleteAccount: Bool, error: Error?) {
         guard let account = accountManager.selectedAccount else {
+            WireLogger.sessionManager.critical("No selected account")
             return
         }
 
@@ -815,6 +816,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.createUnauthenticatedSession(accountId: deleteAccount ? nil : account.userIdentifier)
 
         guard let activeUserSession else {
+            WireLogger.sessionManager.critical("No active user session")
             delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
 
             if deleteAccount {
@@ -823,17 +825,18 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
-            let group = self?.dispatchGroup
-            group?.enter()
+        requireInternal(activeUserSession.userId == account.userIdentifier, "User session and account are different")
+
+        delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [dispatchGroup] in
+            dispatchGroup.enter()
 
             activeUserSession.close(deleteCookie: deleteCookie) {
                 if deleteAccount {
-                    self?.deleteAccountData(for: account)
+                    self.deleteAccountData(for: account)
                 }
-                group?.leave()
+                dispatchGroup.leave()
             }
-            self?.activeUserSession = nil
+            self.activeUserSession = nil
         })
     }
 
@@ -905,7 +908,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         // Set the analytics identifier if it's not present
         if selfUser.analyticsIdentifier == nil {
-            let idProvider = AnalyticsIdentifierProvider(selfUser: userSession.selfUser)
+            let idProvider = AnalyticsIdentifierProvider(selfUser: selfUser)
             idProvider.setIdentifierIfNeeded()
         }
 
