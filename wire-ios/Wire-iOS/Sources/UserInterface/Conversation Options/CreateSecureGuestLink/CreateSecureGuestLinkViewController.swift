@@ -34,8 +34,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     let conversation: ZMConversation
     let conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
-    weak var delegate: ValidatedTextFieldDelegate?
-
     private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = {
         CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
     }()

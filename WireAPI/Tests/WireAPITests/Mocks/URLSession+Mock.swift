@@ -16,25 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-final class AdditionalMenuItem: NSObject {
+extension URLSession {
 
-    let item: UIMenuItem
+    /// A url session powered by `URLProtocolMock`.
+    ///
+    /// Set `URLProtocolMock.mockHandler` with a mocking function to
+    /// control how request received by this URL session are handled.
 
-    let isAvailableInEphemeralConversations: Bool
+    static let mock: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.protocolClasses = [URLProtocolMock.self]
+        return URLSession(configuration: config)
+    }()
 
-    init(item: UIMenuItem, allowedInEphemeralConversations: Bool) {
-        self.item = item
-        self.isAvailableInEphemeralConversations = allowedInEphemeralConversations
-        super.init()
-    }
-
-    static func allowedInEphemeral(_ item: UIMenuItem) -> AdditionalMenuItem {
-        return .init(item: item, allowedInEphemeralConversations: true)
-    }
-
-    static func forbiddenInEphemeral(_ item: UIMenuItem) -> AdditionalMenuItem {
-        return .init(item: item, allowedInEphemeralConversations: false)
-    }
 }

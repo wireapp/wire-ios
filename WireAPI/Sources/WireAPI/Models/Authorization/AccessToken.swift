@@ -17,20 +17,26 @@
 //
 
 import Foundation
-@testable import Wire
-import XCTest
 
-final class StringCapitalizationTests: XCTestCase {
+/// A token used to make authenticated requests to
+/// the backend.
 
-    func testThatTheFirstLetterOfTheSentenceIsCapitalized() {
-        // GIVEN
-        let givenString = "hello world!"
+public struct AccessToken {
 
-        // WHEN
-        let result = givenString.capitalizingFirstCharacterOnly
+    /// The user id of whom the token belongs.
 
-        // THEN
-        XCTAssertEqual(result, "Hello world!")
-    }
+    public let userID: UUID
+
+    /// The authentication token.
+
+    public let token: String
+
+    /// The type of token.
+
+    public let type: String
+
+    /// The number of seconds the token is valid.
+
+    public let validityInSeconds: TimeInterval
 
 }

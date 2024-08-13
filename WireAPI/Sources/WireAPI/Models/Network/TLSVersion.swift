@@ -16,14 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIEdgeInsets {
+/// Supported TLS versions.
 
-    mutating func adjust(top: CGFloat? = nil, left: CGFloat? = nil, bottom: CGFloat? = nil, right: CGFloat? = nil) {
-        top.map { self.top = $0 }
-        left.map { self.left = $0 }
-        bottom.map { self.bottom = $0 }
-        right.map { self.right = $0 }
+public enum TLSVersion {
+
+    /// TLS version 1.2
+
+    case v1_2
+
+    /// TLS version 1.3
+
+    case v1_3
+
+    var secValue: tls_protocol_version_t {
+        switch self {
+        case .v1_2:
+            .TLSv12
+
+        case .v1_3:
+            .TLSv13
+        }
     }
+
 }
