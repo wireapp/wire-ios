@@ -46,8 +46,6 @@ final class ShareContactsViewController: UIViewController {
 
     weak var delegate: ShareContactsViewControllerDelegate?
 
-    private var uploadAddressBookImmediately = false
-    private var backgroundBlurDisabled = false
     private var notNowButtonHidden = false
     private(set) var showingAddressBookAccessDeniedViewController = false
 

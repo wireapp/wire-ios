@@ -36,13 +36,7 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
-    var addressBookUploadLogicHandled = false
-
     var addressBookHelperType: AddressBookHelperProtocol.Type
-
-    var addressBookHelper: AddressBookHelperProtocol {
-        return addressBookHelperType.sharedHelper
-    }
 
     let userSession: UserSession
 
