@@ -21,9 +21,13 @@ import WireDesign
 
 final class TwoLineTitleView: UIView {
 
-    let titleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
-                                     color: SemanticColors.Label.textDefault)
+    let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .font(for: .body2)
+        label.textColor = SemanticColors.Label.textDefault
+
+        label.adjustsFontForContentSizeCategory = false
+
         return label
     }()
 
