@@ -19,6 +19,10 @@
 import Foundation
 
 class SelfUserAPIV4: SelfUserAPIV3 {
+    
+    override var apiVersion: APIVersion {
+        .v4
+    }
 
     override func getSelfUser() async throws -> SelfUser {
         let request = HTTPRequest(
@@ -31,10 +35,6 @@ class SelfUserAPIV4: SelfUserAPIV3 {
         return try ResponseParser()
             .success(code: 200, type: SelfUserV4.self)
             .parse(response)
-    }
-
-    override var apiVersion: APIVersion {
-        .v4
     }
 
 }

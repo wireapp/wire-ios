@@ -172,16 +172,16 @@ final class SelfUserAPITests: XCTestCase {
         }
     }
 
-    // MARK: - V5
+    // MARK: - V4
 
-    func testGetSelfUser_SuccessResponse_200_V5() async throws {
+    func testGetSelfUser_SuccessResponse_200_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: 200,
-            payloadResourceName: "GetSelfUserSuccessResponseV5"
+            payloadResourceName: "GetSelfUserSuccessResponseV4"
         )
 
-        let sut = SelfUserAPIV5(httpClient: httpClient)
+        let sut = SelfUserAPIV4(httpClient: httpClient)
 
         // When
         let result = try await sut.getSelfUser()
@@ -192,6 +192,8 @@ final class SelfUserAPITests: XCTestCase {
             Scaffolding.selfUserV5
         )
     }
+    
+    // MARK: - V5
 
     func testPushSupportedProtocols_SuccessResponse_200_V5() async throws {
         // Given
