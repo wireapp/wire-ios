@@ -27,6 +27,7 @@ final class RootViewController: UIViewController {
     // MARK: - Status Bar / Supported Orientations
 
     override var shouldAutorotate: Bool {
+        NSLog("RootViewController >#@<# %@", "shouldAutorotate: \(true)")
         return true
     }
 
@@ -34,16 +35,20 @@ final class RootViewController: UIViewController {
         if let viewController = presentedViewController,
            viewController is ModalPresentationViewController,
            !viewController.isBeingDismissed {
+            NSLog("RootViewController >#@<# %@", "supportedInterfaceOrientations: \(viewController.supportedInterfaceOrientations)")
             return viewController.supportedInterfaceOrientations
         }
+        NSLog("RootViewController >#@<# %@", "supportedInterfaceOrientations: \(wr_supportedInterfaceOrientations)")
         return wr_supportedInterfaceOrientations
     }
 
     override var childForStatusBarStyle: UIViewController? {
+        NSLog("RootViewController >#@<# %@", "childForStatusBarStyle: \(childViewController)")
         return childViewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
+        NSLog("RootViewController >#@<# %@", "childForStatusBarHidden: \(childViewController)")
         return childViewController
     }
 
@@ -52,6 +57,8 @@ final class RootViewController: UIViewController {
         animated: Bool = false,
         completion: (() -> Void)?
     ) {
+        NSLog("RootViewController >#@<# %@", "set(childViewController: \(newViewController), animated: \(animated))")
+
         if let previousViewController = childViewController {
             transition(
                 from: previousViewController,
@@ -66,6 +73,7 @@ final class RootViewController: UIViewController {
     }
 
     private func contain(_ newViewController: UIViewController, completion: (() -> Void)?) {
+        NSLog("RootViewController >#@<# %@", "contain: \(newViewController)")
         UIView.performWithoutAnimation {
             add(newViewController, to: view)
             childViewController = newViewController
@@ -79,6 +87,8 @@ final class RootViewController: UIViewController {
         animated: Bool = false,
         completion: (() -> Void)?
     ) {
+        NSLog("RootViewController >#@<# %@", "transition(from: \(fromViewController) to: \(toViewController) animated: \(animated)")
+
         let animationGroup = DispatchGroup()
 
         if fromViewController.presentedViewController != nil {
@@ -117,6 +127,7 @@ final class RootViewController: UIViewController {
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        NSLog("RootViewController >#@<# %@", "viewWillTransition(to: \(size), coordinator: \(coordinator)")
         super.viewWillTransition(to: size, with: coordinator)
 
         guard let appRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
@@ -129,6 +140,7 @@ final class RootViewController: UIViewController {
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        NSLog("RootViewController >#@<# %@", "traitCollectionDidChange(previousTraitCollection: \(previousTraitCollection)")
         super.traitCollectionDidChange(previousTraitCollection)
 
         // Do not refresh for iOS 13+ when the app is in background.
