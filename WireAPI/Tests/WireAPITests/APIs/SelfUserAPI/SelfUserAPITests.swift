@@ -56,17 +56,17 @@ final class SelfUserAPITests: XCTestCase {
     }
 
     // MARK: - Request unsupported endpoints
-    
+
     func testPushSupportedProtocols_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
         let httpClient = HTTPClientMock(
             code: 200,
             payload: nil
         )
-        
+
         let unsupportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3, .v4]
         let suts = unsupportedVersions.map { $0.buildAPI(client: httpClient) }
-        
+
         try await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for sut in suts {
                 taskGroup.addTask {
@@ -76,12 +76,12 @@ final class SelfUserAPITests: XCTestCase {
                         try await sut.pushSupportedProtocols([.mls])
                     }
                 }
-                
+
                 try await taskGroup.waitForAll()
             }
         }
     }
-    
+
     // MARK: - Request supported endpoints
 
     func testPushSupportedProtocols_V5_And_NextVersions() async throws {
@@ -90,18 +90,18 @@ final class SelfUserAPITests: XCTestCase {
             code: 200,
             payload: nil
         )
-        
+
         let supportedVersions = APIVersion.v5.andNextVersions
-        
+
         let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
-        
+
         try await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for sut in suts {
                 taskGroup.addTask {
                     // When
                     try await sut.pushSupportedProtocols([.mls])
                 }
-                
+
                 try await taskGroup.waitForAll()
             }
         }
