@@ -17,20 +17,11 @@
 //
 
 import Foundation
-@testable import Wire
-import XCTest
 
-final class StringCapitalizationTests: XCTestCase {
+class SelfUserAPIV2: SelfUserAPIV1 {
 
-    func testThatTheFirstLetterOfTheSentenceIsCapitalized() {
-        // GIVEN
-        let givenString = "hello world!"
-
-        // WHEN
-        let result = givenString.capitalizingFirstCharacterOnly
-
-        // THEN
-        XCTAssertEqual(result, "Hello world!")
+    override var apiVersion: APIVersion {
+        .v2
     }
 
 }

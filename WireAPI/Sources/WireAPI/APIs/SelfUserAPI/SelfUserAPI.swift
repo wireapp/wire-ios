@@ -18,20 +18,18 @@
 
 import Foundation
 
-extension Collection {
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning self user.
+public protocol SelfUserAPI {
 
-    /**
-     * Returns the element at the specified index, if it is valid.
-     * - parameter index: The index to query.
-     * - returns: The element at the index, of `nil` if the index is out of bounds.
-     */
+    /// Get user details for self user
+    /// - Returns: The self user.
 
-    public func element(atIndex index: Index) -> Element? {
-        guard index >= startIndex, index < endIndex else {
-            return nil
-        }
+    func getSelfUser() async throws -> SelfUser
 
-        return self[index]
-    }
-
+    /// Push supported protocols for self user
+    ///
+    /// - Parameter supportedProtocols: list of supported protocols
+    ///
+    func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws
 }

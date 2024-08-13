@@ -909,9 +909,8 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }
@@ -975,9 +974,8 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }

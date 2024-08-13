@@ -43,18 +43,6 @@ extension CGSize {
         }
     }
 
-    var isLandscape: Bool {
-        return aspectRatio == .landscape
-    }
-
-    var isPortrait: Bool {
-        return aspectRatio == .portrait
-    }
-
-    var isSquare: Bool {
-        return aspectRatio == .square
-    }
-
     func flipped() -> CGSize {
         return CGSize(width: height, height: width)
     }

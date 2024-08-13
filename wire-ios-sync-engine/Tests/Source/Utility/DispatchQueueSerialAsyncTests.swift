@@ -48,7 +48,9 @@ final class DispatchQueueSerialAsyncTests: XCTestCase {
             doneExpectation.fulfill()
         }
 
-        self.wait(for: [doneExpectation], timeout: 1)
+        // I've since this taking up to 4 seconds to complete on my mac so setting a high timeout. There is a ticket
+        // to address this better [WPB-10556].
+        self.wait(for: [doneExpectation], timeout: 10)
         XCTAssertTrue(done1)
         XCTAssertTrue(done2)
     }

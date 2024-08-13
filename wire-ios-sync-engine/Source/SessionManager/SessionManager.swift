@@ -773,9 +773,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     #endif
 
     fileprivate func deleteTemporaryData() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: [F] replace with TemporaryFileServiceInterface
-        // swiftlint:enable todo_requires_jira_link
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
         try? manager

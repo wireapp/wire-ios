@@ -97,7 +97,7 @@ final class HTTPClientMock: HTTPClient {
 
     convenience init(
         code: HTTPStatusCode,
-        payload: Data
+        payload: Data?
     ) {
         self.init { _ in
             HTTPResponse(

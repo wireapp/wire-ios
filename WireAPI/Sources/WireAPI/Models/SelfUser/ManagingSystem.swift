@@ -16,14 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIEdgeInsets {
+/// The managing system of the self user identity
 
-    mutating func adjust(top: CGFloat? = nil, left: CGFloat? = nil, bottom: CGFloat? = nil, right: CGFloat? = nil) {
-        top.map { self.top = $0 }
-        left.map { self.left = $0 }
-        bottom.map { self.bottom = $0 }
-        right.map { self.right = $0 }
-    }
+public enum ManagingSystem {
+
+    /// User identity is managed with Wire
+
+    case wire
+
+    /// User identity is managed with SCIM
+
+    case scim
+
 }

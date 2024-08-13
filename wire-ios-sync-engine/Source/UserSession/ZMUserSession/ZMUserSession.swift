@@ -250,7 +250,8 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
             context: syncContext,
-            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject,
+            featureRepository: featureRepository
         )
 
         let e2eiRepository = E2EIRepository(
@@ -757,9 +758,8 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
 // MARK: - UpdateEventProcessor
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
-// swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         await updateEventProcessor?.bufferEvents(events)

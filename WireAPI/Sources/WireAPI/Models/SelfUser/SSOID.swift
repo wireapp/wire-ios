@@ -16,12 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import Foundation
 
-extension Analytics {
+/// The sso id of the self user
 
-    func tag(_ storableEvent: StorableTrackingEvent) {
-        tagEvent(storableEvent.name, attributes: storableEvent.attributes)
-    }
+public struct SSOID: Equatable {
+
+    /// The self user's scim external id
+
+    public let scimExternalId: String
+
+    /// The self user's sso subject
+
+    public let subject: String
+
+    /// The self user's tenant
+
+    public let tenant: String
 
 }

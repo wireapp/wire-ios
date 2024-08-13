@@ -18,21 +18,16 @@
 
 import Foundation
 
-extension String {
-    /// The first character in each sentence changed to its corresponding uppercase value.
-    /// All remaining characters set to their corresponding values.
-    ///
-    /// Caveat:
+/// Errors originating from `SelfUserAPI`.
 
-    ///  1. The implementation only works with a string that contains one sentence.
-    ///  The second sentence won't get capitalized.
-    ///
-    ///  2. It doesn't work if the first string is a whitespace character and delimiter.
-    var capitalizingFirstCharacterOnly: String {
-        let firstLetter = self.prefix(1).capitalized
+public enum SelfUserAPIError: Error {
 
-        let remainingLetters = self.dropFirst()
+    /// Self user was not found.
 
-        return firstLetter + remainingLetters
-    }
+    case selfUserNotFound
+
+    /// Unsupported endpoint for API version
+
+    case unsupportedEndpointForAPIVersion
+
 }
