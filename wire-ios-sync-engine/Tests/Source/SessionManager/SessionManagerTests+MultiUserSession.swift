@@ -370,9 +370,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
     func testThatItActivatesTheAccountForPushReaction() {
         // GIVEN
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: crash at RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
-        // swiftlint:enable todo_requires_jira_link
         let session = self.setupSession()
         //        "Must call be called on the main queue.");
         session.isPerformingSync = false

@@ -63,8 +63,6 @@ final class ClientTableViewCell: UITableViewCell {
     var wr_editable: Bool
 
     private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
-    private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
-    }
 
     // MARK: - Initialization
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

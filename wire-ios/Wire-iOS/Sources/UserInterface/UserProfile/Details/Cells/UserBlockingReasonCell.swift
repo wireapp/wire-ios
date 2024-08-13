@@ -27,12 +27,6 @@ final class UserBlockingReasonCell: UITableViewCell {
 
     private let titleLabel = WebLinkTextView()
 
-    private var title: String? {
-        didSet {
-            titleLabel.text = title
-        }
-    }
-
     // MARK: - Life cycle
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
