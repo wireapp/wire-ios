@@ -76,13 +76,6 @@ extension AudioButtonOverlayState {
         }
     }
 
-    var sendButtonTransform: CGAffineTransform {
-        switch self {
-        case .hidden: return CGAffineTransform(rotationAngle: 90)
-        default: return CGAffineTransform.identity
-        }
-    }
-
     func colorWithColors(_ color: UIColor, highlightedColor: UIColor) -> UIColor {
         if case .expanded(let amount) = self {
             return color.mix(highlightedColor, amount: amount)

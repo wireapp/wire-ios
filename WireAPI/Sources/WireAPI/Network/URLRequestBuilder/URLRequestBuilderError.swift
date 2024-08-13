@@ -16,20 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+enum URLRequestBuilderError: Error {
 
-// sourcery: AutoMockable
-/// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol {
-
-    /// Open the push channel and start receiving update events.
-    ///
-    /// - Returns: A publisher of payloads.
-
-    func open() async throws -> AsyncStream<UpdateEventEnvelope>
-
-    /// Close the push channel and stop receiving update events.
-
-    func close() async
+    case invalidPath(String)
 
 }

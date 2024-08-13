@@ -23,19 +23,6 @@ import WireSystem
 // Note: this is just a tempory helper for debugging
 // purposes and should eventually be removed.
 
-extension ZMUserSession {
-
-    public func makeBackendInfoAPI() -> BackendInfoAPI {
-        let httpClient = HTTPClientImpl(
-            transportSession: transportSession,
-            queue: syncContext
-        )
-
-        return BackendInfoAPIBuilder(httpClient: httpClient)
-            .makeAPI()
-    }
-}
-
 private class HTTPClientImpl: HTTPClient {
 
     let transportSession: TransportSessionType

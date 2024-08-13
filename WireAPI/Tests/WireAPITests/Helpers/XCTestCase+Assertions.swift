@@ -20,6 +20,36 @@ import XCTest
 
 extension XCTestCase {
 
+    /// Assert that a collection is of a certain size.
+    ///
+    /// - Parameters:
+    ///   - collection: The collection to assert.
+    ///   - count: The expected number of elements.
+    ///   - message: The error message to show when the assertion fails.
+    ///   - file: The file name of the invoking test.
+    ///   - line: The line number when this assertion is made.
+
+    func XCTAssertCount(
+        _ collection: some Collection,
+        count: Int,
+        _ message: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        let actualCount = collection.count
+        guard actualCount == count else {
+            let message = message ?? "expected count \(count), but got \(actualCount)"
+
+            XCTFail(
+                message,
+                file: file,
+                line: line
+            )
+
+            throw message
+        }
+    }
+
     /// Assert that an error is thrown when a block is performed.
     ///
     /// - Parameters:

@@ -49,9 +49,8 @@ final class APIVersionResolver {
     // MARK: - Methods
 
     func resolveAPIVersion(completion: @escaping (Error?) -> Void = { _ in }) {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: check if it's been 24hours and proceed or not
-        // swiftlint:enable todo_requires_jira_link
         sendRequest(completion: completion)
     }
 

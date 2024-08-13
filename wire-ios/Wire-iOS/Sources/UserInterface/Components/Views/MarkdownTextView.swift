@@ -171,10 +171,6 @@ final class MarkdownTextView: NextResponderTextView {
         return (text as NSString).lineRange(for: selectedRange)
     }
 
-    private var currentLineTextRange: UITextRange? {
-        return currentLineRange?.textRange(in: self)
-    }
-
     private var previousLineRange: NSRange? {
         guard let range = currentLineRange, range.location > 0 else { return nil }
         return (text as NSString).lineRange(for: NSRange(location: range.location - 1, length: 0))
@@ -653,18 +649,6 @@ extension DownStyle {
         return style
     }()
 
-    /// The style used within search components.
-    static var search: DownStyle = {
-        let style = DownStyle()
-        style.baseFont = FontSpec.normalLightFont.font!
-        style.baseFontColor = SemanticColors.Label.textDefault
-        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
-        style.codeColor = SemanticColors.Label.textDefault
-        style.baseParagraphStyle = NSParagraphStyle.default
-        style.listItemPrefixSpacing = 8
-        return style
-    }()
-
     /// The style used within the input bar.
     static var compact: DownStyle = {
         let style = DownStyle()
@@ -730,13 +714,4 @@ private extension NSRange {
 
         return range
     }
-}
-
-private extension UIPasteboard {
-
-    var hasText: Bool {
-        /// Image copied from browser can be both NSString and UIImage
-        return hasStrings && !hasImages
-    }
-
 }

@@ -49,9 +49,6 @@ final class ConversationImageMessageCell: UIView,
     private var widthConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
 
-    var containerColor: UIColor? = SemanticColors.View.backgroundCollectionCell
-    var containerHeightConstraint: NSLayoutConstraint!
-
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
