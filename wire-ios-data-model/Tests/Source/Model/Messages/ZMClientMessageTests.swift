@@ -342,7 +342,7 @@ extension ClientMessageTests {
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
-        var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
         let contentData = try prototype.serializedData()
         let data: NSDictionary = try [
