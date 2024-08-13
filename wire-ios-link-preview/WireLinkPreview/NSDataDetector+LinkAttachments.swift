@@ -46,7 +46,7 @@ extension NSDataDetector {
 
         switch host {
         case "youtube.com", "m.youtube.com", "www.youtube.com":
-            guard url.pathComponents.element(atIndex: 1) == "watch" else { return nil }
+            guard url.pathComponents.indices.contains(1), url.pathComponents[1] == "watch" else { return nil }
             return .youTubeVideo
 
         case "youtu.be":
@@ -68,7 +68,7 @@ extension NSDataDetector {
         if pathComponents.count == 3 {
             // Match soundcloud.com/<artist>/<track>
             return .soundCloudTrack
-        } else if pathComponents.count == 4 && pathComponents.element(atIndex: 2) == "sets" {
+        } else if pathComponents.count == 4 && pathComponents[2] == "sets" {
             // Match soundcloud.com/<user>/sets/<playlist_name>
             return .soundCloudPlaylist
         }

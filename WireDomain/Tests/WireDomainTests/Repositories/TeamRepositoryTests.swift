@@ -150,10 +150,10 @@ final class TeamRepositoryTests: XCTestCase {
             let request = NSFetchRequest<Role>(entityName: Role.entityName())
             request.sortDescriptors = [NSSortDescriptor(key: Role.nameKey, ascending: true)]
             let roles = try context.fetch(request)
-            XCTAssertEqual(roles.count, 2)
+            guard roles.count == 2 else { return XCTFail("roles.count != 2") }
 
             // One is for the admin.
-            let firstRole = try XCTUnwrap(roles.element(atIndex: 0))
+            let firstRole = try XCTUnwrap(roles[0])
             XCTAssertEqual(firstRole.name, "admin")
             XCTAssertEqual(firstRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
             XCTAssertNil(firstRole.conversation)
@@ -166,7 +166,7 @@ final class TeamRepositoryTests: XCTestCase {
             )
 
             // One is for the member.
-            let secondRole = try XCTUnwrap(roles.element(atIndex: 1))
+            let secondRole = try XCTUnwrap(roles[1])
             XCTAssertEqual(secondRole.name, "member")
             XCTAssertEqual(secondRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
             XCTAssertNil(secondRole.conversation)

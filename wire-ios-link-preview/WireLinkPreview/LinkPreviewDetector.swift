@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireUtilities
 
 public protocol LinkPreviewDetectorType {
 
