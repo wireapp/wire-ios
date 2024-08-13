@@ -19,33 +19,72 @@
 import Foundation
 import WireLinkPreview
 
-public final class TextMessage: ZMMessage, TextMessageData {
+@objc(ZMTextMessage) @objcMembers
+final class TextMessage: ZMMessage, TextMessageData {
 
-    public var messageText: String? { fatalError("TODO") }
-
-    public var linkPreview: LinkMetadata? { fatalError("TODO") }
-
-    public var mentions: [Mention] { fatalError("TODO") }
-
-    public var quoteMessage: (any ZMConversationMessage)? { fatalError("TODO") }
-
-    public var linkPreviewHasImage: Bool { fatalError("TODO") }
-
-    public var linkPreviewImageCacheKey: String? { fatalError("TODO") }
-
-    public var isQuotingSelf: Bool { fatalError("TODO") }
-
-    public var hasQuote: Bool { fatalError("TODO") }
-
-    public func fetchLinkPreviewImageData(queue: DispatchQueue) async -> NSData? {
-        fatalError("TODO")
+    override class func entityName() -> String {
+        "TextMessage"
     }
 
-    public func requestLinkPreviewImageDownload() {
-        fatalError("TODO")
+    @NSManaged public var text: String?
+
+    override var textMessageData: (any TextMessageData)? { self }
+
+    var messageText: String? { text }
+
+    var linkPreview: LinkMetadata? { .none }
+
+    var mentions: [Mention] { [] }
+
+    var quoteMessage: (any ZMConversationMessage)? { nil }
+
+    var linkPreviewHasImage: Bool { false }
+
+    var linkPreviewImageCacheKey: String? { nil }
+
+    var isQuotingSelf: Bool { false }
+
+    var hasQuote: Bool { false }
+
+    override func shortDebugDescription() -> String {
+        super.shortDebugDescription() + ", \(text ?? "<nil>")"
     }
 
-    public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
-        fatalError("TODO")
+    override class func createOrUpdate(
+        from updateEvent: ZMUpdateEvent,
+        in moc: NSManagedObjectContext,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) -> Self? {
+        nil
+    }
+
+    func fetchLinkPreviewImageData(
+        queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    ) {
+        completionHandler(nil)
+    }
+
+    func requestLinkPreviewImageDownload() {
+        // no op
+    }
+
+    func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
+        // no op
     }
 }
+
+/*
+
+ - (NSData *)linkPreviewImageData
+ {
+     return nil;
+ }
+
+ - (void)removeMessageClearingSender:(BOOL)clearingSender
+ {
+     self.text = nil;
+     [super removeMessageClearingSender:clearingSender];
+ }
+
+ */

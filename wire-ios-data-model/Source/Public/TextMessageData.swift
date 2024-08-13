@@ -40,7 +40,10 @@ public protocol TextMessageData: NSObjectProtocol {
 
     /// Fetch linkpreview image data from disk on the given queue.
     @objc(fetchLinkPreviewImageDataWithQueue:completionHandler:)
-    func fetchLinkPreviewImageData(queue: DispatchQueue) async -> Data?
+    func fetchLinkPreviewImageData(
+        queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    )
 
     /// Request link preview image to be downloaded
     func requestLinkPreviewImageDownload()

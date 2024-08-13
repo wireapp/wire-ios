@@ -78,8 +78,11 @@ extension CompositeMessageItemContent: TextMessageData {
         return false
     }
 
-    func fetchLinkPreviewImageData(queue: DispatchQueue) async -> Data? {
-        .none
+    func fetchLinkPreviewImageData(
+        queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    ) {
+        // no op
     }
 
     func requestLinkPreviewImageDownload() {
