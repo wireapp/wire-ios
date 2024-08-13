@@ -1176,7 +1176,6 @@
 		D50892FB2056BD51004D3AE2 /* ZMUser+ExpirationTimeFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50892FA2056BD51004D3AE2 /* ZMUser+ExpirationTimeFormatting.swift */; };
 		D50892FD2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50892FC2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift */; };
 		D5168F282008ED0700F8222A /* KeyboardBlockObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5168F272008ED0700F8222A /* KeyboardBlockObserver.swift */; };
-		D5168F2A2008F3EF00F8222A /* UIEdgeInsets+Adjusting.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5168F292008F3EF00F8222A /* UIEdgeInsets+Adjusting.swift */; };
 		D5168F4D2010B61D00F8222A /* URL+Wire.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5168F4C2010B61D00F8222A /* URL+Wire.swift */; };
 		D5168F502010F1FF00F8222A /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876113E61DD1DE89007F5969 /* ShareViewController.swift */; };
 		D5168F512010F20300F8222A /* ShareViewController+Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872C2B7E1DD9C22B0086A574 /* ShareViewController+Views.swift */; };
@@ -3276,7 +3275,6 @@
 		D50892FA2056BD51004D3AE2 /* ZMUser+ExpirationTimeFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUser+ExpirationTimeFormatting.swift"; sourceTree = "<group>"; };
 		D50892FC2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WirelessExpirationTimeFormatterTests.swift; sourceTree = "<group>"; };
 		D5168F272008ED0700F8222A /* KeyboardBlockObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardBlockObserver.swift; sourceTree = "<group>"; };
-		D5168F292008F3EF00F8222A /* UIEdgeInsets+Adjusting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Adjusting.swift"; sourceTree = "<group>"; };
 		D5168F4C2010B61D00F8222A /* URL+Wire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Wire.swift"; sourceTree = "<group>"; };
 		D5168F582010F2F700F8222A /* TokenField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenField.swift; sourceTree = "<group>"; };
 		D5173572201764DD00B473CE /* UIAlertAction+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertAction+Convenience.swift"; sourceTree = "<group>"; };
