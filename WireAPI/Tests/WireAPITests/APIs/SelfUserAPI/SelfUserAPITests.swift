@@ -192,7 +192,7 @@ final class SelfUserAPITests: XCTestCase {
             Scaffolding.selfUserV5
         )
     }
-    
+
     // MARK: - V5
 
     func testPushSupportedProtocols_SuccessResponse_200_V5() async throws {
