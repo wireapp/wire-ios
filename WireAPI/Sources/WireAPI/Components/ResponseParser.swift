@@ -36,12 +36,12 @@ struct ResponseParser<Success> {
     }
 
     func success<Payload: Decodable & ToAPIModelConvertible>(
-        code: Int,
+        code: HTTPStatusCode,
         type: Payload.Type
     ) -> ResponseParser<Success> where Payload.APIModel == Success {
         var copy = self
         copy.parseBlocks.append { actualCode, data in
-            guard actualCode == code else { return nil }
+            guard actualCode == code.rawValue else { return nil }
             let payload = try decoder.decode(Payload.self, from: data)
             return payload.toAPIModel()
         }
@@ -49,14 +49,14 @@ struct ResponseParser<Success> {
     }
 
     func failure(
-        code: Int,
+        code: HTTPStatusCode,
         label: String = "",
         error: Error
     ) -> ResponseParser<Success> {
         var copy = self
         copy.parseBlocks.append { _, data in
             let failure = try decoder.decode(FailureResponse.self, from: data)
-            guard failure.code == code, failure.label == label else { return nil }
+            guard failure.code == code.rawValue, failure.label == label else { return nil }
             throw error
         }
         return copy

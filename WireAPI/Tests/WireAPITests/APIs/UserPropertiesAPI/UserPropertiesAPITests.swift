@@ -22,11 +22,11 @@ import XCTest
 @testable import WireAPI
 
 final class UserPropertiesAPITests: XCTestCase {
-    
+
     private var apiSnapshotHelper: APISnapshotHelper<UserPropertiesAPI>!
-    
+
     // MARK: - Setup
-    
+
     override func setUp() {
         super.setUp()
         apiSnapshotHelper = APISnapshotHelper { httpClient, apiVersion in
@@ -34,20 +34,20 @@ final class UserPropertiesAPITests: XCTestCase {
             return builder.makeAPI(for: apiVersion)
         }
     }
-    
+
     override func tearDown() {
         apiSnapshotHelper = nil
         super.tearDown()
     }
-    
+
     // MARK: - Request generation
-    
+
     func testGetUserRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getProperty(forKey: .wireTypingIndicatorMode)
         }
     }
-    
+
     // MARK: - Response handling
 
     // MARK: - V0
@@ -55,7 +55,7 @@ final class UserPropertiesAPITests: XCTestCase {
     func testGetUserReceiptModeProperty_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserReceiptModePropertySuccessResponseV0"
         )
 
@@ -70,11 +70,11 @@ final class UserPropertiesAPITests: XCTestCase {
             .areReadRecieptsEnabled(true)
         )
     }
-    
+
     func testGetUserTypingIndicatorModeProperty_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserTypingIndicatorModePropertySuccessResponseV0"
         )
 
@@ -89,11 +89,11 @@ final class UserPropertiesAPITests: XCTestCase {
             .areTypingIndicatorsEnabled(false)
         )
     }
-    
+
     func testGetUserLabelsProperty_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserLabelsPropertySuccessResponseV0"
         )
 
@@ -113,10 +113,10 @@ final class UserPropertiesAPITests: XCTestCase {
 
         }
     }
-    
+
     func testGetUserProperties_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then
@@ -125,12 +125,12 @@ final class UserPropertiesAPITests: XCTestCase {
             try await sut.getProperty(forKey: .wireReceiptMode)
         }
     }
-    
+
     // MARK: - V4
 
     func testGetUserProperties_FailureResponse_InvalidKey_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
 
         // Then

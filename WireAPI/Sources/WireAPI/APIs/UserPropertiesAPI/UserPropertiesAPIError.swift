@@ -25,9 +25,9 @@ public enum UserPropertiesAPIError: Error {
     /// Property was not found.
 
     case propertyNotFound
-    
+
     /// Provided key is invalid
-    
+
     case invalidKey
 
 }

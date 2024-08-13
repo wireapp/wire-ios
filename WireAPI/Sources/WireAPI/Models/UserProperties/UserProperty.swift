@@ -40,3 +40,24 @@ public enum UserProperty: Equatable, Codable {
     case unknown(key: String)
 
 }
+
+extension UserProperty {
+
+    /// The user property key.
+
+    public enum Key: String {
+
+        /// Wire receipt mode
+
+        case wireReceiptMode = "WIRE_RECEIPT_MODE"
+
+        /// Wire typing indicator mode
+
+        case wireTypingIndicatorMode = "WIRE_TYPING_INDICATOR_MODE"
+
+        /// Labels
+
+        case labels = "labels"
+
+    }
+}

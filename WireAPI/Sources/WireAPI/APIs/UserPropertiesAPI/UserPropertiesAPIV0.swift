@@ -31,15 +31,15 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     }
 
     // MARK: - Fetch user property
-    
-    func getProperty(forKey key: UserPropertyKey) async throws -> UserProperty {
+
+    func getProperty(forKey key: UserProperty.Key) async throws -> UserProperty {
         let request = HTTPRequest(
             path: "\(pathPrefix)/properties/\(key.rawValue)",
             method: .get
         )
 
         let response = try await httpClient.executeRequest(request)
-        
+
         switch key {
         case .wireReceiptMode:
             return try getProperty(response: response, payload: ReceiptModeResponseV0.self)
@@ -49,20 +49,20 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
             return try getProperty(response: response, payload: LabelsResponseV0.self)
         }
     }
-    
+
     func getProperty<Payload: UserPropertiesResponseAPIV0>(
         response: HTTPResponse,
         payload: Payload.Type
     ) throws -> UserProperty where Payload.APIModel == UserProperty {
         try ResponseParser()
-            .success(code: 200, type: payload)
-            .failure(code: 404, error: UserPropertiesAPIError.propertyNotFound)
+            .success(code: .ok, type: payload)
+            .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
             .parse(response)
     }
-    
+
 }
 
-protocol UserPropertiesResponseAPIV0: Decodable, ToAPIModelConvertible { 
+protocol UserPropertiesResponseAPIV0: Decodable, ToAPIModelConvertible {
     var value: UserProperty { get }
 }
 
@@ -74,7 +74,7 @@ extension UserPropertiesResponseAPIV0 {
 
 struct ReceiptModeResponseV0: UserPropertiesResponseAPIV0 {
     let value: UserProperty
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(Int.self)
@@ -84,7 +84,7 @@ struct ReceiptModeResponseV0: UserPropertiesResponseAPIV0 {
 
 struct TypeIndicatorModeResponseV0: UserPropertiesResponseAPIV0 {
     let value: UserProperty
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(Int.self)
@@ -94,11 +94,11 @@ struct TypeIndicatorModeResponseV0: UserPropertiesResponseAPIV0 {
 
 struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
     let value: UserProperty
-    
+
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let payload = try container.decode(LabelsPayload.self)
-        
+
         let conversationLabels = payload.labels.map {
             ConversationLabel(
                 id: $0.id,
@@ -107,7 +107,7 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
                 conversationIDs: $0.conversations
             )
         }
-        
+
         self.value = .conversationLabels(conversationLabels)
     }
 }

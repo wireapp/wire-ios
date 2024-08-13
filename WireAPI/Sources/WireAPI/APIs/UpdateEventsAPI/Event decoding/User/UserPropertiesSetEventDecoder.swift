@@ -28,8 +28,8 @@ struct UserPropertiesSetEventDecoder {
             String.self,
             forKey: .propertyKey
         )
-        
-        let userPropertyKey = UserPropertyKey(rawValue: key)
+
+        let userPropertyKey = UserProperty.Key(rawValue: key)
 
         switch userPropertyKey {
         case .wireReceiptMode:
@@ -77,7 +77,7 @@ struct UserPropertiesSetEventDecoder {
 struct LabelsPayload: Decodable {
 
     let labels: [Label]
-    
+
     struct Label: Decodable {
 
         let id: UUID

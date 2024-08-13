@@ -27,5 +27,5 @@ public protocol UserPropertiesAPI {
     /// - Parameter key: The key of the property fo fetch.
     /// - Returns: A `UserProperty` enum
 
-    func getProperty(forKey key: UserPropertyKey) async throws -> UserProperty
+    func getProperty(forKey key: UserProperty.Key) async throws -> UserProperty
 }

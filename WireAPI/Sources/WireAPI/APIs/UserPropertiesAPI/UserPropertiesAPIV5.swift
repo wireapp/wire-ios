@@ -23,14 +23,14 @@ class UserPropertiesAPIV5: UserPropertiesAPIV4 {
     override var apiVersion: APIVersion {
         .v5
     }
-    
+
     override func getProperty<Payload: UserPropertiesResponseAPIV0>(
         response: HTTPResponse,
         payload: Payload.Type
     ) throws -> UserProperty where Payload.APIModel == UserProperty {
         try ResponseParser()
-            .success(code: 200, type: payload)
-            .failure(code: 404, error: UserPropertiesAPIError.propertyNotFound)
+            .success(code: .ok, type: payload)
+            .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
             .parse(response)
     }
 

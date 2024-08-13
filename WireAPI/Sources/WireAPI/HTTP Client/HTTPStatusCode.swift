@@ -18,20 +18,34 @@
 
 import Foundation
 
-/// The user property key.
+/// A list of HTTP status codes
 
-public enum UserPropertyKey: String {
-    
-    /// Wire receipt mode
+public enum HTTPStatusCode: Int {
 
-    case wireReceiptMode = "WIRE_RECEIPT_MODE"
-    
-    /// Wire typing indicator mode
+    // MARK: Success - 2xx
 
-    case wireTypingIndicatorMode = "WIRE_TYPING_INDICATOR_MODE"
-    
-    /// Labels
+    /// ok - 200
 
-    case labels = "labels"
-    
+    case ok = 200
+
+    // MARK: Client Errors - 4xx
+
+    /// bad request - 400
+
+    case badRequest = 400
+
+    /// not found - 404
+
+    case notFound = 404
+
+    /// forbidden - 403
+
+    case forbidden = 403
+
+    // MARK: Server Errors - 5xx
+
+    /// forbidden - 503
+
+    case serviceUnavailable = 503
+
 }
