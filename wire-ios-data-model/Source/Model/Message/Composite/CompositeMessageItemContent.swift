@@ -39,8 +39,10 @@ class CompositeMessageItemContent: NSObject {
     }
 }
 
-// MARK: - ZMTextMessageData
-extension CompositeMessageItemContent: ZMTextMessageData {
+// MARK: - TextMessageData
+
+extension CompositeMessageItemContent: TextMessageData {
+
     var messageText: String? {
         return text?.content.removingExtremeCombiningCharacters
     }
@@ -77,7 +79,10 @@ extension CompositeMessageItemContent: ZMTextMessageData {
         return false
     }
 
-    func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
+    func fetchLinkPreviewImageData(
+        queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    ) {
         // no op
     }
 
@@ -91,7 +96,9 @@ extension CompositeMessageItemContent: ZMTextMessageData {
 }
 
 // MARK: - ButtonMessageData
+
 extension CompositeMessageItemContent: ButtonMessageData {
+
     var title: String? {
         return button?.text
     }

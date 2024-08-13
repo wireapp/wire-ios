@@ -18,6 +18,7 @@
 
 import WireUITesting
 import XCTest
+import WireLinkPreview
 
 @testable import Wire
 

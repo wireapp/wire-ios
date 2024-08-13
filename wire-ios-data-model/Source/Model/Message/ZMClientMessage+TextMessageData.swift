@@ -19,7 +19,7 @@
 import Foundation
 import WireLinkPreview
 
-extension ZMClientMessage: ZMTextMessageData {
+extension ZMClientMessage: TextMessageData {
 
     @NSManaged public var quote: ZMMessage?
 
@@ -27,7 +27,7 @@ extension ZMClientMessage: ZMTextMessageData {
         return quote
     }
 
-    public override var textMessageData: ZMTextMessageData? {
+    public override var textMessageData: TextMessageData? {
         guard underlyingMessage?.textData != nil else {
             return nil
         }
@@ -75,5 +75,4 @@ extension ZMClientMessage: ZMTextMessageData {
         self.linkAttachments = nil
         self.delivered = false
     }
-
 }

@@ -349,6 +349,9 @@
 		597DEB3D2C6B67DA005F21B0 /* WireLinkPreview in Frameworks */ = {isa = PBXBuildFile; productRef = 597DEB3C2C6B67DA005F21B0 /* WireLinkPreview */; };
 		597DEB3E2C6B67DA005F21B0 /* WireLinkPreview in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 597DEB3C2C6B67DA005F21B0 /* WireLinkPreview */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */; };
+		5986A09D2C6B832200299181 /* WireLinkPreview in Frameworks */ = {isa = PBXBuildFile; productRef = 5986A09C2C6B832200299181 /* WireLinkPreview */; };
+		5986A0A12C6B838C00299181 /* WireLinkPreview in Frameworks */ = {isa = PBXBuildFile; productRef = 5986A0A02C6B838C00299181 /* WireLinkPreview */; };
+		5986A0A42C6B83B100299181 /* WireLinkPreview in Frameworks */ = {isa = PBXBuildFile; productRef = 5986A0A32C6B83B100299181 /* WireLinkPreview */; };
 		598D6CC12BF34CF500809AFA /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598D6CC02BF34CF500809AFA /* MainTabBarController.swift */; };
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
@@ -366,7 +369,6 @@
 		5996E8A72C19D090007A52F0 /* WireSyncEngine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */; };
 		5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
-		5996E8AB2C19D0D6007A52F0 /* WireSystemSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5996E8AD2C19D0DF007A52F0 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
@@ -1979,13 +1981,22 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5986A09F2C6B832200299181 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5996E8AC2C19D0D6007A52F0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5996E8AB2C19D0D6007A52F0 /* WireSystemSupport.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3955,6 +3966,7 @@
 				59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */,
 				59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */,
 				5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */,
+				5986A09D2C6B832200299181 /* WireLinkPreview in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4008,6 +4020,7 @@
 				5996E8A02C19D02C007A52F0 /* WireDataModelSupport.framework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
+				5986A0A42C6B83B100299181 /* WireLinkPreview in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
 				5965B47F2C57C85D000DBF91 /* WireSystemPackageSupport in Frameworks */,
@@ -4022,6 +4035,7 @@
 			files = (
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
+				5986A0A12C6B838C00299181 /* WireLinkPreview in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
 				59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */,
@@ -8598,6 +8612,7 @@
 				168A16A51D9597C2005CFA6C /* Sources */,
 				168A16A61D9597C2005CFA6C /* Frameworks */,
 				168A16A71D9597C2005CFA6C /* Resources */,
+				5986A09F2C6B832200299181 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -8608,6 +8623,7 @@
 			packageProductDependencies = (
 				5945D0292C219F7200D039E3 /* WireDesign */,
 				59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */,
+				5986A09C2C6B832200299181 /* WireLinkPreview */,
 			);
 			productName = "Wire-iOS Share Extension";
 			productReference = 168A16A91D9597C2005CFA6C /* Wire Share Extension.appex */;
@@ -8670,6 +8686,7 @@
 				01C1A7C62A54C45A0058D578 /* SnapshotTesting */,
 				59942F172C2BF72C00F65A54 /* WireUITesting */,
 				5965B47E2C57C85D000DBF91 /* WireSystemPackageSupport */,
+				5986A0A32C6B83B100299181 /* WireLinkPreview */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -8690,6 +8707,9 @@
 				E6579E3B2AFF9B30004E7FD8 /* PBXTargetDependency */,
 			);
 			name = "Wire-iOS UnitTests";
+			packageProductDependencies = (
+				5986A0A02C6B838C00299181 /* WireLinkPreview */,
+			);
 			productName = "Wire-iOS UnitTests";
 			productReference = E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -11726,6 +11746,18 @@
 			productName = WireSystemPackageSupport;
 		};
 		597DEB3C2C6B67DA005F21B0 /* WireLinkPreview */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLinkPreview;
+		};
+		5986A09C2C6B832200299181 /* WireLinkPreview */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLinkPreview;
+		};
+		5986A0A02C6B838C00299181 /* WireLinkPreview */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLinkPreview;
+		};
+		5986A0A32C6B83B100299181 /* WireLinkPreview */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLinkPreview;
 		};

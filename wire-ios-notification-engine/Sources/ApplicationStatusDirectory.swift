@@ -18,6 +18,7 @@
 
 import Foundation
 import WireRequestStrategy
+import WireLinkPreview
 
 final class ApplicationStatusDirectory: ApplicationStatus {
 

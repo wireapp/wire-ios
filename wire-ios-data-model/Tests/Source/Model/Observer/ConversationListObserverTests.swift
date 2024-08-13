@@ -574,7 +574,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
-        conversation.mutableMessages.add(ZMTextMessage(nonce: UUID(), managedObjectContext: uiMOC))
+        conversation.mutableMessages.add(TextMessage(nonce: UUID(), managedObjectContext: uiMOC))
         self.uiMOC.saveOrRollback()
 
         // then
