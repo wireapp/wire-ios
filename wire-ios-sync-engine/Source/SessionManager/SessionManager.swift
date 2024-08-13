@@ -310,7 +310,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    private var analyticsManager: (any AnalyticsManagerProtocol)?
+    private(set) var analyticsManager: (any AnalyticsManagerProtocol)?
 
     public override init() {
         fatal("init() not implemented")
@@ -871,7 +871,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
             WireLogger.sessionManager.debug("Activated ZMUserSession for account - \(account.userIdentifier.safeForLoggingDescription)")
-            self.switchAnalyticsUser()
+            self.switchAnalyticsUser(to: session)
 
             self.delegate?.sessionManagerDidChangeActiveUserSession(userSession: session)
             self.configureUserNotifications()
@@ -891,24 +891,29 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func switchAnalyticsUser() {
+    private func switchAnalyticsUser(to userSession: ZMUserSession) {
         guard
             let analyticsManager,
-            let activeUserSession
+            let userProfile = getUserAnalyticsProfile(for: userSession)
         else {
             return
         }
 
-        let selfUser = ZMUser.selfUser(inUserSession: activeUserSession)
+        let analyticsSession = analyticsManager.switchUser(userProfile)
+        userSession.analyticsSession = analyticsSession
+    }
+
+    func getUserAnalyticsProfile(for userSession: ZMUserSession) -> AnalyticsUserProfile? {
+        let selfUser = ZMUser.selfUser(inUserSession: userSession)
 
         // Set the analytics identifier if it's not present
         if selfUser.analyticsIdentifier == nil {
-            let idProvider = AnalyticsIdentifierProvider(selfUser: activeUserSession.selfUser)
+            let idProvider = AnalyticsIdentifierProvider(selfUser: selfUser)
             idProvider.setIdentifierIfNeeded()
         }
 
         guard let analyticsID = selfUser.analyticsIdentifier else {
-            return
+            return nil
         }
 
         var teamInfo: TeamInfo?
@@ -920,14 +925,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             )
         }
 
-        let analyticsSession = analyticsManager.switchUser(
-            AnalyticsUserProfile(
-                analyticsIdentifier: analyticsID,
-                teamInfo: teamInfo
-            )
-        )
-
-        activeUserSession.analyticsSession = analyticsSession
+        return AnalyticsUserProfile(analyticsIdentifier: analyticsID, teamInfo: teamInfo)
     }
 
     func performPostUnlockActionsIfPossible(for session: ZMUserSession) {

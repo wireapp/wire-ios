@@ -98,13 +98,11 @@ extension SettingsCellDescriptorFactory {
                            presentationAction: { DatabaseStatisticsController() })
         )
 
-        if !Analytics.shared.isOptedOut && !TrackingManager.shared.disableAnalyticsSharing {
             developerCellDescriptors.append(
                 Button(title: "Reset call quality survey",
                        isDestructive: false,
                        selectAction: DebugActions.resetCallQualitySurveyMuteFilter)
             )
-        }
 
         developerCellDescriptors.append(
             Button(title: "Trigger slow sync",

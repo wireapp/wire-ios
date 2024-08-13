@@ -26,6 +26,7 @@ final class ZClientViewController: UIViewController {
 
     private let account: Account
     let userSession: UserSession
+    let trackingManager: TrackingManager?
 
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
@@ -43,7 +44,8 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.editableSelfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
-            accountSelector: SessionManager.shared
+            accountSelector: SessionManager.shared,
+            trackingManager: trackingManager
         )
     }
     private lazy var conversationListViewController = ConversationListViewController(
@@ -91,11 +93,12 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        trackingManager: TrackingManager?
     ) {
         self.account = account
         self.userSession = userSession
-
+        self.trackingManager = trackingManager
         colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)

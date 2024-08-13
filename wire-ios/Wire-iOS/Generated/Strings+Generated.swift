@@ -5580,6 +5580,20 @@ internal enum L10n {
         internal enum PrivacyAnalytics {
           /// Send anonymous usage data
           internal static let title = L10n.tr("Localizable", "self.settings.privacy_analytics.title", fallback: "Send anonymous usage data")
+          internal enum Alert {
+            /// With your consent, we use technologies to analyse the use of Wire Messenger in order to improve and develop it based on user needs. Information about your use of Wire Messenger, such as whether and when an error occurs or a particular function is used (so-called events), and other technical information (e.g., IP address, app version, device type, operating system) is collected using a pseudonymous ID. The collected data cannot be assigned to you. The data is not linked to your personal information or shared with third parties beside Zeta Project Germany GmbH. The ID is deleted from your device after [28] days after the last activity at the latest. The statistical analysis of the collected information helps us to troubleshoot and improve the Wire Messenger. Further information can be found in our privacy policy. You can revoke or change your consent at any time with effect for the future.
+            internal static let message = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.message", fallback: "With your consent, we use technologies to analyse the use of Wire Messenger in order to improve and develop it based on user needs. Information about your use of Wire Messenger, such as whether and when an error occurs or a particular function is used (so-called events), and other technical information (e.g., IP address, app version, device type, operating system) is collected using a pseudonymous ID. The collected data cannot be assigned to you. The data is not linked to your personal information or shared with third parties beside Zeta Project Germany GmbH. The ID is deleted from your device after [28] days after the last activity at the latest. The statistical analysis of the collected information helps us to troubleshoot and improve the Wire Messenger. Further information can be found in our privacy policy. You can revoke or change your consent at any time with effect for the future.")
+            /// Consent to the Analysis of Your User Behaviour
+            internal static let title = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.title", fallback: "Consent to the Analysis of Your User Behaviour")
+            internal enum Button {
+              /// Accept
+              internal static let accept = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.button.accept", fallback: "Accept")
+              /// Privacy Policy
+              internal static let privacyPolicy = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.button.privacyPolicy", fallback: "Privacy Policy")
+              /// Reject
+              internal static let reject = L10n.tr("Localizable", "self.settings.privacy_analytics.alert.button.reject", fallback: "Reject")
+            }
+          }
         }
         internal enum PrivacyAnalyticsMenu {
           internal enum Description {
