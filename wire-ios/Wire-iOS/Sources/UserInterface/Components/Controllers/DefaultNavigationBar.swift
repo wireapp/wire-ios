@@ -20,11 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
-
-    func redrawFont() {
-        titleTextAttributes?[.font] = FontSpec.smallSemiboldFont.font!
-    }
+class DefaultNavigationBar: UINavigationBar {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -52,7 +48,7 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
     }
 
     static func titleTextAttributes(for color: UIColor = SemanticColors.Label.textDefault) -> [NSAttributedString.Key: Any] {
-        return [.font: FontSpec.smallSemiboldFont.font!,
+        return [.font: UIFont.systemFont(ofSize: 17, weight: .semibold),
                 .foregroundColor: color,
                 .baselineOffset: 1.0]
     }
