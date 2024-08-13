@@ -22,32 +22,25 @@ import WireLinkPreview
 @objc(ZMTextMessage) @objcMembers
 final class TextMessage: ZMMessage, TextMessageData {
 
-    override class func entityName() -> String {
-        "TextMessage"
-    }
+    override class func entityName() -> String { "TextMessage" }
 
     @NSManaged public var text: String?
 
     override var textMessageData: (any TextMessageData)? { self }
-
     var messageText: String? { text }
-
-    var linkPreview: LinkMetadata? { .none }
 
     var mentions: [Mention] { [] }
 
-    var quoteMessage: (any ZMConversationMessage)? { nil }
-
+    var linkPreview: LinkMetadata? { .none }
     var linkPreviewHasImage: Bool { false }
-
     var linkPreviewImageCacheKey: String? { nil }
 
+    var hasQuote: Bool { false }
+    var quoteMessage: (any ZMConversationMessage)? { nil }
     var isQuotingSelf: Bool { false }
 
-    var hasQuote: Bool { false }
-
     override func shortDebugDescription() -> String {
-        super.shortDebugDescription() + ", \(text ?? "<nil>")"
+        super.shortDebugDescription() + (text.map { "'\($0)'" } ?? "<nil>")
     }
 
     override class func createOrUpdate(
@@ -72,19 +65,9 @@ final class TextMessage: ZMMessage, TextMessageData {
     func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
         // no op
     }
+
+    override func removeClearingSender(_ clearingSender: Bool) {
+        text = nil
+        super.removeClearingSender(clearingSender)
+    }
 }
-
-/*
-
- - (NSData *)linkPreviewImageData
- {
-     return nil;
- }
-
- - (void)removeMessageClearingSender:(BOOL)clearingSender
- {
-     self.text = nil;
-     [super removeMessageClearingSender:clearingSender];
- }
-
- */
