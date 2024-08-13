@@ -75,7 +75,7 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
     }
 
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        textMessageData.fetchLinkPreviewImageData(with: queue, completionHandler: completionHandler)
+        textMessageData.fetchLinkPreviewImageData(queue: queue, completionHandler: completionHandler)
     }
 
 }

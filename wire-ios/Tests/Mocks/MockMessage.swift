@@ -53,7 +53,7 @@ final class MockTextMessageData: NSObject, ZMTextMessageData {
         return linkPreview
     }
 
-    func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
+    func fetchLinkPreviewImageData(queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         completionHandler(imageData)
     }
 
