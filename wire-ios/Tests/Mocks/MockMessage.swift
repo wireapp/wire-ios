@@ -25,7 +25,7 @@ final class MockCompositeMessageData: NSObject, CompositeMessageData {
     var items: [CompositeMessageItem] = []
 }
 
-final class MockTextMessageData: NSObject, ZMTextMessageData {
+final class MockTextMessageData: NSObject, TextMessageData {
 
     var messageText: String? = ""
     var backingLinkPreview: LinkMetadata?
@@ -391,7 +391,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
         return backingLocationMessageData
     }
 
-    var textMessageData: ZMTextMessageData? {
+    var textMessageData: TextMessageData? {
         return backingTextMessageData
     }
 

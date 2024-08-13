@@ -38,7 +38,7 @@ class CompositeMessageItemContent: NSObject {
     }
 }
 
-// MARK: - ZMTextMessageData
+// MARK: - TextMessageData
 
 extension CompositeMessageItemContent: TextMessageData {
 

@@ -18,9 +18,6 @@
 
 import WireLinkPreview
 
-@available(*, deprecated, renamed: "TextMessageData")
-public typealias ZMTextMessageData = TextMessageData
-
 @objc(ZMTextMessageData)
 public protocol TextMessageData: NSObjectProtocol {
 
