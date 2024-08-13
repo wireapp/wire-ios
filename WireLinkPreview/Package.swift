@@ -14,8 +14,14 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0")
     ],
     targets: [
-        .target(name: "WireLinkPreview", path: "./Sources/WireLinkPreview", swiftSettings: swiftSettings),
-        .testTarget(name: "WireLinkPreviewTests", dependencies: ["WireLinkPreview"], path: "./Tests/WireLinkPreviewTests")
+        .target(
+            name: "WireLinkPreview",
+            dependencies: ["HTMLString"],
+            path: "./Sources/WireLinkPreview",
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(name: "WireLinkPreviewTests", dependencies: ["WireLinkPreview"], path: "./Tests/WireLinkPreviewTests"),
+        .binaryTarget(name: "HTMLString", path: "../Carthage/Build/HTMLString.xcframework")
     ]
 )
 
