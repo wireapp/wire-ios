@@ -18,8 +18,8 @@
 
 import WireLinkPreview
 
-@objc(ZMTextMessageData_)
-public protocol TextMessageData_: NSObjectProtocol {
+@objc(ZMTextMessageData)
+public protocol TextMessageData: NSObjectProtocol {
 
     var messageText: String? { get }
     var linkPreview: LinkMetadata? { get }
@@ -40,9 +40,7 @@ public protocol TextMessageData_: NSObjectProtocol {
 
     /// Fetch linkpreview image data from disk on the given queue.
     @objc(fetchLinkPreviewImageDataWithQueue:completionHandler:)
-    func fetchLinkPreviewImageData(with queue: dispatch_queue_t) async -> NSData?
-    @objc(fetchLinkPreviewImageData_WithQueue:completionHandler:)
-    func fetchLinkPreviewImageData_(with queue: DispatchQueue) async -> NSData?
+    func fetchLinkPreviewImageData(queue: DispatchQueue) async -> Data?
 
     /// Request link preview image to be downloaded
     func requestLinkPreviewImageDownload()
