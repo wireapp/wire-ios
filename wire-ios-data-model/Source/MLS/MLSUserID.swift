@@ -29,19 +29,14 @@ public struct MLSUserID {
     // MARK: - Life cycle
 
     public init?(rawValue: String) {
+
         let components = rawValue.split(
             separator: "@",
             omittingEmptySubsequences: false
         )
-
         guard components.count == 2 else { return nil }
 
-        let userID = components[0]
-        let domain = components[1]
-        self.init(
-            userID: String(userID),
-            domain: String(domain)
-        )
+        self.init(userID: String(components[0]), domain: String(components[1]))
     }
 
     public init?(userID: String, domain: String) {
