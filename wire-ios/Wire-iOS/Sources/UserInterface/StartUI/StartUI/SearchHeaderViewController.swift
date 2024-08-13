@@ -70,7 +70,7 @@ final class SearchHeaderViewController: UIViewController {
 
         tokenField.textView.accessibilityIdentifier = "textViewSearch"
         tokenField.tokenTitleColor = SemanticColors.SearchBar.textInputView.resolvedColor(with: traitCollection)
-        tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder.capitalizingFirstCharacterOnly
+        tokenField.textView.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         tokenField.textView.keyboardAppearance = .default
         tokenField.textView.returnKeyType = .done
         tokenField.textView.autocorrectionType = .no
