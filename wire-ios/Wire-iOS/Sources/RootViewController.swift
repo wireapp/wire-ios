@@ -115,9 +115,6 @@ final class RootViewController: UIViewController {
             completion?()
         }
     }
-}
-
-extension RootViewController {
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
@@ -126,9 +123,9 @@ extension RootViewController {
             return
         }
 
-        coordinator.animate(alongsideTransition: nil, completion: { _ in
+        coordinator.animate(alongsideTransition: nil) { _ in
             appRouter.updateOverlayWindowFrame(size: size)
-        })
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
