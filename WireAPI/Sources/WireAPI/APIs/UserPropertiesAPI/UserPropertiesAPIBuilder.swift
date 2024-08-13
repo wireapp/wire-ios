@@ -42,17 +42,17 @@ public struct UserPropertiesBuilder {
         case .v0:
             UserPropertiesAPIV0(httpClient: httpClient)
         case .v1:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV1(httpClient: httpClient)
         case .v2:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV2(httpClient: httpClient)
         case .v3:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV3(httpClient: httpClient)
         case .v4:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV4(httpClient: httpClient)
         case .v5:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV5(httpClient: httpClient)
         case .v6:
-            UserPropertiesAPIV0(httpClient: httpClient)
+            UserPropertiesAPIV6(httpClient: httpClient)
         }
     }
 

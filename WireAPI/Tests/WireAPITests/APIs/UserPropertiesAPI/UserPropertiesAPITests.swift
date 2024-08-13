@@ -42,7 +42,7 @@ final class UserPropertiesAPITests: XCTestCase {
 
     // MARK: - Request generation
 
-    func testGetUserRequest() async throws {
+    func testGetUserPropertyRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.getProperty(forKey: .wireTypingIndicatorMode)
         }
