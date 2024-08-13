@@ -69,7 +69,7 @@ final class ModalTopBar: UIView {
 
     private var title: String? {
         didSet {
-            titleLabel.text = title?.capitalizingFirstCharacterOnly
+            titleLabel.text = title
             titleLabel.isHidden = title == nil
             titleLabel.accessibilityLabel = title
             titleLabel.accessibilityValue = title

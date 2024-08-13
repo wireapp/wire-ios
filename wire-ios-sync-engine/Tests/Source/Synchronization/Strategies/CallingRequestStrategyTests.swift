@@ -21,6 +21,8 @@ import WireDataModelSupport
 import WireRequestStrategy
 @testable import WireSyncEngine
 import WireSyncEngineSupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 class CallingRequestStrategyTests: MessagingTest {
 
@@ -71,7 +73,6 @@ class CallingRequestStrategyTests: MessagingTest {
         mockRegistrationDelegate = nil
         mockApplicationStatus = nil
         mockFetchUserClientsUseCase = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -162,8 +163,11 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Client List
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_NotFederated() throws {
+        // Given
+        BackendInfo.enableMocking()
+        BackendInfo.isFederationEnabled = false
+
         let (conversation, payload) = try syncMOC.performAndWait {
-            // Given
             let selfClient = createSelfClient()
 
             // One user with two clients connected to self.
@@ -235,12 +239,15 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_Federated() throws {
         // Given
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = true
+
         let (conversation, payload) = try syncMOC.performAndWait {
             let selfClient = createSelfClient()
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -323,6 +330,8 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // Then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        BackendInfo.resetMocking()
     }
 
     func testThatItGeneratesClientListRequestAndCallsTheCompletionHandler_MLS() throws {
@@ -619,9 +628,8 @@ class CallingRequestStrategyTests: MessagingTest {
         client.remoteIdentifier = .randomRemoteIdentifier()
         client.user = user
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] use flag here
-        // swiftlint:enable todo_requires_jira_link
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
             try! session.createClientSession(
                 client.sessionIdentifier!,

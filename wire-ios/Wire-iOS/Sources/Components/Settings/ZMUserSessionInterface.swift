@@ -20,9 +20,8 @@ import WireSyncEngine
 
 typealias UserSessionInterface = UserSessionSwiftInterface & UserSessionAppLockInterface
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: delete
-// swiftlint:enable todo_requires_jira_link
 protocol ZMUserSessionInterface: AnyObject {
 
     func perform(_ changes: @escaping () -> Void)

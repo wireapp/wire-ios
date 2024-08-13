@@ -42,7 +42,8 @@ extension ZMTransportResponse {
         guard let payload else {
             return nil
         }
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+        // TODO: [WPB-10283] [F] this method is used to pass events from REST api calls response to processors, not storing the event - to be cleaned
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())
     }
 }
 
@@ -64,9 +65,8 @@ extension ZMConversation {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 // Process `conversation.message-timer-update` event
-                // swiftlint:disable todo_requires_jira_link
-                // FIXME: [jacob] replace with ConversationEventProcessor
-                // swiftlint:enable todo_requires_jira_link
+                // swiftlint:disable:next todo_requires_jira_link
+                // FIXME: [WPB-9089] replace with ConversationEventProcessor
                 userSession.processConversationEvents([event])
                 completion(.success(()))
             } else {

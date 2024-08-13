@@ -379,18 +379,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
-    func stopAndDeleteRecordingIfNeeded() {
-        recorder.stopRecording()
-        recorder.deleteRecording()
-    }
-
-    func sendAudioAsIs() {
-        recorder.stopPlaying()
-        guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to send as audio file") }
-
-        delegate?.audioRecordViewControllerWantsToSendAudio(self, recordingURL: url, duration: recorder.currentDuration, filter: .none)
-    }
-
     private func openEffectsPicker() {
         guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to add effect to audio file") }
 

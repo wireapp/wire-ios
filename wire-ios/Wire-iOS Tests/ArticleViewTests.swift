@@ -29,11 +29,6 @@ final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate
 
     }
 
-    func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool {
-        // no-op
-        return false
-    }
-
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,
         user: UserType,

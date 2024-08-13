@@ -20,9 +20,8 @@ import Foundation
 @testable import Wire
 import WireRequestStrategy
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
-// swiftlint:enable todo_requires_jira_link
 class SwiftMockConversation: NSObject, Conversation {
 
     var isMLSConversationDegraded: Bool = false

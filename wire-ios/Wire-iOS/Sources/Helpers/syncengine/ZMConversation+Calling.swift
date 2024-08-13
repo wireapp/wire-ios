@@ -98,7 +98,8 @@ extension ZMConversation {
             return
         }
 
-        let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
+        let reachability = sessionManager.environment.reachability
+        let networkInfo = NetworkInfo(serverConnection: reachability)
         if networkInfo.qualityType() == .type2G {
 
             let badConnectionController = UIAlertController(
@@ -116,6 +117,8 @@ extension ZMConversation {
         } else {
             handler(false)
         }
+
+        reachability.tearDown()
     }
 
     func warnAboutNoInternetConnection() -> Bool {

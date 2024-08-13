@@ -37,8 +37,6 @@ final class ConversationInputBarViewController: UIViewController,
 
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
-    typealias ButtonColors = SemanticColors.Button
-
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
@@ -721,7 +719,11 @@ final class ConversationInputBarViewController: UIViewController,
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
         giphySearchViewController.delegate = self
-        ZClientViewController.shared?.present(giphySearchViewController.wrapInsideNavigationController(), animated: true)
+
+        let navigationController = UINavigationController(rootViewController: giphySearchViewController)
+        navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.modalPresentationStyle = .formSheet
+        ZClientViewController.shared?.present(navigationController, animated: true)
     }
 
     // MARK: - Animations
@@ -827,9 +829,8 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
 
 extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: check this is still necessary on iOS 13?
-    // swiftlint:enable todo_requires_jira_link
     private func statusBarBlinksRedFix() {
         // Workaround http://stackoverflow.com/questions/26651355/
         do {

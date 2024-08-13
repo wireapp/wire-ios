@@ -1211,9 +1211,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return conversation
         }
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: Mock properly
-        // swiftlint:enable todo_requires_jira_link
         let mockUpdateEvents = [ZMUpdateEvent]()
 
         // expectation
@@ -1378,7 +1377,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Handling out of sync conversations
 
-    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async {
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async throws {
         // GIVEN
         let conversationAndOutOfSyncTuples = await uiMOC.perform { [self] in
             [
@@ -1418,7 +1417,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // WHEN
-        await sut.repairOutOfSyncConversations()
+        try await sut.repairOutOfSyncConversations()
 
         // THEN
         await fulfillment(of: Array(expectations.values), timeout: 1.5)

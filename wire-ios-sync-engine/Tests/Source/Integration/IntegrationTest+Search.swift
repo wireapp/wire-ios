@@ -25,10 +25,10 @@ extension IntegrationTest {
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
-        // swiftlint:enable todo_requires_jira_link
-        self.overrideAPIVersion(.v2)
+        let previousAPIVersion = BackendInfo.apiVersion
+        BackendInfo.apiVersion = .v2
 
         let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
@@ -43,7 +43,8 @@ extension IntegrationTest {
         }
 
         task?.start()
-        self.resetCurrentAPIVersion()
+
+        BackendInfo.apiVersion = previousAPIVersion
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
@@ -63,10 +64,11 @@ extension IntegrationTest {
     public func searchForDirectoryUser(withName name: String, searchQuery: String) -> ZMSearchUser? {
         createSharedSearchDirectory()
         // this only work for v2 and above
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: do test assertion on apiVersion and move currentApiVersion on caller
-        // swiftlint:enable todo_requires_jira_link
-        setCurrentAPIVersion(.v2)
+        let previousAPIVersion = BackendInfo.apiVersion
+        setBackendInfoAPIVersion(.v2)
+
         let searchCompleted = customExpectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
         let task = sharedSearchDirectory?.perform(request)
@@ -83,7 +85,8 @@ extension IntegrationTest {
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
-        resetCurrentAPIVersion()
+
+        BackendInfo.apiVersion = previousAPIVersion
         return searchResult?.directory.first
     }
 

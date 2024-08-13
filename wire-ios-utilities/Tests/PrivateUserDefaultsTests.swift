@@ -77,6 +77,22 @@ final class PrivateUserDefaultsTests: XCTestCase {
         XCTAssertEqual(sut.getUUID(forKey: key), uuid)
     }
 
+    // MARK: Removing all
+
+    func test_removeAll() throws {
+        // Given
+        let scopedKey = "\(userID.uuidString)_B"
+        let storage = UserDefaults.standard
+        storage.set("A", forKey: "A-key")
+        storage.set("B", forKey: scopedKey)
+
+        // When
+        PrivateUserDefaults.removeAll(forUserID: userID, in: .standard)
+
+        // Then
+        XCTAssertEqual(storage.value(forKey: "A-key") as? String, "A")
+        XCTAssertNil(storage.value(forKey: scopedKey))
+    }
 }
 
 extension String: DefaultsKey {
