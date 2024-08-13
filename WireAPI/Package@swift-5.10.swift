@@ -41,7 +41,8 @@ let package = Package(
                 .process("APIs/TeamsAPI/Resources"),
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),
-                .process("UpdateEvent/Resources")
+                .process("UpdateEvent/Resources"),
+                .process("APIs/UserPropertiesAPI/Resources")
             ],
             swiftSettings: swiftSettings
         )

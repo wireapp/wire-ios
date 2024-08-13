@@ -28,9 +28,11 @@ struct UserPropertiesSetEventDecoder {
             String.self,
             forKey: .propertyKey
         )
+        
+        let userPropertyKey = UserPropertyKey(rawValue: key)
 
-        switch key {
-        case "WIRE_RECEIPT_MODE":
+        switch userPropertyKey {
+        case .wireReceiptMode:
             let value = try container.decode(
                 Int.self,
                 forKey: .propertyValue
@@ -38,7 +40,7 @@ struct UserPropertiesSetEventDecoder {
 
             property = .areReadRecieptsEnabled(value == 1)
 
-        case "WIRE_TYPING_INDICATOR_MODE":
+        case .wireTypingIndicatorMode:
             let value = try container.decode(
                 Int.self,
                 forKey: .propertyValue
@@ -46,7 +48,7 @@ struct UserPropertiesSetEventDecoder {
 
             property = .areTypingIndicatorsEnabled(value == 1)
 
-        case "labels":
+        case .labels:
             let payload = try container.decode(
                 LabelsPayload.self,
                 forKey: .propertyValue
@@ -70,13 +72,13 @@ struct UserPropertiesSetEventDecoder {
         return UserPropertiesSetEvent(property: property)
     }
 
-    private struct LabelsPayload: Decodable {
+}
 
-        let labels: [Label]
+struct LabelsPayload: Decodable {
 
-    }
-
-    private struct Label: Decodable {
+    let labels: [Label]
+    
+    struct Label: Decodable {
 
         let id: UUID
         let type: Int16
