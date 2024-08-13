@@ -53,9 +53,9 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertNotNil(event)
 
         // when
-        var sut: ZMTextMessage?
+        var sut: TextMessage?
         performPretendingUiMocIsSyncMoc({ [self] in
-            sut = ZMTextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
+            sut = TextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
         })
 
         // then
