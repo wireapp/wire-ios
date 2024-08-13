@@ -27,12 +27,6 @@ class SettingsBaseTableViewController: UIViewController {
     let footerSeparator = OverflowSeparatorView()
     private let footerContainer = UIView()
 
-    var footer: UIView? {
-        didSet {
-            updateFooter(footer)
-        }
-    }
-
     final fileprivate class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
             didSet {
@@ -114,20 +108,6 @@ class SettingsBaseTableViewController: UIViewController {
           footerSeparator.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
           footerSeparator.rightAnchor.constraint(equalTo: footerContainer.rightAnchor),
           footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
-        ])
-    }
-
-    private func updateFooter(_ newFooter: UIView?) {
-        footer?.removeFromSuperview()
-        footerSeparator.isHidden = newFooter == nil
-        guard let newFooter else { return }
-        footerContainer.addSubview(newFooter)
-        [footerContainer, newFooter].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            newFooter.topAnchor.constraint(equalTo: footerContainer.topAnchor),
-            newFooter.bottomAnchor.constraint(equalTo: footerContainer.bottomAnchor),
-            newFooter.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
-            newFooter.rightAnchor.constraint(equalTo: footerContainer.rightAnchor)
         ])
     }
 }
