@@ -1,0 +1,23 @@
+name: Build for PR
+
+on:
+  pull_request:
+    types: [ opened, synchronize ]
+    branches: [ 'develop', 'ci/upload-builds-to-s3-on-pr' ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: 
+  checks: write
+
+jobs:
+  build_develop:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      datadog_enabled: false
+      fastlane_action: development_pr
+      is_cloud_build: true
+    secrets: inherit
+
