@@ -81,21 +81,22 @@ struct SelfUserV0: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> SelfUser {
-        SelfUser(id: id,
-                 qualifiedID: qualifiedID,
-                 ssoID: ssoID?.toAPIModel(),
-                 name: name,
-                 handle: handle,
-                 teamID: teamID,
-                 phone: phone,
-                 accentID: accentID,
-                 managedBy: managedBy?.toAPIModel(),
-                 assets: assets,
-                 deleted: deleted,
-                 email: email,
-                 expiresAt: expiresAt?.date,
-                 service: service?.toAPIModel(),
-                 supportedProtocols: [.proteus] /// default to Proteus for api versions < v5
+        SelfUser(
+            id: id,
+            qualifiedID: qualifiedID,
+            ssoID: ssoID?.toAPIModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            phone: phone,
+            accentID: accentID,
+            managedBy: managedBy?.toAPIModel(),
+            assets: assets,
+            deleted: deleted,
+            email: email,
+            expiresAt: expiresAt?.date,
+            service: service?.toAPIModel(),
+            supportedProtocols: [.proteus] /// default to Proteus for api versions < v5
         )
     }
 }

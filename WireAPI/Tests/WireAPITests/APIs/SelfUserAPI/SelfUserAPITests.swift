@@ -55,85 +55,55 @@ final class SelfUserAPITests: XCTestCase {
         }
     }
 
-    // MARK: - Request unsupported endpoint
-
-    func testPushSupportedProtocols_UnsupportedVersionError_V0() async throws {
+    // MARK: - Request unsupported endpoints
+    
+    func testPushSupportedProtocols_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
         let httpClient = HTTPClientMock(
             code: 200,
             payload: nil
         )
-
-        let sut = SelfUserAPIV0(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
-            // When
-            try await sut.pushSupportedProtocols([.mls])
+        
+        let unsupportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3, .v4]
+        let suts = unsupportedVersions.map { $0.buildAPI(client: httpClient) }
+        
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for sut in suts {
+                taskGroup.addTask {
+                    // Then
+                    await self.XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
+                        // When
+                        try await sut.pushSupportedProtocols([.mls])
+                    }
+                }
+                
+                try await taskGroup.waitForAll()
+            }
         }
     }
+    
+    // MARK: - Request supported endpoints
 
-    func testPushSupportedProtocols_UnsupportedVersionError_V1() async throws {
+    func testPushSupportedProtocols_V5_And_NextVersions() async throws {
         // Given
         let httpClient = HTTPClientMock(
             code: 200,
             payload: nil
         )
-
-        let sut = SelfUserAPIV1(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
-            // When
-            try await sut.pushSupportedProtocols([.mls])
-        }
-    }
-
-    func testPushSupportedProtocols_UnsupportedVersionError_V2() async throws {
-        // Given
-        let httpClient = HTTPClientMock(
-            code: 200,
-            payload: nil
-        )
-
-        let sut = SelfUserAPIV2(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
-            // When
-            try await sut.pushSupportedProtocols([.mls])
-        }
-    }
-
-    func testPushSupportedProtocols_UnsupportedVersionError_V3() async throws {
-        // Given
-        let httpClient = HTTPClientMock(
-            code: 200,
-            payload: nil
-        )
-
-        let sut = SelfUserAPIV3(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
-            // When
-            try await sut.pushSupportedProtocols([.mls])
-        }
-    }
-
-    func testPushSupportedProtocols_UnsupportedVersionError_V4() async throws {
-        // Given
-        let httpClient = HTTPClientMock(
-            code: 200,
-            payload: nil
-        )
-
-        let sut = SelfUserAPIV4(httpClient: httpClient)
-
-        // Then
-        await XCTAssertThrowsError(SelfUserAPIError.unsupportedEndpointForAPIVersion) {
-            // When
-            try await sut.pushSupportedProtocols([.mls])
+        
+        let supportedVersions = APIVersion.v5.andNextVersions
+        
+        let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
+        
+        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for sut in suts {
+                taskGroup.addTask {
+                    // When
+                    try await sut.pushSupportedProtocols([.mls])
+                }
+                
+                try await taskGroup.waitForAll()
+            }
         }
     }
 
@@ -275,5 +245,12 @@ extension SelfUserAPITests {
             ),
             supportedProtocols: [.mls]
         )
+    }
+}
+
+private extension APIVersion {
+    func buildAPI(client: any HTTPClient) -> SelfUserAPI {
+        let builder = SelfUserAPIBuilder(httpClient: client)
+        return builder.makeAPI(for: self)
     }
 }
