@@ -104,9 +104,6 @@
       location = "group:wire-ios-transport/WireTransport.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-link-preview/WireLinkPreview.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:WireLinkPreview">
    </FileRef>
    <FileRef
