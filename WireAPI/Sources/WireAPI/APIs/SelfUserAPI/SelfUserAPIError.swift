@@ -18,31 +18,16 @@
 
 import Foundation
 
-/// A qualified id for MLS users.
+/// Errors originating from `SelfUserAPI`.
 
-public struct MLSUserID {
+public enum SelfUserAPIError: Error {
 
-    // MARK: - Properties
+    /// Self user was not found.
 
-    public let rawValue: String
+    case selfUserNotFound
 
-    // MARK: - Life cycle
+    /// Unsupported endpoint for API version
 
-    public init?(rawValue: String) {
+    case unsupportedEndpointForAPIVersion
 
-        let components = rawValue.split(
-            separator: "@",
-            omittingEmptySubsequences: false
-        )
-        guard components.count == 2 else { return nil }
-
-        self.init(userID: String(components[0]), domain: String(components[1]))
-    }
-
-    public init?(userID: String, domain: String) {
-        if userID.isEmpty || domain.isEmpty {
-            return nil
-        }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
-    }
 }

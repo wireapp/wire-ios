@@ -18,31 +18,10 @@
 
 import Foundation
 
-/// A qualified id for MLS users.
+class SelfUserAPIV1: SelfUserAPIV0 {
 
-public struct MLSUserID {
-
-    // MARK: - Properties
-
-    public let rawValue: String
-
-    // MARK: - Life cycle
-
-    public init?(rawValue: String) {
-
-        let components = rawValue.split(
-            separator: "@",
-            omittingEmptySubsequences: false
-        )
-        guard components.count == 2 else { return nil }
-
-        self.init(userID: String(components[0]), domain: String(components[1]))
+    override var apiVersion: APIVersion {
+        .v1
     }
 
-    public init?(userID: String, domain: String) {
-        if userID.isEmpty || domain.isEmpty {
-            return nil
-        }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
-    }
 }

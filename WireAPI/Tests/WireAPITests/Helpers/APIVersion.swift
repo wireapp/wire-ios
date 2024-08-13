@@ -16,33 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import enum WireAPI.APIVersion
 
-/// A qualified id for MLS users.
+extension APIVersion {
+    var andNextVersions: [APIVersion] {
+        let apiVersions = APIVersion.allCases
+        let currentVersion = Int(rawValue)
+        let nextVersions = Array(apiVersions.suffix(from: currentVersion))
 
-public struct MLSUserID {
-
-    // MARK: - Properties
-
-    public let rawValue: String
-
-    // MARK: - Life cycle
-
-    public init?(rawValue: String) {
-
-        let components = rawValue.split(
-            separator: "@",
-            omittingEmptySubsequences: false
-        )
-        guard components.count == 2 else { return nil }
-
-        self.init(userID: String(components[0]), domain: String(components[1]))
-    }
-
-    public init?(userID: String, domain: String) {
-        if userID.isEmpty || domain.isEmpty {
-            return nil
-        }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
+        return nextVersions
     }
 }

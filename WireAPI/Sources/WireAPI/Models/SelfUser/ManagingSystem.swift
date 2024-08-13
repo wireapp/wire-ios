@@ -18,31 +18,16 @@
 
 import Foundation
 
-/// A qualified id for MLS users.
+/// The managing system of the self user identity
 
-public struct MLSUserID {
+public enum ManagingSystem {
 
-    // MARK: - Properties
+    /// User identity is managed with Wire
 
-    public let rawValue: String
+    case wire
 
-    // MARK: - Life cycle
+    /// User identity is managed with SCIM
 
-    public init?(rawValue: String) {
+    case scim
 
-        let components = rawValue.split(
-            separator: "@",
-            omittingEmptySubsequences: false
-        )
-        guard components.count == 2 else { return nil }
-
-        self.init(userID: String(components[0]), domain: String(components[1]))
-    }
-
-    public init?(userID: String, domain: String) {
-        if userID.isEmpty || domain.isEmpty {
-            return nil
-        }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
-    }
 }

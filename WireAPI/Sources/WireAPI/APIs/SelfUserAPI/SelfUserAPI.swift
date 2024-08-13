@@ -18,31 +18,18 @@
 
 import Foundation
 
-/// A qualified id for MLS users.
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning self user.
+public protocol SelfUserAPI {
 
-public struct MLSUserID {
+    /// Get user details for self user
+    /// - Returns: The self user.
 
-    // MARK: - Properties
+    func getSelfUser() async throws -> SelfUser
 
-    public let rawValue: String
-
-    // MARK: - Life cycle
-
-    public init?(rawValue: String) {
-
-        let components = rawValue.split(
-            separator: "@",
-            omittingEmptySubsequences: false
-        )
-        guard components.count == 2 else { return nil }
-
-        self.init(userID: String(components[0]), domain: String(components[1]))
-    }
-
-    public init?(userID: String, domain: String) {
-        if userID.isEmpty || domain.isEmpty {
-            return nil
-        }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
-    }
+    /// Push supported protocols for self user
+    ///
+    /// - Parameter supportedProtocols: list of supported protocols
+    ///
+    func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws
 }

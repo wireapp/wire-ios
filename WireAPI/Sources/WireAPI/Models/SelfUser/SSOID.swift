@@ -18,31 +18,20 @@
 
 import Foundation
 
-/// A qualified id for MLS users.
+/// The sso id of the self user
 
-public struct MLSUserID {
+public struct SSOID: Equatable {
 
-    // MARK: - Properties
+    /// The self user's scim external id
 
-    public let rawValue: String
+    public let scimExternalId: String
 
-    // MARK: - Life cycle
+    /// The self user's sso subject
 
-    public init?(rawValue: String) {
+    public let subject: String
 
-        let components = rawValue.split(
-            separator: "@",
-            omittingEmptySubsequences: false
-        )
-        guard components.count == 2 else { return nil }
+    /// The self user's tenant
 
-        self.init(userID: String(components[0]), domain: String(components[1]))
-    }
+    public let tenant: String
 
-    public init?(userID: String, domain: String) {
-        if userID.isEmpty || domain.isEmpty {
-            return nil
-        }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
-    }
 }
