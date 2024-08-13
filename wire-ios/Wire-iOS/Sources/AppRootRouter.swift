@@ -69,13 +69,12 @@ final class AppRootRouter: NSObject {
         self.rootViewController = viewController
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
-        self.urlActionRouter = URLActionRouter(viewController: viewController)
+        self.urlActionRouter = URLActionRouter(viewController: viewController, sessionManager: sessionManager)
         self.switchingAccountRouter = SwitchingAccountRouter()
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
 
-        urlActionRouter.sessionManager = sessionManager
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
         quickActionsManager.sessionManager = sessionManager

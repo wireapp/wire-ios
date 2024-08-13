@@ -36,9 +36,9 @@ final class URLActionRouterTests: XCTestCase {
             style: .cancel
         ))
 
-        let viewController = RootViewController()
+        let viewController = UIViewController()
         let delegate = MockURLActionRouterDelegate()
-        let router = TestableURLActionRouter(viewController: viewController)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.delegate = delegate
 
         // WHEN
@@ -59,10 +59,10 @@ final class URLActionRouterTests: XCTestCase {
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        let viewController = RootViewController()
+        let viewController = UIViewController()
         let delegate = MockURLActionRouterDelegate()
         delegate.canDisplayAlerts = false
-        let router = TestableURLActionRouter(viewController: viewController)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.delegate = delegate
 
         // WHEN
@@ -83,10 +83,10 @@ final class URLActionRouterTests: XCTestCase {
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        let viewController = RootViewController()
+        let viewController = UIViewController()
         let delegate = MockURLActionRouterDelegate()
         delegate.canDisplayAlerts = false
-        let router = TestableURLActionRouter(viewController: viewController)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.delegate = delegate
         router.presentAlert(alert)
 
@@ -103,7 +103,7 @@ final class URLActionRouterTests: XCTestCase {
     func testThatNavigationPerformed_WhenAuthenticatedRouterIsAvailable() {
         // GIVEN
         let authenticatedRouter = MockAuthenticatedRouter()
-        let router = TestableURLActionRouter(viewController: RootViewController())
+        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: .none)
         router.authenticatedRouter = authenticatedRouter
 
         // WHEN
@@ -118,7 +118,7 @@ final class URLActionRouterTests: XCTestCase {
     func testThatNavigationPerformed_WhenAuthenticatedRouterBecomesAvailable() {
         // GIVEN
         let authenticatedRouter = MockAuthenticatedRouter()
-        let router = TestableURLActionRouter(viewController: RootViewController())
+        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: .none)
         router.navigate(to: .conversationList)
 
         // WHEN

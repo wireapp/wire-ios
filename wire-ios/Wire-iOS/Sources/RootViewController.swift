@@ -47,20 +47,19 @@ final class RootViewController: UIViewController {
         return childViewController
     }
 
-    func set(childViewController newViewController: UIViewController?,
-             animated: Bool = false,
-             completion: (() -> Void)? = nil) {
-        if let newViewController,
-           let previousViewController = childViewController {
+    func set(
+        childViewController newViewController: UIViewController,
+        animated: Bool = false,
+        completion: (() -> Void)?
+    ) {
+        if let previousViewController = childViewController {
             transition(
                 from: previousViewController,
                 to: newViewController,
                 animated: animated,
                 completion: completion)
-        } else if let newViewController {
-            contain(newViewController, completion: completion)
         } else {
-            removeChildViewController(animated: animated, completion: completion)
+            contain(newViewController, completion: completion)
         }
 
         setNeedsStatusBarAppearanceUpdate()
@@ -74,29 +73,12 @@ final class RootViewController: UIViewController {
         }
     }
 
-    private func removeChildViewController(animated: Bool, completion: (() -> Void)?) {
-        let animationGroup = DispatchGroup()
-        if childViewController?.presentedViewController != nil {
-            animationGroup.enter()
-            childViewController?.dismiss(animated: animated) {
-                animationGroup.leave()
-            }
-        }
-
-        childViewController?.willMove(toParent: nil)
-        childViewController?.view.removeFromSuperview()
-        childViewController?.removeFromParent()
-        childViewController = nil
-
-        animationGroup.notify(queue: .main) {
-            completion?()
-        }
-    }
-
-    private func transition(from fromViewController: UIViewController,
-                            to toViewController: UIViewController,
-                            animated: Bool = false,
-                            completion: (() -> Void)?) {
+    private func transition(
+        from fromViewController: UIViewController,
+        to toViewController: UIViewController,
+        animated: Bool = false,
+        completion: (() -> Void)?
+    ) {
         let animationGroup = DispatchGroup()
 
         if fromViewController.presentedViewController != nil {
@@ -136,6 +118,7 @@ final class RootViewController: UIViewController {
 }
 
 extension RootViewController {
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
