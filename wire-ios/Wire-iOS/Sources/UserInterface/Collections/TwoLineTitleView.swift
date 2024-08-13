@@ -23,17 +23,17 @@ final class TwoLineTitleView: UIView {
 
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .font(for: .body2)
+        label.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         label.textColor = SemanticColors.Label.textDefault
-
-        label.adjustsFontForContentSizeCategory = false
 
         return label
     }()
 
-    let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .mediumRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+    let subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.textColor = SemanticColors.Label.textDefault
+
         return label
     }()
 
