@@ -20,7 +20,7 @@
 @import WireProtos;
 @import MobileCoreServices;
 @import ImageIO;
-
+@import WireLinkPreview;
 
 #import "ZMMessage+Internal.h"
 #import "ZMConversation.h"

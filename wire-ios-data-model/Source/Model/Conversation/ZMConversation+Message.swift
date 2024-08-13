@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLinkPreview
 
 private let log = ZMSLog(tag: "Conversations")
 

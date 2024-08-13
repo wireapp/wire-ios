@@ -292,6 +292,7 @@
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
+		597DEB392C6B67CA005F21B0 /* WireLinkPreview in Frameworks */ = {isa = PBXBuildFile; productRef = 597DEB382C6B67CA005F21B0 /* WireLinkPreview */; };
 		5980C7012BE4E17100278363 /* E2EINotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5980C7002BE4E17100278363 /* E2EINotifications.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
 		5996E8B42C19F482007A52F0 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B32C19F482007A52F0 /* WireTesting.framework */; };
@@ -620,7 +621,6 @@
 		EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9622954A02400F58B79 /* WireProtos.framework */; };
 		EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */; };
 		EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA9692954A03100F58B79 /* WireTransport.framework */; };
-		EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */; };
 		EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8DA96F2954A03E00F58B79 /* WireImages.framework */; };
 		EE934ACB2B67F8CB008FDB19 /* ZMConversationListTests+OneOnOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE934ACA2B67F8CB008FDB19 /* ZMConversationListTests+OneOnOne.swift */; };
 		EE980FB22834EB3A00CC6B9F /* store2-100-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE980FB12834EB3A00CC6B9F /* store2-100-0.wiredatabase */; };
@@ -905,6 +905,16 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		014C36B32B27206E00D7E8EA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		597DEB3B2C6B67CA005F21B0 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -1597,7 +1607,6 @@
 		EE8DA9622954A02400F58B79 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA9692954A03100F58B79 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE8DA96F2954A03E00F58B79 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE934ACA2B67F8CB008FDB19 /* ZMConversationListTests+OneOnOne.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationListTests+OneOnOne.swift"; sourceTree = "<group>"; };
 		EE980FB12834EB3A00CC6B9F /* store2-100-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-100-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1896,11 +1905,11 @@
 			files = (
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				F9C9A66F1CAD77930039E10C /* CoreData.framework in Frameworks */,
-				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
+				597DEB392C6B67CA005F21B0 /* WireLinkPreview in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3567,7 +3576,6 @@
 				F9C9A66E1CAD77930039E10C /* CoreData.framework */,
 				EE8DA9662954A02B00F58B79 /* WireCryptobox.framework */,
 				EE8DA96F2954A03E00F58B79 /* WireImages.framework */,
-				EE8DA96C2954A03800F58B79 /* WireLinkPreview.framework */,
 				EE8DA9622954A02400F58B79 /* WireProtos.framework */,
 				5996E8B32C19F482007A52F0 /* WireTesting.framework */,
 				014C36AC2B271F2900D7E8EA /* WireTesting.framework */,
@@ -3814,6 +3822,7 @@
 				F9C9A4F71CAD5DF10039E10C /* Sources */,
 				F9C9A4F81CAD5DF10039E10C /* Frameworks */,
 				F9C9A4FA1CAD5DF10039E10C /* Resources */,
+				597DEB3B2C6B67CA005F21B0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3822,6 +3831,7 @@
 			name = WireDataModel;
 			packageProductDependencies = (
 				E6707E8F2BBD683F00469D57 /* PINCache */,
+				597DEB382C6B67CA005F21B0 /* WireLinkPreview */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5184,6 +5194,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		597DEB382C6B67CA005F21B0 /* WireLinkPreview */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLinkPreview;
+		};
 		E6707E8F2BBD683F00469D57 /* PINCache */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */;

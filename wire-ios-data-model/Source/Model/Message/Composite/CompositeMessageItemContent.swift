@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLinkPreview
 
 class CompositeMessageItemContent: NSObject {
     private let parentMessage: ZMClientMessage

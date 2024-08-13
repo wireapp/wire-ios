@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+
+@testable import WireLinkPreview
 
 class LinkAttachmentTypesTests: XCTestCase {
 
@@ -52,5 +53,4 @@ class LinkAttachmentTypesTests: XCTestCase {
         XCTAssertEqual(decodedAttachment?.thumbnails, [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!])
         XCTAssertEqual(decodedAttachment?.originalRange, NSRange(location: 10, length: 43))
     }
-
 }

@@ -25,6 +25,7 @@
 @class LinkMetadata;
 @class Mention;
 @class ZMMessage;
+@class LinkMetadata;
 
 @protocol ZMImageMessageData;
 @protocol ZMSystemMessageData;

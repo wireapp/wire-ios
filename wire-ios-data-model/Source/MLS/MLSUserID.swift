@@ -34,14 +34,10 @@ public struct MLSUserID {
             omittingEmptySubsequences: false
         )
 
-        guard
-            components.count == 2,
-            let userID = components.element(atIndex: 0),
-            let domain = components.element(atIndex: 1)
-        else {
-            return nil
-        }
+        guard components.count == 2 else { return nil }
 
+        let userID = components[0]
+        let domain = components[1]
         self.init(
             userID: String(userID),
             domain: String(domain)
