@@ -34,10 +34,9 @@ extension Data: SwiftPersistableInMetadata {}
 extension Array: SwiftPersistableInMetadata {}
 extension Int: SwiftPersistableInMetadata {}
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: Swift 4
 // extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
-// swiftlint:enable todo_requires_jira_link
 extension NSManagedObjectContext {
 
     @objc(setPersistentStoreMetadata:forKey:) public func setPersistentStoreMetadata(_ persistable: PersistableInMetadata?, key: String) {

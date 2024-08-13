@@ -24,10 +24,9 @@ extension NSManagedObjectContext {
     public func applyPersistedDataPatchesForCurrentVersion() {
         LegacyPersistedDataPatch.applyAll(in: self)
 
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: uncomment when we add the first `PersistedDataPatch`
         // PatchApplicator<PersistedDataPatch>(name: "PersistedDataPatch").applyPatches(in: self)
-        // swiftlint:enable todo_requires_jira_link
     }
 }
 

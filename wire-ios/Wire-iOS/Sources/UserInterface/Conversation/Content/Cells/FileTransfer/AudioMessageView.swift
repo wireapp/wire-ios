@@ -174,10 +174,6 @@ final class AudioMessageView: UIView, TransferView {
         }
     }
 
-    func stopProximitySensor() {
-        proximityMonitorManager?.stopListening()
-    }
-
     func configure(for message: ZMConversationMessage, isInitial: Bool) {
         fileMessage = message
 
@@ -205,12 +201,6 @@ final class AudioMessageView: UIView, TransferView {
             waveformProgressView.setProgress(0, animated: false)
         }
         timeLabel.isAccessibilityElement = false
-    }
-
-    func willDeleteMessage() {
-        proximityMonitorManager?.stopListening()
-        guard let player = audioTrackPlayer, let source = player.sourceMessage, source.isEqual(fileMessage) else { return }
-        player.stop()
     }
 
     private func configureVisibleViews(forFileMessageData fileMessageData: ZMFileMessageData, isInitial: Bool) {
@@ -319,11 +309,6 @@ final class AudioMessageView: UIView, TransferView {
     override func layoutSubviews() {
         super.layoutSubviews()
         playButton.layer.cornerRadius = playButton.bounds.size.width / 2.0
-    }
-
-    func stopPlaying() {
-        guard let player = audioTrackPlayer, let source = player.sourceMessage, source.isEqual(fileMessage) else { return }
-        player.pause()
     }
 
     private func playTrack() {
