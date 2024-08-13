@@ -23,7 +23,7 @@ import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter
-final class AppRootRouter: NSObject {
+final class AppRootRouter {
 
     // MARK: - Public Property
 
@@ -82,8 +82,6 @@ final class AppRootRouter: NSObject {
         sessionManager.foregroundNotificationResponder = foregroundNotificationFilter
         sessionManager.switchingDelegate = switchingAccountRouter
         sessionManager.presentationDelegate = urlActionRouter
-
-        super.init()
 
         setupAppStateCalculator()
         setupURLActionRouter()
