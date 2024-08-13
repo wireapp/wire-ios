@@ -83,7 +83,6 @@
 		5E4BC1BE2189EA3900A8682E /* AnyPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */; };
 		5E4BC1C6218C830500A8682E /* String+Spaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1C5218C830500A8682E /* String+Spaces.swift */; };
 		5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */; };
-		5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */; };
 		5E9EA4C422423EA800D401B2 /* ArraySafeIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */; };
 		5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */; };
@@ -316,7 +315,6 @@
 		5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPropertyTests.swift; sourceTree = "<group>"; };
 		5E4BC1C5218C830500A8682E /* String+Spaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Spaces.swift"; sourceTree = "<group>"; };
 		5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicIntegerTests.swift; sourceTree = "<group>"; };
-		5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeIndex.swift"; sourceTree = "<group>"; };
 		5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArraySafeIndexTests.swift; sourceTree = "<group>"; };
 		5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAtomicInteger.h; sourceTree = "<group>"; };
 		5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAtomicInteger.m; sourceTree = "<group>"; };
@@ -553,7 +551,6 @@
 				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
 				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
 				16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */,
-				5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */,
 				632378692508D34D00AD4346 /* Array+Shift.swift */,
 				EE16270F250BA12900D35062 /* VolatileData.swift */,
 				A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */,
@@ -1142,7 +1139,6 @@
 				EE9AEC882BD158BC00F7853F /* WireUtilities.docc in Sources */,
 				546B178224192FB70091F4B3 /* ZMObjectValidationError.m in Sources */,
 				54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */,
-				5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */,
 				3E88BE551B1F478200232589 /* ZMTimer.m in Sources */,
 				54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */,
 				06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */,
