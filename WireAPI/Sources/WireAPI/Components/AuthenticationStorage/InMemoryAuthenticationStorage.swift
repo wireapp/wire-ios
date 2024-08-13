@@ -16,12 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import Foundation
 
-extension Analytics {
+final class InMemoryAuthenticationStorage: AuthenticationStorage {
 
-    func tag(_ storableEvent: StorableTrackingEvent) {
-        tagEvent(storableEvent.name, attributes: storableEvent.attributes)
+    private var accessToken: AccessToken?
+    private var cookieData: Data?
+
+    func storeAccessToken(_ accessToken: AccessToken) {
+        self.accessToken = accessToken
+    }
+
+    func fetchAccessToken() -> AccessToken? {
+        accessToken
+    }
+
+    func storeCookieData(_ cookieData: Data?) {
+        self.cookieData = cookieData
+    }
+
+    func fetchCookieData() -> Data? {
+        cookieData
     }
 
 }

@@ -18,21 +18,20 @@
 
 import Foundation
 
-extension String {
-    /// The first character in each sentence changed to its corresponding uppercase value.
-    /// All remaining characters set to their corresponding values.
-    ///
-    /// Caveat:
+/// Errors originating from `APIService`.
 
-    ///  1. The implementation only works with a string that contains one sentence.
-    ///  The second sentence won't get capitalized.
-    ///
-    ///  2. It doesn't work if the first string is a whitespace character and delimiter.
-    var capitalizingFirstCharacterOnly: String {
-        let firstLetter = self.prefix(1).capitalized
+public enum APIServiceError: Error {
 
-        let remainingLetters = self.dropFirst()
+    /// An enqueued url request is invalid.
 
-        return firstLetter + remainingLetters
-    }
+    case invalidRequest
+
+    /// An access token is required but none is available.
+
+    case missingAccessToken
+
+    /// The response is not an http url response.
+
+    case notAHTTPURLResponse
+
 }

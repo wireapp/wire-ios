@@ -50,7 +50,6 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     weak var delegate: ConversationListCellDelegate?
 
-    private var titleBottomMarginConstraint: NSLayoutConstraint?
     private var typingObserverToken: Any?
 
     // MARK: - SectionListCellType

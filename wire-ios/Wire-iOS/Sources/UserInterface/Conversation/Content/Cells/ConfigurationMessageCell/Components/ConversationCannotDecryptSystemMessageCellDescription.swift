@@ -85,7 +85,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     // MARK: - Localization
 
     private static let BaseLocalizationString = "content.system.cannot_decrypt"
-    private static let IdentityString = ".identity"
 
     private static func makeAttributedString(systemMessage: ZMSystemMessageData, sender: UserType) -> NSAttributedString {
 
