@@ -690,6 +690,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - conversationCiphersuite
+
+    public var conversationCiphersuiteConversationId_Invocations: [Data] = []
+    public var conversationCiphersuiteConversationId_MockError: Error?
+    public var conversationCiphersuiteConversationId_MockMethod: ((Data) async throws -> WireCoreCrypto.Ciphersuite)?
+    public var conversationCiphersuiteConversationId_MockValue: WireCoreCrypto.Ciphersuite?
+
+    public func conversationCiphersuite(conversationId: Data) async throws -> WireCoreCrypto.Ciphersuite {
+        conversationCiphersuiteConversationId_Invocations.append(conversationId)
+
+        if let error = conversationCiphersuiteConversationId_MockError {
+            throw error
+        }
+
+        if let mock = conversationCiphersuiteConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = conversationCiphersuiteConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationCiphersuiteConversationId`")
+        }
+    }
+
     // MARK: - conversationEpoch
 
     public var conversationEpochConversationId_Invocations: [Data] = []
@@ -2018,11 +2041,11 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - setCallbacks
 
-    public var setCallbacksCallbacks_Invocations: [WireCoreCrypto.CoreCryptoCallbacks] = []
+    public var setCallbacksCallbacks_Invocations: [any WireCoreCrypto.CoreCryptoCallbacks] = []
     public var setCallbacksCallbacks_MockError: Error?
-    public var setCallbacksCallbacks_MockMethod: ((WireCoreCrypto.CoreCryptoCallbacks) async throws -> Void)?
+    public var setCallbacksCallbacks_MockMethod: ((any WireCoreCrypto.CoreCryptoCallbacks) async throws -> Void)?
 
-    public func setCallbacks(callbacks: WireCoreCrypto.CoreCryptoCallbacks) async throws {
+    public func setCallbacks(callbacks: any WireCoreCrypto.CoreCryptoCallbacks) async throws {
         setCallbacksCallbacks_Invocations.append(callbacks)
 
         if let error = setCallbacksCallbacks_MockError {
