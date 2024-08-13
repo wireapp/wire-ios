@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-binary "wire-avs.json" "9.8.5"
-=======
-binary "wire-avs.json" "9.7.20"
-github "microsoft/plcrashreporter" "1.11.2"
->>>>>>> e1eff962dd (feat: use `useSFTForOneToOneCalls` for 1:1 calls via SFT - WPB-7152 (#1742))
+binary "wire-avs.json" "9.7.21"
 github "wireapp/Down" "v2.3.4_xcframework"
 github "wireapp/HTMLString" "6.0.1_xcframework"
 github "wireapp/ZipArchive" "v2.4.2"
