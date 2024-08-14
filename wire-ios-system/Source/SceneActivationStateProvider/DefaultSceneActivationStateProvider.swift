@@ -18,25 +18,13 @@
 
 import UIKit
 
-protocol ApplicationProtocol {
+public struct DefaultSceneActivationStateProvider: SceneActivationStateProviding {
 
-    @available(*, deprecated, message: "Use the interfaceOrientation property of the window scene instead.")
-    var statusBarOrientation: UIInterfaceOrientation { get }
-
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
+    public func activationStateForScene(of view: UIView) -> UIScene.ActivationState? {
+        view.window?.windowScene?.activationState
+    }
 }
 
-extension UIApplication.State: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .active:
-            "active"
-        case .background:
-            "background"
-        case .inactive:
-            "inactive"
-        @unknown default:
-            "unknown"
-        }
-    }
+public extension SceneActivationStateProviding where Self == DefaultSceneActivationStateProvider {
+    static var `default`: Self { .init() }
 }
