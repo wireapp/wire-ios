@@ -300,10 +300,13 @@ private extension AppDelegate {
             shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        // let splitViewController = UISplitViewController(style: .tripleColumn)
-        // splitViewController.setViewController(rootViewController, for: .secondary)
+        let splitViewController = UISplitViewController(style: .tripleColumn)
+        splitViewController.displayModeButtonVisibility = .never
+        splitViewController.setViewController(rootViewController, for: .secondary)
+        rootViewController.navigationItem.hidesBackButton = true
+        rootViewController.navigationController?.setNavigationBarHidden(true, animated: false)
 
-        keyWindow.rootViewController = rootViewController // splitViewController
+        keyWindow.rootViewController = splitViewController
         keyWindow.makeKeyAndVisible()
     }
 
@@ -316,11 +319,10 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        // guard
-        //     let splitViewController = keyWindow.rootViewController as? UISplitViewController,
-        //     let viewController = splitViewController.viewController(for: .primary) as? RootViewController
-        // else {
-        guard let viewController = keyWindow.rootViewController as? RootViewController else {
+        guard
+            let splitViewController = keyWindow.rootViewController as? UISplitViewController,
+            let viewController = splitViewController.viewController(for: .secondary) as? RootViewController
+        else {
             fatalError("rootViewController is not of type RootViewController")
         }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
@@ -329,8 +331,9 @@ private extension AppDelegate {
 
         appRootRouter = AppRootRouter(
             viewController: {
-                NSLog("RootViewController >#@<# %@", "AppDelegate window.rootViewController: \(self.keyWindow?.rootViewController)")
-                return self.keyWindow?.rootViewController as! RootViewController
+                let viewController = (self.keyWindow.rootViewController as! UISplitViewController).viewController(for: .secondary) as! RootViewController
+                NSLog("RootViewController >#@<# %@", "splitViewController.viewController(for: .secondary): \(viewController)")
+                return viewController
             },
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
