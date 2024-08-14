@@ -66,6 +66,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ]
     private var appStateCalculator = AppStateCalculator()
 
+    private let splitViewControllerDelegate = SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate()
+
     // MARK: - Private Set Property
     private(set) var appRootRouter: AppRootRouter?
     private(set) var launchType: ApplicationLaunchType = .unknown
@@ -301,8 +303,10 @@ private extension AppDelegate {
         ])
 
         let splitViewController = UISplitViewController(style: .tripleColumn)
+        splitViewController.delegate = splitViewControllerDelegate
         splitViewController.displayModeButtonVisibility = .never
         splitViewController.setViewController(rootViewController, for: .secondary)
+
         rootViewController.navigationItem.hidesBackButton = true
         rootViewController.navigationController?.setNavigationBarHidden(true, animated: false)
 
