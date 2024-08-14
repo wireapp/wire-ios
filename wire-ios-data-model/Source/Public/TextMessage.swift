@@ -22,6 +22,7 @@ import WireLinkPreview
 @objc(ZMTextMessage) @objcMembers
 final class TextMessage: ZMMessage, TextMessageData {
 
+    // swiftlint:disable:next static_over_final_class
     override class func entityName() -> String { "TextMessage" }
 
     @NSManaged public var text: String?
@@ -43,6 +44,7 @@ final class TextMessage: ZMMessage, TextMessageData {
         super.shortDebugDescription() + (text.map { "'\($0)'" } ?? "<nil>")
     }
 
+    // swiftlint:disable:next static_over_final_class
     override class func createOrUpdate(
         from updateEvent: ZMUpdateEvent,
         in moc: NSManagedObjectContext,
