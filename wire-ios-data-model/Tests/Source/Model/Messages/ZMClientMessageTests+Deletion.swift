@@ -152,7 +152,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAPreEndtoEndPlainTextMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let sut = ZMTextMessage(nonce: .create(), managedObjectContext: uiMOC) // Pre e2ee plain text message
+        let sut = TextMessage(nonce: .create(), managedObjectContext: uiMOC) // Pre e2ee plain text message
 
         sut.visibleInConversation = conversation
         sut.sender = selfUser

@@ -188,7 +188,7 @@ extension ConversationTextMessageCellDescription {
         return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
     }
 
-    static func cells(textMessageData: ZMTextMessageData,
+    static func cells(textMessageData: TextMessageData,
                       message: ZMConversationMessage,
                       searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
 

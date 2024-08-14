@@ -99,7 +99,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func formatForPreview(message: ZMTextMessageData, inputMode: Bool) -> NSAttributedString {
+    static func formatForPreview(message: TextMessageData, inputMode: Bool) -> NSAttributedString {
         var plainText = message.messageText ?? ""
 
         // Substitute mentions with text markers
@@ -130,7 +130,7 @@ extension NSAttributedString {
     }
 
     @objc
-    static func format(message: ZMTextMessageData, isObfuscated: Bool) -> NSAttributedString {
+    static func format(message: TextMessageData, isObfuscated: Bool) -> NSAttributedString {
 
         var plainText = message.messageText ?? ""
 

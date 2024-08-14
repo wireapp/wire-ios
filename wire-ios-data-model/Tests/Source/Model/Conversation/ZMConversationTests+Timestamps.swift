@@ -437,7 +437,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             systemMessage2.visibleInConversation = conversation
             systemMessage2.relevantForConversationStatus = false
 
-            let textMessage = ZMTextMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            let textMessage = TextMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             textMessage.text = "Test"
             textMessage.visibleInConversation = conversation
 

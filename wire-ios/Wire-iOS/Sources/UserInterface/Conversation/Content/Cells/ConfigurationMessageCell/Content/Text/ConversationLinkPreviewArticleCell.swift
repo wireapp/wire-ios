@@ -22,7 +22,7 @@ import WireDataModel
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
 
     struct Configuration {
-        let textMessageData: ZMTextMessageData
+        let textMessageData: TextMessageData
         let showImage: Bool
         let message: ZMConversationMessage
         var isObfuscated: Bool {
@@ -114,7 +114,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMTextMessageData) {
+    init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
         configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
         accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description

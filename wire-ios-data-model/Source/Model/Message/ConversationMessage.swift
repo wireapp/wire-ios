@@ -85,7 +85,7 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var needsReadConfirmation: Bool { get }
 
     /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
-    var textMessageData: ZMTextMessageData? { get }
+    var textMessageData: TextMessageData? { get }
 
     /// The image data associated with the message. If the message has no image, it will be nil
     var imageMessageData: ZMImageMessageData? { get }
@@ -312,7 +312,7 @@ extension ZMMessage {
     @NSManaged public var sender: ZMUser?
     @NSManaged public var serverTimestamp: Date?
 
-    @objc public var textMessageData: ZMTextMessageData? {
+    @objc public var textMessageData: TextMessageData? {
         return nil
     }
 

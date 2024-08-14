@@ -119,36 +119,6 @@ typedef NS_CLOSED_ENUM(int16_t, ZMParticipantsRemovedReason) {
     ZMParticipantsRemovedReasonFederationTermination = 2
 };
 
-@protocol ZMTextMessageData <NSObject>
-
-@property (nonatomic, readonly, nullable) NSString *messageText;
-@property (nonatomic, readonly, nullable) LinkMetadata *linkPreview;
-@property (nonatomic, readonly, nonnull) NSArray<Mention *> *mentions;
-@property (nonatomic, readonly, nullable) id<ZMConversationMessage> quoteMessage;
-
-/// Returns true if the link preview will have an image
-@property (nonatomic, readonly) BOOL linkPreviewHasImage;
-
-/// Unique identifier for link preview image.
-@property (nonatomic, readonly, nullable) NSString *linkPreviewImageCacheKey;
-
-/// Detect if user replies to a message sent from himself
-@property (nonatomic, readonly) BOOL isQuotingSelf;
-
-/// Check if message has a quote
-@property (nonatomic, readonly) BOOL hasQuote;
-
-/// Fetch linkpreview image data from disk on the given queue
-- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t _Nonnull )queue completionHandler:(void (^_Nonnull)(NSData * _Nullable imageData))completionHandler;
-
-/// Request link preview image to be downloaded
-- (void)requestLinkPreviewImageDownload;
-
-/// Edit the text content
-- (void)editText:(NSString * _Nonnull)text mentions:(NSArray<Mention *> * _Nonnull)mentions fetchLinkPreview:(BOOL)fetchLinkPreview;
-
-@end
-
 
 @protocol ZMSystemMessageData <NSObject>
 

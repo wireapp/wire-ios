@@ -53,9 +53,9 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertNotNil(event)
 
         // when
-        var sut: ZMTextMessage?
+        var sut: TextMessage?
         performPretendingUiMocIsSyncMoc({ [self] in
-            sut = ZMTextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
+            sut = TextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
         })
 
         // then
@@ -342,7 +342,7 @@ extension ClientMessageTests {
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
-        var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
         let contentData = try prototype.serializedData()
         let data: NSDictionary = try [
