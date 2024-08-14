@@ -49,7 +49,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testFocusedState() {
         // given
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        (UIApplication.shared.delegate as! AppDelegate).keyWindow?.rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()
@@ -60,7 +60,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testFocusedDeFocusedState() {
         // given
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        (UIApplication.shared.delegate as! AppDelegate).keyWindow?.rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()
