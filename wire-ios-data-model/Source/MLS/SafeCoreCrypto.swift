@@ -40,9 +40,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     public convenience init(path: String, key: String) async throws {
         let coreCrypto = try await coreCryptoDeferredInit(
             path: path,
-            key: key,
-            ciphersuites: [],
-            nbKeyPackage: nil
+            key: key
         )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())
