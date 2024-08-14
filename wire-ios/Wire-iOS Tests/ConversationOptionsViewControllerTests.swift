@@ -21,6 +21,8 @@ import WireSyncEngine
 import WireSyncEngineSupport
 import WireUITesting
 import XCTest
+@_spi(MockBackendInfo)
+import WireTransport
 
 @testable import Wire
 
@@ -79,7 +81,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        BackendInfo.storage = .temporary()
+        BackendInfo.enableMocking()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
         mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
@@ -89,7 +91,7 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
-        BackendInfo.storage = UserDefaults.standard
+        BackendInfo.resetMocking()
         mockConversation = nil
         mockUserSession = nil
         mockCreateSecuredGuestLinkUseCase = nil
