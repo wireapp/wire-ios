@@ -156,9 +156,8 @@ struct LogFilesProvider: LogFilesProviding {
         Date: \(date.transportString())
         """
 
-        if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
-            // display only when enabled
-            body.append("\nDatadog ID: \(datadogUserIdentifier)")
+        if let datadogId = datadogUserId {
+            body.append("\nDatadog ID: \(datadogId)")
         }
 
         let infoFileURL = url.appendingPathComponent("info.txt")
@@ -170,6 +169,18 @@ struct LogFilesProvider: LogFilesProviding {
         )
 
         return infoFileURL
+    }
+
+    private var datadogUserId: String? {
+        var id: String?
+
+        #if DATADOG_IMPORT
+        // datadogId has always a value. NONE by default
+        // return only when enabled
+        id = DatadogWrapper.shared?.datadogUserId
+        #endif
+
+        return id
     }
 
 }

@@ -119,6 +119,24 @@ class SettingsDebugReportViewController: UIViewController {
         ])
     }
 
+    private func setupNavigationBarTitle(_ title: String) {
+        navigationItem.title = title.capitalized
+
+        let titleTextAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+
+        navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
+
+        navigationItem.titleView?.isAccessibilityElement = true
+        navigationItem.titleView?.accessibilityTraits = .header
+        navigationItem.titleView?.accessibilityLabel = navigationItem.title
+
+        navigationItem.titleView?.showsLargeContentViewer = true
+        navigationItem.titleView?.largeContentTitle = navigationItem.title
+    }
+
     // MARK: - Actions
 
     @objc private func didTapSendReport() {

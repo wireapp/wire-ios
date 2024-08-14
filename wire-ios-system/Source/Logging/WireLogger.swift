@@ -20,7 +20,7 @@ import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
-    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
+    public static var provider: LoggerProtocol = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
 
     public let tag: String
 
@@ -29,11 +29,11 @@ public struct WireLogger: LoggerProtocol {
     }
 
     public var logFiles: [URL] {
-        Self.provider?.logFiles ?? []
+        Self.provider.logFiles ?? []
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
-        Self.provider?.addTag(key, value: value)
+        Self.provider.addTag(key, value: value)
     }
 
     public func debug(
@@ -84,8 +84,12 @@ public struct WireLogger: LoggerProtocol {
         log(level: .critical, message: message, attributes: attributes)
     }
 
+    public static var logFiles: [URL] {
+        provider.logFiles
+    }
+
     private func shouldLogMessage(_ message: LogConvertible) -> Bool {
-        return Self.provider != nil && !message.logDescription.isEmpty
+        return !message.logDescription.isEmpty
     }
 
     private func log(
@@ -101,22 +105,22 @@ public struct WireLogger: LoggerProtocol {
 
         switch level {
         case .debug:
-            Self.provider?.debug(message, attributes: attributes)
+            Self.provider.debug(message, attributes: attributes)
 
         case .info:
-            Self.provider?.info(message, attributes: attributes)
+            Self.provider.info(message, attributes: attributes)
 
         case .notice:
-            Self.provider?.notice(message, attributes: attributes)
+            Self.provider.notice(message, attributes: attributes)
 
         case .warn:
-            Self.provider?.warn(message, attributes: attributes)
+            Self.provider.warn(message, attributes: attributes)
 
         case .error:
-            Self.provider?.error(message, attributes: attributes)
+            Self.provider.error(message, attributes: attributes)
 
         case .critical:
-            Self.provider?.critical(message, attributes: attributes)
+            Self.provider.critical(message, attributes: attributes)
         }
     }
 
