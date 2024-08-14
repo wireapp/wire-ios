@@ -26,15 +26,12 @@ extension UIApplication {
     var topMostVisibleWindow: UIWindow? {
 
         let sortedWindows = windows.sorted { $0.windowLevel < $1.windowLevel }
-        let visibleWindow = sortedWindows.filter {
-            guard let controller = $0.rootViewController else {
+        let visibleWindow = sortedWindows.filter { window in
+            guard let rootViewController = window.rootViewController else {
                 return false
             }
 
-            // if let splitViewController = controller as? UISplitViewController, splitViewController.viewController(for: .primary) is RootViewController {
-            //     return true
-            // }
-            if controller is RootViewController {
+            if let splitViewController = rootViewController as? UISplitViewController, splitViewController.viewController(for: .secondary) is RootViewController {
                 return true
             }
 
