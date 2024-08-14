@@ -99,10 +99,10 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     private func setupNavigationBar() {
-        setupNavigationBarTitle(L10n.Localizable.Inbox.title.capitalized)
-        let button = AuthenticationNavigationBar.makeBackButton()
-        button.addTarget(self, action: #selector(onBackButtonPressed), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        setupNavigationBarTitle(L10n.Localizable.Inbox.title)
+        navigationItem.leftBarButtonItem = UIBarButtonItem.backButton(action: UIAction { _ in
+            ZClientViewController.shared?.showConversationList()
+        }, accessibilityLabel: L10n.Localizable.General.back)
     }
 
     // MARK: - UITableViewDataSource
@@ -127,11 +127,6 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - Helpers
-
-    @objc
-    func onBackButtonPressed() {
-        ZClientViewController.shared?.showConversationList()
-    }
 
     private func configureCell(_ cell: ConnectRequestCell, for indexPath: IndexPath) {
         // Get the user in reversed order, newer request is shown on top
