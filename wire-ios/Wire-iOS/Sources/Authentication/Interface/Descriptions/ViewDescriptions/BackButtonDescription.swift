@@ -29,11 +29,15 @@ final class BackButtonDescription {
 
 extension BackButtonDescription: ViewDescriptor {
     func create() -> UIView {
-        let button = IconButton()
-        button.frame = CGRect(x: 0, y: 0, width: 40, height: 20)
-        button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-        let iconType: StyleKitIcon = UIApplication.isLeftToRightLayout ? .backArrow : .forwardArrow
-        button.setIcon(iconType, size: .tiny, for: .normal)
+        let button = UIButton()
+        let chevronRightImage = UIImage(named: "ChevronRight")
+        let chevronLeftImage = UIImage(named: "ChevronLeft")
+
+        button.tintColor = SemanticColors.Icon.foregroundDefault
+
+        let buttonImage = UIApplication.shared.userInterfaceLayoutDirection == .leftToRight ? chevronLeftImage : chevronRightImage
+        button.setImage(buttonImage, for: .normal)
+
         button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(BackButtonDescription.backButtonTapped(_:)), for: .touchUpInside)
         button.sizeToFit()
