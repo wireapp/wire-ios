@@ -99,7 +99,6 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             message = self.insertMessage(with: .uploaded)
 
-
             // When
             self.process(message)
         }
