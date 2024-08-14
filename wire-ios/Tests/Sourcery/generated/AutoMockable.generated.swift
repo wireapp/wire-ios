@@ -31,9 +31,12 @@ import UIKit
 import AppKit
 #endif
 
+import CoreLocation
 import WireDataModel
+import WireSyncEngine
 
 @testable import Wire
+@testable import WireCommonComponents
 
 
 
@@ -270,6 +273,30 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
         } else {
             fatalError("no mock for `getProteusFingerPrint`")
         }
+    }
+
+}
+
+public class MockFileMetaDataGenerating: FileMetaDataGenerating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - metadataForFileAtURL
+
+    public var metadataForFileAtURLUTINameCompletion_Invocations: [(url: URL, uti: String, name: String, completion: (ZMFileMetadata) -> Void)] = []
+    public var metadataForFileAtURLUTINameCompletion_MockMethod: ((URL, String, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
+
+    public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
+        metadataForFileAtURLUTINameCompletion_Invocations.append((url: url, uti: uti, name: name, completion: completion))
+
+        guard let mock = metadataForFileAtURLUTINameCompletion_MockMethod else {
+            fatalError("no mock for `metadataForFileAtURLUTINameCompletion`")
+        }
+
+        mock(url, uti, name, completion)
     }
 
 }
