@@ -1,4 +1,8 @@
 binary "wire-avs.json" "9.7.21"
+<<<<<<< HEAD
+=======
+github "microsoft/plcrashreporter" "1.11.2"
+>>>>>>> 4bd3cd6ff9 (chore: set avs version to 9.7.21- WPB-10564 (#1805))
 github "wireapp/Down" "v2.3.4_xcframework"
 github "wireapp/HTMLString" "6.0.1_xcframework"
 github "wireapp/ZipArchive" "v2.4.2"
