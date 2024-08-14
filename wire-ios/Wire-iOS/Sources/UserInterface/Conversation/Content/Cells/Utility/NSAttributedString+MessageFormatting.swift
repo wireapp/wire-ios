@@ -156,13 +156,11 @@ extension NSAttributedString {
         }
 
         // Do emoji substition (but not inside link or mentions)
-        let codeBlockRanges = markdownText.ranges(of: .code)
-        let links = markdownText.links(excluding: codeBlockRanges)
+        let links = markdownText.links()
         let linkAttachmentRanges = links.compactMap { Range<Int>($0.range) }
         let mentionRanges = mentionTextObjects.compactMap { $0.range(in: markdownText.string as String) }
-        markdownText.replaceEmoticons(
-            excluding: linkAttachmentRanges + mentionRanges + codeBlockRanges.compactMap { Range<Int>($0) }
-        )
+        let codeBlockRanges = markdownText.ranges(of: .code).compactMap { Range<Int>($0) }
+        markdownText.replaceEmoticons(excluding: linkAttachmentRanges + mentionRanges + codeBlockRanges)
 
         markdownText.removeTrailingWhitespace()
         markdownText.changeFontSizeIfMessageContainsOnlyEmoticons()
@@ -170,10 +168,8 @@ extension NSAttributedString {
         return markdownText
     }
 
-    func links(
-        excluding excludedRanges: [NSRange] = []
-    ) -> [URLWithRange] {
-        return NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: excludedRanges) ?? []
+    func links() -> [URLWithRange] {
+        return NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: []) ?? []
     }
 
 }
