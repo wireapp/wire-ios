@@ -24,7 +24,7 @@ struct AppLockFeatureConfigDecoder {
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> AppLockFeatureConfig {
         let payload = try container.decode(
-            FeatureWithConfig<Payload>.self,
+            FeatureWithConfig<FeatureConfigResponse.AppLockV0>.self,
             forKey: .payload
         )
 
@@ -33,13 +33,6 @@ struct AppLockFeatureConfigDecoder {
             isMandatory: payload.config.enforceAppLock,
             inactivityTimeoutInSeconds: payload.config.inactivityTimeoutSecs
         )
-    }
-
-    private struct Payload: Decodable {
-
-        let enforceAppLock: Bool
-        let inactivityTimeoutSecs: UInt
-
     }
 
 }

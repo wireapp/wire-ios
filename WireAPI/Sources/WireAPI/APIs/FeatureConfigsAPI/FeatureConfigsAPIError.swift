@@ -18,21 +18,20 @@
 
 import Foundation
 
-struct EndToEndIdentityFeatureConfigDecoder {
+/// Errors originating from `FeatureConfigsAPI`.
 
-    func decode(
-        from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
-    ) throws -> EndToEndIdentityFeatureConfig {
-        let payload = try container.decode(
-            FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4>.self,
-            forKey: .payload
-        )
+public enum FeatureConfigsAPIError: Error {
 
-        return EndToEndIdentityFeatureConfig(
-            status: payload.status,
-            acmeDiscoveryURL: payload.config.acmeDiscoveryUrl,
-            verificationExpiration: payload.config.verificationExpiration
-        )
-    }
+    /// Insufficient permissions
+
+    case insufficientPermissions
+
+    /// Not a team member
+
+    case userIsNotTeamMember
+
+    /// Team not found
+
+    case teamNotFound
 
 }

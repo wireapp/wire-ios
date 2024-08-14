@@ -24,4 +24,136 @@ class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
         .v4
     }
 
+    override func getAllFeatureConfigs() async throws -> [FeatureConfig] {
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/feature-configs",
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: 200, type: FeatureConfigsResponseAPIV4.self)
+            .failure(code: 403, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
+            .failure(code: 403, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
+            .failure(code: 404, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
+            .parse(response)
+    }
+
+}
+
+struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
+    let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
+    let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
+    let conferenceCalling: FeatureWithoutConfig
+    let conversationGuestLinks: FeatureWithoutConfig
+    let digitalSignatures: FeatureWithoutConfig
+    let fileSharing: FeatureWithoutConfig
+    let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
+    let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>?
+    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4> /// Starting api v4
+    let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4> /// Starting api v4
+
+    func toAPIModel() -> [FeatureConfig] {
+        var featureConfigs: [FeatureConfig] = []
+
+        let appLockConfig = AppLockFeatureConfig(
+            status: appLock.status,
+            isMandatory: appLock.config.enforceAppLock,
+            inactivityTimeoutInSeconds: appLock.config.inactivityTimeoutSecs
+        )
+
+        featureConfigs.append(.appLock(appLockConfig))
+
+        let classifiedDomainsConfig = ClassifiedDomainsFeatureConfig(
+            status: classifiedDomains.status,
+            domains: classifiedDomains.config.domains
+        )
+
+        featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
+
+        let conferenceCallingConfig = ConferenceCallingFeatureConfig(
+            status: conferenceCalling.status
+        )
+
+        featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
+
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
+            status: conversationGuestLinks.status
+        )
+
+        featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
+
+        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(
+            status: digitalSignatures.status
+        )
+
+        featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
+
+        let fileSharingConfig = FileSharingFeatureConfig(
+            status: fileSharing.status
+        )
+
+        featureConfigs.append(.fileSharing(fileSharingConfig))
+
+        let selfDeletingMessagesConfig = SelfDeletingMessagesFeatureConfig(
+            status: selfDeletingMessages.status,
+            enforcedTimeoutSeconds: selfDeletingMessages.config.enforcedTimeoutSeconds
+        )
+
+        featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
+
+        if let mls {
+            let mlsConfig = MLSFeatureConfig(
+                status: mls.status,
+                protocolToggleUsers: mls.config.protocolToggleUsers,
+                defaultProtocol: mls.config.defaultProtocol,
+                allowedCipherSuites: mls.config.allowedCipherSuites,
+                defaultCipherSuite: mls.config.defaultCipherSuite,
+                supportedProtocols: mls.config.supportedProtocols
+            )
+
+            featureConfigs.append(.mls(mlsConfig))
+        }
+
+        let mlsMigrationConfig = MLSMigrationFeatureConfig(
+            status: mlsMigration.status,
+            startTime: mlsMigration.config.startTime?.date,
+            finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
+
+        )
+
+        featureConfigs.append(.mlsMigration(mlsMigrationConfig))
+
+        let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
+            status: mlsE2EId.status,
+            acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
+            verificationExpiration: mlsE2EId.config.verificationExpiration
+
+        )
+
+        featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
+
+        return featureConfigs
+    }
+}
+
+extension FeatureConfigResponse {
+    struct MLSV4: Codable, Equatable {
+        let protocolToggleUsers: Set<UUID>
+        let defaultProtocol: SupportedProtocol
+        let allowedCipherSuites: [MLSCipherSuite]
+        let defaultCipherSuite: MLSCipherSuite
+        let supportedProtocols: Set<SupportedProtocol> /// Starting api v4
+    }
+
+    struct MLSMigrationV4: Decodable {
+        let startTime: UTCTime?
+        let finaliseRegardlessAfter: UTCTime?
+    }
+
+    struct EndToEndIdentityV4: Codable, Equatable {
+        let acmeDiscoveryUrl: String?
+        let verificationExpiration: UInt
+    }
 }

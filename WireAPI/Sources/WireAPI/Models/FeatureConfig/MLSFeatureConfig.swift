@@ -32,7 +32,7 @@ public struct MLSFeatureConfig: Equatable, Codable {
 
     /// The default protocol to use when creating a conversation.
 
-    public let defaultProtocol: MessageProtocol
+    public let defaultProtocol: SupportedProtocol
 
     /// The list of cipher suites that are allowed to be used with mls.
 
@@ -44,6 +44,6 @@ public struct MLSFeatureConfig: Equatable, Codable {
 
     /// The list of supported message protocols.
 
-    public let supportedProtocols: Set<MessageProtocol>
+    public let supportedProtocols: Set<SupportedProtocol>
 
 }
