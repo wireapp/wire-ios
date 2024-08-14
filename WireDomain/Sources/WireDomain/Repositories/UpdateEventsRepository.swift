@@ -256,7 +256,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func stopReceivingLiveEvents() async {
-        await pushChannel.close()
+        pushChannel.close()
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {

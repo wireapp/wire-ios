@@ -49,20 +49,3 @@ extension UIEdgeInsets {
         }
     }
 }
-
-// MARK: - String
-
-extension String {
-
-    func addingTrailingAttachment(_ attachment: NSTextAttachment, verticalOffset: CGFloat = 0) -> NSAttributedString {
-        if let attachmentSize = attachment.image?.size {
-            attachment.bounds = CGRect(x: 0, y: verticalOffset, width: attachmentSize.width, height: attachmentSize.height)
-        }
-
-        if UIApplication.isLeftToRightLayout {
-            return self + "  " + NSAttributedString(attachment: attachment)
-        } else {
-            return NSAttributedString(attachment: attachment) + "  " + self
-        }
-    }
-}
