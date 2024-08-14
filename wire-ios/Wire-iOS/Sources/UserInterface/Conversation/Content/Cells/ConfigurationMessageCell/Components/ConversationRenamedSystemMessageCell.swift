@@ -29,7 +29,6 @@ final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Con
         let newConversationName: NSAttributedString
     }
 
-    private var nameLabelFont: UIFont? = .normalSemiboldFont
     private let nameLabel = UILabel()
 
     override func configureSubviews() {

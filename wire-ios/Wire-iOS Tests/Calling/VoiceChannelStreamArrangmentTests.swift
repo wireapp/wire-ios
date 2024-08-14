@@ -70,7 +70,7 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         mockUser1 = nil
         mockUser2 = nil
         mockUser3 = nil
-        CallingConfiguration.resetDefaultConfig()
+        CallingConfiguration.testHelper_resetDefaultConfig()
         super.tearDown()
     }
 

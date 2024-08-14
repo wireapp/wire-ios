@@ -31,6 +31,7 @@ let package = Package(
             name: "WireAPITests",
             dependencies: [
                 "WireAPI",
+                "WireAPISupport",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [
@@ -40,7 +41,8 @@ let package = Package(
                 .process("APIs/TeamsAPI/Resources"),
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),
-                .process("UpdateEvent/Resources")
+                .process("UpdateEvent/Resources"),
+                .process("APIs/SelfUserAPI/Resources")
             ],
             swiftSettings: swiftSettings
         )

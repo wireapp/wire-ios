@@ -187,12 +187,4 @@ extension BadgeUserImageView {
         }
     }
 
-    func setBadgeIcon(_ newValue: StyleKitIcon) {
-        badgeIcon = newValue
-    }
-
-    func removeBadgeIcon() {
-        badgeIcon = nil
-    }
-
 }
