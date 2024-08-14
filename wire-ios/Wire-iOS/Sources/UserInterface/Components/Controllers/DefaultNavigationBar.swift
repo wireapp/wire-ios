@@ -20,11 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
-
-    func redrawFont() {
-        titleTextAttributes?[.font] = FontSpec.smallSemiboldFont.font!
-    }
+class DefaultNavigationBar: UINavigationBar {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,9 +32,15 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
 
-    func configure() {
+    private func configure() {
         tintColor = SemanticColors.Label.textDefault
-        titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        var navBarTitleTextAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
+            .baselineOffset: 1.0
+        ]
+
+        titleTextAttributes = navBarTitleTextAttributes
         configureBackground()
         let backIndicatorInsets = UIEdgeInsets(top: 0, left: 4, bottom: 2.5, right: 0)
         backIndicatorImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).with(insets: backIndicatorInsets, backgroundColor: .clear)
@@ -49,12 +51,6 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
         isTranslucent = false
         barTintColor = SemanticColors.View.backgroundDefault
         shadowImage = UIImage.singlePixelImage(with: UIColor.clear)
-    }
-
-    static func titleTextAttributes(for color: UIColor = SemanticColors.Label.textDefault) -> [NSAttributedString.Key: Any] {
-        return [.font: FontSpec.smallSemiboldFont.font!,
-                .foregroundColor: color,
-                .baselineOffset: 1.0]
     }
 
 }
