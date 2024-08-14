@@ -51,14 +51,14 @@ class URLActionRouter: URLActionRouterProtocol {
 
     // MARK: - Private Properties
 
-    private let rootViewController: UIViewController
+    private let rootViewController: () -> UIViewController
     private var pendingDestination: NavigationDestination?
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
 
     init(
-        viewController: UIViewController,
+        viewController: @escaping () -> UIViewController,
         sessionManager: SessionManager?
     ) {
         self.rootViewController = viewController
@@ -131,7 +131,7 @@ class URLActionRouter: URLActionRouterProtocol {
     }
 
     func internalPresentAlert(_ alert: UIAlertController) {
-        rootViewController.present(alert, animated: true, completion: nil)
+        rootViewController().present(alert, animated: true, completion: nil)
     }
 }
 
@@ -172,7 +172,7 @@ extension URLActionRouter: PresentationDelegate {
 
         // Use the rootViewController to present the alert
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
-            rootViewController.present(alertController, animated: true)
+            rootViewController().present(alertController, animated: true)
         } else {
             pendingAlert = alertController
         }
@@ -287,7 +287,7 @@ extension URLActionRouter: PresentationDelegate {
 
         let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
-        rootViewController.present(hostingController, animated: true)
+        rootViewController().present(hostingController, animated: true)
     }
 
 }

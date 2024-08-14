@@ -55,14 +55,14 @@ final class AppRootRouter {
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: This should be private
-    let rootViewController: RootViewController
+    let rootViewController: () -> RootViewController
 
     private var lastLaunchOptions: LaunchOptions?
 
     // MARK: - Initialization
 
     init(
-        viewController: RootViewController,
+        viewController: @escaping () -> RootViewController,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator
     ) {
@@ -274,13 +274,13 @@ extension AppRootRouter {
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
-        rootViewController.set(childViewController: blockerViewController,
+        rootViewController().set(childViewController: blockerViewController,
                                completion: completion)
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
-        rootViewController.set(childViewController: blockerViewController,
+        rootViewController().set(childViewController: blockerViewController,
                                completion: completion)
     }
 
@@ -288,7 +288,7 @@ extension AppRootRouter {
         let blockerViewController = BlockerViewController(
             context: .pendingCertificateEnroll,
             sessionManager: sessionManager)
-        rootViewController.set(childViewController: blockerViewController,
+        rootViewController().set(childViewController: blockerViewController,
                                completion: completion)
     }
 
@@ -299,7 +299,7 @@ extension AppRootRouter {
             error: error
         )
 
-        rootViewController.set(childViewController: blockerViewController,
+        rootViewController().set(childViewController: blockerViewController,
                                completion: completion)
     }
 
@@ -310,7 +310,7 @@ extension AppRootRouter {
             launchViewController.showLoadingScreen()
         }
 
-        rootViewController.set(childViewController: launchViewController,
+        rootViewController().set(childViewController: launchViewController,
                                completion: completion)
     }
 
@@ -353,7 +353,7 @@ extension AppRootRouter {
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
-        rootViewController.set(childViewController: navigationController,
+        rootViewController().set(childViewController: navigationController,
                                completion: completion)
     }
 
@@ -374,14 +374,14 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-        rootViewController.set(
+        rootViewController().set(
             childViewController: authenticatedRouter.viewController,
             completion: completion
         )
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
-        rootViewController.set(
+        rootViewController().set(
             childViewController: AppLockModule.build(
                 userSession: userSession
             ),
@@ -399,12 +399,12 @@ extension AppRootRouter {
 
     // MARK: - Helpers
     private func configureUnauthenticatedAppearance() {
-        rootViewController.view.window?.tintColor = UIColor.Wire.primaryLabel
+        rootViewController().view.window?.tintColor = UIColor.Wire.primaryLabel
         ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self]).tintColor = UIColor.Team.activeButton
     }
 
     private func configureAuthenticatedAppearance() {
-        rootViewController.view.window?.tintColor = .accent()
+        rootViewController().view.window?.tintColor = .accent()
         UIColor.setAccentOverride(nil)
     }
 
@@ -428,7 +428,7 @@ extension AppRootRouter {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
         return AuthenticatedRouter(
-            rootViewController: rootViewController,
+            rootViewController: rootViewController(),
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
@@ -441,7 +441,8 @@ extension AppRootRouter {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: rootViewController),
+                targetVC: rootViewController()
+            ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
     }
@@ -533,7 +534,7 @@ extension AppRootRouter {
                 style: .cancel
             ))
 
-            rootViewController.present(alert, animated: true)
+            rootViewController().present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
             let alert = UIAlertController(
@@ -546,12 +547,12 @@ extension AppRootRouter {
                 style: .cancel
             ))
 
-            rootViewController.present(alert, animated: true)
+            rootViewController().present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
             wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            rootViewController.present(wipeCompletionViewController, animated: true)
+            rootViewController().present(wipeCompletionViewController, animated: true)
 
         default:
             break
@@ -618,7 +619,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         ConversationListCell.invalidateCachedCellSize()
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
-        rootViewController.redrawAllFonts()
+        rootViewController().redrawAllFonts()
     }
 
     static func configureAppearance() {

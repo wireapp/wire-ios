@@ -86,7 +86,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // TODO [WPB-9867]: remove this property
     var mediaPlaybackManager: MediaPlaybackManager? {
-        return appRootRouter?.rootViewController
+        return appRootRouter?.rootViewController()
             .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
     }
 
@@ -286,7 +286,10 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
-            viewController: viewController,
+            viewController: {
+                NSLog("RootViewController >#@<# %@", "AppDelegate window.rootViewController: \(self.window?.rootViewController)")
+                return self.window?.rootViewController as! RootViewController
+            },
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
