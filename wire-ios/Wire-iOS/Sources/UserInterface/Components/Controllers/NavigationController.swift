@@ -61,7 +61,8 @@ final class NavigationController: UINavigationController {
         self.navigationBar.tintColor = SemanticColors.Label.textDefault
         let titleTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: SemanticColors.Label.textDefault,
-            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
+            .baselineOffset: 1.0
         ]
 
         self.navigationBar.titleTextAttributes = titleTextAttributes
