@@ -32,11 +32,11 @@ final class RootViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if let viewController = presentedViewController,
-           viewController is ModalPresentationViewController,
-           !viewController.isBeingDismissed {
-            NSLog("RootViewController >#@<# %@", "supportedInterfaceOrientations: \(viewController.supportedInterfaceOrientations)")
-            return viewController.supportedInterfaceOrientations
+        if let presentedViewController,
+           presentedViewController is ModalPresentationViewController,
+           !presentedViewController.isBeingDismissed {
+            NSLog("RootViewController >#@<# %@", "supportedInterfaceOrientations: \(presentedViewController.supportedInterfaceOrientations)")
+            return presentedViewController.supportedInterfaceOrientations
         }
         NSLog("RootViewController >#@<# %@", "supportedInterfaceOrientations: \(wr_supportedInterfaceOrientations)")
         return wr_supportedInterfaceOrientations
@@ -70,6 +70,9 @@ final class RootViewController: UIViewController {
         }
 
         setNeedsStatusBarAppearanceUpdate()
+        if #available(iOS 16.0, *) {
+            setNeedsUpdateOfSupportedInterfaceOrientations()
+        }
     }
 
     private func contain(_ newViewController: UIViewController, completion: (() -> Void)?) {
