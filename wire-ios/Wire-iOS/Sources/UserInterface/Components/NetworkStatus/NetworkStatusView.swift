@@ -78,7 +78,6 @@ final class NetworkStatusView: UIView {
     private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
     private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
     private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    fileprivate var application: ApplicationProtocol = UIApplication.shared
 
     var state: NetworkStatusViewState {
         get {
@@ -95,15 +94,6 @@ final class NetworkStatusView: UIView {
         // if this is called before the frame is set then the offline
         // bar zooms into view (which we don't want).
         updateViewState(animated: (frame == .zero) ? false : animated)
-    }
-
-    /// init method with a parameter for injecting mock application
-    ///
-    /// - Parameter application: Provide this param for testing only
-    convenience init(application: ApplicationProtocol = UIApplication.shared) {
-        self.init(frame: .zero)
-
-        self.application = application
     }
 
     override init(frame: CGRect) {
@@ -213,7 +203,7 @@ final class NetworkStatusView: UIView {
         log(networkStatus: state)
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
-        if application.applicationState == .background {
+        if ![.foregroundActive, .foregroundInactive].contains(window?.windowScene?.activationState) {
             networkStatusViewState = .online
         }
 

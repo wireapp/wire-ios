@@ -73,8 +73,6 @@
 	<string>${DEVELOPER_MODE_ENABLED}</string>
 	<key>FileSharingEnabled</key>
 	<string>${FILE_SHARING_ENABLED}</string>
-	<key>LocationSharingEnabled</key>
-	<string>${LOCATION_SHARING_ENABLED}</string>
 	<key>ForceCBREnabled</key>
 	<string>${FORCE_CBR_ENABLED}</string>
 	<key>ForceCallKitDisabled</key>
@@ -103,6 +101,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LocationSharingEnabled</key>
+	<string>${LOCATION_SHARING_ENABLED}</string>
 	<key>MaxNumberAccounts</key>
 	<string>${MAX_NUMBER_ACCOUNTS}</string>
 	<key>MinTLSVersion</key>
