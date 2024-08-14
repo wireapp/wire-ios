@@ -25,13 +25,17 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
     let conversationID = UUID()
     let domain = "example.com"
     let subgroupType = SubgroupType.conference
+    let epoch = 1
+    let groupID = MLSGroupID(Data())
 
     override func setUp() {
         super.setUp()
         action = DeleteSubgroupAction(
             conversationID: conversationID,
             domain: domain,
-            subgroupType: subgroupType
+            subgroupType: subgroupType,
+            epoch: epoch,
+            groupID: groupID
         )
         handler = DeleteSubgroupActionHandler(context: syncMOC)
     }
@@ -88,7 +92,9 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
         action = DeleteSubgroupAction(
             conversationID: conversationID,
             domain: "",
-            subgroupType: subgroupType
+            subgroupType: subgroupType,
+            epoch: 1,
+            groupID: MLSGroupID(Data())
         )
 
         test_itDoesntGenerateARequest(
