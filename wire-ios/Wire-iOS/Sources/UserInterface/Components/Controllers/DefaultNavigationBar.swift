@@ -37,7 +37,6 @@ class DefaultNavigationBar: UINavigationBar {
         var navBarTitleTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: SemanticColors.Label.textDefault,
             .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
-            .baselineOffset: 1.0
         ]
 
         titleTextAttributes = navBarTitleTextAttributes
