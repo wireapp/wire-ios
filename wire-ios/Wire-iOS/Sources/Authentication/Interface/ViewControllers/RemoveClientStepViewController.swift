@@ -90,14 +90,14 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             return
         }
 
-        let button = AuthenticationNavigationBar.makeBackButton()
-        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.leftBarButtonItem = UIBarButtonItem.backButton(action: UIAction {
+            [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.back)
+
+
     }
 
-    @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
-    }
 
     // MARK: - Adaptive UI
 
