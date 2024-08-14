@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDataModel
 import WireUITesting
 import XCTest
@@ -25,9 +24,9 @@ import XCTest
 
 final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
 
-    var sut: ConnectRequestsViewController!
-    var mockConnectionRequest: SwiftMockConversation!
-    var userSession: UserSessionMock!
+    private var sut: ConnectRequestsViewController!
+    private var mockConnectionRequest: SwiftMockConversation!
+    private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
