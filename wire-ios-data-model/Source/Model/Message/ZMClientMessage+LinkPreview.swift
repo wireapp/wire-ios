@@ -79,7 +79,7 @@ extension ZMClientMessage {
     }
 
     public func fetchLinkPreviewImageData(
-        with queue: DispatchQueue,
+        queue: DispatchQueue,
         completionHandler: @escaping (_ imageData: Data?) -> Void
     ) {
         let cache = managedObjectContext?.zm_fileAssetCache
