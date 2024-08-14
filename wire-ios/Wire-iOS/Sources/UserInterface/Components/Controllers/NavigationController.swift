@@ -59,7 +59,12 @@ final class NavigationController: UINavigationController {
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
         self.useDefaultPopGesture = false
         self.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        let titleTextAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+
+        self.navigationBar.titleTextAttributes = titleTextAttributes
 
         self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(NavigationController.onEdgeSwipe(gestureRecognizer:)))
         self.dismissGestureRecognizer.edges = [.left]
