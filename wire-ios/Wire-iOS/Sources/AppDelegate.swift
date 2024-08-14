@@ -319,12 +319,6 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        guard
-            let splitViewController = keyWindow.rootViewController as? UISplitViewController,
-            let viewController = splitViewController.viewController(for: .secondary) as? RootViewController
-        else {
-            fatalError("rootViewController is not of type RootViewController")
-        }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }
