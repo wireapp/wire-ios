@@ -17,34 +17,21 @@
 //
 
 import Foundation
-import WireDataModel
 
-public final class GetFeatureConfigsAction: EntityAction {
+/// The sso id of the self user
 
-    // MARK: - Types
+public struct SSOID: Equatable {
 
-    public typealias Result = Void
+    /// The self user's scim external id
 
-    public enum Failure: Error {
+    public let scimExternalId: String
 
-        case invalidResponse
-        case insufficientPermissions
-        case userIsNotTeamMember
-        case teamNotFound
-        case malformedResponse
-        case failedToDecodeResponse(reason: String)
-        case unknown(status: Int, label: String)
+    /// The self user's sso subject
 
-    }
+    public let subject: String
 
-    // MARK: - Properties
+    /// The self user's tenant
 
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
+    public let tenant: String
 
 }

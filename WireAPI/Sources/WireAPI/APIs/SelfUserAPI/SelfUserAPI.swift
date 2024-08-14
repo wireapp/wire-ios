@@ -17,34 +17,19 @@
 //
 
 import Foundation
-import WireDataModel
 
-public final class GetFeatureConfigsAction: EntityAction {
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning self user.
+public protocol SelfUserAPI {
 
-    // MARK: - Types
+    /// Get user details for self user
+    /// - Returns: The self user.
 
-    public typealias Result = Void
+    func getSelfUser() async throws -> SelfUser
 
-    public enum Failure: Error {
-
-        case invalidResponse
-        case insufficientPermissions
-        case userIsNotTeamMember
-        case teamNotFound
-        case malformedResponse
-        case failedToDecodeResponse(reason: String)
-        case unknown(status: Int, label: String)
-
-    }
-
-    // MARK: - Properties
-
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
-
+    /// Push supported protocols for self user
+    ///
+    /// - Parameter supportedProtocols: list of supported protocols
+    ///
+    func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws
 }

@@ -17,34 +17,17 @@
 //
 
 import Foundation
-import WireDataModel
 
-public final class GetFeatureConfigsAction: EntityAction {
+/// Errors originating from `SelfUserAPI`.
 
-    // MARK: - Types
+public enum SelfUserAPIError: Error {
 
-    public typealias Result = Void
+    /// Self user was not found.
 
-    public enum Failure: Error {
+    case selfUserNotFound
 
-        case invalidResponse
-        case insufficientPermissions
-        case userIsNotTeamMember
-        case teamNotFound
-        case malformedResponse
-        case failedToDecodeResponse(reason: String)
-        case unknown(status: Int, label: String)
+    /// Unsupported endpoint for API version
 
-    }
-
-    // MARK: - Properties
-
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
+    case unsupportedEndpointForAPIVersion
 
 }

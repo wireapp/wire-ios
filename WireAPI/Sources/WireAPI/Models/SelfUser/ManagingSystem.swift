@@ -17,34 +17,17 @@
 //
 
 import Foundation
-import WireDataModel
 
-public final class GetFeatureConfigsAction: EntityAction {
+/// The managing system of the self user identity
 
-    // MARK: - Types
+public enum ManagingSystem {
 
-    public typealias Result = Void
+    /// User identity is managed with Wire
 
-    public enum Failure: Error {
+    case wire
 
-        case invalidResponse
-        case insufficientPermissions
-        case userIsNotTeamMember
-        case teamNotFound
-        case malformedResponse
-        case failedToDecodeResponse(reason: String)
-        case unknown(status: Int, label: String)
+    /// User identity is managed with SCIM
 
-    }
-
-    // MARK: - Properties
-
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
+    case scim
 
 }
