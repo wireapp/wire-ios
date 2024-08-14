@@ -306,15 +306,12 @@ class AuthenticationStepController: AuthenticationStepViewController {
             return
         }
 
-        let button = AuthenticationNavigationBar.makeBackButton()
-        button.accessibilityLabel = L10n.Accessibility.Authentication.BackButton.description
-        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        navigationItem.backBarButtonItem = UIBarButtonItem(customView: button)
-        navigationItem.backButtonDisplayMode = .minimal
-    }
+        navigationItem.backBarButtonItem = UIBarButtonItem.backButton(action: UIAction {
+            [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.Authentication.BackButton.description)
 
-    @objc private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     // MARK: - Keyboard
