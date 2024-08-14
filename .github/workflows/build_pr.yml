@@ -20,5 +20,6 @@ jobs:
       datadog_enabled: false
       fastlane_action: development_pr
       is_cloud_build: true
+      pr_s3_path: ${{ github.event.pull_request.number }}
     secrets: inherit
 

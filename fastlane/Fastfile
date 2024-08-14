@@ -62,6 +62,7 @@ platform :ios do
     desc "Build & Upload build for PR targeting develop"
     lane :development_pr do |options|
         options[:build_type] = "Development"
+        options[:s3_subfolder] = ENV['PR_S3_SUBFOLDER']
         options[:upload_testflight] = false
         options[:upload_app_center] = false
         options[:upload_dsyms_to_datadog] = false
