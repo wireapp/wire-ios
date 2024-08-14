@@ -20,13 +20,12 @@ import Foundation
 
 extension ZMPersistentCookieStorage {
 
-    /// Returns true if `self` has an cookie with an expiration date later than now
-    @objc public var isAuthenticated: Bool {
-        guard let expirationDate = authenticationCookieExpirationDate else {
-            return false
-        }
-
-        return expirationDate.timeIntervalSinceNow > 0
+    /// Returns true if `self` has an authentication cookie that can be **decrypted**.
+    ///
+    /// - note: This should generally be used in favor of `ZMPersistentCookieStorage.authenticationCookieData` which
+    /// makes no guarantees about whether it's returned value can be decrypted.
+    @objc public var hasAuthenticationCookie: Bool {
+        authenticationCookieExpirationDate != nil
     }
 
 }

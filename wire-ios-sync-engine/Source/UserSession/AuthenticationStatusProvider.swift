@@ -22,4 +22,10 @@ import Foundation
     var isAuthenticated: Bool { get }
 }
 
-extension ZMPersistentCookieStorage: AuthenticationStatusProvider {}
+extension ZMPersistentCookieStorage: AuthenticationStatusProvider {
+    
+    public var isAuthenticated: Bool {
+        hasAuthenticationCookie
+    }
+
+}

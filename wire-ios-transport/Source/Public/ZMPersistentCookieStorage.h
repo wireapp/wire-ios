@@ -43,6 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable) NSDate *authenticationCookieExpirationDate;
 
 /// Authentication cookie available in the storage
+///
+/// - warning: This is encrypted data stored in the keychain. It may not be possible to decrypt it. For example, if the
+/// app is deleted then reinstalled this data may still exist but the encryption key will be different.
 @property (nonatomic, nullable) NSData *authenticationCookieData;
 
 /// User identifier associated with the storage
