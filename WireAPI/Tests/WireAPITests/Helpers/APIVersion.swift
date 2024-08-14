@@ -16,35 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+import enum WireAPI.APIVersion
 
-public final class GetFeatureConfigsAction: EntityAction {
+extension APIVersion {
+    var andNextVersions: [APIVersion] {
+        let apiVersions = APIVersion.allCases
+        let currentVersion = Int(rawValue)
+        let nextVersions = Array(apiVersions.suffix(from: currentVersion))
 
-    // MARK: - Types
-
-    public typealias Result = Void
-
-    public enum Failure: Error {
-
-        case invalidResponse
-        case insufficientPermissions
-        case userIsNotTeamMember
-        case teamNotFound
-        case malformedResponse
-        case failedToDecodeResponse(reason: String)
-        case unknown(status: Int, label: String)
-
+        return nextVersions
     }
-
-    // MARK: - Properties
-
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
-    }
-
 }

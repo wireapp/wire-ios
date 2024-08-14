@@ -17,34 +17,11 @@
 //
 
 import Foundation
-import WireDataModel
 
-public final class GetFeatureConfigsAction: EntityAction {
+class SelfUserAPIV6: SelfUserAPIV5 {
 
-    // MARK: - Types
-
-    public typealias Result = Void
-
-    public enum Failure: Error {
-
-        case invalidResponse
-        case insufficientPermissions
-        case userIsNotTeamMember
-        case teamNotFound
-        case malformedResponse
-        case failedToDecodeResponse(reason: String)
-        case unknown(status: Int, label: String)
-
-    }
-
-    // MARK: - Properties
-
-    public var resultHandler: ResultHandler?
-
-    // MARK: - Life cycle
-
-    public init(resultHandler: ResultHandler? = nil) {
-        self.resultHandler = resultHandler
+    override var apiVersion: APIVersion {
+        .v6
     }
 
 }
