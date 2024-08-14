@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireDesign
 
 final class AuthenticationNavigationBar: DefaultNavigationBar {
 
@@ -25,24 +24,6 @@ final class AuthenticationNavigationBar: DefaultNavigationBar {
         isTranslucent = true
         setBackgroundImage(UIImage(), for: .default)
         shadowImage = UIImage()
-    }
-
-}
-
-extension AuthenticationNavigationBar {
-
-    static func makeBackButton() -> IconButton {
-        let button = IconButton(style: .default)
-        button.setIcon(UIApplication.isLeftToRightLayout ? .backArrow : .forwardArrow, size: .tiny, for: .normal)
-
-            button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-            button.setIconColor(SemanticColors.Icon.foregroundDefault.withAlphaComponent(0.4), for: .highlighted)
-
-        button.contentHorizontalAlignment = UIApplication.isLeftToRightLayout ? .left : .right
-        button.frame = CGRect(x: 0, y: 0, width: 32, height: 20)
-        button.accessibilityIdentifier = "back"
-        button.accessibilityLabel = L10n.Localizable.General.back
-        return button
     }
 
 }
