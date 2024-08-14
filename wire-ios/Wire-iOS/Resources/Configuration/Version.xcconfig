@@ -16,4 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 3.114.0
+=======
+WIRE_SHORT_VERSION = 3.112.6
+>>>>>>> 9f1c6f8119 (chore: bump version to 3.112.6 - no ticket (#1809))
