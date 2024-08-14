@@ -41,7 +41,10 @@ final class NetworkStatusViewTests: XCTestCase {
         super.setUp()
 
         mockSceneActivationStateProvider = .init()
+        mockSceneActivationStateProvider.activationStateForSceneOf_MockValue = .foregroundActive
+
         mockContainer = MockContainer()
+
         sut = NetworkStatusView(sceneActivationStateProvider: mockSceneActivationStateProvider)
         sut.delegate = mockContainer
     }
@@ -56,7 +59,6 @@ final class NetworkStatusViewTests: XCTestCase {
 
     func testThatSyncBarChangesToHiddenWhenTheAppGoesToBackground() {
         // GIVEN
-        mockSceneActivationStateProvider.activationStateForSceneOf_MockValue = .foregroundActive
         sut.state = .onlineSynchronizing
         XCTAssertEqual(sut.connectingView.heightConstraint.constant, CGFloat.SyncBar.height, "NetworkStatusView should not be zero height")
 

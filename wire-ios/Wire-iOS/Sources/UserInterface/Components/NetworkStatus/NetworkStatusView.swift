@@ -207,7 +207,8 @@ final class NetworkStatusView: UIView {
         log(networkStatus: state)
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
-        if ![.foregroundActive, .foregroundInactive].contains(window?.windowScene?.activationState) {
+        let sceneActivationState = sceneActivationStateProvider.activationStateForScene(of: self)
+        if ![.foregroundActive, .foregroundInactive].contains(sceneActivationState) {
             networkStatusViewState = .online
         }
 
