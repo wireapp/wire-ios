@@ -34,16 +34,13 @@ class DefaultNavigationBar: UINavigationBar {
 
     private func configure() {
         tintColor = SemanticColors.Label.textDefault
-        var navBarTitleTextAttributes: [NSAttributedString.Key: Any] = [
+        let navBarTitleTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: SemanticColors.Label.textDefault,
             .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
         ]
 
         titleTextAttributes = navBarTitleTextAttributes
         configureBackground()
-        let backIndicatorInsets = UIEdgeInsets(top: 0, left: 4, bottom: 2.5, right: 0)
-        backIndicatorImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).with(insets: backIndicatorInsets, backgroundColor: .clear)
-        backIndicatorTransitionMaskImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).with(insets: backIndicatorInsets, backgroundColor: .clear)
     }
 
     func configureBackground() {
