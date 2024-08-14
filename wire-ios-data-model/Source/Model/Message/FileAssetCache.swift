@@ -706,7 +706,7 @@ public final class FileAssetCache: NSObject {
         else {
             return nil
         }
-        
+
         guard let encryptedData = cache.assetData(key) else {
             return nil
         }
