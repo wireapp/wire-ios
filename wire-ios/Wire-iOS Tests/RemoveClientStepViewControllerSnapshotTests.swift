@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireUITesting
 import XCTest
 
@@ -24,9 +23,13 @@ import XCTest
 
 final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
 
-    var coreDataFixture: CoreDataFixture!
-    var sut: RemoveClientStepViewController!
+    // MARK: - Properties
+
+    private var sut: RemoveClientStepViewController!
     private var snapshotHelper: SnapshotHelper!
+    var coreDataFixture: CoreDataFixture!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -43,6 +46,8 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
         )
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
@@ -50,6 +55,8 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testForWrappedInNavigationController() {
         // GIVEN & WHEN
