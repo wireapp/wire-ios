@@ -95,15 +95,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @end
 
 
-
-@interface ZMTextMessage : ZMMessage <ZMTextMessageData>
-
-@property (nonatomic, readonly, copy) NSString * _Nullable text;
-
-@end
-
-
-
 @interface ZMImageMessage : ZMMessage <ZMImageMessageData>
 
 @property (nonatomic, readonly) BOOL mediumDataLoaded;
@@ -222,14 +213,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 /// Predicate to select messages whose link attachments need to be updated.
 + (NSPredicate * _Nonnull)predicateForMessagesThatNeedToUpdateLinkAttachments;
-
-@end
-
-
-
-@interface ZMTextMessage (Internal)
-
-@property (nonatomic, copy) NSString * _Nullable text;
 
 @end
 
