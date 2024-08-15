@@ -329,7 +329,6 @@ private extension AppDelegate {
 
         appRootRouter = AppRootRouter(
             windowScene: keyWindow.windowScene!,
-            splitViewController: { self.keyWindow.rootViewController as! UISplitViewController },
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )

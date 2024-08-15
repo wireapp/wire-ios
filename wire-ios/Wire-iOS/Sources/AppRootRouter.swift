@@ -54,25 +54,21 @@ final class AppRootRouter {
     let sessionManager: SessionManager
 
     private let windowScene: UIWindowScene
-    private let splitViewController: () -> UISplitViewController
-
     private var lastLaunchOptions: LaunchOptions?
 
     @available(*, deprecated, message: "Please don't access this property")
     var zClientViewController: ZClientViewController? {
-        splitViewController().viewController(for: .secondary) as? ZClientViewController
+        windowScene.keyWindow!.rootViewController as? ZClientViewController
     }
 
     // MARK: - Initialization
 
     init(
         windowScene: UIWindowScene,
-        splitViewController: @escaping () -> UISplitViewController,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator
     ) {
         self.windowScene = windowScene
-        self.splitViewController = splitViewController
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(viewController: { fatalError("TODO") }, sessionManager: sessionManager)
@@ -316,13 +312,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             launchViewController.showLoadingScreen()
         }
 
-        let splitViewController = splitViewController()
-        DispatchQueue.main.async {
-            splitViewController.setViewController(launchViewController, for: .secondary)
-            DispatchQueue.main.async {
-                completion()
-            }
-        }
+        windowScene.keyWindow!.rootViewController = launchViewController
+        completion()
     }
 
     private func showUnauthenticatedFlow(error: NSError?, completion: @escaping () -> Void) {
@@ -386,13 +377,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        let splitViewController = splitViewController()
-        DispatchQueue.main.async {
-            splitViewController.setViewController(authenticatedRouter.viewController, for: .secondary)
-            DispatchQueue.main.async {
-                completion()
-            }
-        }
+        windowScene.keyWindow!.rootViewController = authenticatedRouter.viewController
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
@@ -445,7 +430,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
         return AuthenticatedRouter(
-            splitViewController: splitViewController(),
+            rootViewController: windowScene.keyWindow!.rootViewController!,
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
@@ -458,7 +443,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: splitViewController()
+                targetVC: { [weak self] in
+                    guard let self else { fatalError("TODO: how to avoid retain cycle?") }
+                    return windowScene.keyWindow!.rootViewController!
+                }
             ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
