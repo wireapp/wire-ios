@@ -73,8 +73,6 @@
 	<string>${DEVELOPER_MODE_ENABLED}</string>
 	<key>FileSharingEnabled</key>
 	<string>${FILE_SHARING_ENABLED}</string>
-	<key>LocationSharingEnabled</key>
-	<string>${LOCATION_SHARING_ENABLED}</string>
 	<key>ForceCBREnabled</key>
 	<string>${FORCE_CBR_ENABLED}</string>
 	<key>ForceCallKitDisabled</key>
@@ -103,6 +101,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LocationSharingEnabled</key>
+	<string>${LOCATION_SHARING_ENABLED}</string>
 	<key>MaxNumberAccounts</key>
 	<string>${MAX_NUMBER_ACCOUNTS}</string>
 	<key>MinTLSVersion</key>
@@ -154,8 +154,6 @@
 	<array/>
 	<key>UIStatusBarHidden</key>
 	<true/>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -169,8 +167,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
