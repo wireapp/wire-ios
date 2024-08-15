@@ -209,9 +209,6 @@ final class ConversationCreationController: UIViewController {
     private func setupNavigationBar() {
 
         setupNavigationBarTitle(CreateGroupName.title)
-// TODO: verify if the merge conflict has been resolved properly for the following two lines
-        navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.navigationBar.tintColor = UIColor.accent()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
