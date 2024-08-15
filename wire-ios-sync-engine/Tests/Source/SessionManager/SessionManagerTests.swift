@@ -21,6 +21,7 @@ import PushKit
 @testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTesting
+import WireTransportSupport
 import XCTest
 
 final class SessionManagerTests: IntegrationTest {

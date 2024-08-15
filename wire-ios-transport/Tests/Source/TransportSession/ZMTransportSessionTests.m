@@ -21,6 +21,7 @@
 @import OCMock;
 @import WireTesting;
 @import WireTransport;
+@import WireTransportSupport;
 @import UniformTypeIdentifiers;
 
 #if TARGET_OS_IPHONE

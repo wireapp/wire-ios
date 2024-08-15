@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireTransport
+#import <Foundation/Foundation.h>
 
-extension HTTPCookie {
+//! Project version number for WireTransportSupport.
+FOUNDATION_EXPORT double WireTransportSupportVersionNumber;
 
-    @objc public class func validCookieData(string: String) -> Data {
-        HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
-    }
+//! Project version string for WireTransportSupport.
+FOUNDATION_EXPORT const unsigned char WireTransportSupportVersionString[];
 
-}
+// In this header, you should import all the public headers of your framework using statements like #import <WireTransportSupport/PublicHeader.h>
+

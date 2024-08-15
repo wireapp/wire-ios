@@ -19,10 +19,13 @@
 @testable import WireTransport
 
 extension HTTPCookie {
-    
-    @objc class func validCookieData() -> Data {
-        let string =  "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure"
-        return HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
+
+    @objc public class func validCookieData() -> Data {
+        validCookieData(string: "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure")
+    }
+
+    @objc public class func validCookieData(string: String) -> Data {
+        HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
     }
 
 }

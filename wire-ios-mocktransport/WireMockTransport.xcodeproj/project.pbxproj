@@ -73,7 +73,7 @@
 		7C52BFF82033225500297DDA /* MockReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C52BFF62033225500297DDA /* MockReachability.m */; };
 		872A2EE01FFE761B00900B22 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EDF1FFE761B00900B22 /* MockService.swift */; };
 		872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */; };
-		CB79AC362C6B5E95003CF5F4 /* HTTPCookie+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC352C6B5E95003CF5F4 /* HTTPCookie+Testing.swift */; };
+		CB79AC682C6D0009003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC672C6D0009003CF5F4 /* WireTransportSupport.framework */; };
 		E94F92652885421100C44964 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F92642885421100C44964 /* MD5DigestHelper.swift */; };
 		EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6FF296F09D8001D7C88 /* WireTesting.framework */; };
 		EE797454283D235700A0BB0C /* MockTransportSession+FeatureConfigs.h in Headers */ = {isa = PBXBuildFile; fileRef = EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */; };
@@ -242,7 +242,7 @@
 		872A2EDF1FFE761B00900B22 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Services.swift"; sourceTree = "<group>"; };
 		872A2EE31FFE85D000900B22 /* MockServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServicesTests.swift; sourceTree = "<group>"; };
-		CB79AC352C6B5E95003CF5F4 /* HTTPCookie+Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPCookie+Testing.swift"; sourceTree = "<group>"; };
+		CB79AC672C6D0009003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E94F92642885421100C44964 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE67F6FF296F09D8001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE797452283D234000A0BB0C /* MockTransportSession+FeatureConfigs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+FeatureConfigs.h"; sourceTree = "<group>"; };
@@ -293,6 +293,7 @@
 				EE974121295498D2000C9340 /* WireProtos.framework in Frameworks */,
 				59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */,
 				EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */,
+				CB79AC682C6D0009003CF5F4 /* WireTransportSupport.framework in Frameworks */,
 				EE974128295498E2000C9340 /* WireTransport.framework in Frameworks */,
 				5996E8C32C19FFDB007A52F0 /* OCMock.xcframework in Frameworks */,
 			);
@@ -479,7 +480,6 @@
 				F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */,
 				541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */,
 				5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */,
-				CB79AC352C6B5E95003CF5F4 /* HTTPCookie+Testing.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -589,6 +589,7 @@
 		54C902651B753419007162A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CB79AC672C6D0009003CF5F4 /* WireTransportSupport.framework */,
 				59EC73FA2C20B82F00E5C036 /* WireSystem.framework */,
 				5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */,
 				EE67F6FF296F09D8001D7C88 /* WireTesting.framework */,
@@ -921,7 +922,6 @@
 				541797671CE1FC0C00C7646D /* CustomResponseGenerator.swift in Sources */,
 				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
 				F14741531EC45F8900A3688C /* MockTeam.swift in Sources */,
-				CB79AC362C6B5E95003CF5F4 /* HTTPCookie+Testing.swift in Sources */,
 				F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */,
 				EE9AEC922BD1596000F7853F /* WireMockTransport.docc in Sources */,
 				F16C8BED20443F4A00677D31 /* MockTransportSession+conversations.swift in Sources */,

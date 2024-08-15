@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireTransport
+import Foundation
 
-extension HTTPCookie {
-
-    @objc public class func validCookieData() -> Data {
-        let string =  "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure"
-        return HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
-    }
+@objc
+public class Foo: NSObject {
 
 }
