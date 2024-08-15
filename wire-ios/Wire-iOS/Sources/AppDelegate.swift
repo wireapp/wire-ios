@@ -294,7 +294,7 @@ private extension AppDelegate {
         let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
         shieldImageView.translatesAutoresizingMaskIntoConstraints = false
 
-        let rootViewController = RootViewController()
+        let rootViewController = UIViewController()
         rootViewController.view.backgroundColor = .black
         rootViewController.view.addSubview(shieldImageView)
         NSLayoutConstraint.activate([
