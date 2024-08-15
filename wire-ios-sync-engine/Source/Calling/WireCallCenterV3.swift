@@ -433,6 +433,11 @@ extension WireCallCenterV3 {
     /// Call this method when the callParticipants changed and avs calls the handler `wcall_participant_changed_h`
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
         guard isEnabled else { return }
+        guard !shouldEndCall(conversationId: conversationId, participants: participants) else {
+            endAllCalls()
+            return
+        }
+
         callSnapshots[conversationId]?.callParticipants.callParticipantsChanged(participants: participants)
 
         if let participants = callSnapshots[conversationId]?.callParticipants.participants {
@@ -447,6 +452,49 @@ extension WireCallCenterV3 {
 
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
         return onParticipantsChangedSubject.eraseToAnyPublisher()
+    }
+
+}
+
+// MARK: - Call ending helpers
+
+extension WireCallCenterV3 {
+
+    /// This is a short term solution for 1:1 calls via SFT.
+    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
+    /// If the other user hangs up, we should end the call for the self user.
+    /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
+    private func shouldEndCall(conversationId: AVSIdentifier, participants: [AVSCallMember]) -> Bool {
+        guard let context = uiMOC,
+              let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: context),
+              conversation.conversationType == .oneOnOne,
+              callSnapshots[conversationId]?.callState == .established
+        else {
+            return false
+        }
+
+        switch conversation.messageProtocol {
+        case .mls:
+            return shouldEndCallForMLS(participants: participants)
+        case .mixed, .proteus:
+            return shouldEndCallForProteus(participants: participants)
+        }
+    }
+
+    private func shouldEndCallForMLS(participants: [AVSCallMember]) -> Bool {
+        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the call should end.
+        guard participants.count == 2,
+              participants[1].audioState == .connecting else {
+            return false
+        }
+        return true
+    }
+
+    private func shouldEndCallForProteus(participants: [AVSCallMember]) -> Bool {
+        return participants.count == 1
     }
 
 }
@@ -525,7 +573,12 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
-            guard conversation.avsConversationType == .mlsConference else { return }
+            guard
+                let conversationType = getAVSConversationType(for: conversation),
+                conversationType == .mlsConference
+            else {
+                return
+            }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -550,7 +603,7 @@ extension WireCallCenterV3 {
         // Make sure we don't have an old state for this conversation.
         clearSnapshot(conversationId: conversationId)
 
-        guard let conversationType = conversation.avsConversationType else {
+        guard let conversationType = getAVSConversationType(for: conversation) else {
             throw Failure.missingAVSConversationType
         }
 
@@ -737,6 +790,18 @@ extension WireCallCenterV3 {
             cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
+
+            guard let viewContext = uiMOC,
+                  let conversation = ZMConversation.fetch(
+                    with: mlsParentIDs.qualifiedID.uuid,
+                    domain: mlsParentIDs.qualifiedID.domain,
+                    in: viewContext),
+                  conversation.conversationType == .group
+            else {
+                deleteSubconversation(conversationID: conversationId)
+                return
+            }
+
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -940,61 +1005,16 @@ extension WireCallCenterV3 {
         var conversationType: AVSConversationType?
 
         context.performAndWait {
-            let conversation = ZMConversation.fetch(
+            if let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
                 domain: conversationId.domain,
                 in: context
-            )
-
-            conversationType = conversation?.avsConversationType
+            ) {
+                conversationType = getAVSConversationType(for: conversation)
+            }
         }
 
         return conversationType
-    }
-
-    /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
-    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
-        Task {
-            guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
-
-            let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
-                let conversation = ZMConversation.fetch(
-                    with: conversationId.identifier,
-                    domain: conversationId.domain,
-                    in: syncContext
-                )
-                guard let conversation, conversation.avsConversationType == .mlsConference else {
-                    return (nil, nil, nil)
-                }
-                return (syncContext.mlsService,
-                        conversation.qualifiedID,
-                        conversation.mlsGroupID)
-            }
-
-            guard
-                let mlsService = result.0,
-                let parentQualifiedID = result.1,
-                let parentGroupID = result.2
-            else {
-                return
-            }
-
-            do {
-                let subgroupID = try await mlsService.createOrJoinSubgroup(
-                    parentQualifiedID: parentQualifiedID,
-                    parentID: parentGroupID
-                )
-
-                let conferenceInfo = try await mlsService.generateConferenceInfo(
-                    parentGroupID: parentGroupID,
-                    subconversationGroupID: subgroupID
-                )
-
-                self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
-            } catch {
-                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
-            }
-        }
     }
 
     /// Handles a change in calling state.
@@ -1053,12 +1073,14 @@ extension WireCallCenterV3 {
 
 }
 
-private extension ZMConversation {
+// MARK: - Get AVS conversation type
 
-    var avsConversationType: AVSConversationType? {
-        switch (conversationType, messageProtocol) {
+extension WireCallCenterV3 {
+
+    private func getAVSConversationType(for conversation: ZMConversation) -> AVSConversationType? {
+        switch (conversation.conversationType, conversation.messageProtocol) {
         case (.oneOnOne, _):
-            return .oneToOne
+            return getAVSConversationTypeForOneOnOne(conversation)
 
         case (.group, .proteus), (.group, .mixed):
             return .conference
@@ -1068,6 +1090,23 @@ private extension ZMConversation {
 
         default:
             return nil
+        }
+    }
+
+    private func getAVSConversationTypeForOneOnOne(_ conversation: ZMConversation) -> AVSConversationType {
+        guard
+            let context = conversation.managedObjectContext,
+            let featureConfig = FeatureRepository(context: context).fetchConferenceCalling().config,
+            featureConfig.useSFTForOneToOneCalls
+        else {
+            return .oneToOne
+        }
+
+        switch conversation.messageProtocol {
+        case .mls:
+            return .mlsConference
+        case .proteus, .mixed:
+            return .conference
         }
     }
 
