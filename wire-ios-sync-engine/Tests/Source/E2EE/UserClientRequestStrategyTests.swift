@@ -19,9 +19,9 @@
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
-import WireTransportSupport
 @testable import WireSyncEngine
 import WireTesting
+import WireTransportSupport
 import WireUtilities
 import XCTest
 
