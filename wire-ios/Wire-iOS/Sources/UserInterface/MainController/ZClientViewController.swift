@@ -78,7 +78,7 @@ final class ZClientViewController: UIViewController {
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
 
-    private let topOverlayContainer: UIView = UIView()
+    private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
     private var contentTopRegularConstraint: NSLayoutConstraint!
     private var contentTopCompactConstraint: NSLayoutConstraint!
