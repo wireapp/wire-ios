@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ giphy.comから";
 "giphy.conversation.random_message" = "giphy.comから";
 "giphy.error.no_more_results" = "これ以上gifがありません。";
-"giphy.error.no_result" = "gifが見つかりませんでした。";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "送信する";
 "giphy.cancel" = "キャンセル";
