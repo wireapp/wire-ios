@@ -34,7 +34,7 @@ extension ZMConversationMessage {
 
 }
 
-extension ZMTextMessageData {
+extension TextMessageData {
 
     var linkPreviewImage: WireImageResource {
         return LinkPreviewImageResourceAdaptor(textMessageData: self)
@@ -60,7 +60,7 @@ extension ZMImageMessageData {
 
 struct LinkPreviewImageResourceAdaptor: WireImageResource {
 
-    let textMessageData: ZMTextMessageData
+    let textMessageData: TextMessageData
 
     var cacheIdentifier: String? {
         return textMessageData.linkPreviewImageCacheKey?.appending("-link")
@@ -75,7 +75,7 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
     }
 
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        textMessageData.fetchLinkPreviewImageData(with: queue, completionHandler: completionHandler)
+        textMessageData.fetchLinkPreviewImageData(queue: queue, completionHandler: completionHandler)
     }
 
 }
@@ -83,7 +83,7 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
 struct LinkAttachmentImageResourceAdaptor: WireImageResource {
 
     let attachment: LinkAttachment
-    let textMessageData: ZMTextMessageData
+    let textMessageData: TextMessageData
     let urlSession: URLSessionProtocol
 
     var cacheIdentifier: String? {
@@ -94,7 +94,7 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
         return false
     }
 
-    init(attachment: LinkAttachment, textMessageData: ZMTextMessageData, urlSession: URLSessionProtocol) {
+    init(attachment: LinkAttachment, textMessageData: TextMessageData, urlSession: URLSessionProtocol) {
         self.attachment = attachment
         self.textMessageData = textMessageData
         self.urlSession = urlSession

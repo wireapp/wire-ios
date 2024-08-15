@@ -35,7 +35,7 @@ final class CollectionLinkCell: CollectionCell {
         setupAccessibility()
     }
 
-    func createArticleView(with textMessageData: ZMTextMessageData) {
+    func createArticleView(with textMessageData: TextMessageData) {
         let articleView = ArticleView(withImagePlaceholder: textMessageData.linkPreviewHasImage)
         articleView.isUserInteractionEnabled = false
         articleView.imageHeight = 0
