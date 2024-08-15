@@ -34,6 +34,7 @@
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
 		595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */; };
+		597D26052C6E019600D8AF15 /* SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D26032C6E019600D8AF15 /* SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate.swift */; };
 		598368A42C51085500ACF0C3 /* ZMLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A32C51085500ACF0C3 /* ZMLogLevel.swift */; };
 		598368A62C51095300ACF0C3 /* ZMAssertionDumpFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A52C51095300ACF0C3 /* ZMAssertionDumpFile.swift */; };
 		598368A82C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A72C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift */; };
@@ -127,6 +128,7 @@
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
 		595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIModalPresentationStyle+CustomDebugStringConvertible.swift"; sourceTree = "<group>"; };
+		597D26032C6E019600D8AF15 /* SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		598368A32C51085500ACF0C3 /* ZMLogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLogLevel.swift; sourceTree = "<group>"; };
 		598368A52C51095300ACF0C3 /* ZMAssertionDumpFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMAssertionDumpFile.swift; sourceTree = "<group>"; };
 		598368A72C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMAssertionDumpFileTests.swift; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				59059B982B4DBA1D0087D1F1 /* DateProviding */,
 				59D985EE2B5FCE1A009B99F0 /* Extensions */,
 				01CB030B2A0CED010000CFF2 /* Logging */,
+				597D26042C6E019600D8AF15 /* NavigationControllerDelegate */,
 				5993B54E2C6CFA15006AECBD /* SplitViewControllerDelegate */,
 				5993B5492C6CE1EE006AECBD /* SceneActivationStateProvider */,
 				F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */,
@@ -332,6 +335,14 @@
 				595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		597D26042C6E019600D8AF15 /* NavigationControllerDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				597D26032C6E019600D8AF15 /* SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate.swift */,
+			);
+			path = NavigationControllerDelegate;
 			sourceTree = "<group>";
 		};
 		598E86D92BF4DB3700FC5438 /* Support */ = {
@@ -608,6 +619,7 @@
 				5993B5502C6CFA47006AECBD /* SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate.swift in Sources */,
 				8701221620F64171001E6342 /* Cache.swift in Sources */,
 				01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */,
+				597D26052C6E019600D8AF15 /* SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate.swift in Sources */,
 				E66F22ED2C2ADC6B005FD57E /* WireLogger+Instances.swift in Sources */,
 				16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */,
 				598368A62C51095300ACF0C3 /* ZMAssertionDumpFile.swift in Sources */,

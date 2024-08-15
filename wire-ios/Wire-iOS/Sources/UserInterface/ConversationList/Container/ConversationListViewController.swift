@@ -205,6 +205,10 @@ final class ConversationListViewController: UIViewController {
         return .portrait
     }
 
+    public override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
     // MARK: - setup UI
 
     private func setupObservers() {
