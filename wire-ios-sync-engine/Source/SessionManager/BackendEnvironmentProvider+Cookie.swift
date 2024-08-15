@@ -25,6 +25,6 @@ extension BackendEnvironmentProvider {
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
-        cookieStorage(for: account).isAuthenticated
+        cookieStorage(for: account).hasAuthenticationCookie
     }
 }
