@@ -56,7 +56,7 @@ final class AuthenticatedRouter {
     // MARK: - Init
 
     init(
-        rootViewController: UIViewController,
+        rootViewController: @escaping () -> UIViewController,
         account: Account,
         userSession: UserSession,
         featureRepositoryProvider: any FeatureRepositoryProvider,
@@ -64,7 +64,7 @@ final class AuthenticatedRouter {
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
         activeCallRouter = ActiveCallRouter(
-            splitViewController: rootViewController,
+            rootViewController: rootViewController,
             userSession: userSession,
             topOverlayPresenter: .init(rootViewController: rootViewController)
         )

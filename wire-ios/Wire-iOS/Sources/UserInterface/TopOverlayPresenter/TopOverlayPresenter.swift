@@ -20,10 +20,10 @@ import UIKit
 
 struct TopOverlayPresenter: TopOverlayPresenting {
 
-    var rootViewController: UIViewController
+    var rootViewController: () -> UIViewController
 
     private var zClientViewController: ZClientViewController? {
-        guard let zClientViewController = rootViewController.firstChild(ofType: ZClientViewController.self) else {
+        guard let zClientViewController = rootViewController() as? ZClientViewController else {
             assertionFailure("there should be at least one instance of `ZClientViewController`")
             return nil
         }

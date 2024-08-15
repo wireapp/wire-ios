@@ -422,8 +422,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
+        let keyWindow = windowScene.keyWindow
         return AuthenticatedRouter(
-            rootViewController: windowScene.keyWindow!.rootViewController!,
+            rootViewController: { keyWindow!.rootViewController! },
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
