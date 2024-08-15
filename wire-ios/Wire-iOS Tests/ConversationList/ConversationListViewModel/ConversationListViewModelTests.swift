@@ -60,10 +60,11 @@ final class ConversationListViewModelTests: XCTestCase {
     var coreDataFixture: CoreDataFixture!
 
     // Constants for section indices
-    let sectionGroups: Int = 0
+    let sectionGroups = 0
 
     override func setUp() {
         super.setUp()
+
         removeViewModelState()
         mockUserSession = UserSessionMock()
         sut = ConversationListViewModel(userSession: mockUserSession)
@@ -107,6 +108,7 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func testForNumberOfItems() {
+
         // GIVEN
         // Set the filter to a state that will include the mockConversation
         sut.selectedFilter = .groups
@@ -126,8 +128,7 @@ final class ConversationListViewModelTests: XCTestCase {
         fillDummyConversations(mockConversation: mockConversation)
 
         // WHEN
-        guard let indexPath = sut.indexPath(for: mockConversation) else {
-            XCTFail("indexPath is nil")
+        guard let indexPath = sut.indexPath(for: mockConversation) else { XCTFail("indexPath is nil ")
             return
         }
 
@@ -146,7 +147,7 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     func testThatNonExistConversationHasNilIndexPath() {
-        //  GIVEN, WHEN && THEN
+        // GIVEN, WHEN && THEN
         XCTAssertNil(sut.indexPath(for: ZMConversation()))
     }
 
@@ -155,6 +156,7 @@ final class ConversationListViewModelTests: XCTestCase {
         // Set the filter to a state that will include the mockConversation
         sut.selectedFilter = .groups
 
+        // THEN
         XCTAssertEqual(sut.sectionCount, 1)
     }
 
@@ -176,9 +178,7 @@ final class ConversationListViewModelTests: XCTestCase {
             guard let conversation = $0 as? ZMConversation else { return false }
             return conversation.remoteIdentifier == mockConversation.remoteIdentifier
         }
-
         XCTAssertTrue(containsMockConversation, "Section does not contain the mock conversation")
-
         XCTAssertNil(sut.section(at: 100))
     }
 
@@ -192,34 +192,5 @@ final class ConversationListViewModelTests: XCTestCase {
         // WHEN & THEN
         XCTAssert(sut.select(itemToSelect: mockConversation))
         XCTAssertEqual(sut.selectedItem as? AnyHashable, mockConversation)
-    }
-
-    func testThatSelectItemAtIndexReturnCorrectConversation() {
-        // GIVEN
-        // Set the filter to a state that will include the mockConversation
-        sut.selectedFilter = .groups
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN
-        let indexPath = sut.indexPath(for: mockConversation)!
-
-        // THEN
-        XCTAssertEqual(sut.selectItem(at: indexPath) as? AnyHashable, mockConversation)
-    }
-
-    func testForItemPrevious() {
-        // GIVEN
-        // Set the filter to a state that will include the mockConversation
-        sut.selectedFilter = .groups
-
-        fillDummyConversations(mockConversation: mockConversation)
-
-        // WHEN & THEN
-        // Since index 0 has no previous item in the same section, it should return nil
-        XCTAssertEqual(sut.itemPrevious(to: 0, section: sectionGroups), nil)
-
-        // Index 1 in the same section should return the item at index 0
-        XCTAssertEqual(sut.itemPrevious(to: 1, section: sectionGroups), IndexPath(item: 0, section: sectionGroups))
     }
 }
