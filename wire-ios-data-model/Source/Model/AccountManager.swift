@@ -35,7 +35,7 @@ fileprivate extension UserDefaults {
 }
 
 /// Class used to safely access and change stored accounts and the current selected account.
-@objcMembers public final class AccountManager: NSObject {
+public final class AccountManager: NSObject {
 
     private let defaults = UserDefaults.shared()
     private(set) public var accounts = [Account]()
@@ -50,35 +50,35 @@ fileprivate extension UserDefaults {
 
     /// Creates a new `AccountManager`.
     /// - parameter sharedDirectory: The directory of the shared container.
-    @objc(initWithSharedDirectory:) public init(sharedDirectory: URL) {
+    public init(sharedDirectory: URL) {
         store = AccountStore(root: sharedDirectory)
         super.init()
         updateAccounts()
     }
 
     /// Deletes all content stored by an `AccountManager` on disk at the given URL, including the selected account.
-    @objc (deleteAtRoot:) static public func delete(at root: URL) {
+    static public func delete(at root: URL) {
         AccountStore.delete(at: root)
         UserDefaults.shared().selectedAccountIdentifier = nil
     }
 
     /// Adds an account to the manager and persists it.
     /// - parameter account: The account to add.
-    @objc(addOrUpdateAccount:) public func addOrUpdate(_ account: Account) {
+    public func addOrUpdate(_ account: Account) {
         store.add(account)
         updateAccounts()
     }
 
     /// Adds an account to the mananger and immediately and selects it.
     /// - parameter account: The account to add and select.
-    @objc(addAndSelectAccount:) public func addAndSelect(_ account: Account) {
+    public func addAndSelect(_ account: Account) {
         addOrUpdate(account)
         select(account)
     }
 
     /// Removes an account from the manager and the persistence layer.
     /// - parameter account: The account to remove.
-    @objc(removeAccount:) public func remove(_ account: Account) {
+    public func remove(_ account: Account) {
         store.remove(account)
         if selectedAccount == account {
             defaults?.selectedAccountIdentifier = nil
@@ -88,7 +88,7 @@ fileprivate extension UserDefaults {
 
     /// Selects a new account.
     /// - parameter account: The account to select.
-    @objc(selectAccount:) public func select(_ account: Account) {
+    public func select(_ account: Account) {
         precondition(accounts.contains(account), "Selecting an account without first adding it is not allowed")
         guard account != selectedAccount else { return }
         defaults?.selectedAccountIdentifier = account.userIdentifier
