@@ -19,6 +19,7 @@
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
+import WireTransportSupport
 @testable import WireSyncEngine
 import WireTesting
 import WireUtilities

@@ -19,6 +19,7 @@
 @import WireTransport;
 @import WireDataModel;
 @import WireTransport;
+@import WireTransportSupport;
 
 #import "MessagingTest.h"
 #import "ZMUserSessionRegistrationNotification.h"
