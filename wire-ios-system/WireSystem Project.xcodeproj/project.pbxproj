@@ -48,6 +48,7 @@
 		59FDA2572C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
+		CB79AC2F2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2E2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
 		E66F22ED2C2ADC6B005FD57E /* WireLogger+Instances.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66F22EC2C2ADC6B005FD57E /* WireLogger+Instances.swift */; };
@@ -139,6 +140,7 @@
 		59FDA2562C47B0BF00E14FF7 /* PopoverPresentationControllerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverPresentationControllerConfiguration.swift; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
+		CB79AC2E2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+SafeForLoggingStringConvertible.swift"; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
 		E66F22EC2C2ADC6B005FD57E /* WireLogger+Instances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WireLogger+Instances.swift"; sourceTree = "<group>"; };
@@ -366,6 +368,7 @@
 			isa = PBXGroup;
 			children = (
 				59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */,
+				CB79AC2E2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -598,6 +601,7 @@
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
 				595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
+				CB79AC2F2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift in Sources */,
 				16AAA62A2C21903200080A06 /* ExpiringActivity.swift in Sources */,
 				54D5736A1DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift in Sources */,
 				599C83222C453FF600D33A0D /* ZMSDispatchGroup.swift in Sources */,
