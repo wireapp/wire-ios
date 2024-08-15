@@ -144,7 +144,7 @@ final class ArticleView: UIView {
         }
     }
 
-    func configure(withTextMessageData textMessageData: ZMTextMessageData,
+    func configure(withTextMessageData textMessageData: TextMessageData,
                    obfuscated: Bool) {
         guard let linkPreview = textMessageData.linkPreview else {
             return
