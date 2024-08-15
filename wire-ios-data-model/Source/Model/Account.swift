@@ -117,3 +117,13 @@ extension Account {
     }
 
 }
+
+// MARK: - SafeForLoggingStringConvertible
+
+extension Account: SafeForLoggingStringConvertible {
+
+    public var safeForLoggingDescription: String {
+        userIdentifier.safeForLoggingDescription
+    }
+
+}
