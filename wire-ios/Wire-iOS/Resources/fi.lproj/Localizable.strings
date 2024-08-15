@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · giphy.com:in kautta";
 "giphy.conversation.random_message" = "giphy.com:in kautta";
 "giphy.error.no_more_results" = "ei enempää giffejä";
-"giphy.error.no_result" = "giffiä ei löytynyt";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "lähetä";
 "giphy.cancel" = "peruuta";
