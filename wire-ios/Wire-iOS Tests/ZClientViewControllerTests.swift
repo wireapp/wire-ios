@@ -21,17 +21,24 @@ import XCTest
 final class ZClientViewControllerTests: XCTestCase {
     var sut: ZClientViewController!
     var userSession: UserSessionMock!
+    var coreDataFixture: CoreDataFixture!
 
     override func setUp() {
         super.setUp()
 
+        coreDataFixture = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        sut = ZClientViewController(account: Account.mockAccount(imageData: mockImageData), userSession: userSession)
+        userSession.coreDataStack = coreDataFixture.coreDataStack
+        sut = ZClientViewController(
+            account: Account.mockAccount(imageData: mockImageData),
+            userSession: userSession
+        )
     }
 
     override func tearDown() {
         sut = nil
         userSession = nil
+        coreDataFixture = nil
 
         super.tearDown()
     }

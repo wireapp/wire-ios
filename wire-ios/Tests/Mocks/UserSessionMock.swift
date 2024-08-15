@@ -322,4 +322,29 @@ final class UserSessionMock: UserSession {
         mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
     }
 
+    // MARK: - Notifications
+
+    var notificationContext: any NotificationContext {
+        viewContext.notificationContext
+    }
+
+    // MARK: - Context Provider
+
+    var coreDataStack: CoreDataStack?
+
+    var contextProvider: any ContextProvider {
+        coreDataStack ?? MockContextProvider()
+    }
+
+}
+
+// MARK: - UserSessionMock + ContextProvider
+
+extension UserSessionMock: ContextProvider {
+
+    var account: Account { contextProvider.account }
+    var viewContext: NSManagedObjectContext { contextProvider.viewContext }
+    var syncContext: NSManagedObjectContext { contextProvider.syncContext }
+    var searchContext: NSManagedObjectContext { contextProvider.searchContext }
+    var eventContext: NSManagedObjectContext { contextProvider.eventContext }
 }

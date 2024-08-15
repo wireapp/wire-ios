@@ -74,11 +74,11 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     // MARK: - Snapshot Tests
 
-    func testForSettingGroup() {
+    func testForSettingGroup() throws {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         let group = settingsCellDescriptorFactory.settingsGroup(isTeamMember: true, userSession: userSession)
-        verify(group: group)
+        try verify(group: group)
     }
 
     private func testForAccountGroup(
@@ -87,37 +87,37 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
         file: StaticString = #file,
         testName: String = #function,
         line: UInt = #line
-    ) {
+    ) throws {
         BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
         let group = settingsCellDescriptorFactory.accountGroup(isTeamMember: true, userSession: userSession)
-        verify(group: group, file: file, testName: testName, line: line)
+        try verify(group: group, file: file, testName: testName, line: line)
     }
 
-    func testForAccountGroup_Federated() {
-        testForAccountGroup(federated: true)
+    func testForAccountGroup_Federated() throws {
+        try testForAccountGroup(federated: true)
     }
 
-    func testForAccountGroup_NotFederated() {
-        testForAccountGroup(federated: false)
+    func testForAccountGroup_NotFederated() throws {
+        try testForAccountGroup(federated: false)
     }
 
-    func testForAccountGroupWithDisabledEditing_Federated() {
-        testForAccountGroup(federated: true, disabledEditing: true)
+    func testForAccountGroupWithDisabledEditing_Federated() throws {
+        try testForAccountGroup(federated: true, disabledEditing: true)
     }
 
-    func testForAccountGroupWithDisabledEditing_NotFederated() {
-        testForAccountGroup(federated: false, disabledEditing: true)
+    func testForAccountGroupWithDisabledEditing_NotFederated() throws {
+        try testForAccountGroup(federated: false, disabledEditing: true)
     }
 
     // MARK: - options
 
-    func testForOptionsGroup() {
+    func testForOptionsGroup() throws {
         Settings.shared[.chatHeadsDisabled] = false
         let group = settingsCellDescriptorFactory.optionsGroup
-        verify(group: group)
+        try verify(group: group)
     }
 
     func testForOptionsGroupFullTableView() {
@@ -163,18 +163,21 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     // MARK: - dark theme
 
-    func testForDarkThemeOptionsGroup() {
+    func testForDarkThemeOptionsGroup() throws {
         setToLightTheme()
 
         let group = SettingsCellDescriptorFactory.darkThemeGroup(for: settingsPropertyFactory.property(.darkMode))
-        verify(group: group)
+        try verify(group: group)
     }
 
-    private func verify(group: Any,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
-        sut = SettingsTableViewController(group: group as! SettingsInternalGroupCellDescriptorType)
+    private func verify(
+        group: Any,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) throws {
+        let group = try XCTUnwrap(group as? SettingsInternalGroupCellDescriptorType)
+        sut = SettingsTableViewController(group: group)
 
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
@@ -184,15 +187,15 @@ final class SettingsTableViewControllerSnapshotTests: ZMSnapshotTestCase {
 
     // MARK: - advanced
 
-    func testForAdvancedGroup() {
-        let group = settingsCellDescriptorFactory.advancedGroup
-        verify(group: group)
+    func testForAdvancedGroup() throws {
+        let group = settingsCellDescriptorFactory.advancedGroup(userSession: userSession)
+        try verify(group: group)
     }
 
     // MARK: - data usage permissions
 
-    func testForDataUsagePermissionsForTeamMember() {
+    func testForDataUsagePermissionsForTeamMember() throws {
         let group = settingsCellDescriptorFactory.dataUsagePermissionsGroup(isTeamMember: true)
-        verify(group: group)
+        try verify(group: group)
     }
 }

@@ -5745,12 +5745,18 @@ internal enum L10n {
         internal enum TechnicalReport {
           /// Include detailed log
           internal static let includeLog = L10n.tr("Localizable", "self.settings.technical_report.include_log", fallback: "Include detailed log")
+          /// If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. 
+          /// 
+          /// You can also share your debug logs directly with your team admin via Wire.
+          internal static let info = L10n.tr("Localizable", "self.settings.technical_report.info", fallback: "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.")
           /// No mail client detected. Tap "OK" and send logs manually to: 
           internal static let noMailAlert = L10n.tr("Localizable", "self.settings.technical_report.no_mail_alert", fallback: "No mail client detected. Tap \"OK\" and send logs manually to: ")
           /// Detailed logs could contain personal data
           internal static let privacyWarning = L10n.tr("Localizable", "self.settings.technical_report.privacy_warning", fallback: "Detailed logs could contain personal data")
-          /// Send report to Wire
-          internal static let sendReport = L10n.tr("Localizable", "self.settings.technical_report.send_report", fallback: "Send report to Wire")
+          /// Send Report
+          internal static let sendReport = L10n.tr("Localizable", "self.settings.technical_report.send_report", fallback: "Send Report")
+          /// Share Report Via Wire
+          internal static let shareReport = L10n.tr("Localizable", "self.settings.technical_report.share_report", fallback: "Share Report Via Wire")
           internal enum Mail {
             /// Wire Debug Report
             internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Wire Debug Report")
@@ -5767,8 +5773,8 @@ internal enum L10n {
           }
         }
         internal enum TechnicalReportSection {
-          /// Technical Report
-          internal static let title = L10n.tr("Localizable", "self.settings.technical_report_section.title", fallback: "Technical Report")
+          /// Debug Report
+          internal static let title = L10n.tr("Localizable", "self.settings.technical_report_section.title", fallback: "Debug Report")
         }
         internal enum Vbr {
           /// This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.

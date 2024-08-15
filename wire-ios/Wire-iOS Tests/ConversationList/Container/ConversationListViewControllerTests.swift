@@ -60,6 +60,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     var sut: ConversationListViewController!
     var mockDelegate: MockConversationListDelegate!
     var userSession: UserSessionMock!
+    private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     // MARK: - setUp
@@ -68,7 +69,10 @@ final class ConversationListViewControllerTests: XCTestCase {
         super.setUp()
         accentColor = .strongBlue
 
-        userSession = UserSessionMock()
+        coreDataFixture = .init()
+
+        userSession = .init()
+        userSession.coreDataStack = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
@@ -100,6 +104,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = nil
         mockDelegate = nil
         userSession = nil
+        coreDataFixture = nil
 
         super.tearDown()
     }
