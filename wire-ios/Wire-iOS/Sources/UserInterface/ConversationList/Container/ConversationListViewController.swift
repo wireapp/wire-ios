@@ -346,22 +346,21 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 extension ConversationListViewController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        guard let selectedIndex = MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) else {
+            fatalError("unexpected selected tab index")
+        }
 
-        switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
+        switch selectedIndex {
         case .contacts:
             presentPeoplePicker { [self] in
                 tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
             }
         case .conversations, .folders:
-            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
+            previouslySelectedTabIndex = selectedIndex
         case .archive:
             setState(.archived, animated: true) { [self] in
                 tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
             }
-        case .none:
-            fallthrough
-        default:
-            fatalError("unexpected selected tab index")
         }
     }
 }
