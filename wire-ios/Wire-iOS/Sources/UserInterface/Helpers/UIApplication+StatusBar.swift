@@ -61,7 +61,7 @@ extension UIApplication {
     }
 
     static var userInterfaceStyle: UIUserInterfaceStyle? {
-        AppDelegate.shared.keyWindow?.rootViewController?.traitCollection.userInterfaceStyle
+        AppDelegate.shared.mainWindow?.rootViewController?.traitCollection.userInterfaceStyle
     }
 }
 

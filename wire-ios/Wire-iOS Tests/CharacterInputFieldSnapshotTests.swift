@@ -27,7 +27,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
     private var sut: CharacterInputField! = nil
 
     private var rootViewController: UIViewController! {
-        (UIApplication.shared.delegate as? AppDelegate)?.keyWindow?.rootViewController
+        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
     }
 
     override func setUp() {

@@ -86,7 +86,7 @@ final class AssetCell: UICollectionViewCell {
                 return
             }
 
-            guard let keyWindow = AppDelegate.shared.keyWindow else { return }
+            guard let keyWindow = AppDelegate.shared.mainWindow else { return }
             let maxDimensionRetina = max(bounds.size.width, bounds.size.height) * (window ?? keyWindow).screen.scale
 
             representedAssetIdentifier = asset.localIdentifier
