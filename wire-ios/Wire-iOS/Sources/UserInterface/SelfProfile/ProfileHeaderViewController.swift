@@ -404,7 +404,6 @@ extension ProfileHeaderViewController: UserObserving {
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
             userStatus.availability = changeInfo.user.availability
-
         }
         if changeInfo.trustLevelChanged {
             userStatus.isProteusVerified = changeInfo.user.isVerified
