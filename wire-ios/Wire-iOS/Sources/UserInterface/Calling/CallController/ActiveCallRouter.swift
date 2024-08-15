@@ -69,7 +69,7 @@ where TopOverlayPresenter: TopOverlayPresenting {
 
     private let userSession: UserSession
     private let topOverlayPresenter: TopOverlayPresenter
-    private let rootViewController: UIViewController
+    private let splitViewController: UIViewController
     private let callController: CallController
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
@@ -80,17 +80,17 @@ where TopOverlayPresenter: TopOverlayPresenting {
     private(set) weak var presentedDegradedAlert: UIAlertController?
 
     init(
-        rootviewController: UIViewController,
+        splitViewController: UIViewController,
         userSession: UserSession,
         topOverlayPresenter: TopOverlayPresenter
     ) {
-        self.rootViewController = rootviewController
+        self.splitViewController = splitViewController
         self.userSession = userSession
         self.topOverlayPresenter = topOverlayPresenter
 
         callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
-        callQualityController = CallQualityController(rootViewController: rootViewController)
+        callQualityController = CallQualityController(splitViewController: splitViewController)
         transitioningDelegate = CallQualityAnimator()
 
         callController.router = self
@@ -125,7 +125,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
         let modalVC = ModalPresentationViewController(viewController: activeCallViewController, enableDismissOnPan: !CallingConfiguration.config.paginationEnabled)
 
-        if rootViewController.presentedViewController != nil {
+        if splitViewController.presentedViewController != nil {
             dismissPresentedAndPresentActiveCall(modalViewController: modalVC, animated: animated)
         } else {
             presentActiveCall(modalViewController: modalVC, animated: animated)
@@ -137,7 +137,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             completion?()
             return
         }
-        rootViewController.dismiss(animated: animated) { [weak self] in
+        splitViewController.dismiss(animated: animated) { [weak self] in
             self?.isActiveCallShown = false
             if let action = self?.scheduledPostCallAction {
                 action {
@@ -201,7 +201,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
             self?.presentedDegradedAlert = alert
 
-            self?.rootViewController.present(alert, animated: true)
+            self?.splitViewController.present(alert, animated: true)
         }
     }
 
@@ -232,7 +232,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
             self?.presentedDegradedAlert = alert
 
-            self?.rootViewController.present(alert, animated: true)
+            self?.splitViewController.present(alert, animated: true)
         }
     }
 
@@ -246,7 +246,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     func presentUnsupportedVersionAlert() {
         executeOrSchedulePostCallAction { [weak self] completion in
             let alert = UIAlertController.unsupportedVersionAlert
-            self?.rootViewController.present(alert, animated: true) {
+            self?.splitViewController.present(alert, animated: true) {
                 completion()
             }
         }
@@ -256,16 +256,16 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     private func dismissPresentedAndPresentActiveCall(modalViewController: ModalPresentationViewController,
                                                       animated: Bool) {
-        rootViewController.presentedViewController?.dismiss(animated: true, completion: { [weak self] in
+        splitViewController.presentedViewController?.dismiss(animated: true) { [weak self] in
             self?.presentActiveCall(modalViewController: modalViewController, animated: animated)
-        })
+        }
     }
 
     private func presentActiveCall(modalViewController: ModalPresentationViewController, animated: Bool) {
         isPresentingActiveCall = true
-        rootViewController.present(modalViewController, animated: animated, completion: { [weak self] in
+        splitViewController.present(modalViewController, animated: animated) { [weak self] in
             self?.isActiveCallShown = true
-        })
+        }
     }
 
     // MARK: - Helpers
@@ -286,19 +286,19 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
         let qualityController = buildCallQualitySurvey(with: callDuration)
 
         executeOrSchedulePostCallAction { [weak self] completion in
-            self?.rootViewController.present(qualityController, animated: true, completion: { [weak self] in
+            self?.splitViewController.present(qualityController, animated: true) { [weak self] in
                 self?.isCallQualityShown = true
                 completion()
-            })
+            }
         }
     }
 
     func dismissCallQualitySurvey(completion: Completion? = nil) {
         guard isCallQualityShown else { return }
-        rootViewController.dismiss(animated: true, completion: { [weak self] in
+        splitViewController.dismiss(animated: true) { [weak self] in
             self?.isCallQualityShown = false
             completion?()
-        })
+        }
     }
 
     func presentCallFailureDebugAlert(presentingViewController: UIViewController) {

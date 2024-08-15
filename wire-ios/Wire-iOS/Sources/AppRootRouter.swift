@@ -53,23 +53,29 @@ final class AppRootRouter {
 
     let sessionManager: SessionManager
 
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: This should be private
-    let rootViewController: () -> RootViewController
+    private let windowScene: UIWindowScene
+    private let splitViewController: () -> UISplitViewController
 
     private var lastLaunchOptions: LaunchOptions?
+
+    @available(*, deprecated, message: "Please don't access this property")
+    var zClientViewController: ZClientViewController? {
+        splitViewController().viewController(for: .secondary) as? ZClientViewController
+    }
 
     // MARK: - Initialization
 
     init(
-        viewController: @escaping () -> RootViewController,
+        windowScene: UIWindowScene,
+        splitViewController: @escaping () -> UISplitViewController,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator
     ) {
-        rootViewController = viewController
+        self.windowScene = windowScene
+        self.splitViewController = splitViewController
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
-        self.urlActionRouter = URLActionRouter(viewController: viewController, sessionManager: sessionManager)
+        self.urlActionRouter = URLActionRouter(viewController: { fatalError("TODO") }, sessionManager: sessionManager)
         self.switchingAccountRouter = SwitchingAccountRouter()
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
@@ -261,10 +267,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: .headless)
         enqueueTransition(to: appStateCalculator.appState)
     }
-}
 
-extension AppRootRouter {
     // MARK: - Navigation Helpers
+
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
             Analytics.shared.tagEvent("app.open")
@@ -274,22 +279,23 @@ extension AppRootRouter {
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
-        rootViewController().set(childViewController: blockerViewController,
-                               completion: completion)
+        fatalError("TODO")
+        // rootViewController().set(childViewController: blockerViewController, completion: completion)
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
-        rootViewController().set(childViewController: blockerViewController,
-                               completion: completion)
+        fatalError("TODO")
+        // rootViewController().set(childViewController: blockerViewController, completion: completion)
     }
 
     private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .pendingCertificateEnroll,
-            sessionManager: sessionManager)
-        rootViewController().set(childViewController: blockerViewController,
-                               completion: completion)
+            sessionManager: sessionManager
+        )
+        fatalError("TODO")
+        // rootViewController().set(childViewController: blockerViewController, completion: completion)
     }
 
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
@@ -299,8 +305,8 @@ extension AppRootRouter {
             error: error
         )
 
-        rootViewController().set(childViewController: blockerViewController,
-                               completion: completion)
+        fatalError("TODO")
+        // rootViewController().set(childViewController: blockerViewController, completion: completion)
     }
 
     private func showLaunchScreen(isLoading: Bool = false, completion: @escaping () -> Void) {
@@ -310,8 +316,13 @@ extension AppRootRouter {
             launchViewController.showLoadingScreen()
         }
 
-        rootViewController().set(childViewController: launchViewController,
-                               completion: completion)
+        let splitViewController = splitViewController()
+        DispatchQueue.main.async {
+            splitViewController.setViewController(launchViewController, for: .secondary)
+            DispatchQueue.main.async {
+                completion()
+            }
+        }
     }
 
     private func showUnauthenticatedFlow(error: NSError?, completion: @escaping () -> Void) {
@@ -353,8 +364,8 @@ extension AppRootRouter {
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
-        rootViewController().set(childViewController: navigationController,
-                               completion: completion)
+        fatalError("TODO")
+        // rootViewController().set(childViewController: navigationController, completion: completion)
     }
 
     @MainActor
@@ -374,19 +385,24 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-        rootViewController().set(
-            childViewController: authenticatedRouter.viewController,
-            completion: completion
-        )
+
+        let splitViewController = splitViewController()
+        DispatchQueue.main.async {
+            splitViewController.setViewController(authenticatedRouter.viewController, for: .secondary)
+            DispatchQueue.main.async {
+                completion()
+            }
+        }
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
-        rootViewController().set(
-            childViewController: AppLockModule.build(
-                userSession: userSession
-            ),
-            completion: completion
-        )
+        fatalError("TODO")
+        // rootViewController().set(
+        //     childViewController: AppLockModule.build(
+        //         userSession: userSession
+        //     ),
+        //     completion: completion
+        // )
     }
 
     private func retryStart(completion: @escaping () -> Void) {
@@ -398,13 +414,14 @@ extension AppRootRouter {
     }
 
     // MARK: - Helpers
+
     private func configureUnauthenticatedAppearance() {
-        rootViewController().view.window?.tintColor = UIColor.Wire.primaryLabel
+        windowScene.keyWindow?.tintColor = UIColor.Wire.primaryLabel
         ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self]).tintColor = UIColor.Team.activeButton
     }
 
     private func configureAuthenticatedAppearance() {
-        rootViewController().view.window?.tintColor = .accent()
+        windowScene.keyWindow?.tintColor = .accent()
         UIColor.setAccentOverride(nil)
     }
 
@@ -428,7 +445,7 @@ extension AppRootRouter {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
         return AuthenticatedRouter(
-            rootViewController: rootViewController(),
+            splitViewController: splitViewController(),
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
@@ -441,7 +458,7 @@ extension AppRootRouter {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: rootViewController()
+                targetVC: splitViewController()
             ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
@@ -534,7 +551,8 @@ extension AppRootRouter {
                 style: .cancel
             ))
 
-            rootViewController().present(alert, animated: true)
+            fatalError("TODO")
+            // rootViewController().present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
             let alert = UIAlertController(
@@ -547,12 +565,14 @@ extension AppRootRouter {
                 style: .cancel
             ))
 
-            rootViewController().present(alert, animated: true)
+            fatalError("TODO")
+            // rootViewController().present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
             wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            rootViewController().present(wipeCompletionViewController, animated: true)
+            fatalError("TODO")
+            // rootViewController().present(wipeCompletionViewController, animated: true)
 
         default:
             break
@@ -619,7 +639,8 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         ConversationListCell.invalidateCachedCellSize()
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
-        rootViewController().redrawAllFonts()
+        fatalError("TODO")
+        // rootViewController().redrawAllFonts()
     }
 
     static func configureAppearance() {

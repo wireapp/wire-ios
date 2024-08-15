@@ -31,10 +31,10 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    private let rootViewController: UIViewController
+    private let splitViewController: UIViewController
 
-    init(rootViewController: UIViewController) {
-        self.rootViewController = rootViewController
+    init(splitViewController: UIViewController) {
+        self.splitViewController = splitViewController
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -102,7 +102,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure(presentingViewController: rootViewController)
+            handleCallFailure(presentingViewController: splitViewController)
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -169,7 +169,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         router?.dismissCallQualitySurvey { [weak self] in
             guard
                 self?.callQualityRejectionRange.contains(score) ?? false,
-                let presentingViewController = self?.rootViewController
+                let presentingViewController = self?.splitViewController
             else { return }
 
             self?.handleCallQualityRejection(presentingViewController: presentingViewController)

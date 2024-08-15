@@ -93,8 +93,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // TODO [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
-        return appRootRouter?.rootViewController()
-            .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
+        appRootRouter?.zClientViewController?.mediaPlaybackManager
     }
 
     // When running production code, this should always be true to ensure that we set the self user provider
@@ -147,6 +146,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
@@ -163,7 +163,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
-            createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
+            createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
         }
 
         WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
@@ -281,7 +281,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         guard appRootRouter == nil else { return }
-        createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions)
+        createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
 }
 
@@ -314,25 +314,22 @@ private extension AppDelegate {
         keyWindow.makeKeyAndVisible()
     }
 
-    private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
+    private func createAppRootRouterAndInitialiazeOperations(_ launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
-        createAppRootRouter(launchOptions: launchOptions)
+        createAppRootRouter(launchOptions)
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
-    private func createAppRootRouter(launchOptions: LaunchOptions) {
+    private func createAppRootRouter(_ launchOptions: LaunchOptions) {
 
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }
 
         appRootRouter = AppRootRouter(
-            viewController: {
-                let viewController = (self.keyWindow.rootViewController as! UISplitViewController).viewController(for: .secondary) as! RootViewController
-                NSLog("RootViewController >#@<# %@", "splitViewController.viewController(for: .secondary): \(viewController)")
-                return viewController
-            },
+            windowScene: keyWindow.windowScene!,
+            splitViewController: { self.keyWindow.rootViewController as! UISplitViewController },
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
