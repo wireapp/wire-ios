@@ -1160,10 +1160,10 @@
 "self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
 "self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
 
-"self.settings.privacy_analytics.alert.title" = "Consent to the Analysis of Your User Behaviour";
-"self.settings.privacy_analytics.alert.message" = "With your consent, we use technologies to analyse the use of Wire Messenger in order to improve and develop it based on user needs. Information about your use of Wire Messenger, such as whether and when an error occurs or a particular function is used (so-called events), and other technical information (e.g., IP address, app version, device type, operating system) is collected using a pseudonymous ID. The collected data cannot be assigned to you. The data is not linked to your personal information or shared with third parties beside Zeta Project Germany GmbH. The ID is deleted from your device after [28] days after the last activity at the latest. The statistical analysis of the collected information helps us to troubleshoot and improve the Wire Messenger. Further information can be found in our privacy policy. You can revoke or change your consent at any time with effect for the future.";
-"self.settings.privacy_analytics.alert.button.accept" = "Accept";
-"self.settings.privacy_analytics.alert.button.reject" = "Reject";
+"self.settings.privacy_analytics.alert.title" = "Consent to share user data";
+"self.settings.privacy_analytics.alert.message" = "Help to improve Wire by sharing your usage data via a pseudonymous ID. The data is neither linked to your personal information nor shared with third parties besides Zeta Project Germany GmbH. It includes, for example, when you use a feature, your app version, device type, or your operating system. The ID will be deleted at the latest from your device after 365 days after the last activity. Find further details in our Privacy Policy. You can revoke your consent at any time.";
+"self.settings.privacy_analytics.alert.button.agree" = "Agree";
+"self.settings.privacy_analytics.alert.button.decline" = "Decline";
 "self.settings.privacy_analytics.alert.button.privacyPolicy" = "Privacy Policy";
 
 // Change Username
