@@ -23,7 +23,7 @@ import Foundation
 }
 
 extension ZMPersistentCookieStorage: AuthenticationStatusProvider {
-    
+
     public var isAuthenticated: Bool {
         hasAuthenticationCookie
     }
