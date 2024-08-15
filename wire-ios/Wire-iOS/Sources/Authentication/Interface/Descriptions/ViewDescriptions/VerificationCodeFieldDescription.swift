@@ -67,8 +67,8 @@ extension ResponderContainer: TextContainer where Child: TextContainer {
 
 extension VerificationCodeFieldDescription: ViewDescriptor {
     func create() -> UIView {
-        // Get the with from keyWindow for iPad non full screen modes.
-        let window = AppDelegate.shared.keyWindow
+        // Get the with from window for iPad non full screen modes.
+        let window = AppDelegate.shared.mainWindow
         let width = window?.frame.width ?? UIScreen.main.bounds.size.width
         let size = CGSize(width: width, height: AuthenticationStepController.mainViewHeight)
 

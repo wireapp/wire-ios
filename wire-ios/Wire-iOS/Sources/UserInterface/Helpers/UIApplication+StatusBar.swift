@@ -41,6 +41,6 @@ extension UIApplication {
 
     @available(*, deprecated, message: "Don't use this property!")
     static var userInterfaceStyle: UIUserInterfaceStyle? {
-        AppDelegate.shared.keyWindow?.rootViewController?.traitCollection.userInterfaceStyle
+        AppDelegate.shared.mainWindow?.rootViewController?.traitCollection.userInterfaceStyle
     }
 }

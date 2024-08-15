@@ -73,7 +73,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Public Set Property
 
     // TODO: [WPB-8778] make private [not private(set)]
-    /*private*/ private(set) var keyWindow: UIWindow!
+    /*private*/ private(set) var mainWindow: UIWindow!
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -82,7 +82,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var launchOptions: LaunchOptions = [:]
 
-    // TODO: [WPB-8778] remove, don't access anything regarding UIApplication, delegate, windows etc., but inject whatever is needed instead
+    // TODO: [WPB-8778] remove this property
     @available(*, deprecated, message: "Will be removed")
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
@@ -113,7 +113,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         guard application.connectedScenes.count == 1, let windowScene = application.connectedScenes.first as? UIWindowScene else {
             fatalError("Expected a single scene of type `UIWindowScene`")
         }
-        keyWindow = .init(windowScene: windowScene)
+        mainWindow = .init(windowScene: windowScene)
 
         // enable logs
         _ = Settings.shared
@@ -335,7 +335,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
-            windowScene: keyWindow.windowScene!,
+            windowScene: mainWindow.windowScene!,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )

@@ -30,8 +30,8 @@ final class MessagePresenterTests: XCTestCase {
     var userSession: UserSessionMock!
 
     private var rootViewController: UIViewController! {
-        get { (UIApplication.shared.delegate as? AppDelegate)?.keyWindow?.rootViewController }
-        set { (UIApplication.shared.delegate as? AppDelegate)?.keyWindow?.rootViewController = newValue }
+        get { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController }
+        set { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController = newValue }
     }
 
     override func setUp() {

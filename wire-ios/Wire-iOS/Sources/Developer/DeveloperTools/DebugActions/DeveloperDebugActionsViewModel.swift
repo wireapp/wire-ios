@@ -51,7 +51,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func sendDebugLogs() {
 
-        var presentingViewController = AppDelegate.shared.keyWindow!.rootViewController!
+        var presentingViewController = AppDelegate.shared.mainWindow!.rootViewController!
         while let presentedViewController = presentingViewController.presentedViewController {
             presentingViewController = presentedViewController
         }
