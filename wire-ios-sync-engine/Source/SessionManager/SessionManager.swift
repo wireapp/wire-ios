@@ -1338,6 +1338,16 @@ extension SessionManager: UserObserving {
             }
             updateCurrentAccount(in: managedObjectContext)
         }
+
+        if changeInfo.analyticsIdentifierChanged {
+            guard changeInfo.user.isSelfUser, let userSession = activeUserSession else {
+                return
+            }
+
+            if let userProfile = getUserAnalyticsProfile(for: userSession) {
+                analyticsManager?.updateUserAnalyticsIdentifier(userProfile, mergeData: true)
+            }
+        }
     }
 }
 

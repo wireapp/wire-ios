@@ -28,8 +28,12 @@ extension Countly: AnalyticsService {
         start(with: config)
     }
 
-    func changeDeviceID(_ id: String) {
-        changeDeviceIDWithoutMerge(id)
+    func changeDeviceID(_ id: String, mergeData: Bool) {
+        if mergeData {
+            changeDeviceID(withMerge: id)
+        } else {
+            changeDeviceIDWithoutMerge(id)
+        }
     }
 
     func setUserValue(_ value: String?, forKey key: String) {

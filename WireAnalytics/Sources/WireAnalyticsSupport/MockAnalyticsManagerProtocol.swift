@@ -65,4 +65,18 @@ public class MockAnalyticsManagerProtocol: AnalyticsManagerProtocol {
         invokedEnableTrackingParametersList.append((userProfile, ()))
         return stubbedEnableTrackingResult
     }
+
+    // MARK: - updateUserAnalyticsIdentifier
+
+    public var invokedUpdateUserAnalyticsIdentifier = false
+    public var invokedUpdateUserAnalyticsIdentifierCount = 0
+    public var invokedUpdateUserAnalyticsIdentifierParameters: (userProfile: AnalyticsUserProfile, mergeData: Bool)?
+    public var invokedUpdateUserAnalyticsIdentifierParametersList = [(userProfile: AnalyticsUserProfile, mergeData: Bool)]()
+
+    public func updateUserAnalyticsIdentifier(_ userProfile: AnalyticsUserProfile, mergeData: Bool) {
+        invokedUpdateUserAnalyticsIdentifier = true
+        invokedUpdateUserAnalyticsIdentifierCount += 1
+        invokedUpdateUserAnalyticsIdentifierParameters = (userProfile, mergeData)
+        invokedUpdateUserAnalyticsIdentifierParametersList.append((userProfile, mergeData))
+    }
 }

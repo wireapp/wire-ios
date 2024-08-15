@@ -18,6 +18,13 @@
 
 public protocol AnalyticsManagerProtocol {
 
+    /// Updates the user analytics identifier and merges data from the previous identifier.
+    ///
+    /// - Parameters:
+    ///   - userProfile: The updated profile of the user.
+    ///   - mergeData: A Boolean indicating whether to merge data from the previous identifier.
+    func updateUserAnalyticsIdentifier(_ userProfile: AnalyticsUserProfile, mergeData: Bool)
+
     /// Switches the current analytics user and starts a new session.
     /// - Parameter userProfile: The profile of the user to switch to.
     /// - Returns: A new analytics session for the switched user.

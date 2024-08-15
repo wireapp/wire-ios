@@ -36,8 +36,14 @@ protocol AnalyticsService {
 
     /// Changes the device ID used for analytics.
     ///
-    /// - Parameter id: The new device ID.
-    func changeDeviceID(_ id: String)
+    /// - Parameters:
+    ///   - id: The new device ID to be used.
+    ///   - mergeData: A Boolean indicating whether to merge the data associated with the previous device ID into the new device ID.
+    ///     - If `true`, the data from the old device ID will be merged with the new device ID.
+    ///     - If `false`, the data will not be merged, and the new device ID will start with separate data.
+    ///
+    /// - Note: If the `withMerge` parameter is set to `false`, the data associated with the previous device ID will not be transferred to the new device ID, resulting in separate analytics tracking.
+    func changeDeviceID(_ id: String, mergeData: Bool)
 
     /// Sets a user value for a given key in the analytics service.
     ///

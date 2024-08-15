@@ -37,7 +37,7 @@ class AnalyticsManagerTests: XCTestCase {
         analyticsService.startAppKeyHost_MockMethod = { _, _ in }
         analyticsService.beginSession_MockMethod = {}
         analyticsService.endSession_MockMethod = {}
-        analyticsService.changeDeviceID_MockMethod = { _ in }
+        analyticsService.changeDeviceIDMergeData_MockMethod = { _, _ in }
         analyticsService.setUserValueForKey_MockMethod = { _, _ in }
 
         sut = AnalyticsManager(
@@ -77,11 +77,12 @@ class AnalyticsManagerTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(analyticsService.endSession_Invocations.count, 1)
-        guard analyticsService.changeDeviceID_Invocations.count == 1 else {
-            XCTFail("Expected 1 invocation of changeDeviceID, but got \(analyticsService.changeDeviceID_Invocations.count)")
+        guard analyticsService.changeDeviceIDMergeData_Invocations.count == 1 else {
+            XCTFail("Expected 1 invocation of changeDeviceIDMergeData, but got \(analyticsService.changeDeviceIDMergeData_Invocations.count)")
             return
         }
-        XCTAssertEqual(analyticsService.changeDeviceID_Invocations[0], "testUser123")
+        XCTAssertEqual(analyticsService.changeDeviceIDMergeData_Invocations[0].id, "testUser123")
+        XCTAssertFalse(analyticsService.changeDeviceIDMergeData_Invocations[0].mergeData)
 
         guard analyticsService.setUserValueForKey_Invocations.count == 3 else {
             XCTFail("Expected 3 invocations of setUserValueForKey, but got \(analyticsService.setUserValueForKey_Invocations.count)")
@@ -111,11 +112,12 @@ class AnalyticsManagerTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(analyticsService.endSession_Invocations.count, 1)
-        guard analyticsService.changeDeviceID_Invocations.count == 1 else {
-            XCTFail("Expected 1 invocation of changeDeviceID, but got \(analyticsService.changeDeviceID_Invocations.count)")
+        guard analyticsService.changeDeviceIDMergeData_Invocations.count == 1 else {
+            XCTFail("Expected 1 invocation of changeDeviceIDMergeData, but got \(analyticsService.changeDeviceIDMergeData_Invocations.count)")
             return
         }
-        XCTAssertEqual(analyticsService.changeDeviceID_Invocations[0], "testUser456")
+        XCTAssertEqual(analyticsService.changeDeviceIDMergeData_Invocations[0].id, "testUser456")
+        XCTAssertFalse(analyticsService.changeDeviceIDMergeData_Invocations[0].mergeData)
 
         guard analyticsService.setUserValueForKey_Invocations.count == 3 else {
             XCTFail("Expected 3 invocations of setUserValueForKey, but got \(analyticsService.setUserValueForKey_Invocations.count)")
