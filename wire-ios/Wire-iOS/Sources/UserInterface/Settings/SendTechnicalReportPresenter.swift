@@ -18,6 +18,7 @@
 
 import MessageUI
 import UIKit
+<<<<<<< HEAD
 import WireReusableUIComponents
 import WireSystem
 
@@ -40,6 +41,30 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
                 from: self,
                 popoverPresentationConfiguration: fallbackActivityPopoverConfiguration
             )
+=======
+
+protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
+    func presentMailComposer()
+}
+
+extension SendTechnicalReportPresenter where Self: UIViewController {
+    @MainActor
+    func presentMailComposer() {
+        presentMailComposer(sourceView: nil)
+    }
+
+    @MainActor
+    func presentMailComposer(sourceView: UIView?) {
+        let mailRecipient = WireEmail.shared.callingSupportEmail
+
+        guard MFMailComposeViewController.canSendMail() else {
+            DebugAlert.displayFallbackActivityController(
+                logPaths: DebugLogSender.existingDebugLogs,
+                email: mailRecipient,
+                from: self, sourceView: sourceView
+            )
+            return
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         }
 
         let mailComposeViewController = MFMailComposeViewController()
@@ -49,17 +74,30 @@ extension SendTechnicalReportPresenter where Self: UIViewController {
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
+<<<<<<< HEAD
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
         let activityIndicator = BlockingActivityIndicator(view: topMostViewController!.view)
         activityIndicator.start()
 
         Task.detached(priority: .userInitiated) {
+=======
+        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+        topMostViewController?.isLoadingViewVisible = true
+
+        Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
             await mailComposeViewController.attachLogs()
 
             await self.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
+<<<<<<< HEAD
                 activityIndicator.stop()
             }
         }
+=======
+                topMostViewController?.isLoadingViewVisible = false
+            }
+        })
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 }

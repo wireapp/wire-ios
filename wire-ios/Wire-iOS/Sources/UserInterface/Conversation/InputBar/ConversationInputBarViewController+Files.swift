@@ -92,11 +92,18 @@ extension ConversationInputBarViewController {
             name: url.lastPathComponent
         ) { [weak self] metadata in
 
+<<<<<<< HEAD
             guard let self else { return }
 
             impactFeedbackGenerator.prepare()
             ZMUserSession.shared()?.perform {
 
+=======
+            guard let `self` else { return }
+            self.impactFeedbackGenerator.prepare()
+            ZMUserSession.shared()?.perform({
+
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
                 self.impactFeedbackGenerator.impactOccurred()
 
                 var conversationMediaAction: ConversationMediaAction = .fileTransfer

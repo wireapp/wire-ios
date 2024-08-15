@@ -855,6 +855,7 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
 }
 
+<<<<<<< HEAD:wire-ios-sync-engine/Support/Sourcery/generated/AutoMockable.generated.swift
 public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServicesUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -879,6 +880,8 @@ public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServic
 
 }
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801)):wire-ios-sync-engine/sourcery/generated/AutoMockable.generated.swift
 public class MockShareFileUseCaseProtocol: ShareFileUseCaseProtocol {
 
     // MARK: - Life cycle

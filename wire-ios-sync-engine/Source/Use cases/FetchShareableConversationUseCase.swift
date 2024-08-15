@@ -40,7 +40,11 @@ public class FetchShareableConversationsUseCase: FetchShareableConversationsUseC
     }
 
     public func invoke() -> [ZMConversation] {
+<<<<<<< HEAD
         ConversationList.conversationsIncludingArchived(
+=======
+        ZMConversationList.conversationsIncludingArchived(
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
             inUserSession: contextProvider
         ).shareableConversations()
     }

@@ -48,7 +48,11 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.coreDataStack = coreDataStack
+<<<<<<< HEAD
         userSession.mockConversationList = ConversationList(
+=======
+        userSession.mockConversationList = ZMConversationList(
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
             allConversations: [mockConversation!],
             filteringPredicate: NSPredicate(value: true),
             managedObjectContext: uiMOC,

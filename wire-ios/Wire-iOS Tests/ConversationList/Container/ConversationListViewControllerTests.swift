@@ -29,11 +29,17 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
+<<<<<<< HEAD
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
     private var tabBarController: UITabBarController!
     private var userSession: UserSessionMock!
+=======
+    var sut: ConversationListViewController!
+    var mockDelegate: MockConversationListDelegate!
+    var userSession: UserSessionMock!
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var snapshotHelper: SnapshotHelper!
@@ -99,7 +105,10 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
         coreDataFixture = nil
+<<<<<<< HEAD
         mockMainCoordinator = nil
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
         super.tearDown()
     }

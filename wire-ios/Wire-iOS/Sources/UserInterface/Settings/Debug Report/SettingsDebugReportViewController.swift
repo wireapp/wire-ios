@@ -19,7 +19,10 @@
 import MessageUI
 import UIKit
 import WireDataModel
+<<<<<<< HEAD
 import WireDesign
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
 class SettingsDebugReportViewController: UIViewController {
 
@@ -54,12 +57,21 @@ class SettingsDebugReportViewController: UIViewController {
         return label
     }()
 
+<<<<<<< HEAD
     private lazy var sendReportButton = createButton(
         title: Strings.TechnicalReport.sendReport.capitalized,
         action: UIAction { [weak self] action in
             self?.didTapSendReport(sender: action.sender as! UIButton)
         }
     )
+=======
+    private lazy var sendReportButton: UIButton = {
+        return createButton(
+            title: Strings.TechnicalReport.sendReport.capitalized,
+            action: UIAction { [weak self] _ in self?.didTapSendReport() }
+        )
+    }()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     private lazy var shareReportButton: UIButton = {
         return createButton(
@@ -120,10 +132,35 @@ class SettingsDebugReportViewController: UIViewController {
         ])
     }
 
+<<<<<<< HEAD
     // MARK: - Actions
 
     @objc private func didTapSendReport(sender: UIView) {
         viewModel.sendReport(sender: sender)
+=======
+    private func setupNavigationBarTitle(_ title: String) {
+        navigationItem.title = title.capitalized
+
+        let titleTextAttributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.Label.textDefault,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+
+        navigationController?.navigationBar.titleTextAttributes = titleTextAttributes
+
+        navigationItem.titleView?.isAccessibilityElement = true
+        navigationItem.titleView?.accessibilityTraits = .header
+        navigationItem.titleView?.accessibilityLabel = navigationItem.title
+
+        navigationItem.titleView?.showsLargeContentViewer = true
+        navigationItem.titleView?.largeContentTitle = navigationItem.title
+    }
+
+    // MARK: - Actions
+
+    @objc private func didTapSendReport() {
+        viewModel.sendReport()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 
     @objc private func didTapShareReport() {

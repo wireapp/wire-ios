@@ -18,10 +18,14 @@
 
 public struct WireLogger: LoggerProtocol {
 
+<<<<<<< HEAD
     private static var provider = AggregatedLogger(loggers: [
         SystemLogger(),
         CocoaLumberjackLogger()
     ])
+=======
+    public static var provider: LoggerProtocol = AggregatedLogger(loggers: [SystemLogger(), CocoaLumberjackLogger()])
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     public let tag: String
 
@@ -34,7 +38,11 @@ public struct WireLogger: LoggerProtocol {
     // MARK: - LoggerProtocol
 
     public var logFiles: [URL] {
+<<<<<<< HEAD
         Self.provider.logFiles
+=======
+        Self.provider.logFiles ?? []
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
@@ -71,7 +79,13 @@ public struct WireLogger: LoggerProtocol {
         Self.provider.critical(message, attributes: finalizedAttributes(attributes))
     }
 
+<<<<<<< HEAD
     // MARK: - Private Helpers
+=======
+    public static var logFiles: [URL] {
+        provider.logFiles
+    }
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     private func shouldLogMessage(_ message: LogConvertible) -> Bool {
         return !message.logDescription.isEmpty
@@ -84,7 +98,29 @@ public struct WireLogger: LoggerProtocol {
             finalizedAttributes[.tag] = tag
         }
 
+<<<<<<< HEAD
         return finalizedAttributes
+=======
+        switch level {
+        case .debug:
+            Self.provider.debug(message, attributes: attributes)
+
+        case .info:
+            Self.provider.info(message, attributes: attributes)
+
+        case .notice:
+            Self.provider.notice(message, attributes: attributes)
+
+        case .warn:
+            Self.provider.warn(message, attributes: attributes)
+
+        case .error:
+            Self.provider.error(message, attributes: attributes)
+
+        case .critical:
+            Self.provider.critical(message, attributes: attributes)
+        }
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 
     // MARK: Static Functions

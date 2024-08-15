@@ -18,7 +18,10 @@
 
 import MessageUI
 import WireDataModel
+<<<<<<< HEAD
 import WireReusableUIComponents
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
@@ -29,7 +32,11 @@ protocol SettingsDebugReportRouterProtocol {
 
     /// Presents the fallback alert
 
+<<<<<<< HEAD
     func presentFallbackAlert(sender: UIView)
+=======
+    func presentFallbackAlert()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     /// Presents the share view controller
     /// 
@@ -41,9 +48,16 @@ protocol SettingsDebugReportRouterProtocol {
         destinations: [ZMConversation],
         debugReport: ShareableDebugReport
     )
+<<<<<<< HEAD
 }
 
 final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
+=======
+
+}
+
+class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     // MARK: - Properties
 
@@ -51,11 +65,14 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
 
     private let mailRecipient = WireEmail.shared.callingSupportEmail
 
+<<<<<<< HEAD
     private lazy var activityIndicator = {
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
         return BlockingActivityIndicator(view: topMostViewController!.view)
     }()
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     // MARK: - Interface
 
     func presentShareViewController(
@@ -85,13 +102,21 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         let body = mailComposeViewController.prefilledBody()
         mailComposeViewController.setMessageBody(body, isHTML: false)
 
+<<<<<<< HEAD
         activityIndicator.stop()
         let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
         Task.detached(priority: .userInitiated) { [activityIndicator] in
+=======
+        let topMostViewController: SpinnerCapableViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false) as? SpinnerCapableViewController
+        topMostViewController?.isLoadingViewVisible = true
+
+        Task.detached(priority: .userInitiated, operation: { [topMostViewController] in
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
             await mailComposeViewController.attachLogs()
 
             await self.viewController?.present(mailComposeViewController, animated: true, completion: nil)
             await MainActor.run {
+<<<<<<< HEAD
                 activityIndicator.stop()
             }
         }
@@ -107,6 +132,24 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
             popoverPresentationConfiguration: .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
         )
     }
+=======
+                topMostViewController?.isLoadingViewVisible = false
+            }
+        })
+    }
+
+    func presentFallbackAlert() {
+        guard let viewController else { return }
+
+        DebugAlert.displayFallbackActivityController(
+            logPaths: DebugLogSender.existingDebugLogs,
+            email: mailRecipient,
+            from: viewController,
+            sourceView: nil
+        )
+    }
+
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 }
 
 extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
@@ -118,4 +161,8 @@ extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
     ) {
         controller.dismiss(animated: true)
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 }

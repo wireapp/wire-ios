@@ -685,6 +685,7 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
 
 }
 
+<<<<<<< HEAD
 class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotificationPermissionHintUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -708,6 +709,8 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
 
 }
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 public class MockFileMetaDataGenerating: FileMetaDataGenerating {
 
     // MARK: - Life cycle
@@ -732,6 +735,7 @@ public class MockFileMetaDataGenerating: FileMetaDataGenerating {
 
 }
 
+<<<<<<< HEAD
 class MockImageTransformer: ImageTransformer {
 
     // MARK: - Life cycle
@@ -758,6 +762,8 @@ class MockImageTransformer: ImageTransformer {
 
 }
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 class MockLogFilesProviding: LogFilesProviding {
 
     // MARK: - Life cycle
@@ -832,6 +838,7 @@ class MockLogFilesProviding: LogFilesProviding {
 
 }
 
+<<<<<<< HEAD
 public class MockNetworkStatusObservable: NetworkStatusObservable {
 
     // MARK: - Life cycle
@@ -1322,6 +1329,8 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
 }
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
 
     // MARK: - Life cycle
@@ -1346,6 +1355,7 @@ class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
 
     // MARK: - presentFallbackAlert
 
+<<<<<<< HEAD
     var presentFallbackAlertSender_Invocations: [UIView] = []
     var presentFallbackAlertSender_MockMethod: ((UIView) -> Void)?
 
@@ -1357,6 +1367,19 @@ class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
         }
 
         mock(sender)
+=======
+    var presentFallbackAlert_Invocations: [Void] = []
+    var presentFallbackAlert_MockMethod: (() -> Void)?
+
+    func presentFallbackAlert() {
+        presentFallbackAlert_Invocations.append(())
+
+        guard let mock = presentFallbackAlert_MockMethod else {
+            fatalError("no mock for `presentFallbackAlert`")
+        }
+
+        mock()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 
     // MARK: - presentShareViewController
@@ -1384,6 +1407,7 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
 
     // MARK: - sendReport
 
+<<<<<<< HEAD
     var sendReportSender_Invocations: [UIView] = []
     var sendReportSender_MockMethod: ((UIView) -> Void)?
 
@@ -1395,6 +1419,19 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
         }
 
         mock(sender)
+=======
+    var sendReport_Invocations: [Void] = []
+    var sendReport_MockMethod: (() -> Void)?
+
+    func sendReport() {
+        sendReport_Invocations.append(())
+
+        guard let mock = sendReport_MockMethod else {
+            fatalError("no mock for `sendReport`")
+        }
+
+        mock()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 
     // MARK: - shareReport
@@ -1414,6 +1451,7 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
 
 }
 
+<<<<<<< HEAD
 class MockShouldPresentNotificationPermissionHintUseCaseProtocol: ShouldPresentNotificationPermissionHintUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1478,6 +1516,8 @@ class MockTopOverlayPresenting: TopOverlayPresenting {
 
 }
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

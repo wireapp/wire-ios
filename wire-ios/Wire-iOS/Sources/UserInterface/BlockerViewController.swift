@@ -159,6 +159,7 @@ final class BlockerViewController: LaunchImageViewController {
 
         let reportError = UIAlertAction(
             title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
+<<<<<<< HEAD
             style: .default
         ) { [weak self] _ in
             guard let self else { return }
@@ -168,6 +169,13 @@ final class BlockerViewController: LaunchImageViewController {
             )
             presentMailComposer(fallbackActivityPopoverConfiguration: fallbackActivityPopoverConfiguration)
         }
+=======
+            style: .default,
+            handler: { [weak self] _ in
+                self?.presentMailComposer()
+            }
+        )
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
         databaseFailureAlert.addAction(reportError)
 

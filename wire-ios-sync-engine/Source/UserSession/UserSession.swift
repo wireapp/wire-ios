@@ -229,6 +229,7 @@ public protocol UserSession: AnyObject {
         completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     )
 
+<<<<<<< HEAD
     // MARK: MLS
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)? { get }
@@ -238,6 +239,8 @@ public protocol UserSession: AnyObject {
     /// Provides a unique context to bind notifications this user session.
     var notificationContext: any NotificationContext { get }
 
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     // MARK: Context provider
 
     var contextProvider: any ContextProvider { get }

@@ -18,6 +18,7 @@
 
 import Foundation
 
+<<<<<<< HEAD
 extension ConversationList {
 
     public func shareableConversations(
@@ -31,6 +32,14 @@ extension ConversationList {
             return isOneOnOneOrGroup &&
                 isSelfAnActiveMember &&
                 isNotExcluded
+=======
+extension ZMConversationList {
+    public func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
+        return map { $0 as! ZMConversation }.filter { (conversation: ZMConversation) -> (Bool) in
+            return (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
+            conversation.isSelfAnActiveMember &&
+            !(conversation === excluding)
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         }
     }
 }

@@ -24,7 +24,11 @@ import WireSyncEngine
 protocol SettingsDebugReportViewModelProtocol {
 
     /// Send a debug report via email or shows fallback alert if email is not available
+<<<<<<< HEAD
     func sendReport(sender: UIView)
+=======
+    func sendReport()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     /// Presents a list of conversation for the user to share the debug report with
     func shareReport()
@@ -59,13 +63,21 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     // MARK: - Interface
 
+<<<<<<< HEAD
     func sendReport(sender: UIView) {
+=======
+    func sendReport() {
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         if MFMailComposeViewController.canSendMail() {
             Task {
                 await router.presentMailComposer()
             }
         } else {
+<<<<<<< HEAD
             router.presentFallbackAlert(sender: sender)
+=======
+            router.presentFallbackAlert()
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         }
     }
 
@@ -94,7 +106,11 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
                 )
             }
         } catch {
+<<<<<<< HEAD
             WireLogger.system.error("failed to generate log files \(error)")
+=======
+            WireLogger.system.warn("failed to generate log files \(error)")
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         }
 
     }

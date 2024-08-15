@@ -18,7 +18,10 @@
 
 import UIKit
 import WireDataModel
+<<<<<<< HEAD
 import WireDesign
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
 class ShareableDebugReportView: UIView {
 

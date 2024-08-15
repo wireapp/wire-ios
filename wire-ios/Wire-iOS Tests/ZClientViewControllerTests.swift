@@ -22,17 +22,26 @@ import XCTest
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
+<<<<<<< HEAD
 
     private var coreDataFixture: CoreDataFixture!
     private var imageTransformer: MockImageTransformer!
     private var sut: ZClientViewController!
     private var userSession: UserSessionMock!
+=======
+    var sut: ZClientViewController!
+    var userSession: UserSessionMock!
+    var coreDataFixture: CoreDataFixture!
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 
     override func setUp() {
         super.setUp()
 
         coreDataFixture = .init()
+<<<<<<< HEAD
         imageTransformer = .init()
+=======
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.coreDataStack = coreDataFixture.coreDataStack
         sut = ZClientViewController(

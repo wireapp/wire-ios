@@ -34,7 +34,11 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
+<<<<<<< HEAD
         accentColor = .blue
+=======
+        accentColor = .strongBlue
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         sut = SettingsDebugReportViewController(viewModel: MockSettingsDebugReportViewModelProtocol())
     }
 
@@ -48,10 +52,16 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Snapshot Test
 
+<<<<<<< HEAD
     func testForInitState() {
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
+=======
+    func disable_testForInitState() {
+        // disabling this test for the release/cycle-3.112 branch because SnapshotHelper doesn't support `UIViewController` yet
+        // it should be reenabled when merging with develop
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
     }
 
 }

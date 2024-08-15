@@ -28,7 +28,12 @@ extension SettingsCellDescriptorFactory {
         let items = [
             troubleshootingSection(userSession: userSession),
             debuggingToolsSection,
+<<<<<<< HEAD
             pushSection
+=======
+            pushSection,
+            versionSection
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         ]
 
         return SettingsGroupCellDescriptor(

@@ -156,9 +156,14 @@ struct LogFilesProvider: LogFilesProviding {
         Date: \(date.transportString())
         """
 
+<<<<<<< HEAD
         if let datadogUserIdentifier = WireAnalytics.Datadog.userIdentifier {
             // display only when enabled
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
+=======
+        if let datadogId = datadogUserId {
+            body.append("\nDatadog ID: \(datadogId)")
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         }
 
         let infoFileURL = url.appendingPathComponent("info.txt")
@@ -172,4 +177,19 @@ struct LogFilesProvider: LogFilesProviding {
         return infoFileURL
     }
 
+<<<<<<< HEAD
+=======
+    private var datadogUserId: String? {
+        var id: String?
+
+        #if DATADOG_IMPORT
+        // datadogId has always a value. NONE by default
+        // return only when enabled
+        id = DatadogWrapper.shared?.datadogUserId
+        #endif
+
+        return id
+    }
+
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
 }

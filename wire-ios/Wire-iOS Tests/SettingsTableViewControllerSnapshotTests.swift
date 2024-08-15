@@ -95,6 +95,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) throws {
+<<<<<<< HEAD
+=======
+        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
+>>>>>>> a932c3a914 (chore: cherry pick share logs through wire - WPB-10436 (#1801))
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing
