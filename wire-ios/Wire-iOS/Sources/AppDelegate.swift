@@ -66,8 +66,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     ]
     private var appStateCalculator = AppStateCalculator()
 
-    private let splitViewControllerDelegate = SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate()
-
     // MARK: - Private Set Property
     private(set) var appRootRouter: AppRootRouter?
     private(set) var launchType: ApplicationLaunchType = .unknown
@@ -295,6 +293,7 @@ private extension AppDelegate {
         shieldImageView.translatesAutoresizingMaskIntoConstraints = false
 
         let rootViewController = UIViewController()
+        rootViewController.navigationItem.hidesBackButton = true
         rootViewController.view.backgroundColor = .black
         rootViewController.view.addSubview(shieldImageView)
         NSLayoutConstraint.activate([
@@ -303,12 +302,20 @@ private extension AppDelegate {
         ])
 
         let splitViewController = UISplitViewController(style: .tripleColumn)
-        splitViewController.delegate = splitViewControllerDelegate
         splitViewController.displayModeButtonVisibility = .never
         splitViewController.setViewController(rootViewController, for: .secondary)
 
-        rootViewController.navigationItem.hidesBackButton = true
-        rootViewController.navigationController?.setNavigationBarHidden(true, animated: false)
+        let splitViewControllerDelegate = SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate()
+        splitViewControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(splitViewController)
+
+        // a navigation controller has automatically been created by `splitViewController.setViewController(_:for:)`,
+        // hide the navigation bar and ensure the supported interface orientations are propagated correctly
+        if let navigationController = rootViewController.navigationController {
+            navigationController.setNavigationBarHidden(true, animated: false)
+
+            let navigationControllerDelegate = SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate()
+            navigationControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(navigationController)
+        }
 
         keyWindow.rootViewController = splitViewController
         keyWindow.makeKeyAndVisible()

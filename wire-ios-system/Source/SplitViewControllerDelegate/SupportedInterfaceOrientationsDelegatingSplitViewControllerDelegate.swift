@@ -39,3 +39,16 @@ public final class SupportedInterfaceOrientationsDelegatingSplitViewControllerDe
         return supportedInterfaceOrientations
     }
 }
+
+// MARK: - Associated Object
+
+public extension SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate {
+
+    /// By setting the instance as delegate and retained associated object we don't need to subclass the split view controller in order to achieve the desired behavior.
+    func setAsDelegateAndNontomicRetainedAssociatedObject(_ splitViewController: UISplitViewController) {
+        splitViewController.delegate = self
+        objc_setAssociatedObject(splitViewController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+}
+
+private nonisolated(unsafe) var associatedObjectKey = 0

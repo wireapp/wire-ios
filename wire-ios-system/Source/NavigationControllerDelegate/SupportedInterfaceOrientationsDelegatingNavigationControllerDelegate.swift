@@ -26,3 +26,16 @@ public final class SupportedInterfaceOrientationsDelegatingNavigationControllerD
         navigationController.topViewController?.supportedInterfaceOrientations ?? []
     }
 }
+
+// MARK: - Associated Object
+
+public extension SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate {
+
+    /// By setting the instance as delegate and retained associated object we don't need to subclass the navigation controller in order to achieve the desired behavior.
+    func setAsDelegateAndNontomicRetainedAssociatedObject(_ navigationController: UINavigationController) {
+        navigationController.delegate = self
+        objc_setAssociatedObject(navigationController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+}
+
+private nonisolated(unsafe) var associatedObjectKey = 0
