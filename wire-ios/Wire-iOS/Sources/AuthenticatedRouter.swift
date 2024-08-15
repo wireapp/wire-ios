@@ -66,7 +66,7 @@ final class AuthenticatedRouter {
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(
-            rootviewController: rootViewController,
+            rootViewController: rootViewController,
             userSession: userSession,
             topOverlayPresenter: .init(rootViewController: rootViewController)
         )
