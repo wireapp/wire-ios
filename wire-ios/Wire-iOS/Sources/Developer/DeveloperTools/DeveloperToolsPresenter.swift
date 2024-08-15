@@ -39,9 +39,9 @@ final class DeveloperToolsPresenter: NSObject {
         )
         developerTools.presentationController?.delegate = self
 
-        topMostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
+        topMostViewController()?.present(developerTools, animated: true) { [weak self] in
             self?.displayedDeveloperTools = true
-        })
+        }
     }
 }
 

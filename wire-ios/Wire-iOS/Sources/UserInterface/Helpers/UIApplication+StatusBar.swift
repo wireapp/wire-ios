@@ -20,34 +20,13 @@ import UIKit
 
 extension UIApplication {
 
-    /// return the visible window on the top most which fulfills these conditions:
-    /// 1. the windows has rootViewController
-    /// 2. the window's rootViewController is RootViewController
-    var topMostVisibleWindow: UIWindow? {
-
-        let sortedWindows = windows.sorted { $0.windowLevel < $1.windowLevel }
-        let visibleWindow = sortedWindows.filter { window in
-            guard let rootViewController = window.rootViewController else {
-                return false
-            }
-
-            if let splitViewController = rootViewController as? UISplitViewController, splitViewController.viewController(for: .secondary) is RootViewController {
-                return true
-            }
-
-            return false
-        }
-
-        return visibleWindow.last
-    }
-
     /// Get the top most view controller
     ///
     /// - Parameter onlyFullScreen: if false, also search for all kinds of presented view controller
     /// - Returns: the top most view controller 
     func topmostViewController(onlyFullScreen: Bool = true) -> UIViewController? {
 
-        guard let window = topMostVisibleWindow,
+        guard let window = AppDelegate.shared.keyWindow,
             var topController = window.rootViewController else {
                 return .none
         }
@@ -60,17 +39,8 @@ extension UIApplication {
         return topController
     }
 
+    @available(*, deprecated, message: "Don't use this property!")
     static var userInterfaceStyle: UIUserInterfaceStyle? {
         AppDelegate.shared.keyWindow?.rootViewController?.traitCollection.userInterfaceStyle
-    }
-}
-
-extension UINavigationController {
-    override open var childForStatusBarStyle: UIViewController? {
-        return topViewController
-    }
-
-    override open var childForStatusBarHidden: UIViewController? {
-        return topViewController
     }
 }

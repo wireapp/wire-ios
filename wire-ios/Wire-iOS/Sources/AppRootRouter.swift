@@ -275,14 +275,14 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
-        fatalError("TODO")
-        // rootViewController().set(childViewController: blockerViewController, completion: completion)
+        windowScene.keyWindow!.rootViewController = blockerViewController
+        completion()
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
-        fatalError("TODO")
-        // rootViewController().set(childViewController: blockerViewController, completion: completion)
+        windowScene.keyWindow!.rootViewController = blockerViewController
+        completion()
     }
 
     private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
@@ -290,8 +290,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             context: .pendingCertificateEnroll,
             sessionManager: sessionManager
         )
-        fatalError("TODO")
-        // rootViewController().set(childViewController: blockerViewController, completion: completion)
+        windowScene.keyWindow!.rootViewController = blockerViewController
     }
 
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
@@ -300,9 +299,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             sessionManager: sessionManager,
             error: error
         )
-
-        fatalError("TODO")
-        // rootViewController().set(childViewController: blockerViewController, completion: completion)
+        windowScene.keyWindow!.rootViewController = blockerViewController
+        completion()
     }
 
     private func showLaunchScreen(isLoading: Bool = false, completion: @escaping () -> Void) {
@@ -311,7 +309,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         if isLoading {
             launchViewController.showLoadingScreen()
         }
-
         windowScene.keyWindow!.rootViewController = launchViewController
         completion()
     }
@@ -355,8 +352,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
-        fatalError("TODO")
-        // rootViewController().set(childViewController: navigationController, completion: completion)
+        windowScene.keyWindow!.rootViewController = navigationController
+        completion()
     }
 
     @MainActor
@@ -378,16 +375,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         self.authenticatedRouter = authenticatedRouter
 
         windowScene.keyWindow!.rootViewController = authenticatedRouter.viewController
+        completion()
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
-        fatalError("TODO")
-        // rootViewController().set(
-        //     childViewController: AppLockModule.build(
-        //         userSession: userSession
-        //     ),
-        //     completion: completion
-        // )
+        windowScene.keyWindow!.rootViewController = AppLockModule.build(userSession: userSession)
+        completion()
     }
 
     private func retryStart(completion: @escaping () -> Void) {
@@ -444,7 +437,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
                 targetVC: { [weak self] in
-                    guard let self else { fatalError("TODO: how to avoid retain cycle?") }
+                    guard let self else { fatalError() }
                     return windowScene.keyWindow!.rootViewController!
                 }
             ),
@@ -538,9 +531,7 @@ extension AppRootRouter {
                 title: L10n.Localizable.General.ok,
                 style: .cancel
             ))
-
-            fatalError("TODO")
-            // rootViewController().present(alert, animated: true)
+            windowScene.keyWindow!.rootViewController!.present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
             let alert = UIAlertController(
@@ -552,15 +543,12 @@ extension AppRootRouter {
                 title: L10n.Localizable.General.ok,
                 style: .cancel
             ))
-
-            fatalError("TODO")
-            // rootViewController().present(alert, animated: true)
+            windowScene.keyWindow!.rootViewController!.present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
             wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            fatalError("TODO")
-            // rootViewController().present(wipeCompletionViewController, animated: true)
+            windowScene.keyWindow!.rootViewController!.present(wipeCompletionViewController, animated: true)
 
         default:
             break
@@ -627,8 +615,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         ConversationListCell.invalidateCachedCellSize()
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
-        fatalError("TODO")
-        // rootViewController().redrawAllFonts()
+        windowScene.keyWindow!.rootViewController!.redrawAllFonts()
     }
 
     static func configureAppearance() {
