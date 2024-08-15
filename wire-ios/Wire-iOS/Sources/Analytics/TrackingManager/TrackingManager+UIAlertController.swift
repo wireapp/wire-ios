@@ -36,8 +36,8 @@ extension TrackingManager {
         )
 
         let actions: [(title: String, style: UIAlertAction.Style, handler: (UIAlertAction) -> Void)] = [
-            (AlertLocale.Button.accept, .default, { _ in completion(true) }),
-            (AlertLocale.Button.reject, .cancel, { _ in completion(false) }),
+            (AlertLocale.Button.agree, .default, { _ in completion(true) }),
+            (AlertLocale.Button.decline, .cancel, { _ in completion(false) }),
             (AlertLocale.Button.privacyPolicy, .default, { [weak self] _ in
                 self?.presentPrivacyPolicy()
                 completion(false)
