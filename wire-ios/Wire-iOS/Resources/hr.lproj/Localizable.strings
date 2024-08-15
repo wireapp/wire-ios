@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · putem giphy.com";
 "giphy.conversation.random_message" = "putem giphy.com";
 "giphy.error.no_more_results" = "nema više gifova";
-"giphy.error.no_result" = "nijedan gif nije pronađen";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "pošalji";
 "giphy.cancel" = "otkaži";

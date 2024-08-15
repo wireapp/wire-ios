@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · преко giphy.com";
 "giphy.conversation.random_message" = "преко giphy.com";
 "giphy.error.no_more_results" = "no more gifs";
-"giphy.error.no_result" = "no gif found";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "пошаљи";
 "giphy.cancel" = "откажи";

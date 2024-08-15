@@ -299,3 +299,10 @@
 
 "createSecureGuestLink.CreateLinkButton.description" = "Gäste-Link erstellen";
 "createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Text eingeben, um nach GIFs zu suchen";
+"searchGifs.norResultsLabel.description" = "Keine Gifs gefunden";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "%@ neue GIFs geladen";

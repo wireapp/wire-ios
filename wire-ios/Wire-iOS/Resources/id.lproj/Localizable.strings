@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · Via giphy.com";
 "giphy.conversation.random_message" = "melalui giphy.com";
 "giphy.error.no_more_results" = "tidak ada lagi gifs";
-"giphy.error.no_result" = "tidak ditemukan gif";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "Kirim";
 "giphy.cancel" = "membatalkan";

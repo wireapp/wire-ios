@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · vía giphy.com";
 "giphy.conversation.random_message" = "vía giphy.com";
 "giphy.error.no_more_results" = "no hay más GIFs";
-"giphy.error.no_result" = "no se encontró ningún GIF";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "enviar";
 "giphy.cancel" = "cancelar";

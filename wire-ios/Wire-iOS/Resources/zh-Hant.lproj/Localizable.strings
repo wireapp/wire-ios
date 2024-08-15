@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · 來自giphy.com";
 "giphy.conversation.random_message" = "來自giphy.com";
 "giphy.error.no_more_results" = "沒有更多的gif圖像";
-"giphy.error.no_result" = "找不到gif圖像";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "發送";
 "giphy.cancel" = "取消";
