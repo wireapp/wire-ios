@@ -138,7 +138,6 @@
 		CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */; };
 		CB79AC582C6CFD44003CF5F4 /* WireTransportSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */; };
-		CB79AC742C6D0448003CF5F4 /* Foo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC732C6D0448003CF5F4 /* Foo.swift */; };
 		CB79AC752C6D0568003CF5F4 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		CB79AC782C6D0582003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC552C6CFD44003CF5F4 /* WireTransportSupport.framework */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
@@ -378,7 +377,6 @@
 		CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireTransportSupport.h; sourceTree = "<group>"; };
 		CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPCookie+Testing.swift"; sourceTree = "<group>"; };
-		CB79AC732C6D0448003CF5F4 /* Foo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foo.swift; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
 		E60957872C3E739D0022E41D /* BackendInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfoTests.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
@@ -886,7 +884,6 @@
 			children = (
 				CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */,
 				CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */,
-				CB79AC732C6D0448003CF5F4 /* Foo.swift */,
 			);
 			path = WireTransportSupport;
 			sourceTree = "<group>";
@@ -1265,7 +1262,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB79AC742C6D0448003CF5F4 /* Foo.swift in Sources */,
 				CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
