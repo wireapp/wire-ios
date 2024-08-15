@@ -28,7 +28,7 @@ extension Countly: AnalyticsService {
         start(with: config)
     }
 
-    func changeDeviceID(_ id: String) {
+    func changeDeviceIDWithMerge(_ id: String) {
         changeDeviceIDWithoutMerge(id)
     }
 

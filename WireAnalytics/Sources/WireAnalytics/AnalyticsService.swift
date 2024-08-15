@@ -34,10 +34,15 @@ protocol AnalyticsService {
     /// Ends the current analytics session.
     func endSession()
 
-    /// Changes the device ID used for analytics.
+    /// Changes the device ID used for analytics without merging the data.
     ///
     /// - Parameter id: The new device ID.
-    func changeDeviceID(_ id: String)
+    func changeDeviceIDWithoutMerge(_ id: String)
+
+    /// Changes the device ID used for analytics and merges the data.
+    ///
+    /// - Parameter id: The new device ID.
+    func changeDeviceIDWithMerge(_ id: String)
 
     /// Sets a user value for a given key in the analytics service.
     ///

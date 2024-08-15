@@ -83,7 +83,7 @@ public struct AnalyticsManager: AnalyticsManagerProtocol {
     // MARK: - Private Helper Methods
 
     private func updateUserProfile(_ userProfile: AnalyticsUserProfile) {
-        analyticsService.changeDeviceID(userProfile.analyticsIdentifier)
+        analyticsService.changeDeviceIDWithoutMerge(userProfile.analyticsIdentifier)
 
         analyticsService.setUserValue(userProfile.teamInfo?.id, forKey: AnalyticsUserKey.teamID.rawValue)
         analyticsService.setUserValue(userProfile.teamInfo?.role, forKey: AnalyticsUserKey.teamRole.rawValue)
