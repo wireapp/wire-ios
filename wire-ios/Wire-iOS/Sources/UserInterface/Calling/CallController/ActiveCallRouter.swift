@@ -80,11 +80,11 @@ where TopOverlayPresenter: TopOverlayPresenting {
     private(set) weak var presentedDegradedAlert: UIAlertController?
 
     init(
-        rootviewController: UIViewController,
+        rootViewController: UIViewController,
         userSession: UserSession,
         topOverlayPresenter: TopOverlayPresenter
     ) {
-        self.rootViewController = rootviewController
+        self.rootViewController = rootViewController
         self.userSession = userSession
         self.topOverlayPresenter = topOverlayPresenter
 

@@ -24,11 +24,9 @@ extension UIApplication {
     /// 1. the windows has rootViewController
     /// 2. the window's rootViewController is RootViewController
     var topMostVisibleWindow: UIWindow? {
-        let orderedWindows = windows.sorted { win1, win2 in
-            win1.windowLevel < win2.windowLevel
-        }
 
-        let visibleWindow = orderedWindows.filter {
+        let sortedWindows = windows.sorted { $0.windowLevel < $1.windowLevel }
+        let visibleWindow = sortedWindows.filter {
             guard let controller = $0.rootViewController else {
                 return false
             }
@@ -63,7 +61,7 @@ extension UIApplication {
     }
 
     static var userInterfaceStyle: UIUserInterfaceStyle? {
-        UIApplication.shared.firstKeyWindow?.rootViewController?.traitCollection.userInterfaceStyle
+        AppDelegate.shared.keyWindow?.rootViewController?.traitCollection.userInterfaceStyle
     }
 }
 
