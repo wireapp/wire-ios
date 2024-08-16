@@ -768,7 +768,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 // MARK: - UpdateEventProcessor
 
 // swiftlint:disable todo_requires_jira_link
-// TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
+// TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 // swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
@@ -814,7 +814,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         if selfClient?.hasRegisteredMLSClient == true {
             Task {
-                await mlsService.repairOutOfSyncConversations()
+                do {
+                    try await mlsService.repairOutOfSyncConversations()
+                } catch {
+                    WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+                }
             }
         }
     }
@@ -852,24 +856,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
             }
         }
 
-        mlsService.commitPendingProposalsIfNeeded()
+        if DeveloperFlag.enableMLSSupport.isOn {
+            mlsService.commitPendingProposalsIfNeeded()
+        }
 
         WaitingGroupTask(context: syncContext) { [self] in
-            do {
-                var getFeatureConfigAction = GetFeatureConfigsAction()
-                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
-
-                try await getFeatureConfigAction.perform(in: notificationContext)
-                try await resolveOneOnOneUseCase.invoke()
-            } catch {
-                WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
-            }
+            await fetchAndStoreFeatureConfig()
+            await resolveOneOnOneConversationsIfNeeded()
         }
 
         recurringActionService.performActionsIfNeeded()
-
-        checkExpiredCertificateRevocationLists()
-        checkE2EICertificateExpiryStatus()
+        performPostQuickSyncE2EIActions()
     }
 
     private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
@@ -881,6 +878,33 @@ extension ZMUserSession: ZMSyncStateDelegate {
             supportedProtocolService: supportedProtocolService,
             resolver: resolver
         )
+    }
+
+    private func resolveOneOnOneConversationsIfNeeded() async {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+        do {
+            try await resolveOneOnOneUseCase.invoke()
+        } catch {
+            WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
+        }
+    }
+
+    private func performPostQuickSyncE2EIActions() {
+        guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
+        checkExpiredCertificateRevocationLists()
+        checkE2EICertificateExpiryStatus()
+    }
+
+    private func fetchAndStoreFeatureConfig() async {
+        do {
+            var getFeatureConfigAction = GetFeatureConfigsAction()
+            try await getFeatureConfigAction.perform(in: notificationContext)
+        } catch {
+            WireLogger.featureConfigs.error("Failed getFeatureConfigAction: \(String(reflecting: error))")
+        }
     }
 
     func processEvents() {
