@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "ikke flere gifs";
-"giphy.error.no_result" = "ingen gif fundet";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "send";
 "giphy.cancel" = "annuller";
