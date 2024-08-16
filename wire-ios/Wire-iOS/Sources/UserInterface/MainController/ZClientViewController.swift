@@ -91,7 +91,8 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        tmp: Void
     ) {
         self.account = account
         self.userSession = userSession

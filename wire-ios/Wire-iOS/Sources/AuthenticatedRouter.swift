@@ -48,7 +48,7 @@ final class AuthenticatedRouter {
     // MARK: - Public Property
 
     var viewController: UIViewController {
-        let viewController = _viewController ?? builder.build(router: self)
+        let viewController = _viewController ?? builder.build_(router: self)
         _viewController = viewController
         return viewController
     }
@@ -174,8 +174,8 @@ struct AuthenticatedWireFrame {
         self.userSession = userSession
     }
 
-    func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+    func build_(router: AuthenticatedRouterProtocol) -> ZClientViewController {
+        let viewController = ZClientViewController(account: account, userSession: userSession, tmp: ())
         viewController.router = router
         return viewController
     }
