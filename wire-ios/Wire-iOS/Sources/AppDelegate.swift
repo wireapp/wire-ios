@@ -305,7 +305,7 @@ private extension AppDelegate {
         splitViewController.displayModeButtonVisibility = .never
         splitViewController.setViewController(rootViewController, for: .secondary)
 
-        let splitViewControllerDelegate = SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate()
+        let splitViewControllerDelegate = SupportedOrientationsDelegatingSplitViewControllerDelegate()
         splitViewControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(splitViewController)
 
         // a navigation controller has automatically been created by `splitViewController.setViewController(_:for:)`,
@@ -313,12 +313,12 @@ private extension AppDelegate {
         if let navigationController = rootViewController.navigationController {
             navigationController.setNavigationBarHidden(true, animated: false)
 
-            let navigationControllerDelegate = SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate()
+            let navigationControllerDelegate = SupportedOrientationsDelegatingNavigationControllerDelegate()
             navigationControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(navigationController)
         }
 
-        keyWindow.rootViewController = splitViewController
-        keyWindow.makeKeyAndVisible()
+        mainWindow.rootViewController = splitViewController
+        mainWindow.makeKeyAndVisible()
     }
 
     private func createAppRootRouterAndInitialiazeOperations(_ launchOptions: LaunchOptions) {
