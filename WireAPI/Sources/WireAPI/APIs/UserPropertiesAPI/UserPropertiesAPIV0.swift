@@ -111,3 +111,18 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
         value = .conversationLabels(conversationLabels)
     }
 }
+
+struct LabelsPayloadV0: Decodable {
+
+    let labels: [Label]
+
+    struct Label: Decodable {
+
+        let id: UUID
+        let type: Int16
+        let name: String?
+        let conversations: [UUID]
+
+    }
+
+}

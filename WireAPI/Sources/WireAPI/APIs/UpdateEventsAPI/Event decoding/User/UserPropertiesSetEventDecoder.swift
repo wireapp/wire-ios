@@ -50,7 +50,7 @@ struct UserPropertiesSetEventDecoder {
 
         case .labels:
             let payload = try container.decode(
-                LabelsPayloadV0.self,
+                LabelsPayload.self,
                 forKey: .propertyValue
             )
 
@@ -74,7 +74,7 @@ struct UserPropertiesSetEventDecoder {
 
 }
 
-struct LabelsPayloadV0: Decodable {
+struct LabelsPayload: Decodable {
 
     let labels: [Label]
 
