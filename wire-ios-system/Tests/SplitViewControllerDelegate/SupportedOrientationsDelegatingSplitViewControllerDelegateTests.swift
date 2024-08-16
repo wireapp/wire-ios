@@ -40,7 +40,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
         let splitViewController = UISplitViewController(style: .doubleColumn)
         splitViewController.setViewController(ViewController(), for: .primary)
         splitViewController.setViewController(ViewController(), for: .secondary)
-        splitViewController.setViewController(ViewController(.landscapeLeft), for: .compact) // ignored when non-collapsed
 
         // When
         let result = splitViewController.withOverridenIsCollapsed(false) {
@@ -149,8 +148,7 @@ private extension UISplitViewController {
     }
 
     @objc var swizzledIsCollapsed: Bool {
-        print("overridenIsCollapsed", overridenIsCollapsed)
-        return overridenIsCollapsed!
+        overridenIsCollapsed!
     }
 
     func withOverridenIsCollapsed<T>(_ isCollapsed: Bool, perform: () -> T) -> T {

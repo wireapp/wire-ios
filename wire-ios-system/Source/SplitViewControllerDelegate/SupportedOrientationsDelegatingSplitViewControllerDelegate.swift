@@ -31,20 +31,12 @@ public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: U
         _ splitViewController: UISplitViewController
     ) -> UIInterfaceOrientationMask {
 
-        // The implementation is
+        // This implementation is a quick-fix for the purpose of preventing some screens of
+        // the app from rotating on phones. It's fragile and and might need to be revisited.
 
         guard splitViewController.viewController(for: .compact) == nil else {
             fatalError("This implementation does not support `.compact` columns. Extend it if needed.")
         }
-
-        if splitViewController.isCollapsed {
-            if let compactViewController = splitViewController.viewController(for: .compact) {
-                return compactViewController.supportedInterfaceOrientations
-            }
-        }
-
-        //fatalError("TODO: consider collapsed")
-        //splitViewController.view
 
         // form an intersection of the view controllers' supported interface orientations
         var supportedInterfaceOrientations = UIInterfaceOrientationMask.all
@@ -55,14 +47,6 @@ public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: U
         }
 
         return supportedInterfaceOrientations
-    }
-
-    // While manually testing the implementation this workaround fixed an edge case with compact column view controllers.
-    // In this project it's probably not needed but won't do harm either.
-    public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
-        if #available(iOSApplicationExtension 16.0, *) {
-            splitViewController.setNeedsUpdateOfSupportedInterfaceOrientations()
-        }
     }
 }
 
