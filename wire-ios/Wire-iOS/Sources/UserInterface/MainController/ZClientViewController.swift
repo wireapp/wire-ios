@@ -305,7 +305,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Singleton
 
-    @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
+    @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
     static var shared: ZClientViewController? {
         AppDelegate.shared.appRootRouter?.zClientViewController
     }
