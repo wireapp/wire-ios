@@ -38,7 +38,7 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
     private let conversationsViewController: ConversationListViewController
     private let foldersViewController: ConversationListViewController
     private var principleTab: PrincipleTab
-    
+
     /// Initializes a `TabBarChangeHandler`.
     /// - Parameters:
     ///   - conversationsViewController: The view controller corresponding the `Conversations` tab.

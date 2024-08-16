@@ -198,7 +198,7 @@ final class ZClientViewController: UIViewController {
             archive: .init()
         )
         wireSplitViewController.leftViewController = mainTabBarController
-        
+
         // TODO [WPB-6647]: Remove in navigation overhaul
         // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
         tabBarChangeHandler = TabBarChangeHandler(
