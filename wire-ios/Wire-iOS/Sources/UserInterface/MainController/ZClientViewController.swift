@@ -37,6 +37,8 @@ final class ZClientViewController: UIViewController {
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: UITabBarController!
+    // TODO [WPB-6647]: Remove in navigation overhaul
+    private var tabBarChangeHandler: TabBarChangeHandler!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -196,6 +198,15 @@ final class ZClientViewController: UIViewController {
             archive: .init()
         )
         wireSplitViewController.leftViewController = mainTabBarController
+
+        // TODO [WPB-6647]: Remove in navigation overhaul
+        // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
+        tabBarChangeHandler = TabBarChangeHandler(
+            conversationsViewController: conversationListViewController,
+            foldersViewController: conversationListWithFoldersViewController,
+            selectedTab: .conversations
+        )
+        mainTabBarController.delegate = tabBarChangeHandler
 
         if pendingInitialStateRestore {
             restoreStartupState()
