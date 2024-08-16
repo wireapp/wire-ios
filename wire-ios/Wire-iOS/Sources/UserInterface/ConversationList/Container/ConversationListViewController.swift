@@ -38,8 +38,6 @@ final class ConversationListViewController: UIViewController {
     /// internal View Model
     var state: ConversationListState = .conversationList
 
-    private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
-
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -184,8 +182,6 @@ final class ConversationListViewController: UIViewController {
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
-
-            tabBarController?.delegate = self
 
             zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
@@ -338,30 +334,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         updateTitleView()
-    }
-}
-
-// MARK: - UITabBarControllerDelegate
-
-extension ConversationListViewController: UITabBarControllerDelegate {
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        guard let selectedIndex = MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) else {
-            fatalError("unexpected selected tab index")
-        }
-
-        switch selectedIndex {
-        case .contacts:
-            presentPeoplePicker { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-        case .conversations, .folders:
-            previouslySelectedTabIndex = selectedIndex
-        case .archive:
-            setState(.archived, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-        }
     }
 }
 
