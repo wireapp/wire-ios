@@ -194,7 +194,7 @@ extension FeatureConfigsAPITests {
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,
-                inactivityTimeoutInSeconds: 2147483647
+                inactivityTimeoutInSeconds: 2_147_483_647
             )
             ),
             .classifiedDomains(.init(
@@ -216,7 +216,8 @@ extension FeatureConfigsAPITests {
             ),
             .selfDeletingMessages(.init(
                 status: .enabled,
-                enforcedTimeoutSeconds: 2147483647)
+                enforcedTimeoutSeconds: 2_147_483_647
+            )
             ),
             .mls(.init(
                 status: .enabled,
@@ -237,11 +238,13 @@ extension FeatureConfigsAPITests {
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,
-                inactivityTimeoutInSeconds: 2147483647)
+                inactivityTimeoutInSeconds: 2_147_483_647
+            )
             ),
             .classifiedDomains(.init(
                 status: .enabled,
-                domains: ["example.com"])
+                domains: ["example.com"]
+            )
             ),
             .conferenceCalling(
                 .init(status: .enabled)
@@ -257,7 +260,8 @@ extension FeatureConfigsAPITests {
             ),
             .selfDeletingMessages(.init(
                 status: .enabled,
-                enforcedTimeoutSeconds: 2147483647)
+                enforcedTimeoutSeconds: 2_147_483_647
+            )
             ),
             .mls(.init(
                 status: .enabled,
@@ -269,19 +273,22 @@ extension FeatureConfigsAPITests {
                     .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                       supportedProtocols: [.proteus])
-                 ),
+                supportedProtocols: [.proteus]
+            )
+            ),
             .mlsMigration(.init(
                 status: .enabled,
                 startTime: dateV4(from: "2021-05-12T10:52:02.671Z"),
-                finaliseRegardlessAfter: dateV4(from: "2021-05-12T10:52:02.671Z"))
+                finaliseRegardlessAfter: dateV4(from: "2021-05-12T10:52:02.671Z")
+            )
             ),
             .endToEndIdentity(.init(
                 status: .enabled,
                 acmeDiscoveryURL: "https://example.com",
-                verificationExpiration: 9223372036854776000,
+                verificationExpiration: 9_223_372_036_854_776_000,
                 crlProxy: nil,
-                useProxyOnMobile: nil)
+                useProxyOnMobile: nil
+            )
             )
         ]
 
@@ -289,11 +296,13 @@ extension FeatureConfigsAPITests {
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,
-                inactivityTimeoutInSeconds: 2147483647)
+                inactivityTimeoutInSeconds: 2_147_483_647
+            )
             ),
             .classifiedDomains(.init(
                 status: .enabled,
-                domains: ["example.com"])
+                domains: ["example.com"]
+            )
             ),
             .conferenceCalling(
                 .init(status: .enabled)
@@ -309,7 +318,8 @@ extension FeatureConfigsAPITests {
             ),
             .selfDeletingMessages(.init(
                 status: .enabled,
-                enforcedTimeoutSeconds: 2147483647)
+                enforcedTimeoutSeconds: 2_147_483_647
+            )
             ),
             .mls(.init(
                 status: .enabled,
@@ -321,19 +331,22 @@ extension FeatureConfigsAPITests {
                     .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                       supportedProtocols: [.proteus])
-                 ),
+                supportedProtocols: [.proteus]
+            )
+            ),
             .mlsMigration(.init(
                 status: .enabled,
                 startTime: dateV6(from: "2021-05-12T10:52:02Z"),
-                finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z"))
+                finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z")
+            )
             ),
             .endToEndIdentity(.init(
                 status: .enabled,
                 acmeDiscoveryURL: "https://example.com",
-                verificationExpiration: 9223372036854776000,
+                verificationExpiration: 9_223_372_036_854_776_000,
                 crlProxy: "https://example.com",
-                useProxyOnMobile: true)
+                useProxyOnMobile: true
+            )
             )
         ]
     }

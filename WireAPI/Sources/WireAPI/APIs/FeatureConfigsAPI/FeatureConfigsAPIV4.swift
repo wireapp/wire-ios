@@ -121,7 +121,6 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
                 status: mlsMigration.status,
                 startTime: mlsMigration.config.startTime?.date,
                 finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
-
             )
 
             featureConfigs.append(.mlsMigration(mlsMigrationConfig))
