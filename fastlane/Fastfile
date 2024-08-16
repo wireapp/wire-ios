@@ -710,7 +710,7 @@ class Build
         if !pr_build
             result + "/" + filename
         else
-            result + "/PR/" + options[:s3_subfolder]
+            result + "/PR/" + ENV['PR_S3_SUBFOLDER']
         end
     end
 
