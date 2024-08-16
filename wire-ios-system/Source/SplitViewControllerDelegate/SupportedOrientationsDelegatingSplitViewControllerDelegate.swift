@@ -28,6 +28,8 @@ public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: U
         _ splitViewController: UISplitViewController
     ) -> UIInterfaceOrientationMask {
 
+        fatalError("TODO: consider collapsed")
+
         // form an intersection of all the view controllers' supported interface orientations
         var supportedInterfaceOrientations = UIInterfaceOrientationMask.all
         for column in [UISplitViewController.Column.primary, .supplementary, .secondary, .compact] {

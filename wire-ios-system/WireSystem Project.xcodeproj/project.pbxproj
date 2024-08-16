@@ -33,6 +33,8 @@
 		592CC3F22C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */; };
 		594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450552BDFE8BF003ACC98 /* TimePoint.swift */; };
 		594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594450572BE0F0C8003ACC98 /* GroupQueue.swift */; };
+		595046822C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595046812C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift */; };
+		595046842C6F47D2005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595046832C6F475F005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift */; };
 		595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */; };
 		597D26052C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597D26032C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift */; };
 		598368A42C51085500ACF0C3 /* ZMLogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598368A32C51085500ACF0C3 /* ZMLogLevel.swift */; };
@@ -126,6 +128,8 @@
 		592CC3F12C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverPresentationControllerConfigurationTests.swift; sourceTree = "<group>"; };
 		594450552BDFE8BF003ACC98 /* TimePoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimePoint.swift; sourceTree = "<group>"; };
 		594450572BE0F0C8003ACC98 /* GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupQueue.swift; sourceTree = "<group>"; };
+		595046812C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift; sourceTree = "<group>"; };
+		595046832C6F475F005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift; sourceTree = "<group>"; };
 		595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIModalPresentationStyle+CustomDebugStringConvertible.swift"; sourceTree = "<group>"; };
 		597D26032C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedOrientationsDelegatingNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 		598368A32C51085500ACF0C3 /* ZMLogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMLogLevel.swift; sourceTree = "<group>"; };
@@ -301,6 +305,8 @@
 		54A327381B99A3650004EB95 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5950467F2C6F44DD005315DE /* NavigationControllerDelegate */,
+				595046802C6F44E2005315DE /* SplitViewControllerDelegate */,
 				8701221720F641A4001E6342 /* CacheTests.swift */,
 				54DB81661DBFB16700AF495D /* CircularArrayTests.swift */,
 				D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */,
@@ -332,6 +338,22 @@
 				595052962C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		5950467F2C6F44DD005315DE /* NavigationControllerDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				595046832C6F475F005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift */,
+			);
+			path = NavigationControllerDelegate;
+			sourceTree = "<group>";
+		};
+		595046802C6F44E2005315DE /* SplitViewControllerDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				595046812C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift */,
+			);
+			path = SplitViewControllerDelegate;
 			sourceTree = "<group>";
 		};
 		597D26042C6E019600D8AF15 /* NavigationControllerDelegate */ = {
@@ -644,9 +666,11 @@
 			files = (
 				8701221920F641BE001E6342 /* CacheTests.swift in Sources */,
 				598368A82C51099600ACF0C3 /* ZMAssertionDumpFileTests.swift in Sources */,
+				595046822C6F44F9005315DE /* SupportedOrientationsDelegatingSplitViewControllerDelegateTests.swift in Sources */,
 				F1670FB022A7C7D800BC6811 /* SanitizedStringTests.swift in Sources */,
 				54A3273C1B99C04F0004EB95 /* ZMLogTests.swift in Sources */,
 				D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */,
+				595046842C6F47D2005315DE /* SupportedOrientationsDelegatingNavigationControllerDelegateTests.swift in Sources */,
 				59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */,
 				59C39F092C21E9480087300D /* TimePointTests.swift in Sources */,
 				592CC3F22C4AC89A0091CD65 /* PopoverPresentationControllerConfigurationTests.swift in Sources */,
