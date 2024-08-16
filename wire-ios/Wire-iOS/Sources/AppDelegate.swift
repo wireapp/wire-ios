@@ -71,7 +71,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private(set) var launchType: ApplicationLaunchType = .unknown
 
     // MARK: - Public Set Property
-    var window: UIWindow?
+
+    private(set) var mainWindow: UIWindow!
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -80,11 +81,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var launchOptions: LaunchOptions = [:]
 
+    // TODO: [WPB-8778] remove this property
+    @available(*, deprecated, message: "Will be removed")
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
     // TODO [WPB-9867]: remove this property
+    @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
         return appRootRouter?.rootViewController
             .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
@@ -102,6 +106,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+        guard !application.supportsMultipleScenes else {
+            fatalError("Multiple scenes are currently not supported")
+        }
+        guard application.connectedScenes.count == 1, let windowScene = application.connectedScenes.first as? UIWindowScene else {
+            fatalError("Expected a single scene of type `UIWindowScene`")
+        }
+        mainWindow = .init(windowScene: windowScene)
+
         // enable logs
         _ = Settings.shared
         // switch logs
@@ -143,6 +156,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: nil)
 
         self.launchOptions = launchOptions ?? [:]
+
+        setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
@@ -268,7 +283,26 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // MARK: - Private Helpers
+
 private extension AppDelegate {
+
+    private func setupWindowAndRootViewController() {
+
+        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
+        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        let rootViewController = RootViewController()
+        rootViewController.view.backgroundColor = .black
+        rootViewController.view.addSubview(shieldImageView)
+        NSLayoutConstraint.activate([
+            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerXAnchor),
+            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
+        ])
+
+        mainWindow.rootViewController = rootViewController
+        mainWindow.makeKeyAndVisible()
+    }
+
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
@@ -278,15 +312,12 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        guard let viewController = window?.rootViewController as? RootViewController else {
-            fatalError("rootViewController is not of type RootViewController")
-        }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }
 
         appRootRouter = AppRootRouter(
-            viewController: viewController,
+            rootViewController: mainWindow.rootViewController as! RootViewController,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
@@ -352,5 +383,4 @@ private extension AppDelegate {
         // this forces transition to standard ones.
         return .standard
     }
-
 }

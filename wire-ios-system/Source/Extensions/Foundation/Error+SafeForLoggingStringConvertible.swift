@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIApplication {
+extension NSError: SafeForLoggingStringConvertible {
 
-  var firstKeyWindow: UIWindow? {
-      return windows.first(where: \.isKeyWindow)
-  }
+    public var safeForLoggingDescription: String {
+        "<domain: \(domain), code: \(code)>"
+    }
 
 }
