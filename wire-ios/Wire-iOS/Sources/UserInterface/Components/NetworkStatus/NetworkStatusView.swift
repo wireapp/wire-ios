@@ -61,6 +61,7 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
 }
 
 final class NetworkStatusView: UIView {
+
     let connectingView: BreathLoadingBar
     private let offlineView: OfflineBar
     private var _state: NetworkStatusViewState = .online
@@ -78,7 +79,8 @@ final class NetworkStatusView: UIView {
     private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
     private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
     private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    fileprivate var application: ApplicationProtocol = UIApplication.shared
+
+    private let sceneActivationStateProvider: SceneActivationStateProviding
 
     var state: NetworkStatusViewState {
         get {
@@ -97,26 +99,18 @@ final class NetworkStatusView: UIView {
         updateViewState(animated: (frame == .zero) ? false : animated)
     }
 
-    /// init method with a parameter for injecting mock application
-    ///
-    /// - Parameter application: Provide this param for testing only
-    convenience init(application: ApplicationProtocol = UIApplication.shared) {
-        self.init(frame: .zero)
+    init(sceneActivationStateProvider: SceneActivationStateProviding = .default) {
+        self.sceneActivationStateProvider = sceneActivationStateProvider
 
-        self.application = application
-    }
-
-    override init(frame: CGRect) {
         connectingView = BreathLoadingBar.withDefaultAnimationDuration()
         connectingView.accessibilityIdentifier = "LoadBar"
         offlineView = OfflineBar()
 
-        super.init(frame: frame)
+        super.init(frame: .zero)
 
         connectingView.delegate = self
 
-        let subviews: [UIView] = [offlineView, connectingView]
-        subviews.forEach { subview in
+        [offlineView, connectingView].forEach { subview in
             addSubview(subview)
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -128,7 +122,7 @@ final class NetworkStatusView: UIView {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func createConstraints() {
@@ -213,7 +207,8 @@ final class NetworkStatusView: UIView {
         log(networkStatus: state)
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
-        if application.applicationState == .background {
+        let sceneActivationState = sceneActivationStateProvider.activationStateForScene(of: self)
+        if ![.foregroundActive, .foregroundInactive].contains(sceneActivationState) {
             networkStatusViewState = .online
         }
 

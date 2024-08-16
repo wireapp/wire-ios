@@ -261,10 +261,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: .headless)
         enqueueTransition(to: appStateCalculator.appState)
     }
-}
 
-extension AppRootRouter {
     // MARK: - Navigation Helpers
+
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
             Analytics.shared.tagEvent("app.open")

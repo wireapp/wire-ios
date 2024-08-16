@@ -72,6 +72,34 @@ public class MockCurrentDateProviding: CurrentDateProviding {
 
 }
 
+public class MockSceneActivationStateProviding: SceneActivationStateProviding {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - activationStateForScene
+
+    public var activationStateForSceneOf_Invocations: [UIView] = []
+    public var activationStateForSceneOf_MockMethod: ((UIView) -> UIScene.ActivationState?)?
+    public var activationStateForSceneOf_MockValue: UIScene.ActivationState??
+
+    @MainActor
+    public func activationStateForScene(of view: UIView) -> UIScene.ActivationState? {
+        activationStateForSceneOf_Invocations.append(view)
+
+        if let mock = activationStateForSceneOf_MockMethod {
+            return mock(view)
+        } else if let mock = activationStateForSceneOf_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `activationStateForSceneOf`")
+        }
+    }
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

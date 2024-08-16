@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
 import XCTest
+import WireSystemSupport
+
+@testable import Wire
 
 class MockContainer: NetworkStatusViewDelegate {
     var shouldAnimateNetworkStatusView: Bool = true
@@ -31,22 +32,26 @@ class MockContainer: NetworkStatusViewDelegate {
 }
 
 final class NetworkStatusViewTests: XCTestCase {
-    var sut: NetworkStatusView!
-    var mockApplication: MockApplication!
-    var mockContainer: MockContainer!
+
+    private var sut: NetworkStatusView!
+    private var mockSceneActivationStateProvider: MockSceneActivationStateProviding!
+    private var mockContainer: MockContainer!
 
     override func setUp() {
         super.setUp()
 
-        mockApplication = MockApplication()
+        mockSceneActivationStateProvider = .init()
+        mockSceneActivationStateProvider.activationStateForSceneOf_MockValue = .foregroundActive
+
         mockContainer = MockContainer()
-        sut = NetworkStatusView(application: mockApplication)
+
+        sut = NetworkStatusView(sceneActivationStateProvider: mockSceneActivationStateProvider)
         sut.delegate = mockContainer
     }
 
     override func tearDown() {
         sut = nil
-        mockApplication = nil
+        mockSceneActivationStateProvider = nil
         mockContainer = nil
 
         super.tearDown()
@@ -54,12 +59,11 @@ final class NetworkStatusViewTests: XCTestCase {
 
     func testThatSyncBarChangesToHiddenWhenTheAppGoesToBackground() {
         // GIVEN
-        mockApplication.applicationState = .active
         sut.state = .onlineSynchronizing
         XCTAssertEqual(sut.connectingView.heightConstraint.constant, CGFloat.SyncBar.height, "NetworkStatusView should not be zero height")
 
         // WHEN
-        mockApplication.applicationState = .background
+        mockSceneActivationStateProvider.activationStateForSceneOf_MockValue = .background
         sut.state = .onlineSynchronizing
 
         // THEN

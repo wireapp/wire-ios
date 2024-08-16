@@ -18,25 +18,13 @@
 
 import UIKit
 
-protocol ApplicationProtocol {
+// sourcery: AutoMockable
+/// Allows for mocking the `UIScene.activationState` property.
+public protocol SceneActivationStateProviding {
 
-    @available(*, deprecated, message: "Use the interfaceOrientation property of the window scene instead.")
-    var statusBarOrientation: UIInterfaceOrientation { get }
-
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
-}
-
-extension UIApplication.State: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .active:
-            "active"
-        case .background:
-            "background"
-        case .inactive:
-            "inactive"
-        @unknown default:
-            "unknown"
-        }
-    }
+    /// Returns the activation state of the window's scene.
+    /// - Parameter view: The instance of which the `window` property is called.
+    /// - Returns: The scene's activation state or `nil` if the `window` or `window.windowScene` property is `nil`.
+    @MainActor
+    func activationStateForScene(of view: UIView) -> UIScene.ActivationState?
 }
