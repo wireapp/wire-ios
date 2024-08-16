@@ -36,7 +36,7 @@ final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
-    private let zClientViewControllerBuilder: ZClientViewControllerBuilder
+    private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
@@ -44,13 +44,14 @@ final class AuthenticatedRouter {
     private var featureChangeObserverToken: Any?
     private var revokedCertificateObserverToken: Any?
 
-    private weak var zClientViewController: ZClientViewController?
-
     // MARK: - Public Property
 
-    var viewController: UIViewController {
-        zClientViewController = zClientViewController ?? zClientViewControllerBuilder(router: self)
-        return zClientViewController!
+    private weak var _zClientController: ZClientViewController?
+
+    var zClientController: ZClientViewController {
+        let zClientController = _zClientController ?? zClientControllerBuilder(router: self)
+        _zClientController = zClientController
+        return zClientController
     }
 
     // MARK: - Init
@@ -68,7 +69,7 @@ final class AuthenticatedRouter {
             userSession: userSession,
             topOverlayPresenter: .init(rootViewController: rootViewController)
         )
-        zClientViewControllerBuilder = .init(account: account, userSession: userSession)
+        zClientControllerBuilder = .init(account: account, userSession: userSession)
 
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
@@ -116,7 +117,7 @@ final class AuthenticatedRouter {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        zClientViewController?.presentAlert(alert)
+        _zClientController?.presentAlert(alert)
     }
 
     private func notifyRevokedCertificate() {
@@ -126,7 +127,7 @@ final class AuthenticatedRouter {
             sessionManager.logoutCurrentSession()
         }
 
-        zClientViewController?.presentAlert(alert)
+        _zClientController?.presentAlert(alert)
     }
 }
 
@@ -144,13 +145,13 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     func navigate(to destination: NavigationDestination) {
         switch destination {
         case .conversation(let converation, let message):
-            zClientViewController?.showConversation(converation, at: message)
+            _zClientController?.showConversation(converation, at: message)
         case .connectionRequest(let userId):
-            zClientViewController?.showConnectionRequest(userId: userId)
+            _zClientController?.showConnectionRequest(userId: userId)
         case .conversationList:
-            zClientViewController?.showConversationList()
+            _zClientController?.showConversationList()
         case .userProfile(let user):
-            zClientViewController?.showUserProfile(user: user)
+            _zClientController?.showUserProfile(user: user)
         }
     }
 }

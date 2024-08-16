@@ -19,7 +19,7 @@
 import WireDataModel
 import WireSyncEngine
 
-struct ZClientViewControllerBuilder {
+struct ZClientControllerBuilder {
 
     private(set) var account: Account
     private(set) var userSession: UserSession
