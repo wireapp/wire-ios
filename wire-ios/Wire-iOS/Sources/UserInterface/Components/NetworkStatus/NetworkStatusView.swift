@@ -99,7 +99,7 @@ final class NetworkStatusView: UIView {
         connectingView.accessibilityIdentifier = "LoadBar"
         offlineView = OfflineBar()
 
-        super.init(frame: .zero)
+        super.init(frame: frame)
 
         connectingView.delegate = self
 
