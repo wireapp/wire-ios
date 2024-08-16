@@ -192,17 +192,18 @@ final class ZClientViewController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        let wireSplitViewController = SplitViewController()
-        wireSplitViewController.zClientController = self
-        wireSplitViewController.delegate = self
-        addToSelf(wireSplitViewController)
+        let splitViewController = SplitViewController()
+        _wireSplitViewController = splitViewController
+        splitViewController.zClientController = self
+        splitViewController.delegate = self
+        addToSelf(splitViewController)
 
-        wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        splitViewController.view.translatesAutoresizingMaskIntoConstraints = false
         createTopViewConstraints()
 
         updateSplitViewTopConstraint()
 
-        wireSplitViewController.view.backgroundColor = .clear
+        splitViewController.view.backgroundColor = .clear
 
         mainTabBarController = MainTabBarController(
             contacts: .init(),
@@ -210,7 +211,7 @@ final class ZClientViewController: UIViewController {
             folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
             archive: .init()
         )
-        wireSplitViewController.leftViewController = mainTabBarController
+        splitViewController.leftViewController = mainTabBarController
 
         // TODO [WPB-6647]: Remove in navigation overhaul
         // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
@@ -238,7 +239,7 @@ final class ZClientViewController: UIViewController {
         setupUserChangeInfoObserver()
         setUpConferenceCallingUnavailableObserver()
 
-        return wireSplitViewController
+        return splitViewController
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
