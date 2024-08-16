@@ -20,31 +20,31 @@ import XCTest
 
 @testable import Wire
 
-class MockContainer: NetworkStatusViewDelegate {
-    var shouldAnimateNetworkStatusView: Bool = true
-
-    var bottomMargin: CGFloat = 0
-
-    func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
-
-    }
-}
-
 final class NetworkStatusViewTests: XCTestCase {
 
     private var sut: NetworkStatusView!
-    private var mockContainer: MockContainer!
+    private var mockContainer: MockNetworkStatusViewDelegate!
 
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
 
-        mockContainer = MockContainer()
+        mockContainer = .init()
+        mockContainer.bottomMargin = 0
+        mockContainer.didChangeHeightAnimatedState_MockMethod = { _, _, _ in }
 
         sut = .init()
         sut.delegate = mockContainer
+        let rootView = try XCTUnwrap((UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?.rootViewController?.view)
+        sut.translatesAutoresizingMaskIntoConstraints = false
+        rootView.addSubview(sut)
+        NSLayoutConstraint.activate([
+            sut.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
+            sut.centerYAnchor.constraint(equalTo: rootView.centerYAnchor)
+        ])
     }
 
     override func tearDown() {
+        sut.removeFromSuperview()
         sut = nil
         mockContainer = nil
 

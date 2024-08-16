@@ -26,6 +26,7 @@ enum NetworkStatusViewState {
     case offlineExpanded
 }
 
+// sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
 
     /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is created but not yet appear, if didChangeHeight called with animated = true.
@@ -200,9 +201,6 @@ final class NetworkStatusView: UIView {
         var networkStatusViewState = state
 
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
-        print(window)
-        print(window?.windowScene)
-        print(window?.windowScene?.activationState)
         if let activationState = window?.windowScene?.activationState, ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online
         }

@@ -22,14 +22,17 @@ import XCTest
 
 final class NetworkStatusViewSnapShotTests: XCTestCase {
 
-    var sut: NetworkStatusView!
-    var mockContainer: MockContainer!
+    private var sut: NetworkStatusView!
+    private var mockContainer: MockNetworkStatusViewDelegate!
 
     override func setUp() {
         super.setUp()
 
         accentColor = .purple
-        mockContainer = MockContainer()
+        mockContainer = .init()
+        mockContainer.bottomMargin = 0
+        mockContainer.didChangeHeightAnimatedState_MockMethod = { _, _, _ in }
+
         sut = NetworkStatusView()
         sut.overrideUserInterfaceStyle = .light
         sut.backgroundColor = .clear
