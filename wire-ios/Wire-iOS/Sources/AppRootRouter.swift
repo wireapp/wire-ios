@@ -374,7 +374,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        windowScene.keyWindow!.rootViewController = authenticatedRouter.zClientController.wireSplitViewController.parent
+        windowScene.keyWindow!.rootViewController = authenticatedRouter.zClientController.wireSplitViewController
         completion()
     }
 
