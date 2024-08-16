@@ -20,7 +20,7 @@ import UIKit
 
 /// Implements the delegate method `splitViewControllerSupportedInterfaceOrientations(_: UISplitViewController)`
 /// and returns a value based on the intersection of all column's view controllers' supported interface orientations.
-public final class SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate: UISplitViewControllerDelegate {
+public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: UISplitViewControllerDelegate {
 
     public init() {}
 
@@ -42,7 +42,7 @@ public final class SupportedInterfaceOrientationsDelegatingSplitViewControllerDe
 
 // MARK: - Associated Object
 
-public extension SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate {
+public extension SupportedOrientationsDelegatingSplitViewControllerDelegate {
 
     /// By setting the instance as delegate and retained associated object we don't need to subclass the split view controller in order to achieve the desired behavior.
     func setAsDelegateAndNontomicRetainedAssociatedObject(_ splitViewController: UISplitViewController) {

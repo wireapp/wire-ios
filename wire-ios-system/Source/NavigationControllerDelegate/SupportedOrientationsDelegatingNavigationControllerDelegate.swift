@@ -20,7 +20,7 @@ import UIKit
 
 /// Implements the delegate method `navigationControllerSupportedInterfaceOrientations(_: UINavigationController)`
 /// and returns a value based on the intersection of the top view controller's supported interface orientations.
-public final class SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
+public final class SupportedOrientationsDelegatingNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
 
     public func navigationControllerSupportedInterfaceOrientations(_ navigationController: UINavigationController) -> UIInterfaceOrientationMask {
         navigationController.topViewController?.supportedInterfaceOrientations ?? []
@@ -29,7 +29,7 @@ public final class SupportedInterfaceOrientationsDelegatingNavigationControllerD
 
 // MARK: - Associated Object
 
-public extension SupportedInterfaceOrientationsDelegatingNavigationControllerDelegate {
+public extension SupportedOrientationsDelegatingNavigationControllerDelegate {
 
     /// By setting the instance as delegate and retained associated object we don't need to subclass the navigation controller in order to achieve the desired behavior.
     func setAsDelegateAndNontomicRetainedAssociatedObject(_ navigationController: UINavigationController) {
