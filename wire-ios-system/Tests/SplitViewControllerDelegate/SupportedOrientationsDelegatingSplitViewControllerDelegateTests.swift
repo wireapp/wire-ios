@@ -133,11 +133,11 @@ private final class ViewController: UIViewController {
         self.interfaceOrientations = interfaceOrientations
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
-    
+
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         interfaceOrientations
     }
