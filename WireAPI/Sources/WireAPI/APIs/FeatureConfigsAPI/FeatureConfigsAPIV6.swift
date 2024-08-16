@@ -24,74 +24,85 @@ class FeatureConfigsAPIV6: FeatureConfigsAPIV5 {
         .v6
     }
 
+    override func getFeatureConfigs() async throws -> [FeatureConfig] {
+        let request = HTTPRequest(
+            path: "\(pathPrefix)/feature-configs",
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: 200, type: FeatureConfigsResponseAPIV6.self)
+            .failure(code: 403, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
+            .failure(code: 403, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
+            .failure(code: 404, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
+            .parse(response)
+    }
+
 }
 
 struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
-    
-    let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>?
-    let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>?
-    let conferenceCalling: FeatureWithoutConfig?
-    let conversationGuestLinks: FeatureWithoutConfig?
-    let digitalSignatures: FeatureWithoutConfig?
-    let fileSharing: FeatureWithoutConfig?
+
+    let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
+    let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
+    let conferenceCalling: FeatureWithoutConfig
+    let conversationGuestLinks: FeatureWithoutConfig
+    let digitalSignatures: FeatureWithoutConfig
+    let fileSharing: FeatureWithoutConfig
+    let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
     let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>?
-    let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>?
-    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4>?
+    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>?
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>?
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
 
-        if let appLock {
-            let appLockConfig = AppLockFeatureConfig(
-                status: appLock.status,
-                isMandatory: appLock.config.enforceAppLock,
-                inactivityTimeoutInSeconds: appLock.config.inactivityTimeoutSecs
-            )
+        let appLockConfig = AppLockFeatureConfig(
+            status: appLock.status,
+            isMandatory: appLock.config.enforceAppLock,
+            inactivityTimeoutInSeconds: appLock.config.inactivityTimeoutSecs
+        )
 
-            featureConfigs.append(.appLock(appLockConfig))
-        }
+        featureConfigs.append(.appLock(appLockConfig))
 
-        if let classifiedDomains {
-            let classifiedDomainsConfig = ClassifiedDomainsFeatureConfig(
-                status: classifiedDomains.status,
-                domains: classifiedDomains.config.domains
-            )
+        let classifiedDomainsConfig = ClassifiedDomainsFeatureConfig(
+            status: classifiedDomains.status,
+            domains: classifiedDomains.config.domains
+        )
 
-            featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
-        }
+        featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
-        if let conferenceCalling {
-            let conferenceCallingConfig = ConferenceCallingFeatureConfig(
-                status: conferenceCalling.status
-            )
+        let conferenceCallingConfig = ConferenceCallingFeatureConfig(
+            status: conferenceCalling.status
+        )
 
-            featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
-        }
+        featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
 
-        if let conversationGuestLinks {
-            let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
-                status: conversationGuestLinks.status
-            )
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
+            status: conversationGuestLinks.status
+        )
 
-            featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
-        }
+        featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
 
-        if let digitalSignatures {
-            let digitalSignaturesConfig = DigitalSignatureFeatureConfig(
-                status: digitalSignatures.status
-            )
+        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(
+            status: digitalSignatures.status
+        )
 
-            featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
-        }
+        featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
 
-        if let fileSharing {
-            let fileSharingConfig = FileSharingFeatureConfig(
-                status: fileSharing.status
-            )
+        let fileSharingConfig = FileSharingFeatureConfig(
+            status: fileSharing.status
+        )
 
-            featureConfigs.append(.fileSharing(fileSharingConfig))
-        }
+        featureConfigs.append(.fileSharing(fileSharingConfig))
+
+        let selfDeletingMessagesConfig = SelfDeletingMessagesFeatureConfig(
+            status: selfDeletingMessages.status,
+            enforcedTimeoutSeconds: selfDeletingMessages.config.enforcedTimeoutSeconds
+        )
+
+        featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
 
         if let mls {
             let mlsConfig = MLSFeatureConfig(
@@ -104,15 +115,6 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
             )
 
             featureConfigs.append(.mls(mlsConfig))
-        }
-
-        if let selfDeletingMessages {
-            let selfDeletingMessagesConfig = SelfDeletingMessagesFeatureConfig(
-                status: selfDeletingMessages.status,
-                enforcedTimeoutSeconds: selfDeletingMessages.config.enforcedTimeoutSeconds
-            )
-
-            featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
         }
 
         if let mlsMigration {
@@ -130,8 +132,9 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
             let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
                 status: mlsE2EId.status,
                 acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
-                verificationExpiration: mlsE2EId.config.verificationExpiration
-
+                verificationExpiration: mlsE2EId.config.verificationExpiration,
+                crlProxy: mlsE2EId.config.crlProxy,
+                useProxyOnMobile: mlsE2EId.config.useProxyOnMobile
             )
 
             featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
@@ -139,18 +142,23 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
 
         return featureConfigs
     }
-    
+
 }
 
 extension FeatureConfigResponse {
-    
+
+    struct MLSMigrationV6: Decodable {
+        let startTime: UTCTime?
+        let finaliseRegardlessAfter: UTCTime?
+    }
+
     struct EndToEndIdentityV6: Decodable {
-        
+
         let acmeDiscoveryUrl: String?
         let verificationExpiration: UInt
         let crlProxy: String? /// Starting api v6
         let useProxyOnMobile: Bool? /// Starting api v6
-        
+
     }
-    
+
 }

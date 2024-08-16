@@ -24,14 +24,16 @@ struct EndToEndIdentityFeatureConfigDecoder {
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> EndToEndIdentityFeatureConfig {
         let payload = try container.decode(
-            FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4>.self,
+            FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>.self,
             forKey: .payload
         )
 
         return EndToEndIdentityFeatureConfig(
             status: payload.status,
             acmeDiscoveryURL: payload.config.acmeDiscoveryUrl,
-            verificationExpiration: payload.config.verificationExpiration
+            verificationExpiration: payload.config.verificationExpiration,
+            crlProxy: payload.config.crlProxy,
+            useProxyOnMobile: payload.config.useProxyOnMobile
         )
     }
 

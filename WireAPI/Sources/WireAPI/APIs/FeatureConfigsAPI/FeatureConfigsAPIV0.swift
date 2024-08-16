@@ -32,7 +32,7 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
 
     // MARK: - Get all feature configs
 
-    func getAllFeatureConfigs() async throws -> [FeatureConfig] {
+    func getFeatureConfigs() async throws -> [FeatureConfig] {
         let request = HTTPRequest(
             path: "\(pathPrefix)/feature-configs",
             method: .get
@@ -53,39 +53,39 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
 /// A namespace for all feature config responses
 
 enum FeatureConfigResponse {
-    
+
     struct AppLockV0: Decodable {
-        
+
         let enforceAppLock: Bool
         let inactivityTimeoutSecs: UInt
-        
+
     }
 
     struct ClassifiedDomainsV0: Decodable {
-        
+
         let domains: Set<String>
-        
+
     }
 
     struct MLSV0: Decodable {
-        
+
         let protocolToggleUsers: Set<UUID>
         let defaultProtocol: SupportedProtocol
         let allowedCipherSuites: [MLSCipherSuite]
         let defaultCipherSuite: MLSCipherSuite
-        
+
     }
 
     struct SelfDeletingMessagesV0: Decodable {
-        
+
         let enforcedTimeoutSeconds: UInt
-        
+
     }
 
 }
 
 struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
-    
+
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
     let conferenceCalling: FeatureWithoutConfig
@@ -159,5 +159,5 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
 
         return featureConfigs
     }
-    
+
 }

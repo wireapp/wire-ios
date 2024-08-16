@@ -24,7 +24,7 @@ class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
         .v4
     }
 
-    override func getAllFeatureConfigs() async throws -> [FeatureConfig] {
+    override func getFeatureConfigs() async throws -> [FeatureConfig] {
         let request = HTTPRequest(
             path: "\(pathPrefix)/feature-configs",
             method: .get
@@ -51,8 +51,8 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
     let fileSharing: FeatureWithoutConfig
     let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
     let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>?
-    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4> /// Starting api v4
-    let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4> /// Starting api v4
+    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4>? /// Starting api v4
+    let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4>? /// Starting api v4
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -116,23 +116,28 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
             featureConfigs.append(.mls(mlsConfig))
         }
 
-        let mlsMigrationConfig = MLSMigrationFeatureConfig(
-            status: mlsMigration.status,
-            startTime: mlsMigration.config.startTime?.date,
-            finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
+        if let mlsMigration {
+            let mlsMigrationConfig = MLSMigrationFeatureConfig(
+                status: mlsMigration.status,
+                startTime: mlsMigration.config.startTime?.date,
+                finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
 
-        )
+            )
 
-        featureConfigs.append(.mlsMigration(mlsMigrationConfig))
+            featureConfigs.append(.mlsMigration(mlsMigrationConfig))
+        }
 
-        let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
-            status: mlsE2EId.status,
-            acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
-            verificationExpiration: mlsE2EId.config.verificationExpiration
+        if let mlsE2EId {
+            let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
+                status: mlsE2EId.status,
+                acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
+                verificationExpiration: mlsE2EId.config.verificationExpiration,
+                crlProxy: nil,
+                useProxyOnMobile: nil
+            )
 
-        )
-
-        featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
+            featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
+        }
 
         return featureConfigs
     }
@@ -148,8 +153,8 @@ extension FeatureConfigResponse {
     }
 
     struct MLSMigrationV4: Decodable {
-        let startTime: UTCTime?
-        let finaliseRegardlessAfter: UTCTime?
+        let startTime: UTCTimeMillis?
+        let finaliseRegardlessAfter: UTCTimeMillis?
     }
 
     struct EndToEndIdentityV4: Codable, Equatable {

@@ -23,5 +23,5 @@ public protocol FeatureConfigsAPI {
     /// Get all feature configs.
     /// - Returns: All the feature configs.
 
-    func getAllFeatureConfigs() async throws -> [FeatureConfig]
+    func getFeatureConfigs() async throws -> [FeatureConfig]
 }

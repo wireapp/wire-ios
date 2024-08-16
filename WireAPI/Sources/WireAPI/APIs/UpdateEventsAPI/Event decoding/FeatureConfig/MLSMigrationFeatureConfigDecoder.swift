@@ -24,7 +24,7 @@ struct MLSMigrationFeatureConfigDecoder {
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> MLSMigrationFeatureConfig {
         let payload = try container.decode(
-            FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4>.self,
+            FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>.self,
             forKey: .payload
         )
 
