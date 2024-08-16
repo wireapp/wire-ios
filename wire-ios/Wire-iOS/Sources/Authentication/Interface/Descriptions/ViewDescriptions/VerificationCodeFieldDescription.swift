@@ -62,7 +62,6 @@ extension ResponderContainer: TextContainer where Child: TextContainer {
             responder.text = newValue
         }
     }
-
 }
 
 extension VerificationCodeFieldDescription: ViewDescriptor {
