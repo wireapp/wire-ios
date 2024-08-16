@@ -1,4 +1,4 @@
-binary "wire-avs.json" "9.7.21"
+binary "wire-avs.json" "9.8.18"
 github "wireapp/Down" "v2.3.4_xcframework"
 github "wireapp/HTMLString" "6.0.1_xcframework"
 github "wireapp/ZipArchive" "v2.4.2"
