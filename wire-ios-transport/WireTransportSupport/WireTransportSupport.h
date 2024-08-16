@@ -16,19 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
+#import <Foundation/Foundation.h>
 
-extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: true)
-    }
+//! Project version number for WireTransportSupport.
+FOUNDATION_EXPORT double WireTransportSupportVersionNumber;
 
-    public func isAuthenticated(_ account: Account) -> Bool {
-        guard let expirationDate = cookieStorage(for: account).authenticationCookieExpirationDate else {
-            return false
-        }
+//! Project version string for WireTransportSupport.
+FOUNDATION_EXPORT const unsigned char WireTransportSupportVersionString[];
 
-        return expirationDate.timeIntervalSinceNow > 0
-    }
-}
+// In this header, you should import all the public headers of your framework using statements like #import <WireTransportSupport/PublicHeader.h>
+
