@@ -54,7 +54,7 @@ final class HTTPClientMock: HTTPClient {
     }
 
     convenience init(
-        code: Int,
+        code: HTTPStatusCode,
         payloadResourceName: String
     ) throws {
         let response = PredefinedResponse(resourceName: payloadResourceName)
@@ -66,14 +66,14 @@ final class HTTPClientMock: HTTPClient {
     }
 
     convenience init(
-        code: Int,
+        code: HTTPStatusCode,
         errorLabel: String
     ) throws {
         try self.init(
             code: code,
             jsonResponse: """
             {
-                "code": \(code),
+                "code": \(code.rawValue),
                 "label": "\(errorLabel)",
                 "message": ""
             }
@@ -82,7 +82,7 @@ final class HTTPClientMock: HTTPClient {
     }
 
     convenience init(
-        code: Int,
+        code: HTTPStatusCode,
         jsonResponse: String
     ) throws {
         guard let payload = jsonResponse.data(using: .utf8) else {
@@ -96,12 +96,12 @@ final class HTTPClientMock: HTTPClient {
     }
 
     convenience init(
-        code: Int,
+        code: HTTPStatusCode,
         payload: Data?
     ) {
         self.init { _ in
             HTTPResponse(
-                code: code,
+                code: code.rawValue,
                 payload: payload
             )
         }

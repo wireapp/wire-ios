@@ -22,7 +22,7 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 
-final class ZClientViewController: UIViewController {
+final class ZClientViewController {
 
     private let account: Account
     let userSession: UserSession
@@ -32,11 +32,19 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = SplitViewController()
+    // TODO: rename splitViewController
+    private weak var _wireSplitViewController: SplitViewController?
+    var wireSplitViewController: SplitViewController {
+        let splitViewController = _wireSplitViewController ?? createSplitViewController()
+        _wireSplitViewController = splitViewController
+        return splitViewController
+    }
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: UITabBarController!
+    // TODO [WPB-6647]: Remove in navigation overhaul
+    private var tabBarChangeHandler: TabBarChangeHandler!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -89,7 +97,7 @@ final class ZClientViewController: UIViewController {
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
-    required init(
+    init(
         account: Account,
         userSession: UserSession
     ) {
@@ -97,8 +105,6 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         colorSchemeController = .init(userSession: userSession)
-
-        super.init(nibName: nil, bundle: nil)
 
         proximityMonitorManager = ProximityMonitorManager()
         mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
@@ -170,24 +176,28 @@ final class ZClientViewController: UIViewController {
         return stateRestored
     }
 
-    // MARK: - Overloaded methods
+    // MARK: -
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private var splitViewControllerHasBeenCreatedBefore = false
+
+    private func createSplitViewController() -> SplitViewController {
+
+        if splitViewControllerHasBeenCreatedBefore {
+            assertionFailure("this shouldn't be called more than once for the same ZClientController instance")
+        }
 
         pendingInitialStateRestore = true
 
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        // view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        wireSplitViewController.delegate = self
-        addToSelf(wireSplitViewController)
-
-        wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        let splitViewController = SplitViewController()
+        _wireSplitViewController = splitViewController
+        splitViewController.zClientController = self
+        splitViewController.delegate = self
+    TODO: topOverlayContainer?
         createTopViewConstraints()
 
         updateSplitViewTopConstraint()
-
-        wireSplitViewController.view.backgroundColor = .clear
 
         mainTabBarController = MainTabBarController(
             contacts: .init(),
@@ -195,7 +205,16 @@ final class ZClientViewController: UIViewController {
             folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
             archive: .init()
         )
-        wireSplitViewController.leftViewController = mainTabBarController
+        splitViewController.leftViewController = mainTabBarController
+
+        // TODO [WPB-6647]: Remove in navigation overhaul
+        // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
+        tabBarChangeHandler = TabBarChangeHandler(
+            conversationsViewController: conversationListViewController,
+            foldersViewController: conversationListWithFoldersViewController,
+            selectedTab: .conversations
+        )
+        mainTabBarController.delegate = tabBarChangeHandler
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -213,17 +232,12 @@ final class ZClientViewController: UIViewController {
 
         setupUserChangeInfoObserver()
         setUpConferenceCallingUnavailableObserver()
-    }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
-    }
-
-    override var shouldAutorotate: Bool {
-        return presentedViewController?.shouldAutorotate ?? true
+        return splitViewController
     }
 
     // MARK: keyboard shortcut
+TODO
     override var keyCommands: [UIKeyCommand]? {
         [
             UIKeyCommand(
@@ -245,21 +259,9 @@ final class ZClientViewController: UIViewController {
         return topOverlayViewController ?? wireSplitViewController
     }
 
-    private var childForStatusBar: UIViewController? {
-        // For iPad regular mode, there is a black bar area and we always use light style and non hidden status bar
-        return isIPadRegular() ? nil : child
-    }
-
-    override var childForStatusBarStyle: UIViewController? {
-        return childForStatusBar
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        return childForStatusBar
-    }
-
     // MARK: trait
 
+    TODO
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
@@ -278,7 +280,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Singleton
 
-    @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
+    @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
     static var shared: ZClientViewController? {
         AppDelegate.shared.appRootRouter?.zClientViewController
     }
@@ -385,13 +387,12 @@ final class ZClientViewController: UIViewController {
         )
         let navController = controller.wrapInNavigationController()
         navController.modalPresentationStyle = .formSheet
-
-        present(navController, animated: true)
+        wireSplitViewController.present(navController, animated: true)
     }
 
     @objc
     private func dismissClientListController(_ sender: Any?) {
-        dismiss(animated: true)
+        wireSplitViewController.dismiss(animated: true)
     }
 
     // MARK: - Animated conversation switch
@@ -415,8 +416,8 @@ final class ZClientViewController: UIViewController {
                 }
 
                 presentedViewController.dismiss(animated: true, completion: callback)
-            } else if self.presentedViewController != nil {
-                self.dismiss(animated: false, completion: callback)
+            } else if self.wireSplitViewController.presentedViewController != nil {
+                self.wireSplitViewController.dismiss(animated: false, completion: callback)
             } else {
                 callback?()
             }
@@ -452,7 +453,7 @@ final class ZClientViewController: UIViewController {
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
 
-        var presentingViewController = self as UIViewController
+        var presentingViewController = wireSplitViewController as UIViewController
         while let presentedViewController = presentingViewController.presentedViewController {
             presentingViewController = presentedViewController
         }
@@ -546,7 +547,7 @@ final class ZClientViewController: UIViewController {
         }
 
     }
-
+TODO
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
@@ -634,7 +635,7 @@ final class ZClientViewController: UIViewController {
                 viewController.presentTopmost(animated: animated, completion: completion)
             })
     }
-
+TODO
     private func createTopViewConstraints() {
 
         topOverlayContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -656,7 +657,7 @@ final class ZClientViewController: UIViewController {
         heightConstraint.priority = UILayoutPriority.defaultLow
         heightConstraint.isActive = true
     }
-
+TODO
     private func updateSplitViewTopConstraint() {
 
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
@@ -707,7 +708,7 @@ final class ZClientViewController: UIViewController {
         let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
         navWrapperController?.modalPresentationStyle = .formSheet
         if let aController = navWrapperController {
-            present(aController, animated: true)
+            wireSplitViewController.present(aController, animated: true)
         }
     }
 
@@ -772,3 +773,15 @@ extension ZClientViewController: SplitViewControllerDelegate {
         (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }
+
+// MARK: - SplitViewController + zClientController
+
+private extension SplitViewController {
+
+    var zClientController: ZClientViewController? {
+        get { objc_getAssociatedObject(self, &zClientControllerKey) as? ZClientViewController }
+        set { objc_setAssociatedObject(self, &zClientControllerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
+
+private nonisolated(unsafe) var zClientControllerKey = 0

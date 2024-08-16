@@ -31,7 +31,7 @@ extension ZClientViewController {
         guard notify.contains(.alert) else { return }
         let availability = selfUser.availability
 
-        present(UIAlertController.availabilityExplanation(availability), animated: true)
+        wireSplitViewController.present(UIAlertController.availabilityExplanation(availability), animated: true)
 
         userSession.perform {
             notify.remove(.alert)

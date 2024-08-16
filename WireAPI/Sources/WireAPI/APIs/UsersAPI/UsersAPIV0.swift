@@ -41,8 +41,8 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: UserResponseV0.self)
-            .failure(code: 404, label: "not-found", error: UsersAPIError.userNotFound)
+            .success(code: .ok, type: UserResponseV0.self)
+            .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
             .parse(response)
     }
 
@@ -57,7 +57,7 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: ListUsersResponseV0.self)
+            .success(code: .ok, type: ListUsersResponseV0.self)
             .parse(response)
     }
 }
