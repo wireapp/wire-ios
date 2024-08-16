@@ -97,11 +97,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
         var message: ZMClientMessage!
 
-<<<<<<< HEAD
         self.syncMOC.performGroupedAndWait {
-=======
-        self.syncMOC.performGroupedAndWait { _ in
->>>>>>> 0ba498bb3e (chore: cherrypick link preview fixes - WPB-10622 WPB-10495 (#1820))
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             message = self.insertMessage(with: .uploaded)
@@ -114,11 +110,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         // THEN
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
 
-<<<<<<< HEAD
         self.syncMOC.performGroupedAndWait {
-=======
-        self.syncMOC.performGroupedAndWait { _ in
->>>>>>> 0ba498bb3e (chore: cherrypick link preview fixes - WPB-10622 WPB-10495 (#1820))
             XCTAssertEqual(message.linkPreviewState, .done)
             XCTAssertNil(message.expirationDate)
         }
