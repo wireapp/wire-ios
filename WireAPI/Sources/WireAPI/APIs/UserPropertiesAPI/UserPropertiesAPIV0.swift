@@ -42,20 +42,20 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
 
         switch key {
         case .wireReceiptMode:
-            return try getProperty(response: response, payload: ReceiptModeResponseV0.self)
+            return try parseResponse(response, forPayloadType: ReceiptModeResponseV0.self)
         case .wireTypingIndicatorMode:
-            return try getProperty(response: response, payload: TypeIndicatorModeResponseV0.self)
+            return try parseResponse(response, forPayloadType: TypeIndicatorModeResponseV0.self)
         case .labels:
-            return try getProperty(response: response, payload: LabelsResponseV0.self)
+            return try parseResponse(response, forPayloadType: LabelsResponseV0.self)
         }
     }
 
-    func getProperty<Payload: UserPropertiesResponseAPIV0>(
-        response: HTTPResponse,
-        payload: Payload.Type
+    func parseResponse<Payload: UserPropertiesResponseAPIV0>(
+        _ response: HTTPResponse,
+        forPayloadType type: Payload.Type
     ) throws -> UserProperty where Payload.APIModel == UserProperty {
         try ResponseParser()
-            .success(code: .ok, type: payload)
+            .success(code: .ok, type: type)
             .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
             .parse(response)
     }
@@ -97,7 +97,7 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
 
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let payload = try container.decode(LabelsPayload.self)
+        let payload = try container.decode(LabelsPayloadV0.self)
 
         let conversationLabels = payload.labels.map {
             ConversationLabel(

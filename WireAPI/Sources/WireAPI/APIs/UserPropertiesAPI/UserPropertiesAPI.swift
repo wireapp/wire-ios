@@ -22,7 +22,7 @@ import Foundation
 /// An API access object for endpoints concerning user properties.
 public protocol UserPropertiesAPI {
 
-    /// Get the proterty value for a given key.
+    /// Get the property value for a given key.
     ///
     /// - Parameter key: The key of the property fo fetch.
     /// - Returns: A `UserProperty` enum
