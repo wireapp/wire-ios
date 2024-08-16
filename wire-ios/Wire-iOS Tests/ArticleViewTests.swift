@@ -200,7 +200,7 @@ final class ArticleViewTests: XCTestCase {
 
     func setUpArticleView(
         withImagePlaceholder: Bool,
-        textMessageData: ZMTextMessageData
+        textMessageData: TextMessageData
     ) -> ArticleView {
 
         let sut = ArticleView(withImagePlaceholder: withImagePlaceholder)
