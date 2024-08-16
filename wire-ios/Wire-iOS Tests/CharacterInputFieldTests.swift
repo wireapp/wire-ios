@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelegate {
     var shouldAccept = true
@@ -36,8 +37,13 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
 }
 
 final class CharacterInputFieldTests: XCTestCase {
-    var sut: CharacterInputField! = nil
-    var delegate: TestCharacterInputFieldDelegate! = nil
+
+    private var sut: CharacterInputField! = nil
+    private var delegate: TestCharacterInputFieldDelegate! = nil
+
+    private var rootViewController: UIViewController! {
+        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
+    }
 
     override func setUp() {
         super.setUp()
@@ -55,7 +61,7 @@ final class CharacterInputFieldTests: XCTestCase {
 
     func testThatItCanBecomeFirstResponder() {
         // when
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        rootViewController?.view.addSubview(sut)
         // then
         XCTAssertTrue(sut.canBecomeFocused)
         XCTAssertTrue(sut.becomeFirstResponder())

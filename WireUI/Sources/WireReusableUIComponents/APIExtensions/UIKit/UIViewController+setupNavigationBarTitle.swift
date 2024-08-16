@@ -20,6 +20,7 @@ import SwiftUI
 import WireDesign
 
 public extension UIViewController {
+
     func setupNavigationBarTitle(_ title: String) {
         navigationItem.title = title
 
@@ -39,6 +40,8 @@ public extension UIViewController {
     }
 }
 
+// MARK: - Previews
+
 struct ViewControllerPreview: UIViewControllerRepresentable {
     let title: String
 
@@ -48,8 +51,7 @@ struct ViewControllerPreview: UIViewControllerRepresentable {
 
         viewController.setupNavigationBarTitle(title)
 
-        let navigationController = UINavigationController(rootViewController: viewController)
-        return navigationController
+        return UINavigationController(rootViewController: viewController)
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

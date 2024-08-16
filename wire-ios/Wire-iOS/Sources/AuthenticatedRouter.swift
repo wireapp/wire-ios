@@ -37,7 +37,7 @@ final class AuthenticatedRouter {
     // MARK: - Private Property
 
     private let builder: AuthenticatedWireFrame
-    private let rootViewController: RootViewController
+    private let rootViewController: UIViewController
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: any FeatureRepositoryProvider
@@ -57,7 +57,7 @@ final class AuthenticatedRouter {
     // MARK: - Init
 
     init(
-        rootViewController: RootViewController,
+        rootViewController: UIViewController,
         account: Account,
         userSession: UserSession,
         featureRepositoryProvider: any FeatureRepositoryProvider,
@@ -66,7 +66,7 @@ final class AuthenticatedRouter {
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(
-            rootviewController: rootViewController,
+            rootViewController: rootViewController,
             userSession: userSession,
             topOverlayPresenter: .init(rootViewController: rootViewController)
         )

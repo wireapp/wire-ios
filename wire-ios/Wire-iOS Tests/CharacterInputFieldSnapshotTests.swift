@@ -26,6 +26,10 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
     private var snapshotHelper: SnapshotHelper!
     private var sut: CharacterInputField! = nil
 
+    private var rootViewController: UIViewController! {
+        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
+    }
+
     override func setUp() {
         super.setUp()
         snapshotHelper = .init()
@@ -49,7 +53,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testFocusedState() {
         // given
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()
@@ -60,7 +64,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testFocusedDeFocusedState() {
         // given
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()

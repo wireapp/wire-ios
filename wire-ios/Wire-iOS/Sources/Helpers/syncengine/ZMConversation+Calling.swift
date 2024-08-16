@@ -137,7 +137,7 @@ extension ZMConversation {
             style: .cancel
         ))
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
 
         return true
     }
