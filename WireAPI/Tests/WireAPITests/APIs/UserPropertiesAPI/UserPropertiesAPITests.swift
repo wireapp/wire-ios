@@ -108,9 +108,9 @@ final class UserPropertiesAPITests: XCTestCase {
             XCTAssertEqual(labels.count, 2)
             XCTAssertEqual(labels[0].name, "Foo")
             XCTAssertEqual(labels[1].name, nil)
+
         default:
             XCTFail()
-
         }
     }
 

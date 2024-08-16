@@ -41,11 +41,11 @@ public enum UserProperty: Equatable, Codable {
 
 }
 
-extension UserProperty {
+public extension UserProperty {
 
     /// The user property key.
 
-    public enum Key: String {
+    enum Key: String {
 
         /// Wire receipt mode
 
@@ -57,7 +57,7 @@ extension UserProperty {
 
         /// Labels
 
-        case labels = "labels"
+        case labels
 
     }
 }
