@@ -70,7 +70,7 @@ enum FeatureConfigResponse {
     struct MLSV0: Decodable {
 
         let protocolToggleUsers: Set<UUID>
-        let defaultProtocol: SupportedProtocol
+        let defaultProtocol: MessageProtocol
         let allowedCipherSuites: [MLSCipherSuite]
         let defaultCipherSuite: MLSCipherSuite
 

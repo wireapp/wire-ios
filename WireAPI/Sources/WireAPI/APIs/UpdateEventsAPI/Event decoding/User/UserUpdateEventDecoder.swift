@@ -49,7 +49,7 @@ struct UserUpdateEventDecoder {
         let email: String?
         let isSSOIDDeleted: Bool?
         let assets: [UserAsset]?
-        let supportedProtocols: Set<SupportedProtocol>?
+        let supportedProtocols: Set<MessageProtocol>?
 
         enum CodingKeys: String, CodingKey {
 

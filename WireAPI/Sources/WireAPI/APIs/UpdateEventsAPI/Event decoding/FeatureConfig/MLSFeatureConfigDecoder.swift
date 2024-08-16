@@ -24,7 +24,7 @@ struct MLSFeatureConfigDecoder {
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> MLSFeatureConfig {
         let payload = try container.decode(
-            FeatureWithConfig<FeatureConfigResponse.MLSV4>.self,
+            FeatureWithConfig<Payload>.self,
             forKey: .payload
         )
 
@@ -36,6 +36,16 @@ struct MLSFeatureConfigDecoder {
             defaultCipherSuite: payload.config.defaultCipherSuite,
             supportedProtocols: payload.config.supportedProtocols
         )
+    }
+
+    private struct Payload: Decodable {
+
+        let protocolToggleUsers: Set<UUID>
+        let defaultProtocol: MessageProtocol
+        let allowedCipherSuites: [MLSCipherSuite]
+        let defaultCipherSuite: MLSCipherSuite
+        let supportedProtocols: Set<MessageProtocol>
+
     }
 
 }

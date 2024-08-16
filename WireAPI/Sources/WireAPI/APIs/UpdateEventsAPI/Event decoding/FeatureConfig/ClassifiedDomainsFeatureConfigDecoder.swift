@@ -24,7 +24,7 @@ struct ClassifiedDomainsFeatureConfigDecoder {
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> ClassifiedDomainsFeatureConfig {
         let payload = try container.decode(
-            FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>.self,
+            FeatureWithConfig<Payload>.self,
             forKey: .payload
         )
 
@@ -33,4 +33,11 @@ struct ClassifiedDomainsFeatureConfigDecoder {
             domains: payload.config.domains
         )
     }
+
+    private struct Payload: Decodable {
+
+        let domains: Set<String>
+
+    }
+
 }

@@ -145,10 +145,10 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
 extension FeatureConfigResponse {
     struct MLSV4: Codable, Equatable {
         let protocolToggleUsers: Set<UUID>
-        let defaultProtocol: SupportedProtocol
+        let defaultProtocol: MessageProtocol
         let allowedCipherSuites: [MLSCipherSuite]
         let defaultCipherSuite: MLSCipherSuite
-        let supportedProtocols: Set<SupportedProtocol> /// Starting api v4
+        let supportedProtocols: Set<MessageProtocol> /// Starting api v4
     }
 
     struct MLSMigrationV4: Decodable {
