@@ -601,6 +601,10 @@ class Build
 
     # Helpers
 
+    def pr_build
+        !ENV['PR_S3_SUBFOLDER'].nil? 
+    end
+
     def countly_enabled
         !@countly_api_key.nil? && !@countly_api_key.empty?
     end
@@ -703,7 +707,10 @@ class Build
         end
 
         # We want to group related artifacts by the filename.
-        result + "/" + filename
+        if !pr_build
+            result + "/" + filename
+        else
+            result + "/PR/" + options[:s3_subfolder]
     end
 
     # Adding build number to icon
