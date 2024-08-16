@@ -32,7 +32,13 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = SplitViewController()
+    // TODO: rename splitViewController
+    private weak var _wireSplitViewController: SplitViewController?
+    var wireSplitViewController: SplitViewController {
+        let splitViewController = _wireSplitViewController ?? createSplitViewController()
+        _wireSplitViewController = splitViewController
+        return splitViewController
+    }
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
@@ -172,15 +178,22 @@ final class ZClientViewController: UIViewController {
         return stateRestored
     }
 
-    // MARK: - Overloaded methods
+    // MARK: -
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private var splitViewControllerHasBeenCreatedBefore = false
+
+    private func createSplitViewController() -> SplitViewController {
+
+        if splitViewControllerHasBeenCreatedBefore {
+            assertionFailure("this shouldn't be called more than once for the same ZClientController instance")
+        }
 
         pendingInitialStateRestore = true
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
+        let wireSplitViewController = SplitViewController()
+        wireSplitViewController.zClientController = self
         wireSplitViewController.delegate = self
         addToSelf(wireSplitViewController)
 
@@ -224,6 +237,8 @@ final class ZClientViewController: UIViewController {
 
         setupUserChangeInfoObserver()
         setUpConferenceCallingUnavailableObserver()
+
+        return wireSplitViewController
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -783,3 +798,15 @@ extension ZClientViewController: SplitViewControllerDelegate {
         (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }
+
+// MARK: - SplitViewController + zClientController
+
+private extension SplitViewController {
+
+    var zClientController: ZClientViewController? {
+        get { objc_getAssociatedObject(self, &zClientControllerKey) as? ZClientViewController }
+        set { objc_setAssociatedObject(self, &zClientControllerKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
+
+private nonisolated(unsafe) var zClientControllerKey = 0
