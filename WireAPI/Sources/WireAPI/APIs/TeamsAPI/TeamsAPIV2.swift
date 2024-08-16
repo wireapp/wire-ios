@@ -36,9 +36,9 @@ class TeamsAPIV2: TeamsAPIV1 {
 
         return try ResponseParser()
             // New response payload.
-            .success(code: 200, type: TeamResponseV2.self)
-            .failure(code: 404, error: TeamsAPIError.invalidTeamID)
-            .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .success(code: .ok, type: TeamResponseV2.self)
+            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
+            .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
 
