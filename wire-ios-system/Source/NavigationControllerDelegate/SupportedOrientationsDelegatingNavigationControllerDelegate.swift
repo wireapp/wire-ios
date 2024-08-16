@@ -23,7 +23,7 @@ import UIKit
 public final class SupportedOrientationsDelegatingNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
 
     public func navigationControllerSupportedInterfaceOrientations(_ navigationController: UINavigationController) -> UIInterfaceOrientationMask {
-        navigationController.topViewController?.supportedInterfaceOrientations ?? []
+        navigationController.topViewController?.supportedInterfaceOrientations ?? .all
     }
 }
 

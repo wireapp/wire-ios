@@ -40,9 +40,12 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
         let splitViewController = UISplitViewController(style: .doubleColumn)
         splitViewController.setViewController(ViewController(), for: .primary)
         splitViewController.setViewController(ViewController(), for: .secondary)
+        splitViewController.setViewController(ViewController(.landscapeLeft), for: .compact) // ignored when non-collapsed
 
         // When
-        let result = sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        let result = splitViewController.withOverridenIsCollapsed(false) {
+            sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        }
 
         // Then
         XCTAssertEqual(result, .all)
@@ -58,7 +61,9 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
         splitViewController.setViewController(ViewController([.landscapeRight, .portraitUpsideDown]), for: .secondary)
 
         // When
-        let result = sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        let result = splitViewController.withOverridenIsCollapsed(false) {
+            sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        }
 
         // Then
         XCTAssertEqual(result, .portraitUpsideDown)
@@ -70,14 +75,45 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
         // Given
         let splitViewController = UISplitViewController(style: .doubleColumn)
         splitViewController.setViewController(ViewController([.portrait, .portraitUpsideDown]), for: .primary)
-        splitViewController.setViewController(ViewController([.landscapeLeft, .portraitUpsideDown]), for: .supplementary)
         splitViewController.setViewController(ViewController([.landscapeRight, .portraitUpsideDown]), for: .secondary)
 
         // When
-        let result = sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        let result = splitViewController.withOverridenIsCollapsed(false) {
+            sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        }
 
         // Then
         XCTAssertEqual(result, .portraitUpsideDown)
+    }
+
+    @MainActor
+    func testAllSupportedWhenNoViewControllersAndCollapsed() {
+
+        // Given
+        let splitViewController = UISplitViewController(style: .tripleColumn)
+
+        // When
+        let result = splitViewController.withOverridenIsCollapsed(true) {
+            sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        }
+
+        // Then
+        XCTAssertEqual(result, .all)
+    }
+
+    @MainActor
+    func testAllSupportedWhenNoViewControllersAndNotCollapsed() {
+
+        // Given
+        let splitViewController = UISplitViewController(style: .tripleColumn)
+
+        // When
+        let result = splitViewController.withOverridenIsCollapsed(false) {
+            sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
+        }
+
+        // Then
+        XCTAssertEqual(result, .all)
     }
 }
 
@@ -102,3 +138,37 @@ private final class ViewController: UIViewController {
 }
 
 extension SupportedOrientationsDelegatingSplitViewControllerDelegate: Sendable {}
+
+// MARK: - Swizzle IsCollapsed
+
+private extension UISplitViewController {
+
+    private var overridenIsCollapsed: Bool? {
+        get { objc_getAssociatedObject(self, &overridenIsCollapsedKey) as? Bool }
+        set { objc_setAssociatedObject(self, &overridenIsCollapsedKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    @objc var swizzledIsCollapsed: Bool {
+        print("overridenIsCollapsed", overridenIsCollapsed)
+        return overridenIsCollapsed!
+    }
+
+    func withOverridenIsCollapsed<T>(_ isCollapsed: Bool, perform: () -> T) -> T {
+
+        let isCollapsedSelector = #selector(getter: UISplitViewController.isCollapsed)
+        let isCollapsedGetter = class_getInstanceMethod(UISplitViewController.self, isCollapsedSelector)!
+
+        let swizzledIsCollapsedSelector = #selector(getter: UISplitViewController.swizzledIsCollapsed)
+        let swizzledIsCollapsedGetter = class_getInstanceMethod(UISplitViewController.self, swizzledIsCollapsedSelector)!
+
+        method_exchangeImplementations(isCollapsedGetter, swizzledIsCollapsedGetter)
+        defer { method_exchangeImplementations(isCollapsedGetter, swizzledIsCollapsedGetter) }
+
+        overridenIsCollapsed = isCollapsed
+        defer { overridenIsCollapsed = nil }
+
+        return perform()
+    }
+}
+
+private nonisolated(unsafe) var overridenIsCollapsedKey = 0

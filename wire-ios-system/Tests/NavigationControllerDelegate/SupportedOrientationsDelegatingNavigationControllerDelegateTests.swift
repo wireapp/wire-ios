@@ -45,6 +45,76 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
         // Then
         XCTAssertEqual(result, .all)
     }
+
+    @MainActor
+    func testOnlyUpsideDownSupported() {
+
+        // Given
+        let navigationViewController = UINavigationController(rootViewController: ViewController(.portraitUpsideDown))
+
+        // When
+        let result = sut.navigationControllerSupportedInterfaceOrientations(navigationViewController)
+
+        // Then
+        XCTAssertEqual(result, .portraitUpsideDown)
+    }
+
+    @MainActor
+    func testOnlyTheTopViewControllerIsConsidered() {
+
+        // Given
+        let navigationViewController = UINavigationController()
+        navigationViewController.setViewControllers([ViewController(.portraitUpsideDown), ViewController(.landscape)], animated: false)
+
+        // When
+        let result = sut.navigationControllerSupportedInterfaceOrientations(navigationViewController)
+
+        // Then
+        XCTAssertEqual(result, .landscape)
+    }
+
+    @MainActor
+    func testAllSupportedWhenNoViewControllers() {
+
+        // Given
+        let navigationViewController = UINavigationController()
+
+        // When
+        let result = sut.navigationControllerSupportedInterfaceOrientations(navigationViewController)
+
+        // Then
+        XCTAssertEqual(result, .all)
+    }
+
+    @MainActor
+    func testDelegateIsSet() {
+
+        // Given
+        let navigationViewController = UINavigationController()
+
+        // When
+        sut.setAsDelegateAndNontomicRetainedAssociatedObject(navigationViewController)
+
+        // Then
+        XCTAssert(navigationViewController.delegate === sut)
+    }
+
+    @MainActor
+    func testDelegateIsRetained() {
+
+        // Given
+        let navigationViewController = UINavigationController()
+
+        // When
+        sut.setAsDelegateAndNontomicRetainedAssociatedObject(navigationViewController)
+        weak var weakSut = sut
+        sut = nil
+
+        // Then
+        withExtendedLifetime(navigationViewController) {
+            XCTAssertNotNil(weakSut)
+        }
+    }
 }
 
 // MARK: - ViewController
@@ -53,7 +123,7 @@ private final class ViewController: UIViewController {
 
     var interfaceOrientations: UIInterfaceOrientationMask
 
-    init(interfaceOrientations: UIInterfaceOrientationMask = .all) {
+    init(_ interfaceOrientations: UIInterfaceOrientationMask = .all) {
         self.interfaceOrientations = interfaceOrientations
         super.init(nibName: nil, bundle: nil)
     }
