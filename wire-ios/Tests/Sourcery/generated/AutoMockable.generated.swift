@@ -850,6 +850,47 @@ public class MockNetworkStatusObservable: NetworkStatusObservable {
 
 }
 
+class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - shouldAnimateNetworkStatusView
+
+    var shouldAnimateNetworkStatusView: Bool {
+        get { return underlyingShouldAnimateNetworkStatusView }
+        set(value) { underlyingShouldAnimateNetworkStatusView = value }
+    }
+
+    var underlyingShouldAnimateNetworkStatusView: Bool!
+
+    // MARK: - bottomMargin
+
+    var bottomMargin: CGFloat {
+        get { return underlyingBottomMargin }
+        set(value) { underlyingBottomMargin = value }
+    }
+
+    var underlyingBottomMargin: CGFloat!
+
+
+    // MARK: - didChangeHeight
+
+    var didChangeHeightAnimatedState_Invocations: [(networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState)] = []
+    var didChangeHeightAnimatedState_MockMethod: ((NetworkStatusView, Bool, NetworkStatusViewState) -> Void)?
+
+    func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
+        didChangeHeightAnimatedState_Invocations.append((networkStatusView: networkStatusView, animated: animated, state: state))
+
+        guard let mock = didChangeHeightAnimatedState_MockMethod else {
+            fatalError("no mock for `didChangeHeightAnimatedState`")
+        }
+
+        mock(networkStatusView, animated, state)
+    }
+
+}
+
 class MockProfileActionsFactoryProtocol: ProfileActionsFactoryProtocol {
 
     // MARK: - Life cycle

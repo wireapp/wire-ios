@@ -26,6 +26,7 @@ enum NetworkStatusViewState {
     case offlineExpanded
 }
 
+// sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
 
     /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is created but not yet appear, if didChangeHeight called with animated = true.
@@ -44,19 +45,20 @@ protocol NetworkStatusViewDelegate: AnyObject {
 }
 
 // MARK: - default implementation of didChangeHeight, animates the layout process
+
 extension NetworkStatusViewDelegate where Self: UIViewController {
+
     func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
 
         guard shouldAnimateNetworkStatusView else { return }
 
         if animated {
-            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState], animations: {
+            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState]) {
                 self.view.layoutIfNeeded()
-            })
+            }
         } else {
             self.view.layoutIfNeeded()
         }
-
     }
 }
 
@@ -80,16 +82,9 @@ final class NetworkStatusView: UIView {
     private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
     private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
 
-    private let sceneActivationStateProvider: SceneActivationStateProviding
-
     var state: NetworkStatusViewState {
-        get {
-            return _state
-        }
-
-        set {
-            update(state: newValue, animated: false)
-        }
+        get { _state }
+        set { update(state: newValue, animated: false) }
     }
 
     func update(state: NetworkStatusViewState, animated: Bool) {
@@ -99,14 +94,12 @@ final class NetworkStatusView: UIView {
         updateViewState(animated: (frame == .zero) ? false : animated)
     }
 
-    init(sceneActivationStateProvider: SceneActivationStateProviding = .default) {
-        self.sceneActivationStateProvider = sceneActivationStateProvider
-
+    override init(frame: CGRect) {
         connectingView = BreathLoadingBar.withDefaultAnimationDuration()
         connectingView.accessibilityIdentifier = "LoadBar"
         offlineView = OfflineBar()
 
-        super.init(frame: .zero)
+        super.init(frame: frame)
 
         connectingView.delegate = self
 
@@ -128,15 +121,15 @@ final class NetworkStatusView: UIView {
     private func createConstraints() {
         [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
-          offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
-          offlineViewTopMargin,
-          offlineViewBottomMargin,
+            offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineViewTopMargin,
+            offlineViewBottomMargin,
 
-          connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
-          connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
-          connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
-          connectingViewBottomMargin
+            connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
+            connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
+            connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
+            connectingViewBottomMargin
         ])
     }
 
@@ -205,10 +198,10 @@ final class NetworkStatusView: UIView {
 
     func updateUI(animated: Bool) {
         log(networkStatus: state)
-        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
-        let sceneActivationState = sceneActivationStateProvider.activationStateForScene(of: self)
-        if ![.foregroundActive, .foregroundInactive].contains(sceneActivationState) {
+
+        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
+        if let activationState = window?.windowScene?.activationState, ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online
         }
 
@@ -246,6 +239,7 @@ final class NetworkStatusView: UIView {
 }
 
 extension NetworkStatusView: BreathLoadingBarDelegate {
+
     func animationDidStarted() {
         delegate?.didChangeHeight(self, animated: true, state: state)
     }

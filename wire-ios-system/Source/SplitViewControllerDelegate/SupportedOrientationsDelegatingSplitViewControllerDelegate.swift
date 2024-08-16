@@ -20,7 +20,10 @@ import UIKit
 
 /// Implements the delegate method `splitViewControllerSupportedInterfaceOrientations(_: UISplitViewController)`
 /// and returns a value based on the intersection of all column's view controllers' supported interface orientations.
-public final class SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate: UISplitViewControllerDelegate {
+///
+/// Note: For tablets with a `UIRequiresFullScreen` value of `false` the `UIViewControllers`' `supportedInterfaceOrientations`
+/// property isn't read and therefore in this project this class is only relevant when running on phones.
+public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: UISplitViewControllerDelegate {
 
     public init() {}
 
@@ -28,9 +31,16 @@ public final class SupportedInterfaceOrientationsDelegatingSplitViewControllerDe
         _ splitViewController: UISplitViewController
     ) -> UIInterfaceOrientationMask {
 
-        // form an intersection of all the view controllers' supported interface orientations
+        // This implementation is a quick-fix for the purpose of preventing some screens of
+        // the app from rotating on phones. It's fragile and and might need to be revisited.
+
+        guard splitViewController.viewController(for: .compact) == nil else {
+            fatalError("This implementation does not support `.compact` columns. Extend it if needed.")
+        }
+
+        // form an intersection of the view controllers' supported interface orientations
         var supportedInterfaceOrientations = UIInterfaceOrientationMask.all
-        for column in [UISplitViewController.Column.primary, .supplementary, .secondary, .compact] {
+        for column in [UISplitViewController.Column.primary, .supplementary, .secondary] {
             if let viewController = splitViewController.viewController(for: column) {
                 supportedInterfaceOrientations.formIntersection(viewController.supportedInterfaceOrientations)
             }
@@ -42,10 +52,15 @@ public final class SupportedInterfaceOrientationsDelegatingSplitViewControllerDe
 
 // MARK: - Associated Object
 
-public extension SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate {
+public extension SupportedOrientationsDelegatingSplitViewControllerDelegate {
 
     /// By setting the instance as delegate and retained associated object we don't need to subclass the split view controller in order to achieve the desired behavior.
     func setAsDelegateAndNontomicRetainedAssociatedObject(_ splitViewController: UISplitViewController) {
+
+        guard splitViewController.viewController(for: .compact) == nil else {
+            fatalError("This implementation does not support `.compact` columns. Extend it if needed.")
+        }
+
         splitViewController.delegate = self
         objc_setAssociatedObject(splitViewController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
