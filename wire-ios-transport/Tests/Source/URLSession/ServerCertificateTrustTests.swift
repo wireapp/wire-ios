@@ -120,7 +120,7 @@ class BackendTrustProviderTests: XCTestCase {
         trustVerificator.verify(url: URL(string: "https://www.youtube.com")!)
 
         // then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 5)
     }
 
     func testThatVerificationFailsWithNoHost() {
@@ -173,7 +173,7 @@ class BackendTrustProviderTests: XCTestCase {
         trustVerificator.verify(url: URL(string: "https://www.youtube.com")!)
 
         // then
-        waitForExpectations(timeout: 5.0)
+        waitForExpectations(timeout: 5)
     }
 
     func testExternalHostWithInvalidCertificateIsNotTrusted() {

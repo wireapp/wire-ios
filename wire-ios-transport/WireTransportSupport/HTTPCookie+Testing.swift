@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireTransport
 
-@objc public protocol AuthenticationStatusProvider {
-    var isAuthenticated: Bool { get }
-}
+extension HTTPCookie {
 
-extension ZMPersistentCookieStorage: AuthenticationStatusProvider {
-    public var isAuthenticated: Bool {
-        return authenticationCookieData != nil
+    @objc public class func validCookieData() -> Data {
+        validCookieData(string: "zuid=something; Path=/access; Expires=Tue, 06-Oct-2099 11:46:18 GMT; HttpOnly; Secure")
     }
+
+    @objc public class func validCookieData(string: String) -> Data {
+        HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
+    }
+
 }

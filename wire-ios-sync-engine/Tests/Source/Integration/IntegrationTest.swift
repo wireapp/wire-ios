@@ -861,8 +861,7 @@ public class MockLoginDelegate: NSObject, LoginDelegate {
 extension IntegrationTest {
     func addAccount(name: String, userIdentifier: UUID) -> Account {
         let account = Account(userName: name, userIdentifier: userIdentifier)
-        let cookie = NSData.secureRandomData(ofLength: 16)
-        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = cookie
+        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
         sessionManager!.accountManager.addOrUpdate(account)
         return account
     }

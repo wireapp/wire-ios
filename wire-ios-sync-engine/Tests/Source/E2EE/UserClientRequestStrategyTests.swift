@@ -21,6 +21,7 @@ import WireDataModelSupport
 import WireMockTransport
 @testable import WireSyncEngine
 import WireTesting
+import WireTransportSupport
 import WireUtilities
 import XCTest
 
@@ -387,7 +388,7 @@ extension UserClientRequestStrategyTests {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
             self.clientRegistrationStatus.lastResortPrekey = (ushort.max, "last-resort-prekey")
-            self.cookieStorage.authenticationCookieData = Data()
+            self.cookieStorage.authenticationCookieData = HTTPCookie.validCookieData()
             self.clientRegistrationStatus.mockPhase = .unregistered
 
             let client = self.createSelfClient(self.syncMOC)

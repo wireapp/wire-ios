@@ -179,7 +179,7 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
     func testThatItDeletesTheAccount_OnAuthentictionFailureForBackgroundSession() {
         // given
         let additionalAccount = Account(userName: "Additional Account", userIdentifier: UUID())
-        sessionManager!.environment.cookieStorage(for: additionalAccount).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        sessionManager!.environment.cookieStorage(for: additionalAccount).authenticationCookieData = HTTPCookie.validCookieData()
         sessionManager!.accountManager.addOrUpdate(additionalAccount)
 
         XCTAssert(login())

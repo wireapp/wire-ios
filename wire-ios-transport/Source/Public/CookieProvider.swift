@@ -25,7 +25,9 @@ public protocol CookieProvider {
 }
 
 extension ZMPersistentCookieStorage: CookieProvider {
+
     public var isAuthenticated: Bool {
-        authenticationCookieData != nil
+        hasAuthenticationCookie
     }
+
 }
