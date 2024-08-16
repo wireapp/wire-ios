@@ -81,8 +81,6 @@ final class NetworkStatusView: UIView {
     private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
     private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
 
-    private let sceneActivationStateProvider: SceneActivationStateProviding
-
     var state: NetworkStatusViewState {
         get { _state }
         set { update(state: newValue, animated: false) }
@@ -95,9 +93,7 @@ final class NetworkStatusView: UIView {
         updateViewState(animated: (frame == .zero) ? false : animated)
     }
 
-    init(sceneActivationStateProvider: SceneActivationStateProviding = .default) {
-        self.sceneActivationStateProvider = sceneActivationStateProvider
-
+    override init(frame: CGRect) {
         connectingView = BreathLoadingBar.withDefaultAnimationDuration()
         connectingView.accessibilityIdentifier = "LoadBar"
         offlineView = OfflineBar()
@@ -201,10 +197,13 @@ final class NetworkStatusView: UIView {
 
     func updateUI(animated: Bool) {
         log(networkStatus: state)
-        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
         var networkStatusViewState = state
-        let sceneActivationState = sceneActivationStateProvider.activationStateForScene(of: self)
-        if ![.foregroundActive, .foregroundInactive].contains(sceneActivationState) {
+
+        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
+        print(window)
+        print(window?.windowScene)
+        print(window?.windowScene?.activationState)
+        if let activationState = window?.windowScene?.activationState, ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online
         }
 

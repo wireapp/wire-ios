@@ -42,8 +42,6 @@
 		598E86E02BF4DB9B00FC5438 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
 		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
-		5993B54B2C6CE207006AECBD /* SceneActivationStateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5993B54A2C6CE207006AECBD /* SceneActivationStateProviding.swift */; };
-		5993B54D2C6CE316006AECBD /* DefaultSceneActivationStateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5993B54C2C6CE316006AECBD /* DefaultSceneActivationStateProvider.swift */; };
 		5993B5502C6CFA47006AECBD /* SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5993B54F2C6CFA47006AECBD /* SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate.swift */; };
 		599C83222C453FF600D33A0D /* ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599C83212C453FF600D33A0D /* ZMSDispatchGroup.swift */; };
 		59C39F072C21E9390087300D /* DispatchGroupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59C39F062C21E9390087300D /* DispatchGroupTests.swift */; };
@@ -138,8 +136,6 @@
 		598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		598E86E72BF4DBC900FC5438 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
 		598E86E82BF4DBC900FC5438 /* config.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = config.yml; sourceTree = "<group>"; };
-		5993B54A2C6CE207006AECBD /* SceneActivationStateProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneActivationStateProviding.swift; sourceTree = "<group>"; };
-		5993B54C2C6CE316006AECBD /* DefaultSceneActivationStateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSceneActivationStateProvider.swift; sourceTree = "<group>"; };
 		5993B54F2C6CFA47006AECBD /* SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedInterfaceOrientationsDelegatingSplitViewControllerDelegate.swift; sourceTree = "<group>"; };
 		599C83212C453FF600D33A0D /* ZMSDispatchGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSDispatchGroup.swift; sourceTree = "<group>"; };
 		59C39F062C21E9390087300D /* DispatchGroupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchGroupTests.swift; sourceTree = "<group>"; };
@@ -261,7 +257,6 @@
 				01CB030B2A0CED010000CFF2 /* Logging */,
 				597D26042C6E019600D8AF15 /* NavigationControllerDelegate */,
 				5993B54E2C6CFA15006AECBD /* SplitViewControllerDelegate */,
-				5993B5492C6CE1EE006AECBD /* SceneActivationStateProvider */,
 				F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */,
 				F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */,
 				594450552BDFE8BF003ACC98 /* TimePoint.swift */,
@@ -372,15 +367,6 @@
 				598E86E82BF4DBC900FC5438 /* config.yml */,
 			);
 			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		5993B5492C6CE1EE006AECBD /* SceneActivationStateProvider */ = {
-			isa = PBXGroup;
-			children = (
-				5993B54C2C6CE316006AECBD /* DefaultSceneActivationStateProvider.swift */,
-				5993B54A2C6CE207006AECBD /* SceneActivationStateProviding.swift */,
-			);
-			path = SceneActivationStateProvider;
 			sourceTree = "<group>";
 		};
 		5993B54E2C6CFA15006AECBD /* SplitViewControllerDelegate */ = {
@@ -631,13 +617,11 @@
 				013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */,
 				594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
-				5993B54D2C6CE316006AECBD /* DefaultSceneActivationStateProvider.swift in Sources */,
 				EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */,
 				E66F22F32C2ADD70005FD57E /* LogConvertible.swift in Sources */,
 				59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				E66F22F52C2ADDAB005FD57E /* LogAttributes.swift in Sources */,
-				5993B54B2C6CE207006AECBD /* SceneActivationStateProviding.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
 				595052972C4785AE0020B1A1 /* UIModalPresentationStyle+CustomDebugStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
