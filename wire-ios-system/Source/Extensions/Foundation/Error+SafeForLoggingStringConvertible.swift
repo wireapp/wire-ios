@@ -18,20 +18,10 @@
 
 import Foundation
 
-/// An event where a new self user client was added.
+extension NSError: SafeForLoggingStringConvertible {
 
-public struct UserClientAddEvent: Equatable, Codable {
-
-    /// The new user client.
-
-    public let client: UserClient
-
-    /// Create a new `UserClientAddEvent`.
-    ///
-    /// - Parameter client: The new user client.
-
-    public init(client: UserClient) {
-        self.client = client
+    public var safeForLoggingDescription: String {
+        "<domain: \(domain), code: \(code)>"
     }
 
 }

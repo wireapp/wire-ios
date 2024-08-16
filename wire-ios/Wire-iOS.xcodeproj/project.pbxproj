@@ -352,6 +352,8 @@
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
+		598EA8C72C5BFFFE006DA500 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 598EA8C62C5BFFFE006DA500 /* WireAPI */; };
+		598EA8C82C5BFFFF006DA500 /* WireAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 598EA8C62C5BFFFE006DA500 /* WireAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */ = {isa = PBXBuildFile; productRef = 59942F172C2BF72C00F65A54 /* WireUITesting */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
@@ -889,9 +891,9 @@
 		A90E4AC42381EFCD00468F31 /* ZMButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90E4AC32381EFCD00468F31 /* ZMButton.swift */; };
 		A90F3E08249B978400429BFE /* MessageActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90F3E07249B978400429BFE /* MessageActionTests.swift */; };
 		A9150DB523D1B6B900844185 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9150DB423D1B6B800844185 /* Analytics.swift */; };
-		A918330D241922EB00CBD0B7 /* TokenTextAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330C241922EB00CBD0B7 /* TokenTextAttachmentTests.swift */; };
+		A918330D241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */; };
 		A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A918330E2419272E00CBD0B7 /* TokenSeparatorAttachment.swift */; };
-		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */; };
+		A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */; };
 		A91833132419347F00CBD0B7 /* TokenFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91833122419347F00CBD0B7 /* TokenFieldTests.swift */; };
 		A9184F0925C097EF00AE7842 /* MockConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9184F0825C097EE00AE7842 /* MockConversation.swift */; };
 		A923F1C02428C12A003F361F /* URLs+zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A923F1BF2428C12A003F361F /* URLs+zip.swift */; };
@@ -2013,6 +2015,7 @@
 				016DB6DF2C261A4900DEB81B /* WireDomain.framework in Embed Frameworks */,
 				5996E8A32C19D066007A52F0 /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
+				598EA8C82C5BFFFF006DA500 /* WireAPI in Embed Frameworks */,
 				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
 			);
@@ -2944,9 +2947,9 @@
 		A90E4AC32381EFCD00468F31 /* ZMButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMButton.swift; sourceTree = "<group>"; };
 		A90F3E07249B978400429BFE /* MessageActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionTests.swift; sourceTree = "<group>"; };
 		A9150DB423D1B6B800844185 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
-		A918330C241922EB00CBD0B7 /* TokenTextAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTextAttachmentTests.swift; sourceTree = "<group>"; };
+		A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenTextAttachmentSnapshotTests.swift; sourceTree = "<group>"; };
 		A918330E2419272E00CBD0B7 /* TokenSeparatorAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachment.swift; sourceTree = "<group>"; };
-		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentTests.swift; sourceTree = "<group>"; };
+		A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSeparatorAttachmentSnapshotTests.swift; sourceTree = "<group>"; };
 		A91833122419347F00CBD0B7 /* TokenFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenFieldTests.swift; sourceTree = "<group>"; };
 		A9184F0825C097EE00AE7842 /* MockConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockConversation.swift; sourceTree = "<group>"; };
 		A923F1BF2428C12A003F361F /* URLs+zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLs+zip.swift"; sourceTree = "<group>"; };
@@ -3980,6 +3983,7 @@
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				E9FBF3A62C47C23100C65DA8 /* FLAnimatedImage in Frameworks */,
 				59CD83E52C22CE9800186022 /* WireDesign in Frameworks */,
+				598EA8C72C5BFFFE006DA500 /* WireAPI in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				061F34192B1E2ED50099CBAB /* AppAuth in Frameworks */,
 				061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */,
@@ -6831,8 +6835,8 @@
 			isa = PBXGroup;
 			children = (
 				A91833122419347F00CBD0B7 /* TokenFieldTests.swift */,
-				A918330C241922EB00CBD0B7 /* TokenTextAttachmentTests.swift */,
-				A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift */,
+				A918330C241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift */,
+				A91833102419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift */,
 			);
 			path = Token;
 			sourceTree = "<group>";
@@ -8641,6 +8645,7 @@
 				59CD83E42C22CE9800186022 /* WireDesign */,
 				E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */,
 				5965B46B2C57AC70000DBF91 /* WireSystemPackage */,
+				598EA8C62C5BFFFE006DA500 /* WireAPI */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -10486,7 +10491,7 @@
 				162AE74D219DB1BD00581D98 /* ConversationImageMessageTests.swift in Sources */,
 				E6C25FF72B0355AD00406A1C /* AppLockModuleViewTests.swift in Sources */,
 				4067991C29C88AB6001326B5 /* SecurityLevelViewTests.swift in Sources */,
-				A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentTests.swift in Sources */,
+				A91833112419275E00CBD0B7 /* TokenSeparatorAttachmentSnapshotTests.swift in Sources */,
 				EF15A7B420BC304A00A045C7 /* SavableImageTests.swift in Sources */,
 				5E294597219087CA0045ACFA /* ConversationReplyCellTests.swift in Sources */,
 				EF3371C52216F067005ED048 /* MockUser+SelfUserFromSession.swift in Sources */,
@@ -10508,7 +10513,7 @@
 				D38BC97628BF8AA700EB928F /* NotificationServiceError.swift in Sources */,
 				874941CB1DE34DEC006CF32B /* UserConnectionViewSnapshotTests.swift in Sources */,
 				EFD5CF4E2189C68D00BEC99E /* NSMutableAttributedString+ReplaceEmojiTests.swift in Sources */,
-				A918330D241922EB00CBD0B7 /* TokenTextAttachmentTests.swift in Sources */,
+				A918330D241922EB00CBD0B7 /* TokenTextAttachmentSnapshotTests.swift in Sources */,
 				EE7F467425B1D0BA001B3EE4 /* AppLockModule.MockView.swift in Sources */,
 				5EBF47C421B2F8710021CFFC /* MessageDetailsActionTests.swift in Sources */,
 				EF4018C02059761D00CFBCB0 /* MockApplication.swift in Sources */,
@@ -11715,6 +11720,10 @@
 		5965B47E2C57C85D000DBF91 /* WireSystemPackageSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireSystemPackageSupport;
+		};
+		598EA8C62C5BFFFE006DA500 /* WireAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireAPI;
 		};
 		59942F172C2BF72C00F65A54 /* WireUITesting */ = {
 			isa = XCSwiftPackageProductDependency;
