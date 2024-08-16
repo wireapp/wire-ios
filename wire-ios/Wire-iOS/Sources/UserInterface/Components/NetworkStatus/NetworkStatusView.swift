@@ -44,19 +44,20 @@ protocol NetworkStatusViewDelegate: AnyObject {
 }
 
 // MARK: - default implementation of didChangeHeight, animates the layout process
+
 extension NetworkStatusViewDelegate where Self: UIViewController {
+
     func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
 
         guard shouldAnimateNetworkStatusView else { return }
 
         if animated {
-            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState], animations: {
+            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState]) {
                 self.view.layoutIfNeeded()
-            })
+            }
         } else {
             self.view.layoutIfNeeded()
         }
-
     }
 }
 
@@ -83,13 +84,8 @@ final class NetworkStatusView: UIView {
     private let sceneActivationStateProvider: SceneActivationStateProviding
 
     var state: NetworkStatusViewState {
-        get {
-            return _state
-        }
-
-        set {
-            update(state: newValue, animated: false)
-        }
+        get { _state }
+        set { update(state: newValue, animated: false) }
     }
 
     func update(state: NetworkStatusViewState, animated: Bool) {
@@ -128,15 +124,15 @@ final class NetworkStatusView: UIView {
     private func createConstraints() {
         [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
-          offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
-          offlineViewTopMargin,
-          offlineViewBottomMargin,
+            offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineViewTopMargin,
+            offlineViewBottomMargin,
 
-          connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
-          connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
-          connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
-          connectingViewBottomMargin
+            connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
+            connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
+            connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
+            connectingViewBottomMargin
         ])
     }
 
@@ -246,6 +242,7 @@ final class NetworkStatusView: UIView {
 }
 
 extension NetworkStatusView: BreathLoadingBarDelegate {
+
     func animationDidStarted() {
         delegate?.didChangeHeight(self, animated: true, state: state)
     }
