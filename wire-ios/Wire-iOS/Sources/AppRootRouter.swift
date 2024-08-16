@@ -638,3 +638,23 @@ extension AppRootRouter: AudioPermissionsObserving {
         sessionManager.updateMuteOtherCallsFromSettings()
     }
 }
+
+// TODO: animate swaping root view controller
+/*
+
+ private func swap() {
+     let window = view.window!
+     let newVC = storyboard?.instantiateInitialViewController() as! Self
+     newVC.loadViewIfNeeded()
+     newVC.label.text = "ok"
+     window.rootViewController = newVC
+
+     let options: UIView.AnimationOptions = .transitionCrossDissolve
+     let duration: TimeInterval = 0.3
+
+     UIView.transition(with: window, duration: duration, options: options, animations: {}) { isCompleted in
+         // maybe do something on completion here
+     }
+ }
+
+ */
