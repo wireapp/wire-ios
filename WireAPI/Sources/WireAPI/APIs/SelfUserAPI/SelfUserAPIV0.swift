@@ -39,7 +39,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: SelfUserV0.self)
+            .success(code: .ok, type: SelfUserV0.self)
             .parse(response)
     }
 

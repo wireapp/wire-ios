@@ -33,7 +33,7 @@ class SelfUserAPIV4: SelfUserAPIV3 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: SelfUserV4.self)
+            .success(code: .ok, type: SelfUserV4.self)
             .parse(response)
     }
 

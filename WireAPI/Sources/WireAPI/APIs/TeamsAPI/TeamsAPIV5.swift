@@ -36,9 +36,9 @@ class TeamsAPIV5: TeamsAPIV4 {
 
         // New: 404
         return try ResponseParser()
-            .success(code: 200, type: TeamResponseV2.self)
-            .failure(code: 404, error: TeamsAPIError.invalidTeamID)
-            .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .success(code: .ok, type: TeamResponseV2.self)
+            .failure(code: .notFound, error: TeamsAPIError.invalidTeamID)
+            .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
 
@@ -54,8 +54,8 @@ class TeamsAPIV5: TeamsAPIV4 {
 
         // New: 400 error was removed.
         return try ResponseParser()
-            .success(code: 200, type: ConversationRolesListResponseV0.self)
-            .failure(code: 403, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .success(code: .ok, type: ConversationRolesListResponseV0.self)
+            .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .parse(response)
     }
 
@@ -81,8 +81,8 @@ class TeamsAPIV5: TeamsAPIV4 {
 
         // New: 400 error was removed.
         return try ResponseParser()
-            .success(code: 200, type: TeamMemberListResponseV0.self)
-            .failure(code: 403, label: "no-team-memper", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .success(code: .ok, type: TeamMemberListResponseV0.self)
+            .failure(code: .forbidden, label: "no-team-memper", error: TeamsAPIError.selfUserIsNotTeamMember)
             .parse(response)
     }
 
@@ -101,9 +101,9 @@ class TeamsAPIV5: TeamsAPIV4 {
 
         // New: 404 invalid request.
         return try ResponseParser()
-            .success(code: 200, type: LegalholdStatusResponseV0.self)
-            .failure(code: 404, error: TeamsAPIError.invalidRequest)
-            .failure(code: 404, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
+            .success(code: .ok, type: LegalholdStatusResponseV0.self)
+            .failure(code: .notFound, error: TeamsAPIError.invalidRequest)
+            .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
     }
 
