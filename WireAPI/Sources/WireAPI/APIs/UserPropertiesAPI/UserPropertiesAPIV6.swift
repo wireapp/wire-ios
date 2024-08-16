@@ -18,25 +18,10 @@
 
 import Foundation
 
-/// A persisted property stored on the server used to
-/// share self user settings across devices.
+class UserPropertiesAPIV6: UserPropertiesAPIV5 {
 
-public enum UserProperty: Equatable, Codable {
-
-    /// Whether the self user has enabled read receipts.
-
-    case areReadRecieptsEnabled(Bool)
-
-    /// Whether the self user has enabled typing indicators.
-
-    case areTypingIndicatorsEnabled(Bool)
-
-    /// The conversation labels setting.
-
-    case conversationLabels([ConversationLabel])
-
-    /// An unknown property.
-
-    case unknown(key: String)
+    override var apiVersion: APIVersion {
+        .v6
+    }
 
 }
