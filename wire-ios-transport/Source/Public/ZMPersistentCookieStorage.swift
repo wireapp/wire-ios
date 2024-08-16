@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTransport
+import Foundation
 
-extension BackendEnvironmentProvider {
-    func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: true)
+extension ZMPersistentCookieStorage {
+
+    /// Returns true if `self` has an authentication cookie that can be **decrypted**.
+    ///
+    /// - note: This should generally be used in favor of `ZMPersistentCookieStorage.authenticationCookieData` which
+    /// makes no guarantees about whether it's returned value can be decrypted.
+    @objc public var hasAuthenticationCookie: Bool {
+        authenticationCookieExpirationDate != nil
     }
 
-    public func isAuthenticated(_ account: Account) -> Bool {
-        guard let expirationDate = cookieStorage(for: account).authenticationCookieExpirationDate else {
-            return false
-        }
-
-        return expirationDate.timeIntervalSinceNow > 0
-    }
 }
