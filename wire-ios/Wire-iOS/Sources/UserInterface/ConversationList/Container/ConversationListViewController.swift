@@ -197,10 +197,6 @@ final class ConversationListViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
     }
 
-    override var shouldAutorotate: Bool {
-        return true
-    }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
     }
