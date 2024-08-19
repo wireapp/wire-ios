@@ -18,25 +18,34 @@
 
 import Foundation
 
-/// A persisted property stored on the server used to
-/// share self user settings across devices.
+/// A list of HTTP status codes (https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#successful_responses)
 
-public enum UserProperty: Equatable, Codable {
+enum HTTPStatusCode: Int {
 
-    /// Whether the self user has enabled read receipts.
+    // MARK: Success - 2xx
 
-    case areReadRecieptsEnabled(Bool)
+    /// ok - 200
 
-    /// Whether the self user has enabled typing indicators.
+    case ok = 200
 
-    case areTypingIndicatorsEnabled(Bool)
+    // MARK: Client Errors - 4xx
 
-    /// The conversation labels setting.
+    /// bad request - 400
 
-    case conversationLabels([ConversationLabel])
+    case badRequest = 400
 
-    /// An unknown property.
+    /// not found - 404
 
-    case unknown(key: String)
+    case notFound = 404
+
+    /// forbidden - 403
+
+    case forbidden = 403
+
+    // MARK: Server Errors - 5xx
+
+    /// service unavailable - 503
+
+    case serviceUnavailable = 503
 
 }

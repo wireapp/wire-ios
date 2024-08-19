@@ -1803,7 +1803,7 @@
 "giphy.conversation.message" = "%@ · giphy.com aracılığıyla";
 "giphy.conversation.random_message" = "giphy.com aracılığıyla";
 "giphy.error.no_more_results" = "daha fazla gif yok";
-"giphy.error.no_result" = "gif bulunamadı";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "gönder";
 "giphy.cancel" = "iptal";

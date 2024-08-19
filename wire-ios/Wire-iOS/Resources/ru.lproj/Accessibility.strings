@@ -300,3 +300,10 @@
 
 "createSecureGuestLink.CreateLinkButton.description" = "Создать гостевую ссылку";
 "createSecureGuestLink.CreateLinkButton.hint" = "Нажмите для создания защищенной гостевой ссылки";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Введите текст для поиска GIF";
+"searchGifs.norResultsLabel.description" = "GIF не найдены";
+"searchGifs.gifItem.accessibilityHint" = "Нажмите для выбора GIF";
+"searchGifs.gifItems_loaded.announcement" = "Загружено %@ новых GIF";
