@@ -1,61 +1,53 @@
 //
-// Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+//  ViewController.swift
+//  StatusWindow
 //
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see http://www.gnu.org/licenses/.
+//  Created by Christoph Aldrian on 19.08.24.
 //
 
-import WireCommonComponents
-import WireSyncEngine
+import UIKit
 
-final class WireApplication: UIApplication {
+final class ViewController: UIViewController {
 
     var callStatusWindowPresenter: CallStatusWindowPresenter!
 
-    private let presenter = DeveloperToolsPresenter()
+    var interfaceOrientations: UIInterfaceOrientationMask = .portrait
 
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        interfaceOrientations
+    }
 
-        callStatusWindowPresenter = callStatusWindowPresenter ?? .init(mainWindow: AppDelegate.shared.mainWindow!)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let delegate = SupportedOrientationsDelegatingNavigationControllerDelegate()
+        delegate.setAsDelegateAndNontomicRetainedAssociatedObject(navigationController!)
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard sender is UIButton, let viewController = segue.destination as? Self else { return }
+
+        viewController.interfaceOrientations = .all
+    }
+
+    @IBAction func statusB(_ sender: UIButton) {
+
+        callStatusWindowPresenter = callStatusWindowPresenter ?? .init(mainWindow: view.window!)
 
         if callStatusWindowPresenter.isHidden {
             callStatusWindowPresenter.show()
         } else {
             callStatusWindowPresenter.hide()
         }
+    }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
 
-        return;
-
-
-        guard Bundle.developerModeEnabled else {
-            return
-        }
-
-        guard motion == .motionShake else { return }
-
-        presenter.presentIfNotDisplayed(with: AppDelegate.shared.appRootRouter, from: self.topmostViewController(onlyFullScreen: false))
+        setNeedsStatusBarAppearanceUpdate()
+        //setNeedsUpdateOfSupportedInterfaceOrientations()
     }
 }
-
-extension WireApplication: NotificationSettingsRegistrable {
-
-    var shouldRegisterUserNotificationSettings: Bool {
-        return !(AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper.disablePushNotificationAlert)
-    }
-}
-
 
 final class CallStatusWindowPresenter {
 
@@ -76,6 +68,7 @@ final class CallStatusWindowPresenter {
         statusWindow = .init(windowScene: mainWindow.windowScene!)
         statusWindow?.rootViewController = labelViewController
         statusWindow?.windowLevel = mainWindow.windowLevel + 1
+        //statusWindow?.isOpaque = false
         statusWindow?.frame = .init(
             origin: .zero,
             size: .init(
@@ -84,7 +77,10 @@ final class CallStatusWindowPresenter {
             )
         )
 
+        print("mainWindow.windowScene!.statusBarManager!.statusBarFrame", mainWindow.windowScene!.statusBarManager!.statusBarFrame)
+
         statusWindow?.isHidden = false
+        //statusWindow?.makeKeyAndVisible()
 
         mainWindow.setNeedsUpdateConstraints()
         mainWindow.setNeedsLayout()
@@ -95,6 +91,8 @@ final class CallStatusWindowPresenter {
             mainWindow.frame.size.height = mainWindow.windowScene!.screen.bounds.height - statusWindow!.frame.height + mainWindow.windowScene!.statusBarManager!.statusBarFrame.height
             mainWindow.layoutIfNeeded()
             mainWindow.updateConstraintsIfNeeded()
+            //mainWindow.rootViewController?.setNeedsStatusBarAppearanceUpdate()
+            //statusWindow!.rootViewController?.setNeedsStatusBarAppearanceUpdate()
         } completion: { isCompleted in
             labelViewController.isLabelHidden = false
         }
@@ -109,14 +107,18 @@ final class CallStatusWindowPresenter {
         let labelViewController = statusWindow!.rootViewController as! LabelViewController
         labelViewController.isLabelHidden = true
 
+        // self.statusWindow?.isHidden = true
+        //mainWindow.rootViewController?.setNeedsStatusBarAppearanceUpdate()
+        //statusWindow!.rootViewController?.setNeedsStatusBarAppearanceUpdate()
+
         UIView.animate(withDuration: 0.5) { [self] in
             statusWindow!.frame.size.height = 0
             mainWindow.frame = mainWindow.windowScene!.screen.bounds
             mainWindow.layoutIfNeeded()
             mainWindow.updateConstraintsIfNeeded()
         } completion: { [self] isCompleted in
-            statusWindow?.isHidden = true
-            statusWindow = nil
+            self.statusWindow?.isHidden = true
+            self.statusWindow = nil
         }
     }
 
@@ -134,20 +136,20 @@ final class CallStatusWindowPresenter {
 
         private let label = UILabel()
 
-        override var shouldAutorotate: Bool { false }
-        override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-            [.portrait]
-        }
+        //override var shouldAutorotate: Bool { false }
+        //override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        //    [.portrait]
+        //}
 
         init(text: String) {
             label.text = text
             super.init(nibName: nil, bundle: nil)
         }
-        
+
         required init?(coder: NSCoder) {
             fatalError("init(coder:) is not supported")
         }
-        
+
         override func viewDidLoad() {
             super.viewDidLoad()
 
@@ -165,6 +167,21 @@ final class CallStatusWindowPresenter {
                 view.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: label.trailingAnchor, multiplier: 1),
                 view.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: label.bottomAnchor, multiplier: 1)
             ])
+        }
+
+        override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+            super.viewWillTransition(to: size, with: coordinator)
+
+            print("LabelViewController.viewWillTransition")
+            //view.window?.alpha = 0
+
+            coordinator.animate { context in
+                //self.view.window?.frame =
+                let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+                windowScene.keyWindow?.frame = windowScene.screen.bounds
+            } completion: { context in
+                //
+            }
         }
     }
 }
