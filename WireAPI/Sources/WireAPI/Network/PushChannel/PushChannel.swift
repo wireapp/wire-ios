@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilitiesPkg
 
 final class PushChannel: NSObject, PushChannelProtocol {
 
@@ -151,17 +152,6 @@ extension PushChannel: URLSessionDataDelegate {
         }
 
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
-    }
-
-}
-
-extension AsyncSequence {
-
-    func toStream() -> AsyncThrowingStream<Element, Error> {
-        var iterator = makeAsyncIterator()
-        return AsyncThrowingStream {
-            try await iterator.next()
-        }
     }
 
 }
