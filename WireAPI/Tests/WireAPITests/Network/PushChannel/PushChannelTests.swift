@@ -25,52 +25,39 @@ final class PushChannelTests: XCTestCase {
 
     var sut: PushChannel!
     var request: URLRequest!
-    var urlSession: URLSessionMock!
-    var webSocketConnection: MockURLSessionWebSocketTaskProtocol!
+    var webSocket: MockWebSocketProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
         let url = try XCTUnwrap(URL(string: "www.example.com"))
         request = URLRequest(url: url)
-        urlSession = URLSessionMock()
-        webSocketConnection = MockURLSessionWebSocketTaskProtocol()
+        webSocket = MockWebSocketProtocol()
+        webSocket.close_MockMethod = {}
 
         sut = PushChannel(
             request: request,
-            urlSession: urlSession
+            webSocketProvider: self
         )
-
-        // Mocks
-        webSocketConnection.resume_MockMethod = { }
-        webSocketConnection.cancelWithReason_MockMethod = { _, _ in }
-        urlSession.webSocket = WebSocket(connection: webSocketConnection)
     }
 
     override func tearDown() async throws {
         request = nil
-        urlSession = nil
-        webSocketConnection = nil
+        webSocket = nil
         sut = nil
         try await super.tearDown()
     }
 
     func testOpenPushChannel() async throws {
         // Given some envelopes that will be delivered through the push channel
-        var mockEnvelopes = [
-            try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope1"),
-            try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2"),
-            try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
-        ]
+        let mockEnvelope1 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope1")
+        let mockEnvelope2 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2")
+        let mockEnvelope3 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
 
-        webSocketConnection.underlyingIsOpen = true
-        webSocketConnection.receiveCompletionHandler_MockMethod = { handler in
-            guard !mockEnvelopes.isEmpty else {
-                // Don't call the handler, this will cause the stream to pause
-                return
-            }
-            
-            let envelope = mockEnvelopes.removeFirst()
-            handler(.success(.data(envelope.jsonData)))
+        webSocket.makeStream_MockValue = AsyncThrowingStream { continuation in
+            continuation.yield(.data(mockEnvelope1.jsonData))
+            continuation.yield(.data(mockEnvelope2.jsonData))
+            continuation.yield(.data(mockEnvelope3.jsonData))
+            continuation.finish()
         }
 
         // When the push channel is open and the stream is iterated
@@ -79,10 +66,6 @@ final class PushChannelTests: XCTestCase {
         var receivedEnvelopes = [UpdateEventEnvelope]()
         for try await envelope in liveEventEnvelopes {
             receivedEnvelopes.append(envelope)
-
-            if receivedEnvelopes.count == 3 {
-                break
-            }
         }
 
         // Then envelopes are received
@@ -93,65 +76,32 @@ final class PushChannelTests: XCTestCase {
     }
 
     func testClosingPushChannel() async throws {
-        // Given an open push channel that is being iterated
-        var mockEnvelopes = [
-            try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope1")
-        ]
-
-        webSocketConnection.underlyingIsOpen = true
-        webSocketConnection.receiveCompletionHandler_MockMethod = { handler in
-            guard !mockEnvelopes.isEmpty else {
-                // Don't call the handler, this will cause the stream to pause
-                return
-            }
-
-            let envelope = mockEnvelopes.removeFirst()
-            handler(.success(.data(envelope.jsonData)))
-        }
-
-        let liveEventEnvelopes = try await sut.open()
-        let didReceiveFirstEnvelope = XCTestExpectation()
-
-        let task = Task {
-            var receivedEnvelopes = [UpdateEventEnvelope]()
-            for try await envelope in liveEventEnvelopes {
-                receivedEnvelopes.append(envelope)
-
-                if receivedEnvelopes.count == 1 {
-                    didReceiveFirstEnvelope.fulfill()
-                }
-            }
-        }
-
-        await fulfillment(of: [didReceiveFirstEnvelope])
+        // Given an open push channel
+        webSocket.makeStream_MockValue = AsyncThrowingStream { _ in }
+        _ = try await sut.open()
 
         // When the push channel is closed
         sut.close()
-        
-        // Then the stream will end
-        try await task.value
 
         // Then the web socket was closed
-        let cancelInvocations = webSocketConnection.cancelWithReason_Invocations
-        try XCTAssertCount(cancelInvocations, count: 1)
-        XCTAssertEqual(cancelInvocations[0].closeCode, .goingAway)
+        try XCTAssertCount(webSocket.close_Invocations, count: 1)
+    }
+
+    func testItDoesNotClosePushChannelIfNoneWasOpened() async throws {
+        // Given no push channel was opened
+        // When the push channel is closed
+        sut.close()
+
+        // Then no web socket was closed
+        XCTAssertTrue(webSocket.close_Invocations.isEmpty)
     }
 
     func testFailureToDecodeClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        var invalidData: Data? = Data()
-
-        webSocketConnection.underlyingIsOpen = true
-        webSocketConnection.receiveCompletionHandler_MockMethod = { handler in
-            guard let data = invalidData else {
-                // Don't call the handler, this will cause the stream to pause
-                return
-            }
-
-            invalidData = nil
-
-            // When invalid data is sent
-            handler(.success(.data(data)))
+        webSocket.makeStream_MockValue = AsyncThrowingStream { continuation in
+            // Send some invalid data
+            continuation.yield(.data(Data()))
+            // Don't call finish, so the stream stays open.
         }
 
         let liveEventEnvelopes = try await sut.open()
@@ -167,26 +117,15 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        let cancelInvocations = webSocketConnection.cancelWithReason_Invocations
-        try XCTAssertCount(cancelInvocations, count: 1)
-        XCTAssertEqual(cancelInvocations[0].closeCode, .goingAway)
+        try XCTAssertCount(webSocket.close_Invocations, count: 1)
     }
 
     func testReceivingUnknownMessageClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        var unknownMessage: String? = "a string"
-
-        webSocketConnection.underlyingIsOpen = true
-        webSocketConnection.receiveCompletionHandler_MockMethod = { handler in
-            guard let message = unknownMessage else {
-                // Don't call the handler, this will cause the stream to pause
-                return
-            }
-
-            unknownMessage = nil
-
-            // When an unknown message is sent
-            handler(.success(.string(message)))
+        webSocket.makeStream_MockValue = AsyncThrowingStream { continuation in
+            // Send some invalid data.
+            continuation.yield(.string("some string"))
+            // Don't call finish, so the stream stays open.
         }
 
         let liveEventEnvelopes = try await sut.open()
@@ -202,9 +141,15 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        let cancelInvocations = webSocketConnection.cancelWithReason_Invocations
-        try XCTAssertCount(cancelInvocations, count: 1)
-        XCTAssertEqual(cancelInvocations[0].closeCode, .goingAway)
+        try XCTAssertCount(webSocket.close_Invocations, count: 1)
+    }
+
+}
+
+extension PushChannelTests: WebSocketProvider {
+
+    func makeWebSocket(with request: URLRequest) -> any WireAPI.WebSocketProtocol {
+        webSocket
     }
 
 }

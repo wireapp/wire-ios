@@ -21,8 +21,8 @@ import Foundation
 final class PushChannel: NSObject, PushChannelProtocol {
 
     private let request: URLRequest
-    private var urlSession: (any URLSessionProtocol)!
-    private var webSocket: WebSocket?
+    private var webSocket: (any WebSocketProtocol)?
+    private var webSocketProvider: (any WebSocketProvider)!
 
     init(
         request: URLRequest,
@@ -32,7 +32,7 @@ final class PushChannel: NSObject, PushChannelProtocol {
         super.init()
         let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
         let configuration = factory.makeWebSocketSessionConfiguration()
-        urlSession = URLSession(
+        webSocketProvider = URLSession(
             configuration: configuration,
             delegate: self,
             delegateQueue: nil
@@ -41,31 +41,24 @@ final class PushChannel: NSObject, PushChannelProtocol {
 
     init(
         request: URLRequest,
-        urlSession: any URLSessionProtocol
+        webSocketProvider: any WebSocketProvider
     ) {
         self.request = request
-        self.urlSession = urlSession
+        self.webSocketProvider = webSocketProvider
     }
 
     deinit {
-        urlSession.invalidateAndCancel()
+        webSocketProvider.tearDown()
     }
 
     func open() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
         print("opening new push channel")
-        let webSocket = urlSession.webSocket(with: request)
-        var iterator = webSocket.makeAsyncIterator()
-
+        let webSocket = webSocketProvider.makeWebSocket(with: request)
         self.webSocket = webSocket
         let decoder = JSONDecoder()
 
-        return AsyncThrowingStream { [weak self] in
+        return webSocket.makeStream().map { [weak self] message in
             do {
-                guard let message = try await iterator.next() else {
-                    print("web socket stream has finished")
-                    return nil
-                }
-
                 switch message {
                 case .data(let data):
                     print("received web socket data, decoding...")
@@ -85,7 +78,7 @@ final class PushChannel: NSObject, PushChannelProtocol {
                 self?.close()
                 throw error
             }
-        }
+        }.toStream()
     }
 
     func close() {
@@ -158,6 +151,17 @@ extension PushChannel: URLSessionDataDelegate {
         }
 
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
+    }
+
+}
+
+extension AsyncSequence {
+
+    func toStream() -> AsyncThrowingStream<Element, Error> {
+        var iterator = makeAsyncIterator()
+        return AsyncThrowingStream {
+            try await iterator.next()
+        }
     }
 
 }

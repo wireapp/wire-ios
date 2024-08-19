@@ -76,7 +76,7 @@ final class WebSocketTests: XCTestCase {
         let didFinishIterating = XCTestExpectation()
 
         Task {
-            for try await _ in sut {
+            for try await _ in sut.makeStream() {
                 didReceiveMessage.fulfill()
             }
 
@@ -118,7 +118,7 @@ final class WebSocketTests: XCTestCase {
         let didFinishIterating = XCTestExpectation()
 
         Task {
-            for try await _ in sut {
+            for try await _ in sut.makeStream() {
                 didReceiveMessage.fulfill()
             }
 
@@ -161,7 +161,7 @@ final class WebSocketTests: XCTestCase {
 
         Task {
             do {
-                for try await _ in sut {
+                for try await _ in sut.makeStream() {
                     didReceiveMessage.fulfill()
                 }
             } catch {
@@ -208,7 +208,7 @@ final class WebSocketTests: XCTestCase {
             var receivedMessageData = [Data]()
 
             // When
-            for try await message in sut {
+            for try await message in sut.makeStream() {
                 if case .data(let data) = message {
                     receivedMessageData.append(data)
                 }

@@ -18,13 +18,11 @@
 
 import Foundation
 
-final class WebSocket: AsyncSequence {
+final class WebSocket: WebSocketProtocol {
 
-    typealias Element = Stream.Element
-    typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, Error>
+    typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
 
     private let connection: any URLSessionWebSocketTaskProtocol
-    private lazy var stream = makeStream()
     private var continuation: Stream.Continuation?
 
     init(connection: any URLSessionWebSocketTaskProtocol) {
@@ -42,7 +40,7 @@ final class WebSocket: AsyncSequence {
         continuation?.finish()
     }
 
-    private func makeStream() -> Stream {
+    func makeStream() -> Stream {
         Stream { continuation in
             self.continuation = continuation
 
@@ -67,10 +65,6 @@ final class WebSocket: AsyncSequence {
 
             yieldNextMessage()
         }
-    }
-
-    func makeAsyncIterator() -> Stream.AsyncIterator {
-        stream.makeAsyncIterator()
     }
 
 }
