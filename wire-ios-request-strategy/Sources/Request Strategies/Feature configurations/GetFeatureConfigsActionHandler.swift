@@ -43,6 +43,10 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _):
+            guard let apiVersion = APIVersion(rawValue: response.apiVersion) else {
+                action.fail(with: .invalidResponse)
+                return
+            }
             guard
                 let data = response.rawData,
                 !data.isEmpty
@@ -55,7 +59,17 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                 let repository = FeatureRepository(context: context)
 
                 let processor = FeatureConfigsPayloadProcessor()
-                try processor.processActionPayload(data: data, repository: repository)
+
+                switch apiVersion {
+                case .v0, .v1, .v2, .v3, .v4, .v5:
+                    try processor.processActionPayload(
+                        data: data,
+                        repository: repository)
+                case .v6:
+                    try processor.processActionPayloadAPIV6(
+                        data: data,
+                        repository: repository)
+                }
 
                 action.succeed()
 

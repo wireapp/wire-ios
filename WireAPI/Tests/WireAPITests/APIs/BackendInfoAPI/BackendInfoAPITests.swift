@@ -55,7 +55,7 @@ final class BackendInfoAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             try request.mockResponse(
-                statusCode: 200,
+                statusCode: .ok,
                 jsonResourceName: "GetBackendInfoSuccessResponse1"
             )
         }
@@ -82,7 +82,7 @@ final class BackendInfoAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             try request.mockResponse(
-                statusCode: 200,
+                statusCode: .ok,
                 jsonResourceName: "GetBackendInfoSuccessResponse2"
             )
         }

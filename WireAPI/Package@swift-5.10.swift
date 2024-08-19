@@ -44,6 +44,8 @@ let package = Package(
                 .process("APIs/UpdateEventsAPI/Resources"),
                 .process("APIs/UsersAPI/Resources"),
                 .process("UpdateEvent/Resources"),
+                .process("APIs/UserPropertiesAPI/Resources"),
+                .process("APIs/SelfUserAPI/Resources"),
                 .process("Network/PushChannel/Resources")
             ],
             swiftSettings: swiftSettings

@@ -97,13 +97,13 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         switch (showLikesTab, showReceiptsTab) {
         case (true, true):
             self.displayMode = .combined
-            self.title = MessageDetails.combinedTitle.capitalized
+            self.title = MessageDetails.combinedTitle
         case (false, true):
             self.displayMode = .receipts
-            self.title = MessageDetails.receiptsTitle.capitalized
+            self.title = MessageDetails.receiptsTitle
         case (true, false):
             self.displayMode = .reactions
-            self.title = MessageDetails.reactionsTitle.capitalized
+            self.title = MessageDetails.reactionsTitle
         default:
             fatal("Trying to display a message that does not support reactions or receipts.")
         }
@@ -175,7 +175,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
                 guard let emoji = self.emojiRepository.emoji(for: reaction) else { return nil }
                 let name = emoji.localizedName ?? emoji.name
                 return MessageDetailsSectionDescription(
-                    headerText: "\(emoji.value) \(name.capitalizingFirstCharacterOnly) (\(users.count))",
+                    headerText: "\(emoji.value) \(name.capitalized) (\(users.count))",
                     items: MessageDetailsCellDescription.makeReactionCells(users)
                 )
             }

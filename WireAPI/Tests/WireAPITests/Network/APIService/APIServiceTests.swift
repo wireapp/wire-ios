@@ -27,11 +27,9 @@ final class APIServiceTests: XCTestCase {
     var backendURL: URL!
     var backendWebSocketURL: URL!
     var authenticationStorage: InMemoryAuthenticationStorage!
-    var urlSession: URLSessionMock!
 
     override func setUp() async throws {
         try await super.setUp()
-        urlSession = URLSessionMock()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
         backendWebSocketURL = try XCTUnwrap(URL(string: "https://www.ws.example.com"))
         authenticationStorage = InMemoryAuthenticationStorage()
@@ -39,13 +37,12 @@ final class APIServiceTests: XCTestCase {
             backendURL: backendURL,
             backendWebSocketURL: backendWebSocketURL,
             authenticationStorage: authenticationStorage,
-            urlSession: urlSession,
+            urlSession: .mock,
             minTLSVersion: .v1_2
         )
     }
 
     override func tearDown() async throws {
-        urlSession = nil
         backendURL = nil
         backendURL = nil
         authenticationStorage = nil
@@ -74,7 +71,7 @@ final class APIServiceTests: XCTestCase {
         let request = Scaffolding.getRequest
 
         // Mock an invalid response.
-        urlSession.mockResponse = { _ in
+        URLProtocolMock.mockHandler = { _ in
             (Data(), URLResponse())
         }
 
@@ -93,8 +90,10 @@ final class APIServiceTests: XCTestCase {
         let request = Scaffolding.getRequest
 
         // Mock a dummy response.
-        urlSession.mockResponse = { _ in
-            (Data(), HTTPURLResponse())
+        var receivedRequests = [URLRequest]()
+        URLProtocolMock.mockHandler = {
+            receivedRequests.append($0)
+            return (Data(), HTTPURLResponse())
         }
 
         // When
@@ -104,10 +103,10 @@ final class APIServiceTests: XCTestCase {
         )
 
         // Then one request was received.
-        try XCTAssertCount(urlSession.receivedRequests, count: 1)
+        try XCTAssertCount(receivedRequests, count: 1)
 
         // Then the request is made against the backend url.
-        let receivedRequest = urlSession.receivedRequests[0]
+        let receivedRequest = receivedRequests[0]
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
     }
 
@@ -117,8 +116,10 @@ final class APIServiceTests: XCTestCase {
         authenticationStorage.storeAccessToken(Scaffolding.accessToken)
 
         // Mock a dummy response.
-        urlSession.mockResponse = { _ in
-            (Data(), HTTPURLResponse())
+        var receivedRequests = [URLRequest]()
+        URLProtocolMock.mockHandler = {
+            receivedRequests.append($0)
+            return (Data(), HTTPURLResponse())
         }
 
         // When
@@ -128,10 +129,10 @@ final class APIServiceTests: XCTestCase {
         )
 
         // Then one request was received.
-        try XCTAssertCount(urlSession.receivedRequests, count: 1)
+        try XCTAssertCount(receivedRequests, count: 1)
 
         // Then the request is made against the backend url.
-        let receivedRequest = urlSession.receivedRequests[0]
+        let receivedRequest = receivedRequests[0]
         XCTAssertEqual(receivedRequest.url?.absoluteString, backendURL.appendingPathComponent("/foo").absoluteString)
 
         // Then the request has an access token attached.
@@ -139,13 +140,13 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(authorizationHeader, "Bearer some-access-token")
     }
 
-    func testItThrowsIfAuthenticationIsRequiredByNosAccessTokenIsFound() async throws {
+    func testItThrowsIfAuthenticationIsRequiredButNoAccessTokenIsFound() async throws {
         // Given
         let request = Scaffolding.getRequest
         XCTAssertNil(authenticationStorage.fetchAccessToken())
 
         // Mock a dummy response.
-        urlSession.mockResponse = { _ in
+        URLProtocolMock.mockHandler = { _ in
             (Data(), HTTPURLResponse())
         }
 

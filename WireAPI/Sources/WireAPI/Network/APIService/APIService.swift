@@ -22,7 +22,7 @@ import Foundation
 /// A service for network communication to a specific backend.
 ///
 /// An api service allows api clients to communicate to a target backend.
-/// It may provide additional functionality, such providing authentication
+/// It may provide additional functionality, such as providing authentication
 /// headers if needed.
 public protocol APIServiceProtocol {
 
@@ -52,7 +52,7 @@ public final class APIService: APIServiceProtocol {
     private let backendURL: URL
     private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
-    private let urlSession: any URLSessionProtocol
+    private let urlSession: URLSession
     private let minTLSVersion: TLSVersion
 
     /// Create a new `APIService`.
@@ -86,7 +86,7 @@ public final class APIService: APIServiceProtocol {
         backendURL: URL,
         backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
-        urlSession: any URLSessionProtocol,
+        urlSession: URLSession,
         minTLSVersion: TLSVersion
     ) {
         self.backendURL = backendURL
@@ -119,7 +119,6 @@ public final class APIService: APIServiceProtocol {
         )
 
         if requiringAccessToken {
-            // TODO: [WPB-10448] renew access token if needed
             guard let accessToken = authenticationStorage.fetchAccessToken() else {
                 throw APIServiceError.missingAccessToken
             }
@@ -147,7 +146,6 @@ public final class APIService: APIServiceProtocol {
             relativeTo: backendWebSocketURL
         )
 
-        // TODO: [WPB-10448] renew access token if needed
         guard let accessToken = authenticationStorage.fetchAccessToken() else {
             throw APIServiceError.missingAccessToken
         }

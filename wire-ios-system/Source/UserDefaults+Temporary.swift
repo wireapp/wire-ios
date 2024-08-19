@@ -68,4 +68,4 @@ private final class SuiteCleanUp {
     }
 }
 
-private var SuiteCleanUpHandle = 0
+private nonisolated(unsafe) var SuiteCleanUpHandle = 0

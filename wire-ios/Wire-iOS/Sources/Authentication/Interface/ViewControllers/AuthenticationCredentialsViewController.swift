@@ -468,10 +468,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         proxyCredentialsViewController.didMove(toParent: self)
     }
 
-    func textFieldDidUpdateText(_ textField: ValidatedTextField) {
-        updateLoginButtonState()
-    }
-
     func textField(_ textField: UITextField, editing: Bool) {
         loginActiveField = editing ? textField : nil
     }
