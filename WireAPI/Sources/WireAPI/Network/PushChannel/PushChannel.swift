@@ -144,7 +144,7 @@ extension PushChannel: URLSessionDataDelegate {
         }
 
         guard
-            let _ = protectionSpace.serverTrust,
+            protectionSpace.serverTrust != nil,
             true // TODO: [WPB-10450] support certificate pinning
         else {
             completionHandler(.cancelAuthenticationChallenge, nil)

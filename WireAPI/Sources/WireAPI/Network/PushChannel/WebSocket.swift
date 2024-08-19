@@ -35,7 +35,6 @@ final class WebSocket: WebSocketProtocol {
     }
 
     func close() {
-        // TODO: is this the right code?
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
     }
@@ -50,7 +49,8 @@ final class WebSocket: WebSocketProtocol {
                     return
                 }
 
-                // Note: From iOS 17 we can use the await variant of this. See  https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
+                // Note: From iOS 17 we can use the await variant of this. 
+                // See  https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
                 connection.receive { result in
                     switch result {
                     case .success(let message):

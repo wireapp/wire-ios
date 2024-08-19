@@ -107,9 +107,13 @@ final class WebSocketTests: XCTestCase {
         connection.underlyingIsOpen = true
         connection.receiveCompletionHandler_MockMethod = { handler in
             Task {
-                // Space the messages 0.5s apart
-                try await Task.sleep(nanoseconds: 500_000)
-                handler(.success(.data(Data())))
+                do {
+                    // Space the messages 0.5s apart
+                    try await Task.sleep(nanoseconds: 500_000)
+                    handler(.success(.data(Data())))
+                } catch {
+                    XCTFail("failed to mock web socket data: \(error)")
+                }
             }
         }
 
@@ -118,8 +122,13 @@ final class WebSocketTests: XCTestCase {
         let didFinishIterating = XCTestExpectation()
 
         Task {
-            for try await _ in sut.makeStream() {
-                didReceiveMessage.fulfill()
+            do {
+                for try await _ in sut.makeStream() {
+                    didReceiveMessage.fulfill()
+                }
+            } catch {
+                XCTFail("failed to iterate stream: \(error)")
+                return
             }
 
             didFinishIterating.fulfill()
@@ -149,9 +158,13 @@ final class WebSocketTests: XCTestCase {
             }
 
             Task {
-                // Space the messages 0.5s apart
-                try await Task.sleep(nanoseconds: 500_000)
-                handler(.success(.data(Data())))
+                do {
+                    // Space the messages 0.5s apart
+                    try await Task.sleep(nanoseconds: 500_000)
+                    handler(.success(.data(Data())))
+                } catch {
+                    XCTFail("failed to mock web socket data: \(error)")
+                }
             }
         }
 
@@ -195,9 +208,13 @@ final class WebSocketTests: XCTestCase {
             }
 
             Task {
-                // Space the messages 0.5s apart
-                try await Task.sleep(nanoseconds: 500_000)
-                handler(.success(.data(message)))
+                do {
+                    // Space the messages 0.5s apart
+                    try await Task.sleep(nanoseconds: 500_000)
+                    handler(.success(.data(Data())))
+                } catch {
+                    XCTFail("failed to mock web socket data: \(error)")
+                }
             }
         }
 
@@ -216,8 +233,8 @@ final class WebSocketTests: XCTestCase {
                 didReceiveMessage.fulfill()
             }
 
-            return receivedMessageData.compactMap {
-                String(data: $0, encoding: .utf8)
+            return receivedMessageData.map {
+                String(decoding: $0, as: UTF8.self)
             }
         }
 
