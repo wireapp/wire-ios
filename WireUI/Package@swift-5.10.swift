@@ -8,9 +8,9 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library("WireDesign"),
-        .library("WireReusableUIComponents"),
-        .library("WireUITesting")
+        .library(name: "WireDesign", targets: ["WireDesign"]),
+        .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
+        .library(name: "WireUITesting", targets: ["WireUITesting"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -49,10 +49,4 @@ for target in package.targets {
         .enableUpcomingFeature("GlobalConcurrency"),
         .enableExperimentalFeature("StrictConcurrency")
     ]
-}
-
-extension Product {
-    public static func library(_ name: String) -> Product {
-        .library(name: name, targets: [name])
-    }
 }

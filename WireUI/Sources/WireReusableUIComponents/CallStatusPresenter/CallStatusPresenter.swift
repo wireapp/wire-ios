@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
 /// For the provided `mainWindow` argument this class resizes the view of the
 /// root view controller's view and displays a view with call status information.
-public final class CallStatusPresenter: CallStatusPresenting {
+public final class CallStatusPresenter: CallStatusPresenting, Sendable {
 
-    private(set) weak var mainWindow: UIWindow?
+    @MainActor
+    private unowned let mainWindow: UIWindow?
+    @MainActor
     private var statusView: UIView?
 
+    @MainActor
     public init(mainWindow: UIWindow) {
         self.mainWindow = mainWindow
     }
@@ -41,7 +44,24 @@ public final class CallStatusPresenter: CallStatusPresenting {
     }
 
     public func updateCallStatus(_ callStatus: CallStatus?) async {
-        if statusView == nil { statusView = await UIView() }
+        await Task { @MainActor in
+            await hideStatusView()
+        }.value
+
+
+        if let callStatus {
+            if statusView == nil {
+                statusView = await UIView()
+            }
+
+        } else {
+            if statusView != nil {
+                await hideStatusView()
+            }
+        }
+
+
+
         guard let statusView else { return assertionFailure() }
 
         await MainActor.run { [statusView] in
@@ -51,4 +71,41 @@ public final class CallStatusPresenter: CallStatusPresenting {
             //
         }
     }
+
+    @MainActor
+    private func showStatusView() async {
+        //
+    }
+
+    @MainActor
+    private func hideStatusView() async {
+        //
+    }
+}
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    {
+        var toggleCallStatus: (() -> Void)?
+        let rootView = NavigationStack {
+            Button("Toggle Call Status") {
+                toggleCallStatus?()
+            }
+            .navigationTitle("Lorem Ipsum")
+            .toolbarBackground(.visible, for: .navigationBar)
+        }
+        let hostingController = UIHostingController(rootView: rootView)
+
+        toggleCallStatus = {
+            let mainWindow = hostingController.view.window!
+            let presenter = CallStatusPresenter(mainWindow: mainWindow)
+            Task { @MainActor in
+                await presenter.updateCallStatus("Connecting ...")
+            }
+        }
+
+        return hostingController
+    }()
 }

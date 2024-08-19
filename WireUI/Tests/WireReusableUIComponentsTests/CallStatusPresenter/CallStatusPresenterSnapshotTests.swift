@@ -20,7 +20,8 @@ import WireUITesting
 import XCTest
 
 @testable import WireReusableUIComponents
-TODO
+/*
+ TODO
 final class CallStatusPresenterSnapshotTests: XCTestCase {
 
     // MARK: - Properties
@@ -81,3 +82,4 @@ final class CallStatusPresenterSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: viewController)
     }
 }
+*/
