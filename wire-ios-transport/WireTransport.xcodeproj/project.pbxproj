@@ -135,6 +135,8 @@
 		BFA7A5C52105E39D00C086A7 /* HTTPCookie+HelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA7A5C42105E39D00C086A7 /* HTTPCookie+HelperTests.swift */; };
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
+		CB5120512C6FD61B000C8FEC /* BackendInfoTestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5120502C6FD61B000C8FEC /* BackendInfoTestObserver.swift */; };
+		CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */; platformFilter = ios; };
 		CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */; };
 		CB79AC582C6CFD44003CF5F4 /* WireTransportSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */; };
@@ -372,6 +374,7 @@
 		BFA7A5C42105E39D00C086A7 /* HTTPCookie+HelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPCookie+HelperTests.swift"; sourceTree = "<group>"; };
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
+		CB5120502C6FD61B000C8FEC /* BackendInfoTestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfoTestObserver.swift; sourceTree = "<group>"; };
 		CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMPersistentCookieStorage.swift; sourceTree = "<group>"; };
 		CB79AC552C6CFD44003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireTransportSupport.h; sourceTree = "<group>"; };
@@ -444,6 +447,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB79AC752C6D0568003CF5F4 /* WireTransport.framework in Frameworks */,
+				CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -883,6 +887,7 @@
 			isa = PBXGroup;
 			children = (
 				CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */,
+				CB5120502C6FD61B000C8FEC /* BackendInfoTestObserver.swift */,
 				CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */,
 			);
 			path = WireTransportSupport;
@@ -1262,6 +1267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB5120512C6FD61B000C8FEC /* BackendInfoTestObserver.swift in Sources */,
 				CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1312,6 +1318,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120B1B751F7900223568 /* ios-test-host.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1330,6 +1337,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120B1B751F7900223568 /* ios-test-host.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
