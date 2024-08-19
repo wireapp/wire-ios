@@ -18,8 +18,8 @@
 
 import WireMockTransport
 import WireTesting
-import XCTest
 import WireTransport
+import XCTest
 
 @testable import WireSyncEngine
 

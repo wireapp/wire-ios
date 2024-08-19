@@ -18,8 +18,8 @@
 
 import Foundation
 @testable import WireSyncEngine
-import XCTest
 import WireTransport
+import XCTest
 
 class AVSIdentifierTests: XCTestCase {
 

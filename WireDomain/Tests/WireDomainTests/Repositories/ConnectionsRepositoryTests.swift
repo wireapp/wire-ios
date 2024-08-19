@@ -20,8 +20,8 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
-import XCTest
 import WireTransport
+import XCTest
 
 @testable import WireAPI
 @testable import WireDomain

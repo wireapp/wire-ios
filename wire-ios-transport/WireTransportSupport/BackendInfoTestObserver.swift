@@ -51,12 +51,6 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
     }
 
     func testCaseWillStart(_ testCase: XCTestCase) {
-        print(">>> RESETTING")
-
-        if BackendInfo.storage !== defaults {
-            print(">>>>> BACKEND STORAGE CHANGED")
-        }
-
         BackendInfo.storage = defaults
         BackendInfo.apiVersion = apiVersion
         BackendInfo.preferredAPIVersion = preferredAPIVersion

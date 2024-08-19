@@ -18,8 +18,8 @@
 
 import WireDataModelSupport
 @testable import WireRequestStrategy
-import XCTest
 import WireTransport
+import XCTest
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
 
