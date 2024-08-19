@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 
 @testable import WireRequestStrategy
-@_spi(MockBackendInfo)
 import WireTransport
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
@@ -73,11 +72,10 @@ class Payload_CodingTests: XCTestCase {
     override func setUp() {
         super.setUp()
         data = try! JSONSerialization.data(withJSONObject: ["foo": "bar"], options: [])
-        BackendInfo.enableMocking()
+        BackendInfo.apiVersion = nil
     }
 
     override func tearDown() {
-        BackendInfo.resetMocking()
         data = nil
         super.tearDown()
     }
