@@ -20,7 +20,7 @@ import SwiftUI
 
 /// For the provided `mainWindow` argument this class resizes the view of the
 /// root view controller's view and displays a view with call status information.
-public final class CallStatusPresenter: CallStatusPresenting, Sendable {
+public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendable {
 
     @MainActor
     private unowned let mainWindow: UIWindow?
@@ -44,37 +44,45 @@ public final class CallStatusPresenter: CallStatusPresenting, Sendable {
     }
 
     public func updateCallStatus(_ callStatus: CallStatus?) async {
-        await Task { @MainActor in
-            await hideStatusView()
+        await Task { @MainActor [self] in
+
+            if let callStatus {
+                if statusView == nil {
+                    await showStatusView()
+                }
+                // TODO: set label text
+                print(callStatus)
+
+            } else {
+                // TODO: clear label
+                if statusView != nil {
+                    await hideStatusView()
+                }
+            }
+
         }.value
-
-
-        if let callStatus {
-            if statusView == nil {
-                statusView = await UIView()
-            }
-
-        } else {
-            if statusView != nil {
-                await hideStatusView()
-            }
-        }
-
-
-
-        guard let statusView else { return assertionFailure() }
-
-        await MainActor.run { [statusView] in
-
-            print(statusView)
-
-            //
-        }
     }
 
     @MainActor
     private func showStatusView() async {
-        //
+        guard
+            let mainWindow,
+            let rootView = mainWindow.rootViewController?.view,
+            let rootSuperview = rootView.superview
+        else { return assertionFailure() }
+        print("showStatusView")
+
+        let statusView = UIView()
+        self.statusView = statusView
+        rootSuperview.insertSubview(statusView, aboveSubview: rootView)
+        print(rootSuperview)
+
+        statusView.backgroundColor = .green
+        statusView.frame = mainWindow.screen.bounds
+        rootView.frame.origin.y += 100
+        rootView.frame.size.height -= 100
+        rootView.alpha = 0.5
+        print(rootView)
     }
 
     @MainActor
