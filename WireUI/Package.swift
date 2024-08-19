@@ -8,9 +8,9 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireDesign", targets: ["WireDesign"]),
-        .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUITesting", targets: ["WireUITesting"])
+        .library("WireDesign"),
+        .library("WireReusableUIComponents"),
+        .library("WireUITesting")
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -18,51 +18,39 @@ let package = Package(
         .package(name: "WireSystemPackage", path: "../WireSystem")
     ],
     targets: [
-        .target(
-            name: "WireDesign",
-            swiftSettings: swiftSettings
-        ),
+
+        .target(name: "WireDesign"),
         .testTarget(
             name: "WireDesignTests",
-            dependencies: [
-                "WireDesign",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
-            ],
-            swiftSettings: swiftSettings
+            dependencies: ["WireDesign", .product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         ),
 
-        .target(
-            name: "WireReusableUIComponents",
-            dependencies: [
-                "WireDesign",
-                "WireSystemPackage"
-            ],
-            swiftSettings: swiftSettings
-        ),
+        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireSystemPackage"]),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
                 "WireUITesting"
-            ],
-            swiftSettings: swiftSettings
+            ]
         ),
 
         // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
         .target(
             name: "WireUITesting",
-            dependencies: [
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                )
-            ],
-            swiftSettings: swiftSettings
+            dependencies: [.product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         )
     ]
 )
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
-]
+for target in package.targets {
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny")
+    ]
+}
+
+extension Product {
+    public static func library(_ name: String) -> Product {
+        .library(name: name, targets: [name])
+    }
+}
