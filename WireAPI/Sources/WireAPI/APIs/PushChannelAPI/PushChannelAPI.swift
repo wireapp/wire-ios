@@ -18,7 +18,7 @@
 
 /// An API access object for endpoints concerning the push channel.
 public protocol PushChannelAPI {
-    
+
     /// Create a new push channel.
     ///
     /// - Parameter clientID: The id of the self client.

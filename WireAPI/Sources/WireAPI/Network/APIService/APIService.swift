@@ -135,7 +135,7 @@ public final class APIService: APIServiceProtocol {
         return (data, httpURLResponse)
     }
 
-    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol{
+    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
         guard let url = request.url else {
             throw APIServiceError.invalidRequest
         }

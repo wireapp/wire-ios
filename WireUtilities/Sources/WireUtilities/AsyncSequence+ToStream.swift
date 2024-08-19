@@ -18,13 +18,13 @@
 
 import Foundation
 
-extension AsyncSequence {
-    
+public extension AsyncSequence {
+
     /// Convert the async sequence to an asynchronous stream.
     ///
     /// - Returns: An `AsyncThrowingStream` of the same element.
 
-    public func toStream() -> AsyncThrowingStream<Element, Error> {
+    func toStream() -> AsyncThrowingStream<Element, Error> {
         var iterator = makeAsyncIterator()
         return AsyncThrowingStream {
             try await iterator.next()

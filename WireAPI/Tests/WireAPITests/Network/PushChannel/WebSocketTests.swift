@@ -28,7 +28,7 @@ final class WebSocketTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         connection = MockURLSessionWebSocketTaskProtocol()
-        connection.resume_MockMethod = { }
+        connection.resume_MockMethod = {}
         connection.cancelWithReason_MockMethod = { _, _ in }
     }
 
@@ -60,7 +60,7 @@ final class WebSocketTests: XCTestCase {
 
     func testWebSocketCloses() async throws {
         // Given we're iterating over the web socket
-        let sut = WebSocket(connection: self.connection)
+        let sut = WebSocket(connection: connection)
 
         // Mock sending one message
         connection.underlyingIsOpen = true
@@ -101,7 +101,7 @@ final class WebSocketTests: XCTestCase {
 
     func testWebSocketFinishesIfConnectionCloses() async throws {
         // Given we're iterating over the web socket
-        let sut = WebSocket(connection: self.connection)
+        let sut = WebSocket(connection: connection)
 
         // Mock sending messages
         connection.underlyingIsOpen = true
@@ -137,7 +137,7 @@ final class WebSocketTests: XCTestCase {
 
     func testWebSocketFinishesIfConnectionHasError() async throws {
         // Given we're iterating over the web socket
-        let sut = WebSocket(connection: self.connection)
+        let sut = WebSocket(connection: connection)
         var shouldSendError = false
 
         // Mock sending messages
@@ -181,7 +181,7 @@ final class WebSocketTests: XCTestCase {
 
     func testWebSocketIteratesSuccessfully() async throws {
         // Given we're iterating over the web socket
-        let sut = WebSocket(connection: self.connection)
+        let sut = WebSocket(connection: connection)
         let messages = ["message1", "message2", "message3", "message4", "message5"]
         var messageData = messages.reversed().compactMap {
             $0.data(using: .utf8)
@@ -220,7 +220,7 @@ final class WebSocketTests: XCTestCase {
                 String(data: $0, encoding: .utf8)
             }
         }
-        
+
         // Wait for messages to be received then we can close
         await fulfillment(of: [didReceiveMessage], timeout: 0.5)
         sut.close()
