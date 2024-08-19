@@ -17,8 +17,6 @@
 //
 
 import XCTest
-
-@_spi(MockBackendInfo)
 import WireTransport
 
 extension ZMOperationLoopTests {
@@ -26,18 +24,8 @@ extension ZMOperationLoopTests {
     // MARK: - BackendInfo Helpers
 
     @objc
-    func enableBackendInfoMocking() {
-        BackendInfo.enableMocking()
-    }
-
-    @objc
     func setBackendInfoAPIVersionNil() {
         BackendInfo.apiVersion = nil
-    }
-
-    @objc
-    func resetBackendInfoMocking() {
-        BackendInfo.resetMocking()
     }
 
     // MARK: - Tests
