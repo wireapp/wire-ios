@@ -81,7 +81,7 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
         statusView.frame = mainWindow.screen.bounds
         rootView.frame.origin.y += 100
         rootView.frame.size.height -= 100
-        rootView.alpha = 0.5
+//        rootView.alpha = 0.5
         print(rootView)
     }
 
@@ -96,24 +96,40 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
 @available(iOS 17, *)
 #Preview {
     {
-        var toggleCallStatus: (() -> Void)?
-        let rootView = NavigationStack {
-            Button("Toggle Call Status") {
-                toggleCallStatus?()
-            }
-            .navigationTitle("Lorem Ipsum")
-            .toolbarBackground(.visible, for: .navigationBar)
-        }
-        let hostingController = UIHostingController(rootView: rootView)
+        let rootViewController = UIViewController()
+        rootViewController.view.backgroundColor = .white
+        let button = UIButton(type: .system)
+        button.setTitle("Toggle Call Status", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        rootViewController.view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: rootViewController.view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: rootViewController.view.centerYAnchor)
+        ])
+        let navigationController = UINavigationController(rootViewController: rootViewController)
 
-        toggleCallStatus = {
-            let mainWindow = hostingController.view.window!
-            let presenter = CallStatusPresenter(mainWindow: mainWindow)
-            Task { @MainActor in
-                await presenter.updateCallStatus("Connecting ...")
-            }
-        }
+        button.addAction(
+            .init { _ in
+                let mainWindow = navigationController.view.window!
+                let presenter = CallStatusPresenter(mainWindow: mainWindow)
+                Task { @MainActor in
+                    await presenter.updateCallStatus("Connecting ...")
+                }
 
-        return hostingController
+
+                let vc = UIViewController()
+                vc.view.backgroundColor = .red
+                let window = UIWindow(windowScene: mainWindow.windowScene!)
+                window.windowLevel = mainWindow.windowLevel + 1
+                window.rootViewController = vc
+                window.makeKeyAndVisible()
+                objc_setAssociatedObject(mainWindow, &key, window, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            },
+            for: .primaryActionTriggered
+        )
+
+        return navigationController
     }()
 }
+
+private nonisolated(unsafe) var key = 0
