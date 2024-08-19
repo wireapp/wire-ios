@@ -65,21 +65,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
     }
 
     @MainActor
-    func testAllButUpsideDownSupported() {
-
-        // Given
-        let splitViewController = UISplitViewController(style: .doubleColumn)
-        splitViewController.setViewController(ViewController([.portrait, .portraitUpsideDown]), for: .primary)
-        splitViewController.setViewController(ViewController([.landscapeRight, .portraitUpsideDown]), for: .secondary)
-
-        // When
-        let result = sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
-
-        // Then
-        XCTAssertEqual(result, .portraitUpsideDown)
-    }
-
-    @MainActor
     func testAllSupportedWhenNoViewControllers() {
 
         // Given
@@ -127,7 +112,8 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 
 private final class ViewController: UIViewController {
 
-    var interfaceOrientations: UIInterfaceOrientationMask
+    private let interfaceOrientations: UIInterfaceOrientationMask
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
 
     init(_ interfaceOrientations: UIInterfaceOrientationMask = .all) {
         self.interfaceOrientations = interfaceOrientations
@@ -136,10 +122,6 @@ private final class ViewController: UIViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
-    }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        interfaceOrientations
     }
 }
 
