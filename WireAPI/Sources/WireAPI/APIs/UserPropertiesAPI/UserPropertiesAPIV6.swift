@@ -18,12 +18,10 @@
 
 import Foundation
 
-@objc public protocol AuthenticationStatusProvider {
-    var isAuthenticated: Bool { get }
-}
+class UserPropertiesAPIV6: UserPropertiesAPIV5 {
 
-extension ZMPersistentCookieStorage: AuthenticationStatusProvider {
-    public var isAuthenticated: Bool {
-        return authenticationCookieData != nil
+    override var apiVersion: APIVersion {
+        .v6
     }
+
 }
