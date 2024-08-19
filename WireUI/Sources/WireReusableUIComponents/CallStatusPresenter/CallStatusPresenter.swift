@@ -58,6 +58,7 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
                 if statusView != nil {
                     await hideStatusView()
                 }
+                print("hide")
             }
 
         }.value
@@ -70,24 +71,33 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
             let rootView = mainWindow.rootViewController?.view,
             let rootSuperview = rootView.superview
         else { return assertionFailure() }
-        print("showStatusView")
+        //print("showStatusView")
 
         let statusView = UIView()
         self.statusView = statusView
         rootSuperview.insertSubview(statusView, aboveSubview: rootView)
-        print(rootSuperview)
+        //print(rootSuperview)
 
         statusView.backgroundColor = .green
-        statusView.frame = mainWindow.screen.bounds
+        //statusView.frame = mainWindow.screen.bounds
         rootView.frame.origin.y += 100
         rootView.frame.size.height -= 100
-//        rootView.alpha = 0.5
-        print(rootView)
+        //print(rootView)
     }
 
     @MainActor
     private func hideStatusView() async {
-        //
+        guard
+            let mainWindow,
+            let rootView = mainWindow.rootViewController?.view,
+            let statusView
+        else { return assertionFailure() }
+        print("hide")
+
+        await withCheckedContinuation { continuation in
+            rootView.frame = mainWindow.screen.bounds
+            continuation.resume()
+        }
     }
 }
 
@@ -95,9 +105,25 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
 
 @available(iOS 17, *)
 #Preview {
-    {
+    Setup()
+}
+
+private final class Setup: UIView {
+
+    private var mainWindow: UIWindow!
+
+    override func didMoveToWindow() {
+        DispatchQueue.main.async { [self] in
+            setupWindow(setupRootViewController())
+        }
+    }
+
+    private func setupRootViewController() -> UIViewController {
+
         let rootViewController = UIViewController()
+        rootViewController.title = "Conversation List"
         rootViewController.view.backgroundColor = .white
+
         let button = UIButton(type: .system)
         button.setTitle("Toggle Call Status", for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -106,30 +132,73 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
             button.centerXAnchor.constraint(equalTo: rootViewController.view.centerXAnchor),
             button.centerYAnchor.constraint(equalTo: rootViewController.view.centerYAnchor)
         ])
+
         let navigationController = UINavigationController(rootViewController: rootViewController)
+        var presenter: CallStatusPresenter!
+        var isVisible = false
 
         button.addAction(
             .init { _ in
                 let mainWindow = navigationController.view.window!
-                let presenter = CallStatusPresenter(mainWindow: mainWindow)
+                presenter = presenter ?? CallStatusPresenter(mainWindow: mainWindow)
                 Task { @MainActor in
-                    await presenter.updateCallStatus("Connecting ...")
+                    isVisible.toggle()
+                    await presenter.updateCallStatus(isVisible ? "Connecting ..." : nil)
                 }
-
-
-                let vc = UIViewController()
-                vc.view.backgroundColor = .red
-                let window = UIWindow(windowScene: mainWindow.windowScene!)
-                window.windowLevel = mainWindow.windowLevel + 1
-                window.rootViewController = vc
-                window.makeKeyAndVisible()
-                objc_setAssociatedObject(mainWindow, &key, window, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             },
             for: .primaryActionTriggered
         )
 
         return navigationController
+    }
+
+    private func setupWindow(_ rootViewController: UIViewController) {
+        mainWindow = UIWindow(windowScene: window!.windowScene!)
+        mainWindow.rootViewController = rootViewController
+        mainWindow.makeKeyAndVisible()
+    }
+}
+
+/*
+#Preview {
+    {
+        let setupWindow: () -> Void = {
+            print("ok")
+        }
+        let rootView =
+        let hostingController = UIHostingController(rootView: )
+
+
+        var toggleCallStatus: (() -> Void)?
+        let rootView = NavigationStack {
+            Button("Toggle Call Status") { toggleCallStatus?() }
+                .navigationTitle("Lorem Ipsum")
+                .toolbarBackground(.visible, for: .navigationBar)
+        }
+        let hostingController = UIHostingController(rootView: rootView)
+
+        toggleCallStatus = {
+            let mainWindow = hostingController.view.window!
+//            let presenter = CallStatusPresenter(mainWindow: mainWindow)
+//            Task { @MainActor in
+//                await presenter.updateCallStatus("Connecting ...")
+//            }
+
+            let vc = UIViewController()
+            vc.view.backgroundColor = .red
+            let window = UIWindow(windowScene: mainWindow.windowScene!)
+            window.windowLevel = mainWindow.windowLevel + 1
+            window.rootViewController = vc
+            window.makeKeyAndVisible()
+            objc_setAssociatedObject(mainWindow, &key, window, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+
+        return hostingController
+
+
+
     }()
 }
 
 private nonisolated(unsafe) var key = 0
+*/
