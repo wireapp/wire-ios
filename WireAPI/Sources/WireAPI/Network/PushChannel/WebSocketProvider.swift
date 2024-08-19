@@ -25,4 +25,3 @@ protocol WebSocketProvider {
     func tearDown()
 
 }
-
