@@ -32,7 +32,6 @@ extension UIViewController {
 }
 
 extension UIView {
-    @available(*, deprecated, message: "Will be removed")
     var isVisible: Bool {
         return convert(bounds, to: nil).intersects(UIScreen.main.bounds)
     }
