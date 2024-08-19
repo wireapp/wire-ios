@@ -212,7 +212,11 @@ extension ConversationTextMessageCellDescription {
         }
 
         // Quote
-        if textMessageData.hasQuote {
+        print("quoteMessage: \(textMessageData.quoteMessage)")
+        if textMessageData.hasQuote || textMessageData.quoteMessage != nil {
+//            print("Attention: \(textMessageData.hasQuote)")
+//            print("Attention: ----------------------------")
+//            print("Attention: \(textMessageData.messageText)")
             let quotedMessage = textMessageData.quoteMessage
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
             cells.append(AnyConversationMessageCellDescription(quoteCell))

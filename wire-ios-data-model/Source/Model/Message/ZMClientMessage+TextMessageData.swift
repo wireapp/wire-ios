@@ -38,6 +38,11 @@ extension ZMClientMessage: TextMessageData {
     }
 
     public var hasQuote: Bool {
+        underlyingMessage
+        print("Attention hasQuote: \(underlyingMessage?.textData?.hasQuote)")
+        print("Attention content: \(underlyingMessage?.textData?.content)")
+        print("Attention underlyingMessage: \(underlyingMessage)")
+        print("Attention -----------------------------")
         return underlyingMessage?.textData?.hasQuote ?? false
     }
 
