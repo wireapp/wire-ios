@@ -120,9 +120,7 @@ final class AppRootRouter {
         completion: @escaping () -> Void
     ) {
         mainWindow.rootViewController = viewController
-        UIView.transition(with: mainWindow, duration: 0.2, options: .transitionCrossDissolve, animations: {}) { isCompleted in
-            completion()
-        }
+        UIView.transition(with: mainWindow, duration: 0.2, options: .transitionCrossDissolve, animations: {}, completion: { _ in completion() })
     }
 
     private func setupAppStateCalculator() {
