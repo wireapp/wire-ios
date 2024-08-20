@@ -21,7 +21,10 @@
   "conferenceCalling": {
     "lockStatus": "locked",
     "status": "enabled",
-    "ttl": "unlimited"
+    "ttl": "unlimited",
+    "config": {
+        "useSFTForOneToOneCalls": true
+    }
   },
   "conversationGuestLinks": {
     "lockStatus": "locked",

@@ -46,7 +46,7 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
 
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
-    let conferenceCalling: FeatureWithoutConfig
+    let conferenceCalling: FeatureWithConfig<FeatureConfigResponse.ConferenceCallingV6>
     let conversationGuestLinks: FeatureWithoutConfig
     let digitalSignatures: FeatureWithoutConfig
     let fileSharing: FeatureWithoutConfig
@@ -74,7 +74,8 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
-            status: conferenceCalling.status
+            status: conferenceCalling.status,
+            useSFTForOneToOneCalls: conferenceCalling.config.useSFTForOneToOneCalls
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
@@ -157,6 +158,12 @@ extension FeatureConfigResponse {
         let verificationExpiration: UInt
         let crlProxy: String? /// Starting api v6
         let useProxyOnMobile: Bool? /// Starting api v6
+
+    }
+
+    struct ConferenceCallingV6: Decodable {
+
+        let useSFTForOneToOneCalls: Bool
 
     }
 
