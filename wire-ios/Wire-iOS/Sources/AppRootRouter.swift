@@ -71,7 +71,10 @@ final class AppRootRouter {
         self.windowScene = windowScene
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
-        self.urlActionRouter = URLActionRouter(viewController: { fatalError("TODO") }, sessionManager: sessionManager)
+        self.urlActionRouter = URLActionRouter(
+            viewController: { windowScene.keyWindow!.rootViewController! },
+            sessionManager: sessionManager
+        )
         self.switchingAccountRouter = SwitchingAccountRouter()
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
