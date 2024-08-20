@@ -114,7 +114,8 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
-            status: conferenceCalling.status
+            status: conferenceCalling.status,
+            useSFTForOneToOneCalls: nil
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))

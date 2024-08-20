@@ -203,7 +203,9 @@ extension FeatureConfigsAPITests {
             )
             ),
             .conferenceCalling(.init(
-                status: .enabled)
+                status: .enabled,
+                useSFTForOneToOneCalls: nil
+            )
             ),
             .conversationGuestLinks(.init(
                 status: .enabled)
@@ -247,7 +249,8 @@ extension FeatureConfigsAPITests {
             )
             ),
             .conferenceCalling(
-                .init(status: .enabled)
+                .init(status: .enabled,
+                      useSFTForOneToOneCalls: nil)
             ),
             .conversationGuestLinks(.init(
                 status: .enabled)
@@ -305,7 +308,8 @@ extension FeatureConfigsAPITests {
             )
             ),
             .conferenceCalling(
-                .init(status: .enabled)
+                .init(status: .enabled,
+                      useSFTForOneToOneCalls: true)
             ),
             .conversationGuestLinks(.init(
                 status: .enabled)

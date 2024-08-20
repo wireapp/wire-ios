@@ -241,7 +241,8 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         static let conferenceCallingUpdateEvent = FeatureConfigUpdateEvent(
             featureConfig: .conferenceCalling(
                 ConferenceCallingFeatureConfig(
-                    status: .enabled
+                    status: .enabled,
+                    useSFTForOneToOneCalls: nil
                 )
             )
         )
