@@ -72,8 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    // TODO: [WPB-8778] make private [not private(set)]
-    /*private*/ private(set) var mainWindow: UIWindow!
+    private(set) var mainWindow: UIWindow!
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -288,36 +287,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 private extension AppDelegate {
 
     private func setupWindowAndRootViewController() {
-
-        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
-        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
-
-        let rootViewController = UIViewController()
-        rootViewController.navigationItem.hidesBackButton = true
-        rootViewController.view.backgroundColor = .black
-        rootViewController.view.addSubview(shieldImageView)
-        NSLayoutConstraint.activate([
-            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
-        ])
-
-        let splitViewController = UISplitViewController(style: .tripleColumn)
-        splitViewController.displayModeButtonVisibility = .never
-        splitViewController.setViewController(rootViewController, for: .secondary)
-
-        let splitViewControllerDelegate = SupportedOrientationsDelegatingSplitViewControllerDelegate()
-        splitViewControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(splitViewController)
-
-        // a navigation controller has automatically been created by `splitViewController.setViewController(_:for:)`,
-        // hide the navigation bar and ensure the supported interface orientations are propagated correctly
-        if let navigationController = rootViewController.navigationController {
-            navigationController.setNavigationBarHidden(true, animated: false)
-
-            let navigationControllerDelegate = SupportedOrientationsDelegatingNavigationControllerDelegate()
-            navigationControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(navigationController)
-        }
-
-        mainWindow.rootViewController = splitViewController
+        mainWindow.rootViewController = LaunchScreenViewController()
         mainWindow.makeKeyAndVisible()
     }
 
@@ -335,7 +305,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
-            windowScene: mainWindow.windowScene!,
+            mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )

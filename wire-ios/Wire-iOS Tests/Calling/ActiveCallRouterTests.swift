@@ -32,7 +32,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         mockTopOverlayPresenter = .init()
         userSession = UserSessionMock()
         sut = ActiveCallRouter(
-            rootViewController: UIViewController.init,
+            rootViewController: { UIViewController() },
             userSession: userSession,
             topOverlayPresenter: mockTopOverlayPresenter
         )

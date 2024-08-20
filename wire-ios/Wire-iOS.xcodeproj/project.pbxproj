@@ -382,6 +382,7 @@
 		59CD83E52C22CE9800186022 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD83E42C22CE9800186022 /* WireDesign */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
 		59D2D9352BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */; };
+		59D53E452C74ADBF007EB3EF /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */; };
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
@@ -2387,6 +2388,7 @@
 		59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+NavigationBar.swift"; sourceTree = "<group>"; };
+		59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		59D8A62B2B7A73B2008236FF /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewBuilder.swift; sourceTree = "<group>"; };
@@ -6368,6 +6370,7 @@
 				EF2126B41FB9DFE300625A9B /* Authentication */,
 				8FC8516F199245760008B66B /* UserInterface */,
 				A9EB722423C3A47B00DA8240 /* AppDelegate.swift */,
+				59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */,
 				F1141C961F5EB2DC005340B3 /* WireApplication.swift */,
 				5489E20D252C84BE0010461D /* AppStateCalculator.swift */,
 				543DF6AC25309641001F6EA6 /* AppRootRouter.swift */,
@@ -9155,6 +9158,7 @@
 				BF515F941D9D1C1900C786FB /* EmojiSectionViewController.swift in Sources */,
 				EF42658B2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift in Sources */,
 				BFE3FEEA209747D6003D9AB5 /* CallStatusView.swift in Sources */,
+				59D53E452C74ADBF007EB3EF /* LaunchScreenViewController.swift in Sources */,
 				A9806A3E23E41EF400691DFE /* Token.swift in Sources */,
 				A978D993236C587B00B568AE /* ZMUserSession+Shared.swift in Sources */,
 				6328BBB12C2F03E8007A3288 /* ShareableDebugReport.swift in Sources */,
