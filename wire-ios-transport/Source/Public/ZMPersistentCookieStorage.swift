@@ -16,27 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-protocol ApplicationProtocol {
+extension ZMPersistentCookieStorage {
 
-    @available(*, deprecated, message: "Use the interfaceOrientation property of the window scene instead.")
-    var statusBarOrientation: UIInterfaceOrientation { get }
-
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
-}
-
-extension UIApplication.State: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .active:
-            "active"
-        case .background:
-            "background"
-        case .inactive:
-            "inactive"
-        @unknown default:
-            "unknown"
-        }
+    /// Returns true if `self` has an authentication cookie that can be **decrypted**.
+    ///
+    /// - note: This should generally be used in favor of `ZMPersistentCookieStorage.authenticationCookieData` which
+    /// makes no guarantees about whether it's returned value can be decrypted.
+    @objc public var hasAuthenticationCookie: Bool {
+        authenticationCookieExpirationDate != nil
     }
+
 }

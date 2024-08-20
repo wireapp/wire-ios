@@ -16,27 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+#import <Foundation/Foundation.h>
 
-protocol ApplicationProtocol {
+//! Project version number for WireTransportSupport.
+FOUNDATION_EXPORT double WireTransportSupportVersionNumber;
 
-    @available(*, deprecated, message: "Use the interfaceOrientation property of the window scene instead.")
-    var statusBarOrientation: UIInterfaceOrientation { get }
+//! Project version string for WireTransportSupport.
+FOUNDATION_EXPORT const unsigned char WireTransportSupportVersionString[];
 
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
-}
+// In this header, you should import all the public headers of your framework using statements like #import <WireTransportSupport/PublicHeader.h>
 
-extension UIApplication.State: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .active:
-            "active"
-        case .background:
-            "background"
-        case .inactive:
-            "inactive"
-        @unknown default:
-            "unknown"
-        }
-    }
-}
