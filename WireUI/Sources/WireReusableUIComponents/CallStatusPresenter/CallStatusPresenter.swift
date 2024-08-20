@@ -44,63 +44,80 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
     }
 
     public func updateCallStatus(_ callStatus: CallStatus?) async {
+        print("updateCallStatus", callStatus)
         await Task { @MainActor [self] in
 
             if let callStatus {
                 if statusView == nil {
-                    await showStatusView()
+                    await setupStatusView()
                 }
-                statusView?.callStatus = callStatus
+                await updateStatusView(callStatus)
 
             } else {
-                statusView?.callStatus = .none
+                await updateStatusView(callStatus)
                 if statusView != nil {
-                    await hideStatusView()
+                    await tearDownStatusView()
                 }
             }
 
         }.value
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-            print("statusViewFrame", self.statusView?.frame)
-            print("mainWindow.rootViewController?.view", self.mainWindow?.rootViewController?.view.frame)
-        }
     }
 
     @MainActor
-    private func showStatusView() async {
+    private func setupStatusView() async {
+
         guard
             let mainWindow,
             let rootView = mainWindow.rootViewController?.view,
             let rootSuperview = rootView.superview
         else { return assertionFailure() }
 
-        let statusView = CallStatusView(
-            frame: .init(
-                origin: .zero,
-                size: .init(width: mainWindow.frame.width, height: 0)
-            )
-        )
-        self.statusView = statusView
-        rootSuperview.insertSubview(statusView, aboveSubview: rootView)
+        print("setupStatusView")
 
-        rootView.frame.origin.y += 100
-        rootView.frame.size.height -= 100
+        let statusView = CallStatusView(frame: .init(origin: .zero, size: .init(width: mainWindow.frame.width, height: 0)))
+        rootSuperview.insertSubview(statusView, aboveSubview: rootView)
+        self.statusView = statusView
     }
 
     @MainActor
-    private func hideStatusView() async {
+    private func updateStatusView(_ callStatus: CallStatus?) async {
+        guard let statusView else { return }
+
+        await withCheckedContinuation { continuation in
+
+            if let callStatus {
+                statusView.callStatus = callStatus
+                statusView.frame.size.height = 100
+
+                statusView.setNeedsLayout()
+                UIView.animate(withDuration: 3) {
+                    statusView.layoutIfNeeded()
+                } completion: { _ in
+                    continuation.resume()
+                }
+            } else {
+                //
+            }
+        }
+    }
+
+    @MainActor
+    private func tearDownStatusView() async {
+
         guard
             let mainWindow,
             let rootView = mainWindow.rootViewController?.view,
-            let statusView
+            statusView != nil
         else { return assertionFailure() }
-        print("hide")
+
+        print("tearDownStatusView")
 
         await withCheckedContinuation { continuation in
             rootView.frame = mainWindow.screen.bounds
             continuation.resume()
         }
+
+        statusView = nil
     }
 }
 
@@ -119,9 +136,9 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
             button.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
         ])
         button.addAction(.init { _ in
-            button.tag += 1
             let callStatus: CallStatus? = if button.tag % 2 == 0 { "Connecting ..." } else { .none }
             setCallStatus(callStatus, view.window!)
+            button.tag += 1
         }, for: .primaryActionTriggered)
         return view
     }()
@@ -141,26 +158,3 @@ private extension UIViewController {
     }
 }
 private nonisolated(unsafe) var presenterKey = 0
-
-
-
-@available(iOS 17, *)
-#Preview("X") {
-    SetupView()
-}
-
-final class SetupView: UIView {
-    override func didMoveToWindow() {
-
-        let view = UIView()
-        view.backgroundColor = .red
-        view.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(view)
-        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        view.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-
-        window?.rootViewController?.view.frame.origin.y += 100
-    }
-}
