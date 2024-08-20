@@ -38,7 +38,7 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     }
 
     private var isLoggedIn: Bool {
-        return transportSession.cookieStorage.authenticationCookieData != nil
+        transportSession.cookieStorage.hasAuthenticationCookie
     }
 
 }

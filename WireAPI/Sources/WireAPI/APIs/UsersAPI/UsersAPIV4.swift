@@ -33,8 +33,8 @@ class UsersAPIV4: UsersAPIV3 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: UserResponseV4.self)
-            .failure(code: 404, label: "not-found", error: UsersAPIError.userNotFound)
+            .success(code: .ok, type: UserResponseV4.self)
+            .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
             .parse(response)
     }
 
@@ -49,7 +49,7 @@ class UsersAPIV4: UsersAPIV3 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: UserListResponseV4.self)
+            .success(code: .ok, type: UserListResponseV4.self)
             .parse(response)
     }
 
