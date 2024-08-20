@@ -51,7 +51,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
         // dismiss the profile and switch to the settings tab
 
         guard
-            let presenter = viewController?.presentingViewController as? RootViewController,
+            let presenter = viewController?.presentingViewController,
             let zClientViewController = presenter.children.compactMap({ $0 as? ZClientViewController }).first,
             let tabBarController = zClientViewController.mainTabBarController
         else { return assertionFailure("Wrong assumptions about the VC presentation") }

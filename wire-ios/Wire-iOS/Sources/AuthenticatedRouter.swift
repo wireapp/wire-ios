@@ -117,8 +117,7 @@ final class AuthenticatedRouter {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        _zClientViewController?.presentAlert(alert)
-        _viewController?.present(alert, animated: true)
+        _zClientViewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
@@ -128,8 +127,7 @@ final class AuthenticatedRouter {
             sessionManager.logoutCurrentSession()
         }
 
-        _zClientViewController?.presentAlert(alert)
-        _viewController?.present(alert, animated: true)
+        _zClientViewController?.present(alert, animated: true)
     }
 }
 

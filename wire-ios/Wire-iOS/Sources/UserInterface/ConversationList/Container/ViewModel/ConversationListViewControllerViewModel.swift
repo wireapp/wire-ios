@@ -102,8 +102,10 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
+        @MainActor
         let miniatureAccountImageFactory = MiniatureAccountImageFactory()
 
+        @MainActor
         init(
             account: Account,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
@@ -180,6 +182,7 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
+    @MainActor
     private func updateAccountImage() {
 
         if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
@@ -310,6 +313,7 @@ extension ConversationListViewController.ViewModel {
 
 extension ConversationListViewController.ViewModel: UserObserving {
 
+    @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
@@ -343,6 +347,7 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
 extension ConversationListViewController.ViewModel: TeamObserver {
 
+    @MainActor
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
 
         if changeInfo.imageDataChanged {

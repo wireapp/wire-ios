@@ -182,6 +182,7 @@ final class ZClientViewController: UIViewController {
             archive: createArchivedListViewController(),
             settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
+        // TODO: tab bar and split view controller don't work together
         wireSplitViewController.setViewController(mainTabBarController, for: .primary)
 
         if pendingInitialStateRestore {
