@@ -40,9 +40,7 @@ final class AppRootRouter {
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private let quickActionsManager: QuickActionsManager
     private var authenticatedRouter: AuthenticatedRouter? {
-        didSet {
-            setupAnalyticsSharing()
-        }
+        didSet { setupAnalyticsSharing() }
     }
 
     private var observerTokens: [NSObjectProtocol] = []
@@ -53,26 +51,26 @@ final class AppRootRouter {
 
     let sessionManager: SessionManager
 
-    private let windowScene: UIWindowScene
+    private let mainWindow: UIWindow
     private var lastLaunchOptions: LaunchOptions?
 
     @available(*, deprecated, message: "Please don't access this property")
     var zClientViewController: ZClientViewController? {
-        windowScene.keyWindow!.rootViewController as? ZClientViewController
+        mainWindow.rootViewController as? ZClientViewController
     }
 
     // MARK: - Initialization
 
     init(
-        windowScene: UIWindowScene,
+        mainWindow: UIWindow,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator
     ) {
-        self.windowScene = windowScene
+        self.mainWindow = mainWindow
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(
-            viewController: { windowScene.keyWindow!.rootViewController! },
+            viewController: { mainWindow.rootViewController! },
             sessionManager: sessionManager
         )
         self.switchingAccountRouter = SwitchingAccountRouter()
@@ -119,6 +117,30 @@ final class AppRootRouter {
     }
 
     // MARK: - Private implementation
+
+    private func replaceRootViewController(by viewController: UIViewController) {
+        //
+
+        /*
+
+         private func swap() {
+             let window = view.window!
+             let newVC = storyboard?.instantiateInitialViewController() as! Self
+             newVC.loadViewIfNeeded()
+             newVC.label.text = "ok"
+             window.rootViewController = newVC
+
+             let options: UIView.AnimationOptions = .transitionCrossDissolve
+             let duration: TimeInterval = 0.3
+
+             UIView.transition(with: window, duration: duration, options: options, animations: {}) { isCompleted in
+                 // maybe do something on completion here
+             }
+         }
+
+         */
+    }
+
     private func setupAppStateCalculator() {
         appStateCalculator.delegate = self
     }
@@ -278,13 +300,13 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
-        windowScene.keyWindow!.rootViewController = blockerViewController
+        mainWindow.rootViewController = blockerViewController
         completion()
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
-        windowScene.keyWindow!.rootViewController = blockerViewController
+        mainWindow.rootViewController = blockerViewController
         completion()
     }
 
@@ -293,7 +315,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             context: .pendingCertificateEnroll,
             sessionManager: sessionManager
         )
-        windowScene.keyWindow!.rootViewController = blockerViewController
+        mainWindow.rootViewController = blockerViewController
     }
 
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
@@ -302,7 +324,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             sessionManager: sessionManager,
             error: error
         )
-        windowScene.keyWindow!.rootViewController = blockerViewController
+        mainWindow.rootViewController = blockerViewController
         completion()
     }
 
@@ -312,7 +334,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         if isLoading {
             launchViewController.showLoadingScreen()
         }
-        windowScene.keyWindow!.rootViewController = launchViewController
+        mainWindow.rootViewController = launchViewController
         completion()
     }
 
@@ -355,7 +377,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
-        windowScene.keyWindow!.rootViewController = navigationController
+        mainWindow.rootViewController = navigationController
         completion()
     }
 
@@ -377,12 +399,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        windowScene.keyWindow!.rootViewController = authenticatedRouter.viewController
+        mainWindow.rootViewController = authenticatedRouter.viewController
         completion()
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
-        windowScene.keyWindow!.rootViewController = AppLockModule.build(userSession: userSession)
+        mainWindow.rootViewController = AppLockModule.build(userSession: userSession)
         completion()
     }
 
@@ -397,12 +419,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     // MARK: - Helpers
 
     private func configureUnauthenticatedAppearance() {
-        windowScene.keyWindow?.tintColor = UIColor.Wire.primaryLabel
+        mainWindow.tintColor = UIColor.Wire.primaryLabel
         ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self]).tintColor = UIColor.Team.activeButton
     }
 
     private func configureAuthenticatedAppearance() {
-        windowScene.keyWindow?.tintColor = .accent()
+        mainWindow.tintColor = .accent()
         UIColor.setAccentOverride(nil)
     }
 
@@ -425,9 +447,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
-        let keyWindow = windowScene.keyWindow
+        let mainWindow = mainWindow
         return AuthenticatedRouter(
-            rootViewController: { keyWindow!.rootViewController! },
+            rootViewController: { mainWindow.rootViewController! },
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
@@ -442,7 +464,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
                 targetVC: { [weak self] in
                     guard let self else { fatalError() }
-                    return windowScene.keyWindow!.rootViewController!
+                    return mainWindow.rootViewController!
                 }
             ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
@@ -535,7 +557,7 @@ extension AppRootRouter {
                 title: L10n.Localizable.General.ok,
                 style: .cancel
             ))
-            windowScene.keyWindow!.rootViewController!.present(alert, animated: true)
+            mainWindow.rootViewController!.present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
             let alert = UIAlertController(
@@ -547,12 +569,12 @@ extension AppRootRouter {
                 title: L10n.Localizable.General.ok,
                 style: .cancel
             ))
-            windowScene.keyWindow!.rootViewController!.present(alert, animated: true)
+            mainWindow.rootViewController!.present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
             wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            windowScene.keyWindow!.rootViewController!.present(wipeCompletionViewController, animated: true)
+            mainWindow.rootViewController!.present(wipeCompletionViewController, animated: true)
 
         default:
             break
@@ -619,7 +641,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         ConversationListCell.invalidateCachedCellSize()
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
-        windowScene.keyWindow!.rootViewController!.redrawAllFonts()
+        mainWindow.rootViewController!.redrawAllFonts()
     }
 
     static func configureAppearance() {
@@ -641,23 +663,3 @@ extension AppRootRouter: AudioPermissionsObserving {
         sessionManager.updateMuteOtherCallsFromSettings()
     }
 }
-
-// TODO: animate swaping root view controller
-/*
-
- private func swap() {
-     let window = view.window!
-     let newVC = storyboard?.instantiateInitialViewController() as! Self
-     newVC.loadViewIfNeeded()
-     newVC.label.text = "ok"
-     window.rootViewController = newVC
-
-     let options: UIView.AnimationOptions = .transitionCrossDissolve
-     let duration: TimeInterval = 0.3
-
-     UIView.transition(with: window, duration: duration, options: options, animations: {}) { isCompleted in
-         // maybe do something on completion here
-     }
- }
-
- */

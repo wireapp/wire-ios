@@ -318,7 +318,7 @@ private extension AppDelegate {
         }
 
         appRootRouter = AppRootRouter(
-            windowScene: mainWindow.windowScene!,
+            mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
