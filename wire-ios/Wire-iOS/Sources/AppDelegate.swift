@@ -72,8 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Public Set Property
 
-    // TODO: [WPB-8778] make private [not private(set)]
-    /*private*/ private(set) var mainWindow: UIWindow!
+    private(set) var mainWindow: UIWindow!
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -301,23 +300,7 @@ private extension AppDelegate {
             shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
         ])
 
-        let splitViewController = UISplitViewController(style: .tripleColumn)
-        splitViewController.displayModeButtonVisibility = .never
-        splitViewController.setViewController(rootViewController, for: .secondary)
-
-        let splitViewControllerDelegate = SupportedOrientationsDelegatingSplitViewControllerDelegate()
-        splitViewControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(splitViewController)
-
-        // a navigation controller has automatically been created by `splitViewController.setViewController(_:for:)`,
-        // hide the navigation bar and ensure the supported interface orientations are propagated correctly
-        if let navigationController = rootViewController.navigationController {
-            navigationController.setNavigationBarHidden(true, animated: false)
-
-            let navigationControllerDelegate = SupportedOrientationsDelegatingNavigationControllerDelegate()
-            navigationControllerDelegate.setAsDelegateAndNontomicRetainedAssociatedObject(navigationController)
-        }
-
-        mainWindow.rootViewController = splitViewController
+        mainWindow.rootViewController = rootViewController
         mainWindow.makeKeyAndVisible()
     }
 
