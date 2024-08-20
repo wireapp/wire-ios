@@ -18,40 +18,20 @@
 
 import Foundation
 
-/// An event where a user's metadata was updated.
+/// Errors originating from `FeatureConfigsAPI`.
 
-public struct UserUpdateEvent: Equatable, Codable {
+public enum FeatureConfigsAPIError: Error {
 
-    /// The updated user's id.
+    /// Insufficient permissions
 
-    public let userID: UUID
+    case insufficientPermissions
 
-    /// The new accent color id.
+    /// Not a team member
 
-    public let accentColorID: Int?
+    case userIsNotTeamMember
 
-    /// The new user name.
+    /// Team not found
 
-    public let name: String?
-
-    /// The new user handle.
-
-    public let handle: String?
-
-    /// The new email address.
-
-    public let email: String?
-
-    /// Whether the user's sso id was deleted.
-
-    public let isSSOIDDeleted: Bool?
-
-    /// The new user assets.
-
-    public let assets: [UserAsset]?
-
-    /// The new supported protocols.
-
-    public let supportedProtocols: Set<MessageProtocol>?
+    case teamNotFound
 
 }

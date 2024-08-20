@@ -267,7 +267,9 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 EndToEndIdentityFeatureConfig(
                     status: .enabled,
                     acmeDiscoveryURL: "www.example.com",
-                    verificationExpiration: 123
+                    verificationExpiration: 123,
+                    crlProxy: nil,
+                    useProxyOnMobile: nil
                 )
             )
         )

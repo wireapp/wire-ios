@@ -18,40 +18,10 @@
 
 import Foundation
 
-/// An event where a user's metadata was updated.
+class FeatureConfigsAPIV1: FeatureConfigsAPIV0 {
 
-public struct UserUpdateEvent: Equatable, Codable {
-
-    /// The updated user's id.
-
-    public let userID: UUID
-
-    /// The new accent color id.
-
-    public let accentColorID: Int?
-
-    /// The new user name.
-
-    public let name: String?
-
-    /// The new user handle.
-
-    public let handle: String?
-
-    /// The new email address.
-
-    public let email: String?
-
-    /// Whether the user's sso id was deleted.
-
-    public let isSSOIDDeleted: Bool?
-
-    /// The new user assets.
-
-    public let assets: [UserAsset]?
-
-    /// The new supported protocols.
-
-    public let supportedProtocols: Set<MessageProtocol>?
+    override var apiVersion: APIVersion {
+        .v1
+    }
 
 }
