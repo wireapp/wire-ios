@@ -53,8 +53,8 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: PaginatedConnectionListV0.self)
-                .failure(code: 400, error: ConnectionsAPIError.invalidBody)
+                .success(code: .ok, type: PaginatedConnectionListV0.self)
+                .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
         }
 

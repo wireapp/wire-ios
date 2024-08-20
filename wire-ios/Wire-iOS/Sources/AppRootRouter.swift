@@ -23,7 +23,7 @@ import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter
-final class AppRootRouter: NSObject {
+final class AppRootRouter {
 
     // MARK: - Public Property
 
@@ -62,20 +62,19 @@ final class AppRootRouter: NSObject {
     // MARK: - Initialization
 
     init(
-        viewController: RootViewController,
+        rootViewController: RootViewController,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator
     ) {
-        self.rootViewController = viewController
+        self.rootViewController = rootViewController
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
-        self.urlActionRouter = URLActionRouter(viewController: viewController)
+        self.urlActionRouter = URLActionRouter(rootViewController: rootViewController, sessionManager: sessionManager)
         self.switchingAccountRouter = SwitchingAccountRouter()
         self.quickActionsManager = QuickActionsManager()
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
 
-        urlActionRouter.sessionManager = sessionManager
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
         quickActionsManager.sessionManager = sessionManager
@@ -83,8 +82,6 @@ final class AppRootRouter: NSObject {
         sessionManager.foregroundNotificationResponder = foregroundNotificationFilter
         sessionManager.switchingDelegate = switchingAccountRouter
         sessionManager.presentationDelegate = urlActionRouter
-
-        super.init()
 
         setupAppStateCalculator()
         setupURLActionRouter()
@@ -264,10 +261,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: .headless)
         enqueueTransition(to: appStateCalculator.appState)
     }
-}
 
-extension AppRootRouter {
     // MARK: - Navigation Helpers
+
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
             Analytics.shared.tagEvent("app.open")
@@ -444,7 +440,8 @@ extension AppRootRouter {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: rootViewController),
+                targetVC: rootViewController
+            ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
     }
@@ -607,7 +604,7 @@ extension AppRootRouter: ApplicationStateObserving {
         if let size {
             screenCurtain.frame.size = size
         } else {
-            screenCurtain.frame = UIApplication.shared.firstKeyWindow?.frame ?? UIScreen.main.bounds
+            screenCurtain.frame = AppDelegate.shared.mainWindow?.frame ?? UIScreen.main.bounds
         }
     }
 }
