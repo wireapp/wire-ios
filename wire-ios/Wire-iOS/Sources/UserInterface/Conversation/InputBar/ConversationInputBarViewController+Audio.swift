@@ -247,9 +247,6 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
     }
 
     private func displayRecordKeyboard() {
-
-// TODO: test on ipad
-
         // do not show keyboard if conversation list is shown,
         guard let splitViewController = self.wr_splitViewController,
               let rightViewController = splitViewController.rightViewController,
