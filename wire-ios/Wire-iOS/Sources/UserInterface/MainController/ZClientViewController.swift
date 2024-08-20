@@ -81,7 +81,6 @@ final class ZClientViewController: UIViewController {
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
-    private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
     required init(
@@ -139,7 +138,6 @@ final class ZClientViewController: UIViewController {
     }
 
     private func restoreStartupState() {
-        pendingInitialStateRestore = false
         attemptToPresentInitialConversation()
     }
 
@@ -171,8 +169,6 @@ final class ZClientViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        pendingInitialStateRestore = true
 
         addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -208,9 +204,7 @@ final class ZClientViewController: UIViewController {
             }
         }
 
-        if pendingInitialStateRestore {
-            restoreStartupState()
-        }
+        restoreStartupState()
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
@@ -763,14 +757,16 @@ final class ZClientViewController: UIViewController {
     }
 
     var isConversationViewVisible: Bool {
+        // TODO: fix
+        false
         //wireSplitViewController.isConversationViewVisible
-        fatalError("TODO")
     }
 
     var isConversationListVisible: Bool {
+        // TODO: fix
+        return false
         //return (wireSplitViewController.layoutSize == .regularLandscape) ||
         //(wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
-        fatalError("TODO")
     }
 
     func minimizeCallOverlay(
