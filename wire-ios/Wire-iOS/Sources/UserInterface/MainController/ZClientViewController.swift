@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireReusableUIComponents
 
 final class ZClientViewController: UIViewController {
 
@@ -33,7 +34,7 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = UISplitViewController(style: .doubleColumn)
+    let wireSplitViewController = UISplitViewController(style: .tripleColumn)
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
@@ -48,6 +49,15 @@ final class ZClientViewController: UIViewController {
         )
     }
     private lazy var conversationListViewController = ConversationListViewController(
+        account: account,
+        selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
+        userSession: userSession,
+        zClientViewController: self,
+        mainCoordinator: MainCoordinator(zClientViewController: self),
+        isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+    )
+    private lazy var iPadConversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
@@ -172,6 +182,11 @@ final class ZClientViewController: UIViewController {
         createTopViewConstraints()
         updateSplitViewTopConstraint()
 
+        let sidebarViewController = SidebarViewController()
+        wireSplitViewController.setViewController(sidebarViewController, for: .primary)
+        wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
+        //wireSplitViewController.setViewController(conversation, for: .secondary)
+
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,
             selfUser: userSession.selfUserLegalHoldSubject
@@ -182,9 +197,9 @@ final class ZClientViewController: UIViewController {
             archive: createArchivedListViewController(),
             settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
-        // TODO: tab bar and split view controller don't work together
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
+        // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom == .phone {
             if #available(iOS 17.0, *) {
                 wireSplitViewController.traitOverrides.horizontalSizeClass = .compact
