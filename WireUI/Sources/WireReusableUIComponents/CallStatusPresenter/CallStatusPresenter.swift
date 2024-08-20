@@ -25,7 +25,9 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
     @MainActor
     private unowned let mainWindow: UIWindow?
     @MainActor
-    private var statusView: CallStatusView?
+    private var backgroundView: UIView?
+    @MainActor
+    private var statusLabel: UILabel?
 
     @MainActor
     public init(mainWindow: UIWindow) {
@@ -33,10 +35,10 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
     }
 
     deinit {
-        guard let mainWindow, let statusView else { return }
+        guard let mainWindow, let backgroundView else { return }
 
         Task { @MainActor in
-            statusView.removeFromSuperview()
+            backgroundView.removeFromSuperview()
             if let view = mainWindow.rootViewController?.viewIfLoaded {
                 view.frame = mainWindow.bounds
             }
@@ -48,15 +50,15 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
         await Task { @MainActor [self] in
 
             if let callStatus {
-                if statusView == nil {
-                    await setupStatusView()
+                if backgroundView == nil {
+                    setupBackgroundView()
                 }
-                await updateStatusView(callStatus)
+                await showStatus(callStatus)
 
             } else {
-                await updateStatusView(callStatus)
-                if statusView != nil {
-                    await tearDownStatusView()
+                await hideStatus()
+                if backgroundView != nil {
+                    tearDownBackgroundView()
                 }
             }
 
@@ -64,7 +66,7 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
     }
 
     @MainActor
-    private func setupStatusView() async {
+    private func setupBackgroundView() {
 
         guard
             let mainWindow,
@@ -74,50 +76,112 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
 
         print("setupStatusView")
 
-        let statusView = CallStatusView(frame: .init(origin: .zero, size: .init(width: mainWindow.frame.width, height: 0)))
-        rootSuperview.insertSubview(statusView, aboveSubview: rootView)
-        self.statusView = statusView
+        let backgroundView = UIView()
+        rootSuperview.insertSubview(backgroundView, aboveSubview: rootView)
+        backgroundView.frame.size.width = mainWindow.bounds.width
+        self.backgroundView = backgroundView
+
+        let statusLabel = UILabel()
+        statusLabel.numberOfLines = 0
+        statusLabel.lineBreakMode = .byWordWrapping
+        statusLabel.textAlignment = .center
+        statusLabel.alpha = 0
+        backgroundView.addSubview(statusLabel)
+        self.statusLabel = statusLabel
     }
 
     @MainActor
-    private func updateStatusView(_ callStatus: CallStatus?) async {
-        guard let statusView else { return }
-
-        await withCheckedContinuation { continuation in
-
-            if let callStatus {
-                statusView.callStatus = callStatus
-                statusView.frame.size.height = 100
-
-                statusView.setNeedsLayout()
-                UIView.animate(withDuration: 3) {
-                    statusView.layoutIfNeeded()
-                } completion: { _ in
-                    continuation.resume()
-                }
-            } else {
-                //
-            }
-        }
-    }
-
-    @MainActor
-    private func tearDownStatusView() async {
-
+    private func showStatus(_ callStatus: CallStatus) async {
+        print(0)
         guard
             let mainWindow,
             let rootView = mainWindow.rootViewController?.view,
-            statusView != nil
+            let backgroundView,
+            let statusLabel
         else { return assertionFailure() }
 
-        print("tearDownStatusView")
-
-        await withCheckedContinuation { continuation in
-            rootView.frame = mainWindow.screen.bounds
-            continuation.resume()
+            print(1)
+        if statusLabel.alpha != 0 {
+            print(2)
+            await UIView.animate(duration: 2) {
+                print(2.1)
+                statusLabel.alpha = 0
+                print(2.2)
+            }
+            print(2.3)
         }
 
-        statusView = nil
+            print(3)
+        statusLabel.text = callStatus
+        statusLabel.frame.origin.x = 20
+        statusLabel.frame.size.width = backgroundView.bounds.width - 40
+        statusLabel.frame.size.height = statusLabel.sizeThatFits(CGSize(
+            width: statusLabel.frame.size.width,
+            height: .greatestFiniteMagnitude
+        )).height
+        print("statusLabel.frame", statusLabel.frame)
+        print("backgroundView.bounds", backgroundView.bounds)
+
+        await UIView.animate(duration: 2) {
+            backgroundView.frame.size.height = statusLabel.frame.size.height
+            var f = rootView.frame
+            f.origin.y = backgroundView.frame.size.height
+            f.size.height = mainWindow.bounds.height - f.origin.y
+            rootView.frame = f
+//            rootView.frame.origin.y = backgroundView.frame.size.height
+//            rootView.frame.size.height = mainWindow.bounds.height - backgroundView.frame.size.height
+//            rootView.setNeedsUpdateConstraints()
+//            rootView.updateConstraintsIfNeeded()
+        }
+        print(4)
+        await UIView.animate(duration: 2) {
+            statusLabel.alpha = 1
+        }
+        print(5)
+    }
+
+    @MainActor
+    private func hideStatus() async {
+        guard
+            let mainWindow,
+            let rootView = mainWindow.rootViewController?.view,
+            let backgroundView,
+            let statusLabel
+        else { return assertionFailure() }
+
+        if statusLabel.alpha != 0 {
+            await UIView.animate(duration: 2) {
+                statusLabel.alpha = 0
+            }
+        }
+        await UIView.animate(duration: 2) {
+            backgroundView.frame.size.height = 0
+            rootView.frame = mainWindow.bounds
+        }
+    }
+
+    @MainActor
+    private func tearDownBackgroundView() {
+        print("tearDownBackgroundView")
+        backgroundView?.removeFromSuperview()
+        backgroundView = nil
+    }
+}
+
+// MARK: - UIView+animate async
+
+private extension UIView {
+
+    @discardableResult
+    class func animate(
+        duration: TimeInterval,
+        animations: @escaping () -> Void
+    ) async -> Bool {
+        await withCheckedContinuation { continuation in
+            animate(withDuration: 0, animations: animations) { isFinished in
+                continuation.resume(returning: isFinished)
+            }
+        }
     }
 }
 
@@ -127,13 +191,14 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
 #Preview {
     {
         let view = UIView()
+        view.backgroundColor = .init(white: 0.9, alpha: 1)
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Toggle Call Status", for: .normal)
         view.addSubview(button)
         NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         button.addAction(.init { _ in
             let callStatus: CallStatus? = if button.tag % 2 == 0 { "Connecting ..." } else { .none }
