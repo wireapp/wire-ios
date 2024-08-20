@@ -25,7 +25,7 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
     @MainActor
     private unowned let mainWindow: UIWindow?
     @MainActor
-    private var statusView: UIView?
+    private var statusView: CallStatusView?
 
     @MainActor
     public init(mainWindow: UIWindow) {
@@ -50,17 +50,21 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
                 if statusView == nil {
                     await showStatusView()
                 }
-                // TODO: set label text
-                print(callStatus)
+                statusView?.callStatus = callStatus
 
             } else {
-                // TODO: clear label
+                statusView?.callStatus = .none
                 if statusView != nil {
                     await hideStatusView()
                 }
             }
 
         }.value
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+            print("statusViewFrame", self.statusView?.frame)
+            print("mainWindow.rootViewController?.view", self.mainWindow?.rootViewController?.view.frame)
+        }
     }
 
     @MainActor
@@ -71,12 +75,15 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
             let rootSuperview = rootView.superview
         else { return assertionFailure() }
 
-        let statusView = UIView()
+        let statusView = CallStatusView(
+            frame: .init(
+                origin: .zero,
+                size: .init(width: mainWindow.frame.width, height: 0)
+            )
+        )
         self.statusView = statusView
         rootSuperview.insertSubview(statusView, aboveSubview: rootView)
 
-        statusView.backgroundColor = .green
-        //statusView.frame = mainWindow.screen.bounds
         rootView.frame.origin.y += 100
         rootView.frame.size.height -= 100
     }
