@@ -25,10 +25,6 @@ import WireSyncEngine
 // MARK: - AppRootRouter
 final class AppRootRouter {
 
-    // MARK: - Public Property
-
-    let screenCurtain = ScreenCurtainWindow()
-
     // MARK: - Private Property
 
     private let appStateCalculator: AppStateCalculator
@@ -52,6 +48,8 @@ final class AppRootRouter {
     let sessionManager: SessionManager
 
     private let mainWindow: UIWindow
+    private let screenCurtainWindow = ScreenCurtainWindow()
+
     private var lastLaunchOptions: LaunchOptions?
 
     @available(*, deprecated, message: "Please don't access this property")
@@ -89,7 +87,6 @@ final class AppRootRouter {
         setupAppStateCalculator()
         setupURLActionRouter()
         setupNotifications()
-        setupScreenCurtainWindow()
 
         AppRootRouter.configureAppearance()
 
@@ -140,12 +137,6 @@ final class AppRootRouter {
         setupApplicationNotifications()
         setupContentSizeCategoryNotifications()
         setupAudioPermissionsNotifications()
-    }
-
-    private func setupScreenCurtainWindow() {
-        // TODO: what's the point in making it visible and then hiding it? also does it have to be key?
-        screenCurtain.makeKeyAndVisible()
-        screenCurtain.isHidden = true
     }
 
     private func createLifeCycleObserverTokens() {
@@ -227,13 +218,13 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
         case .unauthenticated(error: let error):
-            screenCurtain.userSession = nil
+            screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completion)
         case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
-            screenCurtain.userSession = userSession
+            screenCurtainWindow.userSession = userSession
             showAuthenticated(
                 userSession: userSession,
                 completion: completion
@@ -243,7 +234,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         case .loading:
             completion()
         case let .locked(userSession):
-            screenCurtain.userSession = userSession
+            screenCurtainWindow.userSession = userSession
             showAppLock(userSession: userSession, completion: completion)
         }
     }
@@ -582,6 +573,7 @@ extension AppRootRouter: URLActionRouterDelegate {
 // MARK: - ApplicationStateObserving
 
 extension AppRootRouter: ApplicationStateObserving {
+
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
     }
@@ -603,9 +595,9 @@ extension AppRootRouter: ApplicationStateObserving {
 
     func updateOverlayWindowFrame(size: CGSize? = nil) {
         if let size {
-            screenCurtain.frame.size = size
+            screenCurtainWindow.frame.size = size
         } else {
-            screenCurtain.frame = AppDelegate.shared.mainWindow?.frame ?? UIScreen.main.bounds
+            screenCurtainWindow.frame = mainWindow.screen.bounds
         }
     }
 }

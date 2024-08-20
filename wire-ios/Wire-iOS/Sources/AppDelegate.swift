@@ -292,7 +292,6 @@ private extension AppDelegate {
         shieldImageView.translatesAutoresizingMaskIntoConstraints = false
 
         let rootViewController = UIViewController()
-        rootViewController.navigationItem.hidesBackButton = true
         rootViewController.view.backgroundColor = .black
         rootViewController.view.addSubview(shieldImageView)
         NSLayoutConstraint.activate([
