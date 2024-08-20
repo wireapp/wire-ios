@@ -36,8 +36,8 @@ class ConversationsAPIV2: ConversationsAPIV1 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: QualifiedConversationListV0.self)
-            .failure(code: 400, error: ConversationsAPIError.invalidBody)
+            .success(code: .ok, type: QualifiedConversationListV0.self)
+            .failure(code: .badRequest, error: ConversationsAPIError.invalidBody)
             .parse(response)
     }
 }
