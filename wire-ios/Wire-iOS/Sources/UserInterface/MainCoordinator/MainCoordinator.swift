@@ -49,7 +49,10 @@ struct MainCoordinator: MainCoordinating {
         zClientViewController.showConversationList()
     }
 
-    func showSettings() {
-        zClientViewController?.presentSettings()
+    func showSelfProfile() {
+        guard let zClientViewController else {
+            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
+        }
+        zClientViewController.showSelfProfile()
     }
 }

@@ -62,11 +62,16 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+        accentColor = .default
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
-        userSession = UserSessionMock()
+        userSession = UserSessionMock(
+            selfUser: selfUser,
+            selfUserLegalHoldSubject: selfUser,
+            editableSelfUser: selfUser
+        )
     }
 
     // MARK: - tearDown
@@ -82,7 +87,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
-    // MARK: - Helper Method
+    // MARK: - Helper Methods
 
     func setupSut() {
         sut = StartUIViewController(
@@ -97,53 +102,50 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         sut.view.frame = CGRect(origin: .zero, size: screenSize)
     }
 
+    func setupNavigationController() -> UINavigationController {
+        setupSut()
+        let navigationController = UINavigationController(rootViewController: sut)
+        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.overrideUserInterfaceStyle = .dark
+        return navigationController
+    }
+
     // MARK: - Snapshot Tests
 
-    func testForWrappedInNavigationViewController() {
+    func testStartUIViewControllerWrappedInNavigationController() {
         nonTeamTest {
-            setupSut()
-
-            let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
-
-            navigationController.pushViewController(sut, animated: false)
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 
-    func testForNoContact() {
+    func testStartUIViewControllerNoContact() {
         nonTeamTest {
-            setupSut()
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 
-    /// has create group and create guest room rows
-    func testForNoContactWhenSelfIsTeamMember() {
+    func testStartUIViewControllerNoContactWhenSelfIsTeamMember() {
         teamTest {
-            setupSut()
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 
-    /// has no create group and create guest room rows, and no group selector tab
-    func testForNoContactWhenSelfIsPartner() {
+    func testStartUIViewControllerNoContactWhenSelfIsPartner() {
         teamTest {
             selfUser.membership?.setTeamRole(.partner)
-
-            setupSut()
-
+            let navigationController = setupNavigationController()
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut.view)
+                .verify(matching: navigationController.view)
         }
     }
 }

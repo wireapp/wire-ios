@@ -2,14 +2,13 @@
 
 --enable blankLineAfterSwitchCase
 --disable hoistTry
-# this rule is nice but is hard to apply on existing codebases (Core Data, Codable)
-# --enable acronyms
 
 --ifdef outdent
 --stripunusedargs unnamed-only
 --patternlet inline
-
 --commas inline
 --typeblanklines preserve
-
 --decimalgrouping 3,4
+
+# this rule is nice but is hard to apply on existing codebases (Core Data, Codable)
+# --enable acronyms

@@ -28,7 +28,7 @@ enum NavigationDestination {
 
 protocol AuthenticatedRouterProtocol: AnyObject {
     func updateActiveCallPresentationState()
-    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?)
+    func minimizeCallOverlay(animated: Bool, completion: Completion?)
     func navigate(to destination: NavigationDestination)
 }
 
@@ -118,6 +118,7 @@ final class AuthenticatedRouter {
         }
 
         _zClientViewController?.presentAlert(alert)
+        _viewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
@@ -128,21 +129,24 @@ final class AuthenticatedRouter {
         }
 
         _zClientViewController?.presentAlert(alert)
+        _viewController?.present(alert, animated: true)
     }
 }
 
 // MARK: - AuthenticatedRouterProtocol
+
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
+
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
+    func minimizeCallOverlay(animated: Bool, completion: Completion?) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
 
     func navigate(to destination: NavigationDestination) {
+
         switch destination {
         case .conversation(let converation, let message):
             _zClientViewController?.showConversation(converation, at: message)
@@ -156,17 +160,8 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     }
 }
 
-private extension UIViewController {
-
-    func presentAlert(_ alert: UIAlertController) {
-        present(alert, animated: true, completion: nil)
-    }
-}
-
 protocol FeatureRepositoryProvider {
-
     var featureRepository: FeatureRepository { get }
-
 }
 
 extension ZMUserSession: FeatureRepositoryProvider {}

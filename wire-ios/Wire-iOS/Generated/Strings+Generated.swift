@@ -276,9 +276,9 @@ internal enum L10n {
       }
     }
     internal enum ContactsList {
-      internal enum CloseButton {
+      internal enum CancelButton {
         /// Close contact list
-        internal static let description = L10n.tr("Accessibility", "contactsList.closeButton.description", fallback: "Close contact list")
+        internal static let description = L10n.tr("Accessibility", "contactsList.cancelButton.description", fallback: "Close contact list")
       }
       internal enum ExternalIcon {
         /// External
@@ -650,6 +650,50 @@ internal enum L10n {
         /// Double tap to open profile
         internal static let hint = L10n.tr("Accessibility", "conversationsList.connectionRequest.hint", fallback: "Double tap to open profile")
       }
+      internal enum FilterButton {
+        /// Filter conversations
+        internal static let description = L10n.tr("Accessibility", "conversationsList.filterButton.description", fallback: "Filter conversations")
+      }
+      internal enum FilterMenuOptions {
+        internal enum AllConversations {
+          /// Show all conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.description", fallback: "Show all conversations")
+          internal enum Selected {
+            /// Show all conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.allConversations.selected.description", fallback: "Show all conversations")
+          }
+        }
+        internal enum Favorites {
+          /// Show all favorite conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.description", fallback: "Show all favorite conversations")
+          internal enum Selected {
+            /// Show all favorite conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.favorites.selected.description", fallback: "Show all favorite conversations")
+          }
+        }
+        internal enum Groups {
+          /// Show all group conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.description", fallback: "Show all group conversations")
+          internal enum Selected {
+            /// Show all group conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.groups.selected.description", fallback: "Show all group conversations")
+          }
+        }
+        internal enum OneOnOne {
+          /// Show all one on one conversations
+          internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.description", fallback: "Show all one on one conversations")
+          internal enum Selected {
+            /// Show all one on one conversations
+            internal static let description = L10n.tr("Accessibility", "conversationsList.filter_menu_options.oneOnOne.selected.description", fallback: "Show all one on one conversations")
+          }
+        }
+      }
+      internal enum FilterView {
+        internal enum RemoveButton {
+          /// Remove conversation filter
+          internal static let descritpion = L10n.tr("Accessibility", "conversationsList.filter_view.removeButton.descritpion", fallback: "Remove conversation filter")
+        }
+      }
       internal enum ItemCell {
         /// Double tap to open conversation
         internal static let hint = L10n.tr("Accessibility", "conversationsList.itemCell.hint", fallback: "Double tap to open conversation")
@@ -994,12 +1038,6 @@ internal enum L10n {
         /// Double tap to open list of archived conversations
         internal static let hint = L10n.tr("Accessibility", "tabBar.archived.hint", fallback: "Double tap to open list of archived conversations")
       }
-      internal enum Contacts {
-        /// Contacts
-        internal static let description = L10n.tr("Accessibility", "tabBar.contacts.description", fallback: "Contacts")
-        /// Double tap to search for people and open contact list
-        internal static let hint = L10n.tr("Accessibility", "tabBar.contacts.hint", fallback: "Double tap to search for people and open contact list")
-      }
       internal enum Conversations {
         /// List of recent conversations
         internal static let description = L10n.tr("Accessibility", "tabBar.conversations.description", fallback: "List of recent conversations")
@@ -1010,12 +1048,6 @@ internal enum L10n {
         /// Log in via email
         internal static let description = L10n.tr("Accessibility", "tabBar.email.description", fallback: "Log in via email")
       }
-      internal enum Folders {
-        /// List of conversations organized in folders
-        internal static let description = L10n.tr("Accessibility", "tabBar.folders.description", fallback: "List of conversations organized in folders")
-        /// Double tap to open list of conversations organized in folders
-        internal static let hint = L10n.tr("Accessibility", "tabBar.folders.hint", fallback: "Double tap to open list of conversations organized in folders")
-      }
       internal enum Item {
         /// Selected
         internal static let value = L10n.tr("Accessibility", "tabBar.item.value", fallback: "Selected")
@@ -1023,6 +1055,12 @@ internal enum L10n {
       internal enum Phone {
         /// Log in via phone number
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
+      }
+      internal enum Settings {
+        /// Settings
+        internal static let description = L10n.tr("Accessibility", "tabBar.settings.description", fallback: "Settings")
+        /// Double tap to open settings
+        internal static let hint = L10n.tr("Accessibility", "tabBar.settings.hint", fallback: "Double tap to open settings")
       }
     }
   }
@@ -2700,17 +2738,13 @@ internal enum L10n {
           /// Archive
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.archived.title", fallback: "Archive")
         }
-        internal enum Contacts {
-          /// Contacts
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.contacts.title", fallback: "Contacts")
-        }
         internal enum Conversations {
           /// Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.conversations.title", fallback: "Conversations")
         }
-        internal enum Folders {
-          /// Folders
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.folders.title", fallback: "Folders")
+        internal enum Settings {
+          /// Settings
+          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.settings.title", fallback: "Settings")
         }
       }
       internal enum Empty {
@@ -2722,6 +2756,34 @@ internal enum L10n {
           /// Start a conversation or
           /// create a group.
           internal static let message = L10n.tr("Localizable", "conversation_list.empty.no_contacts.message", fallback: "Start a conversation or\ncreate a group.")
+        }
+      }
+      internal enum Filter {
+        internal enum AllConversations {
+          /// All Conversations
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.all_conversations.title", fallback: "All Conversations")
+        }
+        internal enum Favorites {
+          /// Favorites
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.favorites.title", fallback: "Favorites")
+        }
+        internal enum Groups {
+          /// Groups
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.groups.title", fallback: "Groups")
+        }
+        internal enum OneOnOneConversations {
+          /// 1:1 Conversations
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.oneOnOneConversations.title", fallback: "1:1 Conversations")
+        }
+        internal enum RemoveButton {
+          /// Remove
+          internal static let title = L10n.tr("Localizable", "conversation_list.filter.remove_button.title", fallback: "Remove")
+        }
+      }
+      internal enum FilterLabel {
+        /// Filtered by %@
+        internal static func text(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "conversation_list.filter_label.text", String(describing: p1), fallback: "Filtered by %@")
         }
       }
       internal enum Header {
@@ -3369,8 +3431,6 @@ internal enum L10n {
       internal static let edit = L10n.tr("Localizable", "general.edit", fallback: "Edit")
       /// Something went wrong
       internal static let failure = L10n.tr("Localizable", "general.failure", fallback: "Something went wrong")
-      /// Guest room
-      internal static let guestRoomName = L10n.tr("Localizable", "general.guest-room-name", fallback: "Guest room")
       /// Later
       internal static let later = L10n.tr("Localizable", "general.later", fallback: "Later")
       /// Loading…
@@ -4354,8 +4414,8 @@ internal enum L10n {
       internal enum Button {
         /// Add Participants
         internal static let addToConversation = L10n.tr("Localizable", "peoplepicker.button.add_to_conversation", fallback: "Add Participants")
-        /// Create group
-        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.button.create_conversation", fallback: "Create group")
+        /// Create Group
+        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.button.create_conversation", fallback: "Create Group")
       }
       internal enum Federation {
         /// The federated domain is currently not available. [Learn more](%@)
@@ -4434,10 +4494,6 @@ internal enum L10n {
       internal enum QuickAction {
         /// Manage Services
         internal static let adminServices = L10n.tr("Localizable", "peoplepicker.quick-action.admin-services", fallback: "Manage Services")
-        /// Create group
-        internal static let createConversation = L10n.tr("Localizable", "peoplepicker.quick-action.create-conversation", fallback: "Create group")
-        /// Create guest room
-        internal static let createGuestRoom = L10n.tr("Localizable", "peoplepicker.quick-action.create-guest-room", fallback: "Create guest room")
         /// Open
         internal static let openConversation = L10n.tr("Localizable", "peoplepicker.quick-action.open-conversation", fallback: "Open")
       }

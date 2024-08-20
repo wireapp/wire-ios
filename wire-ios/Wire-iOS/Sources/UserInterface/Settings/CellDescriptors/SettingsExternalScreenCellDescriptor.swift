@@ -123,6 +123,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
             controllerToShow.modalPresentationCapturesStatusBarAppearance = true
             self.viewController?.present(controllerToShow, animated: true, completion: .none)
         case .navigation:
+            controllerToShow.hidesBottomBarWhenPushed = true
             viewController?.navigationController?.pushViewController(controllerToShow, animated: true)
         case .alert:
             break

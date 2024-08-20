@@ -84,7 +84,8 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         line: UInt = #line
     ) {
         let state = HandleChangeState(currentHandle: currentHandle, newHandle: newHandle, availability: availability)
-        let sut = ChangeHandleViewController(state: state, federationEnabled: federationEnabled)
+        let sut = ChangeHandleViewController(state: state, useTypeIntrinsicSizeTableView: true, federationEnabled: federationEnabled)
+        sut.overrideUserInterfaceStyle = .light
         snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)
     }
 }

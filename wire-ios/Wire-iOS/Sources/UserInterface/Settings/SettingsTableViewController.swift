@@ -22,6 +22,7 @@ import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController {
 
+    let useTypeIntrinsicSizeTableView: Bool
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
@@ -40,8 +41,16 @@ class SettingsBaseTableViewController: UIViewController {
         }
     }
 
-    init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+    init(
+        style: UITableView.Style,
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
+        self.useTypeIntrinsicSizeTableView = useTypeIntrinsicSizeTableView
+        tableView = if useTypeIntrinsicSizeTableView {
+            IntrinsicSizeTableView(frame: .zero, style: style)
+        } else {
+            UITableView(frame: .zero, style: style)
+        }
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = UIRectEdge()
     }
@@ -131,7 +140,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
@@ -143,13 +151,15 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(group.title)
-        setupNavigationBar()
     }
 
     required init(group: SettingsInternalGroupCellDescriptorType) {
         self.group = group
         self.sections = group.visibleItems
-        super.init(style: group.style == .plain ? .plain : .grouped)
+        super.init(
+            style: group.style == .plain ? .plain : .grouped,
+            useTypeIntrinsicSizeTableView: true
+        )
 
         self.group.items.flatMap { return $0.cellDescriptors }.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
@@ -176,6 +186,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
+        setupNavigationBarAccessibility()
     }
 
     private func setupTableView() {
@@ -197,14 +208,9 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
     }
 
-    private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.presentingViewController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
-        setupAccessibility()
-    }
+    private func setupNavigationBarAccessibility() {
+        typealias Accessibility = L10n.Accessibility.Settings
 
-    private func setupAccessibility() {
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 

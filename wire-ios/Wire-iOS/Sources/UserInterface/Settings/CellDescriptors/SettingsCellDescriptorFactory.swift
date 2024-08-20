@@ -28,14 +28,14 @@ struct SettingsCellDescriptorFactory {
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
 
-    func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func rootGroup() -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
+        rootElements.append(settingsCell())
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
@@ -103,11 +103,26 @@ struct SettingsCellDescriptorFactory {
                                                     copiableText: nil)
     }
 
-    func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func settingsCell() -> SettingsCellDescriptorType {
+
+        SettingsDismissProfileAndSwitchTabDescriptor(
+            title: L10n.Localizable.Self.settings,
+            identifier: type(of: self).settingsDevicesCellIdentifier,
+            icon: .gear,
+            targetTab: .settings
+        )
+    }
+
+    func settingsGroup(
+        isTeamMember: Bool,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
                 isTeamMember: isTeamMember,
-                userSession: userSession
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
             ),
             devicesCell(),
             optionsGroup,

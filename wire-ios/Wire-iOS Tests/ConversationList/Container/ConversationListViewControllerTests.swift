@@ -36,6 +36,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var modelHelper: ModelHelper!
     private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
@@ -54,7 +55,12 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
+        modelHelper = ModelHelper()
+
+        let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
+        selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
+        selfUser.accentColor = .red
+
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -66,16 +72,15 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         sut = ConversationListViewController(
             viewModel: viewModel,
-            isFolderStatePersistenceEnabled: false,
             zClientViewController: .init(account: account, userSession: userSession),
             mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )
+
         tabBarController = MainTabBarController(
-            contacts: .init(),
             conversations: UINavigationController(rootViewController: sut),
-            folders: .init(),
-            archive: .init()
+            archive: .init(),
+            settings: .init()
         )
 
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -99,6 +104,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
         coreDataFixture = nil
+        modelHelper = nil
         mockMainCoordinator = nil
 
         super.tearDown()
@@ -112,7 +118,6 @@ final class ConversationListViewControllerTests: XCTestCase {
     }
 
     func testForEverythingArchived() {
-        let modelHelper = ModelHelper()
         let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
         conversation.isArchived = true
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
@@ -121,7 +126,100 @@ final class ConversationListViewControllerTests: XCTestCase {
         snapshotHelper.verify(matching: tabBarController)
     }
 
-    // MARK: - Helpers
+    // MARK: - Snapshot Tests for Filter View
+
+    func testForShowingConversationsWithoutAnyFilterApplied() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: false),
+            (name: "QA Team", isFavorite: false),
+            (name: "Design Team", isFavorite: false),
+            (name: "iOS Bugs & Questions", isFavorite: false)
+        ]
+
+        let conversations = createConversations(conversationsData: conversationData)
+        userSession.mockConversationDirectory.mockUnarchivedConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(nil)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByGroups() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: false)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+        userSession.mockConversationDirectory.mockGroupConversations = conversations
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.groups)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByFavourites() {
+        // GIVEN
+        let conversationData = [
+            (name: "iOS Team", isFavorite: false),
+            (name: "Web Team", isFavorite: true)
+        ]
+        let conversations = createConversations(conversationsData: conversationData)
+        userSession.mockConversationDirectory.mockFavoritesConversations = conversations.filter { $0.isFavorite }
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.favorites)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
+    func testForShowingConversationsFilteredByOneOnOne() throws {
+        // GIVEN
+        let user1 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user1.name = "Alice"
+
+        let user2 = modelHelper.createUser(in: coreDataFixture.coreDataStack.viewContext)
+        user2.name = "Bob"
+
+        let oneOnOneConversation1 = modelHelper.createOneOnOne(with: user1, in: coreDataFixture.coreDataStack.viewContext)
+        let oneOnOneConversation2 = modelHelper.createOneOnOne(with: user2, in: coreDataFixture.coreDataStack.viewContext)
+
+        userSession.mockConversationDirectory.mockContactsConversations = [oneOnOneConversation1, oneOnOneConversation2]
+
+        // WHEN
+        sut.hideNoContactLabel(animated: false)
+        sut.applyFilter(.oneToOneConversations)
+
+        // THEN
+        snapshotHelper.verify(matching: tabBarController)
+    }
+
+    // MARK: - Helper Methods
+
+    private func createConversations(conversationsData: [(name: String, isFavorite: Bool)]) -> [ZMConversation] {
+        var conversations: [ZMConversation] = []
+
+        for (name, isFavorite) in conversationsData {
+            let conversation = modelHelper.createGroupConversation(
+                in: coreDataFixture.coreDataStack.viewContext
+            )
+
+            conversation.userDefinedName = name
+            conversation.isFavorite = isFavorite
+            conversations.append(conversation)
+        }
+        return conversations
+    }
 
     private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
         let predicate = NSPredicate { _, _ in

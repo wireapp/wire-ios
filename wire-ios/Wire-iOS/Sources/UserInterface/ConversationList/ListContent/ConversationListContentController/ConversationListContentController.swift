@@ -46,7 +46,6 @@ final class ConversationListContentController: UICollectionViewController {
     init(
         userSession: UserSession,
         mainCoordinator: MainCoordinating,
-        isFolderStatePersistenceEnabled: Bool,
         zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession
@@ -57,10 +56,7 @@ final class ConversationListContentController: UICollectionViewController {
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-        self.listViewModel = ConversationListViewModel(
-            userSession: userSession,
-            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
-        )
+        listViewModel = .init(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()
@@ -75,9 +71,7 @@ final class ConversationListContentController: UICollectionViewController {
         super.loadView()
 
         listViewModel.delegate = self
-
         setupViews()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -106,11 +100,11 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func activeMediaPlayerChanged() {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
                 (cell as? ConversationListCell)?.updateAppearance()
             }
-        })
+        }
     }
 
     func reload() {
@@ -132,7 +126,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.register(ConnectRequestsCell.self, forCellWithReuseIdentifier: CellReuseIdConnectionRequests)
         collectionView.register(ConversationListCell.self, forCellWithReuseIdentifier: CellReuseIdConversation)
 
-        collectionView.backgroundColor = SemanticColors.View.backgroundConversationList
         collectionView.alwaysBounceVertical = true
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = false
@@ -258,21 +251,13 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     // MARK: context menu
-    override func collectionView(_ collectionView: UICollectionView,
-                                 willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                 animator: UIContextMenuInteractionCommitAnimating) {
-        guard let destinationViewController = animator.previewViewController as? ConversationPreviewViewController else { return }
-
-        animator.addAnimations { [weak self] in
-            self?.openConversation(conversationListItem: destinationViewController.conversation)
-        }
-    }
 
     override func collectionView(
         _ collectionView: UICollectionView,
         contextMenuConfigurationForItemAt indexPath: IndexPath,
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
+
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
                 return nil
         }
@@ -305,7 +290,7 @@ final class ConversationListContentController: UICollectionViewController {
 
         return UIContextMenuConfiguration(
             identifier: indexPath as NSIndexPath,
-            previewProvider: previewProvider,
+            previewProvider: .none,
             actionProvider: actionProvider
         )
     }

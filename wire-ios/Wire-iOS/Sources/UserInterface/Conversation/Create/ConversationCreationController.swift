@@ -41,8 +41,6 @@ final class ConversationCreationController: UIViewController {
 
     private let collectionViewController = SectionCollectionViewController()
 
-    fileprivate var navBarBackgroundView = UIView()
-
     private var preSelectedParticipants: UserSet?
     private var values: ConversationCreationValues
 
@@ -206,17 +204,6 @@ final class ConversationCreationController: UIViewController {
             collectionViewController.sections.append(contentsOf: [optionsToggle] + optionsSections)
         }
 
-        navBarBackgroundView.backgroundColor = SemanticColors.View.backgroundDefault
-        view.addSubview(navBarBackgroundView)
-
-        navBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-
-        NSLayoutConstraint.activate([
-            navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
-            navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
-        ])
     }
 
     private func setupNavigationBar() {

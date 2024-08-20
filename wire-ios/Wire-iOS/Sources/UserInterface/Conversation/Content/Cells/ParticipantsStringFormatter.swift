@@ -30,8 +30,8 @@ private extension ConversationActionType {
         case .added(herself: false): return localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
         case .removed(reason: .legalHoldPolicyConflict): return (localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold")
         case .removed: return localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
-        case .started(withName: .none), .none: return localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
-        case .started(withName: .some): return "content.system.conversation.with_name.participants"
+        case .started(name: .none), .none: return localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
+        case .started(name: .some): return "content.system.conversation.with_name.participants"
         case .teamMemberLeave: return "content.system.conversation.team.member-leave"
         }
     }
@@ -178,10 +178,10 @@ final class ParticipantsStringFormatter {
 
             return result
 
-        case .removed, .added(herself: false), .started(withName: .none):
+        case .removed, .added(herself: false), .started(name: .none):
             result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
 
-        case .started(withName: .some):
+        case .started(name: .some):
             result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" && font && textColor
 
         default: return nil

@@ -40,13 +40,20 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
-    init(user: UserType, userSession: UserSession) {
+    init(
+        user: UserType,
+        userSession: UserSession,
+        useTypeIntrinsicSizeTableView: Bool
+    ) {
         self.userSession = userSession
         self.viewModel = ChangeEmailViewModel(
             currentEmail: user.emailAddress,
             userProfile: userSession.userProfile
         )
-        super.init(style: .grouped)
+        super.init(
+            style: .grouped,
+            useTypeIntrinsicSizeTableView: useTypeIntrinsicSizeTableView
+        )
         setupViews()
     }
 
@@ -127,7 +134,12 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         activityIndicator.setIsActive(false)
         updateSaveButtonState()
         if let newEmail = viewModel.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            let confirmController = ConfirmEmailViewController(
+                newEmail: newEmail,
+                delegate: self,
+                userSession: userSession,
+                useTypeIntrinsicSizeTableView: true
+            )
             navigationController?.pushViewController(confirmController, animated: true)
         }
     }

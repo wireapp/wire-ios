@@ -116,62 +116,6 @@ final class AccountViewSnapshotTests: XCTestCase {
         snapshotHelper.verify(matching: sut)
     }
 
-    // MARK: - unread dot
-
-    func testThatItShowsBasicAccountWithPictureSelected_Team_withUnreadDot() throws {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil, teamImageData: imageData)
-        account.unreadConversationCount = 100
-        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
-        sut.unreadCountStyle = .current
-
-        // WHEN
-        sut.selected = true
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testThatItShowsBasicAccountWithPictureSelected_Personal_withUnreadDot() {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
-        account.unreadConversationCount = 100
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        sut.unreadCountStyle = .current
-
-        // WHEN
-        sut.selected = true
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testThatItShowsBasicAccountSelected_Personal_withUnreadDot() {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
-        account.unreadConversationCount = 100
-        let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        sut.unreadCountStyle = .current
-
-        // WHEN
-        sut.selected = true
-
-        // THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
-    func testThatItShowsBasicAccountSelected_Team_withUnreadDot() throws {
-        // GIVEN
-        let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)
-        account.unreadConversationCount = 100
-        let sut = try XCTUnwrap(TeamAccountView(user: nil, account: account, displayContext: .accountSelector))
-        sut.unreadCountStyle = .current
-        sut.selected = true
-
-        // WHEN && THEN
-        snapshotHelper.verify(matching: sut)
-    }
-
     // MARK: - smaller icon for conversation list
     func testThatItShowsBasicAccount_Team_conversationListContext() throws {
         // GIVEN
