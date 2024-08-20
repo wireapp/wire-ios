@@ -52,6 +52,10 @@ final class AppRootRouter {
 
     private var lastLaunchOptions: LaunchOptions?
 
+    private var rootViewController: UIViewController {
+        mainWindow.rootViewController!
+    }
+
     @available(*, deprecated, message: "Please don't access this property")
     var zClientViewController: ZClientViewController? {
         mainWindow.rootViewController as? ZClientViewController
@@ -68,7 +72,7 @@ final class AppRootRouter {
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(
-            viewController: { mainWindow.rootViewController! },
+            viewController: mainWindow.rootViewController!,
             sessionManager: sessionManager
         )
         self.switchingAccountRouter = SwitchingAccountRouter()
@@ -419,7 +423,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         let mainWindow = mainWindow
         return AuthenticatedRouter(
-            rootViewController: { mainWindow.rootViewController! },
+            rootViewController: self.rootViewController,
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
@@ -432,7 +436,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: { [weak self] in self!.mainWindow.rootViewController! }
+                targetVC: { [weak self] in self!.rootViewController }
             ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
@@ -524,7 +528,7 @@ extension AppRootRouter {
                 title: L10n.Localizable.General.ok,
                 style: .cancel
             ))
-            mainWindow.rootViewController!.present(alert, animated: true)
+            rootViewController.present(alert, animated: true)
 
         case .biometricPasscodeNotAvailable:
             let alert = UIAlertController(
@@ -536,12 +540,12 @@ extension AppRootRouter {
                 title: L10n.Localizable.General.ok,
                 style: .cancel
             ))
-            mainWindow.rootViewController!.present(alert, animated: true)
+            rootViewController.present(alert, animated: true)
 
         case .databaseWiped:
             let wipeCompletionViewController = WipeCompletionViewController()
             wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            mainWindow.rootViewController!.present(wipeCompletionViewController, animated: true)
+            rootViewController.present(wipeCompletionViewController, animated: true)
 
         default:
             break
@@ -609,7 +613,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         ConversationListCell.invalidateCachedCellSize()
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
         AppRootRouter.configureAppearance()
-        mainWindow.rootViewController!.redrawAllFonts()
+        rootViewController.redrawAllFonts()
     }
 
     static func configureAppearance() {
