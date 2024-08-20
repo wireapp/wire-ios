@@ -32,7 +32,7 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = SplitViewController()
+    let wireSplitViewController = UISplitViewController()
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
@@ -177,19 +177,17 @@ final class ZClientViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        pendingInitialStateRestore = true
-
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        wireSplitViewController.delegate = self
-        addToSelf(wireSplitViewController)
+        pendingInitialStateRestore = true
 
+        addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(wireSplitViewController.view)
+        wireSplitViewController.didMove(toParent: self)
+
         createTopViewConstraints()
-
         updateSplitViewTopConstraint()
-
-        wireSplitViewController.view.backgroundColor = .clear
 
         mainTabBarController = MainTabBarController(
             contacts: .init(),
@@ -197,7 +195,7 @@ final class ZClientViewController: UIViewController {
             folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
             archive: .init()
         )
-        wireSplitViewController.leftViewController = mainTabBarController
+        wireSplitViewController.setViewController(mainTabBarController, for: .primary)
 
         // TODO [WPB-6647]: Remove in navigation overhaul
         // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
@@ -303,27 +301,27 @@ final class ZClientViewController: UIViewController {
 
     /// Exit the connection inbox.  This contains special logic for reselecting another conversation etc when you
     /// have no more connection requests.
-    ///
-    /// - Parameter completion: completion handler
-    func hideIncomingContactRequests(completion: Completion? = nil) {
+    func hideIncomingContactRequests() {
         let conversationsList = userSession.conversationList()
         if let conversation = conversationsList.items.first {
             select(conversation: conversation)
         }
 
-        wireSplitViewController.setLeftViewControllerRevealed(true, animated: true, completion: completion)
+        wireSplitViewController.show(.primary)
     }
 
     @discardableResult
-    private func pushContentViewController(_ viewController: UIViewController? = nil,
-                                           focusOnView focus: Bool = false,
-                                           animated: Bool = false,
-                                           completion: Completion? = nil) -> Bool {
+    private func pushContentViewController(
+        _ viewController: UIViewController? = nil,
+        focusOnView focus: Bool = false,
+        animated: Bool = false,
+        completion: Completion? = nil
+    ) -> Bool {
         conversationRootViewController = viewController
-        wireSplitViewController.setRightViewController(conversationRootViewController, animated: animated, completion: completion)
+        wireSplitViewController.setViewController(conversationRootViewController, for: .secondary)
 
         if focus {
-            wireSplitViewController.setLeftViewControllerRevealed(false, animated: animated)
+            wireSplitViewController.show(.secondary)
         }
 
         return true
@@ -408,7 +406,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Animated conversation switch
     func dismissAllModalControllers(callback: Completion?) {
         let dismissAction = {
-            if let rightViewController = self.wireSplitViewController.rightViewController,
+            if let rightViewController = self.wireSplitViewController.viewController(for: .secondary),
                rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
             } else if let presentedViewController = self.conversationListViewController.presentedViewController {
@@ -547,10 +545,11 @@ final class ZClientViewController: UIViewController {
                           leftViewControllerRevealed: Bool = true,
                           completion: Completion?) {
         let action: Completion = { [weak self] in
-            self?.wireSplitViewController.setLeftViewControllerRevealed(leftViewControllerRevealed, animated: animated, completion: completion)
+            self?.wireSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
+            completion?()
         }
 
-        if let presentedViewController = wireSplitViewController.rightViewController?.presentedViewController {
+        if let presentedViewController = wireSplitViewController.viewController(for: .secondary)?.presentedViewController {
             presentedViewController.dismiss(animated: animated, completion: action)
         } else {
             action()
@@ -753,12 +752,14 @@ final class ZClientViewController: UIViewController {
     }
 
     var isConversationViewVisible: Bool {
-        return wireSplitViewController.isConversationViewVisible
+        //wireSplitViewController.isConversationViewVisible
+        fatalError("TODO")
     }
 
     var isConversationListVisible: Bool {
-        return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        //return (wireSplitViewController.layoutSize == .regularLandscape) ||
+        //(wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        fatalError("TODO")
     }
 
     func minimizeCallOverlay(animated: Bool,
@@ -768,18 +769,5 @@ final class ZClientViewController: UIViewController {
 
     func presentSettings() {
         conversationListViewController.presentSettings()
-    }
-}
-
-// MARK: - ZClientViewController + SplitViewControllerDelegate
-
-extension ZClientViewController: SplitViewControllerDelegate {
-
-    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-
-        return splitViewController.rightViewController != nil &&
-        splitViewController.leftViewController == conversationListViewController.tabBarController &&
-        conversationListViewController.state == .conversationList &&
-        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }

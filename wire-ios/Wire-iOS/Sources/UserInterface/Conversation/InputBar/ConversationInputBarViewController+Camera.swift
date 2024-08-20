@@ -35,7 +35,9 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         guard let splitViewController = ZClientViewController.shared?.wireSplitViewController else {
             fatal("SplitViewController is not created")
         }
-        let cameraKeyboardViewController = CameraKeyboardViewController(splitLayoutObservable: splitViewController)
+        let cameraKeyboardViewController = CameraKeyboardViewController(
+            splitLayoutObservable: SplitViewControllerObserver(splitViewController: splitViewController)
+        )
         cameraKeyboardViewController.delegate = self
 
         self.cameraKeyboardViewController = cameraKeyboardViewController
