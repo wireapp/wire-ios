@@ -131,6 +131,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         DeveloperFlag.storage = UserDefaults.standard
     }
 
+    override func setUp() {
+        super.setUp()
+
+        BackendInfo.domain = nil
+    }
+
     func testThatItApplyPatchesWhenNoVersion() {
 
         // GIVEN
