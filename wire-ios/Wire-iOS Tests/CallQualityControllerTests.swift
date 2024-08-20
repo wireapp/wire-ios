@@ -46,7 +46,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
             otherUser: otherUser
         )
         callConversationProvider = MockCallConversationProvider()
-        sut = MockCallQualityController(rootViewController: { UIViewController() })
+        sut = MockCallQualityController(rootViewController: .init())
         sut.router = router
         sut.usesCallSurveyBudget = false
 

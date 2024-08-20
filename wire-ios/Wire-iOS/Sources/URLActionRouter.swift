@@ -59,7 +59,7 @@ class URLActionRouter: URLActionRouterProtocol {
     // MARK: - Initialization
 
     init(
-        viewController: @escaping () -> UIViewController,
+        viewController: @autoclosure @escaping () -> UIViewController,
         sessionManager: SessionManager?
     ) {
         rootViewController = viewController
