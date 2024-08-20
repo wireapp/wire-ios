@@ -31,10 +31,10 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    private let rootViewController: UIViewController
+    private let mainWindow: UIWindow
 
-    init(rootViewController: UIViewController) {
-        self.rootViewController = rootViewController
+    init(mainWindow: UIWindow) {
+        self.mainWindow = mainWindow
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -89,7 +89,7 @@ class CallQualityController: NSObject {
 
     private func handleCallCompletion(in conversation: ZMConversation, reason: CallClosedReason, eventDate: Date) {
         // Check for the call start date (do not show feedback for unanswered calls)
-        guard let callStartDate = answeredCalls[conversation.remoteIdentifier!] else {
+        guard let callStartDate = answeredCalls[conversation.remoteIdentifier!], let rootViewController = mainWindow.rootViewController else {
             return
         }
 
@@ -169,7 +169,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         router?.dismissCallQualitySurvey { [weak self] in
             guard
                 self?.callQualityRejectionRange.contains(score) ?? false,
-                let presentingViewController = self?.rootViewController
+                let presentingViewController = self?.mainWindow.rootViewController
             else { return }
 
             self?.handleCallQualityRejection(presentingViewController: presentingViewController)

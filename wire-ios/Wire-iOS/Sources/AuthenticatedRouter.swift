@@ -56,7 +56,7 @@ final class AuthenticatedRouter {
     // MARK: - Init
 
     init(
-        rootViewController: UIViewController,
+        mainWindow: UIWindow,
         account: Account,
         userSession: UserSession,
         featureRepositoryProvider: any FeatureRepositoryProvider,
@@ -64,9 +64,9 @@ final class AuthenticatedRouter {
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
         activeCallRouter = ActiveCallRouter(
-            rootViewController: rootViewController,
+            mainWindow: mainWindow,
             userSession: userSession,
-            topOverlayPresenter: .init(rootViewController: rootViewController)
+            topOverlayPresenter: .init(mainWindow: mainWindow)
         )
 
         builder = AuthenticatedWireFrame(

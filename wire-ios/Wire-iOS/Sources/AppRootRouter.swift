@@ -419,11 +419,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         account: Account,
         userSession: UserSession
     ) -> AuthenticatedRouter? {
-        guard let userSession = ZMUserSession.shared() else { return  nil }
+        guard let userSession = ZMUserSession.shared() else { return nil }
 
-        let mainWindow = mainWindow
         return AuthenticatedRouter(
-            rootViewController: self.rootViewController,
+            mainWindow: mainWindow,
             account: account,
             userSession: userSession,
             featureRepositoryProvider: userSession,
