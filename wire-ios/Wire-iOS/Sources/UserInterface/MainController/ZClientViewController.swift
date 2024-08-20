@@ -183,7 +183,15 @@ final class ZClientViewController: UIViewController {
             settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
         // TODO: tab bar and split view controller don't work together
-        wireSplitViewController.setViewController(mainTabBarController, for: .primary)
+        wireSplitViewController.setViewController(mainTabBarController, for: .compact)
+
+        if traitCollection.userInterfaceIdiom == .phone {
+            if #available(iOS 17.0, *) {
+                wireSplitViewController.traitOverrides.horizontalSizeClass = .compact
+            } else {
+                setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: wireSplitViewController)
+            }
+        }
 
         if pendingInitialStateRestore {
             restoreStartupState()
