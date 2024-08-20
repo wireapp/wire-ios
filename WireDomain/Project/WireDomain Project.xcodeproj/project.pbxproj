@@ -29,6 +29,7 @@
 		59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A5D2C5BBEA8009C41DE /* WireAPI */; };
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
+		C9E8A3B92C74C7540093DD5C /* FeatureConfigRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B82C74C7540093DD5C /* FeatureConfigRepository.swift */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -156,6 +157,7 @@
 		162356512C2B223B00C6666C /* UserRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
+		C9E8A3B82C74C7540093DD5C /* FeatureConfigRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigRepository.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryError.swift; sourceTree = "<group>"; };
 		EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 				017F67A12C20802300B6E02D /* SelfUserProvider.swift */,
 				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
 				EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */,
+				C9E8A3B82C74C7540093DD5C /* FeatureConfigRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -729,6 +732,7 @@
 				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
 				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
+				C9E8A3B92C74C7540093DD5C /* FeatureConfigRepository.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
 				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
 				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
