@@ -211,7 +211,7 @@ final class WebSocketTests: XCTestCase {
                 do {
                     // Space the messages 0.5s apart
                     try await Task.sleep(nanoseconds: 500_000)
-                    handler(.success(.data(Data())))
+                    handler(.success(.data(message)))
                 } catch {
                     XCTFail("failed to mock web socket data: \(error)")
                 }
