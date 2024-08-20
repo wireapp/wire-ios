@@ -89,7 +89,7 @@ final class AppRootRouter {
         setupAppStateCalculator()
         setupURLActionRouter()
         setupNotifications()
-        setupAdditionalWindows()
+        setupScreenCurtainWindow()
 
         AppRootRouter.configureAppearance()
 
@@ -118,27 +118,16 @@ final class AppRootRouter {
 
     // MARK: - Private implementation
 
-    private func replaceRootViewController(by viewController: UIViewController) {
-        //
+    private func replaceRootViewController(
+        by viewController: UIViewController,
+        completion: @escaping () -> Void
+    ) {
+        mainWindow.rootViewController = viewController
 
-        /*
-
-         private func swap() {
-             let window = view.window!
-             let newVC = storyboard?.instantiateInitialViewController() as! Self
-             newVC.loadViewIfNeeded()
-             newVC.label.text = "ok"
-             window.rootViewController = newVC
-
-             let options: UIView.AnimationOptions = .transitionCrossDissolve
-             let duration: TimeInterval = 0.3
-
-             UIView.transition(with: window, duration: duration, options: options, animations: {}) { isCompleted in
-                 // maybe do something on completion here
-             }
-         }
-
-         */
+        let animationDuration: TimeInterval = 0.3
+        UIView.transition(with: mainWindow, duration: 0.3, options: .transitionCrossDissolve, animations: {}) { isCompleted in
+            completion()
+        }
     }
 
     private func setupAppStateCalculator() {
@@ -155,7 +144,8 @@ final class AppRootRouter {
         setupAudioPermissionsNotifications()
     }
 
-    private func setupAdditionalWindows() {
+    private func setupScreenCurtainWindow() {
+        // TODO: what's the point in making it visible and then hiding it? also does it have to be key?
         screenCurtain.makeKeyAndVisible()
         screenCurtain.isHidden = true
     }
@@ -300,14 +290,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
-        mainWindow.rootViewController = blockerViewController
-        completion()
+        replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
-        mainWindow.rootViewController = blockerViewController
-        completion()
+        replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
@@ -315,7 +303,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             context: .pendingCertificateEnroll,
             sessionManager: sessionManager
         )
-        mainWindow.rootViewController = blockerViewController
+        replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
@@ -324,8 +312,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             sessionManager: sessionManager,
             error: error
         )
-        mainWindow.rootViewController = blockerViewController
-        completion()
+        replaceRootViewController(by: blockerViewController, completion: completion)
     }
 
     private func showLaunchScreen(isLoading: Bool = false, completion: @escaping () -> Void) {
@@ -334,8 +321,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         if isLoading {
             launchViewController.showLoadingScreen()
         }
-        mainWindow.rootViewController = launchViewController
-        completion()
+        replaceRootViewController(by: launchViewController, completion: completion)
     }
 
     private func showUnauthenticatedFlow(error: NSError?, completion: @escaping () -> Void) {
@@ -377,8 +363,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             numberOfAccounts: SessionManager.numberOfAccounts
         )
 
-        mainWindow.rootViewController = navigationController
-        completion()
+        replaceRootViewController(by: navigationController, completion: completion)
     }
 
     @MainActor
@@ -399,13 +384,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        mainWindow.rootViewController = authenticatedRouter.viewController
-        completion()
+        replaceRootViewController(by: authenticatedRouter.viewController, completion: completion)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
-        mainWindow.rootViewController = AppLockModule.build(userSession: userSession)
-        completion()
+        replaceRootViewController(by: AppLockModule.build(userSession: userSession), completion: completion)
     }
 
     private func retryStart(completion: @escaping () -> Void) {
@@ -462,10 +445,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: { [weak self] in
-                    guard let self else { fatalError() }
-                    return mainWindow.rootViewController!
-                }
+                targetVC: { [weak self] in self!.mainWindow.rootViewController! }
             ),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
