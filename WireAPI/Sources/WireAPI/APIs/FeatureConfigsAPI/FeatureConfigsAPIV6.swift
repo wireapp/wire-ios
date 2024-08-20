@@ -33,10 +33,10 @@ class FeatureConfigsAPIV6: FeatureConfigsAPIV5 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: FeatureConfigsResponseAPIV6.self)
-            .failure(code: 403, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
-            .failure(code: 403, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
-            .failure(code: 404, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
+            .success(code: .ok, type: FeatureConfigsResponseAPIV6.self)
+            .failure(code: .forbidden, label: "operation-denied", error: FeatureConfigsAPIError.insufficientPermissions)
+            .failure(code: .forbidden, label: "no-team-member", error: FeatureConfigsAPIError.userIsNotTeamMember)
+            .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
             .parse(response)
     }
 

@@ -55,7 +55,7 @@ final class FeatureConfigsAPITests: XCTestCase {
     func testGetFeatureConfigs_SuccessResponse_200_V0_to_V3() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetFeatureConfigsSuccessResponseV0"
         )
 
@@ -83,7 +83,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_No_Team() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "no-team")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "no-team")
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
@@ -95,7 +95,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_No_Team_Member() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 403, errorLabel: "no-team-member")
+        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "no-team-member")
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
@@ -107,7 +107,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_FailureResponse_Insufficient_Permissions() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 403, errorLabel: "operation-denied")
+        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "operation-denied")
         let sut = FeatureConfigsAPIV0(httpClient: httpClient)
 
         // Then
@@ -121,7 +121,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     func testGetFeatureConfigs_SuccessResponse_200_V4_TO_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 200, payloadResourceName: "GetFeatureConfigsSuccessResponseV4")
+        let httpClient = try HTTPClientMock(code: .ok, payloadResourceName: "GetFeatureConfigsSuccessResponseV4")
 
         let supportedVersions: [APIVersion] = [.v4, .v5]
 
@@ -150,7 +150,7 @@ final class FeatureConfigsAPITests: XCTestCase {
     func testGetFeatureConfigs_SuccessResponse_200_V6_And_Next_Versions() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetFeatureConfigsSuccessResponseV6"
         )
 
