@@ -123,9 +123,7 @@ final class AppRootRouter {
         completion: @escaping () -> Void
     ) {
         mainWindow.rootViewController = viewController
-
-        let animationDuration: TimeInterval = 0.3
-        UIView.transition(with: mainWindow, duration: 0.3, options: .transitionCrossDissolve, animations: {}) { isCompleted in
+        UIView.transition(with: mainWindow, duration: 0.2, options: .transitionCrossDissolve, animations: {}) { isCompleted in
             completion()
         }
     }
