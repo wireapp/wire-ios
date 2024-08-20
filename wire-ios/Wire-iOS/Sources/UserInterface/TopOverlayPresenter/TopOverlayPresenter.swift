@@ -31,7 +31,7 @@ struct TopOverlayPresenter: TopOverlayPresenting {
         return zClientViewController
     }
 
-    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) { //
+    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
         zClientViewController?.setTopOverlay(to: viewController, animated: animated)
     }
 
