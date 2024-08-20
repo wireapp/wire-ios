@@ -19,7 +19,7 @@
 import SwiftUI
 
 final class LaunchScreenViewController: UIViewController {
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 

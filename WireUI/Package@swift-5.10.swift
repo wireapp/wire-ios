@@ -18,7 +18,6 @@ let package = Package(
         .package(name: "WireSystemPackage", path: "../WireSystem")
     ],
     targets: [
-
         .target(name: "WireDesign"),
         .testTarget(
             name: "WireDesignTests",
