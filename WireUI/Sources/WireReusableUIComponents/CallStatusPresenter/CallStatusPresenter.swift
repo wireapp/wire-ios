@@ -58,7 +58,6 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
                 if statusView != nil {
                     await hideStatusView()
                 }
-                print("hide")
             }
 
         }.value
@@ -71,18 +70,15 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
             let rootView = mainWindow.rootViewController?.view,
             let rootSuperview = rootView.superview
         else { return assertionFailure() }
-        //print("showStatusView")
 
         let statusView = UIView()
         self.statusView = statusView
         rootSuperview.insertSubview(statusView, aboveSubview: rootView)
-        //print(rootSuperview)
 
         statusView.backgroundColor = .green
         //statusView.frame = mainWindow.screen.bounds
         rootView.frame.origin.y += 100
         rootView.frame.size.height -= 100
-        //print(rootView)
     }
 
     @MainActor
@@ -105,8 +101,41 @@ public final class CallStatusPresenter: CallStatusPresenting, @unchecked Sendabl
 
 @available(iOS 17, *)
 #Preview {
-    Setup()
+    {
+        let view = UIView()
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Toggle Call Status", for: .normal)
+        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            button.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            button.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+        ])
+        button.addAction(.init { _ in
+            button.tag += 1
+            let callStatus: CallStatus? = if button.tag % 2 == 0 { "Connecting ..." } else { .none }
+            setCallStatus(callStatus, view.window!)
+        }, for: .primaryActionTriggered)
+        return view
+    }()
 }
+
+@MainActor
+private func setCallStatus(_ callStatus: CallStatus?, _ mainWindow: UIWindow) {
+    let presenter = mainWindow.rootViewController?.callStatusPresenter ?? CallStatusPresenter(mainWindow: mainWindow)
+    mainWindow.rootViewController?.callStatusPresenter = presenter
+    Task { await presenter.updateCallStatus(callStatus) }
+}
+
+private extension UIViewController {
+    var callStatusPresenter: CallStatusPresenter? {
+        get { objc_getAssociatedObject(self, &presenterKey) as? CallStatusPresenter }
+        set { objc_setAssociatedObject(self, &presenterKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
+private nonisolated(unsafe) var presenterKey = 0
+
+
 
 private final class Setup: UIView {
 
@@ -200,5 +229,4 @@ private final class Setup: UIView {
     }()
 }
 
-private nonisolated(unsafe) var key = 0
 */
