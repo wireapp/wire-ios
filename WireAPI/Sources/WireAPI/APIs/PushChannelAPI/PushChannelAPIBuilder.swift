@@ -22,23 +22,22 @@ import Foundation
 
 public struct PushChannelAPIBuilder {
 
-    private let apiService: APIService
+    private let pushChannelService: PushChannelService
 
     /// Create a new builder.
     ///
-    /// - Parameter apiService: An api service to execute requests.
+    /// - Parameter pushChannelService: A push channel service to execute requests.
 
-    public init(apiService: APIService) {
-        self.apiService = apiService
+    public init(pushChannelService: PushChannelService) {
+        self.pushChannelService = pushChannelService
     }
 
     /// Make a `PushChannelAPI`.
     ///
-    /// - Parameter version: An api version.
     /// - Returns: A `PushChannelAPI`.
 
     public func makeAPI() -> any PushChannelAPI {
-        PushChannelAPIImpl(apiService: apiService)
+        PushChannelAPIImpl(pushChannelService: pushChannelService)
     }
 
 }

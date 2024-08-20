@@ -20,10 +20,10 @@ import Foundation
 
 class PushChannelAPIImpl: PushChannelAPI {
 
-    let apiService: APIService
+    let pushChannelService: any PushChannelServiceProtocol
 
-    init(apiService: APIService) {
-        self.apiService = apiService
+    init(pushChannelService: any PushChannelServiceProtocol) {
+        self.pushChannelService = pushChannelService
     }
 
     func createPushChannel(clientID: String) throws -> any PushChannelProtocol {
@@ -38,7 +38,7 @@ class PushChannelAPIImpl: PushChannelAPI {
             .withMethod(.get)
             .build()
 
-        return try apiService.createPushChannel(request)
+        return try pushChannelService.createPushChannel(request)
     }
 
 }

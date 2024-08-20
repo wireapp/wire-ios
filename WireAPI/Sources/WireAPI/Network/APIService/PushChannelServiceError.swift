@@ -18,10 +18,16 @@
 
 import Foundation
 
-protocol WebSocketProvider {
+/// Errors originating from `PushChannelService`.
 
-    func makeWebSocket(with request: URLRequest) -> any WebSocketProtocol
+public enum PushChannelServiceError: Error {
 
-    func tearDown()
+    /// An enqueued url request is invalid.
+
+    case invalidRequest
+
+    /// An access token is required but none is available.
+
+    case missingAccessToken
 
 }

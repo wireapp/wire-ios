@@ -17,16 +17,3 @@
 //
 
 import Foundation
-
-extension URLSession: WebSocketProvider {
-
-    func makeWebSocket(with request: URLRequest) -> WebSocketProtocol {
-        let connection = webSocketTask(with: request)
-        return WebSocket(connection: connection)
-    }
-
-    func tearDown() {
-        invalidateAndCancel()
-    }
-
-}

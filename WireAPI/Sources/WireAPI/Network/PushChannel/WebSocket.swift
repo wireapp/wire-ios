@@ -27,20 +27,16 @@ final class WebSocket: WebSocketProtocol {
 
     init(connection: any URLSessionWebSocketTaskProtocol) {
         self.connection = connection
-        connection.resume()
     }
 
     deinit {
         close()
     }
 
-    func close() {
-        connection.cancel(with: .goingAway, reason: nil)
-        continuation?.finish()
-    }
+    func open() throws -> Stream {
+        connection.resume()
 
-    func makeStream() -> Stream {
-        Stream { continuation in
+        return Stream { continuation in
             self.continuation = continuation
 
             func yieldNextMessage() {
@@ -65,6 +61,11 @@ final class WebSocket: WebSocketProtocol {
 
             yieldNextMessage()
         }
+    }
+
+    func close() {
+        connection.cancel(with: .goingAway, reason: nil)
+        continuation?.finish()
     }
 
 }

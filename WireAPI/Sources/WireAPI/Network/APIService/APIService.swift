@@ -50,7 +50,6 @@ public protocol APIServiceProtocol {
 public final class APIService: APIServiceProtocol {
 
     private let backendURL: URL
-    private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
     private let urlSession: URLSession
     private let minTLSVersion: TLSVersion
@@ -59,13 +58,11 @@ public final class APIService: APIServiceProtocol {
     ///
     /// - Parameters:
     ///   - backendURL: The url of the target backend.
-    ///   - backendWebSocketURL: The web socket url of the target backend.
     ///   - authenticationStorage: The storage for authentication objects.
     ///   - minTLSVersion: The minimum supported TLS version.
 
     public convenience init(
         backendURL: URL,
-        backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
         minTLSVersion: TLSVersion
     ) {
@@ -75,7 +72,6 @@ public final class APIService: APIServiceProtocol {
 
         self.init(
             backendURL: backendURL,
-            backendWebSocketURL: backendWebSocketURL,
             authenticationStorage: authenticationStorage,
             urlSession: urlSession,
             minTLSVersion: minTLSVersion
@@ -84,13 +80,11 @@ public final class APIService: APIServiceProtocol {
 
     init(
         backendURL: URL,
-        backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
         urlSession: URLSession,
         minTLSVersion: TLSVersion
     ) {
         self.backendURL = backendURL
-        self.backendWebSocketURL = backendWebSocketURL
         self.authenticationStorage = authenticationStorage
         self.urlSession = urlSession
         self.minTLSVersion = minTLSVersion
@@ -133,29 +127,6 @@ public final class APIService: APIServiceProtocol {
         }
 
         return (data, httpURLResponse)
-    }
-
-    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
-        guard let url = request.url else {
-            throw APIServiceError.invalidRequest
-        }
-
-        var request = request
-        request.url = URL(
-            string: url.absoluteString,
-            relativeTo: backendWebSocketURL
-        )
-
-        guard let accessToken = authenticationStorage.fetchAccessToken() else {
-            throw APIServiceError.missingAccessToken
-        }
-
-        request.setAccessToken(accessToken)
-
-        return PushChannel(
-            request: request,
-            minTLSVersion: minTLSVersion
-        )
     }
 
 }

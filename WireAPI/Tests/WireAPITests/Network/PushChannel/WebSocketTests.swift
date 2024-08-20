@@ -37,14 +37,6 @@ final class WebSocketTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testWebSocketResumesConnectionWhenCreated() async throws {
-        // When
-        _ = WebSocket(connection: connection)
-
-        // Then
-        XCTAssertEqual(connection.resume_Invocations.count, 1)
-    }
-
     func testWebSocketCancelsWhenItDeinitializes() async throws {
         // When
         {
@@ -76,7 +68,7 @@ final class WebSocketTests: XCTestCase {
         let didFinishIterating = XCTestExpectation()
 
         Task {
-            for try await _ in sut.makeStream() {
+            for try await _ in try sut.open() {
                 didReceiveMessage.fulfill()
             }
 
@@ -123,7 +115,7 @@ final class WebSocketTests: XCTestCase {
 
         Task {
             do {
-                for try await _ in sut.makeStream() {
+                for try await _ in try sut.open() {
                     didReceiveMessage.fulfill()
                 }
             } catch {
@@ -174,7 +166,7 @@ final class WebSocketTests: XCTestCase {
 
         Task {
             do {
-                for try await _ in sut.makeStream() {
+                for try await _ in try sut.open() {
                     didReceiveMessage.fulfill()
                 }
             } catch {
@@ -225,7 +217,7 @@ final class WebSocketTests: XCTestCase {
             var receivedMessageData = [Data]()
 
             // When
-            for try await message in sut.makeStream() {
+            for try await message in try sut.open() {
                 if case .data(let data) = message {
                     receivedMessageData.append(data)
                 }

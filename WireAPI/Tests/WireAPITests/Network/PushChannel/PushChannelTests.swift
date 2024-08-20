@@ -36,7 +36,7 @@ final class PushChannelTests: XCTestCase {
 
         sut = PushChannel(
             request: request,
-            webSocketProvider: self
+            webSocket: webSocket
         )
     }
 
@@ -53,7 +53,7 @@ final class PushChannelTests: XCTestCase {
         let mockEnvelope2 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope2")
         let mockEnvelope3 = try MockJSONPayloadResource(name: "LiveUpdateEventEnvelope3")
 
-        webSocket.makeStream_MockValue = AsyncThrowingStream { continuation in
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
             continuation.yield(.data(mockEnvelope1.jsonData))
             continuation.yield(.data(mockEnvelope2.jsonData))
             continuation.yield(.data(mockEnvelope3.jsonData))
@@ -61,7 +61,7 @@ final class PushChannelTests: XCTestCase {
         }
 
         // When the push channel is open and the stream is iterated
-        let liveEventEnvelopes = try await sut.open()
+        let liveEventEnvelopes = try sut.open()
 
         var receivedEnvelopes = [UpdateEventEnvelope]()
         for try await envelope in liveEventEnvelopes {
@@ -77,34 +77,25 @@ final class PushChannelTests: XCTestCase {
 
     func testClosingPushChannel() async throws {
         // Given an open push channel
-        webSocket.makeStream_MockValue = AsyncThrowingStream { _ in }
-        _ = try await sut.open()
+        webSocket.open_MockValue = AsyncThrowingStream { _ in }
+        _ = try sut.open()
 
         // When the push channel is closed
         sut.close()
 
         // Then the web socket was closed
-        try XCTAssertCount(webSocket.close_Invocations, count: 1)
-    }
-
-    func testItDoesNotClosePushChannelIfNoneWasOpened() async throws {
-        // Given no push channel was opened
-        // When the push channel is closed
-        sut.close()
-
-        // Then no web socket was closed
-        XCTAssertTrue(webSocket.close_Invocations.isEmpty)
+        XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
     func testFailureToDecodeClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket.makeStream_MockValue = AsyncThrowingStream { continuation in
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
             // Send some invalid data
             continuation.yield(.data(Data()))
             // Don't call finish, so the stream stays open.
         }
 
-        let liveEventEnvelopes = try await sut.open()
+        let liveEventEnvelopes = try sut.open()
 
         do {
             for try await _ in liveEventEnvelopes {
@@ -117,18 +108,18 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        try XCTAssertCount(webSocket.close_Invocations, count: 1)
+        XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
     func testReceivingUnknownMessageClosesPushChannel() async throws {
         // Given an open push channel that is being iterated
-        webSocket.makeStream_MockValue = AsyncThrowingStream { continuation in
+        webSocket.open_MockValue = AsyncThrowingStream { continuation in
             // Send some invalid data.
             continuation.yield(.string("some string"))
             // Don't call finish, so the stream stays open.
         }
 
-        let liveEventEnvelopes = try await sut.open()
+        let liveEventEnvelopes = try sut.open()
 
         do {
             for try await _ in liveEventEnvelopes {
@@ -141,15 +132,7 @@ final class PushChannelTests: XCTestCase {
         }
 
         // Then the web socket was closed
-        try XCTAssertCount(webSocket.close_Invocations, count: 1)
-    }
-
-}
-
-extension PushChannelTests: WebSocketProvider {
-
-    func makeWebSocket(with request: URLRequest) -> any WireAPI.WebSocketProtocol {
-        webSocket
+        XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
 
 }

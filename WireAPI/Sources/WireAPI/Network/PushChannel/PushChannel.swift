@@ -19,46 +19,25 @@
 import Foundation
 import WireUtilitiesPkg
 
-final class PushChannel: NSObject, PushChannelProtocol {
+final class PushChannel: PushChannelProtocol {
+
+    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, Error>
 
     private let request: URLRequest
-    private var webSocket: (any WebSocketProtocol)?
-    private var webSocketProvider: (any WebSocketProvider)!
+    private let webSocket: any WebSocketProtocol
+    private let decoder = JSONDecoder()
 
     init(
         request: URLRequest,
-        minTLSVersion: TLSVersion
+        webSocket: any WebSocketProtocol
     ) {
         self.request = request
-        super.init()
-        let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
-        let configuration = factory.makeWebSocketSessionConfiguration()
-        webSocketProvider = URLSession(
-            configuration: configuration,
-            delegate: self,
-            delegateQueue: nil
-        )
-    }
-
-    init(
-        request: URLRequest,
-        webSocketProvider: any WebSocketProvider
-    ) {
-        self.request = request
-        self.webSocketProvider = webSocketProvider
-    }
-
-    deinit {
-        webSocketProvider.tearDown()
-    }
-
-    func open() async throws -> AsyncThrowingStream<UpdateEventEnvelope, Error> {
-        print("opening new push channel")
-        let webSocket = webSocketProvider.makeWebSocket(with: request)
         self.webSocket = webSocket
-        let decoder = JSONDecoder()
+    }
 
-        return webSocket.makeStream().map { [weak self] message in
+    func open() throws -> Stream {
+        print("opening new push channel")
+        return try webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
                 case .data(let data):
@@ -83,75 +62,8 @@ final class PushChannel: NSObject, PushChannelProtocol {
     }
 
     func close() {
-        guard let webSocket else { return }
         print("closing push channel")
         webSocket.close()
-        self.webSocket = nil
-    }
-
-}
-
-extension PushChannel: URLSessionWebSocketDelegate {
-
-    func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didOpenWithProtocol protocol: String?
-    ) {
-        print("web socket task did open")
-    }
-
-    func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-        reason: Data?
-    ) {
-        close()
-    }
-
-}
-
-extension PushChannel: URLSessionDataDelegate {
-
-    func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didCompleteWithError error: Error?
-    ) {
-        if let error {
-            print("web socket task did complete with error: \(error)")
-        } else {
-            print("web socket task did complete")
-        }
-
-        close()
-    }
-
-    func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    ) {
-        print("web socket task did receive challenge")
-
-        let protectionSpace = challenge.protectionSpace
-
-        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
-            completionHandler(.performDefaultHandling, challenge.proposedCredential)
-            return
-        }
-
-        guard
-            protectionSpace.serverTrust != nil,
-            true // TODO: [WPB-10450] support certificate pinning
-        else {
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-
-        completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
 
 }
