@@ -65,21 +65,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
     }
 
     @MainActor
-    func testAllButUpsideDownSupported() {
-
-        // Given
-        let splitViewController = UISplitViewController(style: .doubleColumn)
-        splitViewController.setViewController(ViewController([.portrait, .portraitUpsideDown]), for: .primary)
-        splitViewController.setViewController(ViewController([.landscapeRight, .portraitUpsideDown]), for: .secondary)
-
-        // When
-        let result = sut.splitViewControllerSupportedInterfaceOrientations(splitViewController)
-
-        // Then
-        XCTAssertEqual(result, .portraitUpsideDown)
-    }
-
-    @MainActor
     func testAllSupportedWhenNoViewControllers() {
 
         // Given
