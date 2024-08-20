@@ -16,26 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-/// A label used to categorize conversations.
+/// Errors originating from `ConversationLabelsRepository`.
 
-public struct ConversationLabel: Equatable, Codable, Sendable {
+enum ConversationLabelsRepositoryError: Error {
 
-    /// The label's id.
+    /// Unable to store label locally
 
-    public let id: UUID
+    case failedToStoreLabelLocally(ConversationLabel)
 
-    /// The label's name.
+    /// Unable to pull labels from backend
 
-    public let name: String?
+    case failedToCollectLabelsRemotely
 
-    /// The label's raw type.
+    /// Unable to delete label locally
 
-    public let type: Int16
-
-    /// The conversation ids associated with the label.
-
-    public let conversationIDs: [UUID]
+    case failedToDeleteStoredLabels
 
 }

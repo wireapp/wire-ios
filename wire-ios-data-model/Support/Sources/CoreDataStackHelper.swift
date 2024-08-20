@@ -39,18 +39,18 @@ public struct CoreDataStackHelper {
         self.uniquePath = UUID().uuidString
     }
 
-    public func createStack() async throws -> CoreDataStack {
-        try await createStack(at: storageDirectory)
+    public func createStack(inMemoryStore: Bool = true) async throws -> CoreDataStack {
+        try await createStack(at: storageDirectory, inMemoryStore: inMemoryStore)
     }
 
     @MainActor
-    public func createStack(at directory: URL) async throws -> CoreDataStack {
+    public func createStack(at directory: URL, inMemoryStore: Bool = true) async throws -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: UUID())
 
         let stack = CoreDataStack(
             account: account,
             applicationContainer: directory,
-            inMemoryStore: true
+            inMemoryStore: inMemoryStore
         )
 
         return try await withCheckedThrowingContinuation { continuation in
