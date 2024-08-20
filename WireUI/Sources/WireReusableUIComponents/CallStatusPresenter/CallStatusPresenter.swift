@@ -141,3 +141,26 @@ private extension UIViewController {
     }
 }
 private nonisolated(unsafe) var presenterKey = 0
+
+
+
+@available(iOS 17, *)
+#Preview("X") {
+    SetupView()
+}
+
+final class SetupView: UIView {
+    override func didMoveToWindow() {
+
+        let view = UIView()
+        view.backgroundColor = .red
+        view.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(view)
+        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        view.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+
+        window?.rootViewController?.view.frame.origin.y += 100
+    }
+}
