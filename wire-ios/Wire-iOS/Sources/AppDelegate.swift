@@ -287,19 +287,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 private extension AppDelegate {
 
     private func setupWindowAndRootViewController() {
-
-        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
-        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
-
-        let rootViewController = UIViewController()
-        rootViewController.view.backgroundColor = .black
-        rootViewController.view.addSubview(shieldImageView)
-        NSLayoutConstraint.activate([
-            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
-        ])
-
-        mainWindow.rootViewController = rootViewController
+        mainWindow.rootViewController = LaunchScreenViewController()
         mainWindow.makeKeyAndVisible()
     }
 
