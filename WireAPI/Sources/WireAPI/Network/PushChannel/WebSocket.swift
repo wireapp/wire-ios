@@ -49,7 +49,7 @@ final class WebSocket: WebSocketProtocol {
                     return
                 }
 
-                // Note: From iOS 17 we can use the await variant of this. 
+                // Note: From iOS 17 we can use the await variant of this.
                 // See  https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
                 connection.receive { result in
                     switch result {
