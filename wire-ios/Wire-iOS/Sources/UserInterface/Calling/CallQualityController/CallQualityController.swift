@@ -31,9 +31,9 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    private let rootViewController: () -> UIViewController
+    private let rootViewController: UIViewController
 
-    init(rootViewController: @escaping () -> UIViewController) {
+    init(rootViewController: UIViewController) {
         self.rootViewController = rootViewController
         super.init()
 
@@ -102,7 +102,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure(presentingViewController: rootViewController())
+            handleCallFailure(presentingViewController: rootViewController)
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -169,7 +169,7 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         router?.dismissCallQualitySurvey { [weak self] in
             guard
                 self?.callQualityRejectionRange.contains(score) ?? false,
-                let presentingViewController = self?.rootViewController()
+                let presentingViewController = self?.rootViewController
             else { return }
 
             self?.handleCallQualityRejection(presentingViewController: presentingViewController)

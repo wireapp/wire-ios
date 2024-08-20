@@ -56,7 +56,7 @@ final class AuthenticatedRouter {
     // MARK: - Init
 
     init(
-        rootViewController: @autoclosure @escaping () -> UIViewController,
+        rootViewController: UIViewController,
         account: Account,
         userSession: UserSession,
         featureRepositoryProvider: any FeatureRepositoryProvider,
