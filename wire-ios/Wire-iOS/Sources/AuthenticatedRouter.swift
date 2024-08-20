@@ -46,12 +46,12 @@ final class AuthenticatedRouter {
 
     // MARK: - Public Property
 
-    private weak var _zClientController: ZClientViewController?
+    private weak var _zClientViewController: ZClientViewController?
 
-    var zClientController: ZClientViewController {
-        let zClientController = _zClientController ?? zClientControllerBuilder(router: self)
-        _zClientController = zClientController
-        return zClientController
+    var zClientViewController: ZClientViewController {
+        let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
+        _zClientViewController = zClientViewController
+        return zClientViewController
     }
 
     // MARK: - Init
@@ -117,7 +117,7 @@ final class AuthenticatedRouter {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        _zClientController?.presentAlert(alert)
+        _zClientViewController?.presentAlert(alert)
     }
 
     private func notifyRevokedCertificate() {
@@ -127,7 +127,7 @@ final class AuthenticatedRouter {
             sessionManager.logoutCurrentSession()
         }
 
-        _zClientController?.presentAlert(alert)
+        _zClientViewController?.presentAlert(alert)
     }
 }
 
@@ -145,13 +145,13 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     func navigate(to destination: NavigationDestination) {
         switch destination {
         case .conversation(let converation, let message):
-            _zClientController?.showConversation(converation, at: message)
+            _zClientViewController?.showConversation(converation, at: message)
         case .connectionRequest(let userId):
-            _zClientController?.showConnectionRequest(userId: userId)
+            _zClientViewController?.showConnectionRequest(userId: userId)
         case .conversationList:
-            _zClientController?.showConversationList()
+            _zClientViewController?.showConversationList()
         case .userProfile(let user):
-            _zClientController?.showUserProfile(user: user)
+            _zClientViewController?.showUserProfile(user: user)
         }
     }
 }
