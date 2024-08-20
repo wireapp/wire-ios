@@ -36,6 +36,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
+    @MainActor
     func testAllAccountTypesAndAvailabilities() {
         for accountType in AccountImageView.AccountType.allCases {
             for availability in Availability.allCases + [Availability?.none] {
