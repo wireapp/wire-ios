@@ -38,8 +38,8 @@ final class ZClientViewController: UIViewController {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.preferredSplitBehavior = .tile
 //        splitViewController.preferredDisplayMode = .secondaryOnly
-//        splitViewController.preferredDisplayMode .oneBesideSecondary
-        splitViewController.preferredDisplayMode = .twoBesideSecondary
+        splitViewController.preferredDisplayMode = .oneBesideSecondary
+//        splitViewController.preferredDisplayMode = .twoBesideSecondary
         return splitViewController
     }()
 
@@ -189,15 +189,10 @@ final class ZClientViewController: UIViewController {
 
         let sidebarViewController = SidebarViewController()
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
+        wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
         let conversationPlaceholder = UIViewController()
         conversationPlaceholder.navigationItem.leftBarButtonItems = [.init(systemItem: .action)]
-        let doubleColumnContainer = DoubleColumnContainerViewController(
-            primary: UINavigationController(rootViewController: iPadConversationListViewController),
-            secondary: UINavigationController(rootViewController: conversationPlaceholder)
-        )
-        wireSplitViewController.setViewController(doubleColumnContainer, for: .secondary)
-        doubleColumnContainer.navigationItem.leftBarButtonItem = .init(systemItem: .pause)
-        //doubleColumnContainer.navigationController?.isNavigationBarHidden = true
+        wireSplitViewController.setViewController(conversationPlaceholder, for: .secondary)
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,

@@ -75,9 +75,7 @@ extension ConversationListViewController {
     }
 
     func setupLeftNavigationBarButtons() {
-        guard traitCollection.userInterfaceIdiom != .pad else {
-            return setupLeftNavigationBarButtons_SplitView()
-        }
+        guard traitCollection.userInterfaceIdiom != .pad else { return }
 
         // in the design the left bar button items are very close to each other,
         // so we'll use a stack view instead
@@ -131,10 +129,6 @@ extension ConversationListViewController {
 
         navigationItem.titleView = titleLabel
         self.titleViewLabel = titleLabel
-    }
-
-    private func setupLeftNavigationBarButtons_SplitView() {
-        navigationItem.leftBarButtonItems = [.init(systemItem: .bookmarks)]
     }
 
     func setupRightNavigationBarButtons() {
@@ -213,7 +207,42 @@ extension ConversationListViewController {
     }
 
     private func setupRightNavigationBarButtons_SplitView() {
-        navigationItem.rightBarButtonItems = [.init(systemItem: .add)]
+
+        let newConversationBarButtonItem = UIBarButtonItem(
+            icon: .plus,
+            target: self,
+            action: #selector(presentNewConversationViewController)
+        )
+        // TODO: accessibilityIdentifier
+        newConversationBarButtonItem.accessibilityIdentifier = "???????????"
+        navigationItem.rightBarButtonItem = newConversationBarButtonItem
+
+
+
+/*
+
+ let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
+ let action = #selector(ConversationViewController.onCollectionButtonPressed(_:))
+
+ let button = IconButton()
+ button.setIcon(showingSearchResults ? .activeSearch : .search, size: .tiny, for: .normal)
+ button.accessibilityIdentifier = "collection"
+ button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
+
+ button.addTarget(self, action: action, for: .touchUpInside)
+
+ button.backgroundColor = SemanticColors.Button.backgroundBarItem
+ button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+ button.layer.borderWidth = 1
+ button.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+ button.layer.cornerRadius = 12
+ button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+ button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
+
+ return UIBarButtonItem(customView: button)
+ */
+
+
     }
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.

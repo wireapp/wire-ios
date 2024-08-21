@@ -349,8 +349,6 @@ final class ConversationListViewController: UIViewController {
         navigationItem.searchController = searchController
         if #available(iOS 16.0, *) {
             navigationItem.preferredSearchBarPlacement = .stacked
-        } else {
-//            navigationItem.rightBarButtonItems = [.init(systemItem: .play)]
         }
     }
 
@@ -439,7 +437,7 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Presentation
 
     /// Present the new conversation view controller
-    func presentNewConversationViewController() {
+    @objc func presentNewConversationViewController() {
         let viewController = StartUIViewController(
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator
