@@ -43,8 +43,8 @@ protocol ActiveCallRouterProtocol: AnyObject {
 protocol CallQualityRouterProtocol: AnyObject {
     func presentCallQualitySurvey(with callDuration: TimeInterval)
     func dismissCallQualitySurvey(completion: Completion?)
-    func presentCallFailureDebugAlert(presentingViewController: UIViewController)
-    func presentCallQualityRejection(presentingViewController: UIViewController)
+    func presentCallFailureDebugAlert(mainWindow: UIWindow)
+    func presentCallQualityRejection(mainWindow: UIWindow)
 }
 
 typealias PostCallAction = ((@escaping Completion) -> Void)
@@ -303,7 +303,8 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
         }
     }
 
-    func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
+    func presentCallFailureDebugAlert(mainWindow: UIWindow) {
+        let presentingViewController = mainWindow.rootViewController!
 
         let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
         let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(
@@ -323,7 +324,8 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
         }
     }
 
-    func presentCallQualityRejection(presentingViewController: UIViewController) {
+    func presentCallQualityRejection(mainWindow: UIWindow) {
+        let presentingViewController = mainWindow.rootViewController!
 
         let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
         let popoverPresentationConfiguration = PopoverPresentationControllerConfiguration.sourceView(

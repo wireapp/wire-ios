@@ -102,7 +102,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure(presentingViewController: rootViewController)
+            router?.presentCallFailureDebugAlert(mainWindow: mainWindow)
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -126,17 +126,6 @@ class CallQualityController: NSObject {
         router?.presentCallQualitySurvey(with: callDuration)
         #endif
     }
-
-    /// Presents the debug log prompt after a call failure.
-    private func handleCallFailure(presentingViewController: UIViewController) {
-        router?.presentCallFailureDebugAlert(presentingViewController: presentingViewController)
-    }
-
-    /// Presents the debug log prompt after a user quality rejection.
-    private func handleCallQualityRejection(presentingViewController: UIViewController) {
-        router?.presentCallQualityRejection(presentingViewController: presentingViewController)
-    }
-
 }
 
 // MARK: - Call State
@@ -169,10 +158,10 @@ extension CallQualityController: CallQualityViewControllerDelegate {
         router?.dismissCallQualitySurvey { [weak self] in
             guard
                 self?.callQualityRejectionRange.contains(score) ?? false,
-                let presentingViewController = self?.mainWindow.rootViewController
+                let mainWindow = self?.mainWindow
             else { return }
 
-            self?.handleCallQualityRejection(presentingViewController: presentingViewController)
+            self?.router?.presentCallQualityRejection(mainWindow: mainWindow)
         }
 
         CallQualityController.updateLastSurveyDate(Date())
