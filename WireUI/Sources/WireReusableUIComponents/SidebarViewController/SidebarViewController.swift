@@ -35,13 +35,28 @@ struct SidebarView: View {
             // content
             VStack {
                 userInfo
+                ScrollView {
+
+                    Text("Conversations")
+                    Text("Favorites")
+                    Text("Groups")
+                    Text("1:1 Conversations")
+                    Text("Archive")
+
+                    Text("Contacts")
+                    Text("Connect")
+                }
                 Spacer()
-            }.background(Color.red)
+                Text("Settings")
+                Text("Support")
+            }
+            .frame(maxWidth: .infinity)
+            .background(Color.red.opacity(0.4))
         }
     }
 
     private var userInfo: some View {
-        Text("TODO").multilineTextAlignment(.leading)
+        Text("avatar").multilineTextAlignment(.leading)
     }
 }
 
