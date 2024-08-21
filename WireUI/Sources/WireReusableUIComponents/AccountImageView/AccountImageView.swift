@@ -22,11 +22,7 @@ import WireDesign
 // MARK: Constants
 
 private let accountImageViewBorderColor = ColorTheme.Strokes.outline
-private let availabilityIndicatorBackgroundColor = UIColor {
-    $0.userInterfaceStyle == .dark
-        ? BaseColorPalette.Grays.gray90
-        : .clear
-}
+private let availabilityIndicatorBackgroundColor = ColorTheme.Backgrounds.surfaceVariant
 
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
@@ -181,7 +177,7 @@ public final class AccountImageView: UIView {
         }
 
         // for dark mode
-        availabilityIndicatorBackgroundView.isHidden = availability == .none || traitCollection.userInterfaceStyle != .dark
+        availabilityIndicatorBackgroundView.isHidden = availability == .none
 
         if availability == .none || traitCollection.userInterfaceStyle == .dark {
             // remove clipping
@@ -247,7 +243,6 @@ struct AccountImageView_Previews: PreviewProvider {
                 }
             }
         }
-        .background(Color(UIColor.systemGray2))
     }
 
     @ViewBuilder

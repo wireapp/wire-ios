@@ -19,7 +19,33 @@
 import SwiftUI
 import WireDesign
 
-public final class SidebarViewController: UIViewController {
+@MainActor
+public func SidebarViewController() -> UIViewController {
+    UIHostingController(rootView: SidebarView())
+}
+
+struct SidebarView: View {
+
+    var body: some View {
+        ZStack {
+            // background color
+            Rectangle()
+                .foregroundStyle(Color(ColorTheme.Backgrounds.background))
+                .ignoresSafeArea()
+            // content
+            VStack {
+                userInfo
+                Spacer()
+            }.background(Color.red)
+        }
+    }
+
+    private var userInfo: some View {
+        Text("TODO").multilineTextAlignment(.leading)
+    }
+}
+
+public final class SidebarViewController_: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
