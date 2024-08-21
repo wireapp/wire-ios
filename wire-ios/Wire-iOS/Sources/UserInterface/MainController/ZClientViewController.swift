@@ -182,8 +182,14 @@ final class ZClientViewController: UIViewController {
 
         let sidebarViewController = SidebarViewController()
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
-        wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
-        //wireSplitViewController.setViewController(conversation, for: .secondary)
+        let conversationPlaceholder = UIViewController()
+        conversationPlaceholder.navigationItem.leftBarButtonItems = [.init(systemItem: .action)]
+        let doubleColumnContainer = DoubleColumnContainerViewController(
+            primary: UINavigationController(rootViewController: iPadConversationListViewController),
+            secondary: UINavigationController(rootViewController: conversationPlaceholder)
+        )
+        wireSplitViewController.setViewController(doubleColumnContainer, for: .secondary)
+        //doubleColumnContainer.navigationController?.isNavigationBarHidden = true
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,

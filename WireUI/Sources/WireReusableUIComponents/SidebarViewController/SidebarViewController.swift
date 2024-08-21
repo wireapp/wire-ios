@@ -23,6 +23,8 @@ public final class SidebarViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = .lightGray
+
         let label = UILabel()
         label.text = "Sidebar"
         label.translatesAutoresizingMaskIntoConstraints = false

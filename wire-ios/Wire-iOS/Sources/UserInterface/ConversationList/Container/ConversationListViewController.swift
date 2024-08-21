@@ -347,6 +347,11 @@ final class ConversationListViewController: UIViewController {
         searchController.searchResultsUpdater = self
 
         navigationItem.searchController = searchController
+        if #available(iOS 16.0, *) {
+            navigationItem.preferredSearchBarPlacement = .stacked
+        } else {
+            navigationItem.rightBarButtonItems = [.init(systemItem: .play)]
+        }
     }
 
     // MARK: - No Contact Label Management

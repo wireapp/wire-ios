@@ -76,13 +76,7 @@ extension ConversationListViewController {
 
     func setupLeftNavigationBarButtons() {
         guard traitCollection.userInterfaceIdiom != .pad else {
-            navigationItem.leftBarButtonItems = [.init(systemItem: .camera)]
-            navigationItem.leftItemsSupplementBackButton = false
-            navigationItem.hidesBackButton = true
-            navigationItem.backBarButtonItem = .init(systemItem: .bookmarks)
-            navigationItem.backButtonDisplayMode = .generic
-            navigationController?.isNavigationBarHidden = true
-            return
+            return setupLeftNavigationBarButtons_SplitView()
         }
 
         // in the design the left bar button items are very close to each other,
@@ -137,6 +131,10 @@ extension ConversationListViewController {
 
         navigationItem.titleView = titleLabel
         self.titleViewLabel = titleLabel
+    }
+
+    private func setupLeftNavigationBarButtons_SplitView() {
+        navigationItem.leftBarButtonItems = [.init(systemItem: .bookmarks)]
     }
 
     func setupRightNavigationBarButtons() {
