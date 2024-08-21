@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireUITesting
 import XCTest
 
 @testable import Wire
@@ -28,23 +29,27 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
+    private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
     private var tabBarController: UITabBarController!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
 
         coreDataFixture = .init()
 
         userSession = .init()
-        userSession.contextProvider = coreDataFixture.coreDataStack
+        userSession.coreDataStack = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
@@ -55,12 +60,15 @@ final class ConversationListViewControllerTests: XCTestCase {
             account: account,
             selfUserLegalHoldSubject: selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
         )
 
         sut = ConversationListViewController(
             viewModel: viewModel,
             isFolderStatePersistenceEnabled: false,
+            zClientViewController: .init(account: account, userSession: userSession),
+            mainCoordinator: mockMainCoordinator,
             selfProfileViewControllerBuilder: .mock
         )
         tabBarController = MainTabBarController(
@@ -82,6 +90,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         window.isHidden = true
         window.rootViewController = nil
         window = nil
@@ -90,6 +99,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
         coreDataFixture = nil
+        mockMainCoordinator = nil
 
         super.tearDown()
     }
@@ -98,7 +108,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     func testForNoConversations() {
         window.rootViewController = nil
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     func testForEverythingArchived() {
@@ -108,7 +118,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
         window.rootViewController = nil
-        verify(matching: tabBarController)
+        snapshotHelper.verify(matching: tabBarController)
     }
 
     // MARK: - Helpers

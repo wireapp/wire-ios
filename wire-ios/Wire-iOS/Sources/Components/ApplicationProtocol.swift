@@ -19,10 +19,24 @@
 import UIKit
 
 protocol ApplicationProtocol {
-    var statusBarOrientation: UIInterfaceOrientation { get }
-    var applicationState: UIApplication.State { get }
 
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Swift.Void)!)
+    @available(*, deprecated, message: "Use the interfaceOrientation property of the window scene instead.")
+    var statusBarOrientation: UIInterfaceOrientation { get }
+
+    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void)
 }
 
-extension UIApplication: ApplicationProtocol {}
+extension UIApplication.State: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .active:
+            "active"
+        case .background:
+            "background"
+        case .inactive:
+            "inactive"
+        @unknown default:
+            "unknown"
+        }
+    }
+}

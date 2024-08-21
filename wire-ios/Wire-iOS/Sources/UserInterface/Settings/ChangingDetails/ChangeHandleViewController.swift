@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 fileprivate extension UIView {
@@ -211,6 +212,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     var popOnSuccess = true
     private var federationEnabled: Bool
 
+    private lazy var activityIndicator = BlockingActivityIndicator(view: view)
+
     convenience init() {
         let user = SelfUser.provider?.providedSelfUser
         self.init(state: HandleChangeState(currentHandle: user?.handle ?? nil, newHandle: nil, availability: .unknown))
@@ -238,6 +241,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        setupNavigationBar()
         updateUI()
         observerToken = userProfile?.add(observer: self)
     }
@@ -248,7 +252,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     private func setupViews() {
-        navigationItem.setupNavigationBarTitle(title: HandleChange.title.capitalized)
         view.backgroundColor = .clear
         ChangeHandleTableViewCell.register(in: tableView)
         tableView.allowsSelection = false
@@ -257,19 +260,25 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
         tableView.separatorColor = SemanticColors.View.backgroundSeparatorCell
         footerLabel.numberOfLines = 0
         updateUI()
-
-        let saveButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: HandleChange.save.capitalized,
-                                                                                  systemImage: false,
-                                                                                  target: self,
-                                                                                  action: #selector(saveButtonTapped))
-        saveButtonItem.tintColor = .accent()
-        navigationItem.rightBarButtonItem = saveButtonItem
     }
 
-    @objc func saveButtonTapped(sender: UIBarButtonItem) {
+    func setupNavigationBar() {
+        setupNavigationBarTitle(HandleChange.title)
+        let saveButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: HandleChange.save,
+            action: UIAction { [weak self] _ in
+                self?.saveButtonTapped()
+            })
+
+        saveButtonItem.tintColor = .accent()
+        navigationItem.rightBarButtonItem = saveButtonItem
+
+    }
+
+    func saveButtonTapped() {
         guard let handleToSet = state.newHandle else { return }
         userProfile?.requestSettingHandle(handle: handleToSet)
-        isLoadingViewVisible = true
+        activityIndicator.start()
     }
 
     fileprivate var attributedFooterTitle: NSAttributedString? {
@@ -377,7 +386,7 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
     }
 
     func didSetHandle() {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         state.availability = .taken
         guard popOnSuccess else { return }
         _ = navigationController?.popViewController(animated: true)
@@ -385,13 +394,13 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 
     func didFailToSetHandle() {
         presentFailureAlert()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     func didFailToSetHandleBecauseExisting() {
         state.availability = .taken
         updateUI()
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     private func presentFailureAlert() {

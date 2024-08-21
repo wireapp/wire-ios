@@ -21,6 +21,7 @@ import WireDataModel
 import WireSyncEngine
 import class WireCommonComponents.NetworkStatus
 
+// TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
 
     var isCallingSupported: Bool {
@@ -97,27 +98,27 @@ extension ZMConversation {
             return
         }
 
-        let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
-
+        let reachability = sessionManager.environment.reachability
+        let networkInfo = NetworkInfo(serverConnection: reachability)
         if networkInfo.qualityType() == .type2G {
+
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,
                 preferredStyle: .alert
             )
-
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { _ in
+            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default) { _ in
                 handler(false)
-            }))
-
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { _ in
+            })
+            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
                 handler(true)
-            }))
-
+            })
             ZClientViewController.shared?.present(badConnectionController, animated: true)
         } else {
             handler(false)
         }
+
+        reachability.tearDown()
     }
 
     func warnAboutNoInternetConnection() -> Bool {
@@ -136,7 +137,7 @@ extension ZMConversation {
             style: .cancel
         ))
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
 
         return true
     }

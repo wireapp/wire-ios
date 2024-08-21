@@ -21,13 +21,14 @@ import DifferenceKit
 import UIKit
 import WireCommonComponents
 import WireDataModel
+import WireReusableUIComponents
 import WireSyncEngine
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
 }
 
-final class CallGridViewController: SpinnerCapableViewController {
+final class CallGridViewController: UIViewController {
     // MARK: - Statics
 
     static let isCoveredKey = "isCovered"
@@ -59,8 +60,12 @@ final class CallGridViewController: SpinnerCapableViewController {
     private let networkConditionView = NetworkConditionIndicatorView()
     private let pageIndicator = RoundedPageIndicator()
     private let topStack = UIStackView(axis: .vertical)
-    private let mediaManager: AVSMediaManagerInterface
     private var viewCache = [AVSClient: OrientableView]()
+    private var networkQualityObserverToken: Any?
+    private var networkQuality: NetworkQuality
+
+    private let mediaManager: AVSMediaManagerInterface
+    private let voiceChannel: VoiceChannel
 
     // MARK: - Public Properties
 
@@ -73,11 +78,7 @@ final class CallGridViewController: SpinnerCapableViewController {
             guard !configuration.isEqual(to: oldValue) else { return }
             dismissMaximizedViewIfNeeded(oldPresentationMode: oldValue.presentationMode)
             updateState()
-            if
-                configuration.isGroupCall,
-                configuration.isConnected,
-                !oldValue.isConnected
-            {
+            if configuration.isGroupCall, configuration.isConnected, !oldValue.isConnected {
                 updateHint(for: .connectionEstablished)
             }
         }
@@ -92,30 +93,35 @@ final class CallGridViewController: SpinnerCapableViewController {
         didSet {
             guard isCovered != oldValue else { return }
             notifyVisibilityChanged()
-            displayIndicatorViewsIfNeeded()
+            displayNetworkConditionViewIfNeeded(for: networkQuality)
             animateNetworkConditionView()
             hintView.setMessageHidden(isCovered)
         }
     }
 
-    var dismissSpinner: SpinnerCompletion?
+    private var activityIndicator: BlockingActivityIndicator!
 
     weak var delegate: CallGridViewControllerDelegate?
 
     // MARK: - Initialization
 
-    init(configuration: CallGridViewControllerInput,
-         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()) {
+    init(
+        voiceChannel: VoiceChannel,
+        configuration: CallGridViewControllerInput,
+        mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
+    ) {
 
         self.configuration = configuration
         self.mediaManager = mediaManager
+        self.voiceChannel = voiceChannel
+        self.networkQuality = voiceChannel.networkQuality
 
         super.init(nibName: nil, bundle: nil)
 
         setupViews()
         createConstraints()
         updateState()
-        displayIndicatorViewsIfNeeded()
+        setupObservers()
     }
 
     @available(*, unavailable)
@@ -125,7 +131,10 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        activityIndicator = .init(view: view)
         updateHint(for: .viewDidLoad)
+        displayNetworkConditionViewIfNeeded(for: networkQuality)
     }
 
     // MARK: - Setup
@@ -186,6 +195,10 @@ final class CallGridViewController: SpinnerCapableViewController {
         let newCurrentPage = sender.currentPage
         pageIndicator.currentPage = newCurrentPage
         gridView.scrollToPage(page: newCurrentPage, animated: true)
+    }
+
+    private func setupObservers() {
+        networkQualityObserverToken = voiceChannel.addNetworkQualityObserver(self)
     }
 
     // MARK: - Public Interface
@@ -262,13 +275,11 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - UI Update
 
-    private func displayIndicatorViewsIfNeeded() {
-        networkConditionView.networkQuality = configuration.networkQuality
-        networkConditionView.isHidden = shouldHideNetworkCondition
-    }
+    private func displayNetworkConditionViewIfNeeded(for networkQuality: NetworkQuality) {
+        let shouldHideNetworkCondition = isCovered || networkQuality.isNormal
 
-    private var shouldHideNetworkCondition: Bool {
-        return isCovered || configuration.networkQuality.isNormal
+        networkConditionView.networkQuality = networkQuality
+        networkConditionView.isHidden = shouldHideNetworkCondition
     }
 
     private func notifyVisibilityChanged() {
@@ -295,7 +306,6 @@ final class CallGridViewController: SpinnerCapableViewController {
         updateSelfCallParticipantView()
         updateFloatingView(with: configuration.floatingStream)
         updateGrid(with: streams)
-        displayIndicatorViewsIfNeeded()
         updateGridViewAxis()
         updateHint(for: .configurationChanged)
         requestVideoStreamsIfNeeded(forPage: gridView.currentPage)
@@ -303,17 +313,15 @@ final class CallGridViewController: SpinnerCapableViewController {
     }
 
     private func displaySpinnerIfNeeded() {
-        let subViewStackWithSpinner = self.view.subviews.filter { $0 is LoadingSpinnerView }
         guard
             configuration.presentationMode == .activeSpeakers,
-            configuration.streams.isEmpty,
-            subViewStackWithSpinner.isEmpty
+            configuration.streams.isEmpty
         else {
-            dismissSpinner?()
+            activityIndicator.stop()
             return
         }
 
-        showLoadingView(title: L10n.Localizable.Call.Grid.noActiveSpeakers)
+        activityIndicator.start(text: L10n.Localizable.Call.Grid.noActiveSpeakers)
     }
 
     private func updateSelfCallParticipantView() {
@@ -538,6 +546,15 @@ extension CallGridViewController: GridViewDelegate {
     func gridView(_ gridView: GridView, didChangePageTo page: Int) {
         pageIndicator.currentPage = page
         requestVideoStreamsIfNeeded(forPage: page)
+    }
+}
+
+// MARK: - NetworkQualityObserver
+
+extension CallGridViewController: NetworkQualityObserver {
+    func callCenterDidChange(networkQuality: NetworkQuality) {
+        self.networkQuality = networkQuality
+        displayNetworkConditionViewIfNeeded(for: networkQuality)
     }
 }
 

@@ -45,14 +45,6 @@ extension URL {
 
 }
 
-extension NSURL {
-
-    func openInApp(aboveViewController viewController: UIViewController) {
-        (self as URL).openInApp(above: viewController)
-    }
-
-}
-
 protocol LinkOpeningOption {
     associatedtype ApplicationOptionEnum: RawRepresentable where ApplicationOptionEnum.RawValue == Int
 

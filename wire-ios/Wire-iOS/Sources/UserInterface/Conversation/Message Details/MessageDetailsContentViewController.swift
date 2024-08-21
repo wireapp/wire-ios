@@ -76,6 +76,7 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
+    private let mainCoordinator: MainCoordinating
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -93,11 +94,19 @@ final class MessageDetailsContentViewController: UIViewController {
      * Creates a view controller to display message details of a certain type.
      */
 
-    init(contentType: ContentType, conversation: ZMConversation, userSession: UserSession) {
+    init(
+        contentType: ContentType,
+        conversation: ZMConversation,
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.contentType = contentType
         self.conversation = conversation
         self.userSession = userSession
+        self.mainCoordinator = mainCoordinator
+
         super.init(nibName: nil, bundle: nil)
+
         updateTitle()
     }
 
@@ -198,17 +207,17 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .receipts:
             if sections.isEmpty {
-                title = MessageDetails.receiptsTitle.capitalizingFirstCharacterOnly
+                title = MessageDetails.receiptsTitle
             } else {
-                title = MessageDetails.Tabs.seen(count).capitalizingFirstCharacterOnly
+                title = MessageDetails.Tabs.seen(count)
 
             }
 
         case .reactions:
             if sections.isEmpty {
-                title = MessageDetails.reactionsTitle.capitalizingFirstCharacterOnly
+                title = MessageDetails.reactionsTitle
             } else {
-                title = MessageDetails.Tabs.reactions(count).capitalizingFirstCharacterOnly
+                title = MessageDetails.Tabs.reactions(count)
             }
         }
     }
@@ -246,17 +255,17 @@ final class MessageDetailsContentViewController: UIViewController {
         switch contentType {
         case .reactions:
             noResultsView.label.accessibilityIdentifier = "placeholder.no_likes"
-            noResultsView.placeholderText = MessageDetails.emptyLikes.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.emptyLikes
             noResultsView.icon = .like
 
         case .receipts(enabled: true):
             noResultsView.label.accessibilityIdentifier = "placeholder.no_read_receipts"
-            noResultsView.placeholderText = MessageDetails.emptyReadReceipts.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.emptyReadReceipts
             noResultsView.icon = .eye
 
         case .receipts(enabled: false):
             noResultsView.label.accessibilityIdentifier = "placeholder.read_receipts_disabled"
-            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled.capitalizingFirstCharacterOnly
+            noResultsView.placeholderText = MessageDetails.readReceiptsDisabled
             noResultsView.icon = .eye
         }
     }
@@ -344,7 +353,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
             assertionFailure("expected available 'user'!")
         }
 
-        cell.showSeparator = indexPath.item != (sections.endIndex - 1)
+        cell.showSeparator = indexPath.item != (sections[indexPath.section].items.count - 1)
         cell.subtitleLabel.accessibilityLabel = description.accessibleSubtitleLabel
         cell.subtitleLabel.accessibilityValue = description.accessibleSubtitleValue
 
@@ -370,7 +379,13 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
 
         let cell = collectionView.cellForItem(at: indexPath) as! UserCell
 
-        let profileViewController = ProfileViewController(user: user, viewer: viewer, conversation: conversation, userSession: userSession)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
 

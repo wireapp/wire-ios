@@ -71,7 +71,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private(set) var launchType: ApplicationLaunchType = .unknown
 
     // MARK: - Public Set Property
-    var window: UIWindow?
+
+    private(set) var mainWindow: UIWindow!
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -80,10 +81,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var launchOptions: LaunchOptions = [:]
 
+    // TODO: [WPB-8778] remove this property
+    @available(*, deprecated, message: "Will be removed")
     static var shared: AppDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
+    // TODO [WPB-9867]: remove this property
+    @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
         return appRootRouter?.rootViewController
             .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
@@ -99,12 +104,17 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
 
-    override init() {
-        super.init()
-    }
-
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+        guard !application.supportsMultipleScenes else {
+            fatalError("Multiple scenes are currently not supported")
+        }
+        guard application.connectedScenes.count == 1, let windowScene = application.connectedScenes.first as? UIWindowScene else {
+            fatalError("Expected a single scene of type `UIWindowScene`")
+        }
+        mainWindow = .init(windowScene: windowScene)
+
         // enable logs
         _ = Settings.shared
         // switch logs
@@ -112,9 +122,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Set up Datadog as logger
         WireAnalytics.Datadog.enable()
-
         WireLogger.appDelegate.info(
-            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))"
+            "application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
         )
 
         // Initial log line to indicate the client version and build
@@ -135,11 +144,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
 
-        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))")
 
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(userSessionDidBecomeAvailable(_:)),
@@ -147,6 +157,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: nil)
 
         self.launchOptions = launchOptions ?? [:]
+
+        setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
@@ -159,14 +171,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         WireLogger.appDelegate.info(
-            "applicationWillEnterForeground: (applicationState = \(application.applicationState.rawValue)",
+            "applicationWillEnterForeground: (applicationState = \(application.applicationState)",
             attributes: .safePublic
         )
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         WireLogger.appDelegate.info(
-            "applicationDidBecomeActive (applicationState = \(application.applicationState.rawValue))",
+            "applicationDidBecomeActive (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
 
@@ -181,20 +193,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillResignActive(_ application: UIApplication) {
         WireLogger.appDelegate.info(
-            "applicationWillResignActive: (applicationState = \(application.applicationState.rawValue))",
+            "applicationWillResignActive: (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         WireLogger.appDelegate.info(
-            "applicationDidEnterBackground: (applicationState = \(application.applicationState.rawValue))",
+            "applicationDidEnterBackground: (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
 
         launchType = .unknown
-
-        UserDefaults.standard.synchronize()
     }
 
     func application(_ app: UIApplication,
@@ -209,7 +219,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         WireLogger.appDelegate.info(
-            "applicationWillTerminate: (applicationState = \(application.applicationState.rawValue))",
+            "applicationWillTerminate: (applicationState = \(application.applicationState))",
             attributes: .safePublic
         )
     }
@@ -252,7 +262,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:")
+        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
         appRootRouter?.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
@@ -274,7 +284,26 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // MARK: - Private Helpers
+
 private extension AppDelegate {
+
+    private func setupWindowAndRootViewController() {
+
+        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
+        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        let rootViewController = RootViewController()
+        rootViewController.view.backgroundColor = .black
+        rootViewController.view.addSubview(shieldImageView)
+        NSLayoutConstraint.activate([
+            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerXAnchor),
+            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
+        ])
+
+        mainWindow.rootViewController = rootViewController
+        mainWindow.makeKeyAndVisible()
+    }
+
     private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
@@ -284,15 +313,12 @@ private extension AppDelegate {
 
     private func createAppRootRouter(launchOptions: LaunchOptions) {
 
-        guard let viewController = window?.rootViewController as? RootViewController else {
-            fatalError("rootViewController is not of type RootViewController")
-        }
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }
 
         appRootRouter = AppRootRouter(
-            viewController: viewController,
+            rootViewController: mainWindow.rootViewController as! RootViewController,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
@@ -358,5 +384,4 @@ private extension AppDelegate {
         // this forces transition to standard ones.
         return .standard
     }
-
 }

@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 /**
@@ -42,13 +43,15 @@ final class SelfProfileViewController: UIViewController {
     let userSession: UserSession
     private let accountSelector: AccountSelector?
 
+    private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
+
     // MARK: - AppLock
     private var callback: ResultHandler?
 
     // MARK: - Configuration
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     // MARK: - Initialization
@@ -135,11 +138,18 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController.tableView.isScrollEnabled = false
 
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        configureAccountTitle()
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
+
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        configureAccountTitle()
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
@@ -159,7 +169,7 @@ final class SelfProfileViewController: UIViewController {
             navigationItem.titleView = accountSelectorView
             self.accountSelectorView = accountSelectorView
         } else {
-            navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.account.capitalized)
+            setupNavigationBarTitle(L10n.Localizable.Self.account)
         }
     }
 
@@ -201,10 +211,12 @@ final class SelfProfileViewController: UIViewController {
     @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
-        let alertViewController = profileImagePicker.selectProfileImage()
-        alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
-
-        present(alertViewController, animated: true)
+        let alertController = profileImagePicker.selectProfileImage()
+        if let popoverPresentationController = alertController.popoverPresentationController {
+            popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
+            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(dx: -4, dy: -4)
+        }
+        present(alertController, animated: true)
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -231,17 +243,17 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
 
-    private var topViewController: SpinnerCapableViewController? {
-        navigationController?.topViewController as? SpinnerCapableViewController
+    private var topViewController: UIViewController! {
+        navigationController!.topViewController
     }
 
     func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        // topViewController is SettingsTableViewController
-        topViewController?.isLoadingViewVisible = true
+        // shown on SettingsTableViewController
+        activityIndicator.start()
     }
 
     func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory) {
-        topViewController?.isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     /// Create or delete custom passcode when appLock option did change

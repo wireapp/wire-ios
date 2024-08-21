@@ -19,19 +19,9 @@
 import UIKit
 
 final class RootViewController: UIViewController {
-    // MARK: - SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
-
-    // MARK: - PopoverPresenter
-    var presentedPopover: UIPopoverPresentationController?
-    var popoverPointToView: UIView?
-
-    // MARK: - Public Property
-    var isPresenting: Bool {
-        return presentedViewController != nil
-    }
 
     // MARK: - Private Property
+
     private var childViewController: UIViewController?
 
     // MARK: - Status Bar / Supported Orientations
@@ -57,20 +47,19 @@ final class RootViewController: UIViewController {
         return childViewController
     }
 
-    func set(childViewController newViewController: UIViewController?,
-             animated: Bool = false,
-             completion: (() -> Void)? = nil) {
-        if let newViewController,
-           let previousViewController = childViewController {
+    func set(
+        childViewController newViewController: UIViewController,
+        animated: Bool = false,
+        completion: (() -> Void)?
+    ) {
+        if let previousViewController = childViewController {
             transition(
                 from: previousViewController,
                 to: newViewController,
                 animated: animated,
                 completion: completion)
-        } else if let newViewController {
-            contain(newViewController, completion: completion)
         } else {
-            removeChildViewController(animated: animated, completion: completion)
+            contain(newViewController, completion: completion)
         }
 
         setNeedsStatusBarAppearanceUpdate()
@@ -84,29 +73,12 @@ final class RootViewController: UIViewController {
         }
     }
 
-    private func removeChildViewController(animated: Bool, completion: (() -> Void)?) {
-        let animationGroup = DispatchGroup()
-        if childViewController?.presentedViewController != nil {
-            animationGroup.enter()
-            childViewController?.dismiss(animated: animated) {
-                animationGroup.leave()
-            }
-        }
-
-        childViewController?.willMove(toParent: nil)
-        childViewController?.view.removeFromSuperview()
-        childViewController?.removeFromParent()
-        childViewController = nil
-
-        animationGroup.notify(queue: .main) {
-            completion?()
-        }
-    }
-
-    private func transition(from fromViewController: UIViewController,
-                            to toViewController: UIViewController,
-                            animated: Bool = false,
-                            completion: (() -> Void)?) {
+    private func transition(
+        from fromViewController: UIViewController,
+        to toViewController: UIViewController,
+        animated: Bool = false,
+        completion: (() -> Void)?
+    ) {
         let animationGroup = DispatchGroup()
 
         if fromViewController.presentedViewController != nil {
@@ -143,9 +115,7 @@ final class RootViewController: UIViewController {
             completion?()
         }
     }
-}
 
-extension RootViewController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
@@ -153,9 +123,9 @@ extension RootViewController {
             return
         }
 
-        coordinator.animate(alongsideTransition: nil, completion: { _ in
+        coordinator.animate(alongsideTransition: nil) { _ in
             appRouter.updateOverlayWindowFrame(size: size)
-        })
+        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -172,6 +142,3 @@ extension RootViewController {
         }
     }
 }
-
-extension RootViewController: SpinnerCapable { }
-extension RootViewController: PopoverPresenter { }

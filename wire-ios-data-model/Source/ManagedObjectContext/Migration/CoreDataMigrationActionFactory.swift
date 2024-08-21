@@ -18,15 +18,43 @@
 
 import Foundation
 
-struct CoreDataMigrationActionFactory {
+enum CoreDataMigrationActionFactory {
+
+    static func createPreMigrationAction<Version: CoreDataMigrationVersion>(for destinationVersion: Version) -> CoreDataMigrationAction? {
+
+        if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
+            return createPreMigrationAction(for: version)
+        }
+
+        if let version = destinationVersion as? CoreDataEventsMigrationVersion {
+            return createPreMigrationAction(for: version)
+        }
+
+        fatalError("unsupported coredata migration version")
+    }
+
+    static func createPostMigrationAction<Version: CoreDataMigrationVersion>(for destinationVersion: Version) -> CoreDataMigrationAction? {
+
+        if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
+            return createPostMigrationAction(for: version)
+        }
+
+        if let version = destinationVersion as? CoreDataEventsMigrationVersion {
+            return createPostMigrationAction(for: version)
+        }
+
+        fatalError("unsupported coredata migration version")
+    }
+
+    // MARK: - CoreDataMessagingMigrationVersion
 
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_111:
+        case .v111:
             return RemoveDuplicatePreAction()
 
-        case .version2_107:
-            return CleanupModels2_107PreAction()
+        case .v107:
+            return CleanupModels107PreAction()
 
         default:
             return nil
@@ -35,17 +63,27 @@ struct CoreDataMigrationActionFactory {
 
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_116:
+        case .v116:
             return IsPendingInitialFetchMigrationAction()
 
-        case .version2_114:
+        case .v114:
             return OneOnOneConversationMigrationAction()
 
-        case .version2_111:
+        case .v111:
             return PrefillPrimaryKeyAction()
 
         default:
             return nil
         }
+    }
+
+    // MARK: - CoreDataEventsMigrationVersion
+
+    static func createPreMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
+        return nil
+    }
+
+    static func createPostMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
+        return nil
     }
 }

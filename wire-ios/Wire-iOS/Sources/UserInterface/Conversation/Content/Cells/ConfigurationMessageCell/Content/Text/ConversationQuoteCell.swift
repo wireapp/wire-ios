@@ -23,7 +23,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationReplyContentView: UIView {
-    typealias View = ConversationReplyCell
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
     let numberOfLinesLimit: Int = 4
@@ -299,7 +298,7 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     }
 
     @objc func onTap() {
-        delegate?.perform(action: .openQuote, for: message, view: self)
+        delegate?.perform(action: .openQuote, for: message!, view: self)
     }
 
 }

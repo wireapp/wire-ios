@@ -23,9 +23,31 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "UI")
 
-public final class FileMetaDataGenerator {
+// sourcery: AutoMockable
+public protocol FileMetaDataGenerating {
 
-    public static func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
+    func metadataForFileAtURL(
+        _ url: URL,
+        UTI uti: String,
+        name: String,
+        completion: @escaping (ZMFileMetadata) -> Void
+    )
+
+}
+
+public final class FileMetaDataGenerator: FileMetaDataGenerating {
+
+    @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
+    public static var shared = FileMetaDataGenerator()
+
+    public init() {}
+
+    public func metadataForFileAtURL(
+        _ url: URL,
+        UTI uti: String,
+        name: String,
+        completion: @escaping (ZMFileMetadata) -> Void
+    ) {
         SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 
@@ -40,9 +62,8 @@ public final class FileMetaDataGenerator {
                     completion(ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? []))
                 }
             } else {
-                // swiftlint:disable todo_requires_jira_link
+                // swiftlint:disable:next todo_requires_jira_link
                 // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
-                // swiftlint:enable todo_requires_jira_link
                 completion(ZMFileMetadata(fileURL: url, thumbnail: thumbnail))
             }
         }

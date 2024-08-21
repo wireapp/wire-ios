@@ -16,24 +16,29 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
-    var sut: ServiceDetailViewController!
-    var serviceUser: MockServiceUserType!
-    var groupConversation: ZMConversation!
-    var mockSelfUser: MockUserType!
+    private var sut: ServiceDetailViewController!
+    private var serviceUser: MockServiceUserType!
+    private var groupConversation: ZMConversation!
+    private var mockSelfUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         serviceUser = .createServiceUser(name: "ServiceUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         serviceUser = nil
         groupConversation = nil
@@ -56,7 +61,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             mockSelfUser.canRemoveService = true
             createSut()
             let navigationController = sut.wrapInNavigationController()
-            verify(matching: navigationController)
+            snapshotHelper.verify(matching: navigationController)
         }
     }
 
@@ -65,7 +70,7 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             mockSelfUser.canRemoveService = false
             createSut()
-            verify(matching: sut)
+            snapshotHelper.verify(matching: sut)
         }
     }
 }

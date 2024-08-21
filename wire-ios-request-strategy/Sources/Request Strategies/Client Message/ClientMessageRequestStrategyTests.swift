@@ -18,8 +18,11 @@
 
 import XCTest
 
+@testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+@_spi(MockBackendInfo)
+import WireTransport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -30,7 +33,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     var mockMessageSender: MockMessageSenderInterface!
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -50,6 +53,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
                                                messageSender: mockMessageSender)
         }
 
+        BackendInfo.enableMocking()
         apiVersion = .v0
 
     }
@@ -60,7 +64,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         self.sut = nil
-        apiVersion = nil
+        BackendInfo.resetMocking()
 
         super.tearDown()
     }
@@ -209,7 +213,8 @@ extension ClientMessageRequestStrategyTests {
 
     func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
         // GIVEN
-        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let lastEventIDRepository = MockLastEventIDRepositoryInterface()
+        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let text = "Everything"
         let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 

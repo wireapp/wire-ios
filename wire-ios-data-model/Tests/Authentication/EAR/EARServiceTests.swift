@@ -906,7 +906,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Given
         let keyGen = EARKeyGenerator()
         let keys = try keyGen.generatePrimaryPublicPrivateKeyPair(id: "EARServiceTests")
-        let data = "Hello world".data(using: .utf8)!
+        let data = Data("Hello world".utf8)
 
         // When
         guard let encryptedData = SecKeyCreateEncryptedData(

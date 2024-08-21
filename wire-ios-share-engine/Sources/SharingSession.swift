@@ -63,7 +63,7 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     }
 
     private var isLoggedIn: Bool {
-        return transportSession.cookieStorage.authenticationCookieData != nil
+        return transportSession.cookieStorage.hasAuthenticationCookie
     }
 
 }
@@ -75,7 +75,7 @@ extension BackendEnvironmentProvider {
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
-        return cookieStorage(for: account).authenticationCookieData != nil
+        return cookieStorage(for: account).hasAuthenticationCookie
     }
 }
 
@@ -476,14 +476,9 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-fileprivate extension ZMConversationList {
-    var writeableConversations: [Conversation] {
-        return self.filter {
-            if let conversation = $0 as? ZMConversation {
-                return !conversation.isReadOnly
-            }
-            return false
-        }.compactMap { $0 as? Conversation }
-    }
+fileprivate extension ConversationList {
 
+    var writeableConversations: [Conversation] {
+        items.filter { !$0.isReadOnly }
+    }
 }

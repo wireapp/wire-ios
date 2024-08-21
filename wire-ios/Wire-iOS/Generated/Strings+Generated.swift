@@ -793,18 +793,6 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "landing.loginEnterpriseButton.description", fallback: "Log in with SSO")
       }
     }
-    internal enum LicenseDetailsSettings {
-      internal enum BackButton {
-        /// Go back to License details
-        internal static let description = L10n.tr("Accessibility", "licenseDetailsSettings.backButton.description", fallback: "Go back to License details")
-      }
-    }
-    internal enum LicenseInformationSettings {
-      internal enum BackButton {
-        /// Go back to License information
-        internal static let description = L10n.tr("Accessibility", "licenseInformationSettings.backButton.description", fallback: "Go back to License information")
-      }
-    }
     internal enum MessageAction {
       internal enum CopyButton {
         /// Copy picture
@@ -883,6 +871,26 @@ internal enum L10n {
       internal enum SearchFieldPlaceholder {
         /// Search for emoji
         internal static let description = L10n.tr("Accessibility", "reactionPicker.searchFieldPlaceholder.description", fallback: "Search for emoji")
+      }
+    }
+    internal enum SearchGifs {
+      internal enum GifItem {
+        /// Tap to select this GIF
+        internal static let accessibilityHint = L10n.tr("Accessibility", "searchGifs.gifItem.accessibilityHint", fallback: "Tap to select this GIF")
+      }
+      internal enum GifItemsLoaded {
+        /// Loaded %@ new GIFs
+        internal static func announcement(_ p1: Any) -> String {
+          return L10n.tr("Accessibility", "searchGifs.gifItems_loaded.announcement", String(describing: p1), fallback: "Loaded %@ new GIFs")
+        }
+      }
+      internal enum NorResultsLabel {
+        /// No Gifs found
+        internal static let description = L10n.tr("Accessibility", "searchGifs.norResultsLabel.description", fallback: "No Gifs found")
+      }
+      internal enum SearchBar {
+        /// Enter text to search for GIFs
+        internal static let accessibilityLabel = L10n.tr("Accessibility", "searchGifs.searchBar.accessibilityLabel", fallback: "Enter text to search for GIFs")
       }
     }
     internal enum SearchView {
@@ -1059,16 +1067,6 @@ internal enum L10n {
       internal enum Legal {
         /// Legal
         internal static let title = L10n.tr("Localizable", "about.legal.title", fallback: "Legal")
-      }
-      internal enum License {
-        /// Acknowledgements
-        internal static let licenseHeader = L10n.tr("Localizable", "about.license.license_header", fallback: "Acknowledgements")
-        /// View Project Page
-        internal static let openProjectButton = L10n.tr("Localizable", "about.license.open_project_button", fallback: "View Project Page")
-        /// Details
-        internal static let projectHeader = L10n.tr("Localizable", "about.license.project_header", fallback: "Details")
-        /// License Information
-        internal static let title = L10n.tr("Localizable", "about.license.title", fallback: "License Information")
       }
       internal enum Privacy {
         /// Privacy Policy
@@ -1657,8 +1655,6 @@ internal enum L10n {
         internal static let details = L10n.tr("Localizable", "content.message.details", fallback: "Details")
         /// Download
         internal static let download = L10n.tr("Localizable", "content.message.download", fallback: "Download")
-        /// Share
-        internal static let forward = L10n.tr("Localizable", "content.message.forward", fallback: "Share")
         /// Reveal
         internal static let goToConversation = L10n.tr("Localizable", "content.message.go_to_conversation", fallback: "Reveal")
         /// Like
@@ -3420,8 +3416,8 @@ internal enum L10n {
       internal enum Error {
         /// no more gifs
         internal static let noMoreResults = L10n.tr("Localizable", "giphy.error.no_more_results", fallback: "no more gifs")
-        /// no gif found
-        internal static let noResult = L10n.tr("Localizable", "giphy.error.no_result", fallback: "no gif found")
+        /// No gif found
+        internal static let noResult = L10n.tr("Localizable", "giphy.error.no_result", fallback: "No gif found")
       }
     }
     internal enum GroupDetails {
@@ -5414,10 +5410,6 @@ internal enum L10n {
               internal static let title = L10n.tr("Localizable", "self.settings.advanced.troubleshooting.submit_debug.title", fallback: "Debug Report")
             }
           }
-          internal enum VersionTechnicalDetails {
-            /// Version Technical Details
-            internal static let title = L10n.tr("Localizable", "self.settings.advanced.version_technical_details.title", fallback: "Version Technical Details")
-          }
         }
         internal enum ApnsLogging {
           /// APNS Logging
@@ -5617,16 +5609,6 @@ internal enum L10n {
           /// Contacts
           internal static let title = L10n.tr("Localizable", "self.settings.privacy_contacts_section.title", fallback: "Contacts")
         }
-        internal enum PrivacyCrash {
-          /// Send anonymous crash data
-          internal static let title = L10n.tr("Localizable", "self.settings.privacy_crash.title", fallback: "Send anonymous crash data")
-        }
-        internal enum PrivacyCrashMenu {
-          internal enum Description {
-            /// Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.
-            internal static let title = L10n.tr("Localizable", "self.settings.privacy_crash_menu.description.title", fallback: "Send anonymous crash reports and basic data like version number and operating system to help Wire identify and solve issues in the app.")
-          }
-        }
         internal enum PrivacySectionGroup {
           /// When this is off, you won’t be able to see read receipts from other people.
           /// 
@@ -5737,12 +5719,18 @@ internal enum L10n {
         internal enum TechnicalReport {
           /// Include detailed log
           internal static let includeLog = L10n.tr("Localizable", "self.settings.technical_report.include_log", fallback: "Include detailed log")
+          /// If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. 
+          /// 
+          /// You can also share your debug logs directly with your team admin via Wire.
+          internal static let info = L10n.tr("Localizable", "self.settings.technical_report.info", fallback: "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.")
           /// No mail client detected. Tap "OK" and send logs manually to: 
           internal static let noMailAlert = L10n.tr("Localizable", "self.settings.technical_report.no_mail_alert", fallback: "No mail client detected. Tap \"OK\" and send logs manually to: ")
           /// Detailed logs could contain personal data
           internal static let privacyWarning = L10n.tr("Localizable", "self.settings.technical_report.privacy_warning", fallback: "Detailed logs could contain personal data")
-          /// Send report to Wire
-          internal static let sendReport = L10n.tr("Localizable", "self.settings.technical_report.send_report", fallback: "Send report to Wire")
+          /// Send Report
+          internal static let sendReport = L10n.tr("Localizable", "self.settings.technical_report.send_report", fallback: "Send Report")
+          /// Share Report Via Wire
+          internal static let shareReport = L10n.tr("Localizable", "self.settings.technical_report.share_report", fallback: "Share Report Via Wire")
           internal enum Mail {
             /// Wire Debug Report
             internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Wire Debug Report")
@@ -5759,8 +5747,8 @@ internal enum L10n {
           }
         }
         internal enum TechnicalReportSection {
-          /// Technical Report
-          internal static let title = L10n.tr("Localizable", "self.settings.technical_report_section.title", fallback: "Technical Report")
+          /// Debug Report
+          internal static let title = L10n.tr("Localizable", "self.settings.technical_report_section.title", fallback: "Debug Report")
         }
         internal enum Vbr {
           /// This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.

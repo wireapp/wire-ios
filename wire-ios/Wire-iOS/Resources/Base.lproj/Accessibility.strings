@@ -163,8 +163,6 @@
 "supportSettings.backButton.description" = "Go back to Support";
 
 "aboutSettings.backButton.description" = "Go back to About";
-"licenseInformationSettings.backButton.description" = "Go back to License information";
-"licenseDetailsSettings.backButton.description" = "Go back to License details";
 
 "developerOptionsSettings.backButton.description" = "Go back to Developer options";
 
@@ -301,3 +299,10 @@
 
 "createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
 "createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
+"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";

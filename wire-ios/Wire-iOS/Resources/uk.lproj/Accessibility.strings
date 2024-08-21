@@ -163,8 +163,6 @@
 "supportSettings.backButton.description" = "Повернутися до підтримки";
 
 "aboutSettings.backButton.description" = "Повернутися до інформації про програму";
-"licenseInformationSettings.backButton.description" = "Повернутися до інформації про ліцензію";
-"licenseDetailsSettings.backButton.description" = "Повернутися до подробиць про ліцензію";
 
 "developerOptionsSettings.backButton.description" = "Повернутися до налаштувань розробника";
 
@@ -283,3 +281,28 @@
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Dismiss emoji keyboard";
 "reactionPicker.searchFieldPlaceholder.description" = "Search for emoji";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Close Secure guest link";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Generate password";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Tap to generate a random password";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Guest link password";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Enter a new password for the secure guest link";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Password validation error. Please make sure the password meets the requirements.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Confirm Guest Link Password";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Re-enter the password for verification";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
+"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";

@@ -20,19 +20,12 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+class SettingsBaseTableViewController: UIViewController {
 
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
     private let footerContainer = UIView()
-
-    var footer: UIView? {
-        didSet {
-            updateFooter(footer)
-        }
-    }
 
     final fileprivate class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
@@ -117,20 +110,6 @@ class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
           footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
         ])
     }
-
-    private func updateFooter(_ newFooter: UIView?) {
-        footer?.removeFromSuperview()
-        footerSeparator.isHidden = newFooter == nil
-        guard let newFooter else { return }
-        footerContainer.addSubview(newFooter)
-        [footerContainer, newFooter].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        NSLayoutConstraint.activate([
-            newFooter.topAnchor.constraint(equalTo: footerContainer.topAnchor),
-            newFooter.bottomAnchor.constraint(equalTo: footerContainer.bottomAnchor),
-            newFooter.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
-            newFooter.rightAnchor.constraint(equalTo: footerContainer.rightAnchor)
-        ])
-    }
 }
 
 extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataSource {
@@ -161,11 +140,16 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(group.title)
+        setupNavigationBar()
+    }
+
     required init(group: SettingsInternalGroupCellDescriptorType) {
         self.group = group
         self.sections = group.visibleItems
         super.init(style: group.style == .plain ? .plain : .grouped)
-        setupNavigationTitle()
 
         self.group.items.flatMap { return $0.cellDescriptors }.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
@@ -191,9 +175,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupTableView()
-        setupNavigationBar()
     }
 
     private func setupTableView() {
@@ -216,14 +198,13 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     private func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.Settings.CloseButton.description)
         setupAccessibility()
     }
 
     private func setupAccessibility() {
-        typealias Accessibility = L10n.Accessibility.Settings
-
-        navigationItem.rightBarButtonItem?.accessibilityLabel = Accessibility.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = group.accessibilityBackButtonText
     }
 
@@ -280,10 +261,11 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
-        let property = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
+        let sectionDescriptor = sections[indexPath.section]
+        let property = sectionDescriptor.visibleCellDescriptors[indexPath.row]
+        let cell = tableView.cellForRow(at: indexPath)!
 
-        property.select(SettingsPropertyValue.none)
+        property.select(SettingsPropertyValue.none, sender: cell)
         tableView.deselectRow(at: indexPath, animated: false)
     }
 
@@ -307,10 +289,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         if let headerFooterView = view as? UITableViewHeaderFooterView {
             headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionFooter
         }
-    }
-
-    private func setupNavigationTitle() {
-        navigationItem.setupNavigationBarTitle(title: group.title.capitalized)
     }
 
 }

@@ -58,7 +58,6 @@ final class LocationSelectionViewController: UIViewController {
         return button
     }()
 
-    let locationButtonContainer = UIView()
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
     private let mapViewController = MapViewController()
@@ -93,7 +92,7 @@ final class LocationSelectionViewController: UIViewController {
             mapViewController.mapView.restoreLocation(animated: animated)
         }
         appLocationManager.requestLocationAuthorization()
-        endEditing()
+        view.window?.endEditing(true)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -163,13 +162,6 @@ final class LocationSelectionViewController: UIViewController {
     }
 
     // MARK: - Helpers
-
-    private func updateUserLocation() {
-        mapViewController.mapView.showsUserLocation = appLocationManager.userLocationAuthorized
-        if appLocationManager.userLocationAuthorized {
-            appLocationManager.startUpdatingLocation()
-        }
-    }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSystem
 
 protocol TextSearchInputViewDelegate: AnyObject {
@@ -62,10 +62,8 @@ final class TextSearchInputView: UIView {
 
         backgroundColor = SemanticColors.View.backgroundDefault
 
-        iconView.setIcon(.search,
-                         size: .tiny,
-                         color: SearchBarColors.backgroundButton)
-
+        iconView.setTemplateIcon(.search, size: .tiny)
+        iconView.tintColor = SearchBarColors.backgroundButton
         iconView.contentMode = .center
         searchInput.delegate = self
         searchInput.autocorrectionType = .no

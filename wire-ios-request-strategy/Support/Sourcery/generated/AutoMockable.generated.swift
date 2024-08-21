@@ -588,6 +588,53 @@ public class MockEnrollE2EICertificateUseCaseProtocol: EnrollE2EICertificateUseC
 
 }
 
+public class MockEventDecoderProtocol: EventDecoderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - decryptAndStoreEvents
+
+    public var decryptAndStoreEventsPublicKeys_Invocations: [(events: [ZMUpdateEvent], publicKeys: EARPublicKeys?)] = []
+    public var decryptAndStoreEventsPublicKeys_MockError: Error?
+    public var decryptAndStoreEventsPublicKeys_MockMethod: (([ZMUpdateEvent], EARPublicKeys?) async throws -> [ZMUpdateEvent])?
+    public var decryptAndStoreEventsPublicKeys_MockValue: [ZMUpdateEvent]?
+
+    public func decryptAndStoreEvents(_ events: [ZMUpdateEvent], publicKeys: EARPublicKeys?) async throws -> [ZMUpdateEvent] {
+        decryptAndStoreEventsPublicKeys_Invocations.append((events: events, publicKeys: publicKeys))
+
+        if let error = decryptAndStoreEventsPublicKeys_MockError {
+            throw error
+        }
+
+        if let mock = decryptAndStoreEventsPublicKeys_MockMethod {
+            return try await mock(events, publicKeys)
+        } else if let mock = decryptAndStoreEventsPublicKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `decryptAndStoreEventsPublicKeys`")
+        }
+    }
+
+    // MARK: - processStoredEvents
+
+    public var processStoredEventsWithCallEventsOnly_Invocations: [(privateKeys: EARPrivateKeys?, callEventsOnly: Bool, block: ([ZMUpdateEvent]) async -> Void)] = []
+    public var processStoredEventsWithCallEventsOnly_MockMethod: ((EARPrivateKeys?, Bool, @escaping ([ZMUpdateEvent]) async -> Void) async -> Void)?
+
+    public func processStoredEvents(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool, _ block: @escaping ([ZMUpdateEvent]) async -> Void) async {
+        processStoredEventsWithCallEventsOnly_Invocations.append((privateKeys: privateKeys, callEventsOnly: callEventsOnly, block: block))
+
+        guard let mock = processStoredEventsWithCallEventsOnly_MockMethod else {
+            fatalError("no mock for `processStoredEventsWithCallEventsOnly`")
+        }
+
+        await mock(privateKeys, callEventsOnly, block)
+    }
+
+}
+
 class MockMLSClientIDsProviding: MLSClientIDsProviding {
 
     // MARK: - Life cycle
@@ -1091,22 +1138,22 @@ public class MockUserClientAPI: UserClientAPI {
 
     // MARK: - deleteUserClient
 
-    public var deleteUserClientClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
-    public var deleteUserClientClientIdCredentials_MockError: Error?
-    public var deleteUserClientClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+    public var deleteUserClientClientIdPassword_Invocations: [(clientId: String, password: String)] = []
+    public var deleteUserClientClientIdPassword_MockError: Error?
+    public var deleteUserClientClientIdPassword_MockMethod: ((String, String) async throws -> Void)?
 
-    public func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws {
-        deleteUserClientClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+    public func deleteUserClient(clientId: String, password: String) async throws {
+        deleteUserClientClientIdPassword_Invocations.append((clientId: clientId, password: password))
 
-        if let error = deleteUserClientClientIdCredentials_MockError {
+        if let error = deleteUserClientClientIdPassword_MockError {
             throw error
         }
 
-        guard let mock = deleteUserClientClientIdCredentials_MockMethod else {
-            fatalError("no mock for `deleteUserClientClientIdCredentials`")
+        guard let mock = deleteUserClientClientIdPassword_MockMethod else {
+            fatalError("no mock for `deleteUserClientClientIdPassword`")
         }
 
-        try await mock(clientId, credentials)
+        try await mock(clientId, password)
     }
 
 }

@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
 import WireCommonComponents
+import WireDesign
 import XCTest
+
+@testable import Wire
 
 private class MockPulsingIconImageView: PulsingIconImageView {
     var didStartPulsing: Bool = false

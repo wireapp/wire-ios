@@ -62,8 +62,6 @@
                                          using:^(NotificationInContext * note) {
                                              [self pushChannelDidChange:note];
                                          }];
-
-    [self setCurrentAPIVersion:APIVersionV0];
 }
 
 - (void)tearDown;
@@ -79,7 +77,7 @@
     self.mockUpdateEventProcessor = nil;
     [self.sut tearDown];
     self.sut = nil;
-    [self resetCurrentAPIVersion];
+
     [super tearDown];
 }
 
@@ -167,7 +165,8 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self clearCurrentAPIVersion];
+    [self enableBackendInfoMocking];
+    [self setBackendInfoAPIVersionNil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"
@@ -182,6 +181,8 @@
     // then
     XCTAssertFalse(self.mockRequestStrategy.nextRequestCalled);
     XCTAssertNil(self.mockTransportSesssion.lastEnqueuedRequest);
+
+    [self resetBackendInfoMocking];
 }
 
 - (void)testThatItSendsAsManyCallsAsTheTransportSessionCanHandle
@@ -270,7 +271,7 @@
 {
     // given
 
-    // FIXME: [jacob] use a mock sync status
+    // FIXME: [WPB-9091] use a mock sync status
     // simulate being online
     [self.syncStatus pushChannelDidOpen];
     while (self.syncStatus.isSyncing) {

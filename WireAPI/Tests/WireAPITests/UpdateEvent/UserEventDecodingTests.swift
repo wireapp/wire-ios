@@ -25,7 +25,7 @@ final class UserEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -38,7 +38,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserClientAdd")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -52,7 +55,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserClientRemove")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -66,7 +72,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserConnection")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -80,7 +89,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserContactJoin")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -94,7 +106,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserDelete")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -108,7 +123,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdDisable")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -122,7 +140,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdEnable")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -136,7 +157,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserLegalholdRequest")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -150,7 +174,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetReadReceipts")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -164,7 +191,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetTypingIndicators")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -178,7 +208,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetConversationLabels")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -192,7 +225,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesSetUnknownProperty")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -206,7 +242,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserPropertiesDelete")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -220,7 +259,10 @@ final class UserEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "UserUpdate")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -231,19 +273,23 @@ final class UserEventDecodingTests: XCTestCase {
 
     private enum Scaffolding {
 
-        static func date(from string: String) -> Date {
+        static func fractionalDate(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+        }
+
+        static func date(from string: String) -> Date {
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
 
         static let clientAddEvent = UserClientAddEvent(
             client: UserClient(
                 id: "2a1fd72806d84e26",
                 type: .permanent,
-                activationDate: date(from: "2024-06-04T15:03:07.598Z"),
+                activationDate: fractionalDate(from: "2024-06-04T15:03:07.598Z"),
                 label: "Alice's work phone",
                 model: "iPhone 20",
                 deviceClass: .phone,
-                lastActiveDate: date(from: "2024-06-04T15:03:07.598Z"),
+                lastActiveDate: date(from: "2024-06-04T15:03:07Z"),
                 mlsPublicKeys: MLSPublicKeys(
                     ed25519: "ed25519_key",
                     ed448: "ed448_key",
@@ -263,18 +309,18 @@ final class UserEventDecodingTests: XCTestCase {
         static let connectionEvent = UserConnectionEvent(
             userName: "Alice McGee",
             connection: Connection(
-                senderId: UUID(uuidString: "67b39b90-bd3c-41dd-ab58-35905afda19c")!,
-                receiverId: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
-                receiverQualifiedId: QualifiedID(
+                senderID: UUID(uuidString: "67b39b90-bd3c-41dd-ab58-35905afda19c")!,
+                receiverID: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
+                receiverQualifiedID: QualifiedID(
                     uuid: UUID(uuidString: "7fdaac60-68cc-4c3b-b337-8202506a2db6")!,
                     domain: "example.com"
                 ),
-                conversationId: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
-                qualifiedConversationId: QualifiedID(
+                conversationID: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
+                qualifiedConversationID: QualifiedID(
                     uuid: UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     domain: "example.com"
                 ),
-                lastUpdate: date(from: "2024-06-05T08:34:21.766Z"),
+                lastUpdate: date(from: "2024-06-05T08:34:21Z"),
                 status: .accepted
             )
         )
@@ -296,7 +342,7 @@ final class UserEventDecodingTests: XCTestCase {
             userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!,
             clientID: "abcd1234",
             lastPrekey: Prekey(
-                id: 12345,
+                id: 12_345,
                 base64EncodedKey: "foo"
             )
         )

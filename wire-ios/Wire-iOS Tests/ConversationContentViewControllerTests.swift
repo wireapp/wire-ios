@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
@@ -42,7 +43,12 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
 
         userSession = UserSessionMock()
 
-        sut = ConversationContentViewController(conversation: mockConversation, mediaPlaybackManager: nil, userSession: userSession)
+        sut = ConversationContentViewController(
+            conversation: mockConversation,
+            mediaPlaybackManager: nil,
+            userSession: userSession,
+            mainCoordinator: .mock
+        )
 
         // Call the setup codes in viewDidLoad
         sut.loadViewIfNeeded()
@@ -66,6 +72,6 @@ final class ConversationContentViewControllerTests: XCTestCase, CoreDataFixtureT
         let message = MockMessageFactory.textMessage(withText: "test")
         sut.messageAction(actionId: .delete, for: message, view: view)
 
-        try verify(matching: sut.deletionDialogPresenter!.deleteAlert(message: mockMessage, sourceView: view, userSession: userSession))
+        try verify(matching: sut.deletionDialogPresenter!.deleteAlert(message: mockMessage, sourceView: view, userSession: userSession) { _ in })
     }
 }

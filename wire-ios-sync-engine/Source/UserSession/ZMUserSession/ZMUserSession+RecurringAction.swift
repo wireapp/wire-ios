@@ -23,6 +23,8 @@ extension ZMUserSession {
 
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
+            guard DeveloperFlag.enableMLSSupport.isOn else { return }
+
             Task { [weak self] in
                 do {
                     try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()

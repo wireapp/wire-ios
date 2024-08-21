@@ -38,9 +38,8 @@ public final class AutomationHelper: NSObject {
     public static let sharedHelper = AutomationHelper()
     /// Whether analytics should be used
     public var useAnalytics: Bool {
-    // swiftlint:disable todo_requires_jira_link
+    // swiftlint:disable:next todo_requires_jira_link
     // TODO: get it from xcconfig?
-    // swiftlint:enable todo_requires_jira_link
     // return UserDefaults.standard.bool(forKey: "UseAnalytics")
         return true
     }
@@ -106,10 +105,8 @@ public final class AutomationHelper: NSObject {
         }
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
-        if
-            let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
-            let apiVersion = Int32(value)
-        {
+        if let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
+            let apiVersion = Int32(value) {
             preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 

@@ -25,14 +25,14 @@ import XCTest
 
 final class UserClientTests: ZMBaseManagedObjectTest {
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
     }
 
-    override class func tearDown() {
+    override static func tearDown() {
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
@@ -438,7 +438,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.numberOfKeysRemaining = 1
 
             // when
-            selfClient.decrementNumberOfRemainingKeys()
+            selfClient.decrementNumberOfRemainingProteusKeys()
 
             // then
             XCTAssertTrue(selfClient.modifiedKeys!.contains(ZMUserClientNumberOfKeysRemainingKey))
@@ -453,7 +453,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.numberOfKeysRemaining = 2
 
             // when
-            selfClient.decrementNumberOfRemainingKeys()
+            selfClient.decrementNumberOfRemainingProteusKeys()
 
             // then
             XCTAssertNil(selfClient.modifiedKeys)
@@ -909,9 +909,8 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }
@@ -975,9 +974,8 @@ extension UserClientTests {
             otherClient.user = otherUser
             otherClient.needsSessionMigration = true
 
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             }

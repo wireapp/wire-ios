@@ -128,11 +128,6 @@ extension SessionManager {
     public func showUserProfile(user: UserType) {
         self.presentationDelegate?.showUserProfile(user: user)
     }
-
-    public func showConnectionRequest(userId: UUID) {
-        self.presentationDelegate?.showConnectionRequest(userId: userId)
-    }
-
 }
 
 extension SessionManager {

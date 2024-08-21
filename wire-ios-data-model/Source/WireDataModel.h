@@ -28,6 +28,7 @@
 
 #import <WireDataModel/NSManagedObjectContext+zmessaging.h>
 #import <WireDataModel/NSManagedObjectContext+tests.h>
+#import <WireDataModel/NSManagedObjectContext+executeFetchRequestOrAssert.h>
 
 #import <WireDataModel/ZMUser.h>
 #import <WireDataModel/ZMUser+Internal.h>
@@ -40,9 +41,6 @@
 #import <WireDataModel/ZMConversationSecurityLevel.h>
 
 #import <WireDataModel/ZMConnection+Internal.h>
-
-#import <WireDataModel/ZMConversationList.h>
-#import <WireDataModel/ZMConversationList+Internal.h>
 
 #import <WireDataModel/ZMMessage.h>
 #import <WireDataModel/ZMMessage+Internal.h>

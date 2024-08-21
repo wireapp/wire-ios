@@ -26,89 +26,9 @@ import XCTest
 private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
 
-extension ViewImageConfig: Hashable {
-
-    public static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
-        lhs.size == rhs.size && lhs.traits == rhs.traits
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(size?.width)
-        hasher.combine(size?.height)
-        hasher.combine(traits)
-    }
-}
-
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
-
-    /// snapshot file name suffixs
-    static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [ViewImageConfig: String] {
-        return [
-            .iPhoneSe(orientation): "iPhone-4_0_Inch",
-            .iPhone8(orientation): "iPhone-4_7_Inch",
-            .iPhone8Plus(orientation): "iPhone-5_5_Inch",
-            .iPhoneX(orientation): "iPhone-5_8_Inch",
-            .iPhoneXsMax(orientation): "iPhone-6_5_Inch"
-        ]
-    }
-
-    static let padConfigNames: [SnapshotTesting.ViewImageConfig: String] = [
-        .iPadMini(.landscape): "iPad-landscape",
-        .iPadMini(.portrait): "iPad-portrait"]
-
-    func verifyAllIPhoneSizes(matching value: UIViewController,
-                              orientation: ViewImageConfig.Orientation = .portrait,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-
-        for(config, name) in XCTestCase.phoneConfigNames(orientation: orientation) {
-            verify(matching: value,
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
-    }
-
-    func verifyAllIPhoneSizes(createSut: (CGSize) -> UIViewController,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-
-        for(config, name) in XCTestCase.phoneConfigNames() {
-            verify(matching: createSut(config.size!),
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
-    }
-
-    func verifyInAllDeviceSizes(matching value: UIViewController,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-
-        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
-
-        for(config, name) in allDevices {
-            if let deviceMockable = value as? DeviceMockable {
-                (deviceMockable.device as? MockDevice)?.userInterfaceIdiom = config.traits.userInterfaceIdiom
-            }
-
-            verify(matching: value,
-                   as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
-                   named: name,
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
-    }
 
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
@@ -149,25 +69,9 @@ extension XCTestCase {
             nameWithProperty = "\(width)"
         }
 
-        verify(matching: value,
-               named: nameWithProperty,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInAllPhoneWidths(
-        matching value: UIViewController,
-        snapshotBackgroundColor: UIColor? = nil,
-        named name: String? = nil,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        verifyInAllPhoneWidths(
-            matching: value.view,
-            snapshotBackgroundColor: snapshotBackgroundColor,
-            named: name,
+        verify(
+            matching: value,
+            named: nameWithProperty,
             file: file,
             testName: testName,
             line: line
@@ -189,126 +93,6 @@ extension XCTestCase {
                        file: file,
                        testName: testName,
                        line: line)
-    }
-
-    // MARK: - verify the snapshots in both dark and light scheme
-
-    func verifyInAllColorSchemes(createSut: () -> UIViewController,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
-
-        verifyInDarkScheme(createSut: createSut,
-                           name: "DarkTheme",
-                           file: file,
-                           testName: testName,
-                           line: line)
-
-        verifyInLightScheme(createSut: createSut,
-                            name: "LightTheme",
-                            file: file,
-                            testName: testName,
-                            line: line)
-    }
-
-    func verifyViewInDarkScheme(createSut: () -> UIView,
-                                name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .dark
-        verify(matching: createSut(),
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyViewInLightScheme(createSut: () -> UIView,
-                                 name: String? = nil,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-        verify(matching: createSut(),
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInDarkScheme(createSut: () -> UIViewController,
-                            name: String? = nil,
-                            file: StaticString = #file,
-                            testName: String = #function,
-                            line: UInt = #line) {
-
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .dark
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInLightScheme(createSut: () -> UIViewController,
-                             name: String? = nil,
-                             file: StaticString = #file,
-                             testName: String = #function,
-                             line: UInt = #line) {
-
-        let sut = createSut()
-        sut.overrideUserInterfaceStyle = .light
-
-        verify(matching: sut,
-               named: name,
-               file: file,
-               testName: testName,
-               line: line)
-    }
-
-    func verifyInAllColorSchemes(matching: UIView,
-                                 file: StaticString = #file,
-                                 testName: String = #function,
-                                 line: UInt = #line) {
-        if var themeable = matching as? Themeable {
-            themeable.colorSchemeVariant = .light
-            matching.overrideUserInterfaceStyle = .light
-
-            verify(matching: matching,
-                   named: "LightTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-            themeable.colorSchemeVariant = .dark
-            matching.overrideUserInterfaceStyle = .dark
-
-            verify(matching: matching,
-                   named: "DarkTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-        } else {
-            matching.overrideUserInterfaceStyle = .light
-
-            verify(matching: matching,
-                   named: "LightTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-
-            matching.overrideUserInterfaceStyle = .dark
-
-            verify(matching: matching,
-                   named: "DarkTheme",
-                   file: file,
-                   testName: testName,
-                   line: line)
-        }
     }
 
 }
@@ -339,7 +123,7 @@ extension XCTestCase {
             presentViewController(value)
         }
 
-        let failure = verifySnapshot(matching: value,
+        let failure = verifySnapshot(of: value,
                                      as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
                                      snapshotDirectory: snapshotDirectory(file: file),
                                      file: file, testName: testName, line: line)
@@ -352,33 +136,7 @@ extension XCTestCase {
         }
     }
 
-    func verify(matching value: UIViewController,
-                customSize: CGSize? = nil,
-                named name: String? = nil,
-                record recording: Bool = false,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        var config: ViewImageConfig?
-        if let customSize {
-            config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
-                                     size: customSize,
-                                     traits: UITraitCollection())
-        }
-
-        let failure = verifySnapshot(matching: value,
-                                     as: config == nil ? .image(precision: precision, perceptualPrecision: perceptualPrecision) : .image(on: config!, precision: precision, perceptualPrecision: perceptualPrecision),
-                                     named: name,
-                                     record: recording,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
+    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
     func verify(matching value: UIView,
                 named name: String? = nil,
                 file: StaticString = #file,
@@ -394,75 +152,8 @@ extension XCTestCase {
                                      line: line)
 
         XCTAssertNil(failure, file: file, line: line)
-
     }
 
-    func verifyForDynamicType(matching value: UIView,
-                              named name: String? = nil,
-                              file: StaticString = #file,
-                              testName: String = #function,
-                              line: UInt = #line) {
-        [
-            "extra-small": UIContentSizeCategory.extraSmall,
-            "small": .small,
-            "medium": .medium,
-            "large": .large,
-            "extra-large": .extraLarge,
-            "extra-extra-large": .extraExtraLarge,
-            "extra-extra-extra-large": .extraExtraExtraLarge,
-            "accessibility-medium": .accessibilityMedium,
-            "accessibility-large": .accessibilityLarge,
-            "accessibility-extra-large": .accessibilityExtraLarge,
-            "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
-            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
-        ].forEach { name, contentSize in
-            let failure = verifySnapshot(matching: value,
-                                         as: .image(precision: precision, perceptualPrecision: perceptualPrecision, traits: .init(preferredContentSizeCategory: contentSize)),
-                                         named: name,
-                                         snapshotDirectory: snapshotDirectory(file: file),
-                                         file: file,
-                                         testName: testName,
-                                         line: line)
-
-            XCTAssertNil(failure, file: file, line: line)
-        }
-
-    }
-
-    func verify(matching value: UIImage,
-                named name: String? = nil,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        let failure = verifySnapshot(matching: value,
-                                     as: .image,
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
-    func verify<Value, Format>(matching value: Value,
-                               as snapshotting: Snapshotting<Value, Format>,
-                               named name: String? = nil,
-                               file: StaticString = #file,
-                               testName: String = #function,
-                               line: UInt = #line) {
-
-        let failure = verifySnapshot(matching: value,
-                                     as: snapshotting,
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
 }
 
 extension Snapshotting where Value == UIAlertController, Format == UIImage {

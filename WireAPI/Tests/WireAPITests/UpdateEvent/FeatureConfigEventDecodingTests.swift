@@ -25,7 +25,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        decoder = .defaultDecoder
+        decoder = .init()
     }
 
     override func tearDown() {
@@ -38,7 +38,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateAppLock")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -52,7 +55,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateClassifiedDomains")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -66,7 +72,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateConferenceCalling")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -80,7 +89,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateConversationGuestLinks")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -94,7 +106,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateDigitalSignature")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -108,7 +123,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateEndToEndIdentity")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -122,7 +140,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateFileSharing")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -136,7 +157,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateMLS")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -150,7 +174,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateMLSMigration")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -164,7 +191,10 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         let mockEventData = try MockJSONPayloadResource(name: "FeatureConfigUpdateSelfDeletingMessages")
 
         // When
-        let decodedEvent = try decoder.decode(UpdateEvent.self, from: mockEventData.jsonData)
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
 
         // Then
         XCTAssertEqual(
@@ -176,7 +206,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
     private enum Scaffolding {
 
         static func date(from string: String) -> Date {
-            ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+            ISO8601DateFormatter.internetDateTime.date(from: string)!
         }
 
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
@@ -277,8 +307,8 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
             featureConfig: .mlsMigration(
                 MLSMigrationFeatureConfig(
                     status: .enabled,
-                    startTime: date(from: "2024-06-04T15:03:07.598Z"),
-                    finaliseRegardlessAfter: date(from: "2025-06-04T15:03:07.598Z")
+                    startTime: date(from: "2024-06-04T15:03:07Z"),
+                    finaliseRegardlessAfter: date(from: "2025-06-04T15:03:07Z")
                 )
             )
         )

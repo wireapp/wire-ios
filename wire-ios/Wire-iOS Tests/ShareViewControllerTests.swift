@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireLinkPreview
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class MockShareViewControllerConversation: SwiftMockConversation {}
 
@@ -34,14 +36,17 @@ extension MockShareViewControllerConversation: StableRandomParticipantsProvider 
 	}
 }
 
+// TODO: [WPB-10223] Fix the snapshots
 final class ShareViewControllerTests: XCTestCase {
+
     private var groupConversation: MockShareViewControllerConversation!
     private var oneToOneConversation: MockShareViewControllerConversation!
     private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         let mockUser = MockUserType.createDefaultOtherUser()
 
         groupConversation = MockShareViewControllerConversation()
@@ -56,6 +61,7 @@ final class ShareViewControllerTests: XCTestCase {
 
     override func tearDown() {
         disableDarkColorScheme()
+        snapshotHelper = nil
         groupConversation = nil
         oneToOneConversation = nil
         sut = nil
@@ -81,7 +87,7 @@ final class ShareViewControllerTests: XCTestCase {
                   allowsMultipleSelection: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectlyShareViewController_OneLineTextMessage() {
@@ -122,7 +128,7 @@ final class ShareViewControllerTests: XCTestCase {
 
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
 
-        verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
     }
 
     func testThatItRendersCorrectlyShareViewController_Photos() {
@@ -137,7 +143,7 @@ final class ShareViewControllerTests: XCTestCase {
         activateDarkColorScheme()
 
         XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
-        verifyInAllDeviceSizes(matching: sut)
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut)
     }
 
     private func createSut(message: MockShareableMessage,
@@ -153,21 +159,12 @@ final class ShareViewControllerTests: XCTestCase {
 
     /// create a SUT with a group conversation and a one-to-one conversation and verify snapshot
     private func makeTestForShareViewController(message: MockShareableMessage,
-                                                inAllColorSchemes: Bool = false,
                                                 file: StaticString = #file,
                                                 testName: String = #function,
                                                 line: UInt = #line) {
         createSut(message: message)
 
-        verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
-
-        if inAllColorSchemes {
-            activateDarkColorScheme()
-
-            createSut(message: message)
-
-            verifyInAllDeviceSizes(matching: sut, file: file, testName: testName + "dark", line: line)
-        }
+        snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
 
     }
 

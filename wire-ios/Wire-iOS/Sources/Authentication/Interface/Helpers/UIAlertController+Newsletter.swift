@@ -34,7 +34,7 @@ extension UIAlertController {
                                                 preferredStyle: .alert)
 
         let privacyPolicyActionHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-            let browserViewController = BrowserViewController(url: URL.wr_privacyPolicy.appendingLocaleParameter)
+            let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
 
             browserViewController.completion = {
                 UIAlertController.showNewsletterSubscriptionDialog(over: viewController, completionHandler: completionHandler)
@@ -61,7 +61,7 @@ extension UIAlertController {
 
         UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
         viewController.present(alertController, animated: true) {
-            UIApplication.shared.firstKeyWindow?.endEditing(true)
+            AppDelegate.shared.mainWindow?.endEditing(true)
         }
     }
 
@@ -81,23 +81,11 @@ extension UIAlertController {
     }
 }
 
-extension AuthenticationCoordinatorAlert {
-
-    static func makeMarketingConsentAlert() -> AuthenticationCoordinatorAlert {
-        typealias Consent = L10n.Localizable.NewsOffers.Consent
-
-        return AuthenticationCoordinatorAlert(title: Consent.title,
-                                              message: Consent.message,
-                                              actions: [.privacyPolicy, .decline, .accept])
-    }
-
-}
-
 private extension AuthenticationCoordinatorAlertAction {
 
     static var privacyPolicy: Self {
         Self.init(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
-                  coordinatorActions: [.showLoadingView, .openURL(URL.wr_privacyPolicy.appendingLocaleParameter)])
+                  coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])
     }
 
     static var decline: Self {

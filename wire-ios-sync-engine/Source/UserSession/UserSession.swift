@@ -29,6 +29,8 @@ public protocol UserSession: AnyObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: structure mixed methods and properties in sections
 
+    var userProfile: UserProfile { get }
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
@@ -168,14 +170,14 @@ public protocol UserSession: AnyObject {
 
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
-        for list: ZMConversationList
+        for list: ConversationList
     ) -> NSObjectProtocol
 
-    func conversationList() -> ZMConversationList
+    func conversationList() -> ConversationList
 
-    func pendingConnectionConversationsInUserSession() -> ZMConversationList
+    func pendingConnectionConversationsInUserSession() -> ConversationList
 
-    func archivedConversationsInUserSession() -> ZMConversationList
+    func archivedConversationsInUserSession() -> ConversationList
 
     var ringingCallConversation: ZMConversation? { get }
 
@@ -212,7 +214,7 @@ public protocol UserSession: AnyObject {
 
     func cancelProxiedRequest(_ request: ProxyRequest)
 
-    var networkState: ZMNetworkState { get }
+    var networkState: NetworkState { get }
 
     var selfUserClient: UserClient? { get }
 
@@ -230,6 +232,15 @@ public protocol UserSession: AnyObject {
     // MARK: MLS
 
     var mlsGroupVerification: (any MLSGroupVerificationProtocol)? { get }
+
+    // MARK: Notifications
+
+    /// Provides a unique context to bind notifications this user session.
+    var notificationContext: any NotificationContext { get }
+
+    // MARK: Context provider
+
+    var contextProvider: any ContextProvider { get }
 
     // MARK: Use Cases
 

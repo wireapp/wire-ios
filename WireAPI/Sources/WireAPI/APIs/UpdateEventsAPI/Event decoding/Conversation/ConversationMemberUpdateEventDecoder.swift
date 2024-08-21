@@ -34,7 +34,7 @@ struct ConversationMemberUpdateEventDecoder {
         )
 
         let timestamp = try container.decode(
-            Date.self,
+            UTCTimeMillis.self,
             forKey: .timestamp
         )
 
@@ -46,14 +46,14 @@ struct ConversationMemberUpdateEventDecoder {
         return ConversationMemberUpdateEvent(
             conversationID: conversationID,
             senderID: senderID,
-            timestamp: timestamp,
+            timestamp: timestamp.date,
             memberChange: ConversationMemberChange(
                 id: payload.userID,
                 newRoleName: payload.role,
                 newMuteStatus: payload.muteStatus,
-                muteStatusReferenceDate: payload.muteStatusReference,
+                muteStatusReferenceDate: payload.muteStatusReference?.date,
                 newArchivedStatus: payload.archivedStatus,
-                archivedStatusReferenceDate: payload.archivedStatusReference
+                archivedStatusReferenceDate: payload.archivedStatusReference?.date
             )
         )
     }
@@ -63,9 +63,9 @@ struct ConversationMemberUpdateEventDecoder {
         let userID: UserID
         let role: String?
         let muteStatus: Int?
-        let muteStatusReference: Date?
+        let muteStatusReference: UTCTimeMillis?
         let archivedStatus: Bool?
-        let archivedStatusReference: Date?
+        let archivedStatusReference: UTCTimeMillis?
 
         enum CodingKeys: String, CodingKey {
 

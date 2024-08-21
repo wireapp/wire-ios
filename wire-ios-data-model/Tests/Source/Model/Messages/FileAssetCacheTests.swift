@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireDataModelSupport
+import WireTesting
 import XCTest
+
+@testable import WireDataModel
 
 class FileAssetCacheTests: XCTestCase {
 
@@ -46,7 +48,7 @@ class FileAssetCacheTests: XCTestCase {
         }
 
         location = try XCTUnwrap(
-            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            FileManager.default.randomCacheURL
         )
 
         try FileManager.default.removeItemIfExists(at: location!)
@@ -80,10 +82,10 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
-        let data1_plain = "data1_plain".data(using: String.Encoding.utf8)!
-        let data2_plain = "data2_plain".data(using: String.Encoding.utf8)!
-        let data1_enc = "data1_enc".data(using: String.Encoding.utf8)!
-        let data2_enc = "data2_enc".data(using: String.Encoding.utf8)!
+        let data1_plain = Data("data1_plain".utf8)
+        let data2_plain = Data("data2_plain".utf8)
+        let data1_enc = Data("data1_enc".utf8)
+        let data2_enc = Data("data2_enc".utf8)
 
         sut.storeEncryptedFile(data: data1_enc, for: message1)
         sut.storeEncryptedFile(data: data2_enc, for: message2)
@@ -108,7 +110,7 @@ class FileAssetCacheTests: XCTestCase {
         message.serverTimestamp = Date(timeIntervalSinceReferenceDate: 1000)
 
         // when
-        sut.storeOriginalFile(data: "data1_plain".data(using: String.Encoding.utf8)!, for: message)
+        sut.storeOriginalFile(data: Data("data1_plain".utf8), for: message)
 
         // then
         let url = try XCTUnwrap(sut.accessAssetURL(message))
@@ -262,6 +264,25 @@ class FileAssetCacheTests: XCTestCase {
         // then
         XCTAssertNil(result)
         XCTAssertFalse(sut.hasEncryptedMediumImageData(for: message))
+    }
+
+    func testThatItDoesNotDecryptAFileIfSHA256IsEmpty() {
+
+        // given
+        let message = createMessageForCaching()
+        sut.storeEncryptedMediumImage(data: testData(), for: message)
+        XCTAssertTrue(sut.hasEncryptedMediumImageData(for: message))
+
+        // when
+        let result = sut.decryptedMediumImageData(
+            for: message,
+            encryptionKey: .randomEncryptionKey(),
+            sha256Digest: Data()
+        )
+
+        // then
+        XCTAssertNil(result)
+        XCTAssertTrue(sut.hasEncryptedMediumImageData(for: message))
     }
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3

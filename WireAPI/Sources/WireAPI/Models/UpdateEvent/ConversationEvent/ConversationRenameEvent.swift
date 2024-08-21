@@ -20,7 +20,7 @@ import Foundation
 
 /// An event where the conversation's name was changed.
 
-public struct ConversationRenameEvent: Equatable {
+public struct ConversationRenameEvent: Equatable, Codable {
 
     /// The id of the conversation.
 
@@ -37,5 +37,25 @@ public struct ConversationRenameEvent: Equatable {
     /// The new name of the conversation.
 
     public let newName: String
+
+    /// Create a new `ConversationRenameEvent`.
+    ///
+    /// - Parameters:
+    ///   - conversationID: The id of the conversation.
+    ///   - senderID: The id of the user who renamed the conversation.
+    ///   - timestamp: When the conversation was renamed.
+    ///   - newName: The new name of the conversation.
+
+    public init(
+        conversationID: ConversationID,
+        senderID: UserID,
+        timestamp: Date,
+        newName: String
+    ) {
+        self.conversationID = conversationID
+        self.senderID = senderID
+        self.timestamp = timestamp
+        self.newName = newName
+    }
 
 }

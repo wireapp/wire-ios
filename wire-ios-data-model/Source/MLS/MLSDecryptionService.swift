@@ -139,13 +139,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
         var groupID = groupID
         var debugInfo = "parentID: \(groupID)"
-        if
-            let type = subconversationType,
+        if let type = subconversationType,
             let subconversationGroupID = await subconverationGroupIDRepository.fetchSubconversationGroupID(
                 forType: type,
                 parentGroupID: groupID
-            )
-        {
+            ) {
             groupID = subconversationGroupID
             debugInfo.append("; subconversationGroupID: \(subconversationGroupID)")
         }

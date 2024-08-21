@@ -22,9 +22,8 @@ import XCTest
 
 private final class MockBackupExcluder: BackupExcluder {}
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: test protocol instead
-// swiftlint:enable todo_requires_jira_link
 final class BackupExcluderTests: XCTestCase {
     private var sut: MockBackupExcluder!
     let filename = "test.txt"

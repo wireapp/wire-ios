@@ -32,13 +32,13 @@ protocol AuthenticatedRouterProtocol: AnyObject {
     func navigate(to destination: NavigationDestination)
 }
 
-final class AuthenticatedRouter: NSObject {
+final class AuthenticatedRouter {
 
     // MARK: - Private Property
 
     private let builder: AuthenticatedWireFrame
-    private let rootViewController: RootViewController
-    private let activeCallRouter: ActiveCallRouter
+    private let rootViewController: UIViewController
+    private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
@@ -57,7 +57,7 @@ final class AuthenticatedRouter: NSObject {
     // MARK: - Init
 
     init(
-        rootViewController: RootViewController,
+        rootViewController: UIViewController,
         account: Account,
         userSession: UserSession,
         featureRepositoryProvider: any FeatureRepositoryProvider,
@@ -65,7 +65,11 @@ final class AuthenticatedRouter: NSObject {
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
         self.rootViewController = rootViewController
-        activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
+        activeCallRouter = ActiveCallRouter(
+            rootViewController: rootViewController,
+            userSession: userSession,
+            topOverlayPresenter: .init(rootViewController: rootViewController)
+        )
 
         builder = AuthenticatedWireFrame(
             account: account,
@@ -75,8 +79,6 @@ final class AuthenticatedRouter: NSObject {
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
-
-        super.init()
 
         featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
@@ -126,10 +128,10 @@ final class AuthenticatedRouter: NSObject {
     }
 
     private func notifyRevokedCertificate() {
-        guard let session = SessionManager.shared else { return }
+        guard let sessionManager = SessionManager.shared else { return }
 
         let alert = UIAlertController.revokedCertificateWarning {
-            session.logoutCurrentSession()
+            sessionManager.logoutCurrentSession()
         }
 
         _viewController?.presentAlert(alert)

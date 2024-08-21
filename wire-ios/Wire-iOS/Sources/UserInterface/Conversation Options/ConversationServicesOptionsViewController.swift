@@ -19,18 +19,18 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 final class ConversationServicesOptionsViewController: UIViewController,
                                                        UITableViewDelegate,
                                                        UITableViewDataSource,
-                                                       SpinnerCapable,
                                                        ConversationServicesOptionsViewModelDelegate {
 
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
 
-    var dismissSpinner: SpinnerCompletion?
+    private lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
@@ -56,9 +56,11 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceConversationSettings.CloseButton.description
+
+        setupNavigationBarTitle(L10n.Localizable.GroupDetails.ServicesOptionsCell.title.capitalized)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Accessibility.ServiceConversationSettings.CloseButton.description)
     }
 
     @available(*, unavailable)
@@ -91,20 +93,28 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     // MARK: – ConversationOptionsViewModelDelegate
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel,
-                   didUpdateState state: ConversationServicesOptionsViewModel.State) {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didUpdateState state: ConversationServicesOptionsViewModel.State
+    ) {
+        activityIndicator.setIsActive(state.isLoading)
         tableView.reloadData()
-
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = state.isLoading
     }
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, didReceiveError error: Error) {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        didReceiveError error: Error
+    ) {
         present(UIAlertController.checkYourConnection(), animated: false)
     }
 
-    func viewModel(_ viewModel: ConversationServicesOptionsViewModel, sourceView: UIView? = nil, confirmRemovingServices completion: @escaping (Bool) -> Void) -> UIAlertController? {
+    func conversationServicesOptionsViewModel(
+        _ viewModel: ConversationServicesOptionsViewModel,
+        fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration,
+        confirmRemovingServices completion: @escaping (Bool) -> Void
+    ) -> UIAlertController? {
         let alertController = UIAlertController.confirmRemovingServices(completion)
-        alertController.configPopover(pointToView: sourceView ?? view)
+        alertController.configurePopoverPresentationController(using: fallbackActivityPopoverConfiguration)
         present(alertController, animated: true)
 
         return alertController
@@ -133,8 +143,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let cell = tableView.cellForRow(at: indexPath)
+        let cell = tableView.cellForRow(at: indexPath)!
         viewModel.state.rows[indexPath.row].action?(cell)
     }
-
 }

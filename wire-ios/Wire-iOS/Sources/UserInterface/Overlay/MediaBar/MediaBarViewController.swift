@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDesign
 
 final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?
@@ -49,10 +50,6 @@ final class MediaBarViewController: UIViewController {
         mediaBarView?.closeButton.addTarget(self, action: #selector(stop(_:)), for: .touchUpInside)
 
         updatePlayPauseButton()
-    }
-
-    private func updateTitleLabel() {
-        mediaBarView?.titleLabel.text = mediaPlaybackManager?.activeMediaPlayer?.title?.uppercasedWithCurrentLocale
     }
 
     func updatePlayPauseButton() {

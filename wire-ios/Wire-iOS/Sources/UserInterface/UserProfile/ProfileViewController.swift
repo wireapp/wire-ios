@@ -21,8 +21,6 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ProfileViewController")
-
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
     case devices
@@ -30,10 +28,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-}
-
-protocol BackButtonTitleDelegate: AnyObject {
-    func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String?
 }
 
 extension ZMConversationType {
@@ -48,6 +42,7 @@ extension ZMConversationType {
 }
 
 final class ProfileViewController: UIViewController {
+
     weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
@@ -58,6 +53,7 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
+    private let mainCoordinator: MainCoordinating
 
     // MARK: - init
 
@@ -68,7 +64,8 @@ final class ProfileViewController: UIViewController {
         context: ProfileViewControllerContext? = nil,
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
-        userSession: UserSession
+        userSession: UserSession,
+        mainCoordinator: some MainCoordinating
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {
@@ -95,15 +92,20 @@ final class ProfileViewController: UIViewController {
             profileActionsFactory: profileActionsFactory
         )
 
-        self.init(viewModel: viewModel)
-
-        setupKeyboardFrameNotification()
+        self.init(
+            viewModel: viewModel,
+            mainCoordinator: mainCoordinator
+        )
 
         self.viewControllerDismisser = viewControllerDismisser
     }
 
-    required init(viewModel: any ProfileViewControllerViewModeling) {
+    required init(
+        viewModel: some ProfileViewControllerViewModeling,
+        mainCoordinator: some MainCoordinating
+    ) {
         self.viewModel = viewModel
+        self.mainCoordinator = mainCoordinator
         super.init(nibName: nil, bundle: nil)
 
         viewModel.setConversationTransitionClosure { [weak self] conversation in
@@ -165,8 +167,6 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Profile.Details.title)
-
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
         view.addSubview(activityIndicator)
@@ -183,24 +183,9 @@ final class ProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
-    }
-
-    // MARK: - Keyboard frame observer
-
-    private func setupKeyboardFrameNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardFrameDidChange(notification:)),
-            name: UIResponder.keyboardDidChangeFrameNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    private func keyboardFrameDidChange(notification: Notification) {
-        updatePopoverFrame()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -208,9 +193,8 @@ final class ProfileViewController: UIViewController {
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
-        // swiftlint:enable todo_requires_jira_link
         let profileDetailsViewController = ProfileDetailsViewController(
             user: viewModel.user,
             viewer: viewModel.viewer,
@@ -383,14 +367,14 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
         if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
+            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
         } else {
             leftViewControllerRevealed = true
         }
 
-        dismiss(animated: true) { [weak self] in
-            self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.presentSettings()
+        dismiss(animated: true) {
+            self.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
+                self.mainCoordinator.showSettings()
             }
         }
     }
@@ -415,7 +399,12 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     @objc
     private func presentLegalHoldDetails() {
         let user = viewModel.user
-        LegalHoldDetailsViewController.present(in: self, user: user, userSession: viewModel.userSession)
+        LegalHoldDetailsViewController.present(
+            in: self,
+            user: user,
+            userSession: viewModel.userSession,
+            mainCoordinator: mainCoordinator
+        )
     }
 
     // MARK: Block
@@ -560,12 +549,13 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.rightBarButtonItem = navigationController?.closeItem()
+            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
             navigationItem.leftBarButtonItem = legalHoldItem
         } else {
             navigationItem.rightBarButtonItem = legalHoldItem
         }
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.DeviceDetails.BackButton.description
     }
 

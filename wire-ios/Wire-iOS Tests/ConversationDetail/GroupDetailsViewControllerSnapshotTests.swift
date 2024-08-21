@@ -16,19 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireUITesting
 import XCTest
+
+@testable import Wire
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
-    var sut: GroupDetailsViewController!
-    var mockConversation: MockGroupDetailsConversation!
-    var mockSelfUser: MockUserType!
-    var otherUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var mockMainCoordinator: MockMainCoordinator!
+    private var sut: GroupDetailsViewController!
+    private var mockConversation: MockGroupDetailsConversation!
+    private var mockSelfUser: MockUserType!
+    private var otherUser: MockUserType!
+    private var userSession: UserSessionMock!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
         mockConversation = MockGroupDetailsConversation()
         mockConversation.displayName = "iOS Team"
         mockConversation.securityLevel = .notSecure
@@ -49,11 +55,14 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockConversation = nil
         mockSelfUser = nil
         otherUser = nil
         userSession = nil
+        mockMainCoordinator = nil
+
         super.tearDown()
     }
 
@@ -86,11 +95,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForOptionsForTeamUserInNonTeamConversation_Partner() {
@@ -105,11 +115,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForOptionsForTeamUserInTeamConversation() {
@@ -131,11 +142,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForOptionsForTeamUserInTeamConversation_Partner() {
@@ -150,11 +162,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForOptionsForNonTeamUser() {
@@ -168,11 +181,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForOptionsForTeamUserInTeamConversation_Admins() throws {
@@ -188,10 +202,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForMlsConversation_withVerifiedStatus() throws {
@@ -206,11 +221,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     func testForMlsConversation_withNotVerifiedStatus() throws {
@@ -225,11 +241,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
 
     func testForProteusConversation_withVerifiedStatus() throws {
@@ -244,11 +261,11 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
         sut = GroupDetailsViewController(
             conversation: mockConversation,
             userSession: userSession,
+            mainCoordinator: mockMainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController())
+        snapshotHelper.verify(matching: sut.wrapInNavigationController())
     }
-
 }

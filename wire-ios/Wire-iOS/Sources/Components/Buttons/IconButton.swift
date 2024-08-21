@@ -17,16 +17,15 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDesign
 
 // This is temporary until we finish with the accessibility project
 // This is named NonLegacyIconButton for the simple reason to keep
 // file changes to the minimum instead of renaming the oroginal IconButton
 // class to something else and then had to make changes in a lot more files
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: - [AGIS] Get rid of this class as soon as we make all the appropriate changes to the original class
-// swiftlint:enable todo_requires_jira_link
 class NonLegacyIconButton: IconButton {
 
     override var isSelected: Bool {
@@ -64,12 +63,6 @@ class IconButton: ButtonWithLargerHitArea {
     var borderWidth: CGFloat = 0.5 {
         didSet {
             updateCircular()
-        }
-    }
-
-    var hasRoundCorners = false {
-        didSet {
-            updateCustomCornerRadius()
         }
     }
 
@@ -300,10 +293,6 @@ class IconButton: ButtonWithLargerHitArea {
 
         // When the button has border, set self.layer.cornerRadius to prevent border is covered by icon
         layer.cornerRadius = borderWidth > 0 ? radius : 0
-    }
-
-    func updateCustomCornerRadius() {
-        layer.cornerRadius = hasRoundCorners ? 6 : 0
     }
 
     private func updateForNewStateIfNeeded() {

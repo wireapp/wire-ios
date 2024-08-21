@@ -61,7 +61,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUserForID_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserSuccessResponseV0"
         )
 
@@ -74,14 +74,13 @@ final class UsersAPITests: XCTestCase {
         XCTAssertEqual(
             result,
             Scaffolding.user
-
         )
     }
 
     func testGetUsersForIDs_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUsersSuccessResponseV0"
         )
         let sut = UsersAPIV0(httpClient: httpClient)
@@ -98,7 +97,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_FailureResponse_NotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = UsersAPIV0(httpClient: httpClient)
 
         // Then
@@ -113,7 +112,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUserForID_SuccessResponse_200_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserSuccessResponseV4"
         )
 
@@ -128,13 +127,12 @@ final class UsersAPITests: XCTestCase {
         XCTAssertEqual(
             result,
             Scaffolding.user
-
         )
     }
 
     func testGetUsersForIDs_FailureResponse_NotFound_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = UsersAPIV4(httpClient: httpClient)
 
         // Then
@@ -147,7 +145,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUsersForIDs_SuccessResponse_200_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUsersSuccessResponseV4"
         )
         let sut = UsersAPIV4(httpClient: httpClient)
@@ -162,7 +160,7 @@ final class UsersAPITests: XCTestCase {
         )
     }
 
-    struct Scaffolding {
+    enum Scaffolding {
         static let teamID = UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
         static let userID = UserID(
             uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
@@ -181,7 +179,7 @@ final class UsersAPITests: XCTestCase {
             )],
             deleted: true,
             email: "john.doe@example.com",
-            expiresAt: "2021-05-12T10:52:02.671Z",
+            expiresAt: ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")!,
             service: Service(
                 id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!

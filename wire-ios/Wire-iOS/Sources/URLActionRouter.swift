@@ -33,6 +33,7 @@ protocol URLActionRouterDelegate: AnyObject {
 }
 
 // MARK: - URLActionRouterProtocol
+
 protocol URLActionRouterProtocol {
     func open(url: URL) -> Bool
 }
@@ -43,26 +44,30 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - URLActionRouter
 class URLActionRouter: URLActionRouterProtocol {
 
-    // MARK: - Public Property
-    var sessionManager: SessionManager?
+    // MARK: - Public Properties
+
+    private(set) var sessionManager: SessionManager?
     weak var delegate: URLActionRouterDelegate?
     weak var authenticatedRouter: AuthenticatedRouterProtocol?
 
-    // MARK: - Private Property
+    // MARK: - Private Properties
+
     private let rootViewController: RootViewController
     private var pendingDestination: NavigationDestination?
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
+
     init(
-        viewController: RootViewController,
-        sessionManager: SessionManager? = nil
+        rootViewController: RootViewController,
+        sessionManager: SessionManager?
     ) {
-        self.rootViewController = viewController
+        self.rootViewController = rootViewController
         self.sessionManager = sessionManager
     }
 
     // MARK: - Public Implementation
+
     @discardableResult
     func open(url: URL) -> Bool {
         do {
@@ -71,9 +76,9 @@ class URLActionRouter: URLActionRouterProtocol {
             if error is CompanyLoginError {
                 delegate?.urlActionRouterWillShowCompanyLoginError()
 
-                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true, completion: {
+                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true) {
                     UIApplication.shared.topmostViewController()?.showAlert(for: error)
-                })
+                }
             } else {
                 UIApplication.shared.topmostViewController()?.showAlert(for: error)
             }
@@ -153,7 +158,7 @@ extension URLActionRouter: PresentationDelegate {
             completion(password)
         }
 
-        let helpLinkURL = URL.wr_guestLinksLearnMore
+        let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
@@ -374,7 +379,7 @@ private extension URLActionRouter {
         case URLActionError.conversationLinkIsDisabled:
             let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             let guestLinksLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
-                let browserViewController = BrowserViewController(url: URL.wr_guestLinksLearnMore.appendingLocaleParameter)
+                let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
                 topmostViewController?.present(browserViewController, animated: true)
             }
             alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
