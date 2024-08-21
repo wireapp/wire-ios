@@ -17,13 +17,14 @@
 //
 
 import SwiftUI
+import WireDesign
 
 public final class SidebarViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .lightGray
+        view.backgroundColor = ColorTheme.Backgrounds.background
 
         let label = UILabel()
         label.text = "Sidebar"

@@ -84,8 +84,6 @@ final class ZClientViewController: UIViewController {
 
     private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
-    private var contentTopRegularConstraint: NSLayoutConstraint!
-    private var contentTopCompactConstraint: NSLayoutConstraint!
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: NSObjectProtocol?
@@ -177,7 +175,7 @@ final class ZClientViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.backgroundColor = ColorTheme.Backgrounds.background
 
         addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -185,13 +183,13 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.didMove(toParent: self)
 
         createTopViewConstraints()
-        updateSplitViewTopConstraint()
 
         let sidebarViewController = SidebarViewController()
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
-        let conversationPlaceholder = UIViewController()
+        let conversationPlaceholder = UIViewController() // TODO: see loadPlaceholderConversationController
         conversationPlaceholder.navigationItem.leftBarButtonItems = [.init(systemItem: .action)]
+        conversationPlaceholder.view.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
         wireSplitViewController.setViewController(conversationPlaceholder, for: .secondary)
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
@@ -205,6 +203,8 @@ final class ZClientViewController: UIViewController {
             settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
+        wireSplitViewController.preferredPrimaryColumnWidth = 260
+        wireSplitViewController.preferredSupplementaryColumnWidth = 320
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom == .phone {
@@ -288,7 +288,6 @@ final class ZClientViewController: UIViewController {
             }
         }
 
-        updateSplitViewTopConstraint()
         view.setNeedsLayout()
     }
 
@@ -581,14 +580,12 @@ final class ZClientViewController: UIViewController {
                     viewController.didMove(toParent: self)
                     previousViewController.removeFromParent()
                     self.topOverlayViewController = viewController
-                    self.updateSplitViewTopConstraint()
                 })
             } else {
                 topOverlayContainer.addSubview(viewController.view)
                 viewController.view.fitIn(view: topOverlayContainer)
                 viewController.didMove(toParent: self)
                 topOverlayViewController = viewController
-                updateSplitViewTopConstraint()
             }
         } else if let previousViewController = topOverlayViewController {
             if animated {
@@ -605,13 +602,11 @@ final class ZClientViewController: UIViewController {
                     self.topOverlayViewController?.removeFromParent()
                     previousViewController.view.removeFromSuperview()
                     self.topOverlayViewController = nil
-                    self.updateSplitViewTopConstraint()
                 })
             } else {
                 self.topOverlayViewController?.removeFromParent()
                 previousViewController.view.removeFromSuperview()
                 self.topOverlayViewController = nil
-                self.updateSplitViewTopConstraint()
             }
         } else if let viewController {
             addChild(viewController)
@@ -629,7 +624,6 @@ final class ZClientViewController: UIViewController {
                 heightConstraint.isActive = true
 
                 self.topOverlayViewController = viewController
-                self.updateSplitViewTopConstraint()
 
                 UIView.animate(withDuration: 0.35, delay: 0, options: [.curveEaseOut, .beginFromCurrentState], animations: {
                     heightConstraint.isActive = false
@@ -637,7 +631,6 @@ final class ZClientViewController: UIViewController {
                 })
             } else {
                 topOverlayViewController = viewController
-                updateSplitViewTopConstraint()
             }
         }
     }
@@ -656,12 +649,9 @@ final class ZClientViewController: UIViewController {
         topOverlayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topOverlayContainer)
 
-        // TODO: remove
-        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor)
-        contentTopCompactConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor)
-
         NSLayoutConstraint.activate([
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             topOverlayContainer.bottomAnchor.constraint(equalTo: wireSplitViewController.view.topAnchor),
             wireSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -672,20 +662,6 @@ final class ZClientViewController: UIViewController {
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.priority = UILayoutPriority.defaultLow
         heightConstraint.isActive = true
-    }
-
-    private func updateSplitViewTopConstraint() {
-
-        let isRegularContainer = traitCollection.horizontalSizeClass == .regular
-
-        if isRegularContainer && topOverlayViewController == nil {
-            contentTopCompactConstraint.isActive = false
-            contentTopRegularConstraint.isActive = true
-        } else {
-            contentTopRegularConstraint.isActive = false
-            contentTopCompactConstraint.isActive = true
-        }
-
     }
 
     /// Open the user client list screen

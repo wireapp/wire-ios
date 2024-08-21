@@ -333,7 +333,9 @@ final class ConversationListViewController: UIViewController {
     }
 
     private func applyColorTheme() {
-        view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        view.backgroundColor = configureForSplitView
+        ? ColorTheme.Backgrounds.backgroundVariant
+        : ColorTheme.Backgrounds.surfaceVariant
     }
 
     private func setupSearchController() {
