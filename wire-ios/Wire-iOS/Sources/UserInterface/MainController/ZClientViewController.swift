@@ -34,7 +34,7 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = UISplitViewController(style: .tripleColumn)
+    let wireSplitViewController = UISplitViewController(style: .doubleColumn)
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?

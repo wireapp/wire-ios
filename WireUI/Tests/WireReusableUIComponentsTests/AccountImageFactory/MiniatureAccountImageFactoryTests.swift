@@ -28,8 +28,8 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
     private var sut: MiniatureAccountImageFactory!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        sut = .init()
+    override func setUp() async throws {
+        sut = await MainActor.run { .init() }
         snapshotHelper = .init()
             .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
@@ -40,6 +40,7 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
         sut = nil
     }
 
+    @MainActor
     func testRenderingWhiteW() {
         let image = sut.createImage(initials: "W", backgroundColor: .white)
         let imageView = UIImageView(image: image)
@@ -49,6 +50,7 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
             .verify(matching: imageView)
     }
 
+    @MainActor
     func testRenderingBlueCA() {
         let image = sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.LightUI.MainColor.blue500)
         let imageView = UIImageView(image: image)
