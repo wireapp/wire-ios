@@ -75,6 +75,15 @@ extension ConversationListViewController {
     }
 
     func setupLeftNavigationBarButtons() {
+        guard traitCollection.userInterfaceIdiom != .pad else {
+            navigationItem.leftBarButtonItems = [.init(systemItem: .camera)]
+            navigationItem.leftItemsSupplementBackButton = false
+            navigationItem.hidesBackButton = true
+            navigationItem.backBarButtonItem = .init(systemItem: .bookmarks)
+            navigationItem.backButtonDisplayMode = .generic
+            navigationController?.isNavigationBarHidden = true
+            return
+        }
 
         // in the design the left bar button items are very close to each other,
         // so we'll use a stack view instead
@@ -131,6 +140,10 @@ extension ConversationListViewController {
     }
 
     func setupRightNavigationBarButtons() {
+        if traitCollection.userInterfaceIdiom == .pad {
+            return setupRightNavigationBarButtons_SplitView()
+        }
+
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
 
@@ -199,6 +212,10 @@ extension ConversationListViewController {
         // of the add conversation button and filter button
         // when the filter button is tapped.
         self.view.setNeedsLayout()
+    }
+
+    private func setupRightNavigationBarButtons_SplitView() {
+        navigationItem.rightBarButtonItems = [.init(systemItem: .add)]
     }
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.

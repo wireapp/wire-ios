@@ -55,7 +55,8 @@ final class ZClientViewController: UIViewController {
         zClientViewController: self,
         mainCoordinator: MainCoordinator(zClientViewController: self),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        configureForSplitView: false
     )
     private lazy var iPadConversationListViewController = ConversationListViewController(
         account: account,
@@ -64,7 +65,8 @@ final class ZClientViewController: UIViewController {
         zClientViewController: self,
         mainCoordinator: MainCoordinator(zClientViewController: self),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        configureForSplitView: true
     )
 
     var proximityMonitorManager: ProximityMonitorManager?

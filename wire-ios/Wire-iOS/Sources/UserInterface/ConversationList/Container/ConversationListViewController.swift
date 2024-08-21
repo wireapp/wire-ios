@@ -97,6 +97,7 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
+    private let configureForSplitView: Bool
 
     // MARK: - Init
 
@@ -107,7 +108,8 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinating,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder,
+        configureForSplitView: Bool
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -120,7 +122,8 @@ final class ConversationListViewController: UIViewController {
             viewModel: viewModel,
             zClientViewController: zClientViewController,
             mainCoordinator: mainCoordinator,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            configureForSplitView: configureForSplitView
         )
     }
 
@@ -128,7 +131,8 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinating,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some ViewControllerBuilder,
+        configureForSplitView: Bool
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -142,6 +146,8 @@ final class ConversationListViewController: UIViewController {
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
+
+        self.configureForSplitView = configureForSplitView
 
         super.init(nibName: nil, bundle: nil)
 
