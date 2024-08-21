@@ -37,9 +37,9 @@ final class ZClientViewController: UIViewController {
     let wireSplitViewController = {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.preferredSplitBehavior = .tile
-//        splitViewController.preferredDisplayMode = .secondaryOnly
         splitViewController.preferredDisplayMode = .oneBesideSecondary
-//        splitViewController.preferredDisplayMode = .twoBesideSecondary
+        splitViewController.preferredPrimaryColumnWidth = 260
+        splitViewController.preferredSupplementaryColumnWidth = 320
         return splitViewController
     }()
 
@@ -203,8 +203,6 @@ final class ZClientViewController: UIViewController {
             settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
-        wireSplitViewController.preferredPrimaryColumnWidth = 260
-        wireSplitViewController.preferredSupplementaryColumnWidth = 320
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom == .phone {

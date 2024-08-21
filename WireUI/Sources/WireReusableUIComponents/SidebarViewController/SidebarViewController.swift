@@ -44,63 +44,39 @@ public final class SidebarViewController: UIViewController {
     {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         if splitViewController.traitCollection.userInterfaceIdiom != .pad {
-            return HintViewController("Please switch to iPad!")
+            return HintViewController("Please switch to iPad (iOS 17+)!")
         }
 
-        splitViewController.setViewController(.init(), for: .primary)
+        splitViewController.setViewController(SidebarViewController(), for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)
         splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)
+        splitViewController.preferredSplitBehavior = .tile
+        splitViewController.preferredDisplayMode = .twoBesideSecondary
+        splitViewController.preferredPrimaryColumnWidth = 260
+        splitViewController.preferredSupplementaryColumnWidth = 320
+        splitViewController.view.backgroundColor = ColorTheme.Backgrounds.background
 
         return splitViewController
     }()
 }
 
-private final class EmptyViewController: UIViewController {
-
-    private var fakeSidebarHeightConstraint: NSLayoutConstraint!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupFakeSidebarBackground()
-        updateFakeSidebarBackgroundSize()
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
-        updateFakeSidebarBackgroundSize()
-    }
-
-    private func setupFakeSidebarBackground() {
-        let fakeSideBarBackground = UIView()
-        fakeSideBarBackground.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
-        fakeSideBarBackground.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(fakeSideBarBackground)
-        fakeSidebarHeightConstraint = fakeSideBarBackground.heightAnchor.constraint(equalToConstant: 0)
-        NSLayoutConstraint.activate([
-            fakeSideBarBackground.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            fakeSideBarBackground.topAnchor.constraint(equalTo: view.topAnchor),
-            view.trailingAnchor.constraint(equalTo: fakeSideBarBackground.trailingAnchor),
-            fakeSidebarHeightConstraint
-        ])
-    }
-
-    private func updateFakeSidebarBackgroundSize() {
-        fakeSidebarHeightConstraint.constant = view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+private final class EmptyViewController: UIHostingController<AnyView> {
+    convenience init() { self.init(rootView: AnyView(EmptyView())) }
+    private struct EmptyView: View {
+        let sidebarBackground = Color(ColorTheme.Backgrounds.background)
+        let defaultBackground = Color(ColorTheme.Backgrounds.backgroundVariant)
+        var body: some View {
+            VStack {
+                Rectangle().foregroundStyle(sidebarBackground).frame(height: 22)
+                Rectangle().foregroundStyle(defaultBackground)
+            }.ignoresSafeArea()
+        }
     }
 }
 
-/// Hint for the user to switch to iPad previews.
-private final class HintViewController: UIViewController {
-
-    private let text: String
-    fileprivate init(_ text: String) { self.text = text; super.init(nibName: nil, bundle: nil) }
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
-    override func loadView() {
-        let label = UILabel()
-        label.text = text
-        label.textAlignment = .center
-        label.backgroundColor = .systemBackground
-        view = label
+private final class HintViewController: UIHostingController<Text> {
+    convenience init(_ hint: String) {
+        self.init(rootView: Text(verbatim: hint).font(.title2))
     }
 }
