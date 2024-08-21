@@ -92,12 +92,11 @@ final class ConversationListViewController: UIViewController {
     let listContentController: ConversationListContentController
 
     weak var accountImageView: AccountImageView?
-    weak var titleViewLabel: UILabel?
 
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
-    private let configureForSplitView: Bool
+    let configureForSplitView: Bool
 
     // MARK: - Init
 
@@ -335,7 +334,6 @@ final class ConversationListViewController: UIViewController {
 
     private func applyColorTheme() {
         view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
-        titleViewLabel?.textColor = ColorTheme.Backgrounds.onSurfaceVariant
     }
 
     private func setupSearchController() {
@@ -437,7 +435,7 @@ final class ConversationListViewController: UIViewController {
     // MARK: - Presentation
 
     /// Present the new conversation view controller
-    @objc func presentNewConversationViewController() {
+    func presentNewConversationViewController() {
         let viewController = StartUIViewController(
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator

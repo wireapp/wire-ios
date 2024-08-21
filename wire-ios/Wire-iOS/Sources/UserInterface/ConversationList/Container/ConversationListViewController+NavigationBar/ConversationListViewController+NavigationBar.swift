@@ -115,20 +115,11 @@ extension ConversationListViewController {
     }
 
     func setupTitleView() {
-
-        let titleLabel = UILabel()
-        titleLabel.font = .font(for: .h2)
-        titleLabel.textColor = ColorTheme.Backgrounds.onSurfaceVariant
-        titleLabel.accessibilityTraits = .header
-        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-        titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        titleLabel.text = L10n.Localizable.List.title
-        titleLabel.accessibilityValue = L10n.Localizable.List.title
-
-        navigationItem.titleView = titleLabel
-        self.titleViewLabel = titleLabel
+        navigationItem.title = if configureForSplitView {
+            L10n.Localizable.ConversationList.Filter.AllConversations.title
+        } else {
+            L10n.Localizable.List.title
+        }
     }
 
     func setupRightNavigationBarButtons() {
@@ -144,6 +135,7 @@ extension ConversationListViewController {
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             self?.presentNewConversationViewController()
         }
+        // TODO: accessibility
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
 
         let defaultFilterImage = UIImage(resource: .ConversationList.Header.filterConversations)
@@ -208,41 +200,21 @@ extension ConversationListViewController {
 
     private func setupRightNavigationBarButtons_SplitView() {
 
-        let newConversationBarButtonItem = UIBarButtonItem(
-            icon: .plus,
-            target: self,
-            action: #selector(presentNewConversationViewController)
-        )
-        // TODO: accessibilityIdentifier
-        newConversationBarButtonItem.accessibilityIdentifier = "???????????"
-        navigationItem.rightBarButtonItem = newConversationBarButtonItem
+        let newConversationBarButton = IconButton()
+        newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
+        newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier
+        newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
+        newConversationBarButton.addAction(.init { [weak self] _ in self?.presentNewConversationViewController() }, for: .primaryActionTriggered)
 
+        newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
+        newConversationBarButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        newConversationBarButton.layer.borderWidth = 1
+        newConversationBarButton.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
+        newConversationBarButton.layer.cornerRadius = 12
+        newConversationBarButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        newConversationBarButton.bounds.size = newConversationBarButton.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
-
-/*
-
- let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
- let action = #selector(ConversationViewController.onCollectionButtonPressed(_:))
-
- let button = IconButton()
- button.setIcon(showingSearchResults ? .activeSearch : .search, size: .tiny, for: .normal)
- button.accessibilityIdentifier = "collection"
- button.accessibilityLabel = L10n.Accessibility.Conversation.SearchButton.description
-
- button.addTarget(self, action: action, for: .touchUpInside)
-
- button.backgroundColor = SemanticColors.Button.backgroundBarItem
- button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
- button.layer.borderWidth = 1
- button.setBorderColor(SemanticColors.Button.borderBarItem.resolvedColor(with: traitCollection), for: .normal)
- button.layer.cornerRadius = 12
- button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
- button.bounds.size = button.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
-
- return UIBarButtonItem(customView: button)
- */
-
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: newConversationBarButton)
     }
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
@@ -303,20 +275,20 @@ extension ConversationListViewController {
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
-        guard
-            let rightBarButtonItems = navigationItem.rightBarButtonItems,
-            rightBarButtonItems.count == 3, // new conversation, spacer, filter
-            let newConversationButton = rightBarButtonItems[0].customView,
-            let filterConversationsButton = rightBarButtonItems[2].customView,
-            let titleViewLabel,
-            let window = viewIfLoaded?.window
-        else { return }
-
-        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
-        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
-        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
-        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
-        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
+//        guard
+//            let rightBarButtonItems = navigationItem.rightBarButtonItems,
+//            rightBarButtonItems.count == 3, // new conversation, spacer, filter
+//            let newConversationButton = rightBarButtonItems[0].customView,
+//            let filterConversationsButton = rightBarButtonItems[2].customView,
+//            let titleViewLabel,
+//            let window = viewIfLoaded?.window
+//        else { return }
+//
+//        let filterConversationsButtonWidth = filterConversationsButton.frame.size.width
+//        let titleLabelMaxX = titleViewLabel.convert(titleViewLabel.frame, to: window).maxX
+//        let newConversationButtonMinX = newConversationButton.convert(newConversationButton.frame, to: window).minX
+//        let spacerWidth = (newConversationButtonMinX - titleLabelMaxX - filterConversationsButtonWidth) / 2
+//        rightBarButtonItems[1].width = spacerWidth < 29 ? spacerWidth : 29
     }
 
     @objc
