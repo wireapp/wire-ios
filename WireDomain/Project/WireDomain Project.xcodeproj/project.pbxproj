@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -29,6 +29,7 @@
 		59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A5D2C5BBEA8009C41DE /* WireAPI */; };
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
+		59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -38,7 +39,6 @@
 		EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */; };
 		EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */; };
 		EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */; };
-		EE463E0F2C7360BD0089C78B /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = EE463E0E2C7360BD0089C78B /* WireUtilitiesPackage */; };
 		EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */; };
 		EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */; };
 		EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */; };
@@ -226,7 +226,7 @@
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
 				01D0DCC42C1C8CC20076CB1C /* WireDataModel.framework in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
-				EE463E0F2C7360BD0089C78B /* WireUtilitiesPackage in Frameworks */,
+				59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,7 +563,7 @@
 			name = WireDomain;
 			packageProductDependencies = (
 				59909A5D2C5BBEA8009C41DE /* WireAPI */,
-				EE463E0E2C7360BD0089C78B /* WireUtilitiesPackage */,
+				59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -622,7 +622,6 @@
 			);
 			mainGroup = 01D0DC9C2C1C8C870076CB1C;
 			packageReferences = (
-				EE463E0D2C7360BD0089C78B /* XCLocalSwiftPackageReference "../../WireUtilities" */,
 			);
 			productRefGroup = 01D0DCA72C1C8C870076CB1C /* Products */;
 			projectDirPath = "";
@@ -1153,13 +1152,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		EE463E0D2C7360BD0089C78B /* XCLocalSwiftPackageReference "../../WireUtilities" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../WireUtilities;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
 		59909A5D2C5BBEA8009C41DE /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1173,7 +1165,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
 		};
-		EE463E0E2C7360BD0089C78B /* WireUtilitiesPackage */ = {
+		59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireUtilitiesPackage;
 		};
