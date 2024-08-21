@@ -350,7 +350,7 @@ final class ConversationListViewController: UIViewController {
         if #available(iOS 16.0, *) {
             navigationItem.preferredSearchBarPlacement = .stacked
         } else {
-            navigationItem.rightBarButtonItems = [.init(systemItem: .play)]
+//            navigationItem.rightBarButtonItems = [.init(systemItem: .play)]
         }
     }
 

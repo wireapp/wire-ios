@@ -34,7 +34,14 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let wireSplitViewController = UISplitViewController(style: .doubleColumn)
+    let wireSplitViewController = {
+        let splitViewController = UISplitViewController(style: .tripleColumn)
+        splitViewController.preferredSplitBehavior = .tile
+//        splitViewController.preferredDisplayMode = .secondaryOnly
+//        splitViewController.preferredDisplayMode .oneBesideSecondary
+        splitViewController.preferredDisplayMode = .twoBesideSecondary
+        return splitViewController
+    }()
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
@@ -189,6 +196,7 @@ final class ZClientViewController: UIViewController {
             secondary: UINavigationController(rootViewController: conversationPlaceholder)
         )
         wireSplitViewController.setViewController(doubleColumnContainer, for: .secondary)
+        doubleColumnContainer.navigationItem.leftBarButtonItem = .init(systemItem: .pause)
         //doubleColumnContainer.navigationController?.isNavigationBarHidden = true
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
@@ -212,7 +220,7 @@ final class ZClientViewController: UIViewController {
             }
         }
 
-        restoreStartupState()
+        //restoreStartupState()
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
