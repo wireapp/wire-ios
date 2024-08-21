@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -38,6 +38,7 @@
 		EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCB2C2DAA87009DBAB0 /* UpdateEventProcessor.swift */; };
 		EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CCC2C2DAA87009DBAB0 /* UserEventProcessor.swift */; };
 		EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3F97532C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift */; };
+		EE463E0F2C7360BD0089C78B /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = EE463E0E2C7360BD0089C78B /* WireUtilitiesPackage */; };
 		EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */; };
 		EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FD2C298F380096F242 /* UpdateEventDecryptor.swift */; };
 		EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE57A6FF2C298F630096F242 /* ProteusMessageDecryptor.swift */; };
@@ -77,7 +78,6 @@
 		EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */; };
 		EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */; };
 		EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */; };
-		EEB4FBBB2C48E96000655F56 /* AsyncSequence+ToStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB4FBBA2C48E96000655F56 /* AsyncSequence+ToStream.swift */; };
 		EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC410242C60D48900E89394 /* SyncManagerTests.swift */; };
 		EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A52C2EB6CD00679448 /* SyncManager.swift */; };
 		EECC35A82C2EB70400679448 /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A72C2EB70400679448 /* SyncState.swift */; };
@@ -204,7 +204,6 @@
 		EEAD0A302C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationConnectionRemovedEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A322C46B99800CC8658 /* FederationDeleteEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationDeleteEventProcessor.swift; sourceTree = "<group>"; };
 		EEAD0A352C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigUpdateEventProcessor.swift; sourceTree = "<group>"; };
-		EEB4FBBA2C48E96000655F56 /* AsyncSequence+ToStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AsyncSequence+ToStream.swift"; sourceTree = "<group>"; };
 		EEC410242C60D48900E89394 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		EECC35A52C2EB6CD00679448 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		EECC35A72C2EB70400679448 /* SyncState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncState.swift; sourceTree = "<group>"; };
@@ -227,6 +226,7 @@
 				59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */,
 				01D0DCC42C1C8CC20076CB1C /* WireDataModel.framework in Frameworks */,
 				01D0DCC62C1C8CD90076CB1C /* WireTransport.framework in Frameworks */,
+				EE463E0F2C7360BD0089C78B /* WireUtilitiesPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,7 +291,6 @@
 				EE57A6FC2C298F280096F242 /* Event Decryption */,
 				EE368CCD2C2DAA87009DBAB0 /* Event Processing */,
 				017F67A22C20802300B6E02D /* Repositories */,
-				EEB4FBB92C48E94100655F56 /* Helpers */,
 			);
 			path = WireDomain;
 			sourceTree = "<group>";
@@ -486,14 +485,6 @@
 			path = FeatureConfigEventProcessor;
 			sourceTree = "<group>";
 		};
-		EEB4FBB92C48E94100655F56 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				EEB4FBBA2C48E96000655F56 /* AsyncSequence+ToStream.swift */,
-			);
-			path = Helpers;
-			sourceTree = "<group>";
-		};
 		EEC410252C60D48900E89394 /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
@@ -572,6 +563,7 @@
 			name = WireDomain;
 			packageProductDependencies = (
 				59909A5D2C5BBEA8009C41DE /* WireAPI */,
+				EE463E0E2C7360BD0089C78B /* WireUtilitiesPackage */,
 			);
 			productName = WireDomain;
 			productReference = 01D0DCA62C1C8C870076CB1C /* WireDomain.framework */;
@@ -630,6 +622,7 @@
 			);
 			mainGroup = 01D0DC9C2C1C8C870076CB1C;
 			packageReferences = (
+				EE463E0D2C7360BD0089C78B /* XCLocalSwiftPackageReference "../../WireUtilities" */,
 			);
 			productRefGroup = 01D0DCA72C1C8C870076CB1C /* Products */;
 			projectDirPath = "";
@@ -757,7 +750,6 @@
 				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
 				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
 				EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */,
-				EEB4FBBB2C48E96000655F56 /* AsyncSequence+ToStream.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1161,6 +1153,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		EE463E0D2C7360BD0089C78B /* XCLocalSwiftPackageReference "../../WireUtilities" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../WireUtilities;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		59909A5D2C5BBEA8009C41DE /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1173,6 +1172,10 @@
 		59909A6C2C5BC08B009C41DE /* WireAPISupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
+		};
+		EE463E0E2C7360BD0089C78B /* WireUtilitiesPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUtilitiesPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
