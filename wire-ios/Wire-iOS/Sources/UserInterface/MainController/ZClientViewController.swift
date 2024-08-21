@@ -215,7 +215,7 @@ final class ZClientViewController: UIViewController {
             }
         }
 
-        //restoreStartupState()
+        // restoreStartupState()
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
@@ -317,30 +317,23 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.show(.primary)
     }
 
-    @discardableResult
     private func pushContentViewController(
         _ viewController: UIViewController? = nil,
         focusOnView focus: Bool = false,
         animated: Bool = false,
         completion: Completion? = nil
-    ) -> Bool {
+    ) {
         conversationRootViewController = viewController
         wireSplitViewController.setViewController(conversationRootViewController, for: .secondary)
 
         if focus {
             wireSplitViewController.show(.secondary)
         }
-
-        return true
     }
 
     func loadPlaceholderConversationController(animated: Bool) {
-        loadPlaceholderConversationController(animated: animated) { }
-    }
-
-    func loadPlaceholderConversationController(animated: Bool, completion: @escaping Completion) {
         currentConversation = nil
-        pushContentViewController(animated: animated, completion: completion)
+        pushContentViewController(focusOnView: false, animated: animated)
     }
 
     /// Load and optionally show a conversation, but don't change the list selection.  This is the place to put

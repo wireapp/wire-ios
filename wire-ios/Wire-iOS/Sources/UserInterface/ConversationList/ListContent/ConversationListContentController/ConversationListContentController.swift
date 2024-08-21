@@ -133,8 +133,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.delaysContentTouches = false
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear
-//        collectionView.backgroundView = .init()
-//        collectionView.backgroundView?.backgroundColor = .clear
         clearsSelectionOnViewWillAppear = false
     }
 
