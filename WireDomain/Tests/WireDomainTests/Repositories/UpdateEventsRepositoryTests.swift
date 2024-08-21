@@ -309,8 +309,8 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 
     func testItBuffersLiveEventsUntilIterationStarts() async throws {
         // Mock push channel.
-        var liveEventsContinuation: AsyncStream<UpdateEventEnvelope>.Continuation?
-        pushChannel.open_MockValue = AsyncStream {
+        var liveEventsContinuation: AsyncThrowingStream<UpdateEventEnvelope, Error>.Continuation?
+        pushChannel.open_MockValue = AsyncThrowingStream {
             liveEventsContinuation = $0
         }
 

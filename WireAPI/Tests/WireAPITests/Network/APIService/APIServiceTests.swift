@@ -25,24 +25,21 @@ final class APIServiceTests: XCTestCase {
 
     var sut: APIService!
     var backendURL: URL!
-    var backendWebSocketURL: URL!
     var authenticationStorage: InMemoryAuthenticationStorage!
 
     override func setUp() async throws {
         try await super.setUp()
         backendURL = try XCTUnwrap(URL(string: "https://www.example.com"))
-        backendWebSocketURL = try XCTUnwrap(URL(string: "https://www.ws.example.com"))
         authenticationStorage = InMemoryAuthenticationStorage()
         sut = APIService(
             backendURL: backendURL,
-            backendWebSocketURL: backendWebSocketURL,
             authenticationStorage: authenticationStorage,
-            urlSession: .mock
+            urlSession: .mock,
+            minTLSVersion: .v1_2
         )
     }
 
     override func tearDown() async throws {
-        backendURL = nil
         backendURL = nil
         authenticationStorage = nil
         sut = nil

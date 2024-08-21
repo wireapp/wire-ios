@@ -1,0 +1,32 @@
+{
+    "id": "eb660720-079c-43f3-9a80-1168638c928f",
+    "transient": false,
+    "payload": [
+        {
+            "type": "conversation.typing",
+            "qualified_conversation": {
+                "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
+                "domain": "example.com"
+            },
+            "qualified_from": {
+                "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+                "domain": "example.com"
+            },
+            "data": {
+                "status": "started"
+            }
+        },
+        {
+            "type": "conversation.delete",
+            "qualified_conversation": {
+                "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
+                "domain": "example.com"
+            },
+            "qualified_from": {
+                "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+                "domain": "example.com"
+            },
+            "time": "2024-06-04T15:03:07.598Z"
+        }
+    ]
+}

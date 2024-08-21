@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireUtilitiesPkg
 
 // sourcery: AutoMockable
 /// Access update events.

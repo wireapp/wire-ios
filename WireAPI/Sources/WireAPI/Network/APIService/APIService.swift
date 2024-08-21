@@ -50,21 +50,19 @@ public protocol APIServiceProtocol {
 public final class APIService: APIServiceProtocol {
 
     private let backendURL: URL
-    private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
     private let urlSession: URLSession
+    private let minTLSVersion: TLSVersion
 
     /// Create a new `APIService`.
     ///
     /// - Parameters:
     ///   - backendURL: The url of the target backend.
-    ///   - backendWebSocketURL: The web socket url of the target backend.
     ///   - authenticationStorage: The storage for authentication objects.
     ///   - minTLSVersion: The minimum supported TLS version.
 
     public convenience init(
         backendURL: URL,
-        backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
         minTLSVersion: TLSVersion
     ) {
@@ -74,22 +72,22 @@ public final class APIService: APIServiceProtocol {
 
         self.init(
             backendURL: backendURL,
-            backendWebSocketURL: backendWebSocketURL,
             authenticationStorage: authenticationStorage,
-            urlSession: urlSession
+            urlSession: urlSession,
+            minTLSVersion: minTLSVersion
         )
     }
 
     init(
         backendURL: URL,
-        backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
-        urlSession: URLSession
+        urlSession: URLSession,
+        minTLSVersion: TLSVersion
     ) {
         self.backendURL = backendURL
-        self.backendWebSocketURL = backendWebSocketURL
         self.authenticationStorage = authenticationStorage
         self.urlSession = urlSession
+        self.minTLSVersion = minTLSVersion
     }
 
     /// Execute a request to the backend.
@@ -109,7 +107,10 @@ public final class APIService: APIServiceProtocol {
         }
 
         var request = request
-        request.url = URL(string: url.absoluteString, relativeTo: backendURL)
+        request.url = URL(
+            string: url.absoluteString,
+            relativeTo: backendURL
+        )
 
         if requiringAccessToken {
             guard let accessToken = authenticationStorage.fetchAccessToken() else {

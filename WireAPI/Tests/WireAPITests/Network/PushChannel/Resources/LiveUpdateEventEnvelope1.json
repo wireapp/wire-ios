@@ -1,0 +1,38 @@
+{
+    "id": "66c7731b-9985-4b5e-90d7-b8f8ce1cadb9",
+    "transient": false,
+    "payload": [
+        {
+            "type": "conversation.otr-message-add",
+            "qualified_conversation": {
+                "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
+                "domain": "example.com"
+            },
+            "qualified_from": {
+                "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+                "domain": "example.com"
+            },
+            "time": "2024-06-04T15:03:07.598Z",
+            "data": {
+                "text": "foo",
+                "data": "bar",
+                "sender": "abc123",
+                "recipient": "def456"
+            }
+        },
+        {
+            "type": "conversation.protocol-update",
+            "qualified_conversation": {
+                "id": "a644fa88-2d83-406b-8a85-d4fd8dedad6b",
+                "domain": "example.com"
+            },
+            "qualified_from": {
+                "id": "f55fe9b0-a0cc-4b11-944b-125c834d9b6a",
+                "domain": "example.com"
+            },
+            "data": {
+                "protocol": "mls"
+            }
+        }
+    ]
+}

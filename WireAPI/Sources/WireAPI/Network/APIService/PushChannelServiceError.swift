@@ -18,13 +18,16 @@
 
 import Foundation
 
-extension AsyncSequence {
+/// Errors originating from `PushChannelService`.
 
-    func toStream() -> AsyncThrowingStream<Element, Error> {
-        var iterator = makeAsyncIterator()
-        return AsyncThrowingStream {
-            try await iterator.next()
-        }
-    }
+public enum PushChannelServiceError: Error {
+
+    /// An enqueued url request is invalid.
+
+    case invalidRequest
+
+    /// An access token is required but none is available.
+
+    case missingAccessToken
 
 }

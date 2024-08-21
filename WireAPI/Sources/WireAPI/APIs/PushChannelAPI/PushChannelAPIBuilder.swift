@@ -15,3 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+import Foundation
+
+/// A builder of `PushChannelAPI`.
+
+public struct PushChannelAPIBuilder {
+
+    private let pushChannelService: PushChannelService
+
+    /// Create a new builder.
+    ///
+    /// - Parameter pushChannelService: A push channel service to execute requests.
+
+    public init(pushChannelService: PushChannelService) {
+        self.pushChannelService = pushChannelService
+    }
+
+    /// Make a `PushChannelAPI`.
+    ///
+    /// - Returns: A `PushChannelAPI`.
+
+    public func makeAPI() -> any PushChannelAPI {
+        PushChannelAPIImpl(pushChannelService: pushChannelService)
+    }
+
+}
