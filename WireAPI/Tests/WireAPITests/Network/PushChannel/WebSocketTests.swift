@@ -64,11 +64,16 @@ final class WebSocketTests: XCTestCase {
         }
 
         let didReceiveMessage = XCTestExpectation()
+        didReceiveMessage.assertForOverFulfill = false
         let didFinishIterating = XCTestExpectation()
 
         Task {
-            for try await _ in try sut.open() {
-                didReceiveMessage.fulfill()
+            do {
+                for try await _ in try sut.open() {
+                    didReceiveMessage.fulfill()
+                }
+            } catch {
+                XCTFail("unexpected error: \(error)")
             }
 
             didFinishIterating.fulfill()
