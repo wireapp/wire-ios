@@ -57,11 +57,10 @@ final class WebSocketTests: XCTestCase {
         // Mock sending one message
         connection.underlyingIsOpen = true
 
-        var shouldSendData = true
-        connection.receiveCompletionHandler_MockMethod = { handler in
-            guard shouldSendData else { return }
-            shouldSendData = false
-            handler(.success(.data(Data())))
+        connection.receive_MockMethod = {
+            // Space the messages 0.5s apart
+            try await Task.sleep(nanoseconds: 500_000)
+            return .data(Data())
         }
 
         let didReceiveMessage = XCTestExpectation()
@@ -97,16 +96,10 @@ final class WebSocketTests: XCTestCase {
 
         // Mock sending messages
         connection.underlyingIsOpen = true
-        connection.receiveCompletionHandler_MockMethod = { handler in
-            Task {
-                do {
-                    // Space the messages 0.5s apart
-                    try await Task.sleep(nanoseconds: 500_000)
-                    handler(.success(.data(Data())))
-                } catch {
-                    XCTFail("failed to mock web socket data: \(error)")
-                }
-            }
+        connection.receive_MockMethod = {
+            // Space the messages 0.5s apart
+            try await Task.sleep(nanoseconds: 500_000)
+            return .data(Data())
         }
 
         let didReceiveMessage = XCTestExpectation()
@@ -143,21 +136,14 @@ final class WebSocketTests: XCTestCase {
 
         // Mock sending messages
         connection.underlyingIsOpen = true
-        connection.receiveCompletionHandler_MockMethod = { handler in
+        connection.receive_MockMethod = {
             if shouldSendError {
-                handler(.failure("some error"))
-                return
+                throw "some error"
             }
 
-            Task {
-                do {
-                    // Space the messages 0.5s apart
-                    try await Task.sleep(nanoseconds: 500_000)
-                    handler(.success(.data(Data())))
-                } catch {
-                    XCTFail("failed to mock web socket data: \(error)")
-                }
-            }
+            // Space the messages 0.5s apart
+            try await Task.sleep(nanoseconds: 500_000)
+            return .data(Data())
         }
 
         let didReceiveMessage = XCTestExpectation()
@@ -194,48 +180,38 @@ final class WebSocketTests: XCTestCase {
 
         // Mock sending messages
         connection.underlyingIsOpen = true
-        connection.receiveCompletionHandler_MockMethod = { handler in
+        connection.receive_MockMethod = {
             guard let message = messageData.popLast() else {
-                return
+                throw "no more messages"
             }
-
-            Task {
-                do {
-                    // Space the messages 0.5s apart
-                    try await Task.sleep(nanoseconds: 500_000)
-                    handler(.success(.data(message)))
-                } catch {
-                    XCTFail("failed to mock web socket data: \(error)")
-                }
-            }
+            
+            // Space the messages 0.5s apart
+            try await Task.sleep(nanoseconds: 500_000)
+            return .data(message)
         }
 
-        let didReceiveMessage = XCTestExpectation()
-        didReceiveMessage.expectedFulfillmentCount = 5
+        var receivedMessageData = [Data]()
 
-        let task = Task {
-            var receivedMessageData = [Data]()
-
-            // When
+        // When
+        do {
             for try await message in try sut.open() {
                 if case .data(let data) = message {
                     receivedMessageData.append(data)
                 }
 
-                didReceiveMessage.fulfill()
             }
-
-            return receivedMessageData.map {
-                String(decoding: $0, as: UTF8.self)
-            }
+        } catch let error as String where error == "no more messages" {
+            // no op
+        } catch {
+            XCTFail("unexpected error: \(error)")
+            return
         }
 
-        // Wait for messages to be received then we can close
-        await fulfillment(of: [didReceiveMessage], timeout: 0.5)
-        sut.close()
+        let receivedMessages = receivedMessageData.map {
+            String(decoding: $0, as: UTF8.self)
+        }
 
         // Then all messages were received in order
-        let receivedMessages = try await task.value
         XCTAssertEqual(receivedMessages, messages)
     }
 

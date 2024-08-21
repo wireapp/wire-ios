@@ -36,31 +36,54 @@ final class WebSocket: WebSocketProtocol {
     func open() throws -> Stream {
         connection.resume()
 
-        return Stream { continuation in
-            self.continuation = continuation
+        if #available(iOS 17, *) {
+            return Stream { continuation in
+                self.continuation = continuation
 
-            func yieldNextMessage() {
-                guard connection.isOpen else {
-                    continuation.finish()
-                    return
-                }
+                Task {
+                    var isAlive = true
 
-                // Note: From iOS 17 we can use the await variant of this.
-                // See  https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
-                connection.receive { result in
-                    switch result {
-                    case .success(let message):
-                        continuation.yield(message)
-                        yieldNextMessage()
-
-                    case .failure(let error):
-                        continuation.finish(throwing: error)
+                    while isAlive && connection.isOpen {
+                        do {
+                            let message = try await connection.receive()
+                            continuation.yield(message)
+                        } catch {
+                            continuation.finish(throwing: error)
+                            isAlive = false
+                        }
                     }
+
+                    continuation.finish()
                 }
             }
+        } else {
+            // This is the solution pre-iOS17, see for more details:
+            // https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
+            return Stream { continuation in
+                self.continuation = continuation
 
-            yieldNextMessage()
+                func yieldNextMessage() {
+                    guard connection.isOpen else {
+                        continuation.finish()
+                        return
+                    }
+
+                    connection.receive { result in
+                        switch result {
+                        case .success(let message):
+                            continuation.yield(message)
+                            yieldNextMessage()
+
+                        case .failure(let error):
+                            continuation.finish(throwing: error)
+                        }
+                    }
+                }
+
+                yieldNextMessage()
+            }
         }
+
     }
 
     func close() {
