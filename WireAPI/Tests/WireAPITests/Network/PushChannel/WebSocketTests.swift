@@ -184,7 +184,7 @@ final class WebSocketTests: XCTestCase {
             guard let message = messageData.popLast() else {
                 throw "no more messages"
             }
-            
+
             // Space the messages 0.5s apart
             try await Task.sleep(nanoseconds: 500_000)
             return .data(message)
@@ -198,7 +198,6 @@ final class WebSocketTests: XCTestCase {
                 if case .data(let data) = message {
                     receivedMessageData.append(data)
                 }
-
             }
         } catch let error as String where error == "no more messages" {
             // no op

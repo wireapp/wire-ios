@@ -43,7 +43,7 @@ final class WebSocket: WebSocketProtocol {
                 Task {
                     var isAlive = true
 
-                    while isAlive && connection.isOpen {
+                    while isAlive, connection.isOpen {
                         do {
                             let message = try await connection.receive()
                             continuation.yield(message)
@@ -83,7 +83,6 @@ final class WebSocket: WebSocketProtocol {
                 yieldNextMessage()
             }
         }
-
     }
 
     func close() {
