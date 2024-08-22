@@ -38,7 +38,7 @@ final class URLActionRouterTests: XCTestCase {
 
         let viewController = UIViewController()
         let delegate = MockURLActionRouterDelegate()
-        let router = TestableURLActionRouter(rootViewController: .init(), sessionManager: .none)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.delegate = delegate
 
         // WHEN
@@ -62,7 +62,7 @@ final class URLActionRouterTests: XCTestCase {
         let viewController = UIViewController()
         let delegate = MockURLActionRouterDelegate()
         delegate.canDisplayAlerts = false
-        let router = TestableURLActionRouter(rootViewController: .init(), sessionManager: .none)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.delegate = delegate
 
         // WHEN
@@ -86,7 +86,7 @@ final class URLActionRouterTests: XCTestCase {
         let viewController = UIViewController()
         let delegate = MockURLActionRouterDelegate()
         delegate.canDisplayAlerts = false
-        let router = TestableURLActionRouter(rootViewController: .init(), sessionManager: .none)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.delegate = delegate
         router.presentAlert(alert)
 
@@ -104,7 +104,7 @@ final class URLActionRouterTests: XCTestCase {
         // GIVEN
         let viewController = UIViewController()
         let authenticatedRouter = MockAuthenticatedRouter()
-        let router = TestableURLActionRouter(rootViewController: .init(), sessionManager: .none)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.authenticatedRouter = authenticatedRouter
 
         // WHEN
@@ -120,7 +120,7 @@ final class URLActionRouterTests: XCTestCase {
         // GIVEN
         let viewController = UIViewController()
         let authenticatedRouter = MockAuthenticatedRouter()
-        let router = TestableURLActionRouter(rootViewController: .init(), sessionManager: .none)
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
         router.navigate(to: .conversationList)
 
         // WHEN

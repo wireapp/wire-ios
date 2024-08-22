@@ -21,8 +21,8 @@ import WireDesign
 
 public final class ProgressSpinner: UIView {
 
-    private var didBecomeActiveNotificationToken: NSObjectProtocol?
-    private var didEnterBackgroundNotificationToken: NSObjectProtocol?
+    private var didBecomeActiveNotificationToken: (any NSObjectProtocol)?
+    private var didEnterBackgroundNotificationToken: (any NSObjectProtocol)?
 
     public var color: UIColor = .white {
         didSet { updateSpinnerIcon() }

@@ -270,7 +270,7 @@ extension BlockerViewController {
         else {
             return
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { rootViewController })
 
         let certificateChain = try await activeUserSession
             .enrollE2EICertificate
