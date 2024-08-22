@@ -26,8 +26,7 @@ private let accountImageBorderWidth: CGFloat = 1
 private let teamAccountImageCornerRadius: CGFloat = 6
 private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 
-// TODO: make diameter?
-private let availabilityIndicatorRadius: CGFloat = 8.75 / 2
+private let availabilityIndicatorDiameterFraction = CGFloat(10)/32
 
 // MARK: -
 
@@ -115,8 +114,8 @@ public final class AccountImageView: UIView {
         availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityIndicatorView)
         NSLayoutConstraint.activate([
-            availabilityIndicatorView.widthAnchor.constraint(equalToConstant: availabilityIndicatorRadius * 2),
-            availabilityIndicatorView.heightAnchor.constraint(equalToConstant: availabilityIndicatorRadius * 2),
+            availabilityIndicatorView.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: availabilityIndicatorDiameterFraction),
+            availabilityIndicatorView.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: availabilityIndicatorDiameterFraction),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
         ])
