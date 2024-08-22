@@ -16,26 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-struct TopOverlayPresenter: TopOverlayPresenting {
+public extension AsyncSequence {
 
-    var mainWindow: UIWindow
+    /// Convert the async sequence to an asynchronous stream.
+    ///
+    /// - Returns: An `AsyncThrowingStream` of the same element.
 
-    private var zClientViewController: ZClientViewController? {
-        guard let zClientViewController = mainWindow.rootViewController as? ZClientViewController else {
-            assertionFailure("there should be at least one instance of `ZClientViewController`")
-            return nil
+    func toStream() -> AsyncThrowingStream<Element, Error> {
+        var iterator = makeAsyncIterator()
+        return AsyncThrowingStream {
+            try await iterator.next()
         }
-
-        return zClientViewController
     }
 
-    func presentTopOverlay(_ viewController: UIViewController, animated: Bool) {
-        zClientViewController?.setTopOverlay(to: viewController, animated: animated)
-    }
-
-    func dismissTopOverlay(animated: Bool) {
-        zClientViewController?.setTopOverlay(to: nil, animated: animated)
-    }
 }

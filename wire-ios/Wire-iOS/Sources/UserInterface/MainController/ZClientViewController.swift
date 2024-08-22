@@ -269,7 +269,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
     static var shared: ZClientViewController? {
-        AppDelegate.shared.appRootRouter?.rootViewController.children.first { $0 is ZClientViewController } as? ZClientViewController
+        AppDelegate.shared.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
