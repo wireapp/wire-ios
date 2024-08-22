@@ -284,30 +284,18 @@ private extension View {
     }
 }
 
-private struct AccountImageViewRepresentable: UIViewRepresentable {
-
-    private(set) var accountImage: UIImage
-    private(set) var isTeamAccount: Bool
-    private(set) var availability: Availability?
+private extension AccountImageViewRepresentable {
 
     init(
         _ accountImage: UIImage,
         _ isTeamAccount: Bool,
         _ availability: Availability?
     ) {
-        self.accountImage = accountImage
-        self.isTeamAccount = isTeamAccount
-        self.availability = availability
-    }
-
-    func makeUIView(context: Context) -> AccountImageView {
-        .init()
-    }
-
-    func updateUIView(_ view: AccountImageView, context: Context) {
-        view.accountImage = accountImage
-        view.isTeamAccount = isTeamAccount
-        view.availability = availability
+        self.init(
+            accountImage: accountImage,
+            isTeamAccount: isTeamAccount,
+            availability: availability
+        )
     }
 }
 

@@ -38,6 +38,7 @@ struct SidebarView: View {
                 ScrollView {
 
                     Text("Conversations")
+                        .background(Color.green)
                     Text("Favorites")
                     Text("Groups")
                     Text("1:1 Conversations")
@@ -46,6 +47,8 @@ struct SidebarView: View {
                     Text("Contacts")
                     Text("Connect")
                 }
+                .frame(maxWidth: .infinity)
+                .background(Color.yellow)
                 Spacer()
                 Text("Settings")
                 Text("Support")
@@ -56,7 +59,14 @@ struct SidebarView: View {
     }
 
     private var userInfo: some View {
-        Text("avatar").multilineTextAlignment(.leading)
+        HStack {
+            AccountImageViewRepresentable(
+                accountImage: .from(solidColor: .systemIndigo),
+                isTeamAccount: false,
+                availability: .available
+            )
+            Text("avatar").multilineTextAlignment(.leading)
+        }.background(Color.cyan)
     }
 }
 
@@ -119,5 +129,15 @@ private final class EmptyViewController: UIHostingController<AnyView> {
 private final class HintViewController: UIHostingController<Text> {
     convenience init(_ hint: String) {
         self.init(rootView: Text(verbatim: hint).font(.title2))
+    }
+}
+
+private extension UIImage {
+
+    static func from(solidColor color: UIColor) -> UIImage {
+        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
+            color.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
     }
 }
