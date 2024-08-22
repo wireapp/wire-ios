@@ -20,9 +20,9 @@ import SwiftUI
 
 public struct AccountImageViewRepresentable: UIViewRepresentable {
 
-    private(set) var accountImage: UIImage
-    private(set) var isTeamAccount: Bool
-    private(set) var availability: Availability?
+    private let accountImage: UIImage
+    private let isTeamAccount: Bool
+    private let availability: Availability?
 
     public init(
         accountImage: UIImage,
