@@ -57,24 +57,15 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
 
-        let appLockConfig = AppLockFeatureConfig(
-            status: appLock.status,
-            isMandatory: appLock.config.enforceAppLock,
-            inactivityTimeoutInSeconds: appLock.config.inactivityTimeoutSecs
-        )
-
+        let appLockConfig = appLock.toAPIModel()
         featureConfigs.append(.appLock(appLockConfig))
 
-        let classifiedDomainsConfig = ClassifiedDomainsFeatureConfig(
-            status: classifiedDomains.status,
-            domains: classifiedDomains.config.domains
-        )
-
+        let classifiedDomainsConfig = classifiedDomains.toAPIModel()
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
             status: conferenceCalling.status,
-            useSFTForOneToOneCalls: nil
+            useSFTForOneToOneCalls: false
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
@@ -97,11 +88,7 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
 
         featureConfigs.append(.fileSharing(fileSharingConfig))
 
-        let selfDeletingMessagesConfig = SelfDeletingMessagesFeatureConfig(
-            status: selfDeletingMessages.status,
-            enforcedTimeoutSeconds: selfDeletingMessages.config.enforcedTimeoutSeconds
-        )
-
+        let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
         featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
 
         if let mls {
@@ -133,7 +120,7 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
                 acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
                 verificationExpiration: mlsE2EId.config.verificationExpiration,
                 crlProxy: nil,
-                useProxyOnMobile: nil
+                useProxyOnMobile: false
             )
 
             featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))

@@ -40,6 +40,6 @@ public struct EndToEndIdentityFeatureConfig: Equatable, Codable {
 
     /// Uses proxy on mobile
 
-    public let useProxyOnMobile: Bool?
+    public let useProxyOnMobile: Bool
 
 }

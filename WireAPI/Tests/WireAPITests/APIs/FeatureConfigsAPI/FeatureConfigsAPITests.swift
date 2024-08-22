@@ -204,7 +204,7 @@ extension FeatureConfigsAPITests {
             ),
             .conferenceCalling(.init(
                 status: .enabled,
-                useSFTForOneToOneCalls: nil
+                useSFTForOneToOneCalls: false
             )
             ),
             .conversationGuestLinks(.init(
@@ -248,19 +248,14 @@ extension FeatureConfigsAPITests {
                 domains: ["example.com"]
             )
             ),
-            .conferenceCalling(
-                .init(status: .enabled,
-                      useSFTForOneToOneCalls: nil)
+            .conferenceCalling(.init(
+                status: .enabled,
+                useSFTForOneToOneCalls: false
+            )
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
-            ),
-            .digitalSignature(.init(
-                status: .enabled)
-            ),
-            .fileSharing(.init(
-                status: .enabled)
-            ),
+            .conversationGuestLinks(.init(status: .enabled)),
+            .digitalSignature(.init(status: .enabled)),
+            .fileSharing(.init(status: .enabled)),
             .selfDeletingMessages(.init(
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
@@ -290,7 +285,7 @@ extension FeatureConfigsAPITests {
                 acmeDiscoveryURL: "https://example.com",
                 verificationExpiration: 9_223_372_036_854_776_000,
                 crlProxy: nil,
-                useProxyOnMobile: nil
+                useProxyOnMobile: false
             )
             )
         ]
@@ -311,15 +306,10 @@ extension FeatureConfigsAPITests {
                 .init(status: .enabled,
                       useSFTForOneToOneCalls: true)
             ),
-            .conversationGuestLinks(.init(
-                status: .enabled)
+            .conversationGuestLinks(.init(status: .enabled)
             ),
-            .digitalSignature(.init(
-                status: .enabled)
-            ),
-            .fileSharing(.init(
-                status: .enabled)
-            ),
+            .digitalSignature(.init(status: .enabled)),
+            .fileSharing(.init(status: .enabled)),
             .selfDeletingMessages(.init(
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
