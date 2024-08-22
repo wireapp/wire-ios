@@ -24,6 +24,8 @@ import WireDesign
 private let availableColor = ColorTheme.Base.positive
 private let awayColor = ColorTheme.Base.error
 private let busyColor = ColorTheme.Base.warning
+private let backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+private let backgroundBorderWidth: CGFloat = 2
 
 // in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
 private let awayRelativeBorderSize = 2.0 / 4.375
@@ -43,6 +45,12 @@ final class AvailabilityIndicatorView: UIView {
 
     // MARK: - Private Properties
 
+    /// A view which serves as background and outer border.
+    private let backgroundView = UIView()
+
+    /// The container is needed, so that a layer's `mask` property can be set.
+    /// Setting the `mask` layer of the root view (self) would result in the background being masked too.
+    private let shapeContainerView = UIView()
     private let shapeView = UIView()
 
     // MARK: - Life Cycle
@@ -60,7 +68,14 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Methods
 
     private func setupSubviews() {
-        addSubview(shapeView)
+        backgroundView.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        addSubview(backgroundView)
+
+        shapeContainerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        shapeContainerView.addSubview(shapeView)
+        shapeContainerView.frame = bounds
+        addSubview(shapeContainerView)
+
         setNeedsLayout()
     }
 
@@ -68,8 +83,9 @@ final class AvailabilityIndicatorView: UIView {
         super.layoutSubviews()
 
         guard let availability else {
+            shapeContainerView.layer.mask = nil
+            backgroundView.isHidden = true
             shapeView.backgroundColor = .none
-            layer.mask = nil
             return
         }
 
@@ -84,7 +100,7 @@ final class AvailabilityIndicatorView: UIView {
         switch availability {
         case .available:
             shapeView.backgroundColor = availableColor
-            layer.mask = nil
+            shapeContainerView.layer.mask = nil
 
         case .away:
             shapeView.backgroundColor = awayColor
@@ -103,7 +119,7 @@ final class AvailabilityIndicatorView: UIView {
             let maskLayer = CAShapeLayer()
             maskLayer.path = maskPath.cgPath
             maskLayer.fillRule = .evenOdd
-            layer.mask = maskLayer
+            shapeContainerView.layer.mask = maskLayer
 
         case .busy:
             shapeView.backgroundColor = busyColor
@@ -122,8 +138,12 @@ final class AvailabilityIndicatorView: UIView {
             let maskLayer = CAShapeLayer()
             maskLayer.path = maskPath.cgPath
             maskLayer.fillRule = .evenOdd
-            layer.mask = maskLayer
+            shapeContainerView.layer.mask = maskLayer
         }
+
+        backgroundView.isHidden = false
+        backgroundView.frame = shapeView.frame.insetBy(dx: -backgroundBorderWidth, dy: -backgroundBorderWidth)
+        backgroundView.layer.cornerRadius = backgroundView.frame.width / 2
     }
 }
 
