@@ -60,13 +60,25 @@ struct SidebarView: View {
 
     private var userInfo: some View {
         HStack {
+//            Button {} label: {
+//                EmptyView()
+//            }
             AccountImageViewRepresentable(
                 accountImage: .from(solidColor: .systemIndigo),
                 isTeamAccount: false,
                 availability: .available
             )
-            Text("avatar").multilineTextAlignment(.leading)
-        }.background(Color.cyan)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(Color.pink)
+            VStack(alignment: .leading) {
+                Text("avatar").multilineTextAlignment(.leading)
+                Text("avatar").multilineTextAlignment(.leading)
+            }
+            .fixedSize(horizontal: true, vertical: true)
+            .background(Color.green)
+        }
+        .padding()
+        .background(Color.cyan)
     }
 }
 
@@ -140,4 +152,34 @@ private extension UIImage {
             rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
         }
     }
+}
+
+
+
+
+private struct ContentView: View {
+    var body: some View {
+        HStack(alignment: .center) {
+            // Circle on the left
+            Circle()
+                .frame(width: 50, height: 50) // Adjust size as needed
+                .foregroundColor(.blue)
+
+            // VStack for the texts on the right
+            VStack(alignment: .leading) {
+                Text("First Text")
+                    .font(.headline) // Customize the font if needed
+
+                Text("Second Text")
+                    .font(.subheadline) // Customize the font if needed
+                    .foregroundColor(.gray) // Optional: set color to distinguish the texts
+            }
+            .padding(.leading, 8) // Add some spacing between the circle and the texts
+        }
+        .padding() // Optional: Add padding around the HStack
+    }
+}
+
+#Preview("X") {
+    ContentView()
 }
