@@ -1314,7 +1314,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120B1B751F7900223568 /* ios-test-host.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1333,7 +1332,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5477120B1B751F7900223568 /* ios-test-host.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
