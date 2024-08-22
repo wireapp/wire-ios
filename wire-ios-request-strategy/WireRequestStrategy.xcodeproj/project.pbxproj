@@ -779,8 +779,6 @@
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB5120552C6FD9CE000C8FEC /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB51206C2C707B32000C8FEC /* BackenInfoSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = BackenInfoSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBF2BD5E2C5BD468002BCBDD /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		D33B57B02A56BDCA0078A4F9 /* FederationTerminationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManager.swift; sourceTree = "<group>"; };
 		D3DA067B2A5D9EF700BA9CEB /* FederationTerminationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationTerminationManagerTest.swift; sourceTree = "<group>"; };
@@ -1386,8 +1384,6 @@
 		166902041D7082C7000FE4AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB51206C2C707B32000C8FEC /* BackenInfoSupport.framework */,
-				CB5120552C6FD9CE000C8FEC /* WireTransportSupport.framework */,
 				CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */,
 				598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */,
 				59D1C3112B1DF3AD0016F6B2 /* WireDataModelSupport.framework */,
