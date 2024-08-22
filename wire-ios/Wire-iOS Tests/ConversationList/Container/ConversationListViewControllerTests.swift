@@ -41,55 +41,58 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
-        mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
-        accentColor = .blue
+    override func setUp() async throws {
+        await MainActor.run {
 
-        coreDataFixture = .init()
+            mockMainCoordinator = .init()
+            snapshotHelper = SnapshotHelper()
+            accentColor = .blue
 
-        userSession = .init()
-        userSession.coreDataStack = coreDataFixture.coreDataStack
+            coreDataFixture = .init()
 
-        mockIsSelfUserE2EICertifiedUseCase = .init()
-        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+            userSession = .init()
+            userSession.coreDataStack = coreDataFixture.coreDataStack
 
-        modelHelper = ModelHelper()
+            mockIsSelfUserE2EICertifiedUseCase = .init()
+            mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
-        selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
-        selfUser.accentColor = .red
+            modelHelper = ModelHelper()
 
-        let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(
-            account: account,
-            selfUserLegalHoldSubject: selfUser,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock
-        )
+            let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
+            selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
+            selfUser.accentColor = .red
 
-        sut = ConversationListViewController(
-            viewModel: viewModel,
-            zClientViewController: .init(account: account, userSession: userSession),
-            mainCoordinator: mockMainCoordinator,
-            selfProfileViewControllerBuilder: .mock
-        )
+            let account = Account.mockAccount(imageData: mockImageData)
+            let viewModel = ConversationListViewController.ViewModel(
+                account: account,
+                selfUserLegalHoldSubject: selfUser,
+                userSession: userSession,
+                isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+                mainCoordinator: .mock
+            )
 
-        tabBarController = MainTabBarController(
-            conversations: UINavigationController(rootViewController: sut),
-            archive: .init(),
-            settings: .init()
-        )
+            sut = ConversationListViewController(
+                viewModel: viewModel,
+                zClientViewController: .init(account: account, userSession: userSession),
+                mainCoordinator: mockMainCoordinator,
+                selfProfileViewControllerBuilder: .mock,
+                configureForSplitView: false
+            )
 
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = tabBarController
-        window.makeKeyAndVisible()
-        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-        tabBarController.overrideUserInterfaceStyle = .dark
+            tabBarController = MainTabBarController(
+                conversations: UINavigationController(rootViewController: sut),
+                archive: .init(),
+                settings: .init()
+            )
 
-        UIView.setAnimationsEnabled(false)
+            window = .init(frame: UIScreen.main.bounds)
+            window.rootViewController = tabBarController
+            window.makeKeyAndVisible()
+            wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+            tabBarController.overrideUserInterfaceStyle = .dark
+
+            UIView.setAnimationsEnabled(false)
+        }
     }
 
     // MARK: - tearDown
