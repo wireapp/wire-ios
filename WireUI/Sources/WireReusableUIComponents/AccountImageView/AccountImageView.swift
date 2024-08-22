@@ -26,7 +26,7 @@ private let accountImageBorderWidth: CGFloat = 1
 private let teamAccountImageCornerRadius: CGFloat = 6
 private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 
-private let availabilityIndicatorDiameterFraction = CGFloat(10)/32
+private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
 // MARK: -
 

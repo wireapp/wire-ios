@@ -68,7 +68,6 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Methods
 
     private func setupSubviews() {
-
         backgroundView.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
         addSubview(backgroundView)
 

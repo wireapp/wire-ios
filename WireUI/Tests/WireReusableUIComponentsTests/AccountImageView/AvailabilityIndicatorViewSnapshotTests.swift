@@ -49,7 +49,6 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
     @MainActor
     func testAllAvailabilities() {
         for availability in Availability.allCases + [Availability?.none] {
-
             // Given
             sut.availability = availability
             let testName = if let availability { "\(availability)" } else { "none" }
