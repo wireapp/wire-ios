@@ -26,8 +26,8 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
     private var sut: AvailabilityIndicatorView!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        sut = .init(frame: .init(x: 0, y: 0, width: 20, height: 20))
+    override func setUp() async throws {
+        sut = await .init(frame: .init(x: 0, y: 0, width: 20, height: 20))
         snapshotHelper = .init()
             .withSnapshotDirectory(relativeTo: #file)
     }
@@ -37,6 +37,7 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
         sut = nil
     }
 
+    @MainActor
     func testAllAvailabilities() {
         for availability in Availability.allCases + [Availability?.none] {
             // Given
@@ -53,3 +54,5 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
         }
     }
 }
+
+extension AvailabilityIndicatorView: Sendable {}

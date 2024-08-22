@@ -819,7 +819,7 @@ extension AuthenticationCoordinator {
         guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
 
         Task { @MainActor in
             do {
