@@ -22,11 +22,7 @@ import WireDesign
 // MARK: Constants
 
 private let accountImageViewBorderColor = ColorTheme.Strokes.outline
-private let availabilityIndicatorBackgroundColor = UIColor {
-    $0.userInterfaceStyle == .dark
-        ? BaseColorPalette.Grays.gray90
-        : .clear
-}
+private let availabilityIndicatorBackgroundColor = ColorTheme.Backgrounds.surfaceVariant
 
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
@@ -46,7 +42,7 @@ public final class AccountImageView: UIView {
         didSet { updateAccountImage() }
     }
 
-    public var accountType = AccountType.user {
+    public var isTeamAccount = false {
         didSet { updateShape() }
     }
 
@@ -168,11 +164,10 @@ public final class AccountImageView: UIView {
     private func updateShape() {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
-        switch accountType {
-        case .user:
-            accountImageViewWrapper.layer.cornerRadius = accountImageHeight / 2 + accountImageBorderWidth
-        case .team:
-            accountImageViewWrapper.layer.cornerRadius = teamAccountImageCornerRadius
+        accountImageViewWrapper.layer.cornerRadius = if isTeamAccount {
+            teamAccountImageCornerRadius
+        } else {
+            accountImageHeight / 2 + accountImageBorderWidth
         }
     }
 
@@ -182,7 +177,7 @@ public final class AccountImageView: UIView {
         }
 
         // for dark mode
-        availabilityIndicatorBackgroundView.isHidden = availability == .none || traitCollection.userInterfaceStyle != .dark
+        availabilityIndicatorBackgroundView.isHidden = availability == .none
 
         if availability == .none || traitCollection.userInterfaceStyle == .dark {
             // remove clipping
@@ -207,15 +202,6 @@ public final class AccountImageView: UIView {
         maskLayer.fillRule = .evenOdd
         accountImageView.superview?.layer.mask = maskLayer
     }
-
-    // MARK: - Nested Types
-
-    public enum AccountType: CaseIterable {
-        /// The account image will be clipped using a circle shape.
-        case user
-        /// The account image will be clipped using a round rectangle shape.
-        case team
-    }
 }
 
 // MARK: - Convenience Init
@@ -224,13 +210,13 @@ public extension AccountImageView {
 
     convenience init(
         accountImage: UIImage,
-        accountType: AccountType,
+        isTeamAccount: Bool,
         availability: Availability?
     ) {
         self.init()
 
         self.accountImage = accountImage
-        self.accountType = accountType
+        self.isTeamAccount = isTeamAccount
         self.availability = availability
 
         updateAccountImage()
@@ -246,28 +232,27 @@ struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            ForEach(AccountImageView.AccountType.allCases, id: \.self) { accountType in
+            ForEach([false, true], id: \.self) { isTeamAccount in
 
-                previewWithNavigationBar(accountType, .none)
-                    .previewDisplayName("\(accountType)")
+                previewWithNavigationBar(isTeamAccount, .none)
+                    .previewDisplayName(isTeamAccount ? "team" : "personal")
 
                 ForEach(Availability.allCases, id: \.self) { availability in
-                    previewWithNavigationBar(accountType, availability)
-                        .previewDisplayName("\(accountType) - \(availability)")
+                    previewWithNavigationBar(isTeamAccount, availability)
+                        .previewDisplayName(isTeamAccount ? "team" : "personal" + " - \(availability)")
                 }
             }
         }
-        .background(Color(UIColor.systemGray2))
     }
 
     @ViewBuilder
     static func previewWithNavigationBar(
-        _ accountType: AccountImageView.AccountType,
+        _ isTeamAccount: Bool,
         _ availability: Availability?
     ) -> some View {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
-            AccountImageViewRepresentable(accountImage, accountType, availability)
+            AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
                 .center()
                 .scaleEffect(6)
                 .navigationTitle("Conversations")
@@ -275,7 +260,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
-                            AccountImageViewRepresentable(accountImage, accountType, availability)
+                            AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
                                 .padding(.horizontal)
                         }
                     }
@@ -299,30 +284,18 @@ private extension View {
     }
 }
 
-private struct AccountImageViewRepresentable: UIViewRepresentable {
-
-    private(set) var accountImage: UIImage
-    private(set) var accountType: AccountImageView.AccountType
-    private(set) var availability: Availability?
+private extension AccountImageViewRepresentable {
 
     init(
         _ accountImage: UIImage,
-        _ accountType: AccountImageView.AccountType,
+        _ isTeamAccount: Bool,
         _ availability: Availability?
     ) {
-        self.accountImage = accountImage
-        self.accountType = accountType
-        self.availability = availability
-    }
-
-    func makeUIView(context: Context) -> AccountImageView {
-        .init()
-    }
-
-    func updateUIView(_ view: AccountImageView, context: Context) {
-        view.accountImage = accountImage
-        view.accountType = accountType
-        view.availability = availability
+        self.init(
+            accountImage: accountImage,
+            isTeamAccount: isTeamAccount,
+            availability: availability
+        )
     }
 }
 
