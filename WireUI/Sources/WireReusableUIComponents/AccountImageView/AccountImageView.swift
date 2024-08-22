@@ -21,6 +21,7 @@ import WireDesign
 
 // MARK: Constants
 
+/// Used for the intrinsic content size
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
 private let teamAccountImageCornerRadius: CGFloat = 6
@@ -74,6 +75,7 @@ public final class AccountImageView: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
         updateAccountImageBorder()
+        updateShape()
     }
 
     override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -92,23 +94,40 @@ public final class AccountImageView: UIView {
         accountImageViewWrapper.translatesAutoresizingMaskIntoConstraints = false
         accountImageViewWrapper.clipsToBounds = true
         addSubview(accountImageViewWrapper)
-        NSLayoutConstraint.activate([
+        var constraints = [
+            // make sure it's in the center, even if the surrounding view is not a square
             accountImageViewWrapper.centerXAnchor.constraint(equalTo: centerXAnchor),
-            accountImageViewWrapper.centerYAnchor.constraint(equalTo: centerYAnchor)
-        ])
+            accountImageViewWrapper.centerYAnchor.constraint(equalTo: centerYAnchor),
+            // aspect ratio 1:1
+            accountImageViewWrapper.widthAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor),
+            // ensure the image wrapper is always inside its container
+            accountImageViewWrapper.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
+            accountImageViewWrapper.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            trailingAnchor.constraint(greaterThanOrEqualTo: accountImageViewWrapper.trailingAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: accountImageViewWrapper.bottomAnchor),
+            // enlarge the image wrapper as much as possible
+            accountImageViewWrapper.leadingAnchor.constraint(equalTo: leadingAnchor), // lower priority
+            accountImageViewWrapper.topAnchor.constraint(equalTo: topAnchor), // lower priority
+            trailingAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor), // lower priority
+            bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor) // lower priority
+        ]
+        constraints[constraints.endIndex - 4 ..< constraints.endIndex].forEach { $0.priority = .defaultHigh }
+        NSLayoutConstraint.activate(constraints)
 
         // the image view which displays the account image
         accountImageView.contentMode = .scaleAspectFill
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
         accountImageViewWrapper.addSubview(accountImageView)
-        NSLayoutConstraint.activate([
-            accountImageView.widthAnchor.constraint(equalToConstant: accountImageHeight),
-            accountImageView.heightAnchor.constraint(equalToConstant: accountImageHeight),
+        constraints = [
+            accountImageView.widthAnchor.constraint(equalToConstant: accountImageHeight), // fallback, lower priority
+            accountImageView.heightAnchor.constraint(equalToConstant: accountImageHeight), // fallback, lower priority
             accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: accountImageBorderWidth),
             accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: accountImageBorderWidth),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: accountImageBorderWidth),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth)
-        ])
+        ]
+        constraints[0 ... 1].forEach { $0.priority = .defaultLow }
+        NSLayoutConstraint.activate(constraints)
 
         // view which renders the availability status
         availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -148,7 +167,7 @@ public final class AccountImageView: UIView {
         accountImageViewWrapper.layer.cornerRadius = if isTeamAccount {
             teamAccountImageCornerRadius
         } else {
-            accountImageHeight / 2 + accountImageBorderWidth
+            accountImageViewWrapper.frame.height / 2
         }
     }
 
@@ -214,11 +233,19 @@ struct AccountImageView_Previews: PreviewProvider {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
             AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
+                // set a frame in order check that it scales,
+                // ensure it scales with "aspectFit" content mode
+                .frame(width: 32, height: 50)
+                // make the frame visible in order to be able
+                // to check the alignment and size
+                .background(Color(UIColor.systemGray2))
                 .center()
+                // scale in order to better see it, keeping the
+                // ratio between the border width and total size
                 .scaleEffect(6)
                 .navigationTitle("Conversations")
                 .navigationBarTitleDisplayMode(.inline)
-                .background(Color(UIColor.systemGray2))
+                .background(Color(UIColor.systemGray3))
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
