@@ -50,16 +50,37 @@ final class FeatureConfigsAPITests: XCTestCase {
 
     // MARK: - Response handling
 
-    // MARK: - V0 to V3
+    // MARK: - V0
 
-    func testGetFeatureConfigs_SuccessResponse_200_V0_to_V3() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
             code: .ok,
             payloadResourceName: "GetFeatureConfigsSuccessResponseV0"
         )
 
-        let supportedVersions: [APIVersion] = [.v0, .v1, .v2, .v3]
+        let sut = APIVersion.v0.buildAPI(client: httpClient)
+
+        // When
+        let result = try await sut.getFeatureConfigs()
+
+        // Then
+        XCTAssertEqual(
+            result,
+            Scaffolding.featureConfigsV0
+        )
+    }
+
+    // MARK: - V1 to V3
+
+    func testGetFeatureConfigs_SuccessResponse_200_V1_to_V3() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: .ok,
+            payloadResourceName: "GetFeatureConfigsSuccessResponseV1"
+        )
+
+        let supportedVersions: [APIVersion] = [.v1, .v2, .v3]
 
         let suts = supportedVersions.map { $0.buildAPI(client: httpClient) }
 
@@ -74,7 +95,7 @@ final class FeatureConfigsAPITests: XCTestCase {
                     // Then
                     XCTAssertEqual(
                         result,
-                        Scaffolding.featureConfigsV0
+                        Scaffolding.featureConfigsV1
                     )
                 }
             }
@@ -191,6 +212,39 @@ extension FeatureConfigsAPITests {
         }
 
         static let featureConfigsV0: [FeatureConfig] = [
+            .appLock(.init(
+                status: .enabled,
+                isMandatory: true,
+                inactivityTimeoutInSeconds: 2_147_483_647
+            )
+            ),
+            .classifiedDomains(.init(
+                status: .enabled,
+                domains: ["example.com"]
+            )
+            ),
+            .conferenceCalling(.init(
+                status: .enabled,
+                useSFTForOneToOneCalls: false
+            )
+            ),
+            .conversationGuestLinks(.init(
+                status: .enabled)
+            ),
+            .digitalSignature(.init(
+                status: .enabled)
+            ),
+            .fileSharing(.init(
+                status: .enabled)
+            ),
+            .selfDeletingMessages(.init(
+                status: .enabled,
+                enforcedTimeoutSeconds: 2_147_483_647
+            )
+            )
+        ]
+
+        static let featureConfigsV1: [FeatureConfig] = [
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,

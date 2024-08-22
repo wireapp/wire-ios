@@ -67,15 +67,6 @@ enum FeatureConfigResponse {
 
     }
 
-    struct MLSV0: Decodable {
-
-        let protocolToggleUsers: Set<UUID>
-        let defaultProtocol: MessageProtocol
-        let allowedCipherSuites: [MLSCipherSuite]
-        let defaultCipherSuite: MLSCipherSuite
-
-    }
-
     struct SelfDeletingMessagesV0: Decodable {
 
         let enforcedTimeoutSeconds: UInt
@@ -93,7 +84,6 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
     let digitalSignatures: FeatureWithoutConfig
     let fileSharing: FeatureWithoutConfig
     let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
-    let mls: FeatureWithConfig<FeatureConfigResponse.MLSV0>?
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
@@ -131,19 +121,6 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
 
         let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
         featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
-
-        if let mls {
-            let mlsConfig = MLSFeatureConfig(
-                status: mls.status,
-                protocolToggleUsers: mls.config.protocolToggleUsers,
-                defaultProtocol: mls.config.defaultProtocol,
-                allowedCipherSuites: mls.config.allowedCipherSuites,
-                defaultCipherSuite: mls.config.defaultCipherSuite,
-                supportedProtocols: [.proteus] /// Default to Proteus
-            )
-
-            featureConfigs.append(.mls(mlsConfig))
-        }
 
         return featureConfigs
     }
