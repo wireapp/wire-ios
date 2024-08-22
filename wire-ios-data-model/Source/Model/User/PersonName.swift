@@ -32,6 +32,7 @@
     let rawFullName: String
     let nameOrder: NameOrder
     static let stringsToPersonNames = NSCache<NSString, PersonName>()
+    static let tagger = NSLinguisticTagger(tagSchemes: [NSLinguisticTagScheme.script], options: 0)
 
     lazy var secondNameComponents: [String] = {
         guard self.components.count < 2  else { return [] }
@@ -91,11 +92,11 @@
     }()
 
     public static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
-        let tagger = schemeTagger ?? NSLinguisticTagger(tagSchemes: [NSLinguisticTagScheme.script], options: 0)
-
         if let cachedPersonName = stringsToPersonNames.object(forKey: name as NSString) {
             return cachedPersonName
         }
+
+        let tagger = schemeTagger ?? tagger
         let cachedPersonName = PersonName(name: name, schemeTagger: tagger)
         stringsToPersonNames.setObject(cachedPersonName, forKey: name as NSString)
         return cachedPersonName
