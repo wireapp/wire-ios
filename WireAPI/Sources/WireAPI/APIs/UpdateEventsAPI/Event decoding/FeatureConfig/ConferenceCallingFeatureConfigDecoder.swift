@@ -30,7 +30,7 @@ struct ConferenceCallingFeatureConfigDecoder {
 
         return ConferenceCallingFeatureConfig(
             status: payload.status,
-            useSFTForOneToOneCalls: nil
+            useSFTForOneToOneCalls: false
         )
     }
 
