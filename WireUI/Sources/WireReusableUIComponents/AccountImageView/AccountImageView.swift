@@ -21,15 +21,12 @@ import WireDesign
 
 // MARK: Constants
 
-private let accountImageViewBorderColor = ColorTheme.Strokes.outline
-private let availabilityIndicatorBackgroundColor = ColorTheme.Backgrounds.surfaceVariant
-
 private let accountImageHeight: CGFloat = 26
 private let accountImageBorderWidth: CGFloat = 1
-private let availabilityIndicatorRadius: CGFloat = 8.75 / 2
-private let availabilityIndicatorBorderWidth: CGFloat = 2
-private let availabilityIndicatorCenterOffset = accountImageBorderWidth * 2 + accountImageHeight - availabilityIndicatorRadius
 private let teamAccountImageCornerRadius: CGFloat = 6
+private let accountImageViewBorderColor = ColorTheme.Strokes.outline
+
+private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
 // MARK: -
 
@@ -54,8 +51,6 @@ public final class AccountImageView: UIView {
 
     private let accountImageView = UIImageView()
     private let availabilityIndicatorView = AvailabilityIndicatorView()
-    // provides a background color only for dark mode
-    private let availabilityIndicatorBackgroundView = UIView()
 
     override public var intrinsicContentSize: CGSize {
         .init(
@@ -119,20 +114,10 @@ public final class AccountImageView: UIView {
         availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityIndicatorView)
         NSLayoutConstraint.activate([
-            availabilityIndicatorView.widthAnchor.constraint(equalToConstant: availabilityIndicatorRadius * 2),
-            availabilityIndicatorView.heightAnchor.constraint(equalToConstant: availabilityIndicatorRadius * 2),
+            availabilityIndicatorView.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: availabilityIndicatorDiameterFraction),
+            availabilityIndicatorView.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: availabilityIndicatorDiameterFraction),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
-        ])
-
-        // background view for the availability indicator
-        availabilityIndicatorBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        insertSubview(availabilityIndicatorBackgroundView, belowSubview: availabilityIndicatorView)
-        NSLayoutConstraint.activate([
-            availabilityIndicatorView.leadingAnchor.constraint(equalTo: availabilityIndicatorBackgroundView.leadingAnchor, constant: availabilityIndicatorBorderWidth),
-            availabilityIndicatorView.topAnchor.constraint(equalTo: availabilityIndicatorBackgroundView.topAnchor, constant: availabilityIndicatorBorderWidth),
-            availabilityIndicatorBackgroundView.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor, constant: availabilityIndicatorBorderWidth),
-            availabilityIndicatorBackgroundView.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor, constant: availabilityIndicatorBorderWidth)
         ])
 
         updateAccountImage()
@@ -151,10 +136,6 @@ public final class AccountImageView: UIView {
 
         accountImageViewWrapper.layer.borderWidth = 1
         accountImageViewWrapper.layer.borderColor = accountImageViewBorderColor.cgColor
-
-        // update the background view of the activitiy indicator view
-        availabilityIndicatorBackgroundView.layer.cornerRadius = availabilityIndicatorBackgroundView.frame.height / 2
-        availabilityIndicatorBackgroundView.backgroundColor = availabilityIndicatorBackgroundColor
     }
 
     private func updateAccountImage() {
@@ -176,31 +157,11 @@ public final class AccountImageView: UIView {
             availabilityIndicatorView.availability = availability
         }
 
-        // for dark mode
-        availabilityIndicatorBackgroundView.isHidden = availability == .none
-
         if availability == .none || traitCollection.userInterfaceStyle == .dark {
             // remove clipping
             accountImageView.superview?.layer.mask = .none
             return
         }
-
-        // draw a rect over the total bounds (for inverting the arc)
-        let imageWrapperViewHeight = accountImageBorderWidth * 2 + accountImageHeight
-        let maskPath = UIBezierPath(
-            rect: .init(origin: .zero, size: .init(width: imageWrapperViewHeight, height: imageWrapperViewHeight))
-        )
-        // crop a circle shape from the image
-        let center = CGPoint(x: availabilityIndicatorCenterOffset, y: availabilityIndicatorCenterOffset)
-        let radius = availabilityIndicatorRadius + availabilityIndicatorBorderWidth
-        maskPath.addArc(withCenter: center, radius: radius, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
-
-        // this clips a circle from the view, which gives the
-        // availability indicator view a transparent border
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = maskPath.cgPath
-        maskLayer.fillRule = .evenOdd
-        accountImageView.superview?.layer.mask = maskLayer
     }
 }
 
@@ -257,6 +218,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 .scaleEffect(6)
                 .navigationTitle("Conversations")
                 .navigationBarTitleDisplayMode(.inline)
+                .background(Color(UIColor.systemGray2))
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
