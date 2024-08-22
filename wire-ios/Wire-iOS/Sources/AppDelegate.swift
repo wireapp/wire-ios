@@ -90,8 +90,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // TODO [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
-        return appRootRouter?.rootViewController
-            .firstChild(ofType: ZClientViewController.self)?.mediaPlaybackManager
+        appRootRouter?.zClientViewController?.mediaPlaybackManager
     }
 
     // When running production code, this should always be true to ensure that we set the self user provider
@@ -161,7 +160,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         setupWindowAndRootViewController()
 
         if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
-            createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
+            createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
         }
 
         WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
@@ -279,7 +278,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         guard appRootRouter == nil else { return }
-        createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions)
+        createAppRootRouterAndInitialiazeOperations(launchOptions)
     }
 }
 
@@ -288,37 +287,25 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 private extension AppDelegate {
 
     private func setupWindowAndRootViewController() {
-
-        let shieldImageView = UIImageView(image: .init(resource: .Wire.shield))
-        shieldImageView.translatesAutoresizingMaskIntoConstraints = false
-
-        let rootViewController = RootViewController()
-        rootViewController.view.backgroundColor = .black
-        rootViewController.view.addSubview(shieldImageView)
-        NSLayoutConstraint.activate([
-            shieldImageView.centerXAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: rootViewController.view.safeAreaLayoutGuide.centerYAnchor)
-        ])
-
-        mainWindow.rootViewController = rootViewController
+        mainWindow.rootViewController = LaunchScreenViewController()
         mainWindow.makeKeyAndVisible()
     }
 
-    private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
+    private func createAppRootRouterAndInitialiazeOperations(_ launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
-        createAppRootRouter(launchOptions: launchOptions)
+        createAppRootRouter(launchOptions)
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
-    private func createAppRootRouter(launchOptions: LaunchOptions) {
+    private func createAppRootRouter(_ launchOptions: LaunchOptions) {
 
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }
 
         appRootRouter = AppRootRouter(
-            rootViewController: mainWindow.rootViewController as! RootViewController,
+            mainWindow: mainWindow,
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
