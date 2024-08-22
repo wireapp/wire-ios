@@ -24,12 +24,13 @@ enum BitRateStatus: String {
     case constant
     case variable
 
+    /// We don't need to display the `Variable Bit Rate Encoding` label.
     fileprivate var localizedText: String {
         switch self {
         case BitRateStatus.constant:
             return L10n.Localizable.Call.Status.constantBitrate
         case BitRateStatus.variable:
-            return L10n.Localizable.Call.Status.variableBitrate
+            return ""
         }
 
     }
