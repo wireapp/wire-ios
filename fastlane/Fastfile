@@ -710,7 +710,7 @@ class Build
         end
 
         # We want to group related artifacts by the filename.
-        if !pr_build
+        if !pr_build?
             result + "/" + filename
         else
             result + "/PR/" + ENV['PR_S3_SUBFOLDER']
