@@ -23,11 +23,20 @@ import XCTest
 
 final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
 
-    private var sut: AvailabilityIndicatorView!
+    typealias SUT = AvailabilityIndicatorView
+
+    /// A container is needed because the availability indicator view has a border beyond its frame.
+    private var container: UIView!
+    private var sut: SUT!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() async throws {
-        sut = await .init(frame: .init(x: 0, y: 0, width: 20, height: 20))
+        (sut, container) = await MainActor.run {
+            let container = UIView(frame: .init(origin: .zero, size: .init(width: 26, height: 26)))
+            let sut = SUT(frame: .init(x: 3, y: 3, width: 20, height: 20))
+            container.addSubview(sut)
+            return (sut, container)
+        }
         snapshotHelper = .init()
             .withSnapshotDirectory(relativeTo: #file)
     }
@@ -40,6 +49,7 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
     @MainActor
     func testAllAvailabilities() {
         for availability in Availability.allCases + [Availability?.none] {
+
             // Given
             sut.availability = availability
             let testName = if let availability { "\(availability)" } else { "none" }
@@ -47,10 +57,10 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
             // Then
             snapshotHelper
                 .withUserInterfaceStyle(.light)
-                .verify(matching: sut, named: "light", testName: testName)
+                .verify(matching: container, named: "light", testName: testName)
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut, named: "dark", testName: testName)
+                .verify(matching: container, named: "dark", testName: testName)
         }
     }
 }
