@@ -80,7 +80,7 @@ final class ZClientViewController: UIViewController {
     var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
 
-    private let topOverlayContainer: UIView = UIView()
+    private let topOverlayContainer = UIView()
     private var topOverlayViewController: UIViewController?
     private var contentTopRegularConstraint: NSLayoutConstraint!
     private var contentTopCompactConstraint: NSLayoutConstraint!
@@ -291,7 +291,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
     static var shared: ZClientViewController? {
-        AppDelegate.shared.appRootRouter?.rootViewController.children.first { $0 is ZClientViewController } as? ZClientViewController
+        AppDelegate.shared.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
