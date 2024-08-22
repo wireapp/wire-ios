@@ -25,5 +25,5 @@ enum FeatureConfigRepositoryError: Error {
     /// Unable to store config locally
 
     case failedToStoreConfigLocally(Error)
-    
+
 }

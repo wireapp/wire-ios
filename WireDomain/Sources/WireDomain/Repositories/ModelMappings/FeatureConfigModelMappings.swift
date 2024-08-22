@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import WireDataModel
 import WireAPI
+import WireDataModel
 
 extension WireAPI.MLSFeatureConfig {
-    
+
     func toDomainModel() -> WireDataModel.Feature.MLS.Config {
         .init(
             protocolToggleUsers: Array(protocolToggleUsers),
@@ -35,11 +35,11 @@ extension WireAPI.MLSFeatureConfig {
             })
         )
     }
-    
+
 }
 
 extension WireAPI.EndToEndIdentityFeatureConfig {
-    
+
     func toDomainModel() -> WireDataModel.Feature.E2EI.Config {
         .init(
             acmeDiscoveryUrl: acmeDiscoveryURL,
@@ -48,11 +48,11 @@ extension WireAPI.EndToEndIdentityFeatureConfig {
             useProxyOnMobile: useProxyOnMobile
         )
     }
-    
+
 }
 
 extension WireAPI.AppLockFeatureConfig {
-    
+
     func toDomainModel() -> Feature.AppLock.Config {
         .init(
             enforceAppLock: isMandatory,
@@ -62,42 +62,42 @@ extension WireAPI.AppLockFeatureConfig {
 }
 
 extension WireAPI.ClassifiedDomainsFeatureConfig {
-    
+
     func toDomainModel() -> Feature.ClassifiedDomains.Config {
         .init(
             domains: Array(domains)
         )
     }
-    
+
 }
 
 extension WireAPI.ConferenceCallingFeatureConfig {
-    
+
     func toDomainModel() -> Feature.ConferenceCalling.Config? {
         if let useSFTForOneToOneCalls {
-            return .init(useSFTForOneToOneCalls: useSFTForOneToOneCalls)
+            .init(useSFTForOneToOneCalls: useSFTForOneToOneCalls)
         } else {
-            return nil
+            nil
         }
     }
-    
+
 }
 
 extension WireAPI.MLSMigrationFeatureConfig {
-    
+
     func toDomainModel() -> Feature.MLSMigration.Config {
         .init(
             startTime: startTime,
             finaliseRegardlessAfter: finaliseRegardlessAfter
         )
     }
-    
+
 }
 
 extension WireAPI.SelfDeletingMessagesFeatureConfig {
-    
+
     func toDomainModel() -> Feature.SelfDeletingMessages.Config {
         .init(enforcedTimeoutSeconds: enforcedTimeoutSeconds)
     }
-    
+
 }
