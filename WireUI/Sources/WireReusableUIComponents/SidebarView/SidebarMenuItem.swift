@@ -22,9 +22,10 @@ import WireDesign
 private let titleForegroundColor = Color(ColorTheme.Backgrounds.onBackground)
 private let linkIconForegroundColor = Color(ColorTheme.Base.secondaryText)
 private let isPressedForegroundColor = Color(ColorTheme.Base.onPrimary)
-
 // TODO: get from Environment
 private let accentColor_ = Color(ColorTheme.Base.primary)
+
+private let cornerRadius_: CGFloat = 12
 
 struct SidebarMenuItem: View {
 
@@ -43,24 +44,30 @@ struct SidebarMenuItem: View {
 
         Button(action: action) {
             IsPressedReader { isPressed in
+                let isHighlighted = isHighlighted != isPressed
                 HStack {
 
-                    let iconSystemNameSuffix = isHighlighted != isPressed ? ".fill" : ""
                     Label {
                         title()
-                            .foregroundStyle(isPressed ? isPressedForegroundColor : titleForegroundColor)
+                            .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)
                     } icon: {
+                        let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
                         Image(systemName: icon + iconSystemNameSuffix)
-                            .foregroundStyle(isPressed ? isPressedForegroundColor : accentColor_)
+                            .foregroundStyle(isHighlighted ? isPressedForegroundColor : accentColor_)
                     }
 
                     Spacer()
 
                     if isLink {
                         Image(systemName: "arrow.up.forward.square")
-                            .foregroundStyle(isPressed ? isPressedForegroundColor : linkIconForegroundColor)
+                            .foregroundStyle(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor)
                     }
                 }
+                .contentShape(RoundedRectangle(cornerRadius: cornerRadius_))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 12)
+                .background(isHighlighted ? accentColor_ : .clear)
+                .cornerRadius(cornerRadius_)
             }
         }
         .buttonStyle(SidebarMenuItemStyle())
@@ -69,21 +76,15 @@ struct SidebarMenuItem: View {
 
 private struct IsPressedReader<Content>: View where Content: View {
     @Environment(\.isPressed) private var isPressed
-    let content: (_ isPressed: Bool) -> Content
+    @ViewBuilder let content: (_ isPressed: Bool) -> Content
     var body: some View { content(isPressed) }
 }
 
 private struct SidebarMenuItemStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
-        let cornerRadius: CGFloat = 12
         configuration.label
             .environment(\.isPressed, configuration.isPressed)
-            .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 12)
-            .background(configuration.isPressed ? accentColor_ : .clear)
-            .cornerRadius(cornerRadius)
     }
 }
 
@@ -103,4 +104,15 @@ extension View {
     func myCustomValue(_ isPressed: Bool) -> some View {
         environment(\.isPressed, isPressed)
     }
+}
+
+// MARK: - Previews
+
+#Preview {
+    VStack {
+        SidebarMenuItem(icon: "text.bubble", isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
+        SidebarMenuItem(icon: "star", isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+        SidebarMenuItem(icon: "person.3", isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+    }
+    .frame(width: 250)
 }
