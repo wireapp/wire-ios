@@ -79,6 +79,7 @@ struct SidebarView: View {
     @ViewBuilder
     private func scrollDeactivatableMenuItems(isScrollDisabled: Bool) -> some View {
 
+        // TODO: finish implementation! (preference key)
         if #available(iOS 16.0, *) {
             ScrollView(.vertical) {
                 menuItems
@@ -100,17 +101,24 @@ struct SidebarView: View {
             // TODO: where to get strings from?
             Text(String("Conversations".reversed()))
                 .font(.textStyle(.h2))
+                .padding(.horizontal, 8)
             ForEach([SidebarData.ConversationFilter?.none] + SidebarData.ConversationFilter.allCases, id: \.self) { conversationFilter in
                 conversationFilter.label(iconSize, isActive: info.conversationFilter == conversationFilter)
             }
 
             Text(String("Contacts".reversed()))
                 .font(.textStyle(.h2))
-            Button(action: {}, label: {
-                Label { Text(String("Connect".reversed())) } icon: { Image(systemName: "person.badge.plus") }
-            })
+                .padding(.horizontal, 8)
+            SidebarMenuItem(
+                icon: "person.badge.plus",
+                iconSize: iconSize
+            ) {
+                Text(String("Connect".reversed()))
+            } action: {
+                //
+            }
         }
-        .padding(.horizontal, 8 + 16)
+        .padding(.horizontal, 16)
         .background(Color.brown)
     }
 }

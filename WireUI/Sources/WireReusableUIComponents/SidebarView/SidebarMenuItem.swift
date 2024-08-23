@@ -151,6 +151,8 @@ struct SidebarMenuItemIconSizeKey: PreferenceKey {
             SidebarMenuItem(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Small Icon") }, action: { print("show all conversations") })
             SidebarMenuItem(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
         }
+        Text("Make sure, the icons' sizes match only within their menu! (the icon sizes of the menu below are independent from the ones above)")
+            .font(.caption)
     }
     .frame(width: 250)
 }
