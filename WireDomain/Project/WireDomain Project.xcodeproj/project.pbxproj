@@ -83,6 +83,7 @@
 		EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEC410242C60D48900E89394 /* SyncManagerTests.swift */; };
 		EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A52C2EB6CD00679448 /* SyncManager.swift */; };
 		EECC35A82C2EB70400679448 /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECC35A72C2EB70400679448 /* SyncState.swift */; };
+		EEEE33582C78BD7100DAC5FD /* ClientSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEE33572C78BD7100DAC5FD /* ClientSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,6 +202,7 @@
 		EEC410242C60D48900E89394 /* SyncManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncManagerTests.swift; sourceTree = "<group>"; };
 		EECC35A52C2EB6CD00679448 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		EECC35A72C2EB70400679448 /* SyncState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncState.swift; sourceTree = "<group>"; };
+		EEEE33572C78BD7100DAC5FD /* ClientSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +284,7 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				EEEE33562C78BD4C00DAC5FD /* Sessions */,
 				EECC35A42C2EB6C100679448 /* Synchronization */,
 				EE57A6FC2C298F280096F242 /* Event Decryption */,
 				EE368CCD2C2DAA87009DBAB0 /* Event Processing */,
@@ -499,6 +502,14 @@
 			path = Synchronization;
 			sourceTree = "<group>";
 		};
+		EEEE33562C78BD4C00DAC5FD /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				EEEE33572C78BD7100DAC5FD /* ClientSession.swift */,
+			);
+			path = Sessions;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -703,6 +714,7 @@
 				EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */,
 				EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
+				EEEE33582C78BD7100DAC5FD /* ClientSession.swift in Sources */,
 				EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */,
 				EEAD0A282C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift in Sources */,
 				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
