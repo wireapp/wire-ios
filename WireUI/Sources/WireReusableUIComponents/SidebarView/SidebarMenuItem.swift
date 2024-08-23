@@ -124,15 +124,8 @@ private struct SidebarMenuItemStyle: ButtonStyle {
 struct SidebarMenuItemIconSizeKey: PreferenceKey {
     static var defaultValue: CGSize { .zero }
     static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-        guard value != .zero else {
-            print("value == .zero; value = ", nextValue())
-            return value = nextValue()
-        }
-        print("value", value, "nextValue", nextValue())
-        value = .init(
-            width: max(value.width, nextValue().width),
-            height: max(value.height, nextValue().height)
-        )
+        value.width = max(value.width, nextValue().width)
+        value.height = max(value.height, nextValue().height)
     }
 }
 
@@ -154,7 +147,7 @@ struct SidebarMenuItemIconSizeKey: PreferenceKey {
         Text("Make sure, the icons' sizes match only within their menu! (the icon sizes of the menu below are independent from the ones above)")
             .font(.caption)
     }
-    .frame(width: 250)
+    .frame(width: 260)
 }
 
 private struct SidebarMenuItemContainer<Content>: View where Content: View {
@@ -166,16 +159,11 @@ private struct SidebarMenuItemContainer<Content>: View where Content: View {
     var body: some View {
         VStack {
             content(iconSize)
-                .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { iconSize in
-                    //self.iconSize = iconSize
-
-                    let newIconSize = CGSize(
-                        width: max(self.iconSize?.width ?? 0, iconSize.width),
-                        height: max(self.iconSize?.height ?? 0, iconSize.height)
-                    )
-
-                    print("onPreferenceChange", self.iconSize, " = ", newIconSize)
-                    self.iconSize = newIconSize
+                .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { newIconSize in
+                    guard var iconSize else { return iconSize = newIconSize }
+                    iconSize.width = max(iconSize.width, newIconSize.width)
+                    iconSize.height = max(iconSize.height, newIconSize.height)
+                    self.iconSize = iconSize
                 }
         }
     }

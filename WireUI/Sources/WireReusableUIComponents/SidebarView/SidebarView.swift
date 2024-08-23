@@ -60,7 +60,12 @@ struct SidebarView: View {
             .background(Color.red.opacity(0.4))
             .padding(.bottom)
         }
-        .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { iconSize = $0 }
+        .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { newIconSize in
+            guard var iconSize else { return iconSize = newIconSize }
+            iconSize.width = max(iconSize.width, newIconSize.width)
+            iconSize.height = max(iconSize.height, newIconSize.height)
+            self.iconSize = iconSize
+        }
     }
 
     @ViewBuilder
