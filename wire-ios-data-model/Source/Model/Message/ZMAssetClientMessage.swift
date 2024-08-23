@@ -176,8 +176,11 @@ import Foundation
     public override func expire() {
         super.expire()
 
-        if transferState != .uploaded {
+        switch transferState {
+        case .uploading:
             transferState = .uploadingFailed
+        case .uploaded, .uploadingCancelled, .uploadingFailed:
+            break
         }
     }
 
