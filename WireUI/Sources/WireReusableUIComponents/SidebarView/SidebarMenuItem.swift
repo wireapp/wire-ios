@@ -24,21 +24,22 @@ private let linkIconForegroundColor = Color(ColorTheme.Base.secondaryText)
 private let isPressedForegroundColor = Color(ColorTheme.Base.onPrimary)
 // TODO: get from Environment
 private let accentColor_ = Color(ColorTheme.Base.primary)
-
+// TODO: remove underscore
 private let cornerRadius_: CGFloat = 12
 
 struct SidebarMenuItem: View {
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     /// If `isHighlighted` is `true`, ".fill" will be appended to the icon name.
-    var icon: String
+    private(set) var icon: String
+    private(set) var iconSize: CGSize?
     /// If `true` an icon will be shown at the trailing side of the title.
-    var isLink = false
+    private(set) var isLink = false
     /// Displays a highlighted/selection state.
-    var isHighlighted = false
+    private(set) var isHighlighted = false
 
-    var title: () -> Text
-    var action: () -> Void
+    private(set) var title: () -> Text
+    private(set) var action: () -> Void
 
     var body: some View {
 
@@ -52,8 +53,16 @@ struct SidebarMenuItem: View {
                             .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)
                     } icon: {
                         let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
-                        Image(systemName: icon + iconSystemNameSuffix)
+                        let icon = Image(systemName: icon + iconSystemNameSuffix)
                             .foregroundStyle(isHighlighted ? isPressedForegroundColor : accentColor_)
+                            .background(GeometryReader { geometryProxy in
+                                Color.clear.preference(key: SidebarMenuItemIconSizeKey.self, value: geometryProxy.size)
+                            })
+                        if let iconSize {
+                            icon.frame(minWidth: iconSize.width, minHeight: iconSize.height)
+                        } else {
+                            icon
+                        }
                     }
 
                     Spacer()
@@ -74,18 +83,12 @@ struct SidebarMenuItem: View {
     }
 }
 
+// MARK: - Helpers
+
 private struct IsPressedReader<Content>: View where Content: View {
     @Environment(\.isPressed) private var isPressed
     @ViewBuilder let content: (_ isPressed: Bool) -> Content
     var body: some View { content(isPressed) }
-}
-
-private struct SidebarMenuItemStyle: ButtonStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .environment(\.isPressed, configuration.isPressed)
-    }
 }
 
 private extension EnvironmentValues {
@@ -106,13 +109,72 @@ extension View {
     }
 }
 
+// MARK: - Button Style
+
+private struct SidebarMenuItemStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .environment(\.isPressed, configuration.isPressed)
+    }
+}
+
+// MARK: - Preference Key
+
+struct SidebarMenuItemIconSizeKey: PreferenceKey {
+    static var defaultValue: CGSize { .zero }
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        guard value != .zero else {
+            print("value == .zero; value = ", nextValue())
+            return value = nextValue()
+        }
+        print("value", value, "nextValue", nextValue())
+        value = .init(
+            width: max(value.width, nextValue().width),
+            height: max(value.height, nextValue().height)
+        )
+    }
+}
+
 // MARK: - Previews
 
 #Preview {
     VStack {
-        SidebarMenuItem(icon: "text.bubble", isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
-        SidebarMenuItem(icon: "star", isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
-        SidebarMenuItem(icon: "person.3", isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+        SidebarMenuItemContainer { iconSize in
+            SidebarMenuItem(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
+            SidebarMenuItem(icon: "gamecontroller", iconSize: iconSize, isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+            SidebarMenuItem(icon: "person.3", iconSize: iconSize, isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+        }
+        Rectangle()
+            .frame(height: 1)
+        SidebarMenuItemContainer { iconSize in
+            SidebarMenuItem(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Small Icon") }, action: { print("show all conversations") })
+            SidebarMenuItem(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
+        }
     }
     .frame(width: 250)
+}
+
+private struct SidebarMenuItemContainer<Content>: View where Content: View {
+
+    @State private var iconSize: CGSize?
+
+    @ViewBuilder let content: (_ iconSize: CGSize?) -> Content
+
+    var body: some View {
+        VStack {
+            content(iconSize)
+                .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { iconSize in
+                    //self.iconSize = iconSize
+
+                    let newIconSize = CGSize(
+                        width: max(self.iconSize?.width ?? 0, iconSize.width),
+                        height: max(self.iconSize?.height ?? 0, iconSize.height)
+                    )
+
+                    print("onPreferenceChange", self.iconSize, " = ", newIconSize)
+                    self.iconSize = newIconSize
+                }
+        }
+    }
 }

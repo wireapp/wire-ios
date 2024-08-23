@@ -73,6 +73,7 @@ extension SidebarProfileSwitcherView {
 private struct ProfileSwitcherHeightKey: PreferenceKey {
     static var defaultValue: CGFloat { 0 }
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        // probably never called
         value = nextValue()
     }
 }

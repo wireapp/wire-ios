@@ -23,6 +23,8 @@ struct SidebarView: View {
 
     @EnvironmentObject var info: SidebarData
 
+    @State private var iconSize: CGSize?
+
     var body: some View {
         ZStack {
 
@@ -40,14 +42,14 @@ struct SidebarView: View {
                 Spacer()
 
                 // bottom menu items
-                SidebarMenuItem(icon: "gearshape") {
+                SidebarMenuItem(icon: "gearshape", iconSize: iconSize) {
                     Text(String("Settings".reversed()))
                 } action: {
                     print("settings")
                 }
                 .padding(.horizontal, 16)
 
-                SidebarMenuItem(icon: "questionmark.circle", isLink: true) {
+                SidebarMenuItem(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
                     Text(String("Support".reversed()))
                 } action: {
                     print("support")
@@ -58,6 +60,7 @@ struct SidebarView: View {
             .background(Color.red.opacity(0.4))
             .padding(.bottom)
         }
+        .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { iconSize = $0 }
     }
 
     @ViewBuilder
@@ -98,7 +101,7 @@ struct SidebarView: View {
             Text(String("Conversations".reversed()))
                 .font(.textStyle(.h2))
             ForEach([SidebarData.ConversationFilter?.none] + SidebarData.ConversationFilter.allCases, id: \.self) { conversationFilter in
-                conversationFilter.label(isActive: info.conversationFilter == conversationFilter)
+                conversationFilter.label(iconSize, isActive: info.conversationFilter == conversationFilter)
             }
 
             Text(String("Contacts".reversed()))
@@ -112,25 +115,42 @@ struct SidebarView: View {
     }
 }
 
-// SidebarData.ConversationFilter + label
+// MARK: - SidebarData.ConversationFilter + label
 
 extension Optional where Wrapped == SidebarData.ConversationFilter {
 
-    func label(isActive: Bool) -> Label<Text, Image> {
+    func label(_ iconSize: CGSize?, isActive: Bool) -> SidebarMenuItem {
+
+        let text: Text
+        let icon: String
+        let action: () -> Void = {}
+
         switch self {
         case .none:
-            Label { Text(String("All".reversed())) } icon: { Image(systemName: isActive ? "text.bubble.fill" : "text.bubble") }
+            text = Text(String("All".reversed()))
+            icon = "text.bubble"
         case .favorites:
-            Label { Text(String("Favorites".reversed())) } icon: { Image(systemName: isActive ? "star.fill" : "star") }
+            text = Text(String("Favorites".reversed()))
+            icon = "star"
         case .groups:
-            Label { Text(String("Groups".reversed())) } icon: { Image(systemName: isActive ? "person.3.fill" : "person.3") }
+            text = Text(String("Groups".reversed()))
+            icon = "person.3"
         case .oneOnOne:
-            Label { Text(String("1:1 Conversations".reversed())) } icon: { Image(systemName: isActive ? "person.fill" : "person") }
+            text = Text(String("1:1 Conversations".reversed()))
+            icon = "person"
         case .archived:
-            Label { Text(String("Archive".reversed())) } icon: { Image(systemName: isActive ? "archivebox.fill" : "archivebox") }
+            text = Text(String("Archive".reversed()))
+            icon = "archivebox"
         }
 
-        //SidebarMenuItem()
+        return SidebarMenuItem(
+            icon: icon,
+            iconSize: iconSize,
+            isLink: false,
+            isHighlighted: isActive,
+            title: { text },
+            action: action
+        )
     }
 }
 
