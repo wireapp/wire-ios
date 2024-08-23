@@ -45,30 +45,25 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
     /// Retrieve from backend and store conversation labels locally
 
     func pullConversationLabels() async throws {
-        let result = try await userPropertiesAPI.getProperty(forKey: .labels)
+        let conversationLabels = try await userPropertiesAPI.getLabels()
 
-        switch result {
-        case .conversationLabels(let conversationLabels):
-            await withThrowingTaskGroup(of: Void.self) { taskGroup in
-                for conversationLabel in conversationLabels {
-                    taskGroup.addTask { [self] in
-                        try await storeLabelLocally(conversationLabel)
-                    }
+        await withThrowingTaskGroup(of: Void.self) { taskGroup in
+            for conversationLabel in conversationLabels {
+                taskGroup.addTask { [self] in
+                    try await storeLabelLocally(conversationLabel)
                 }
             }
-
-            try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
-
-        default:
-            throw ConversationLabelsRepositoryError.failedToCollectLabelsRemotely
         }
+        
+        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
+
     }
 
     /// Save label and related conversations objects to local storage.
     /// - Parameter conversationLabel: conversation label from WireAPI
 
     private func storeLabelLocally(_ conversationLabel: ConversationLabel) async throws {
-        try await context.perform { [self] in
+        try await context.perform { [context] in
             var created = false
             let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
                 Label.fetchFavoriteLabel(in: context)
@@ -100,7 +95,7 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
     /// - Only old labels of type `folder` are deleted, `favorite` labels always remain in the local storage.
 
     private func deleteOldLabelsLocally(excludedLabels remoteLabels: [ConversationLabel]) async throws {
-        try await context.perform { [self] in
+        try await context.perform { [context] in
             let uuids = remoteLabels.map { $0.id.uuidData as NSData }
             let predicateFormat = "type == \(Label.Kind.folder.rawValue) AND NOT remoteIdentifier_data IN %@"
 

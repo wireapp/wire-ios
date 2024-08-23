@@ -18,21 +18,4 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning user properties.
-public protocol UserPropertiesAPI {
-    
-    /// Indicates whether typing indicators is enabled.
-    
-    var areTypingIndicatorsEnabled: Bool { get async throws }
-
-    /// Indicates whether read receipts is enabled.
-    
-    var areReadReceiptsEnabled: Bool { get async throws }
-
-    /// Get the conversation labels.
-    ///
-    /// - Returns: A `ConversationLabel` list.
-
-    func getLabels() async throws -> [ConversationLabel]
-}
+extension String: Error { }

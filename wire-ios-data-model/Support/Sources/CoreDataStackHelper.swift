@@ -74,16 +74,10 @@ public struct CoreDataStackHelper {
             return
         }
 
-        guard fileManager.fileExists(atPath: storageDirectory.absoluteString) else {
+        guard fileManager.fileExists(atPath: storageDirectory.path) else {
             return
         }
-
-        let files = try fileManager.contentsOfDirectory(
-            at: storageDirectory,
-            includingPropertiesForKeys: nil,
-            options: []
-        )
-
-        try files.forEach { try fileManager.removeItem(at: $0) }
+        
+        try fileManager.removeItem(atPath: storageDirectory.path)
     }
 }

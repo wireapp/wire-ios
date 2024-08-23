@@ -45,7 +45,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         /// Batch requests don't work with in-memory store
         /// so we need to use a persistent store.
         stack = try await coreDataStackHelper.createStack(inMemoryStore: false)
-        cleanLabelEntity(in: context)
+        cleanUpEntity()
         setupConversations()
         userPropertiesAPI = MockUserPropertiesAPI()
         sut = ConversationLabelsRepository(
@@ -55,7 +55,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        stack = nil
+        try coreDataStackHelper.cleanupDirectory()
         userPropertiesAPI = nil
         sut = nil
         try await super.tearDown()
@@ -66,10 +66,10 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     func testPullConversation_Given_Local_Store_Empty_Labels_Are_Created() async throws {
         // Mock
 
-        userPropertiesAPI.getPropertyForKey_MockValue = .conversationLabels([
+        userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel1,
             Scaffolding.conversationLabel2
-        ])
+        ]
 
         // When
 
@@ -96,16 +96,16 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             context.saveOrRollback()
         }
 
-        try await context.perform { [context] in
+        try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            XCTAssertNotNil(a.first)
+            try XCTAssertCount(a, count: 1)
             XCTAssertEqual(a.first!.name, Scaffolding.conversationLabel1.name)
         }
 
-        userPropertiesAPI.getPropertyForKey_MockValue = .conversationLabels([
+        userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.updatedConversationLabel1
-        ])
+        ]
 
         // When
 
@@ -113,10 +113,10 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         // Then
 
-        try await context.perform { [context] in
+        try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            XCTAssertNotNil(a.first)
+            try XCTAssertCount(a, count: 1)
             XCTAssertEqual(a.first!.remoteIdentifier, Scaffolding.conversationLabel1.id)
             XCTAssertEqual(a.first!.name, Scaffolding.updatedConversationLabel1.name)
         }
@@ -132,17 +132,17 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             context.saveOrRollback()
         }
 
-        try await context.perform { [context] in
+        try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            XCTAssertNotNil(a.first)
+            try XCTAssertCount(a, count: 1)
             let labelConversations = a.first!.conversations
             XCTAssertEqual(labelConversations.count, 2)
         }
 
-        userPropertiesAPI.getPropertyForKey_MockValue = .conversationLabels([
+        userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.updatedConversationLabel1
-        ])
+        ]
 
         // When
 
@@ -150,10 +150,10 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         // Then
 
-        try await context.perform { [context] in
+        try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            XCTAssertNotNil(a.first)
+            try XCTAssertCount(a, count: 1)
             let labelConversations = a.first!.conversations.compactMap(\.remoteIdentifier)
             let expected = Scaffolding.updatedConversationLabel1.conversationIDs
             for labelConversation in labelConversations {
@@ -168,21 +168,22 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         _ = await context.perform { [context] in
             var created = false
             _ = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            context.saveOrRollback()
         }
 
-        try await context.perform { [context] in
+        try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            XCTAssertNotNil(a.first)
+            try XCTAssertCount(a, count: 1)
             XCTAssertEqual(a.first!.remoteIdentifier, Scaffolding.conversationLabel1.id)
         }
 
         // Mock
 
-        userPropertiesAPI.getPropertyForKey_MockValue = .conversationLabels([
+        userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel2,
             Scaffolding.conversationLabel3
-        ])
+        ]
 
         // When
 
@@ -212,19 +213,19 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             context.saveOrRollback()
         }
 
-        try await context.perform { [context] in
+        try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            XCTAssertNotNil(a.first)
+            try XCTAssertCount(a, count: 1)
             XCTAssertEqual(a.first!.remoteIdentifier, Scaffolding.favoriteConversationLabel1.id)
         }
 
         // Mock
 
-        userPropertiesAPI.getPropertyForKey_MockValue = .conversationLabels([
+        userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel2,
             Scaffolding.conversationLabel3
-        ])
+        ]
 
         // When
 
@@ -249,7 +250,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 }
 
 private extension ConversationLabelsRepositoryTests {
-    func cleanLabelEntity(in context: NSManagedObjectContext) {
+    func cleanUpEntity() {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         _ = try? context.execute(batchDeleteRequest)
