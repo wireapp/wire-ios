@@ -21,11 +21,7 @@ import WireDesign
 
 struct SidebarView: View {
 
-    let accountImage: UIImage
-    let isTeamAccount: Bool
-    let availability: Availability?
-    let displayName: String
-    let username: String
+    @EnvironmentObject var info: SidebarData
 
     var body: some View {
         ZStack {
@@ -38,31 +34,88 @@ struct SidebarView: View {
             // content
             VStack(alignment: .leading) {
 
-                SidebarProfileSwitcherView(displayName, username) {
-                    AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
-                }
-                .padding(.horizontal, 24)
-
-                ScrollView {
-
-                    Text("Conversations")
-                        .background(Color.green)
-                    Text("Favorites")
-                    Text("Groups")
-                    Text("1:1 Conversations")
-                    Text("Archive")
-
-                    Text("Contacts")
-                    Text("Connect")
-                }
-                .frame(maxWidth: .infinity)
-                .background(Color.yellow)
+                profileSwitcher
+                scrollDeactivatableMenuItems(isScrollDisabled: false) // TODO: pass value
+                    .background(Color.yellow)
                 Spacer()
+
+                // bottom menu items
                 Text("Settings")
                 Text("Support")
             }
             .frame(maxWidth: .infinity)
             .background(Color.red.opacity(0.4))
+        }
+    }
+
+    @ViewBuilder
+    private var profileSwitcher: some View {
+
+        if let accountInfo = info.accountInfo {
+            SidebarProfileSwitcherView(accountInfo.displayName, accountInfo.username) {
+                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.isTeamAccount, info.availability)
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom)
+        }
+    }
+
+    /// Workaround, remove once the deployment target is equal or above iOS 16.
+    @ViewBuilder
+    private func scrollDeactivatableMenuItems(isScrollDisabled: Bool) -> some View {
+
+        if #available(iOS 16.0, *) {
+            ScrollView(.vertical) {
+                menuItems
+            }.scrollDisabled(isScrollDisabled)
+
+        } else if !isScrollDisabled {
+            ScrollView(.vertical) {
+                menuItems
+            }
+        } else {
+            menuItems
+        }
+    }
+
+    @ViewBuilder
+    private var menuItems: some View {
+
+        VStack(alignment: .leading) {
+            // TODO: where to get strings from?
+            Text(String("Conversations".reversed()))
+                .font(.textStyle(.h2))
+            ForEach([SidebarData.ConversationFilter?.none] + SidebarData.ConversationFilter.allCases, id: \.self) { conversationFilter in
+                conversationFilter.label(isActive: info.conversationFilter == conversationFilter)
+            }
+
+            Text(String("Contacts".reversed()))
+                .font(.textStyle(.h2))
+            Button(action: {}, label: {
+                Label { Text(String("Connect".reversed())) } icon: { Image(systemName: "person.badge.plus") }
+            })
+        }
+        .padding(.horizontal, 8 + 16)
+        .background(Color.brown)
+    }
+}
+
+// SidebarData.ConversationFilter + label
+
+extension Optional where Wrapped == SidebarData.ConversationFilter {
+
+    func label(isActive: Bool) -> Label<Text, Image> {
+        switch self {
+        case .none:
+            Label { Text(String("All".reversed())) } icon: { Image(systemName: isActive ? "text.bubble.fill" : "text.bubble") }
+        case .favorites:
+            Label { Text(String("Favorites".reversed())) } icon: { Image(systemName: isActive ? "star.fill" : "star") }
+        case .groups:
+            Label { Text(String("Groups".reversed())) } icon: { Image(systemName: isActive ? "person.3.fill" : "person.3") }
+        case .oneOnOne:
+            Label { Text(String("1:1 Conversations".reversed())) } icon: { Image(systemName: isActive ? "person.fill" : "person") }
+        case .archived:
+            Label { Text(String("Archive".reversed())) } icon: { Image(systemName: isActive ? "archivebox.fill" : "archivebox") }
         }
     }
 }
@@ -77,7 +130,16 @@ struct SidebarView: View {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        let viewModel = SidebarViewModel()
+        let viewModel = SidebarViewModel(
+            accountInfo: .init(
+                displayName: "Firstname Lastname",
+                username: "@username",
+                accountImage: .from(solidColor: .brown),
+                isTeamAccount: false
+            ),
+            availability: .available,
+            conversationFilter: .none
+        )
         splitViewController.setViewController(SidebarViewController(viewModel: viewModel), for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)

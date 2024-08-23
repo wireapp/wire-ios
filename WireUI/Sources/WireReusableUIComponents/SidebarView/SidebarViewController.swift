@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+public typealias SidebarViewModel = SidebarData
+
 @MainActor
 public func SidebarViewController(viewModel: SidebarViewModel) -> UIViewController {
     SidebarHostingController(viewModel)
@@ -25,23 +27,8 @@ public func SidebarViewController(viewModel: SidebarViewModel) -> UIViewControll
 
 private final class SidebarHostingController: UIHostingController<SidebarViewWrapper> {
 
-//    let viewModel: SidebarViewModel
-//
-//    required init(viewModel: SidebarViewModel) {
-//        self.viewModel = viewModel
-//        super.init(
-//            rootView: .init(
-//                accountImage: .init(),
-//                isTeamAccount: false,
-//                availability: .none,
-//                displayName: "",
-//                username: ""
-//            )
-//        )
-//    }
-
     required init(_ viewModel: SidebarViewModel) {
-        super.init(rootView: .init(viewModel: viewModel))
+        super.init(rootView: .init(sidebarData: viewModel))
     }
 
     @MainActor
@@ -52,15 +39,11 @@ private final class SidebarHostingController: UIHostingController<SidebarViewWra
 
 private struct SidebarViewWrapper: View {
 
-    @StateObject var viewModel = SidebarViewModel()
+    @ObservedObject
+    var sidebarData: SidebarData
 
     var body: some View {
-        SidebarView(
-            accountImage: viewModel.accountImage,
-            isTeamAccount: viewModel.isTeamAccount,
-            availability: viewModel.availability,
-            displayName: viewModel.displayName,
-            username: viewModel.username
-        )
+        SidebarView()
+            .environmentObject(sidebarData)
     }
 }

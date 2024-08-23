@@ -16,14 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Combine
-import UIKit
+import SwiftUI
 
-public final class SidebarViewModel: ObservableObject {
+/// The `.scrollDisabled(_:)` view modifier is available only for iOS 16+.
+/// Once the deployment target is equal or above iOS 16, this type can be removed.
+public struct BackportedDeactivatableScrollView<Content>: View
+where Content : View {
 
-    @Published private (set) var accountImage = UIImage()
-    @Published private (set) var isTeamAccount = false
-    @Published private (set) var availability: Availability?
-    @Published private (set) var displayName = ""
-    @Published private (set) var username = ""
+    private let axes: Axis.Set
+    private let content: () -> Content
+
+    public init(axes: Axis.Set, content: @escaping () -> Content) {
+        self.axes = axes
+        self.content = content
+    }
+
+    public var body: some View {
+
+        if #available(iOS 16.0, *) {
+            ScrollView(axes, content: content)
+                .scrollDisabled(true)
+        } else {
+            // Fallback on earlier versions
+        }
+    }
 }
