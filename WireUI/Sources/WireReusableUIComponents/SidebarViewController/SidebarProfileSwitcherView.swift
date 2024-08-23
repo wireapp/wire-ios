@@ -17,27 +17,33 @@
 //
 
 import SwiftUI
+import WireDesign
 
-private struct SidebarProfileSwitcherView: View {
+struct SidebarProfileSwitcherView<AccountImageView>: View
+where AccountImageView: View {
 
     @State private var accountImageDiameter: CGFloat = 0
+
+    let displayName: String
+    let username: String
+    let accountImageView: () -> AccountImageView
 
     var body: some View {
         HStack {
 
-            Circle()
-                .foregroundColor(.blue)
+            accountImageView()
                 .frame(width: accountImageDiameter, height: accountImageDiameter)
 
             VStack(alignment: .leading) {
-                Text("First Text")
+                Text(displayName)
                     .font(.headline)
-                Text("Second Text")
+                    .foregroundStyle(Color(ColorTheme.Backgrounds.onSurface))
+                Text(username)
                     .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(Color(ColorTheme.Base.secondaryText))
             }
             .background(GeometryReader { geometryProxy in
-                Color.yellow.preference(
+                Color.clear.preference(
                     key: ProfileSwitcherHeightKey.self,
                     value: geometryProxy.size.height
                 )
@@ -46,7 +52,6 @@ private struct SidebarProfileSwitcherView: View {
                 accountImageDiameter = height
             }
         }
-        .padding()
     }
 }
 
@@ -57,8 +62,35 @@ private struct ProfileSwitcherHeightKey: PreferenceKey {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        SidebarProfileSwitcherView()
+// MARK: - Previews
+
+#Preview("Personal Account") {
+    SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
+        AccountImageViewRepresentable(
+            accountImage: .from(solidColor: .brown),
+            isTeamAccount: false,
+            availability: .available
+        )
+    }
+}
+
+#Preview("Team Account") {
+    SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
+        AccountImageViewRepresentable(
+            accountImage: .from(solidColor: .orange),
+            isTeamAccount: true,
+            availability: .busy
+        )
+    }
+}
+
+private extension UIImage {
+
+    // TODO: look for all copies and move the code into WireUtilities or WireSystem
+    static func from(solidColor color: UIColor) -> UIImage {
+        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
+            color.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
     }
 }

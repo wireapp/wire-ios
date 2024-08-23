@@ -19,22 +19,41 @@
 import SwiftUI
 import WireDesign
 
+final class SidebarViewModel: ObservableObject {
+
+    typealias Book = Int
+    @Published private(set) var books: [Book] = [Book(), Book(), Book()]
+}
+
 @MainActor
 public func SidebarViewController() -> UIViewController {
-    UIHostingController(rootView: SidebarView())
+    UIHostingController(rootView: SidebarView(sidebarViewModel: .init()))
 }
 
 struct SidebarView: View {
 
+    @StateObject fileprivate var sidebarViewModel: SidebarViewModel
+
     var body: some View {
         ZStack {
+
             // background color
             Rectangle()
                 .foregroundStyle(Color(ColorTheme.Backgrounds.background))
                 .ignoresSafeArea()
+
             // content
-            VStack {
-                userInfo
+            VStack(alignment: .leading) {
+
+                SidebarProfileSwitcherView(displayName: "TODO", username: "TODO") {
+                    AccountImageViewRepresentable(
+                        accountImage: .from(solidColor: .systemIndigo),
+                        isTeamAccount: false,
+                        availability: .available
+                    )
+                }
+                .padding(.horizontal, 24)
+
                 ScrollView {
 
                     Text("Conversations")
@@ -56,29 +75,6 @@ struct SidebarView: View {
             .frame(maxWidth: .infinity)
             .background(Color.red.opacity(0.4))
         }
-    }
-
-    private var userInfo: some View {
-        HStack {
-//            Button {} label: {
-//                EmptyView()
-//            }
-            AccountImageViewRepresentable(
-                accountImage: .from(solidColor: .systemIndigo),
-                isTeamAccount: false,
-                availability: .available
-            )
-            .fixedSize(horizontal: false, vertical: true)
-            .background(Color.pink)
-            VStack(alignment: .leading) {
-                Text("avatar").multilineTextAlignment(.leading)
-                Text("avatar").multilineTextAlignment(.leading)
-            }
-            .fixedSize(horizontal: true, vertical: true)
-            .background(Color.green)
-        }
-        .padding()
-        .background(Color.cyan)
     }
 }
 
@@ -107,7 +103,7 @@ public final class SidebarViewController_: UIViewController {
     {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         if splitViewController.traitCollection.userInterfaceIdiom != .pad {
-            return HintViewController("Please switch to iPad (iOS 17+)!")
+            return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
         splitViewController.setViewController(SidebarViewController(), for: .primary)
@@ -146,40 +142,11 @@ private final class HintViewController: UIHostingController<Text> {
 
 private extension UIImage {
 
+    // TODO: look for all copies and move the code into WireUtilities or WireSystem
     static func from(solidColor color: UIColor) -> UIImage {
         UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
             color.setFill()
             rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
         }
     }
-}
-
-
-
-
-private struct ContentView: View {
-    var body: some View {
-        HStack(alignment: .center) {
-            // Circle on the left
-            Circle()
-                .frame(width: 50, height: 50) // Adjust size as needed
-                .foregroundColor(.blue)
-
-            // VStack for the texts on the right
-            VStack(alignment: .leading) {
-                Text("First Text")
-                    .font(.headline) // Customize the font if needed
-
-                Text("Second Text")
-                    .font(.subheadline) // Customize the font if needed
-                    .foregroundColor(.gray) // Optional: set color to distinguish the texts
-            }
-            .padding(.leading, 8) // Add some spacing between the circle and the texts
-        }
-        .padding() // Optional: Add padding around the HStack
-    }
-}
-
-#Preview("X") {
-    ContentView()
 }
