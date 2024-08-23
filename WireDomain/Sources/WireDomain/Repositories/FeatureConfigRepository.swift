@@ -27,17 +27,33 @@ protocol FeatureConfigRepositoryProtocol {
 
     /// Pull feature configs from the server and store them locally.
     ///
-    /// The `AsyncStream` produces a config value right after it is stored locally
-    /// so actions can be triggered right away from a lower level callsite (e.g an interactor).
+    /// The `AsyncStream` produces a `FeatureState` value right after the feature is stored locally.
+    /// so actions can be triggered right away at a lower level callsite (e.g an interactor).
+    /// This will allow a user to be notified even if the stream fails afterwards.
     ///
-    /// - Returns: An async stream of feature config.
+    /// - Returns: An async stream of `FeatureState`.
 
-    func pullFeatureConfigs() -> AsyncThrowingStream<FeatureConfig, Error>
+    func pullFeatureConfigs() -> AsyncThrowingStream<FeatureState, Error>
 
-    /// Indicates whether the user should be notified of a given feature.
-    /// - Parameter featureName: The feature name.
+    /// Fetch a feature config locally.
+    ///
+    /// - Parameter name: The feature name to fetch the config for.
+    /// - Parameter type: The type of config to retrieve.
+    /// - Returns: A `LocalFeature` object with a status and a config (if any).
 
-    func shouldNotifyUser(for featureName: Feature.Name) -> Bool
+    func fetchFeatureConfig<T: Decodable>(withName name: Feature.Name, type: T.Type) async throws -> LocalFeature<T>
+
+    /// Fetches a flag indicating whether the user should be notified of a given feature.
+    /// - Parameter name: The feature name.
+    /// - Returns: `true` if user should be notified.
+
+    func fetchNeedsToNotifyUser(forFeatureName name: Feature.Name) async throws -> Bool
+
+    /// Stores a flag indicating whether the user should be notified of a given feature.
+    /// - Parameter notifyUser: Whether the user should be notified for a given feature.
+    /// - Parameter name: The name of the feature to set the flag for.
+
+    func storeNeedsToNotifyUser(_ notifyUser: Bool, forFeatureName name: Feature.Name) async throws
 
 }
 
@@ -60,16 +76,18 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Public
 
-    func pullFeatureConfigs() -> AsyncThrowingStream<FeatureConfig, Error> {
-        AsyncThrowingStream<FeatureConfig, Error> { continuation in
+    func pullFeatureConfigs() -> AsyncThrowingStream<FeatureState, Error> {
+        AsyncThrowingStream<FeatureState, Error> { continuation in
             Task {
                 do {
                     let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
 
                     for featureConfig in featureConfigs {
                         do {
-                            try await self.storeFeatureConfig(featureConfig)
-                            continuation.yield(featureConfig)
+                            try await storeFeatureConfig(featureConfig)
+                            if let featureState = try await getFeatureState(featureConfig) {
+                                continuation.yield(featureState)
+                            }
                         } catch {
                             continuation.finish(throwing: FeatureConfigRepositoryError.failedToStoreConfigLocally(error))
                         }
@@ -83,12 +101,130 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
-    func shouldNotifyUser(for featureName: Feature.Name) -> Bool {
-        let feature = Feature.fetch(name: featureName, context: context)
-        return feature?.needsToNotifyUser ?? false
+    func fetchFeatureConfig<T: Decodable>(withName name: Feature.Name, type: T.Type) async throws -> LocalFeature<T> {
+        try await context.perform { [context] in
+            guard let feature = Feature.fetch(name: name, context: context) else {
+                throw FeatureConfigRepositoryError.failedToFetchConfigLocally
+            }
+
+            if let config = feature.config {
+                let decoder = JSONDecoder()
+                let config = try decoder.decode(type, from: config)
+
+                return LocalFeature(status: feature.status, config: config)
+            }
+
+            return LocalFeature(status: feature.status, config: nil)
+        }
+    }
+
+    func fetchNeedsToNotifyUser(forFeatureName name: Feature.Name) async throws -> Bool {
+        await context.perform { [context] in
+            let feature = Feature.fetch(name: name, context: context)
+            return feature?.needsToNotifyUser ?? false
+        }
+    }
+
+    func storeNeedsToNotifyUser(_ notifyUser: Bool, forFeatureName name: Feature.Name) async throws {
+        await context.perform { [context] in
+            let feature = Feature.fetch(name: name, context: context)
+            feature?.needsToNotifyUser = notifyUser
+        }
     }
 
     // MARK: - Private
+
+    private func getFeatureState(_ featureConfig: FeatureConfig) async throws -> FeatureState? {
+        switch featureConfig {
+        case .appLock(let appLockFeatureConfig):
+
+            return FeatureState(
+                name: .appLock,
+                status: appLockFeatureConfig.status,
+                shouldNotifyUser: false
+            )
+
+        case .classifiedDomains(let classifiedDomainsFeatureConfig):
+
+            return FeatureState(
+                name: .classifiedDomains,
+                status: classifiedDomainsFeatureConfig.status,
+                shouldNotifyUser: false
+            )
+
+        case .conferenceCalling(let conferenceCallingFeatureConfig):
+
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .conferenceCalling)
+            return FeatureState(
+                name: .conferenceCalling,
+                status: conferenceCallingFeatureConfig.status,
+                shouldNotifyUser: needsToNotifyUser
+            )
+
+        case .conversationGuestLinks(let conversationGuestLinksFeatureConfig):
+
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .conversationGuestLinks)
+            return FeatureState(
+                name: .conversationGuestLinks,
+                status: conversationGuestLinksFeatureConfig.status,
+                shouldNotifyUser: needsToNotifyUser
+            )
+
+        case .digitalSignature(let digitalSignatureFeatureConfig):
+
+            return FeatureState(
+                name: .digitalSignature,
+                status: digitalSignatureFeatureConfig.status,
+                shouldNotifyUser: false
+            )
+
+        case .endToEndIdentity(let endToEndIdentityFeatureConfig):
+
+            return FeatureState(
+                name: .e2ei,
+                status: endToEndIdentityFeatureConfig.status,
+                shouldNotifyUser: false
+            )
+
+        case .fileSharing(let fileSharingFeatureConfig):
+
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .fileSharing)
+            return FeatureState(
+                name: .fileSharing,
+                status: fileSharingFeatureConfig.status,
+                shouldNotifyUser: needsToNotifyUser
+            )
+
+        case .mls(let mLSFeatureConfig):
+
+            return FeatureState(
+                name: .mls,
+                status: mLSFeatureConfig.status,
+                shouldNotifyUser: false
+            )
+
+        case .mlsMigration(let mLSMigrationFeatureConfig):
+
+            return FeatureState(
+                name: .mlsMigration,
+                status: mLSMigrationFeatureConfig.status,
+                shouldNotifyUser: false
+            )
+
+        case .selfDeletingMessages(let selfDeletingMessagesFeatureConfig):
+
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .selfDeletingMessages)
+            return FeatureState(
+                name: .selfDeletingMessages,
+                status: selfDeletingMessagesFeatureConfig.status,
+                shouldNotifyUser: needsToNotifyUser
+            )
+
+        case .unknown(let featureName):
+            assertionFailure("Unknown feature: \(featureName)")
+            return nil
+        }
+    }
 
     private func storeFeatureConfig(_ featureConfig: FeatureConfig) async throws {
         try await context.perform { [self] in
@@ -97,7 +233,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .appLock(let appLockFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .appLock,
                     isEnabled: appLockFeatureConfig.status == .enabled,
                     config: appLockFeatureConfig.toDomainModel()
@@ -106,7 +241,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .classifiedDomains(let classifiedDomainsFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .classifiedDomains,
                     isEnabled: classifiedDomainsFeatureConfig.status == .enabled,
                     config: classifiedDomainsFeatureConfig.toDomainModel()
@@ -115,7 +249,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .conferenceCalling(let conferenceCallingFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .conferenceCalling,
                     isEnabled: conferenceCallingFeatureConfig.status == .enabled,
                     config: conferenceCallingFeatureConfig.toDomainModel() /// always nil for api < v6
@@ -124,7 +257,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .conversationGuestLinks(let conversationGuestLinksFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .conversationGuestLinks,
                     isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
                 )
@@ -132,7 +264,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .digitalSignature(let digitalSignatureFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .digitalSignature,
                     isEnabled: digitalSignatureFeatureConfig.status == .enabled
                 )
@@ -140,7 +271,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .endToEndIdentity(let endToEndIdentityFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .e2ei,
                     isEnabled: endToEndIdentityFeatureConfig.status == .enabled,
                     config: endToEndIdentityFeatureConfig.toDomainModel()
@@ -149,7 +279,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .fileSharing(let fileSharingFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .fileSharing,
                     isEnabled: fileSharingFeatureConfig.status == .enabled
                 )
@@ -157,7 +286,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .mls(let mLSFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .mls,
                     isEnabled: mLSFeatureConfig.status == .enabled,
                     config: mLSFeatureConfig.toDomainModel()
@@ -166,7 +294,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .mlsMigration(let mLSMigrationFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .mlsMigration,
                     isEnabled: mLSMigrationFeatureConfig.status == .enabled,
                     config: mLSMigrationFeatureConfig.toDomainModel()
@@ -175,7 +302,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             case .selfDeletingMessages(let selfDeletingMessagesFeatureConfig):
 
                 try updateOrCreate(
-                    inContext: context,
                     featureName: .selfDeletingMessages,
                     isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled,
                     config: selfDeletingMessagesFeatureConfig.toDomainModel()
@@ -188,7 +314,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     }
 
     private func updateOrCreate(
-        inContext context: NSManagedObjectContext,
         featureName: Feature.Name,
         isEnabled: Bool,
         config: (any Codable)? = nil
@@ -208,4 +333,15 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
+}
+
+struct LocalFeature<T: Decodable> {
+    let status: Feature.Status
+    let config: T?
+}
+
+struct FeatureState {
+    let name: Feature.Name
+    let status: FeatureConfigStatus
+    let shouldNotifyUser: Bool
 }

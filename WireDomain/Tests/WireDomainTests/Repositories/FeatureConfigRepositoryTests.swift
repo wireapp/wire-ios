@@ -55,45 +55,69 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testPullFeatureConfigs() async throws {
-        // Mock
+    func testPullFeatureConfigs_When_Configs_Are_Pulled_Configs_Are_Stored_Locally() async throws {
+        // Given
 
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
 
         // When
-        let featureConfigs = sut.pullFeatureConfigs()
-        var storedFeatures: [Feature?] = []
 
-        for try await featureConfig in featureConfigs {
-            switch featureConfig {
-            case .appLock:
-                storedFeatures.append(Feature.fetch(name: .appLock, context: context))
-            case .classifiedDomains:
-                storedFeatures.append(Feature.fetch(name: .classifiedDomains, context: context))
-            case .conferenceCalling:
-                storedFeatures.append(Feature.fetch(name: .conferenceCalling, context: context))
-            case .conversationGuestLinks:
-                storedFeatures.append(Feature.fetch(name: .conversationGuestLinks, context: context))
-            case .digitalSignature:
-                storedFeatures.append(Feature.fetch(name: .digitalSignature, context: context))
-            case .endToEndIdentity:
-                storedFeatures.append(Feature.fetch(name: .e2ei, context: context))
-            case .fileSharing:
-                storedFeatures.append(Feature.fetch(name: .fileSharing, context: context))
-            case .mls:
-                storedFeatures.append(Feature.fetch(name: .mls, context: context))
-            case .mlsMigration:
-                storedFeatures.append(Feature.fetch(name: .mlsMigration, context: context))
-            case .selfDeletingMessages:
-                storedFeatures.append(Feature.fetch(name: .selfDeletingMessages, context: context))
-            case .unknown:
-                XCTFail()
-            }
+        let featureStates = sut.pullFeatureConfigs()
+
+        var localFeatures: [Feature?] = []
+
+        for try await featureState in featureStates {
+            localFeatures.append(Feature.fetch(name: featureState.name, context: context))
+            XCTAssertEqual(featureState.status, .enabled)
+            XCTAssertEqual(featureState.shouldNotifyUser, false)
         }
 
         // Then
-        let foundFeatures = storedFeatures.compactMap { $0 }
+
+        let foundFeatures = localFeatures.compactMap { $0 }
         XCTAssertEqual(foundFeatures.count, 10)
+    }
+
+    func testNeedsToNotifyUser_When_Flag_Set_To_True_Stored_Value_Returns_True() async throws {
+        // Given
+
+        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+
+        await context.perform { [context] in
+            Feature.updateOrCreate(havingName: .conversationGuestLinks, in: context) {
+                $0.status = .enabled
+            }
+        }
+
+        // When
+
+        try await sut.storeNeedsToNotifyUser(true, forFeatureName: .conversationGuestLinks)
+
+        // Then
+
+        let result = try await sut.fetchNeedsToNotifyUser(forFeatureName: .conversationGuestLinks)
+        XCTAssertEqual(result, true)
+    }
+
+    func testFetchFeatureConfig_When_Feature_Is_Stored_Feature_Can_Be_Retrieved() async throws {
+        // Given
+
+        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+
+        // When
+
+        let featureStates = sut.pullFeatureConfigs()
+
+        for try await featureState in featureStates {
+            continue
+        }
+
+        // Then
+
+        let config = try await sut.fetchFeatureConfig(withName: .appLock, type: Feature.AppLock.Config.self)
+        XCTAssertEqual(config.isEnabled, true)
+        XCTAssertEqual(config.config?.enforceAppLock, true)
+        XCTAssertEqual(config.config?.inactivityTimeoutSecs, 2_147_483_647)
     }
 
 }
