@@ -80,7 +80,7 @@ final class BackupRestoreController: NSObject {
             forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
             asCopy: true
         )
-        
+
         picker.delegate = self
         target.present(picker, animated: true)
     }
