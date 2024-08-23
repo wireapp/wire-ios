@@ -37,9 +37,16 @@ struct SidebarView: View {
             VStack(alignment: .leading, spacing: 0) {
 
                 profileSwitcher
-                    .padding(.bottom, 4)
-                scrollDeactivatableMenuItems(isScrollDisabled: false) // TODO: pass value
-                    .background(Color.yellow)
+                    .padding(.vertical, 8)
+
+                let menuItemsScrollView = ScrollView(.vertical) { menuItems }
+                if #available(iOS 16.4, *) {
+                    menuItemsScrollView
+                        .scrollBounceBehavior(.basedOnSize)
+                } else {
+                    menuItemsScrollView
+                }
+
                 Spacer()
 
                 // bottom menu items
@@ -80,29 +87,10 @@ struct SidebarView: View {
         }
     }
 
-    /// Workaround, remove once the deployment target is equal or above iOS 16.
-    @ViewBuilder
-    private func scrollDeactivatableMenuItems(isScrollDisabled: Bool) -> some View {
-
-        // TODO: finish implementation! (preference key)
-        if #available(iOS 16.0, *) {
-            ScrollView(.vertical) {
-                menuItems
-            }.scrollDisabled(isScrollDisabled)
-
-        } else if !isScrollDisabled {
-            ScrollView(.vertical) {
-                menuItems
-            }
-        } else {
-            menuItems
-        }
-    }
-
     @ViewBuilder
     private var menuItems: some View {
 
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             // TODO: where to get strings from?
             Text(String("Conversations".reversed()))
                 .font(.textStyle(.h2))
@@ -113,7 +101,8 @@ struct SidebarView: View {
 
             Text(String("Contacts".reversed()))
                 .font(.textStyle(.h2))
-                .padding(.horizontal, 8)
+                .padding(8)
+                .padding(.top, 12)
             SidebarMenuItem(
                 icon: "person.badge.plus",
                 iconSize: iconSize
@@ -124,7 +113,6 @@ struct SidebarView: View {
             }
         }
         .padding(.horizontal, 16)
-        .background(Color.brown)
     }
 }
 

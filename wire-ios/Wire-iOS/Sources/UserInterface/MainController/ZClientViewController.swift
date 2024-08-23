@@ -184,7 +184,7 @@ final class ZClientViewController: UIViewController {
 
         createTopViewConstraints()
 
-        let sidebarViewController = SidebarViewController()
+        let sidebarViewController = SidebarViewController(viewModel: .init())
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
         let conversationPlaceholder = UIViewController() // TODO: see loadPlaceholderConversationController
