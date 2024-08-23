@@ -242,7 +242,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
             featureConfig: .conferenceCalling(
                 ConferenceCallingFeatureConfig(
                     status: .enabled,
-                    useSFTForOneToOneCalls: nil
+                    useSFTForOneToOneCalls: false
                 )
             )
         )
@@ -270,7 +270,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                     acmeDiscoveryURL: "www.example.com",
                     verificationExpiration: 123,
                     crlProxy: nil,
-                    useProxyOnMobile: nil
+                    useProxyOnMobile: false
                 )
             )
         )

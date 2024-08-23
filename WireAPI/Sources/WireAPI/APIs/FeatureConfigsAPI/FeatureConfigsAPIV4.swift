@@ -50,94 +50,67 @@ struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {
     let digitalSignatures: FeatureWithoutConfig
     let fileSharing: FeatureWithoutConfig
     let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
-    let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>?
-    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4>? /// Starting api v4
-    let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4>? /// Starting api v4
+    let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>
+    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV4> /// Starting api v4
+    let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV4> /// Starting api v4
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
 
-        let appLockConfig = AppLockFeatureConfig(
-            status: appLock.status,
-            isMandatory: appLock.config.enforceAppLock,
-            inactivityTimeoutInSeconds: appLock.config.inactivityTimeoutSecs
-        )
-
+        let appLockConfig = appLock.toAPIModel()
         featureConfigs.append(.appLock(appLockConfig))
 
-        let classifiedDomainsConfig = ClassifiedDomainsFeatureConfig(
-            status: classifiedDomains.status,
-            domains: classifiedDomains.config.domains
-        )
-
+        let classifiedDomainsConfig = classifiedDomains.toAPIModel()
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
             status: conferenceCalling.status,
-            useSFTForOneToOneCalls: nil
+            useSFTForOneToOneCalls: false
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
 
-        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(
-            status: conversationGuestLinks.status
-        )
-
+        let conversationGuestLinksConfig = ConversationGuestLinksFeatureConfig(status: conversationGuestLinks.status)
         featureConfigs.append(.conversationGuestLinks(conversationGuestLinksConfig))
 
-        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(
-            status: digitalSignatures.status
-        )
+        let digitalSignaturesConfig = DigitalSignatureFeatureConfig(status: digitalSignatures.status)
 
         featureConfigs.append(.digitalSignature(digitalSignaturesConfig))
 
-        let fileSharingConfig = FileSharingFeatureConfig(
-            status: fileSharing.status
-        )
-
+        let fileSharingConfig = FileSharingFeatureConfig(status: fileSharing.status)
         featureConfigs.append(.fileSharing(fileSharingConfig))
 
-        let selfDeletingMessagesConfig = SelfDeletingMessagesFeatureConfig(
-            status: selfDeletingMessages.status,
-            enforcedTimeoutSeconds: selfDeletingMessages.config.enforcedTimeoutSeconds
-        )
-
+        let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
         featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
 
-        if let mls {
-            let mlsConfig = MLSFeatureConfig(
-                status: mls.status,
-                protocolToggleUsers: mls.config.protocolToggleUsers,
-                defaultProtocol: mls.config.defaultProtocol,
-                allowedCipherSuites: mls.config.allowedCipherSuites,
-                defaultCipherSuite: mls.config.defaultCipherSuite,
-                supportedProtocols: mls.config.supportedProtocols
-            )
+        let mlsConfig = MLSFeatureConfig(
+            status: mls.status,
+            protocolToggleUsers: mls.config.protocolToggleUsers,
+            defaultProtocol: mls.config.defaultProtocol,
+            allowedCipherSuites: mls.config.allowedCipherSuites,
+            defaultCipherSuite: mls.config.defaultCipherSuite,
+            supportedProtocols: mls.config.supportedProtocols
+        )
 
-            featureConfigs.append(.mls(mlsConfig))
-        }
+        featureConfigs.append(.mls(mlsConfig))
 
-        if let mlsMigration {
-            let mlsMigrationConfig = MLSMigrationFeatureConfig(
-                status: mlsMigration.status,
-                startTime: mlsMigration.config.startTime?.date,
-                finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
-            )
+        let mlsMigrationConfig = MLSMigrationFeatureConfig(
+            status: mlsMigration.status,
+            startTime: mlsMigration.config.startTime?.date,
+            finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
+        )
 
-            featureConfigs.append(.mlsMigration(mlsMigrationConfig))
-        }
+        featureConfigs.append(.mlsMigration(mlsMigrationConfig))
 
-        if let mlsE2EId {
-            let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
-                status: mlsE2EId.status,
-                acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
-                verificationExpiration: mlsE2EId.config.verificationExpiration,
-                crlProxy: nil,
-                useProxyOnMobile: nil
-            )
+        let mlsE2EIdConfig = EndToEndIdentityFeatureConfig(
+            status: mlsE2EId.status,
+            acmeDiscoveryURL: mlsE2EId.config.acmeDiscoveryUrl,
+            verificationExpiration: mlsE2EId.config.verificationExpiration,
+            crlProxy: nil,
+            useProxyOnMobile: false
+        )
 
-            featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
-        }
+        featureConfigs.append(.endToEndIdentity(mlsE2EIdConfig))
 
         return featureConfigs
     }

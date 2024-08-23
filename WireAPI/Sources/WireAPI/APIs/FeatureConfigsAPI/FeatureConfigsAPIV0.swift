@@ -67,15 +67,6 @@ enum FeatureConfigResponse {
 
     }
 
-    struct MLSV0: Decodable {
-
-        let protocolToggleUsers: Set<UUID>
-        let defaultProtocol: MessageProtocol
-        let allowedCipherSuites: [MLSCipherSuite]
-        let defaultCipherSuite: MLSCipherSuite
-
-    }
-
     struct SelfDeletingMessagesV0: Decodable {
 
         let enforcedTimeoutSeconds: UInt
@@ -93,29 +84,19 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
     let digitalSignatures: FeatureWithoutConfig
     let fileSharing: FeatureWithoutConfig
     let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
-    let mls: FeatureWithConfig<FeatureConfigResponse.MLSV0>?
 
     func toAPIModel() -> [FeatureConfig] {
         var featureConfigs: [FeatureConfig] = []
 
-        let appLockConfig = AppLockFeatureConfig(
-            status: appLock.status,
-            isMandatory: appLock.config.enforceAppLock,
-            inactivityTimeoutInSeconds: appLock.config.inactivityTimeoutSecs
-        )
-
+        let appLockConfig = appLock.toAPIModel()
         featureConfigs.append(.appLock(appLockConfig))
 
-        let classifiedDomainsConfig = ClassifiedDomainsFeatureConfig(
-            status: classifiedDomains.status,
-            domains: classifiedDomains.config.domains
-        )
-
+        let classifiedDomainsConfig = classifiedDomains.toAPIModel()
         featureConfigs.append(.classifiedDomains(classifiedDomainsConfig))
 
         let conferenceCallingConfig = ConferenceCallingFeatureConfig(
             status: conferenceCalling.status,
-            useSFTForOneToOneCalls: nil
+            useSFTForOneToOneCalls: false
         )
 
         featureConfigs.append(.conferenceCalling(conferenceCallingConfig))
@@ -138,27 +119,44 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
 
         featureConfigs.append(.fileSharing(fileSharingConfig))
 
-        let selfDeletingMessagesConfig = SelfDeletingMessagesFeatureConfig(
-            status: selfDeletingMessages.status,
-            enforcedTimeoutSeconds: selfDeletingMessages.config.enforcedTimeoutSeconds
-        )
-
+        let selfDeletingMessagesConfig = selfDeletingMessages.toAPIModel()
         featureConfigs.append(.selfDeletingMessages(selfDeletingMessagesConfig))
 
-        if let mls {
-            let mlsConfig = MLSFeatureConfig(
-                status: mls.status,
-                protocolToggleUsers: mls.config.protocolToggleUsers,
-                defaultProtocol: mls.config.defaultProtocol,
-                allowedCipherSuites: mls.config.allowedCipherSuites,
-                defaultCipherSuite: mls.config.defaultCipherSuite,
-                supportedProtocols: [.proteus] /// Default to Proteus
-            )
-
-            featureConfigs.append(.mls(mlsConfig))
-        }
-
         return featureConfigs
+    }
+
+}
+
+extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConvertible {
+
+    func toAPIModel() -> AppLockFeatureConfig {
+        AppLockFeatureConfig(
+            status: status,
+            isMandatory: config.enforceAppLock,
+            inactivityTimeoutInSeconds: config.inactivityTimeoutSecs
+        )
+    }
+
+}
+
+extension FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0> {
+
+    func toAPIModel() -> ClassifiedDomainsFeatureConfig {
+        ClassifiedDomainsFeatureConfig(
+            status: status,
+            domains: config.domains
+        )
+    }
+
+}
+
+extension FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0> {
+
+    func toAPIModel() -> SelfDeletingMessagesFeatureConfig {
+        SelfDeletingMessagesFeatureConfig(
+            status: status,
+            enforcedTimeoutSeconds: config.enforcedTimeoutSeconds
+        )
     }
 
 }

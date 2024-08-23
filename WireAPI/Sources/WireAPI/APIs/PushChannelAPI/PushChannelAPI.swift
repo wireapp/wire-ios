@@ -15,3 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
+/// An API access object for endpoints concerning the push channel.
+public protocol PushChannelAPI {
+
+    /// Create a new push channel.
+    ///
+    /// - Parameter clientID: The id of the self client.
+    /// - Returns: A push channel.
+
+    func createPushChannel(clientID: String) throws -> any PushChannelProtocol
+
+}

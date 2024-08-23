@@ -18,23 +18,16 @@
 
 import Foundation
 
-public class TestUserDefaults: UserDefaults {
-    private let suiteName: String
+/// Errors originating from `PushChannelService`.
 
-    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
+public enum PushChannelServiceError: Error {
 
-    public override init?(suiteName suitename: String?) {
-        self.suiteName = suitename ?? ""
-        super.init(suiteName: suitename)
-    }
+    /// An enqueued url request is invalid.
 
-    public override func set(_ value: Any?, forKey defaultName: String) {
-        if shouldSet(value, defaultName) {
-            super.set(value, forKey: defaultName)
-        }
-    }
+    case invalidRequest
 
-    public func reset() {
-        removePersistentDomain(forName: suiteName)
-    }
+    /// An access token is required but none is available.
+
+    case missingAccessToken
+
 }
