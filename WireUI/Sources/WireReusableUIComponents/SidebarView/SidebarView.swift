@@ -37,6 +37,7 @@ struct SidebarView: View {
             VStack(alignment: .leading, spacing: 0) {
 
                 profileSwitcher
+                    .padding(.bottom, 4)
                 scrollDeactivatableMenuItems(isScrollDisabled: false) // TODO: pass value
                     .background(Color.yellow)
                 Spacer()
@@ -57,7 +58,6 @@ struct SidebarView: View {
                 .padding(.horizontal, 16)
             }
             .frame(maxWidth: .infinity)
-            .background(Color.red.opacity(0.4))
             .padding(.bottom)
         }
         .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { newIconSize in

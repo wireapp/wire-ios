@@ -121,6 +121,7 @@ private struct SidebarMenuItemStyle: ButtonStyle {
 
 // MARK: - Preference Key
 
+// TODO: consider renaming
 struct SidebarMenuItemIconSizeKey: PreferenceKey {
     static var defaultValue: CGSize { .zero }
     static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
