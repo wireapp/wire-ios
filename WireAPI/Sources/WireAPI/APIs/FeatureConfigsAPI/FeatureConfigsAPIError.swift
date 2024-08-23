@@ -18,28 +18,20 @@
 
 import Foundation
 
-/// A configuration for the *End To End Identity* feature.
+/// Errors originating from `FeatureConfigsAPI`.
 
-public struct EndToEndIdentityFeatureConfig: Equatable, Codable {
+public enum FeatureConfigsAPIError: Error {
 
-    /// The feature's status.
+    /// Insufficient permissions
 
-    public let status: FeatureConfigStatus
+    case insufficientPermissions
 
-    /// The URL of the ACME server directory service.
+    /// Not a team member
 
-    public let acmeDiscoveryURL: String?
+    case userIsNotTeamMember
 
-    /// The login grace period for OAUTH/OpenID Connect authentication.
+    /// Team not found
 
-    public let verificationExpiration: UInt
-
-    /// The crl proxy URL
-
-    public let crlProxy: String?
-
-    /// Uses proxy on mobile
-
-    public let useProxyOnMobile: Bool
+    case teamNotFound
 
 }

@@ -18,28 +18,10 @@
 
 import Foundation
 
-/// A configuration for the *End To End Identity* feature.
+class FeatureConfigsAPIV3: FeatureConfigsAPIV2 {
 
-public struct EndToEndIdentityFeatureConfig: Equatable, Codable {
-
-    /// The feature's status.
-
-    public let status: FeatureConfigStatus
-
-    /// The URL of the ACME server directory service.
-
-    public let acmeDiscoveryURL: String?
-
-    /// The login grace period for OAUTH/OpenID Connect authentication.
-
-    public let verificationExpiration: UInt
-
-    /// The crl proxy URL
-
-    public let crlProxy: String?
-
-    /// Uses proxy on mobile
-
-    public let useProxyOnMobile: Bool
+    override var apiVersion: APIVersion {
+        .v3
+    }
 
 }
