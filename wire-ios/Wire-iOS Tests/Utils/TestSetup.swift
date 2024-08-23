@@ -29,7 +29,7 @@ final class TestSetup: NSObject {
         super.init()
 
         XCTestObservationCenter.shared.addTestObserver(
-            makeBackendInfoTestObservation(
+            makeBackendInfoTestObserver(
                 apiVersion: .v0,
                 preferredAPIVersion: nil,
                 domain: "wire.com",

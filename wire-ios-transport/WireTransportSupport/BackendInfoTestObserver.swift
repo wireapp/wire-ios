@@ -19,7 +19,7 @@
 import WireTransport
 import XCTest
 
-public func makeBackendInfoTestObservation(
+public func makeBackendInfoTestObserver(
     apiVersion: APIVersion?,
     preferredAPIVersion: APIVersion?,
     domain: String?,

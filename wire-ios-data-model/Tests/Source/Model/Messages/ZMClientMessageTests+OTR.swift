@@ -63,7 +63,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         mockProteusService = nil
 
         DeveloperFlag.storage = UserDefaults.standard
-        BackendInfo.domain = nil
         super.tearDown()
     }
 
@@ -340,7 +339,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {

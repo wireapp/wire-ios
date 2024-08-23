@@ -23,12 +23,12 @@
 
     override func setUp() {
         DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .temporary())
+        BackendInfo.domain = nil
         super.setUp()
     }
 
     override func tearDown() {
         super.tearDown()
-        BackendInfo.domain = nil
         DeveloperFlag.storage = UserDefaults.standard
     }
 
@@ -293,7 +293,6 @@ extension ClientMessageTests_OTR_Legacy {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {
