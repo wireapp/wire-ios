@@ -32,7 +32,7 @@ struct SidebarView: View {
                 .ignoresSafeArea()
 
             // content
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
 
                 profileSwitcher
                 scrollDeactivatableMenuItems(isScrollDisabled: false) // TODO: pass value
@@ -40,11 +40,23 @@ struct SidebarView: View {
                 Spacer()
 
                 // bottom menu items
-                Text("Settings")
-                Text("Support")
+                SidebarMenuItem(icon: "gearshape") {
+                    Text(String("Settings".reversed()))
+                } action: {
+                    print("settings")
+                }
+                .padding(.horizontal, 16)
+
+                SidebarMenuItem(icon: "questionmark.circle", isLink: true) {
+                    Text(String("Support".reversed()))
+                } action: {
+                    print("support")
+                }
+                .padding(.horizontal, 16)
             }
             .frame(maxWidth: .infinity)
             .background(Color.red.opacity(0.4))
+            .padding(.bottom)
         }
     }
 
@@ -117,6 +129,8 @@ extension Optional where Wrapped == SidebarData.ConversationFilter {
         case .archived:
             Label { Text(String("Archive".reversed())) } icon: { Image(systemName: isActive ? "archivebox.fill" : "archivebox") }
         }
+
+        //SidebarMenuItem()
     }
 }
 
