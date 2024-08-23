@@ -19,13 +19,15 @@
 import SwiftUI
 import WireDesign
 
-struct SidebarView: View {
+public struct SidebarView: View {
 
-    @EnvironmentObject var info: SidebarData
+    public var accountInfo: SidebarAccountInfo?
+    public var availability: Availability?
+    public var conversationFilter: SidebarConversationFilter?
 
     @State private var iconSize: CGSize?
 
-    var body: some View {
+    public var body: some View {
         ZStack {
 
             // background color
@@ -37,7 +39,6 @@ struct SidebarView: View {
             VStack(alignment: .leading, spacing: 0) {
 
                 profileSwitcher
-                    .padding(.vertical, 8)
 
                 let menuItemsScrollView = ScrollView(.vertical) { menuItems }
                 if #available(iOS 16.4, *) {
@@ -65,7 +66,7 @@ struct SidebarView: View {
                 .padding(.horizontal, 16)
             }
             .frame(maxWidth: .infinity)
-            .padding(.bottom)
+            .padding(.vertical)
         }
         .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { newIconSize in
             guard var iconSize else { return iconSize = newIconSize }
@@ -78,9 +79,9 @@ struct SidebarView: View {
     @ViewBuilder
     private var profileSwitcher: some View {
 
-        if let accountInfo = info.accountInfo {
+        if let accountInfo {
             SidebarProfileSwitcherView(accountInfo.displayName, accountInfo.username) {
-                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.isTeamAccount, info.availability)
+                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.isTeamAccount, availability)
             }
             .padding(.horizontal, 24)
             .padding(.bottom)
@@ -95,13 +96,15 @@ struct SidebarView: View {
             Text(String("Conversations".reversed()))
                 .font(.textStyle(.h2))
                 .padding(.horizontal, 8)
-            ForEach([SidebarData.ConversationFilter?.none] + SidebarData.ConversationFilter.allCases, id: \.self) { conversationFilter in
-                conversationFilter.label(iconSize, isActive: info.conversationFilter == conversationFilter)
+                .padding(.vertical, 12)
+            ForEach([SidebarConversationFilter?.none] + SidebarConversationFilter.allCases, id: \.self) { conversationFilter in
+                conversationFilter.label(iconSize, isActive: self.conversationFilter == conversationFilter)
             }
 
             Text(String("Contacts".reversed()))
                 .font(.textStyle(.h2))
-                .padding(8)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 12)
                 .padding(.top, 12)
             SidebarMenuItem(
                 icon: "person.badge.plus",
@@ -118,7 +121,7 @@ struct SidebarView: View {
 
 // MARK: - SidebarData.ConversationFilter + label
 
-extension Optional where Wrapped == SidebarData.ConversationFilter {
+extension Optional where Wrapped == SidebarConversationFilter {
 
     func label(_ iconSize: CGSize?, isActive: Bool) -> SidebarMenuItem {
 
@@ -165,7 +168,7 @@ extension Optional where Wrapped == SidebarData.ConversationFilter {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        let viewModel = SidebarViewModel(
+        let sidebarViewController = SidebarViewController(
             accountInfo: .init(
                 displayName: "Firstname Lastname",
                 username: "@username",
@@ -175,7 +178,7 @@ extension Optional where Wrapped == SidebarData.ConversationFilter {
             availability: .available,
             conversationFilter: .none
         )
-        splitViewController.setViewController(SidebarViewController(viewModel: viewModel), for: .primary)
+        splitViewController.setViewController(sidebarViewController, for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)
         splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)

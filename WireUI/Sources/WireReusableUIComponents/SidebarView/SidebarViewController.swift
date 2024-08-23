@@ -18,32 +18,38 @@
 
 import SwiftUI
 
-public typealias SidebarViewModel = SidebarData
+public final class SidebarViewController: UIHostingController<SidebarView> {
 
-@MainActor
-public func SidebarViewController(viewModel: SidebarViewModel) -> UIViewController {
-    SidebarHostingController(viewModel)
-}
+    public var accountInfo: SidebarAccountInfo? {
+        get { rootView.accountInfo }
+        set { rootView.accountInfo = newValue }
+    }
 
-private final class SidebarHostingController: UIHostingController<SidebarViewWrapper> {
+    public var availability: Availability? {
+        get { rootView.availability }
+        set { rootView.availability = newValue }
+    }
 
-    required init(_ viewModel: SidebarViewModel) {
-        super.init(rootView: .init(sidebarData: viewModel))
+    public var conversationFilter: SidebarConversationFilter? {
+        get { rootView.conversationFilter }
+        set { rootView.conversationFilter = newValue }
+    }
+
+    public required init(
+        accountInfo: SidebarAccountInfo?,
+        availability: Availability?,
+        conversationFilter: SidebarConversationFilter?
+    ) {
+        let rootView = SidebarView(
+            accountInfo: accountInfo,
+            availability: availability,
+            conversationFilter: conversationFilter
+        )
+        super.init(rootView: rootView)
     }
 
     @MainActor
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
-    }
-}
-
-private struct SidebarViewWrapper: View {
-
-    @ObservedObject
-    var sidebarData: SidebarData
-
-    var body: some View {
-        SidebarView()
-            .environmentObject(sidebarData)
     }
 }
