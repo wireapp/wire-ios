@@ -195,7 +195,7 @@ extension WireCallCenterV3 {
             callStarter: callStarter,
             isVideo: video,
             isGroup: group,
-            isConstantBitRate: false,
+            isConstantBitRate: useConstantBitRateAudio,
             videoState: video ? .started : .stopped,
             networkQuality: .normal,
             conversationType: conversationType,
