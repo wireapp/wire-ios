@@ -18,7 +18,7 @@
 
 import WireUITesting
 import XCTest
-@_spi(MockBackendInfo)
+
 import WireTransport
 
 @testable import Wire
@@ -60,7 +60,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         )
 
         MockUserRight.isPermitted = true
-        BackendInfo.enableMocking()
     }
 
     // MARK: - tearDown
@@ -75,7 +74,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         selfUser = nil
         SelfUser.provider = nil
         Settings.shared.reset()
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 

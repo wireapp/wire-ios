@@ -16,25 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireTransport
+import WireTransportSupport
+import XCTest
 
-public class TestUserDefaults: UserDefaults {
-    private let suiteName: String
+final class TestSetup: NSObject, XCTestObservation {
+    override init() {
+        super.init()
 
-    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
-
-    public override init?(suiteName suitename: String?) {
-        self.suiteName = suitename ?? ""
-        super.init(suiteName: suitename)
+        XCTestObservationCenter.shared.addTestObserver(
+            makeBackendInfoTestObservation(
+                apiVersion: .v0,
+                preferredAPIVersion: nil,
+                domain: "wire.com",
+                isFederationEnabled: false
+            )
+        )
     }
 
-    public override func set(_ value: Any?, forKey defaultName: String) {
-        if shouldSet(value, defaultName) {
-            super.set(value, forKey: defaultName)
-        }
-    }
-
-    public func reset() {
-        removePersistentDomain(forName: suiteName)
-    }
 }

@@ -18,7 +18,6 @@
 
 import Foundation
 @testable import WireRequestStrategy
-@_spi(MockBackendInfo)
 import WireTransport
 
 final class AcmeAPITests: ZMTBaseTest {
@@ -30,7 +29,6 @@ final class AcmeAPITests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
         mockHttpClient = MockHttpClient()
         if let mockHttpClient {
             let path = "https://acme/defaultteams/directory"
@@ -41,7 +39,6 @@ final class AcmeAPITests: ZMTBaseTest {
     override func tearDown() {
         acmeApi = nil
         mockHttpClient = nil
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

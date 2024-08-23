@@ -18,7 +18,6 @@
 
 import XCTest
 
-@_spi(MockBackendInfo)
 import WireTransport
 
 @testable import WireSyncEngine
@@ -46,10 +45,8 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
     ) {
         // given
         defer {
-            BackendInfo.resetMocking()
             transportSession.renewAccessTokenCalls = []
         }
-        BackendInfo.enableMocking()
         BackendInfo.apiVersion = apiVersion
 
         // when

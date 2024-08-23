@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-@_spi(MockBackendInfo)
 import WireTransport
 
 extension SearchTests: UserObserving {
@@ -35,7 +34,6 @@ final class SearchTests: IntegrationTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
         BackendInfo.domain = "example.com"
         BackendInfo.apiVersion = .v0
         BackendInfo.isFederationEnabled = false
@@ -46,7 +44,6 @@ final class SearchTests: IntegrationTest {
 
     override func tearDown() {
         userNotifications.removeAll()
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

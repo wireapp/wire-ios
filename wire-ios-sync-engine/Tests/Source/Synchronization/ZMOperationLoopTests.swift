@@ -16,28 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 extension ZMOperationLoopTests {
 
     // MARK: - BackendInfo Helpers
 
     @objc
-    func enableBackendInfoMocking() {
-        BackendInfo.enableMocking()
-    }
-
-    @objc
     func setBackendInfoAPIVersionNil() {
         BackendInfo.apiVersion = nil
-    }
-
-    @objc
-    func resetBackendInfoMocking() {
-        BackendInfo.resetMocking()
     }
 
     // MARK: - Tests

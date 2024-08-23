@@ -135,13 +135,14 @@
 		BFA7A5C52105E39D00C086A7 /* HTTPCookie+HelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA7A5C42105E39D00C086A7 /* HTTPCookie+HelperTests.swift */; };
 		BFC6403C1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h in Headers */ = {isa = PBXBuildFile; fileRef = BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */; };
+		CB5120512C6FD61B000C8FEC /* BackendInfoTestObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5120502C6FD61B000C8FEC /* BackendInfoTestObserver.swift */; };
+		CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */; platformFilter = ios; };
 		CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */; };
 		CB79AC582C6CFD44003CF5F4 /* WireTransportSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */; };
 		CB79AC752C6D0568003CF5F4 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		CB79AC782C6D0582003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC552C6CFD44003CF5F4 /* WireTransportSupport.framework */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
-		E60957882C3E739D0022E41D /* BackendInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E60957872C3E739D0022E41D /* BackendInfoTests.swift */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
 		EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */; };
@@ -372,13 +373,13 @@
 		BFA7A5C42105E39D00C086A7 /* HTTPCookie+HelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPCookie+HelperTests.swift"; sourceTree = "<group>"; };
 		BFC6403B1D2CFE3300886274 /* ZMTransportRequest+AssetGet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMTransportRequest+AssetGet.h"; sourceTree = "<group>"; };
 		BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifierTests.m; sourceTree = "<group>"; };
+		CB5120502C6FD61B000C8FEC /* BackendInfoTestObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfoTestObserver.swift; sourceTree = "<group>"; };
 		CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMPersistentCookieStorage.swift; sourceTree = "<group>"; };
 		CB79AC552C6CFD44003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireTransportSupport.h; sourceTree = "<group>"; };
 		CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPCookie+Testing.swift"; sourceTree = "<group>"; };
 		CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundActivityFactory.swift; sourceTree = "<group>"; };
-		E60957872C3E739D0022E41D /* BackendInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfoTests.swift; sourceTree = "<group>"; };
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfo.swift; sourceTree = "<group>"; };
 		EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccessTokenHandler.swift; sourceTree = "<group>"; };
@@ -444,6 +445,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB79AC752C6D0568003CF5F4 /* WireTransport.framework in Frameworks */,
+				CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -845,7 +847,6 @@
 		596090D32B14C9050007583F /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				E60957872C3E739D0022E41D /* BackendInfoTests.swift */,
 				596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */,
 			);
 			path = Public;
@@ -883,6 +884,7 @@
 			isa = PBXGroup;
 			children = (
 				CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */,
+				CB5120502C6FD61B000C8FEC /* BackendInfoTestObserver.swift */,
 				CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */,
 			);
 			path = WireTransportSupport;
@@ -1217,7 +1219,6 @@
 				F9C4317E1CD7ADF300A8542F /* ZMKeychainTests.m in Sources */,
 				596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */,
 				546E89FF1B33015000DD1042 /* ZMTransportCodecTests.m in Sources */,
-				E60957882C3E739D0022E41D /* BackendInfoTests.swift in Sources */,
 				AF9D8F9E1F20D9B700ABF225 /* TestTrustVerificator.swift in Sources */,
 				BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */,
 				546E89F11B33015000DD1042 /* ZMWebSocketHandshakeTests.m in Sources */,
@@ -1262,6 +1263,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB5120512C6FD61B000C8FEC /* BackendInfoTestObserver.swift in Sources */,
 				CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

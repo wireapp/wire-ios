@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
-@_spi(MockBackendInfo)
 import WireTransport
 import XCTest
 
@@ -63,7 +62,6 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             self.conversation = self.createGroupConversation(with: self.user)
         }
 
-        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
@@ -72,7 +70,6 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         sut = nil
         user = nil
         conversation = nil
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 

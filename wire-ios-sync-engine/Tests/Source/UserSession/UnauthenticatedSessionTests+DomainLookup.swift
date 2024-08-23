@@ -17,10 +17,8 @@
 //
 
 import WireTesting
-import XCTest
-
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -88,7 +86,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     func testThatItLookupReturnsNoAPiVersionError() {
         // given
-        BackendInfo.enableMocking()
         BackendInfo.apiVersion = nil
         let domain = "example com"
 
@@ -108,8 +105,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 1.0))
         XCTAssertTrue(gettingExpectedError)
-
-        BackendInfo.resetMocking()
     }
 
     // MARK: Response handling

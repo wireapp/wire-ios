@@ -17,9 +17,8 @@
 //
 
 import WireSyncEngine
-import XCTest
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 @testable import Wire
 
@@ -325,7 +324,6 @@ final class AppStateCalculatorTests: XCTestCase {
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
-        BackendInfo.enableMocking()
         BackendInfo.apiVersion = nil
 
         let blacklistState = AppState.blacklisted(reason: .clientAPIVersionObsolete)
@@ -336,7 +334,5 @@ final class AppStateCalculatorTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.appState, blacklistState)
-
-        BackendInfo.resetMocking()
     }
 }

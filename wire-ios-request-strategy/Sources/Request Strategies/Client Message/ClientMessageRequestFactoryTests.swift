@@ -19,7 +19,6 @@
 import WireDataModel
 import WireProtos
 @testable import WireRequestStrategy
-@_spi(MockBackendInfo)
 import WireTransport
 import WireUtilities
 import XCTest
@@ -34,15 +33,8 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        BackendInfo.enableMocking()
         apiVersion = .v0
     }
-
-    override func tearDown() {
-        BackendInfo.resetMocking()
-        super.tearDown()
-    }
-
 }
 
 // MARK: - Client discovery
