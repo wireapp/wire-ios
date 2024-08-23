@@ -19,20 +19,13 @@
 import SwiftUI
 import WireDesign
 
-final class SidebarViewModel: ObservableObject {
-
-    typealias Book = Int
-    @Published private(set) var books: [Book] = [Book(), Book(), Book()]
-}
-
-@MainActor
-public func SidebarViewController() -> UIViewController {
-    UIHostingController(rootView: SidebarView(sidebarViewModel: .init()))
-}
-
 struct SidebarView: View {
 
-    @StateObject fileprivate var sidebarViewModel: SidebarViewModel
+    let accountImage: UIImage
+    let isTeamAccount: Bool
+    let availability: Availability?
+    let displayName: String
+    let username: String
 
     var body: some View {
         ZStack {
@@ -45,12 +38,8 @@ struct SidebarView: View {
             // content
             VStack(alignment: .leading) {
 
-                SidebarProfileSwitcherView(displayName: "TODO", username: "TODO") {
-                    AccountImageViewRepresentable(
-                        accountImage: .from(solidColor: .systemIndigo),
-                        isTeamAccount: false,
-                        availability: .available
-                    )
+                SidebarProfileSwitcherView(displayName, username) {
+                    AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
                 }
                 .padding(.horizontal, 24)
 
@@ -78,24 +67,6 @@ struct SidebarView: View {
     }
 }
 
-public final class SidebarViewController_: UIViewController {
-
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = ColorTheme.Backgrounds.background
-
-        let label = UILabel()
-        label.text = "Sidebar"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
-}
-
 // MARK: - Previews
 
 @available(iOS 17, *)
@@ -106,7 +77,8 @@ public final class SidebarViewController_: UIViewController {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        splitViewController.setViewController(SidebarViewController(), for: .primary)
+        let viewModel = SidebarViewModel()
+        splitViewController.setViewController(SidebarViewController(viewModel: viewModel), for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)
         splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)

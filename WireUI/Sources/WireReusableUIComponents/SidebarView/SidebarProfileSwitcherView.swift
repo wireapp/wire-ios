@@ -55,6 +55,21 @@ where AccountImageView: View {
     }
 }
 
+extension SidebarProfileSwitcherView {
+
+    init(
+        _ displayName: String,
+        _ username: String,
+        _ accountImageView: @escaping () -> AccountImageView
+    ) {
+        self.init(
+            displayName: displayName,
+            username: username,
+            accountImageView: accountImageView
+        )
+    }
+}
+
 private struct ProfileSwitcherHeightKey: PreferenceKey {
     static var defaultValue: CGFloat { 0 }
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
