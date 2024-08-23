@@ -18,23 +18,10 @@
 
 import Foundation
 
-public class TestUserDefaults: UserDefaults {
-    private let suiteName: String
+class FeatureConfigsAPIV5: FeatureConfigsAPIV4 {
 
-    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
-
-    public override init?(suiteName suitename: String?) {
-        self.suiteName = suitename ?? ""
-        super.init(suiteName: suitename)
+    override var apiVersion: APIVersion {
+        .v5
     }
 
-    public override func set(_ value: Any?, forKey defaultName: String) {
-        if shouldSet(value, defaultName) {
-            super.set(value, forKey: defaultName)
-        }
-    }
-
-    public func reset() {
-        removePersistentDomain(forName: suiteName)
-    }
 }
