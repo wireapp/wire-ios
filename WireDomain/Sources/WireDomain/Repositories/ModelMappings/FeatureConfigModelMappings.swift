@@ -73,12 +73,8 @@ extension WireAPI.ClassifiedDomainsFeatureConfig {
 
 extension WireAPI.ConferenceCallingFeatureConfig {
 
-    func toDomainModel() -> Feature.ConferenceCalling.Config? {
-        if let useSFTForOneToOneCalls {
-            .init(useSFTForOneToOneCalls: useSFTForOneToOneCalls)
-        } else {
-            nil
-        }
+    func toDomainModel() -> Feature.ConferenceCalling.Config {
+        .init(useSFTForOneToOneCalls: useSFTForOneToOneCalls)
     }
 
 }

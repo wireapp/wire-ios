@@ -114,7 +114,7 @@ private extension FeatureConfigRepositoryTests {
             ),
             .conferenceCalling(.init(
                 status: .enabled,
-                useSFTForOneToOneCalls: nil
+                useSFTForOneToOneCalls: false
             )
             ),
             .conversationGuestLinks(.init(
