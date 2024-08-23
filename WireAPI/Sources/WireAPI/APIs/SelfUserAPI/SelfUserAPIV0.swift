@@ -43,7 +43,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .parse(response)
     }
 
-    func pushSupportedProtocols(_: Set<SupportedProtocol>) async throws {
+    func pushSupportedProtocols(_: Set<MessageProtocol>) async throws {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
 }

@@ -44,7 +44,7 @@ extension WireAPI.QualifiedID {
 
 }
 
-extension Set<WireAPI.SupportedProtocol> {
+extension Set<WireAPI.MessageProtocol> {
 
     func toDomainModel() -> Set<WireDataModel.MessageProtocol> {
         .init(map { $0.toDomainModel() })
@@ -52,7 +52,7 @@ extension Set<WireAPI.SupportedProtocol> {
 
 }
 
-extension WireAPI.SupportedProtocol {
+extension WireAPI.MessageProtocol {
 
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {

@@ -31,5 +31,5 @@ public protocol SelfUserAPI {
     ///
     /// - Parameter supportedProtocols: list of supported protocols
     ///
-    func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws
+    func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws
 }

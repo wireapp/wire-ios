@@ -26,4 +26,8 @@ public struct ConferenceCallingFeatureConfig: Codable, Equatable {
 
     public let status: FeatureConfigStatus
 
+    /// If set to `true`, clients will use SFTs for 1:1 calls
+
+    public let useSFTForOneToOneCalls: Bool
+
 }
