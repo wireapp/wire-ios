@@ -39,31 +39,27 @@ struct SidebarMenuItem: View {
     var title: () -> Text
     var action: () -> Void
 
-//    @Environment(\.isPressed) private var isPressed
-
     var body: some View {
 
         Button(action: action) {
-            @Environment(\.isPressed) var isPressed
-            HStack {
-                if isPressed {
-                    Text("prs")
-                }
+            IsPressedReader { isPressed in
+                HStack {
 
-                let iconSystemNameSuffix = isHighlighted != isPressed ? ".fill" : ""
-                Label {
-                    title()
-                        .foregroundStyle(isPressed ? isPressedForegroundColor : titleForegroundColor)
-                } icon: {
-                    Image(systemName: icon + iconSystemNameSuffix)
-                        .foregroundStyle(isPressed ? isPressedForegroundColor : accentColor_)
-                }
+                    let iconSystemNameSuffix = isHighlighted != isPressed ? ".fill" : ""
+                    Label {
+                        title()
+                            .foregroundStyle(isPressed ? isPressedForegroundColor : titleForegroundColor)
+                    } icon: {
+                        Image(systemName: icon + iconSystemNameSuffix)
+                            .foregroundStyle(isPressed ? isPressedForegroundColor : accentColor_)
+                    }
 
-                Spacer()
+                    Spacer()
 
-                if isLink {
-                    Image(systemName: "arrow.up.forward.square")
-                        .foregroundStyle(isPressed ? isPressedForegroundColor : linkIconForegroundColor)
+                    if isLink {
+                        Image(systemName: "arrow.up.forward.square")
+                            .foregroundStyle(isPressed ? isPressedForegroundColor : linkIconForegroundColor)
+                    }
                 }
             }
         }
@@ -71,12 +67,18 @@ struct SidebarMenuItem: View {
     }
 }
 
+private struct IsPressedReader<Content>: View where Content: View {
+    @Environment(\.isPressed) private var isPressed
+    let content: (_ isPressed: Bool) -> Content
+    var body: some View { content(isPressed) }
+}
+
 private struct SidebarMenuItemStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         let cornerRadius: CGFloat = 12
         configuration.label
-            .myCustomValue(configuration.isPressed)
+            .environment(\.isPressed, configuration.isPressed)
             .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
