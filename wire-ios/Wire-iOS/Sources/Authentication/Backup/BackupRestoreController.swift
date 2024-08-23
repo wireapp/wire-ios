@@ -76,14 +76,10 @@ final class BackupRestoreController: NSObject {
     }
 
     private func showFilePicker() {
-        let picker: UIDocumentPickerViewController
-        if #available(iOS 14.0, *) {
-            picker = UIDocumentPickerViewController(
-                forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
-                asCopy: true)
-        } else {
-            picker = UIDocumentPickerViewController(documentTypes: BackupRestoreController.WireBackupUTIs, in: .import)
-        }
+        let picker = UIDocumentPickerViewController(
+            forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
+            asCopy: true
+        )
 
         picker.delegate = self
         target.present(picker, animated: true)
