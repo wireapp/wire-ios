@@ -52,14 +52,14 @@ public struct SidebarView: View {
 
                 // bottom menu items
                 SidebarMenuItem(icon: "gearshape", iconSize: iconSize) {
-                    Text(String("Settings".reversed()))
+                    Text("sidebar.settings.title", bundle: .module)
                 } action: {
                     print("settings")
                 }
                 .padding(.horizontal, 16)
 
                 SidebarMenuItem(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
-                    Text(String("Support".reversed()))
+                    Text("sidebar.support.title", bundle: .module)
                 } action: {
                     print("support")
                 }
@@ -100,7 +100,7 @@ public struct SidebarView: View {
                 conversationFilter.label(iconSize, isActive: self.conversationFilter == conversationFilter)
             }
 
-            Text(String("Contacts".reversed()))
+            Text("sidebar.contacts.title", bundle: .module)
                 .font(.textStyle(.h2))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
@@ -109,7 +109,7 @@ public struct SidebarView: View {
                 icon: "person.badge.plus",
                 iconSize: iconSize
             ) {
-                Text(String("Connect".reversed()))
+                Text("sidebar.contacts.connect.title", bundle: .module)
             } action: {
                 //
             }
@@ -120,7 +120,7 @@ public struct SidebarView: View {
 
 // MARK: - SidebarData.ConversationFilter + label
 
-extension Optional where Wrapped == SidebarConversationFilter {
+private extension Optional where Wrapped == SidebarConversationFilter {
 
     func label(_ iconSize: CGSize?, isActive: Bool) -> SidebarMenuItem {
 
@@ -130,19 +130,19 @@ extension Optional where Wrapped == SidebarConversationFilter {
 
         switch self {
         case .none:
-            text = Text(String("All".reversed()))
+            text = Text("sidebar.conversation_filter.all.title", bundle: .module)
             icon = "text.bubble"
         case .favorites:
-            text = Text(String("Favorites".reversed()))
+            text = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
             icon = "star"
         case .groups:
-            text = Text(String("Groups".reversed()))
+            text = Text("sidebar.conversation_filter.groups.title", bundle: .module)
             icon = "person.3"
         case .oneOnOne:
-            text = Text(String("1:1 Conversations".reversed()))
+            text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
             icon = "person"
         case .archived:
-            text = Text(String("Archive".reversed()))
+            text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
             icon = "archivebox"
         }
 
