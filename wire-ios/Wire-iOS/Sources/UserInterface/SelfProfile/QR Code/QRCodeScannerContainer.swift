@@ -31,9 +31,9 @@ struct QRCodeScannerContainer: View {
             VStack {
                 Spacer()
                 if let latestCode {
-                    Button(action: {
+                    Button {
                         openScannedCode(latestCode)
-                    }) {
+                    } label: {
                         Text("Tap to connect")
                             .padding()
                             .background(Color.yellow)
