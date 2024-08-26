@@ -68,7 +68,7 @@ public struct SidebarView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical)
         }
-        .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { newIconSize in
+        .onPreferenceChange(SidebarMenuItemMinIconSizeKey.self) { newIconSize in
             guard var iconSize else { return iconSize = newIconSize }
             iconSize.width = max(iconSize.width, newIconSize.width)
             iconSize.height = max(iconSize.height, newIconSize.height)

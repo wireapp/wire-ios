@@ -54,7 +54,7 @@ struct SidebarMenuItem: View {
                     let icon = Image(systemName: icon + iconSystemNameSuffix)
                         .foregroundStyle(isHighlighted ? isPressedForegroundColor : accentColor_)
                         .background(GeometryReader { geometryProxy in
-                            Color.clear.preference(key: SidebarMenuItemIconSizeKey.self, value: geometryProxy.size)
+                            Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
                     if let iconSize {
                         icon.frame(minWidth: iconSize.width, minHeight: iconSize.height)
@@ -81,8 +81,7 @@ struct SidebarMenuItem: View {
 
 // MARK: - Preference Key
 
-// TODO: consider renaming
-struct SidebarMenuItemIconSizeKey: PreferenceKey {
+struct SidebarMenuItemMinIconSizeKey: PreferenceKey {
     static var defaultValue: CGSize { .zero }
     static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
         value.width = max(value.width, nextValue().width)
@@ -120,7 +119,7 @@ private struct SidebarMenuItemContainer<Content>: View where Content: View {
     var body: some View {
         VStack {
             content(iconSize)
-                .onPreferenceChange(SidebarMenuItemIconSizeKey.self) { newIconSize in
+                .onPreferenceChange(SidebarMenuItemMinIconSizeKey.self) { newIconSize in
                     guard var iconSize else { return iconSize = newIconSize }
                     iconSize.width = max(iconSize.width, newIconSize.width)
                     iconSize.height = max(iconSize.height, newIconSize.height)
