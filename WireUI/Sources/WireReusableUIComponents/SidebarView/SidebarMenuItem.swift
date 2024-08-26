@@ -24,8 +24,8 @@ private let linkIconForegroundColor = Color(ColorTheme.Base.secondaryText)
 private let isPressedForegroundColor = Color(ColorTheme.Base.onPrimary)
 // TODO: get from Environment
 private let accentColor_ = Color(ColorTheme.Base.primary)
-// TODO: remove underscore
-private let cornerRadius_: CGFloat = 12
+
+private let backgroundCornerRadius: CGFloat = 12
 
 struct SidebarMenuItem: View {
 
@@ -70,16 +70,16 @@ struct SidebarMenuItem: View {
                         .foregroundStyle(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor)
                 }
             }
-            .contentShape(RoundedRectangle(cornerRadius: cornerRadius_))
+            .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
             .background(isHighlighted ? accentColor_ : .clear)
-            .cornerRadius(cornerRadius_)
+            .cornerRadius(backgroundCornerRadius)
         }
     }
 }
 
-// MARK: - Preference Key
+// MARK: - Min Icon Size Preference Key
 
 struct SidebarMenuItemMinIconSizeKey: PreferenceKey {
     static var defaultValue: CGSize { .zero }
