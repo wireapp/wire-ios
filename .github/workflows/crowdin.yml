@@ -25,8 +25,8 @@ jobs:
           # For more info: https://github.com/crowdin/github-action/blob/master/action.yml
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}          
           token: ${{ secrets.CROWDIN_API_TOKEN }}
-          config: wire-ios/crowdin.yml
-          
+          config: crowdin.yml
+
           upload_sources: true
           download_translations: true
           upload_translations: false

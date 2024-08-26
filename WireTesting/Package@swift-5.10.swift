@@ -5,7 +5,6 @@ import PackageDescription
 
 let package = Package(
     name: "WireTestingPackage",
-    defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireTestingPackage", type: .dynamic, targets: ["WireTestingPkg"])

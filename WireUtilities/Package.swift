@@ -5,7 +5,6 @@ import PackageDescription
 
 let package = Package(
     name: "WireUtilitiesPackage",
-    defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireUtilitiesPackage", type: .dynamic, targets: ["WireUtilitiesPkg"]),
