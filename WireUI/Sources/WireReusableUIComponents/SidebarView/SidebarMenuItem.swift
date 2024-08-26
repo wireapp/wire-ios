@@ -44,78 +44,38 @@ struct SidebarMenuItem: View {
     var body: some View {
 
         Button(action: action) {
-            IsPressedReader { isPressed in
-                let isHighlighted = isHighlighted != isPressed
-                HStack {
+            HStack {
 
-                    Label {
-                        title()
-                            .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)
-                    } icon: {
-                        let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
-                        let icon = Image(systemName: icon + iconSystemNameSuffix)
-                            .foregroundStyle(isHighlighted ? isPressedForegroundColor : accentColor_)
-                            .background(GeometryReader { geometryProxy in
-                                Color.clear.preference(key: SidebarMenuItemIconSizeKey.self, value: geometryProxy.size)
-                            })
-                        if let iconSize {
-                            icon.frame(minWidth: iconSize.width, minHeight: iconSize.height)
-                        } else {
-                            icon
-                        }
-                    }
-
-                    Spacer()
-
-                    if isLink {
-                        Image(systemName: "arrow.up.forward.square")
-                            .foregroundStyle(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor)
+                Label {
+                    title()
+                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)
+                } icon: {
+                    let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
+                    let icon = Image(systemName: icon + iconSystemNameSuffix)
+                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : accentColor_)
+                        .background(GeometryReader { geometryProxy in
+                            Color.clear.preference(key: SidebarMenuItemIconSizeKey.self, value: geometryProxy.size)
+                        })
+                    if let iconSize {
+                        icon.frame(minWidth: iconSize.width, minHeight: iconSize.height)
+                    } else {
+                        icon
                     }
                 }
-                .contentShape(RoundedRectangle(cornerRadius: cornerRadius_))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 12)
-                .background(isHighlighted ? accentColor_ : .clear)
-                .cornerRadius(cornerRadius_)
+
+                Spacer()
+
+                if isLink {
+                    Image(systemName: "arrow.up.forward.square")
+                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor)
+                }
             }
+            .contentShape(RoundedRectangle(cornerRadius: cornerRadius_))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 12)
+            .background(isHighlighted ? accentColor_ : .clear)
+            .cornerRadius(cornerRadius_)
         }
-        .buttonStyle(SidebarMenuItemStyle())
-    }
-}
-
-// MARK: - Helpers
-
-private struct IsPressedReader<Content>: View where Content: View {
-    @Environment(\.isPressed) private var isPressed
-    @ViewBuilder let content: (_ isPressed: Bool) -> Content
-    var body: some View { content(isPressed) }
-}
-
-private extension EnvironmentValues {
-
-    struct IsPressedKey: EnvironmentKey {
-        static let defaultValue = false
-    }
-
-    var isPressed: Bool {
-        get { self[IsPressedKey.self] }
-        set { self[IsPressedKey.self] = newValue }
-    }
-}
-
-extension View {
-    func myCustomValue(_ isPressed: Bool) -> some View {
-        environment(\.isPressed, isPressed)
-    }
-}
-
-// MARK: - Button Style
-
-private struct SidebarMenuItemStyle: ButtonStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .environment(\.isPressed, configuration.isPressed)
     }
 }
 
