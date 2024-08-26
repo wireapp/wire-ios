@@ -32,23 +32,25 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
         var components = URLComponents(string: "\(pathPrefix)\(basePath)/last")
         components?.queryItems = [URLQueryItem(name: "client", value: selfClientID)]
 
-        guard let path = components?.string else {
-            assertionFailure("generated an invalid path")
-            throw UpdateEventsAPIError.invalidPath
+        guard let url = components?.url else {
+            assertionFailure("generated an invalid url")
+            throw UpdateEventsAPIError.invalidURL
         }
 
-        let request = HTTPRequest(
-            path: path,
-            method: .get
-        )
+        let request = URLRequestBuilder(url: url)
+            .withMethod(.get)
+            .build()
 
-        let response = try await httpClient.executeRequest(request)
+        let (data, response) = try await self.apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
 
         // Change: 400 error removed.
         return try ResponseParser()
             .success(code: .ok, type: UpdateEventEnvelopeV0.self)
             .failure(code: .notFound, label: "not-found", error: UpdateEventsAPIError.notFound)
-            .parse(response)
+            .parse(code: response.statusCode, data: data)
     }
 
     // MARK: - Get events since
@@ -67,23 +69,24 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
                 URLQueryItem(name: "size", value: "500")
             ]
 
-            guard let path = components?.string else {
-                assertionFailure("generated an invalid path")
-                throw UpdateEventsAPIError.invalidPath
+            guard let url = components?.url else {
+                assertionFailure("generated an invalid url")
+                throw UpdateEventsAPIError.invalidURL
             }
 
-            let request = HTTPRequest(
-                path: path,
-                method: .get
+            let request = URLRequestBuilder(url: url)
+                .withMethod(.get)
+                .build()
+
+            let (data, response) = try await self.apiService.executeRequest(
+                request,
+                requiringAccessToken: true
             )
-
-            let response = try await self.httpClient.executeRequest(request)
-
             // Change: 400 error removed.
             return try ResponseParser()
                 .success(code: .ok, type: UpdateEventListResponseV0.self)
                 .failure(code: .notFound, error: UpdateEventsAPIError.notFound)
-                .parse(response)
+                .parse(code: response.statusCode, data: data)
         }
     }
 

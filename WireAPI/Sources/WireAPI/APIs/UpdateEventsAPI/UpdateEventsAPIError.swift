@@ -22,9 +22,9 @@ import Foundation
 
 public enum UpdateEventsAPIError: Error {
 
-    /// A request path is not invalid.
+    /// A request url is not invalid.
 
-    case invalidPath
+    case invalidURL
 
     /// A provided client id is not valid.
 

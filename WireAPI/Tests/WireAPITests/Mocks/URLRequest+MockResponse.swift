@@ -44,4 +44,27 @@ extension URLRequest {
         return (try jsonPayload.data(), response)
     }
 
+    func mockErrorResponse(
+        statusCode: HTTPStatusCode,
+        label: String = ""
+    ) throws -> (Data, HTTPURLResponse) {
+        guard let url else {
+            throw "Unable to create mock response, request is missing url"
+        }
+
+        guard let response = HTTPURLResponse(
+            url: url,
+            statusCode: statusCode.rawValue,
+            httpVersion: nil,
+            headerFields: ["Content-Type": HTTPContentType.json.rawValue]
+        ) else {
+            throw "Unable to create mock response"
+        }
+
+        let jsonPayload = FailureResponse(code: statusCode.rawValue, label: label, message: "")
+        let jsonData = try JSONEncoder().encode(jsonPayload)
+
+        return (jsonData, response)
+    }
+
 }
