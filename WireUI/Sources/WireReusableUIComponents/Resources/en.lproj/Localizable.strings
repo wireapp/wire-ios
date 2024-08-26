@@ -16,10 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// Sidebar
-
 "sidebar.conversation_filter.title" = "Conversations";
 "sidebar.conversation_filter.all.title" = "All";
 "sidebar.conversation_filter.favorites.title" = "Favorites";
