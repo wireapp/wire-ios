@@ -1068,7 +1068,7 @@ internal enum L10n {
     /// Allow Wire to access your camera so you can place video calls and send photos.
     internal static let nsCameraUsageDescription = L10n.tr("InfoPlist", "NSCameraUsageDescription", fallback: "Allow Wire to access your camera so you can place video calls and send photos.")
     /// *  Wire
-    ///  *  Copyright (C) 2016 Wire Swiss GmbH
+    ///  *  Copyright (C) 2024 Wire Swiss GmbH
     ///  *
     ///  *  This program is free software: you can redistribute it and/or modify
     ///  *  it under the terms of the GNU General Public License as published by

@@ -16,16 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-#import <Availability.h>
-
-#ifdef __OBJC__
-
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
-
-#ifndef NS_DESIGNATED_INITIALIZER
-#define NS_DESIGNATED_INITIALIZER
-#endif
-
-#endif
+// Sidebar
+"sidebar.conversation_filter.title" = "Conversations";
