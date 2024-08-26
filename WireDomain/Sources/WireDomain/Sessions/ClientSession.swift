@@ -23,20 +23,29 @@ import WireDataModel
 
 public struct ClientSession {
 
-    private let apiVersion = WireAPI.APIVersion.v0
     private let updateEventsAPI: any UpdateEventsAPI
     private let updateEventsRepository: UpdateEventsRepository
     private let syncManager: SyncManager
+    private let apiService: APIService
 
     public init(
         clientID: String,
-        httpClient: any HTTPClient,
+        backendURL: URL,
+        apiVersion: WireAPI.APIVersion,
+        minTLSversion: WireAPI.TLSVersion,
+        authenticationStorage: any AuthenticationStorage,
         proteusService: any ProteusServiceInterface,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
-        updateEventsAPI = UpdateEventsAPIBuilder(httpClient: httpClient).makeAPI(for: apiVersion)
+        apiService = APIService(
+            backendURL: backendURL,
+            authenticationStorage: authenticationStorage,
+            minTLSVersion: minTLSversion
+        )
+
+        updateEventsAPI = UpdateEventsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
 
         let updateEventDecryptor = UpdateEventDecryptor(
             proteusService: proteusService,
