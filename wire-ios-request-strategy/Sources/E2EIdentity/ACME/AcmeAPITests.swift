@@ -18,12 +18,12 @@
 
 import Foundation
 @testable import WireRequestStrategy
+import WireTransport
 
 final class AcmeAPITests: ZMTBaseTest {
 
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
-    let backendDomainBackup = BackendInfo.domain
     private let encoder: JSONEncoder = .defaultEncoder
 
     override func setUp() {
@@ -39,7 +39,6 @@ final class AcmeAPITests: ZMTBaseTest {
     override func tearDown() {
         acmeApi = nil
         mockHttpClient = nil
-        BackendInfo.domain = backendDomainBackup
 
         super.tearDown()
     }

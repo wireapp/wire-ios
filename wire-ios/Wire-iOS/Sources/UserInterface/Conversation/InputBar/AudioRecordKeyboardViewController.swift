@@ -111,7 +111,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         recorder.stopRecording()
-        if isAppLockActive { UIApplication.shared.firstKeyWindow?.endEditing(true) }
+        if isAppLockActive { AppDelegate.shared.mainWindow?.endEditing(true) }
     }
 
     // MARK: - View Configuration
@@ -377,18 +377,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             self.openEffectsPicker()
             self.recordTapGestureRecognizer.isEnabled = false
         }
-    }
-
-    func stopAndDeleteRecordingIfNeeded() {
-        recorder.stopRecording()
-        recorder.deleteRecording()
-    }
-
-    func sendAudioAsIs() {
-        recorder.stopPlaying()
-        guard let url = recorder.fileURL else { return zmLog.warn("Nil url passed to send as audio file") }
-
-        delegate?.audioRecordViewControllerWantsToSendAudio(self, recordingURL: url, duration: recorder.currentDuration, filter: .none)
     }
 
     private func openEffectsPicker() {

@@ -87,7 +87,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         sut = nil
         mediaManager = nil
         mockHintView = nil
-        CallingConfiguration.resetDefaultConfig()
+        CallingConfiguration.testHelper_resetDefaultConfig()
 
         super.tearDown()
     }

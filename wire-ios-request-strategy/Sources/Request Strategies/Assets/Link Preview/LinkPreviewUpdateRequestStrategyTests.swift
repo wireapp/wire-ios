@@ -20,6 +20,7 @@ import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+import WireTransport
 
 class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
@@ -29,7 +30,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     private var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -46,14 +47,12 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
                 messageSender: self.mockMessageSender
             )
         }
-
         apiVersion = .v0
     }
 
     override func tearDown() {
         applicationStatus = nil
         sut = nil
-        apiVersion = nil
         super.tearDown()
     }
 
@@ -92,17 +91,25 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesCreateARequestInState_Uploaded() {
         apiVersion = .v1
 
+        var message: ZMClientMessage!
+
         self.syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.insertMessage(with: .uploaded)
+            message = self.insertMessage(with: .uploaded)
 
             // When
             self.process(message)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        // THEN
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+
+        self.syncMOC.performGroupedAndWait {
+            XCTAssertEqual(message.linkPreviewState, .done)
+            XCTAssertNil(message.expirationDate)
+        }
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {

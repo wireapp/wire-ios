@@ -131,6 +131,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         DeveloperFlag.storage = UserDefaults.standard
     }
 
+    override func setUp() {
+        super.setUp()
+
+        BackendInfo.domain = nil
+    }
+
     func testThatItApplyPatchesWhenNoVersion() {
 
         // GIVEN
@@ -212,9 +218,8 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(didEstablishSession)
 
         await syncMOC.performGrouped {
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
             self.syncMOC.saveOrRollback()
 

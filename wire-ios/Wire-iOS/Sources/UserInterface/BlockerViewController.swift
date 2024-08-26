@@ -266,11 +266,11 @@ extension BlockerViewController {
     private func enrollCertificate() async throws {
         guard
             let activeUserSession = sessionManager?.activeUserSession,
-            let rootViewController = AppDelegate.shared.window?.rootViewController
+            let rootViewController = AppDelegate.shared.mainWindow.rootViewController
         else {
             return
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { rootViewController })
 
         let certificateChain = try await activeUserSession
             .enrollE2EICertificate

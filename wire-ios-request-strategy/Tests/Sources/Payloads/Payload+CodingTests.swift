@@ -20,6 +20,7 @@ import Foundation
 import XCTest
 
 @testable import WireRequestStrategy
+import WireTransport
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
 
@@ -75,7 +76,6 @@ class Payload_CodingTests: XCTestCase {
     }
 
     override func tearDown() {
-        BackendInfo.apiVersion = .v3
         data = nil
         super.tearDown()
     }

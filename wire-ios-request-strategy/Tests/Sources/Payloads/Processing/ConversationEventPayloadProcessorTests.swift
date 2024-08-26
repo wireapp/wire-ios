@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireTransport
 import XCTest
 
 @testable import WireRequestStrategy
@@ -45,6 +46,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         syncMOC.performAndWait {
             syncMOC.mlsService = mockMLSService
         }
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
@@ -53,7 +55,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         mockMLSEventProcessor = nil
         mockRemoveLocalConversation = nil
         mockMLSEventProcessor = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 

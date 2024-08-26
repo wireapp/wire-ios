@@ -61,7 +61,7 @@ extension UIAlertController {
 
         UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
         viewController.present(alertController, animated: true) {
-            UIApplication.shared.firstKeyWindow?.endEditing(true)
+            AppDelegate.shared.mainWindow?.endEditing(true)
         }
     }
 
@@ -79,18 +79,6 @@ extension UIAlertController {
 
         showNewsletterSubscriptionDialog(over: presentViewController, completionHandler: completionHandler)
     }
-}
-
-extension AuthenticationCoordinatorAlert {
-
-    static func makeMarketingConsentAlert() -> AuthenticationCoordinatorAlert {
-        typealias Consent = L10n.Localizable.NewsOffers.Consent
-
-        return AuthenticationCoordinatorAlert(title: Consent.title,
-                                              message: Consent.message,
-                                              actions: [.privacyPolicy, .decline, .accept])
-    }
-
 }
 
 private extension AuthenticationCoordinatorAlertAction {

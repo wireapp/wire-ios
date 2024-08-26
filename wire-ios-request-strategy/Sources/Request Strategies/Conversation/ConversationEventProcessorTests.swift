@@ -20,6 +20,7 @@ import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
+import WireTransport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
 
@@ -48,8 +49,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             conversationService: conversationService,
             mlsEventProcessor: mockMLSEventProcessor
         )
-
-        BackendInfo.storage = .temporary()
         BackendInfo.apiVersion = .v0
     }
 

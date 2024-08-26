@@ -178,14 +178,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
 extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
 
-    /// Call this when the presented finished presenting.
-    func completePresentation() {
-        if let pendingModal {
-            presenter?.present(pendingModal, animated: true)
-            self.pendingModal = nil
-        }
-    }
-
     func stateDidChange(
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
@@ -827,7 +819,7 @@ extension AuthenticationCoordinator {
         guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
 
         Task { @MainActor in
             do {

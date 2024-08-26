@@ -241,7 +241,8 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         static let conferenceCallingUpdateEvent = FeatureConfigUpdateEvent(
             featureConfig: .conferenceCalling(
                 ConferenceCallingFeatureConfig(
-                    status: .enabled
+                    status: .enabled,
+                    useSFTForOneToOneCalls: false
                 )
             )
         )
@@ -267,7 +268,9 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 EndToEndIdentityFeatureConfig(
                     status: .enabled,
                     acmeDiscoveryURL: "www.example.com",
-                    verificationExpiration: 123
+                    verificationExpiration: 123,
+                    crlProxy: nil,
+                    useProxyOnMobile: false
                 )
             )
         )

@@ -53,9 +53,9 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertNotNil(event)
 
         // when
-        var sut: ZMTextMessage?
+        var sut: TextMessage?
         performPretendingUiMocIsSyncMoc({ [self] in
-            sut = ZMTextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
+            sut = TextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
         })
 
         // then
@@ -342,7 +342,7 @@ extension ClientMessageTests {
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
-        var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
         let contentData = try prototype.serializedData()
         let data: NSDictionary = try [
@@ -580,9 +580,8 @@ extension ClientMessageTests {
         // given
         let initialText = "initial text"
         let modifiedText = "modified text"
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: `modifiedText` is not used, is the text correct?
-        // swiftlint:enable todo_requires_jira_link
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()

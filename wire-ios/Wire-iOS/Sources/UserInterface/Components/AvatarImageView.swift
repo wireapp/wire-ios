@@ -38,12 +38,6 @@ class AvatarImageView: UIView {
         didSet { allowsInitials != oldValue ? updateAvatar() : () }
     }
 
-    /// The background color for the image.
-    var imageBackgroundColor: UIColor? {
-        get { return container.backgroundColor }
-        set { container.backgroundColor = newValue }
-    }
-
     /// The font to use of the initials label.
     var initialsFont: UIFont {
         get { return initialsLabel.font }
