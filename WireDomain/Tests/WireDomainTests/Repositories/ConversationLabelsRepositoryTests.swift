@@ -29,7 +29,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     var userPropertiesAPI: MockUserPropertiesAPI!
 
     var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
     let modelHelper = ModelHelper()
 
     private var conversation1: ZMConversation!
@@ -42,6 +42,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
         /// Batch requests don't work with in-memory store
         /// so we need to use a persistent store.
         stack = try await coreDataStackHelper.createStack(inMemoryStore: false)
@@ -56,6 +57,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
     override func tearDown() async throws {
         try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
         userPropertiesAPI = nil
         sut = nil
         try await super.tearDown()
