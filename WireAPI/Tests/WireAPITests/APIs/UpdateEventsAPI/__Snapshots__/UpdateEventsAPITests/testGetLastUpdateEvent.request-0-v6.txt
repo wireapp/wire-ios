@@ -1,4 +1,2 @@
-- HTTPRequest
-  - path: "/v6/notifications/last?client=abcd1234"
-  - method: get
-  - body: none
+curl \
+	"/v6/notifications/last?client=abcd1234"
