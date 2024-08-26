@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilitiesPkg
 import UIKit
+
 @testable import Wire
 
 final class MockCell: UIView, ConversationMessageCell {

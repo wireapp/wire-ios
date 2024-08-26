@@ -16,25 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireDesign
+import SwiftUI
 
-extension AccentColor {
+private struct AccentColorKey: EnvironmentKey {
+    static let defaultValue: AccentColor = .default
+}
 
-    var uiColor: UIColor {
-        switch self {
-        case .blue:
-            SemanticColors.Accent.blue
-        case .green:
-            SemanticColors.Accent.green
-        case .red:
-            SemanticColors.Accent.red
-        case .amber:
-            SemanticColors.Accent.amber
-        case .turquoise:
-            SemanticColors.Accent.turquoise
-        case .purple:
-            SemanticColors.Accent.purple
-        }
+extension EnvironmentValues {
+    var accentColor: AccentColor {
+        get { self[AccentColorKey.self] }
+        set { self[AccentColorKey.self] = newValue }
+    }
+}
+
+extension View {
+    func accentColor(_ accentColor: AccentColor) -> some View {
+        environment(\.accentColor, accentColor)
     }
 }

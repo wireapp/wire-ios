@@ -7,20 +7,20 @@ let package = Package(
     name: "WireSystemPackage",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireSystemPackage", type: .dynamic, targets: ["WireSystemPackage"]),
-        .library(name: "WireSystemPackageSupport", type: .dynamic, targets: ["WireSystemPackageSupport"])
+        .library(name: "WireSystemPackage", type: .dynamic, targets: ["WireSystemPkg"]),
+        .library(name: "WireSystemPackageSupport", type: .dynamic, targets: ["WireSystemPkgSupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireSystemPackage", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
-        .testTarget(name: "WireSystemPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/WireSystemTests"),
+        .target(name: "WireSystemPkg", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
+        .testTarget(name: "WireSystemPkgTests", dependencies: ["WireSystemPkg"], path: "./Tests/WireSystemTests"),
 
         .target(
-            name: "WireSystemPackageSupport",
-            dependencies: ["WireSystemPackage"],
+            name: "WireSystemPkgSupport",
+            dependencies: ["WireSystemPkg"],
             path: "./Sources/WireSystemSupport",
             swiftSettings: swiftSettings,
             plugins: [

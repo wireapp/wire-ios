@@ -19,6 +19,7 @@
 import FLAnimatedImage
 import UIKit
 import WireCommonComponents
+import WireUtilitiesPkg
 import WireDataModel
 import WireDesign
 import WireSyncEngine

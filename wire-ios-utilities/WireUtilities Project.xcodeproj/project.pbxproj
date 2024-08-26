@@ -67,7 +67,6 @@
 		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
 		5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */; };
 		5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */; };
-		5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* AccentColor.swift */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
 		596C4DCE2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */; };
@@ -75,6 +74,9 @@
 		598E86BA2BF4D6A900FC5438 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		598E86C72BF4D77200FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86C22BF4D77200FC5438 /* AutoMockable.generated.swift */; };
 		598E86CA2BF4D7AA00FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86B32BF4D64000FC5438 /* WireUtilitiesSupport.framework */; };
+		59AB817E2C7CA75900A18B37 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59AB817D2C7CA75900A18B37 /* WireDesign */; };
+		59AB81802C7CAB1500A18B37 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AB817F2C7CAB1500A18B37 /* WireUtilitiesPackage */; };
+		59AB81842C7CAB8200A18B37 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AB81832C7CAB8200A18B37 /* WireUtilitiesPackage */; };
 		59E3C25C2BD8053000C95BD7 /* ZMAccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E3C25B2BD8053000C95BD7 /* ZMAccentColorTests.swift */; };
 		59E3C25E2BD8094900C95BD7 /* ZMAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59F654252BF83DC500E521E0 /* MockUserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F654242BF83D1100E521E0 /* MockUserNotificationCenterAbstraction.swift */; };
@@ -211,6 +213,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		59AB81822C7CAB1500A18B37 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59AB81862C7CAB8200A18B37 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F1D567B4207BA4E800CCDD77 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -297,7 +319,6 @@
 		5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+NativelySupportedKey.swift"; sourceTree = "<group>"; };
 		5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
 		5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterWrapper.swift; sourceTree = "<group>"; };
-		5966D83B2BD6BFCF00305BBC /* AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColor.swift; sourceTree = "<group>"; };
 		5966D83D2BD6C20700305BBC /* AccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorTests.swift; sourceTree = "<group>"; };
 		5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
 		596C4DCD2BE0F95D00F63E61 /* NSManagedObjectContext+GroupQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+GroupQueue.swift"; sourceTree = "<group>"; };
@@ -424,6 +445,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE712FC8295487A9006EA7B3 /* WireSystem.framework in Frameworks */,
+				59AB817E2C7CA75900A18B37 /* WireDesign in Frameworks */,
+				59AB81802C7CAB1500A18B37 /* WireUtilitiesPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,6 +456,7 @@
 			files = (
 				598E86CA2BF4D7AA00FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
 				3E88BD441B1F3EA300232589 /* WireUtilities.framework in Frameworks */,
+				59AB81842C7CAB8200A18B37 /* WireUtilitiesPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -695,7 +719,6 @@
 		5966D8412BD7DF2500305BBC /* AccentColor */ = {
 			isa = PBXGroup;
 			children = (
-				5966D83B2BD6BFCF00305BBC /* AccentColor.swift */,
 				5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */,
 				59E3C25D2BD8094100C95BD7 /* ZMAccentColor.h */,
 			);
@@ -903,12 +926,17 @@
 				3E88BD331B1F3EA300232589 /* Sources */,
 				3E88BD341B1F3EA300232589 /* Frameworks */,
 				3E88BD361B1F3EA300232589 /* Resources */,
+				59AB81822C7CAB1500A18B37 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = WireUtilities;
+			packageProductDependencies = (
+				59AB817D2C7CA75900A18B37 /* WireDesign */,
+				59AB817F2C7CAB1500A18B37 /* WireUtilitiesPackage */,
+			);
 			productName = WireUtilities;
 			productReference = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */;
 			productType = "com.apple.product-type.framework";
@@ -920,6 +948,7 @@
 				3E88BD3F1B1F3EA300232589 /* Sources */,
 				3E88BD401B1F3EA300232589 /* Frameworks */,
 				3E88BD411B1F3EA300232589 /* Resources */,
+				59AB81862C7CAB8200A18B37 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -929,6 +958,9 @@
 				598E86CD2BF4D7AA00FC5438 /* PBXTargetDependency */,
 			);
 			name = "WireUtilities-Tests";
+			packageProductDependencies = (
+				59AB81832C7CAB8200A18B37 /* WireUtilitiesPackage */,
+			);
 			productName = WireUtilitiesTests;
 			productReference = 3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -1141,7 +1173,6 @@
 				06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */,
 				09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
-				5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */,
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
@@ -1588,6 +1619,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		59AB817D2C7CA75900A18B37 /* WireDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDesign;
+		};
+		59AB817F2C7CAB1500A18B37 /* WireUtilitiesPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUtilitiesPackage;
+		};
+		59AB81832C7CAB8200A18B37 /* WireUtilitiesPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUtilitiesPackage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3E88BD2A1B1F3E8400232589 /* Project object */;
 }

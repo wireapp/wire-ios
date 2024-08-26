@@ -273,21 +273,6 @@ private extension View {
     }
 }
 
-private extension AccountImageViewRepresentable {
-
-    init(
-        _ accountImage: UIImage,
-        _ isTeamAccount: Bool,
-        _ availability: Availability?
-    ) {
-        self.init(
-            accountImage: accountImage,
-            isTeamAccount: isTeamAccount,
-            availability: availability
-        )
-    }
-}
-
 private extension UIImage {
 
     static func from(solidColor color: UIColor) -> UIImage {

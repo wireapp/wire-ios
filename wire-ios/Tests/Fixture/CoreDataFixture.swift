@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireUtilitiesPkg
 
 @testable import Wire
 @testable import WireDataModel
