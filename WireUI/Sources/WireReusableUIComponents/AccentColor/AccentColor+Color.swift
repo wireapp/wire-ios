@@ -17,21 +17,19 @@
 //
 
 import SwiftUI
-import WireDesign
+import WireUtilitiesPkg
 
-private struct AccentColorKey: EnvironmentKey {
-    static let defaultValue = AccentColor.default
-}
+public extension AccentColor {
 
-extension EnvironmentValues {
-    var accentColor: AccentColor {
-        get { self[AccentColorKey.self] }
-        set { self[AccentColorKey.self] = newValue }
+    var color: Color {
+        Color(uiColor: uiColor)
     }
 }
 
-extension View {
-    func accentColor(_ accentColor: AccentColor) -> some View {
-        environment(\.accentColor, accentColor)
+#Preview {
+    VStack {
+        ForEach(AccentColor.allCases, id: \.self) { accentColor in
+            accentColor.color
+        }
     }
 }

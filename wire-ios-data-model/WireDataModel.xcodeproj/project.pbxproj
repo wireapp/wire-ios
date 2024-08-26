@@ -296,6 +296,7 @@
 		5986A08D2C6B710E00299181 /* TextMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5986A08C2C6B710E00299181 /* TextMessageData.swift */; };
 		5986A08F2C6B744300299181 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5986A08E2C6B744300299181 /* TextMessage.swift */; };
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
+		5990A3B52C7CAFDD00189B21 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5990A3B42C7CAFDD00189B21 /* WireUtilitiesPackage */; };
 		5996E8B42C19F482007A52F0 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B32C19F482007A52F0 /* WireTesting.framework */; };
 		5996E8B52C19F482007A52F0 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8B32C19F482007A52F0 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5996E8C72C1A0000007A52F0 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C62C1A0000007A52F0 /* OCMock.xcframework */; };
@@ -916,6 +917,16 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		014C36B32B27206E00D7E8EA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5990A3B72C7CAFDD00189B21 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -1921,6 +1932,7 @@
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
+				5990A3B52C7CAFDD00189B21 /* WireUtilitiesPackage in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
@@ -3864,6 +3876,7 @@
 				F9C9A4F71CAD5DF10039E10C /* Sources */,
 				F9C9A4F81CAD5DF10039E10C /* Frameworks */,
 				F9C9A4FA1CAD5DF10039E10C /* Resources */,
+				5990A3B72C7CAFDD00189B21 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3872,6 +3885,7 @@
 			name = WireDataModel;
 			packageProductDependencies = (
 				E6707E8F2BBD683F00469D57 /* PINCache */,
+				5990A3B42C7CAFDD00189B21 /* WireUtilitiesPackage */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5244,6 +5258,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5990A3B42C7CAFDD00189B21 /* WireUtilitiesPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUtilitiesPackage;
+		};
 		E6707E8F2BBD683F00469D57 /* PINCache */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */;
