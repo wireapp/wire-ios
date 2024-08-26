@@ -55,7 +55,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testPullFeatureConfigs_When_Configs_Are_Pulled_Configs_Are_Stored_Locally() async throws {
+    func testPullFeatureConfigs_When_Configs_Are_Pulled_Configs_Then_Exists_Locally() async throws {
         // Given
 
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
@@ -75,7 +75,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         // Then
 
         let foundFeatures = localFeatures.compactMap { $0 }
-        XCTAssertEqual(foundFeatures.count, 10)
+        XCTAssertEqual(foundFeatures.count, Scaffolding.featureConfigs.count)
     }
 
     func testNeedsToNotifyUser_When_Flag_Set_To_True_Stored_Value_Returns_True() async throws {
@@ -99,7 +99,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         XCTAssertEqual(result, true)
     }
 
-    func testFetchFeatureConfig_When_Feature_Is_Stored_Feature_Can_Be_Retrieved() async throws {
+    func testFetchFeatureConfig_When_Feature_Is_Stored_Locally_Feature_Is_Successfully_Retrieved() async throws {
         // Given
 
         featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
@@ -114,10 +114,10 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let config = try await sut.fetchFeatureConfig(withName: .appLock, type: Feature.AppLock.Config.self)
-        XCTAssertEqual(config.isEnabled, true)
-        XCTAssertEqual(config.config?.enforceAppLock, true)
-        XCTAssertEqual(config.config?.inactivityTimeoutSecs, 2_147_483_647)
+        let feature = try await sut.fetchFeatureConfig(withName: .appLock, type: Feature.AppLock.Config.self)
+        XCTAssertEqual(feature.status == .enabled, true)
+        XCTAssertEqual(feature.config?.enforceAppLock, true)
+        XCTAssertEqual(feature.config?.inactivityTimeoutSecs, 2_147_483_647)
     }
 
 }

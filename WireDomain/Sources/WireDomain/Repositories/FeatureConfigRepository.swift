@@ -29,7 +29,7 @@ protocol FeatureConfigRepositoryProtocol {
     ///
     /// The `AsyncStream` produces a `FeatureState` value right after the feature is stored locally.
     /// so actions can be triggered right away at a lower level callsite (e.g an interactor).
-    /// This will allow a user to be notified even if the stream fails afterwards.
+    /// This will allow a user to be notified immediately even if the stream fails afterwards.
     ///
     /// - Returns: An async stream of `FeatureState`.
 
@@ -85,7 +85,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                     for featureConfig in featureConfigs {
                         do {
                             try await storeFeatureConfig(featureConfig)
-                            if let featureState = try await getFeatureState(featureConfig) {
+                            if let featureState = try await getFeatureState(forFeatureConfig: featureConfig) {
                                 continuation.yield(featureState)
                             }
                         } catch {
@@ -134,8 +134,8 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Private
 
-    private func getFeatureState(_ featureConfig: FeatureConfig) async throws -> FeatureState? {
-        switch featureConfig {
+    private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {
+        switch config {
         case .appLock(let appLockFeatureConfig):
 
             return FeatureState(
@@ -335,10 +335,15 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
 }
 
+
+/// A feature fetched locally
+
 struct LocalFeature<T: Decodable> {
     let status: Feature.Status
     let config: T?
 }
+
+/// The state of the feature
 
 struct FeatureState {
     let name: Feature.Name
