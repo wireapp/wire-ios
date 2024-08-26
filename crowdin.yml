@@ -40,7 +40,7 @@ files: [
  },
  {
   "source" : "/WireUI/Sources/WireReusableUIComponents/Resources/Localizable.xcstrings",
-  "dest" : "/App/WireReusableUIComponents/Localizable.xcstrings",
-  "translation" : "/wire-ios/Wire-iOS Share Extension/%osx_code%/%original_file_name%",
- }
+  "dest" : "/App/WireReusableUIComponents/Resources/Localizable.strings",
+  "translation" : "/WireUI/Sources/WireReusableUIComponents/Resources/%osx_code%/%original_file_name%",
+ },
 ]
