@@ -24,7 +24,7 @@ class SelfUserAPIV5: SelfUserAPIV4 {
         .v5
     }
 
-    override func pushSupportedProtocols(_ supportedProtocols: Set<SupportedProtocol>) async throws {
+    override func pushSupportedProtocols(_ supportedProtocols: Set<MessageProtocol>) async throws {
         let encoder = JSONEncoder.defaultEncoder
         let payload = SupportedProtocolsPayloadV5(supportedProtocols: supportedProtocols)
         let body = try encoder.encode(payload)
@@ -45,7 +45,7 @@ class SelfUserAPIV5: SelfUserAPIV4 {
 }
 
 struct SupportedProtocolsPayloadV5: Encodable {
-    let supportedProtocols: Set<SupportedProtocol>
+    let supportedProtocols: Set<MessageProtocol>
 
     enum CodingKeys: String, CodingKey {
         case supportedProtocols = "supported_protocols"

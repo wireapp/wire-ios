@@ -18,16 +18,10 @@
 
 import Foundation
 
-/// The protocols which a user can support.
+class FeatureConfigsAPIV3: FeatureConfigsAPIV2 {
 
-public enum SupportedProtocol: String, Equatable, Codable {
-
-    /// The Proteus messaging protocol.
-
-    case proteus
-
-    /// The Messaging Layer Security protocol.
-
-    case mls
+    override var apiVersion: APIVersion {
+        .v3
+    }
 
 }
