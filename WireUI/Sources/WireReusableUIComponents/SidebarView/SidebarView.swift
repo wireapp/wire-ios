@@ -92,8 +92,7 @@ public struct SidebarView: View {
     private var menuItems: some View {
 
         VStack(alignment: .leading, spacing: 0) {
-            // TODO: where to get strings from?
-            Text(String("Conversations".reversed()))
+            Text("sidebar.conversation_filter.title", bundle: .module)
                 .font(.textStyle(.h2))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
