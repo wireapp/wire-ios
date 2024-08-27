@@ -115,7 +115,11 @@ final class SyncManager: SyncManagerProtocol {
         switch syncState {
         case .quickSync(let task):
             task
-        default:
+
+        case .live(let task):
+            task
+
+        case .suspended:
             nil
         }
     }
