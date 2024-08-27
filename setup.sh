@@ -54,7 +54,7 @@ echo "ℹ️  Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else
-    "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
+    carthage bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""
 

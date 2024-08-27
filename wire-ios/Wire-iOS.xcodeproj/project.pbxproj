@@ -3999,7 +3999,6 @@
 				59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */,
 				5996E8A02C19D02C007A52F0 /* WireDataModelSupport.framework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
-				CB79790D2C737AA7006FBA58 /* WireTransportSupport.framework in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
@@ -4658,6 +4657,14 @@
 				EEE60E2B2179D99100D03346 /* GroupDetailsNotificationOptionsCellTests.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		599A0F892C7DCA2500C58CC7 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				CB79790F2C737AB7006FBA58 /* WireTransportSupport.framework */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		59A1F1452B7BA1E7002CB679 /* UserStatus */ = {
@@ -5457,7 +5464,6 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB79790C2C737AA7006FBA58 /* WireTransportSupport.framework */,
 				016DB6DD2C261A4900DEB81B /* WireDomain.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
 				EEE25B3429719BD30008B894 /* WireCryptobox.framework */,
@@ -6267,6 +6273,7 @@
 				065A5ADF279B07AC002D4D1E /* Wire Notification Service Extension */,
 				8F42C539199244A700288E4D /* Products */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
+				599A0F892C7DCA2500C58CC7 /* Recovered References */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -11260,6 +11267,7 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
@@ -11268,6 +11276,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE = NO;
 			};
 			name = Release;
