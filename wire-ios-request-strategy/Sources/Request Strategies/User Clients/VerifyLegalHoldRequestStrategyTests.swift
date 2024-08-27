@@ -74,7 +74,6 @@ extension Payload.MessageSendingStatusV4: TransportDataConvertible {
     }
 }
 
-
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
     var sut: VerifyLegalHoldRequestStrategy!
@@ -173,8 +172,6 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
                 transportData = Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             case .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
-
-
             }
 
             // WHEN
