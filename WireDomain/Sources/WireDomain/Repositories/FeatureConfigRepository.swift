@@ -35,7 +35,7 @@ protocol FeatureConfigRepositoryProtocol {
 
     func pullFeatureConfigs() -> AsyncThrowingStream<FeatureState, Error>
 
-    /// Fetch a feature config locally.
+    /// Fetches a feature config locally.
     ///
     /// - Parameter name: The feature name to fetch the config for.
     /// - Parameter type: The type of config to retrieve.
