@@ -49,7 +49,19 @@ private struct ClientUpdateResponse: Codable, TransportDataConvertible {
     }
 }
 
-extension Payload.MessageSendingStatus: TransportDataConvertible {
+extension Payload.MessageSendingStatusV1: TransportDataConvertible {
+    fileprivate init(missing: UserListByDomain) {
+        self.init(
+            time: .init(),
+            missing: missing,
+            redundant: .init(),
+            deleted: .init(),
+            failedToSend: .init()
+        )
+    }
+}
+
+extension Payload.MessageSendingStatusV4: TransportDataConvertible {
     fileprivate init(missing: UserListByDomain) {
         self.init(
             time: .init(),
@@ -61,6 +73,7 @@ extension Payload.MessageSendingStatus: TransportDataConvertible {
         )
     }
 }
+
 
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
@@ -156,8 +169,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+            case .v1, .v2, .v3:
+                transportData = Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+            case .v4, .v5, .v6:
+                transportData = Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+
 
             }
 
@@ -200,8 +216,10 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+            case .v1, .v2, .v3:
+                transportData = Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+            case .v4, .v5, .v6:
+                transportData = Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
             // WHEN
@@ -241,8 +259,10 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: ClientListByUser()).transportData
-            case .v1, .v2, .v3, .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatus(missing: UserListByDomain()).transportData
+            case .v1, .v2, .v3:
+                transportData = Payload.MessageSendingStatusV1(missing: UserListByDomain()).transportData
+            case .v4, .v5, .v6:
+                transportData = Payload.MessageSendingStatusV4(missing: UserListByDomain()).transportData
             }
 
             // WHEN
@@ -281,8 +301,10 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatus(missing: [selfUser.domain!: clientListByUserID]).transportData
+            case .v1, .v2, .v3:
+                transportData = Payload.MessageSendingStatusV1(missing: [selfUser.domain!: clientListByUserID]).transportData
+            case .v4, .v5, .v6:
+                transportData = Payload.MessageSendingStatusV4(missing: [selfUser.domain!: clientListByUserID]).transportData
             }
 
             // WHEN
