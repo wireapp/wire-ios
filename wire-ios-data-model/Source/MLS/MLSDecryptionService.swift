@@ -54,7 +54,6 @@ public protocol MLSDecryptionServiceInterface {
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult]
 
-
     /// Processes a welcome message.
     ///
     /// - Parameter welcomeMessage: A base64 encoded welcome message.
