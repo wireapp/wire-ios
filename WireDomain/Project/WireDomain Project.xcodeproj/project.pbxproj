@@ -29,9 +29,13 @@
 		59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A5D2C5BBEA8009C41DE /* WireAPI */; };
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
+		59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */; };
+		C9E8A3CB2C7C78AE0093DD5C /* ConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3CA2C7C78AE0093DD5C /* ConversationRepository.swift */; };
+		C9E8A3CD2C7C78B80093DD5C /* ConversationRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */; };
+		C9E8A3D12C7C7D320093DD5C /* ConversationModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */; };
+		C9E8A3D32C7CC2370093DD5C /* ConversationLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
-		59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -148,6 +152,10 @@
 		162356512C2B223B00C6666C /* UserRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
+		C9E8A3CA2C7C78AE0093DD5C /* ConversationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepository.swift; sourceTree = "<group>"; };
+		C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryError.swift; sourceTree = "<group>"; };
+		C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationModelMappings.swift; sourceTree = "<group>"; };
+		C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLocalStore.swift; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -265,16 +273,11 @@
 		017F67A22C20802300B6E02D /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
-				162356562C2B22A300C6666C /* UserModelMappings.swift */,
-				162356512C2B223B00C6666C /* UserRepository.swift */,
-				162356522C2B223B00C6666C /* UserRepositoryError.swift */,
-				017F679D2C20802300B6E02D /* ConnectionsRepositiory.swift */,
-				017F679E2C20802300B6E02D /* ConnectionsRepositoryError.swift */,
-				017F679F2C20802300B6E02D /* TeamRepository.swift */,
-				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
-				017F67A12C20802300B6E02D /* SelfUserProvider.swift */,
-				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
-				EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */,
+				C9E8A3D72C7CCA990093DD5C /* User */,
+				C9E8A3D62C7CCA810093DD5C /* Conversations */,
+				C9E8A3D82C7CCAA80093DD5C /* Connections */,
+				C9E8A3DA2C7CCAC40093DD5C /* Team */,
+				C9E8A3D92C7CCABB0093DD5C /* UpdateEvents */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -366,6 +369,55 @@
 			);
 			name = Tests;
 			path = ../Tests;
+			sourceTree = "<group>";
+		};
+		C9E8A3D62C7CCA810093DD5C /* Conversations */ = {
+			isa = PBXGroup;
+			children = (
+				C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */,
+				C9E8A3CA2C7C78AE0093DD5C /* ConversationRepository.swift */,
+				C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */,
+				C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */,
+			);
+			path = Conversations;
+			sourceTree = "<group>";
+		};
+		C9E8A3D72C7CCA990093DD5C /* User */ = {
+			isa = PBXGroup;
+			children = (
+				017F67A12C20802300B6E02D /* SelfUserProvider.swift */,
+				162356512C2B223B00C6666C /* UserRepository.swift */,
+				162356522C2B223B00C6666C /* UserRepositoryError.swift */,
+				162356562C2B22A300C6666C /* UserModelMappings.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
+		C9E8A3D82C7CCAA80093DD5C /* Connections */ = {
+			isa = PBXGroup;
+			children = (
+				017F679D2C20802300B6E02D /* ConnectionsRepositiory.swift */,
+				017F679E2C20802300B6E02D /* ConnectionsRepositoryError.swift */,
+			);
+			path = Connections;
+			sourceTree = "<group>";
+		};
+		C9E8A3D92C7CCABB0093DD5C /* UpdateEvents */ = {
+			isa = PBXGroup;
+			children = (
+				EE57A6FA2C298EC90096F242 /* UpdateEventsRepository.swift */,
+				EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */,
+			);
+			path = UpdateEvents;
+			sourceTree = "<group>";
+		};
+		C9E8A3DA2C7CCAC40093DD5C /* Team */ = {
+			isa = PBXGroup;
+			children = (
+				017F679F2C20802300B6E02D /* TeamRepository.swift */,
+				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
+			);
+			path = Team;
 			sourceTree = "<group>";
 		};
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
@@ -707,6 +759,7 @@
 				EEAD0A282C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift in Sources */,
 				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
 				EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */,
+				C9E8A3D32C7CC2370093DD5C /* ConversationLocalStore.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
 				EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */,
 				EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */,
@@ -718,9 +771,11 @@
 				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
+				C9E8A3CB2C7C78AE0093DD5C /* ConversationRepository.swift in Sources */,
 				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
 				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
 				EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */,
+				C9E8A3CD2C7C78B80093DD5C /* ConversationRepositoryError.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				017F67AE2C20802C00B6E02D /* SelfUserProvider.swift in Sources */,
@@ -739,6 +794,7 @@
 				EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */,
 				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
 				EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */,
+				C9E8A3D12C7C7D320093DD5C /* ConversationModelMappings.swift in Sources */,
 				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
 				EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */,
