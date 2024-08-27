@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
+public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible, Sendable {
 
     enum CodingKeys: String, CodingKey {
         case uuid = "id"

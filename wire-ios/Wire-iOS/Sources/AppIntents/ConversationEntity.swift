@@ -17,6 +17,50 @@
 //
 
 import AppIntents
-import WireAPI
+import WireDataModel
 
-struct ConversationEntity: AppEntity {}
+@available(iOS 16.0, *)
+struct ConversationEntity: AppEntity {
+
+    static var defaultQuery: ConversationEntityQuery { .init() }
+
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        .init(name: .init(stringLiteral: "Conversation"))
+    }
+
+    var displayRepresentation: DisplayRepresentation {
+        .init(title: "\(name)")
+    }
+
+    var id: QualifiedID
+    var name: String
+}
+
+@available(iOS 16.0, *)
+struct ConversationEntityQuery: EntityQuery {
+
+//    @Dependency
+//    var trailManager: TrailDataManager
+
+    func entities(for identifiers: [ConversationEntity.ID]) async throws -> [ConversationEntity] {
+        // Logger.entityQueryLogging.debug("[TrailEntityQuery] Query for IDs \(identifiers)")
+//        return trailManager.trails(with: identifiers)
+//                .map { TrailEntity(trail: $0) }
+        [.init(id: .random(), name: "iOS Team")]
+    }
+}
+
+extension QualifiedID: EntityIdentifierConvertible {
+
+    public var entityIdentifierString: String { "\(uuid.transportString())@\(domain)" }
+    public static func entityIdentifier(for entityIdentifierString: String) -> QualifiedID? {
+
+        let elements = entityIdentifierString
+            .split(separator: "@")
+            .map(String.init)
+
+        guard elements.count == 2, let uuid = UUID(transportString: elements[0]) else { return nil }
+
+        return .init(uuid: uuid, domain: elements[1])
+    }
+}
