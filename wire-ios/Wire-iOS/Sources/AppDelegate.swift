@@ -23,6 +23,7 @@ import UIKit
 import WireCommonComponents
 import WireCoreCrypto
 import WireSyncEngine
+import os
 
 enum ApplicationLaunchType {
     case unknown
@@ -105,6 +106,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+        Logger.appDelegate.debug("willFinishLaunchingWithOptions")
 
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")

@@ -23,18 +23,29 @@ struct AppShortcuts: AppShortcutsProvider {
 
     @AppShortcutsBuilder
     static var appShortcuts: [AppShortcut] {
-        AppShortcut(
-            intent: SendQuickResponseIntent(),
-            phrases: [],
-            shortTitle: LocalizedStringResource(stringLiteral: "New Feature"),
-            systemImageName: "apple.logo"
-        )
-//        AppShortcut(intent: <#T##AppIntent#>, phrases: <#T##[AppShortcutPhrase<AppIntent>]#>, shortTitle: <#T##LocalizedStringResource#>, systemImageName: <#T##String#>)
-//        AppShortcut(
-//            intent: SendQuickResponseIntent(),
-//            phrases: ["Make a New \(.applicationName)"],
-//            shortTitle: LocalizedStringResource(stringLiteral: "New Feature"),
-//            systemImageName: "apple.logo"
-//        )
+
+            AppShortcut(
+                intent: SendQuickResponseIntent(),
+                phrases: [],
+                shortTitle: LocalizedStringResource(stringLiteral: "New Feature"),
+                systemImageName: "apple.logo"
+//                parameterPresentation: .init(
+//                    for: \.$conversation,
+//                    summary: Summary("Get \(\.$conversation) conversations"),
+//                    optionsCollections: {
+//                        OptionsCollection(ConversationEntityQuery(), title: "Conversations", systemImageName: "cloud.rainbow.half")
+//                    }
+//                )
+            )
+
+            AppShortcut(
+                intent: OpenWireIntent(),
+                phrases: [],
+                shortTitle: LocalizedStringResource(stringLiteral: "sdfa"),
+                systemImageName: "gears"
+            )
+
     }
 }
+
+// TODO: read https://arctouch.com/blog/implementing-app-shortcuts-intents

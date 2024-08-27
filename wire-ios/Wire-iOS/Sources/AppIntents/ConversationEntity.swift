@@ -18,6 +18,7 @@
 
 import AppIntents
 import WireDataModel
+import os
 
 @available(iOS 16.0, *)
 struct ConversationEntity: AppEntity {
@@ -43,10 +44,14 @@ struct ConversationEntityQuery: EntityQuery {
 //    var trailManager: TrailDataManager
 
     func entities(for identifiers: [ConversationEntity.ID]) async throws -> [ConversationEntity] {
-        // Logger.entityQueryLogging.debug("[TrailEntityQuery] Query for IDs \(identifiers)")
-//        return trailManager.trails(with: identifiers)
-//                .map { TrailEntity(trail: $0) }
-        [.init(id: .random(), name: "iOS Team")]
+        Logger.entityQueryLogging.debug("entities(for: \(identifiers)): ?")
+        return identifiers.map { id in
+            .init(id: id, name: "\(id)")
+        }
+    }
+
+    func suggestedEntities() async throws -> [ConversationEntity] {
+        [.init(id: .random(), name: "adkslbjsdf")]
     }
 }
 
@@ -54,6 +59,8 @@ extension QualifiedID: EntityIdentifierConvertible {
 
     public var entityIdentifierString: String { "\(uuid.transportString())@\(domain)" }
     public static func entityIdentifier(for entityIdentifierString: String) -> QualifiedID? {
+
+        Logger.entityQueryLogging.debug("entityIdentifier(for: \(entityIdentifierString)) -> ?")
 
         let elements = entityIdentifierString
             .split(separator: "@")

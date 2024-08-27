@@ -17,6 +17,7 @@
 //
 
 import AppIntents
+import os
 
 @available(iOS 16, *)
 struct SendQuickResponseIntent: AppIntent {
@@ -35,7 +36,8 @@ struct SendQuickResponseIntent: AppIntent {
         // Logic to send the message via Wire's messaging service
         // This will require Wire's API or internal messaging function to send the message
 
-        print("Sending '\(message)' to \(conversation)")
+        //logger.debug("Sending '\(message)' to \(conversation)")
+        Logger.intentLogging.debug("Sending")
 
         return .result()
     }
