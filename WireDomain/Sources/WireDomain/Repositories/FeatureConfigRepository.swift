@@ -25,7 +25,7 @@ import WireDataModel
 
 protocol FeatureConfigRepositoryProtocol {
 
-    /// Pull feature configs from the server and store them locally.
+    /// Pulls feature configs from the server and stores them locally.
     ///
     /// The `AsyncStream` produces a `FeatureState` value right after the feature is stored locally.
     /// so actions can be triggered right away at a lower level callsite (e.g an interactor).
