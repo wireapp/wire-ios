@@ -141,7 +141,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.version, 3)
     }
 
-    func testThatTransferStateIsUpdated_WhenExpired() {
+    func testThatTransferStateIsUpdated_WhenExpired_IfUploading() {
         // given
         let sut = appendFileMessage(to: conversation)!
         XCTAssertEqual(sut.transferState, .uploading)
@@ -153,16 +153,21 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, .uploadingFailed)
     }
 
-    func testThatTransferStateIsNotUpdated_WhenExpired_IfAlreadyUploaded() {
-        // given
-        let sut = appendFileMessage(to: conversation)!
-        sut.transferState = .uploaded
+    func testThatTransferStateIsNotUpdated_WhenExpired_IfNotUploading() {
+        let testCases: [AssetTransferState] = [.uploaded, .uploadingCancelled, .uploadingFailed]
 
-        // when
-        sut.expire()
+        for transferState in testCases {
+            // given
+            let sut = appendFileMessage(to: conversation)!
+            sut.transferState = transferState
 
-        // then
-        XCTAssertEqual(sut.transferState, .uploaded)
+            // when
+            sut.expire()
+
+            // then
+            XCTAssertEqual(
+                sut.transferState, transferState, "Test case when transferState == \(transferState.rawValue) failed")
+        }
     }
 
     func testThatItHasDownloadedFileWhenTheFileIsOnDisk() {
