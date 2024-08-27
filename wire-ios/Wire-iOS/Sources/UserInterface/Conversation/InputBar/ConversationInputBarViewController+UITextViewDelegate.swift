@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDataModel
-import WireSystemPkg
+import WireSystemPackage
 
 // MARK: SplitViewController reveal
 

@@ -20,7 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import WireSystemPkg
+import WireSystemPackage
 
 extension VoiceChannel {
     func accessoryType() -> CallInfoViewControllerAccessoryType {
