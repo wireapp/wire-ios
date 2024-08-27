@@ -21,7 +21,7 @@ import Foundation
 import WireAPI
 import WireDataModel
 
-/// Facilitate access to feature configs related domain objects.
+/// Facilitates access to feature configs related domain objects.
 
 protocol FeatureConfigRepositoryProtocol {
 
