@@ -66,7 +66,7 @@ final class ProfileHeaderViewController: UIViewController {
 
         label.accessibilityTraits.insert(.header)
         label.lineBreakMode = .byTruncatingTail
-        label.numberOfLines = 3
+        label.numberOfLines = 2
         label.textAlignment = .center
 
         return label
@@ -75,14 +75,27 @@ final class ProfileHeaderViewController: UIViewController {
     private let e2eiCertifiedImageView = {
         let imageView = UIImageView(image: .init(resource: .certificateValid))
         imageView.contentMode = .center
-        imageView.isHidden = true
+        imageView.isHidden = false
         return imageView
     }()
+
     private let proteusVerifiedImageView = {
         let imageView = UIImageView(image: .init(resource: .verifiedShield))
         imageView.contentMode = .center
         imageView.isHidden = true
         return imageView
+    }()
+
+    private let qrCodeButton = {
+        let button = UIButton(type: .system)
+
+        let boldConfig = UIImage.SymbolConfiguration(weight: .black)
+        let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
+        button.setImage(boldImage, for: .normal)
+        button.tintColor = .black
+        //button.accessibilityLabel = L10n.Accessibility.Calling.HeaderBar.description
+
+        return button
     }()
 
     private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
@@ -220,6 +233,7 @@ final class ProfileHeaderViewController: UIViewController {
         stackView.wr_addCustomSpacing(20, after: federatedIndicator)
 
         view.addSubview(stackView)
+        view.addSubview(qrCodeButton)
 
         guestIndicator.tintColor = SemanticColors.Icon.foregroundDefault
         view.backgroundColor = UIColor.clear
@@ -244,23 +258,30 @@ final class ProfileHeaderViewController: UIViewController {
     private func configureConstraints() {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        qrCodeButton.translatesAutoresizingMaskIntoConstraints = false
+       // stackView.backgroundColor = .blue
 
-        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40)
+        let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56)
         let topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
-        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40)
+        let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -56)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
-            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
+            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
+            qrCodeButton.topAnchor.constraint(equalTo: stackView.topAnchor),
+            qrCodeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            qrCodeButton.heightAnchor.constraint(equalToConstant: 20),
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 20)
+
         ])
     }
 
     private func applyUserStatus() {
         nameLabel.text = userStatus.name
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
+       // e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
         proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
     }
 
