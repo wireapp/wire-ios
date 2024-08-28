@@ -56,6 +56,35 @@ import WireDataModel
 
 
 
+public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullConversations
+
+    public var pullConversations_Invocations: [Void] = []
+    public var pullConversations_MockError: Error?
+    public var pullConversations_MockMethod: (() async throws -> Void)?
+
+    public func pullConversations() async throws {
+        pullConversations_Invocations.append(())
+
+        if let error = pullConversations_MockError {
+            throw error
+        }
+
+        guard let mock = pullConversations_MockMethod else {
+            fatalError("no mock for `pullConversations`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
     // MARK: - Life cycle

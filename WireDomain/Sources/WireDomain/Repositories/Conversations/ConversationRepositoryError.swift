@@ -17,3 +17,13 @@
 //
 
 import Foundation
+
+/// Errors originating from `ConversationRepository`.
+
+enum ConversationRepositoryError: Error {
+
+    /// Conversation ID was not found
+
+    case conversationIdNotFound
+
+}

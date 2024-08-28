@@ -16,358 +16,330 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import CoreData
 import WireAPI
+import WireDataModel
 
-final class ConversationLocalStore {
-    
+// sourcery: AutoMockable
+/// A local store dedicated to conversation related work.
+/// The store uses the injected context to perform CoreData operations
+/// on conversations objects.
+public protocol ConversationLocalStoreProtocol {
+
+    func storeConversation(_ conversation: WireAPI.Conversation, withId id: UUID) async throws
+
+    func deleteConversation(
+        withQualifiedId qualifiedId: WireAPI.QualifiedID
+    ) async throws
+
+    func removeSelfUserFromConversation(
+        withQualifiedId qualifiedId: WireAPI.QualifiedID
+    ) async
+
+    func storeNeedsToBeUpdatedFromBackend(
+        requiresUpdate: Bool,
+        conversation: WireAPI.QualifiedID
+    ) async
+
+    func storeFailedConversationStatus(_ failedConversation: WireAPI.QualifiedID) async
+}
+
+final class ConversationLocalStore: ConversationLocalStoreProtocol {
+
+    // MARK: - Properties
+
     let context: NSManagedObjectContext
-    
+
+    // MARK: - Object lifecycle
+
     init(context: NSManagedObjectContext) {
         self.context = context
     }
-    
-    // MARK: - Update
-    
-    func update(localConversation: ZMConversation, remoteConversation: WireAPI.Conversation) {
-        
-    }
-    
-    // MARK: - Conversations
-    
-    func createOrJoinSelfConversation(from conversation: ZMConversation) async throws {
-        guard let context = conversation.managedObjectContext else {
-            return
-        }
-        
-        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
-            (
-                conversation.mlsGroupID,
-                context.mlsService,
-                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true
+
+    // MARK: - Public
+
+    func storeConversation(_ conversation: WireAPI.Conversation, withId id: UUID) async throws {
+
+        switch conversation.type {
+        case .group:
+            await updateOrCreateGroupConversation(
+                remoteConversation: conversation,
+                remoteConversationID: id
             )
-        }
-        
-        guard let groupID, let mlsService, hasRegisteredMLSClient else {
-            return
-        }
-        
-        if await context.perform({ conversation.epoch <= 0 }) {
-            let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
-            await context.perform { conversation.ciphersuite = ciphersuite }
-        } else if try await !mlsService.conversationExists(groupID: groupID) {
-            try await mlsService.joinGroup(with: groupID)
-        }
-    }
-    
-    func updateConversationStatus(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
-    ) {
-        if let selfMember = payload.members?.selfMember {
-            updateMemberStatus(
-                from: selfMember,
-                for: conversation
+
+        case .`self`:
+            try await updateOrCreateSelfConversation(
+                remoteConversation: conversation,
+                remoteConversationID: id
             )
-        }
-        
-        if let readReceiptMode = payload.readReceiptMode {
-            conversation.updateReceiptMode(readReceiptMode)
-        }
-        
-        if let accessModes = payload.access {
-            if let accessRoles = payload.accessRoles {
-                conversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
-            } else if
-                let accessRole = payload.legacyAccessRole,
-                let legacyAccessRole = accessRole.toDomainModel() {
-                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
-                conversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
-            }
-        }
-        
-        if let messageTimer = payload.messageTimer {
-            conversation.updateMessageDestructionTimeout(timeout: messageTimer)
-        }
-    }
-    
-    func updateConversationIfNeeded(
-        conversation: ZMConversation,
-        fallbackGroupID: MLSGroupID?
-    ) async {
-        
-        let (messageProtocol, mlsGroupID, mlsService) = await context.perform { [self] in
-            (
-                conversation.messageProtocol,
-                conversation.mlsGroupID,
-                context.mlsService
+
+        case .connection:
+            /// Conversations are of type `connection` while the connection
+            /// is pending.
+            await updateOrCreateConnectionConversation(
+                remoteConversation: conversation,
+                remoteConversationID: id
             )
-        }
-        
-        guard
-            messageProtocol.isOne(of: .mls, .mixed),
-            let mlsGroupID = mlsGroupID ?? fallbackGroupID else {
+
+        case .oneOnOne:
+            /// Conversations are of type `oneOnOne` when the connection
+            /// is accepted.
+            await updateOrCreateOneToOneConversation(
+                remoteConversation: conversation,
+                remoteConversationID: id
+            )
+
+        default:
+            /// conversation type is nil
             return
         }
-        
-        await context.perform {
-            if conversation.mlsGroupID == nil {
-                conversation.mlsGroupID = mlsGroupID
-            }
-        }
-        
-        guard let mlsService else { return }
-        
-        let conversationExists: Bool
-        
-        do {
-            conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
-        } catch {
-            conversationExists = false
-        }
-        
-        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
-        
-        await context.perform { [self] in
-            let previousStatus = conversation.mlsStatus
-            
-            conversation.mlsStatus = newStatus
-            context.saveOrRollback()
-        }
     }
-    
-    func updateConversationTimestamps(
-        for conversation: ZMConversation,
-        serverTimestamp: Date
-    ) {
-        /// If the lastModifiedDate is non-nil, e.g. restore from backup,
-        /// do not update the lastModifiedDate.
-        
-        if conversation.lastModifiedDate == nil {
-            conversation.updateLastModified(serverTimestamp)
-        }
-        
-        conversation.updateServerModified(serverTimestamp)
-    }
-    
-    // MARK: - Message protocols
-    
-    func assignMessageProtocol(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
-    ) {
-        guard let newMessageProtocol = payload.messageProtocol else {
-            return
-        }
-        
-        conversation.messageProtocol = newMessageProtocol.toDomainModel()
-    }
-    
-    func updateMessageProtocol(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
-    ) {
-        
-        guard let newMessageProtocol = payload.messageProtocol else {
-            return
-        }
-        
-        let sender = ZMUser.selfUser(in: context)
-        
-        switch conversation.messageProtocol {
-        case .proteus:
-            switch newMessageProtocol {
-            case .proteus:
-                break /// no update, ignore
-            case .mixed:
-                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
-                conversation.messageProtocol = newMessageProtocol.toDomainModel()
-            case .mls:
-                let date = conversation.lastModifiedDate ?? .now
-                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
-                conversation.messageProtocol = newMessageProtocol.toDomainModel()
-            }
-            
-        case .mixed:
-            switch newMessageProtocol {
-            case .proteus, .mixed:
-                break /// no update, ignore
-            case .mls:
-                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
-                conversation.messageProtocol = newMessageProtocol.toDomainModel()
-            }
-            
-        case .mls:
-            switch newMessageProtocol {
-            case .proteus, .mixed, .mls:
-                break
-            }
-        }
-    }
-    
-    func updateMLSStatus(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation,
-        isSlowSync: Bool
-    ) async {
-        guard DeveloperFlag.enableMLSSupport.isOn else { return }
-        
-        await updateConversationIfNeeded(
-            conversation: conversation,
-            fallbackGroupID: payload.mlsGroupID.map( { .init(base64Encoded: $0) }) ?? nil
-        )
-    }
-    
-    
-    // MARK: - Participants
-    
-    func fetchCreator(from payload: WireAPI.Conversation) -> ZMUser? {
-        guard let userID = payload.creator else {
-            return nil
-        }
-        
-        /// We assume that the creator always belongs to the same domain as the conversation
-        return ZMUser.fetchOrCreate(
-            with: userID,
-            domain: payload.qualifiedID?.domain,
-            in: context
-        )
-    }
-    
-    func fetchUserAndRole(
-        from payload: WireAPI.Conversation.Member,
-        for conversation: ZMConversation
-    ) -> (ZMUser, Role?)? {
-        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
-            return nil
-        }
-        
-        let user = ZMUser.fetchOrCreate(
-            with: userID,
-            domain: payload.qualifiedID?.domain,
-            in: context
-        )
-        
-        func fetchOrCreateRoleForConversation(
-            name: String,
-            conversation: ZMConversation
-        ) -> Role {
-            Role.fetchOrCreateRole(
-                with: name,
-                teamOrConversation: conversation.team != nil ? .team(conversation.team!) : .conversation(conversation),
+
+    func deleteConversation(
+        withQualifiedId qualifiedId: WireAPI.QualifiedID
+    ) async throws {
+        let conversation = await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: qualifiedId.uuid,
+                domain: qualifiedId.domain,
                 in: context
             )
+
+            return conversation?.conversationType == .group ? conversation : nil
         }
-        
-        let role = payload.conversationRole.map {
-            fetchOrCreateRoleForConversation(name: $0, conversation: conversation)
+
+        guard let conversation else { return }
+
+        conversation.isDeletedRemotely = true
+
+        let (mlsService, groupID) = if conversation.messageProtocol == .mls {
+            (MLSServiceInterface?.none, MLSGroupID?.none)
+        } else {
+            (context.mlsService, conversation.mlsGroupID)
         }
-        
-        return (user, role)
-    }
-    
-    func linkOneOnOneUserIfNeeded(for conversation: ZMConversation) {
-        guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first
-        else {
+
+        guard let mlsService, let groupID else {
             return
         }
-        
-        conversation.oneOnOneUser = otherUser
+
+        try await mlsService.wipeGroup(groupID)
     }
-    
-    func updateMemberStatus(
-        from payload: WireAPI.Conversation.Member,
-        for conversation: ZMConversation
-    ) {
-        if let mutedStatus = payload.mutedStatus,
-           let mutedReference = payload.mutedReference {
-            conversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
-        }
-        
-        if let archived = payload.archived,
-           let archivedReference = payload.archivedReference {
-            conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
-        }
-    }
-    
-    func updateMembers(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
-    ) {
-        guard let members = payload.members else {
-            return
-        }
-        
-        let otherMembers = fetchOtherMembers(
-            from: members,
-            conversation: conversation
-        )
-        
-        let selfUserRole = fetchUserAndRole(
-            from: members.selfMember,
-            for: conversation
-        )?.1
-        
-        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
-    }
-    
-    func fetchOtherMembers(
-        from payload: WireAPI.Conversation.Members,
-        conversation: ZMConversation
-    ) -> [(ZMUser, Role?)] {
-        return payload.others.compactMap {
-            fetchUserAndRole(
-                from: $0,
-                for: conversation
+
+    func removeSelfUserFromConversation(
+        withQualifiedId qualifiedId: WireAPI.QualifiedID
+    ) async {
+        await context.perform { [context] in
+
+            let conversation = ZMConversation.fetch(
+                with: qualifiedId.uuid,
+                domain: qualifiedId.domain,
+                in: context
+            )
+
+            guard let conversation,
+                  conversation.conversationType == .group,
+                  conversation.isSelfAnActiveMember
+            else {
+                return
+            }
+
+            let selfUser = ZMUser.selfUser(in: context)
+
+            conversation.removeParticipantAndUpdateConversationState(
+                user: selfUser,
+                initiatingUser: selfUser
             )
         }
     }
-    
-    
-    // MARK: - Other
-    
-    func updateAttributes(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
-    ) {
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
-        
-        if let epoch = payload.epoch {
-            conversation.epoch = UInt64(epoch)
-        }
-        
-        if
-            let base64String = payload.mlsGroupID,
-            let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
-            conversation.mlsGroupID = mlsGroupID
-        }
-        
-        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
-            conversation.ciphersuite = ciphersuite.toDomainModel()
+
+    func storeNeedsToBeUpdatedFromBackend(
+        requiresUpdate: Bool,
+        conversation: WireAPI.QualifiedID
+    ) async {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: conversation.uuid,
+                domain: conversation.domain,
+                in: context
+            )
+
+            conversation?.needsToBeUpdatedFromBackend = requiresUpdate
         }
     }
-    
-    func updateMetadata(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
-    ) {
-        if let teamID = payload.teamID {
-            conversation.updateTeam(identifier: teamID)
-        }
-        
-        if let name = payload.name {
-            conversation.userDefinedName = name
-        }
-        
-        if let creator = fetchCreator(
-            from: payload
-        ) {
-            conversation.creator = creator
+
+    func storeFailedConversationStatus(_ failedConversation: WireAPI.QualifiedID) async {
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: failedConversation.uuid,
+                domain: failedConversation.domain,
+                in: context
+            )
+
+            conversation.isPendingMetadataRefresh = true
+            conversation.needsToBeUpdatedFromBackend = true
         }
     }
-    
+
+    // MARK: - Private
+
+    private func updateOrCreateConnectionConversation(
+        remoteConversation: WireAPI.Conversation,
+        remoteConversationID: UUID
+    ) async {
+        await fetchOrCreateConversation(
+            conversationID: remoteConversationID,
+            domain: remoteConversation.qualifiedID?.domain
+        ) { [self] in
+            $0.conversationType = .connection
+
+            commonUpdate(from: remoteConversation, for: $0)
+            assignMessageProtocol(from: remoteConversation, for: $0)
+            updateConversationStatus(from: remoteConversation, for: $0)
+
+            $0.needsToBeUpdatedFromBackend = false
+            $0.isPendingInitialFetch = false
+
+            return ($0, $0.mlsGroupID)
+        }
+    }
+
+    private func updateOrCreateSelfConversation(
+        remoteConversation: WireAPI.Conversation,
+        remoteConversationID: UUID
+    ) async throws {
+        let (conversation, mlsGroupID) = await fetchOrCreateConversation(
+            conversationID: remoteConversationID,
+            domain: remoteConversation.qualifiedID?.domain
+        ) { [self] in
+
+            $0.conversationType = .`self`
+            $0.isPendingMetadataRefresh = false
+
+            commonUpdate(from: remoteConversation, for: $0)
+            updateMessageProtocol(from: remoteConversation, for: $0)
+
+            $0.isPendingInitialFetch = false
+            $0.needsToBeUpdatedFromBackend = false
+
+            return ($0, $0.mlsGroupID)
+        }
+
+        if mlsGroupID != nil {
+            try await createOrJoinSelfConversation(from: conversation)
+        }
+    }
+
+    private func updateOrCreateGroupConversation(
+        remoteConversation: WireAPI.Conversation,
+        remoteConversationID: UUID
+    ) async {
+        var isInitialFetch = false
+
+        let (conversation, _) = await fetchOrCreateConversation(
+            conversationID: remoteConversationID,
+            domain: remoteConversation.qualifiedID?.domain
+        ) { [self] in
+
+            isInitialFetch = $0.isPendingInitialFetch
+
+            $0.conversationType = .group
+            $0.remoteIdentifier = remoteConversationID
+            $0.isPendingMetadataRefresh = false
+            $0.isPendingInitialFetch = false
+
+            commonUpdate(from: remoteConversation, for: $0)
+            updateConversationStatus(from: remoteConversation, for: $0)
+
+            isInitialFetch ?
+                assignMessageProtocol(from: remoteConversation, for: $0) :
+                updateMessageProtocol(from: remoteConversation, for: $0)
+
+            return ($0, $0.mlsGroupID)
+        }
+
+        await updateMLSStatus(from: remoteConversation, for: conversation)
+
+        await context.perform { [self] in
+            if isInitialFetch {
+                /// we just got a new conversation, we display new conversation header
+                conversation.appendNewConversationSystemMessage(
+                    at: .distantPast,
+                    users: conversation.localParticipants
+                )
+
+                /// Slow synced conversations should be considered read from the start
+                conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+            }
+
+            /// If we discover this group is actually a fake one on one,
+            /// then we should link the one on one user.
+            linkOneOnOneUserIfNeeded(for: conversation)
+        }
+    }
+
+    private func updateOrCreateOneToOneConversation(
+        remoteConversation: WireAPI.Conversation,
+        remoteConversationID: UUID
+    ) async {
+        guard let conversationTypeRawValue = remoteConversation.type?.rawValue else {
+            return
+        }
+
+        await fetchOrCreateConversation(
+            conversationID: remoteConversationID,
+            domain: remoteConversation.qualifiedID?.domain
+        ) { [self] in
+            let conversationType = BackendConversationType.clientConversationType(
+                rawValue: conversationTypeRawValue
+            )
+
+            if $0.oneOnOneUser?.connection?.status == .sent {
+                $0.conversationType = .connection
+            } else {
+                $0.conversationType = conversationType
+            }
+
+            assignMessageProtocol(from: remoteConversation, for: $0)
+            commonUpdate(from: remoteConversation, for: $0)
+            updateConversationStatus(from: remoteConversation, for: $0)
+            linkOneOnOneUserIfNeeded(for: $0)
+
+            $0.needsToBeUpdatedFromBackend = false
+            $0.isPendingInitialFetch = false
+
+            if let otherUser = $0.localParticipantsExcludingSelf.first {
+                $0.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+            }
+
+            return ($0, $0.mlsGroupID)
+        }
+    }
+
+    @discardableResult
+    private func fetchOrCreateConversation(
+        conversationID: UUID,
+        domain: String?,
+        handler: @escaping (ZMConversation) -> (ZMConversation, MLSGroupID?)
+    ) async -> (ZMConversation, MLSGroupID?) {
+        await context.perform { [self] in
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: domain,
+                in: context
+            )
+
+            return handler(conversation)
+        }
+    }
+
+    private func commonUpdate(
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
+    ) {
+        updateAttributes(from: remoteConversation, for: localConversation)
+        updateMetadata(from: remoteConversation, for: localConversation)
+        updateMembers(from: remoteConversation, for: localConversation)
+        updateConversationTimestamps(for: localConversation)
+    }
+
 }

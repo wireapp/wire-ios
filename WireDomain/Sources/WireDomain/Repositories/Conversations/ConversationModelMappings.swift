@@ -20,30 +20,30 @@ import WireAPI
 import WireDataModel
 
 extension WireAPI.MLSCipherSuite {
-    
+
     func toDomainModel() -> WireDataModel.MLSCipherSuite {
         .init(rawValue: rawValue)!
     }
 }
 
 extension WireAPI.ConversationAccessRoleLegacy {
-    
+
     func toDomainModel() -> WireDataModel.ConversationAccessRole? {
         .init(rawValue: rawValue)
     }
 }
 
 extension WireAPI.ConversationMessageProtocol {
-    
+
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {
         case .proteus:
-                .proteus
+            .proteus
         case .mixed:
-                .mixed
+            .mixed
         case .mls:
-                .mls
+            .mls
         }
     }
-    
+
 }

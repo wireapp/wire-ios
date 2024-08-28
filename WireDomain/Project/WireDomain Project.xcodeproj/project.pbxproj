@@ -34,6 +34,10 @@
 		C9E8A3CD2C7C78B80093DD5C /* ConversationRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */; };
 		C9E8A3D12C7C7D320093DD5C /* ConversationModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */; };
 		C9E8A3D32C7CC2370093DD5C /* ConversationLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */; };
+		C9E8A3DE2C7F5B5D0093DD5C /* ConversationLocalStore+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3DD2C7F5B5D0093DD5C /* ConversationLocalStore+Status.swift */; };
+		C9E8A3E02C7F5BB90093DD5C /* ConversationLocalStore+Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3DF2C7F5BB90093DD5C /* ConversationLocalStore+Group.swift */; };
+		C9E8A3E22C7F5C870093DD5C /* ConversationLocalStore+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */; };
+		C9E8A3E62C7F60910093DD5C /* ConversationLocalStore+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
@@ -156,6 +160,10 @@
 		C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryError.swift; sourceTree = "<group>"; };
 		C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationModelMappings.swift; sourceTree = "<group>"; };
 		C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLocalStore.swift; sourceTree = "<group>"; };
+		C9E8A3DD2C7F5B5D0093DD5C /* ConversationLocalStore+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+Status.swift"; sourceTree = "<group>"; };
+		C9E8A3DF2C7F5BB90093DD5C /* ConversationLocalStore+Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+Group.swift"; sourceTree = "<group>"; };
+		C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+MLS.swift"; sourceTree = "<group>"; };
+		C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+Metadata.swift"; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -376,8 +384,12 @@
 			children = (
 				C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */,
 				C9E8A3CA2C7C78AE0093DD5C /* ConversationRepository.swift */,
-				C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */,
 				C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */,
+				C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */,
+				C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */,
+				C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */,
+				C9E8A3DF2C7F5BB90093DD5C /* ConversationLocalStore+Group.swift */,
+				C9E8A3DD2C7F5B5D0093DD5C /* ConversationLocalStore+Status.swift */,
 			);
 			path = Conversations;
 			sourceTree = "<group>";
@@ -758,6 +770,7 @@
 				EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */,
 				EEAD0A282C46AE6400CC8658 /* UserPropertiesSetEventProcessor.swift in Sources */,
 				EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */,
+				C9E8A3DE2C7F5B5D0093DD5C /* ConversationLocalStore+Status.swift in Sources */,
 				EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */,
 				C9E8A3D32C7CC2370093DD5C /* ConversationLocalStore.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
@@ -774,6 +787,7 @@
 				C9E8A3CB2C7C78AE0093DD5C /* ConversationRepository.swift in Sources */,
 				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
 				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
+				C9E8A3E02C7F5BB90093DD5C /* ConversationLocalStore+Group.swift in Sources */,
 				EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */,
 				C9E8A3CD2C7C78B80093DD5C /* ConversationRepositoryError.swift in Sources */,
 				162356572C2B22A300C6666C /* UserModelMappings.swift in Sources */,
@@ -792,6 +806,7 @@
 				EECC35A82C2EB70400679448 /* SyncState.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
 				EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */,
+				C9E8A3E62C7F60910093DD5C /* ConversationLocalStore+Metadata.swift in Sources */,
 				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
 				EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */,
 				C9E8A3D12C7C7D320093DD5C /* ConversationModelMappings.swift in Sources */,
@@ -799,6 +814,7 @@
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
 				EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */,
 				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
+				C9E8A3E22C7F5C870093DD5C /* ConversationLocalStore+MLS.swift in Sources */,
 				EE57A6FB2C298EC90096F242 /* UpdateEventsRepository.swift in Sources */,
 				EECC35A62C2EB6CD00679448 /* SyncManager.swift in Sources */,
 			);
