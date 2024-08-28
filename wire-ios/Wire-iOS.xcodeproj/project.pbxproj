@@ -1526,8 +1526,6 @@
 		EED92353278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */; };
 		EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */; };
 		EEE104052126F68A003C779B /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE104042126F68A003C779B /* CameraController.swift */; };
-		EEE25B20297199FC0008B894 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */; };
-		EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2629719A730008B894 /* Clibsodium.xcframework */; };
 		EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; };
 		EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; };
@@ -2008,7 +2006,6 @@
 				5996E8A32C19D066007A52F0 /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
 				598EA8C82C5BFFFF006DA500 /* WireAPI in Embed Frameworks */,
-				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -3552,7 +3549,6 @@
 		EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccentColorPickerSnapshotTests.swift; path = "Wire-iOS Tests/AccentColorPickerSnapshotTests.swift"; sourceTree = SOURCE_ROOT; };
 		EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+Invite.swift"; sourceTree = "<group>"; };
 		EEE104042126F68A003C779B /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
-		EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = ../Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		EEE25B2629719A730008B894 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = ../Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
 		EEE25B2729719A730008B894 /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = ../Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
 		EEE25B3429719BD30008B894 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3963,7 +3959,6 @@
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
-				EEE25B20297199FC0008B894 /* SwiftProtobuf.xcframework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
@@ -5480,7 +5475,6 @@
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
 				EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */,
 				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
-				EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */,
 				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */,
 			);
