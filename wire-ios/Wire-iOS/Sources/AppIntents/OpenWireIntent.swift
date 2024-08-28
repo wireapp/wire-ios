@@ -19,6 +19,7 @@
 import AppIntents
 import os
 import WireDataModel
+import WireSyncEngine
 
 @available(iOS 16, *)
 struct OpenWireIntent: OpenIntent {
@@ -27,6 +28,17 @@ struct OpenWireIntent: OpenIntent {
 
     @Parameter(title: "Account", description: "The account the app should be switched to after opening.")
     var target: AccountEntity
+
+    @Dependency
+    private var sessionManager: SessionManager
+
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        let account = sessionManager.accountManager.accounts.first { $0.userIdentifier == target.id }!
+        //accountManager.select(account)
+        sessionManager.select(account)
+        return .result()
+    }
 }
 
 @available(iOS 16.0, *)
@@ -35,36 +47,42 @@ struct AccountEntity: AppEntity {
     static var defaultQuery: AccountEntityQuery { .init() }
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        .init(name: .init(stringLiteral: "Account"))
+        .init(name: .init(stringLiteral: "Select Account"))
     }
 
     var displayRepresentation: DisplayRepresentation {
         .init(title: "\(name)")
     }
 
-    var id: QualifiedID
-    var name: String
+    private(set) var id: UUID
+    private(set) var name: String
+
+    init(_ account: Account) {
+        id = account.userIdentifier
+        name = account.userName
+    }
 }
 
 @available(iOS 16.0, *)
 struct AccountEntityQuery: EntityQuery {
 
-//    @Dependency
-//    var trailManager: TrailDataManager
+    @Dependency
+    private var accountManager: AccountManager
 
     func entities(for identifiers: [AccountEntity.ID]) async throws -> [AccountEntity] {
-        Logger.openWireIntent.debug("entities(for: \(identifiers)): ?")
+        os.Logger.openWireIntent.debug("entities(for: \(identifiers)): ?")
         return identifiers.map { id in
-            .init(id: id, name: "\(id)")
+            let account = accountManager.accounts.first { $0.userIdentifier == id }!
+            return .init(account)
         }
     }
 
     func suggestedEntities() async throws -> [AccountEntity] {
-        [.init(id: .random(), name: "adkslbjsdf")]
+        accountManager.accounts.map(AccountEntity.init(_:))
     }
 }
 
 @available(iOS 16, *)
-extension Logger {
-    static let openWireIntent = Logger(subsystem: Bundle.main.bundleIdentifier!, category: .init(describing: OpenWireIntent.self))
+extension os.Logger {
+    static let openWireIntent = Self(subsystem: Bundle.main.bundleIdentifier!, category: .init(describing: OpenWireIntent.self))
 }

@@ -24,6 +24,7 @@ import WireCommonComponents
 import WireCoreCrypto
 import WireSyncEngine
 import os
+import AppIntents
 
 enum ApplicationLaunchType {
     case unknown
@@ -306,6 +307,12 @@ private extension AppDelegate {
             sessionManager: sessionManager,
             appStateCalculator: appStateCalculator
         )
+
+        if #available(iOS 16.0, *) {
+            AppDependencyManager.shared.add(dependency: sessionManager)
+            AppDependencyManager.shared.add(dependency: sessionManager.accountManager)
+            AppShortcuts.updateAppShortcutParameters()
+        }
     }
 
     private func createSessionManager(launchOptions: LaunchOptions) -> SessionManager? {
@@ -360,6 +367,7 @@ private extension AppDelegate {
     }
 
     private func startAppRouter(launchOptions: LaunchOptions) {
+        Logger.appDelegate.debug("startAppRouter(launchOptions: \( String(reflecting: launchOptions), privacy: .public ))")
         appRootRouter?.start(launchOptions: launchOptions)
     }
 

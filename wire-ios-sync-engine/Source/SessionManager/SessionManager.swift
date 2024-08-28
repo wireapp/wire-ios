@@ -19,6 +19,7 @@
 import avs
 import CallKit
 import Foundation
+import os
 import PushKit
 import UserNotifications
 import WireDataModel
@@ -598,6 +599,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func start(launchOptions: LaunchOptions) {
+
+        os.Logger.sessionManager.debug("start(launchOptions: \( String(reflecting: launchOptions ), privacy: .public) accountManager.selectedAccount: \( self.accountManager.selectedAccount?.userName ?? "<nil>", privacy: .public )")
+
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
             // swiftlint:disable todo_requires_jira_link
@@ -1594,4 +1598,8 @@ extension SessionManager {
     public static func stopAVSLogging() {
         avsLogObserver = nil
     }
+}
+
+extension os.Logger {
+    static let sessionManager = Self(subsystem: Bundle.main.bundleIdentifier!, category: .init(describing: SessionManager.self))
 }

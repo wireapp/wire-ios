@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireTransport
 
 private let log = ZMSLog(tag: "Accounts")
@@ -51,6 +52,9 @@ public final class AccountManager: NSObject {
     /// Creates a new `AccountManager`.
     /// - parameter sharedDirectory: The directory of the shared container.
     public init(sharedDirectory: URL) {
+
+        os.Logger.accountManager.debug("init \(sharedDirectory.path, privacy: .public)")
+
         store = AccountStore(root: sharedDirectory)
         super.init()
         updateAccounts()
@@ -89,6 +93,9 @@ public final class AccountManager: NSObject {
     /// Selects a new account.
     /// - parameter account: The account to select.
     public func select(_ account: Account) {
+
+        os.Logger.accountManager.debug("select(\(account.userName, privacy: .public))")
+
         precondition(accounts.contains(account), "Selecting an account without first adding it is not allowed")
         guard account != selectedAccount else { return }
         defaults?.selectedAccountIdentifier = account.userIdentifier
@@ -157,5 +164,8 @@ public final class AccountManager: NSObject {
             }
         }
     }
+}
 
+extension os.Logger {
+    static let accountManager = Self(subsystem: Bundle.main.bundleIdentifier!, category: .init(describing: AccountManager.self))
 }

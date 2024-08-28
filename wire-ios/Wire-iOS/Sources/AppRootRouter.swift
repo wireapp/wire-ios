@@ -17,6 +17,7 @@
 //
 
 import avs
+import os
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -172,6 +173,9 @@ final class AppRootRouter {
     ///     - completion: A block executed after the transition has completed.
 
     private func enqueueTransition(to appState: AppState, completion: @escaping () -> Void = {}) {
+
+        os.Logger.appRootRouter.debug("enqueueTransition(to \( appState.safeForLoggingDescription, privacy: .public))")
+
         // Perform the wait on a background queue so we don't cause a
         // deadlock on the main queue.
         appStateTransitionQueue.async { [weak self] in
@@ -197,6 +201,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
+
+        os.Logger.appRootRouter.debug("transition(to \( appState.safeForLoggingDescription, privacy: .public))")
+
         applicationWillTransition(to: appState)
 
         resetAuthenticationCoordinatorIfNeeded(for: appState)
@@ -633,4 +640,8 @@ extension AppRootRouter: AudioPermissionsObserving {
         sessionManager.updateCallNotificationStyleFromSettings()
         sessionManager.updateMuteOtherCallsFromSettings()
     }
+}
+
+extension os.Logger {
+    static let appRootRouter = Self(subsystem: Bundle.main.bundleIdentifier!, category: .init(describing: AppRootRouter.self))
 }
