@@ -22,5 +22,5 @@ import os
 extension Logger {
     static let intentLogging = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "App Intent")
     static let entityQueryLogging = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Entity Query")
-    static let appDelegate = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "App Delegate")
+    static let appDelegate = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
 }

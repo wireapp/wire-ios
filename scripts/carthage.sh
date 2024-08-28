@@ -19,6 +19,13 @@ set -Eeuo pipefail
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
+# brew uninstall carthage; brew install --head carthage 
+CARTHAGE=`which carthage`
+if [[ -f "$CARTHAGE" ]]; then
+    "$CARTHAGE" "$@"
+    exit 0
+fi
+
 REPO_ROOT=$(git rev-parse --show-toplevel)
 CARTHAGE_URL="https://github.com/Carthage/Carthage/releases/download/0.39.1/Carthage.pkg"
 CARTHAGE_DIR="$REPO_ROOT/Carthage"

@@ -17,29 +17,54 @@
 //
 
 import AppIntents
+import os
+import WireDataModel
 
 @available(iOS 16, *)
 struct OpenWireIntent: OpenIntent {
 
-    static let title = LocalizedStringResource(stringLiteral: "title")
+    static let title = LocalizedStringResource(stringLiteral: "Open Wire on selected Account")
 
-    @Parameter(title: "Trail", description: "The trail to get information on.")
-    var target: Accountt
+    @Parameter(title: "Account", description: "The account the app should be switched to after opening.")
+    var target: AccountEntity
 }
 
 @available(iOS 16.0, *)
-enum Accountt: String, AppEnum {
+struct AccountEntity: AppEntity {
 
-    static let typeDisplayRepresentation = TypeDisplayRepresentation(stringLiteral: "x")
+    static var defaultQuery: AccountEntityQuery { .init() }
 
-    static var caseDisplayRepresentations: [Accountt: DisplayRepresentation] = [
-        .a: DisplayRepresentation(title: "a",
-                                       subtitle: "aaa",
-                                       image: nil),
-        .b: DisplayRepresentation(title: "b",
-                                       subtitle: "bbb",
-                                       image: nil),
-    ]
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        .init(name: .init(stringLiteral: "Account"))
+    }
 
-    case a, b
+    var displayRepresentation: DisplayRepresentation {
+        .init(title: "\(name)")
+    }
+
+    var id: QualifiedID
+    var name: String
+}
+
+@available(iOS 16.0, *)
+struct AccountEntityQuery: EntityQuery {
+
+//    @Dependency
+//    var trailManager: TrailDataManager
+
+    func entities(for identifiers: [AccountEntity.ID]) async throws -> [AccountEntity] {
+        Logger.openWireIntent.debug("entities(for: \(identifiers)): ?")
+        return identifiers.map { id in
+            .init(id: id, name: "\(id)")
+        }
+    }
+
+    func suggestedEntities() async throws -> [AccountEntity] {
+        [.init(id: .random(), name: "adkslbjsdf")]
+    }
+}
+
+@available(iOS 16, *)
+extension Logger {
+    static let openWireIntent = Logger(subsystem: Bundle.main.bundleIdentifier!, category: .init(describing: OpenWireIntent.self))
 }

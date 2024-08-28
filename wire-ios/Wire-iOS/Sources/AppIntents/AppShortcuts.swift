@@ -29,13 +29,6 @@ struct AppShortcuts: AppShortcutsProvider {
                 phrases: [],
                 shortTitle: LocalizedStringResource(stringLiteral: "New Feature"),
                 systemImageName: "apple.logo"
-//                parameterPresentation: .init(
-//                    for: \.$conversation,
-//                    summary: Summary("Get \(\.$conversation) conversations"),
-//                    optionsCollections: {
-//                        OptionsCollection(ConversationEntityQuery(), title: "Conversations", systemImageName: "cloud.rainbow.half")
-//                    }
-//                )
             )
 
             AppShortcut(

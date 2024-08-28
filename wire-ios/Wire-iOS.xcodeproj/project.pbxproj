@@ -4721,9 +4721,9 @@
 			children = (
 				59DE06932C7DE8B200E43079 /* AppShortcuts.swift */,
 				59CED5AB2C7DE2AE003FC932 /* ConversationEntity.swift */,
-				59DE06952C7DE96900E43079 /* SendQuickResponseIntent.swift */,
-				59DE07072C7E0AEB00E43079 /* OpenWireIntent.swift */,
 				59DE07092C7E0F2100E43079 /* LoggerInstances.swift */,
+				59DE07072C7E0AEB00E43079 /* OpenWireIntent.swift */,
+				59DE06952C7DE96900E43079 /* SendQuickResponseIntent.swift */,
 			);
 			path = AppIntents;
 			sourceTree = "<group>";
