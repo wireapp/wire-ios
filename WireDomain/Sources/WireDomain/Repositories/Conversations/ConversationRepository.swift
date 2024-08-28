@@ -74,9 +74,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     // MARK: - Public
 
     public func pullConversations() async throws {
-        let result = try await conversationsAPI.getLegacyConversationIdentifiers()
-        let uuids = try await result.reduce([UUID](), +)
-        let qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: domain) }
+        var qualifiedIds: [WireAPI.QualifiedID]
+
+        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { /// only for api v0 (see `ConversationsAPIV0` method comment.
+            let uuids = try await result.reduce([UUID](), +)
+            qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: domain) }
+        } else {
+            let ids = try await conversationsAPI.getConversationIdentifiers()
+            qualifiedIds = try await ids.reduce([WireAPI.QualifiedID](), +)
+        }
+
         let conversationList = try await conversationsAPI.getConversations(for: qualifiedIds)
 
         try await withThrowingTaskGroup(of: Void.self) { taskGroup in

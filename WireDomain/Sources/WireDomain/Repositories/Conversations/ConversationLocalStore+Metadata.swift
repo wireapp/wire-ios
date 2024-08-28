@@ -22,7 +22,7 @@ import WireDataModel
 /// An extension that encapsulates storage work related to conversation metadata.
 
 extension ConversationLocalStore {
-    
+
     // MARK: - Metadata
 
     func updateMetadata(
@@ -50,7 +50,7 @@ extension ConversationLocalStore {
 
         conversation.creator = creator
     }
-    
+
     // MARK: - Attributes
 
     func updateAttributes(
@@ -74,7 +74,7 @@ extension ConversationLocalStore {
             conversation.ciphersuite = ciphersuite.toDomainModel()
         }
     }
-    
+
     // MARK: - Timestamps
 
     func updateConversationTimestamps(

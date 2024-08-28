@@ -59,7 +59,6 @@ final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Public
 
     func storeConversation(_ conversation: WireAPI.Conversation, withId id: UUID) async throws {
-
         switch conversation.type {
         case .group:
             await updateOrCreateGroupConversation(
