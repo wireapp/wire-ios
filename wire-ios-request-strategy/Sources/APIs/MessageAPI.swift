@@ -197,15 +197,18 @@ class MessageAPIV1: MessageAPIV0 {
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {
-            guard
-                let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-            else {
+            guard let messageSendingStatus = Payload.MessageSendingStatusV1(
+                response,
+                decoder: .defaultDecoder
+            ) else {
                 throw NetworkError.errorDecodingResponse(response)
             }
-            throw NetworkError.missingClients(messageSendingStatus, response)
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
         } else {
-            let payload: Payload.MessageSendingStatus = try mapResponse(response)
-            return (payload, response)
+            let payload: Payload.MessageSendingStatusV1 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
         }
     }
 
@@ -236,15 +239,18 @@ class MessageAPIV1: MessageAPIV0 {
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {
-            guard
-                let messageSendingStatus = Payload.MessageSendingStatus(response, decoder: .defaultDecoder)
-            else {
+            guard let messageSendingStatus = Payload.MessageSendingStatusV1(
+                response,
+                decoder: .defaultDecoder
+            ) else {
                 throw NetworkError.errorDecodingResponse(response)
             }
-            throw NetworkError.missingClients(messageSendingStatus, response)
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
         } else {
-            let payload: Payload.MessageSendingStatus = try mapResponse(response)
-            return (payload, response)
+            let payload: Payload.MessageSendingStatusV1 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
         }
     }
 }
@@ -264,6 +270,87 @@ class MessageAPIV3: MessageAPIV2 {
 class MessageAPIV4: MessageAPIV3 {
     override var apiVersion: APIVersion {
         .v4
+    }
+
+    private let protobufContentType = "application/x-protobuf"
+
+    override func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        let path = "/broadcast/proteus/messages"
+
+        guard let encryptedPayload = await message.encryptForTransportQualified() else {
+            WireLogger.messaging.error("failed to encrypt message for transport")
+            throw NetworkError.errorEncodingRequest
+        }
+
+        let request = ZMTransportRequest(
+            path: path,
+            method: .post,
+            binaryData: encryptedPayload.data,
+            type: protobufContentType,
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        let response = await httpClient.send(request)
+
+        if response.httpStatus == 412 {
+            // New V4 payload
+            guard let messageSendingStatus = Payload.MessageSendingStatusV4(
+                response,
+                decoder: .defaultDecoder
+            ) else {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
+        } else {
+            let payload: Payload.MessageSendingStatusV4 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
+        }
+    }
+
+    override func sendProteusMessage(
+        message: any ProteusMessage,
+        conversationID: QualifiedID
+    ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+
+        guard let encryptedPayload = await message.encryptForTransportQualified() else {
+            WireLogger.messaging.error("failed to encrypt message for transport")
+            throw NetworkError.errorEncodingRequest
+        }
+
+        let request = ZMTransportRequest(
+            path: path,
+            method: .post,
+            binaryData: encryptedPayload.data,
+            type: protobufContentType,
+            contentDisposition: nil,
+            apiVersion: apiVersion.rawValue
+        )
+
+        if let expirationDate = await message.context.perform({ message.expirationDate }) {
+            request.expire(at: expirationDate)
+        }
+
+        let response = await httpClient.send(request)
+
+        if response.httpStatus == 412 {
+            // New V4 payload
+            guard let messageSendingStatus = Payload.MessageSendingStatusV4(
+                response,
+                decoder: .defaultDecoder
+            ) else {
+                throw NetworkError.errorDecodingResponse(response)
+            }
+
+            throw NetworkError.missingClients(messageSendingStatus.toAPIModel(), response)
+
+        } else {
+            let payload: Payload.MessageSendingStatusV4 = try mapResponse(response)
+            return (payload.toAPIModel(), response)
+        }
     }
 }
 
