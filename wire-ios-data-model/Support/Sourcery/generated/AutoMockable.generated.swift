@@ -5272,23 +5272,6 @@ public class MockProteusToMLSMigrationCoordinating: ProteusToMLSMigrationCoordin
 
 }
 
-class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
-
-    // MARK: - Life cycle
-
-
-    // MARK: - migrationStatus
-
-    var migrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus {
-        get { return underlyingMigrationStatus }
-        set(value) { underlyingMigrationStatus = value }
-    }
-
-    var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
-
-
-}
-
 public class MockStaleMLSKeyDetectorProtocol: StaleMLSKeyDetectorProtocol {
 
     // MARK: - Life cycle

@@ -29,13 +29,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
     // MARK: - Types
 
-    enum MigrationStatus: Int {
-        case notStarted
-        case started
-        case finalising
-        case finalised
-    }
-
     enum MigrationStartStatus: Equatable {
         case canStart
         case cannotStart(reason: CannotStartMigrationReason)
@@ -55,8 +48,6 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private let context: NSManagedObjectContext
     private let featureRepository: FeatureRepositoryInterface
     private let actionsProvider: MLSActionsProviderProtocol
-    private var storage: ProteusToMLSMigrationStorageInterface
-
     private let logger = WireLogger.mls
 
     // MARK: - Life cycle
@@ -65,23 +56,15 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         context: NSManagedObjectContext,
         userID: UUID
     ) {
-        self.init(
-            context: context,
-            storage: ProteusToMLSMigrationStorage(
-                userID: userID,
-                userDefaults: .standard
-            )
-        )
+        self.init(context: context)
     }
 
     init(
         context: NSManagedObjectContext,
-        storage: ProteusToMLSMigrationStorageInterface,
         featureRepository: FeatureRepositoryInterface? = nil,
         actionsProvider: MLSActionsProviderProtocol? = nil
     ) {
         self.context = context
-        self.storage = storage
         self.featureRepository = featureRepository ?? FeatureRepository(context: context)
         self.actionsProvider = actionsProvider ?? MLSActionsProvider()
     }
@@ -89,34 +72,27 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     // MARK: - Public Interface
 
     public func updateMigrationStatus() async throws {
-        switch storage.migrationStatus {
-        case .notStarted:
-            try await startMigrationIfNeeded()
-        case .started:
+
+        let migrationStartStatus = await resolveMigrationStartStatus()
+
+        switch migrationStartStatus {
+        case .canStart:
+            try await startMigration()
             try await finaliseMigrationIfNeeded()
-        default:
-            break
+        case .cannotStart(reason: let reason):
+            logger.info("proteus-to-mls migration can't start (reason: \(reason))")
         }
     }
 
     // MARK: - Migration Start
 
-    private func startMigrationIfNeeded() async throws {
-        logger.info("checking if proteus-to-mls migration can start")
-        let migrationStartStatus = await resolveMigrationStartStatus()
-
-        switch migrationStartStatus {
-        case .canStart:
-            guard let mlsService = await context.perform({ self.context.mlsService }) else {
-                return logger.warn("can't start migration: missing `mlsService`")
-            }
-
-            logger.info("starting proteus-to-mls migration")
-            try await mlsService.startProteusToMLSMigration()
-            storage.migrationStatus = .started
-        case .cannotStart(reason: let reason):
-            logger.info("proteus-to-mls migration can't start (reason: \(reason))")
+    private func startMigration() async throws {
+        guard let mlsService = await context.perform({ self.context.mlsService }) else {
+            return logger.warn("can't start migration: missing `mlsService`")
         }
+
+        logger.info("starting proteus-to-mls migration")
+        try await mlsService.startProteusToMLSMigration()
     }
 
     // MARK: - Migration Finalisation

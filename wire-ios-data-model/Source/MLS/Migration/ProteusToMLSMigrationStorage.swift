@@ -18,47 +18,4 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-protocol ProteusToMLSMigrationStorageInterface {
-    var migrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus { get set }
-}
 
-class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
-
-    // MARK: - Properties
-
-    private let storage: PrivateUserDefaults<Key>
-
-    // MARK: - Types
-
-    private enum Key: String, DefaultsKey {
-        case migrationStatus = "com.wire.mls.migration.status"
-    }
-
-    typealias MigrationStatus = ProteusToMLSMigrationCoordinator.MigrationStatus
-
-    // MARK: - Life cycle
-
-    init(
-        userID: UUID,
-        userDefaults: UserDefaults
-    ) {
-        storage = PrivateUserDefaults(
-            userID: userID,
-            storage: userDefaults
-        )
-    }
-
-    // MARK: - Interface
-
-    var migrationStatus: MigrationStatus {
-        get {
-            let value = storage.integer(forKey: Key.migrationStatus)
-            return MigrationStatus(rawValue: value)!
-        }
-
-        set {
-            storage.set(newValue.rawValue, forKey: Key.migrationStatus)
-        }
-    }
-}

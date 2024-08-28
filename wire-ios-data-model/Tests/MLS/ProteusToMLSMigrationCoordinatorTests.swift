@@ -26,7 +26,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     // MARK: - Properties
 
     var sut: ProteusToMLSMigrationCoordinator!
-    var mockStorage: MockProteusToMLSMigrationStorageInterface!
     var mockFeatureRepository: MockFeatureRepositoryInterface!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockMLSService: MockMLSServiceInterface!
@@ -36,14 +35,12 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
 
-        mockStorage = MockProteusToMLSMigrationStorageInterface()
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockMLSService = MockMLSServiceInterface()
 
         sut = ProteusToMLSMigrationCoordinator(
             context: syncMOC,
-            storage: mockStorage,
             featureRepository: mockFeatureRepository,
             actionsProvider: mockActionsProvider
         )
@@ -65,7 +62,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     override func tearDown() {
         sut = nil
-        mockStorage = nil
         mockFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
@@ -75,12 +71,11 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     // MARK: - Migration Start
 
-    func test_ItStartsMigration_IfNotStartedAndReady() async throws {
+    func test_ItStartsMigration_IfReady() async throws {
         // GIVEN
         await createUserAndGroupConversation()
 
         setMigrationReadiness(to: true)
-        mockStorage.underlyingMigrationStatus = .notStarted
 
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
@@ -91,29 +86,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertTrue(startedMigration)
-    }
-
-    func test_ItDoesntStartMigration_IfAlreadyStarted() async throws {
-        // GIVEN
-        await createUserAndGroupConversation()
-
-        setMigrationReadiness(to: true)
-        mockStorage.underlyingMigrationStatus = .started
-        mockMLSService.conversationExistsGroupID_MockMethod = { _ in return true }
-
-        var startedMigration = false
-        mockMLSService.startProteusToMLSMigration_MockMethod = {
-            startedMigration = true
-        }
-
-        // WHEN
-        try await sut.updateMigrationStatus()
-
-        // THEN
-        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
-        XCTAssertFalse(startedMigration)
     }
 
     func test_ItDoesntStartMigration_IfNotReady() async throws {
@@ -121,7 +94,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         await createUserAndGroupConversation()
 
         setMigrationReadiness(to: false)
-        mockStorage.underlyingMigrationStatus = .notStarted
 
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
@@ -132,7 +104,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
         XCTAssertFalse(startedMigration)
     }
 
@@ -149,7 +120,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             startTime: nil
         )
 
-        mockStorage.underlyingMigrationStatus = .notStarted
 
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
@@ -160,7 +130,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
         XCTAssertFalse(startedMigration)
     }
 
@@ -177,8 +146,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             startTime: .distantFuture
         )
 
-        mockStorage.underlyingMigrationStatus = .notStarted
-
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
             startedMigration = true
@@ -188,7 +155,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .notStarted)
         XCTAssertFalse(startedMigration)
     }
 
@@ -205,8 +171,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             startTime: .distantPast
         )
 
-        mockStorage.underlyingMigrationStatus = .notStarted
-
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
             startedMigration = true
@@ -216,7 +180,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         try await sut.updateMigrationStatus()
 
         // THEN
-        XCTAssertEqual(mockStorage.underlyingMigrationStatus, .started)
         XCTAssertTrue(startedMigration)
     }
 
@@ -250,7 +213,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             isMLSMigrationFeatureEnabled: true,
             hasStartTimeBeenReached: true
         )
-        mockStorage.underlyingMigrationStatus = .notStarted
 
         // WHEN
         try await sut.updateMigrationStatus()
@@ -263,9 +225,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_ItSyncsUsers_IfFinalisationTimeHasNotBeenReached() async throws {
         // GIVEN
-        mockStorage.underlyingMigrationStatus = .started
+        setMigrationReadiness(to: true)
         await createUserAndGroupConversation()
-
         // Mock that the finalisation time has not been reached
         mockFeatureRepository.fetchMLSMigration_MockValue = Feature.MLSMigration(
             status: .enabled,
@@ -285,6 +246,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             return [user1.qualifiedID, user2.qualifiedID]
         }
 
+        mockMLSService.startProteusToMLSMigration_MockMethod = {}
+
         // WHEN
         try await sut.updateMigrationStatus()
 
@@ -301,11 +264,13 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_ItJoinsMLSGroup_IfGroupDoesntExist() async throws {
         // GIVEN
+        setMigrationReadiness(to: true)
+
         let groupID = MLSGroupID.random()
         await createUserAndGroupConversation(groupID: groupID)
 
-        mockStorage.underlyingMigrationStatus = .started
         mockMLSService.conversationExistsGroupID_MockValue = false
+        mockMLSService.startProteusToMLSMigration_MockMethod = {}
 
         // WHEN
         try await sut.updateMigrationStatus()
@@ -318,7 +283,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     func test_ItDoesntJoinMLSGroup_IfGroupExists() async throws {
         // GIVEN
         await createUserAndGroupConversation()
-        mockStorage.underlyingMigrationStatus = .started
         mockMLSService.conversationExistsGroupID_MockValue = true
 
         // WHEN
@@ -330,7 +294,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_ItUpdatesConversationProtocolToMLS_IfAllParticipantsSupportMLS() async throws {
         // GIVEN
-        mockStorage.underlyingMigrationStatus = .started
 
         await setMocksForFinalisation(
             supportedProtocolForAllParticipants: .mls,
@@ -346,7 +309,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_ItUpdatesConversationProtocolToMLS_IfFinalisationTimeHasBeenReached() async throws {
         // GIVEN
-        mockStorage.underlyingMigrationStatus = .started
 
         await setMocksForFinalisation(
             supportedProtocolForAllParticipants: .proteus,
@@ -362,7 +324,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
     func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
         // GIVEN
-        mockStorage.underlyingMigrationStatus = .started
 
         await setMocksForFinalisation(
             supportedProtocolForAllParticipants: .proteus,
