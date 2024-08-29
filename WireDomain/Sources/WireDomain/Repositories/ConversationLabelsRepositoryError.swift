@@ -16,23 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireAPI
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning user properties.
-public protocol UserPropertiesAPI {
+/// Errors originating from `ConversationLabelsRepository`.
 
-    /// Indicates whether typing indicators is enabled.
+enum ConversationLabelsRepositoryError: Error {
 
-    var areTypingIndicatorsEnabled: Bool { get async throws }
+    /// Unable to store label locally
 
-    /// Indicates whether read receipts is enabled.
+    case failedToStoreLabelLocally(ConversationLabel)
 
-    var areReadReceiptsEnabled: Bool { get async throws }
+    /// Unable to pull labels from backend
 
-    /// Get the conversation labels.
-    ///
-    /// - Returns: A `ConversationLabel` list.
+    case failedToCollectLabelsRemotely
 
-    func getLabels() async throws -> [ConversationLabel]
+    /// Unable to delete label locally
+
+    case failedToDeleteStoredLabels
+
 }

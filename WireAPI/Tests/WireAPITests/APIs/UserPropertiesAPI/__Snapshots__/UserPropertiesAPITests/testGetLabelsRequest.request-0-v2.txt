@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v2/properties/labels"
+  - method: get
+  - body: none

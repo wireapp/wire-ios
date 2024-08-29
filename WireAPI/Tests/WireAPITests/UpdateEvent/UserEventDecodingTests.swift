@@ -348,7 +348,7 @@ final class UserEventDecodingTests: XCTestCase {
         )
 
         static let readReceiptsPropertiesSetEvent = UserPropertiesSetEvent(
-            property: .areReadRecieptsEnabled(true)
+            property: .areReadReceiptsEnabled(true)
         )
 
         static let typingIndicatorsPropertiesSetEvent = UserPropertiesSetEvent(
