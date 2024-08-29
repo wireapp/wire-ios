@@ -69,6 +69,9 @@ struct Wire_Widget: Widget {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             Wire_WidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
+                .onAppear {
+                    print(sessionManager.accountManager.accounts)
+                }
         }
     }
 }

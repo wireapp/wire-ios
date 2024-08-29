@@ -332,6 +332,8 @@
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
 		5950467D2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
+		595FA3952C80A059001387A0 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595FA3942C80A059001387A0 /* Bridge.swift */; };
+		595FA3982C80A0AC001387A0 /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595FA3972C80A0AC001387A0 /* WireSyncEngine.framework */; };
 		5965B46C2C57AC70000DBF91 /* WireSystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B46B2C57AC70000DBF91 /* WireSystemPackage */; };
 		5965B46D2C57AC70000DBF91 /* WireSystemPackage in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 5965B46B2C57AC70000DBF91 /* WireSystemPackage */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5965B4792C57BF59000DBF91 /* WireAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 5965B4782C57BF59000DBF91 /* WireAnalytics */; };
@@ -2375,6 +2377,8 @@
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusViewSnapshotTests.swift; sourceTree = "<group>"; };
 		5952693E2BE8C93B001C1E8B /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
+		595FA3942C80A059001387A0 /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
+		595FA3972C80A0AC001387A0 /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewControllerBuilder.swift; sourceTree = "<group>"; };
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
@@ -3989,6 +3993,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				595FA3982C80A0AC001387A0 /* WireSyncEngine.framework in Frameworks */,
 				59AB85712C809DB100847F64 /* SwiftUI.framework in Frameworks */,
 				59AB856F2C809DB100847F64 /* WidgetKit.framework in Frameworks */,
 			);
@@ -4757,6 +4762,7 @@
 				59AB85752C809DB100847F64 /* Wire_WidgetLiveActivity.swift */,
 				59AB85772C809DB100847F64 /* Wire_Widget.swift */,
 				59AB85792C809DB100847F64 /* AppIntent.swift */,
+				595FA3942C80A059001387A0 /* Bridge.swift */,
 				59AB857B2C809DB200847F64 /* Assets.xcassets */,
 				59AB857D2C809DB200847F64 /* Info.plist */,
 			);
@@ -5533,6 +5539,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				595FA3972C80A0AC001387A0 /* WireSyncEngine.framework */,
 				016DB6DD2C261A4900DEB81B /* WireDomain.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
 				EEE25B3429719BD30008B894 /* WireCryptobox.framework */,
@@ -9229,6 +9236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				595FA3952C80A059001387A0 /* Bridge.swift in Sources */,
 				59AB85782C809DB100847F64 /* Wire_Widget.swift in Sources */,
 				59AB857A2C809DB100847F64 /* AppIntent.swift in Sources */,
 				59AB85742C809DB100847F64 /* Wire_WidgetBundle.swift in Sources */,
