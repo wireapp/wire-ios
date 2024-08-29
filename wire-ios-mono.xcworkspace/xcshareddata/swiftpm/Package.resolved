@@ -246,11 +246,11 @@
       },
       {
         "package": "SwiftProtobuf",
-        "repositoryURL": "https://github.com/wireapp/swift-protobuf",
+        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {
           "branch": null,
-          "revision": "f25867a208f459d3c5a06935dceb9083b11cd539",
-          "version": "1.22.0"
+          "revision": "564597ad2fe2513a94dd8f3ba27ea2ff4be3cb37",
+          "version": "1.28.0"
         }
       },
       {
