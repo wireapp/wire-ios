@@ -18,9 +18,9 @@ The wire-ios-protos framework contains precompiled protocol buffer definitions f
 
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, run `carthage bootstrap --platform ios --use-xcframeworks --no-use-binaries`.
 
-You need the Swift Protocol Buffer compiler  to build the protobuf Swift files. Run `brew install swift-protobuf` to install it.
+You need the Swift Protocol Buffer compiler to build the protobuf Swift files. Run `brew install swift-protobuf` to install it.
 
-Run `bash Scripts/compile-protos.sh` to generate the files from the protobuf definitions imported from Carthage.
+From the `wire-ios-protos` directory, run `bash Scripts/compile-protos.sh` to generate the files from the protobuf definitions imported from Carthage.
 
 You can now open the Xcode project and build.
 
