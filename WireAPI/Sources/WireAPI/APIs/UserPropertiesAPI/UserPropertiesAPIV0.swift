@@ -29,7 +29,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
     var apiVersion: APIVersion {
         .v0
     }
-    
+
     var areTypingIndicatorsEnabled: Bool {
         get async throws {
             let result = try await getProperty(forKey: .wireTypingIndicatorMode)
@@ -40,7 +40,7 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
             return isEnabled
         }
     }
-    
+
     var areReadReceiptsEnabled: Bool {
         get async throws {
             let result = try await getProperty(forKey: .wireReceiptMode)
@@ -51,17 +51,17 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
             return isEnabled
         }
     }
-    
+
     func getLabels() async throws -> [ConversationLabel] {
         let result = try await getProperty(forKey: .labels)
-        
+
         guard case .conversationLabels(let labels) = result else {
             throw UserPropertiesAPIError.invalidKey
         }
-        
+
         return labels
     }
-    
+
     // MARK: - Fetch user property
 
     func getProperty(forKey key: UserProperty.Key) async throws -> UserProperty {

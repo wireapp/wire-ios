@@ -54,9 +54,8 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
                 }
             }
         }
-        
-        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
 
+        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
     }
 
     /// Save label and related conversations objects to local storage.

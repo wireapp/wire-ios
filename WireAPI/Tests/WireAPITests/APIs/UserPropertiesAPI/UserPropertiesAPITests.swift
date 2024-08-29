@@ -47,13 +47,13 @@ final class UserPropertiesAPITests: XCTestCase {
             _ = try await sut.getLabels()
         }
     }
-    
+
     func testGetWireIndicatorModeRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.areTypingIndicatorsEnabled
         }
     }
-    
+
     func testGetWireReceiptModeRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
             _ = try await sut.areReadReceiptsEnabled
@@ -118,7 +118,6 @@ final class UserPropertiesAPITests: XCTestCase {
         XCTAssertEqual(labels.count, 2)
         XCTAssertEqual(labels[0].name, "Foo")
         XCTAssertEqual(labels[1].name, nil)
-        
     }
 
     func testGetLabels_FailureResponse_PropertyNotFound_V0() async throws {
@@ -144,7 +143,7 @@ final class UserPropertiesAPITests: XCTestCase {
             _ = try await sut.areTypingIndicatorsEnabled
         }
     }
-    
+
     func testGetUserReceiptModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")

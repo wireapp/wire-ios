@@ -77,7 +77,7 @@ public struct CoreDataStackHelper {
         guard fileManager.fileExists(atPath: storageDirectory.path) else {
             return
         }
-        
+
         try fileManager.removeItem(atPath: storageDirectory.path)
     }
 }
