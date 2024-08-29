@@ -18,7 +18,6 @@
 
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
-import WireDataModel
 import avs
 import UIKit
 import WireCommonComponents
@@ -170,20 +169,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Logger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions), privacy: .public)")
         Logger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments, privacy: .public)")
-
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(15)) {
-            //try! EARKeyGenerator().generatePrimaryPublicPrivateKeyPair(id: "abcdefgh")
-
-//            let sut = CoreCryptoKeyProvider()
-//
-//            let item = CoreCryptoKeychainItem()
-//            let expectedKey = try! KeychainManager.generateKey(numberOfBytes: 32)
-//            try? KeychainManager.storeItem(item, value: expectedKey)
-//
-//            let key = try! sut.coreCryptoKey(createIfNeeded: false)
-        }
-
         return true
     }
 

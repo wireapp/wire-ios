@@ -72,11 +72,9 @@ public class CoreCryptoKeyProvider {
     }
 }
 
-public struct CoreCryptoKeychainItem: KeychainItemProtocol {
+struct CoreCryptoKeychainItem: KeychainItemProtocol {
 
-    public init() {} 
-
-    public var id: String {
+    var id: String {
         "com.wire.mls.key"
     }
 
@@ -84,7 +82,7 @@ public struct CoreCryptoKeychainItem: KeychainItemProtocol {
         id.data(using: .utf8)!
     }
 
-    public var getQuery: [CFString: Any] {
+    var getQuery: [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
@@ -93,7 +91,7 @@ public struct CoreCryptoKeychainItem: KeychainItemProtocol {
         ]
     }
 
-    public func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery<T>(value: T) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,

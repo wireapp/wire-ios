@@ -71,7 +71,6 @@ struct AccountEntityQuery: EntityQuery {
 
     func entities(for identifiers: [AccountEntity.ID]) async throws -> [AccountEntity] {
         os.Logger.openWireIntent.debug("entities(for: \(identifiers)): ?")
-
         return identifiers.map { id in
             let account = accountManager.accounts.first { $0.userIdentifier == id }!
             return .init(account)
@@ -79,20 +78,7 @@ struct AccountEntityQuery: EntityQuery {
     }
 
     func suggestedEntities() async throws -> [AccountEntity] {
-
-        await MainActor.run {
-            let sut = CoreCryptoKeyProvider()
-
-            let item = CoreCryptoKeychainItem()
-            let expectedKey = try! KeychainManager.generateKey(numberOfBytes: 32)
-            try? KeychainManager.storeItem(item, value: expectedKey)
-
-            let key = try! sut.coreCryptoKey(createIfNeeded: false)
-            os.Logger.openWireIntent.debug("key.count: \(key.count, privacy: .public)")
-        }
-        UIApplication
-
-        return accountManager.accounts.map(AccountEntity.init(_:))
+        accountManager.accounts.map(AccountEntity.init(_:))
     }
 }
 

@@ -48,13 +48,13 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
 
     // MARK: - Keychain item
 
-    public var getQuery: [CFString: Any] {
+    var getQuery: [CFString: Any] {
         var query = baseQuery
         query[kSecReturnData] = true
         return query
     }
 
-    public func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery<T>(value: T) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueData] = value
         return query

@@ -50,7 +50,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
 
     // MARK: - Keychain item
 
-    public var getQuery: [CFString: Any] {
+    var getQuery: [CFString: Any] {
         var query: [CFString: Any] = [
             kSecClass: kSecClassKey,
             kSecAttrKeyClass: kSecAttrKeyClassPrivate,
@@ -68,7 +68,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         return query
     }
 
-    public func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery<T>(value: T) -> [CFString: Any] {
         // Private keys are stored in the Secure Enclave.
         return [:]
     }

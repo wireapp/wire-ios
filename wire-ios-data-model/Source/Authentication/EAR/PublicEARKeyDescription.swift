@@ -53,13 +53,13 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
 
     // MARK: - Keychain item
 
-    public var getQuery: [CFString: Any] {
+    var getQuery: [CFString: Any] {
         var query = baseQuery
         query[kSecReturnRef] = true
         return query
     }
 
-    public func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery<T>(value: T) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueRef] = value
         query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
