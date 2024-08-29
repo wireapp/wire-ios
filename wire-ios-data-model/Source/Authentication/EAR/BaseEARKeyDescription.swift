@@ -24,7 +24,7 @@ open class BaseEARKeyDescription {
 
     // MARK: - Properties
 
-    let id: String
+    public  let id: String
     let tag: Data
     let accountID: String
     let label: String

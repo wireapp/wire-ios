@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol KeychainItemProtocol {
+public protocol KeychainItemProtocol {
 
     var id: String { get }
     var getQuery: [CFString: Any] { get }
@@ -30,7 +30,7 @@ public enum KeychainManager {
 
     // MARK: - Keychain access
 
-    static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
+    public static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
         WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 
@@ -65,7 +65,7 @@ public enum KeychainManager {
 
     // MARK: - Key generation
 
-    static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
+    public static func generateKey(numberOfBytes: UInt = 32) throws -> Data {
         var key = [UInt8](repeating: 0, count: Int(numberOfBytes))
         let status = SecRandomCopyBytes(kSecRandomDefault, key.count, &key)
 
