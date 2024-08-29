@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@_spi(MockBackendInfo)
 import WireTransport
 
 @testable import WireSyncEngine
@@ -85,7 +84,6 @@ extension MessagingTest {
 
     @objc
     public func setBackendInfoDefaults() {
-        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "example.com"
 
@@ -93,8 +91,4 @@ extension MessagingTest {
         proteusViaCoreCrypto.isOn = false
     }
 
-    @objc
-    public func resetBackendInfo() {
-        BackendInfo.resetMocking()
-    }
 }

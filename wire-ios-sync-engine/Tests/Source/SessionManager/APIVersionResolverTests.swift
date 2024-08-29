@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -29,8 +27,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
     override func setUp() {
-        BackendInfo.enableMocking()
-
+        BackendInfo.apiVersion = nil
         mockDelegate = .init()
         transportSession = MockTransportSession(dispatchGroup: dispatchGroup)
 
@@ -40,8 +37,6 @@ final class APIVersionResolverTests: ZMTBaseTest {
     override func tearDown() {
         mockDelegate = nil
         transportSession = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }
