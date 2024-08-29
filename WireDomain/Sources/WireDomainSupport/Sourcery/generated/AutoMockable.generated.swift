@@ -56,6 +56,100 @@ import WireDataModel
 
 
 
+public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - storeConversation
+
+    public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
+    public var storeConversationIsFederationEnabled_MockError: Error?
+    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async throws -> Void)?
+
+    public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async throws {
+        storeConversationIsFederationEnabled_Invocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
+
+        if let error = storeConversationIsFederationEnabled_MockError {
+            throw error
+        }
+
+        guard let mock = storeConversationIsFederationEnabled_MockMethod else {
+            fatalError("no mock for `storeConversationIsFederationEnabled`")
+        }
+
+        try await mock(conversation, isFederationEnabled)
+    }
+
+    // MARK: - deleteConversation
+
+    public var deleteConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
+    public var deleteConversationWithQualifiedId_MockError: Error?
+    public var deleteConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async throws -> Void)?
+
+    public func deleteConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async throws {
+        deleteConversationWithQualifiedId_Invocations.append(qualifiedId)
+
+        if let error = deleteConversationWithQualifiedId_MockError {
+            throw error
+        }
+
+        guard let mock = deleteConversationWithQualifiedId_MockMethod else {
+            fatalError("no mock for `deleteConversationWithQualifiedId`")
+        }
+
+        try await mock(qualifiedId)
+    }
+
+    // MARK: - removeSelfUserFromConversation
+
+    public var removeSelfUserFromConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
+    public var removeSelfUserFromConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
+
+    public func removeSelfUserFromConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
+        removeSelfUserFromConversationWithQualifiedId_Invocations.append(qualifiedId)
+
+        guard let mock = removeSelfUserFromConversationWithQualifiedId_MockMethod else {
+            fatalError("no mock for `removeSelfUserFromConversationWithQualifiedId`")
+        }
+
+        await mock(qualifiedId)
+    }
+
+    // MARK: - storeConversationNeedsBackendUpdate
+
+    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
+    public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
+
+    public func storeConversationNeedsBackendUpdate(_ needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
+        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
+
+        guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
+            fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
+        }
+
+        await mock(needsUpdate, qualifiedId)
+    }
+
+    // MARK: - storeFailedConversation
+
+    public var storeFailedConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
+    public var storeFailedConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
+
+    public func storeFailedConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
+        storeFailedConversationWithQualifiedId_Invocations.append(qualifiedId)
+
+        guard let mock = storeFailedConversationWithQualifiedId_MockMethod else {
+            fatalError("no mock for `storeFailedConversationWithQualifiedId`")
+        }
+
+        await mock(qualifiedId)
+    }
+
+}
+
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
 
     // MARK: - Life cycle
@@ -81,6 +175,56 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
 
         try await mock()
+    }
+
+    // MARK: - deleteConversations
+
+    public var deleteConversationsWithQualifiedIds_Invocations: [Set<WireAPI.QualifiedID>] = []
+    public var deleteConversationsWithQualifiedIds_MockError: Error?
+    public var deleteConversationsWithQualifiedIds_MockMethod: ((Set<WireAPI.QualifiedID>) async throws -> Void)?
+
+    public func deleteConversations(withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>) async throws {
+        deleteConversationsWithQualifiedIds_Invocations.append(qualifiedIds)
+
+        if let error = deleteConversationsWithQualifiedIds_MockError {
+            throw error
+        }
+
+        guard let mock = deleteConversationsWithQualifiedIds_MockMethod else {
+            fatalError("no mock for `deleteConversationsWithQualifiedIds`")
+        }
+
+        try await mock(qualifiedIds)
+    }
+
+    // MARK: - removeSelfUserFromConversations
+
+    public var removeSelfUserFromConversationsWithQualifiedIds_Invocations: [Set<WireAPI.QualifiedID>] = []
+    public var removeSelfUserFromConversationsWithQualifiedIds_MockMethod: ((Set<WireAPI.QualifiedID>) async -> Void)?
+
+    public func removeSelfUserFromConversations(withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>) async {
+        removeSelfUserFromConversationsWithQualifiedIds_Invocations.append(qualifiedIds)
+
+        guard let mock = removeSelfUserFromConversationsWithQualifiedIds_MockMethod else {
+            fatalError("no mock for `removeSelfUserFromConversationsWithQualifiedIds`")
+        }
+
+        await mock(qualifiedIds)
+    }
+
+    // MARK: - markConversationsAsFetched
+
+    public var markConversationsAsFetchedQualifiedIds_Invocations: [Set<WireAPI.QualifiedID>] = []
+    public var markConversationsAsFetchedQualifiedIds_MockMethod: ((Set<WireAPI.QualifiedID>) async -> Void)?
+
+    public func markConversationsAsFetched(qualifiedIds: Set<WireAPI.QualifiedID>) async {
+        markConversationsAsFetchedQualifiedIds_Invocations.append(qualifiedIds)
+
+        guard let mock = markConversationsAsFetchedQualifiedIds_MockMethod else {
+            fatalError("no mock for `markConversationsAsFetchedQualifiedIds`")
+        }
+
+        await mock(qualifiedIds)
     }
 
 }

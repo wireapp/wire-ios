@@ -19,61 +19,67 @@
 import WireAPI
 import WireDataModel
 
-/// An extension that encapsulates storage work related to conversation various statuses.
+/// An extension that encapsulates storage operations related to conversation statuses.
 
 extension ConversationLocalStore {
 
+    // MARK: - Conversation status
+
     func updateConversationStatus(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
     ) {
-        if let selfMember = payload.members?.selfMember {
+        if let selfMember = remoteConversation.members?.selfMember {
             updateMemberStatus(
                 from: selfMember,
-                for: conversation
+                for: localConversation
             )
         }
 
-        if let readReceiptMode = payload.readReceiptMode {
-            conversation.updateReceiptMode(readReceiptMode)
+        if let readReceiptMode = remoteConversation.readReceiptMode {
+            localConversation.updateReceiptMode(readReceiptMode)
         }
 
-        if let accessModes = payload.access {
-            if let accessRoles = payload.accessRoles {
-                conversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
+        if let accessModes = remoteConversation.access {
+            if let accessRoles = remoteConversation.accessRoles {
+                localConversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
             } else if
-                let accessRole = payload.legacyAccessRole,
+                let accessRole = remoteConversation.legacyAccessRole,
                 let legacyAccessRole = accessRole.toDomainModel() {
                 let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
-                conversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
+                localConversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
             }
         }
 
-        if let messageTimer = payload.messageTimer {
-            conversation.updateMessageDestructionTimeout(timeout: messageTimer)
+        if let messageTimer = remoteConversation.messageTimer {
+            localConversation.updateMessageDestructionTimeout(timeout: messageTimer)
         }
     }
 
+    // MARK: - MLS status
+
     func updateMLSStatus(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
     ) async {
         guard DeveloperFlag.enableMLSSupport.isOn else { return }
 
         await updateConversationIfNeeded(
-            conversation: conversation,
-            fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil
+            localConversation: localConversation,
+            fallbackGroupID: remoteConversation.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil
         )
     }
 
+    // MARK: - MLS status
+
     func updateConversationIfNeeded(
-        conversation: ZMConversation,
+        localConversation: ZMConversation,
         fallbackGroupID: MLSGroupID?
     ) async {
         let (messageProtocol, mlsGroupID, mlsService) = await context.perform { [self] in
             (
-                conversation.messageProtocol,
-                conversation.mlsGroupID,
+                localConversation.messageProtocol,
+                localConversation.mlsGroupID,
                 context.mlsService
             )
         }
@@ -86,8 +92,8 @@ extension ConversationLocalStore {
         }
 
         await context.perform {
-            if conversation.mlsGroupID == nil {
-                conversation.mlsGroupID = mlsGroupID
+            if localConversation.mlsGroupID == nil {
+                localConversation.mlsGroupID = mlsGroupID
             }
         }
 
@@ -104,23 +110,25 @@ extension ConversationLocalStore {
         let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform { [self] in
-            conversation.mlsStatus = newStatus
+            localConversation.mlsStatus = newStatus
             context.saveOrRollback()
         }
     }
 
+    // MARK: - Member status
+
     func updateMemberStatus(
-        from payload: WireAPI.Conversation.Member,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation.Member,
+        for localConversation: ZMConversation
     ) {
-        if let mutedStatus = payload.mutedStatus,
-           let mutedReference = payload.mutedReference {
-            conversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
+        if let mutedStatus = remoteConversation.mutedStatus,
+           let mutedReference = remoteConversation.mutedReference {
+            localConversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
         }
 
-        if let archived = payload.archived,
-           let archivedReference = payload.archivedReference {
-            conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
+        if let archived = remoteConversation.archived,
+           let archivedReference = remoteConversation.archivedReference {
+            localConversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
         }
     }
 

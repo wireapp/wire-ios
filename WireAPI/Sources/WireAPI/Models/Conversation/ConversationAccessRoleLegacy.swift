@@ -20,7 +20,7 @@ import Foundation
 
 /// Which users are allowed to be participants in a conversation.
 
-public enum ConversationAccessRoleLegacy: String, Codable {
+public enum ConversationAccessRoleLegacy: String, Codable, Sendable {
 
     /// Used in one-to-one and self conversations.
 

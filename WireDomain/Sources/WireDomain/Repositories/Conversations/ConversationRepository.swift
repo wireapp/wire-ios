@@ -24,51 +24,56 @@ import WireDataModel
 /// Facilitate access to conversations related domain objects.
 public protocol ConversationRepositoryProtocol {
 
-    /// Fetch and persist all conversations
+    /// Fetches and persists all conversations
 
     func pullConversations() async throws
 
-    /// Delete conversations with qualified conversations ids.
+    /// Deletes conversations with qualified conversations ids.
     /// - Parameter qualifiedIds: The qualified conversations IDs.
 
     func deleteConversations(
         withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
     ) async throws
 
-    /// Remove `SelfUser` from the specified conversations IDs.
+    /// Removes `SelfUser` from the specified conversations IDs.
     /// - Parameter qualifiedIds: The qualified conversations IDs.
 
     func removeSelfUserFromConversations(
         withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async throws
+    ) async
 
-    /// Mark specified conversations as fetched.
+    /// Marks specified conversations as fetched.
     /// - Parameter qualifiedIds: The qualified conversations IDs.
 
     func markConversationsAsFetched(
         qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async throws
+    ) async
 
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
 
+    public struct BackendInfo {
+        let domain: String
+        let isFederationEnabled: Bool
+    }
+
     // MARK: - Properties
 
     private let conversationsAPI: any ConversationsAPI
-    private var conversationsLocalStore: any ConversationLocalStoreProtocol
-    private let domain: String
+    private let conversationsLocalStore: any ConversationLocalStoreProtocol
+    private let backendInfo: BackendInfo
 
     // MARK: - Object lifecycle
 
     public init(
         conversationsAPI: any ConversationsAPI,
         conversationsLocalStore: any ConversationLocalStoreProtocol,
-        domain: String
+        backendInfo: BackendInfo
     ) {
         self.conversationsAPI = conversationsAPI
         self.conversationsLocalStore = conversationsLocalStore
-        self.domain = domain
+        self.backendInfo = backendInfo
     }
 
     // MARK: - Public
@@ -76,43 +81,49 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func pullConversations() async throws {
         var qualifiedIds: [WireAPI.QualifiedID]
 
-        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { /// only for api v0 (see `ConversationsAPIV0` method comment.
+        if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { /// only for api v0 (see `ConversationsAPIV0` method comment)
             let uuids = try await result.reduce([UUID](), +)
-            qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: domain) }
+            qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain) }
         } else {
+            /// fallback to api versions > v0.
             let ids = try await conversationsAPI.getConversationIdentifiers()
             qualifiedIds = try await ids.reduce([WireAPI.QualifiedID](), +)
         }
 
         let conversationList = try await conversationsAPI.getConversations(for: qualifiedIds)
 
-        try await withThrowingTaskGroup(of: Void.self) { taskGroup in
+        await withThrowingTaskGroup(of: Void.self) { taskGroup in
             let foundConversations = conversationList.found
-            let missingConversations = conversationList.notFound
-            let failedConversations = conversationList.failed
+            let missingConversationsQualifiedIds = conversationList.notFound
+            let failedConversationsQualifiedIds = conversationList.failed
 
-            for foundConversation in foundConversations {
-                guard let conversationID = foundConversation.id ?? foundConversation.qualifiedID?.uuid else {
-                    throw ConversationRepositoryError.conversationIdNotFound
-                }
-
+            for conversation in foundConversations {
                 taskGroup.addTask { [self] in
-                    try await conversationsLocalStore.storeConversation(foundConversation, withId: conversationID)
+                    do {
+                        try await conversationsLocalStore.storeConversation(
+                            conversation,
+                            isFederationEnabled: backendInfo.isFederationEnabled
+                        )
+                    } catch {
+                        throw ConversationRepositoryError.failedToStoreConversation(error)
+                    }
                 }
             }
 
-            for missingConversation in missingConversations {
+            for id in missingConversationsQualifiedIds {
                 taskGroup.addTask { [self] in
-                    try await conversationsLocalStore.storeNeedsToBeUpdatedFromBackend(
-                        requiresUpdate: true,
-                        conversation: missingConversation
+                    await conversationsLocalStore.storeConversationNeedsBackendUpdate(
+                        true,
+                        qualifiedId: id
                     )
                 }
             }
 
-            for failedConversation in failedConversations {
+            for id in failedConversationsQualifiedIds {
                 taskGroup.addTask { [self] in
-                    try await conversationsLocalStore.storeFailedConversationStatus(failedConversation)
+                    await conversationsLocalStore.storeFailedConversation(
+                        withQualifiedId: id
+                    )
                 }
             }
         }
@@ -124,7 +135,11 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for qualifiedId in qualifiedIds {
                 taskGroup.addTask { [self] in
-                    try await conversationsLocalStore.deleteConversation(withQualifiedId: qualifiedId)
+                    do {
+                        try await conversationsLocalStore.deleteConversation(withQualifiedId: qualifiedId)
+                    } catch {
+                        throw ConversationRepositoryError.failedToDeleteConversation(error)
+                    }
                 }
             }
         }
@@ -132,7 +147,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     public func removeSelfUserFromConversations(
         withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async throws {
+    ) async {
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for qualifiedId in qualifiedIds {
                 taskGroup.addTask { [self] in
@@ -144,13 +159,13 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     public func markConversationsAsFetched(
         qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async throws {
+    ) async {
         await withThrowingTaskGroup(of: Void.self) { taskGroup in
             for qualifiedId in qualifiedIds {
                 taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeNeedsToBeUpdatedFromBackend(
-                        requiresUpdate: false,
-                        conversation: qualifiedId
+                    await conversationsLocalStore.storeConversationNeedsBackendUpdate(
+                        false,
+                        qualifiedId: qualifiedId
                     )
                 }
             }

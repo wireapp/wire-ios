@@ -19,77 +19,78 @@
 import WireAPI
 import WireDataModel
 
-/// An extension that encapsulates storage work related to conversation metadata.
+/// An extension that encapsulates storage operations related to conversation metadata.
 
 extension ConversationLocalStore {
 
     // MARK: - Metadata
 
     func updateMetadata(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
     ) {
-        if let teamID = payload.teamID {
-            conversation.updateTeam(identifier: teamID)
+        if let teamID = remoteConversation.teamID {
+            localConversation.updateTeam(identifier: teamID)
         }
 
-        if let name = payload.name {
-            conversation.userDefinedName = name
+        if let name = remoteConversation.name {
+            localConversation.userDefinedName = name
         }
 
-        guard let userID = payload.creator else {
+        guard let userID = remoteConversation.creator else {
             return
         }
 
         /// We assume that the creator always belongs to the same domain as the conversation
         let creator = ZMUser.fetchOrCreate(
             with: userID,
-            domain: payload.qualifiedID?.domain,
+            domain: remoteConversation.qualifiedID?.domain,
             in: context
         )
 
-        conversation.creator = creator
+        localConversation.creator = creator
     }
 
     // MARK: - Attributes
 
     func updateAttributes(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation,
+        isFederationEnabled: Bool
     ) {
-        conversation.domain = BackendInfo.isFederationEnabled ? payload.qualifiedID?.domain : nil
-        conversation.needsToBeUpdatedFromBackend = false
+        localConversation.domain = isFederationEnabled ? remoteConversation.qualifiedID?.domain : nil
+        localConversation.needsToBeUpdatedFromBackend = false
 
-        if let epoch = payload.epoch {
-            conversation.epoch = UInt64(epoch)
+        if let epoch = remoteConversation.epoch {
+            localConversation.epoch = UInt64(epoch)
         }
 
         if
-            let base64String = payload.mlsGroupID,
+            let base64String = remoteConversation.mlsGroupID,
             let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
-            conversation.mlsGroupID = mlsGroupID
+            localConversation.mlsGroupID = mlsGroupID
         }
 
-        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
-            conversation.ciphersuite = ciphersuite.toDomainModel()
+        if let ciphersuite = remoteConversation.cipherSuite, let epoch = remoteConversation.epoch, epoch > 0 {
+            localConversation.ciphersuite = ciphersuite.toDomainModel()
         }
     }
 
     // MARK: - Timestamps
 
     func updateConversationTimestamps(
-        for conversation: ZMConversation
+        for localConversation: ZMConversation
     ) {
+        let serverTimestamp = Date.now
+
         /// If the lastModifiedDate is non-nil, e.g. restore from backup,
         /// do not update the lastModifiedDate.
 
-        let serverTimestamp = Date.now
-
-        if conversation.lastModifiedDate == nil {
-            conversation.updateLastModified(serverTimestamp)
+        if localConversation.lastModifiedDate == nil {
+            localConversation.updateLastModified(serverTimestamp)
         }
 
-        conversation.updateServerModified(serverTimestamp)
+        localConversation.updateServerModified(serverTimestamp)
     }
 
 }

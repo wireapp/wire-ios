@@ -19,23 +19,23 @@
 import WireAPI
 import WireDataModel
 
-/// An extension that encapsulates storage work related to conversation group (user, role, members).
+/// An extension that encapsulates storage operations related to conversation group (user, role, members).
 
 extension ConversationLocalStore {
 
     // MARK: - User & Role
 
     func fetchUserAndRole(
-        from payload: WireAPI.Conversation.Member,
-        for conversation: ZMConversation
+        from remoteConversationMember: WireAPI.Conversation.Member,
+        for localConversation: ZMConversation
     ) -> (ZMUser, Role?)? {
-        guard let userID = payload.id ?? payload.qualifiedID?.uuid else {
+        guard let userID = remoteConversationMember.id ?? remoteConversationMember.qualifiedID?.uuid else {
             return nil
         }
 
         let user = ZMUser.fetchOrCreate(
             with: userID,
-            domain: payload.qualifiedID?.domain,
+            domain: remoteConversationMember.qualifiedID?.domain,
             in: context
         )
 
@@ -50,8 +50,8 @@ extension ConversationLocalStore {
             )
         }
 
-        let role = payload.conversationRole.map {
-            fetchOrCreateRoleForConversation(name: $0, conversation: conversation)
+        let role = remoteConversationMember.conversationRole.map {
+            fetchOrCreateRoleForConversation(name: $0, conversation: localConversation)
         }
 
         return (user, role)
@@ -60,41 +60,41 @@ extension ConversationLocalStore {
     // MARK: - Members
 
     func updateMembers(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
     ) {
-        guard let members = payload.members else {
+        guard let members = remoteConversation.members else {
             return
         }
 
         let otherMembers = members.others.compactMap {
             fetchUserAndRole(
                 from: $0,
-                for: conversation
+                for: localConversation
             )
         }
 
         let selfUserRole = fetchUserAndRole(
             from: members.selfMember,
-            for: conversation
+            for: localConversation
         )?.1
 
-        conversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
+        localConversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
     }
 
     // MARK: 1:1
 
     func linkOneOnOneUserIfNeeded(
-        for conversation: ZMConversation
+        for localConversation: ZMConversation
     ) {
         guard
-            conversation.conversationType == .oneOnOne,
-            let otherUser = conversation.localParticipantsExcludingSelf.first
+            localConversation.conversationType == .oneOnOne,
+            let otherUser = localConversation.localParticipantsExcludingSelf.first
         else {
             return
         }
 
-        conversation.oneOnOneUser = otherUser
+        localConversation.oneOnOneUser = otherUser
     }
 
 }

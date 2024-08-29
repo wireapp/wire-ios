@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// Access to conversations API.
 public protocol ConversationsAPI {
 

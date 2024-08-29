@@ -19,46 +19,46 @@
 import WireAPI
 import WireDataModel
 
-/// An extension that encapsulates storage work related to conversation MLS.
+/// An extension that encapsulates storage operations related to conversation MLS.
 
 extension ConversationLocalStore {
 
     // MARK: - Message protocols
 
     func assignMessageProtocol(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
     ) {
-        guard let newMessageProtocol = payload.messageProtocol else {
+        guard let newMessageProtocol = remoteConversation.messageProtocol else {
             return
         }
 
-        conversation.messageProtocol = newMessageProtocol.toDomainModel()
+        localConversation.messageProtocol = newMessageProtocol.toDomainModel()
     }
 
     func updateMessageProtocol(
-        from payload: WireAPI.Conversation,
-        for conversation: ZMConversation
+        from remoteConversation: WireAPI.Conversation,
+        for localConversation: ZMConversation
     ) {
-        guard let newMessageProtocol = payload.messageProtocol else {
+        guard let newMessageProtocol = remoteConversation.messageProtocol else {
             return
         }
 
         let sender = ZMUser.selfUser(in: context)
 
-        switch conversation.messageProtocol {
+        switch localConversation.messageProtocol {
         case .proteus:
             switch newMessageProtocol {
             case .proteus:
                 break /// no update, ignore
             case .mixed:
-                conversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
-                conversation.messageProtocol = newMessageProtocol.toDomainModel()
+                localConversation.appendMLSMigrationStartedSystemMessage(sender: sender, at: .now)
+                localConversation.messageProtocol = newMessageProtocol.toDomainModel()
 
             case .mls:
-                let date = conversation.lastModifiedDate ?? .now
-                conversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
-                conversation.messageProtocol = newMessageProtocol.toDomainModel()
+                let date = localConversation.lastModifiedDate ?? .now
+                localConversation.appendMLSMigrationPotentialGapSystemMessage(sender: sender, at: date)
+                localConversation.messageProtocol = newMessageProtocol.toDomainModel()
             }
 
         case .mixed:
@@ -66,8 +66,8 @@ extension ConversationLocalStore {
             case .proteus, .mixed:
                 break /// no update, ignore
             case .mls:
-                conversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
-                conversation.messageProtocol = newMessageProtocol.toDomainModel()
+                localConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
+                localConversation.messageProtocol = newMessageProtocol.toDomainModel()
             }
 
         case .mls:
@@ -81,15 +81,15 @@ extension ConversationLocalStore {
     // MARK: - Self / MLS
 
     func createOrJoinSelfConversation(
-        from conversation: ZMConversation
+        from localConversation: ZMConversation
     ) async throws {
-        guard let context = conversation.managedObjectContext else {
+        guard let context = localConversation.managedObjectContext else {
             return
         }
 
         let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
             (
-                conversation.mlsGroupID,
+                localConversation.mlsGroupID,
                 context.mlsService,
                 ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true
             )
@@ -99,9 +99,9 @@ extension ConversationLocalStore {
             return
         }
 
-        if await context.perform({ conversation.epoch <= 0 }) {
+        if await context.perform({ localConversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
-            await context.perform { conversation.ciphersuite = ciphersuite }
+            await context.perform { localConversation.ciphersuite = ciphersuite }
         } else if try await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }

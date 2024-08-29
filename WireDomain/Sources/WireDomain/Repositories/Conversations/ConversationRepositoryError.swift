@@ -22,8 +22,11 @@ import Foundation
 
 enum ConversationRepositoryError: Error {
 
-    /// Conversation ID was not found
+    /// Unable to delete conversation.
 
-    case conversationIdNotFound
+    case failedToDeleteConversation(Error)
 
+    /// Unable to store conversation.
+
+    case failedToStoreConversation(Error)
 }
