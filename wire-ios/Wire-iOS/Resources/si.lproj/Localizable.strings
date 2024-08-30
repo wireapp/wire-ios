@@ -43,8 +43,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "අමුත්තන්ගේ කාමරය";
-
 // User Cell
 "user_cell.title.you_suffix" = " (ඔබ)";
 
@@ -53,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "නමකින් හෝ පරිශ්‍රීලක නාමයෙන් සොයන්න";
 "peoplepicker.header.top_people" = "ජනප්‍රිය පුද්ගලයින්";
-"peoplepicker.button.create_conversation" = "සමූහයක් සාදන්න";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "සහභාගීන් යොදන්න";
 "peoplepicker.header.conversations" = "සමූහ";
 "peoplepicker.header.team_conversations" = "සමූහ %@";
@@ -104,8 +102,6 @@
 "peoplepicker.invite_more_people" = "ආරාධනා කරන්න";
 "peoplepicker.invite_team_members" = "කණ්ඩායමට එක්වීමට ආරාධනා කරන්න";
 "peoplepicker.quick-action.open-conversation" = "අරින්න";
-"peoplepicker.quick-action.create-conversation" = "සමූහයක් සාදන්න";
-"peoplepicker.quick-action.create-guest-room" = "අමුත්තන්ගේ කාමරයක් සාදන්න";
 "peoplepicker.quick-action.admin-services" = "සේවා කළමනාකරණය";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +125,13 @@
 "conversation_list.empty.all_archived.message" = "සියල්ල සංරක්‍ෂිතයි";
 "conversation_list.empty.no_contacts.message" = "සංවාදයක් අරඹන්න හෝ සමූහයක් සාදන්න";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favorites";
+"conversation_list.filter.groups.title" = "සමූහ";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Remove";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "එක්වන්න";
@@ -138,10 +141,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "සබඳතා";
 "conversation_list.bottom_bar.conversations.title" = "සංවාද";
-"conversation_list.bottom_bar.folders.title" = "බහාලුම්";
 "conversation_list.bottom_bar.archived.title" = "සංරක්‍ෂණය";
+"conversation_list.bottom_bar.settings.title" = "Settings";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
