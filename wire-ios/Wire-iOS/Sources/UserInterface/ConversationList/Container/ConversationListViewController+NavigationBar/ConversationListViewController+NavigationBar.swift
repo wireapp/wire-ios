@@ -75,7 +75,8 @@ extension ConversationListViewController {
     }
 
     func setupLeftNavigationBarButtons() {
-        guard traitCollection.userInterfaceIdiom != .pad else { return }
+        // TODO: actually check if it's the compact column
+        guard traitCollection.horizontalSizeClass == .compact else { return }
 
         // in the design the left bar button items are very close to each other,
         // so we'll use a stack view instead
@@ -111,7 +112,7 @@ extension ConversationListViewController {
             stackView.addArrangedSubview(imageView)
         }
 
-        navigationItem.leftBarButtonItem = .init(customView: stackView)
+        parent?.navigationItem.leftBarButtonItem = .init(customView: stackView)
     }
 
     func setupTitleView() {
@@ -123,7 +124,8 @@ extension ConversationListViewController {
     }
 
     func setupRightNavigationBarButtons() {
-        if traitCollection.userInterfaceIdiom == .pad {
+        // TODO: actually check if it's the compact column
+        if traitCollection.horizontalSizeClass != .compact {
             return setupRightNavigationBarButtons_SplitView()
         }
 

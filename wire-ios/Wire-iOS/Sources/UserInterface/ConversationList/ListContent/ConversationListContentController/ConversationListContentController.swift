@@ -130,6 +130,7 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.allowsSelection = true
         collectionView.allowsMultipleSelection = false
         collectionView.contentInset = .zero
+        collectionView.contentInset.top = -20
         collectionView.delaysContentTouches = false
         collectionView.accessibilityIdentifier = "conversation list"
         collectionView.backgroundColor = .clear

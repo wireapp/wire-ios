@@ -177,7 +177,7 @@ final class ZClientViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = ColorTheme.Backgrounds.background
+        view.backgroundColor = ColorTheme.Backgrounds.surface
 
         addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -655,7 +655,7 @@ final class ZClientViewController: UIViewController {
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            topOverlayContainer.bottomAnchor.constraint(equalTo: wireSplitViewController.view.topAnchor),
+            wireSplitViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
             wireSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             wireSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             wireSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)

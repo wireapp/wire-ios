@@ -238,6 +238,14 @@ final class ConversationListViewController: UIViewController {
         .portrait
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        setupTitleView()
+        setupLeftNavigationBarButtons()
+        setupRightNavigationBarButtons()
+    }
+
     // MARK: - Setup UI
 
     private func setupObservers() {

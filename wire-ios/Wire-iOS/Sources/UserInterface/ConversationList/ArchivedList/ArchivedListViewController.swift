@@ -53,6 +53,8 @@ final class ArchivedListViewController: UIViewController {
 
         view.accessibilityViewIsModal = true
         view.backgroundColor = SemanticColors.View.backgroundConversationList
+        // TODO: see docs: https://developer.apple.com/documentation/uikit/uiviewcontroller/1621851-navigationitem
+        // "Avoid tying the creation of bar button items in your navigation item to the creation of your view controller's view. The navigation item of a view controller may be retrieved independently of the view controller's view. ..."
         setupNavigationItem()
         setupCollectionView()
         setupEmptyPlaceholder()
