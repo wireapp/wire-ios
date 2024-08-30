@@ -18,7 +18,11 @@
 
 import SwiftUI
 
-public final class SidebarViewController: UIHostingController<SidebarView> {
+public final class SidebarViewController: UIHostingController<SidebarAdapter> {
+
+    public weak var delegate: (any SidebarViewControllerDelegate)?
+
+    @State private var count = 0
 
     public var accountInfo: SidebarAccountInfo? {
         get { rootView.accountInfo }
@@ -35,22 +39,56 @@ public final class SidebarViewController: UIHostingController<SidebarView> {
         set { rootView.conversationFilter = newValue }
     }
 
+    public convenience init() {
+        self.init(accountInfo: .init(), availability: .none, conversationFilter: .none)
+    }
+
     public required init(
         accountInfo: SidebarAccountInfo?,
         availability: Availability?,
         conversationFilter: SidebarConversationFilter?
     ) {
-        let rootView = SidebarView(
-            accountInfo: accountInfo,
-            availability: availability,
-            conversationFilter: conversationFilter
+        let rootView = SidebarAdapter(
+            accountInfo: <#T##SidebarAccountInfo?#>,
+            availability: <#T##Availability?#>,
+            initialConversationFilter: <#T##SidebarConversationFilter?#>,
+            conversationFilterUpdated: <#T##(SidebarConversationFilter?) -> Void##(SidebarConversationFilter?) -> Void##(_ conversationFilter: SidebarConversationFilter?) -> Void#>
         )
         super.init(rootView: rootView)
     }
 
-    @available(*, unavailable)
-    @MainActor
+    @available(*, unavailable) @MainActor
     dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
+    }
+}
+
+public struct SidebarAdapter: View {
+
+    fileprivate var accountInfo: SidebarAccountInfo?
+    fileprivate var availability: Availability?
+
+    @State fileprivate var conversationFilter: SidebarConversationFilter? {
+        didSet { conversationFilterUpdated(conversationFilter) }
+    }
+    let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
+
+    init(
+        accountInfo: SidebarAccountInfo?,
+        availability: Availability?,
+        initialConversationFilter: SidebarConversationFilter?,
+        conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
+    ) {
+        self.accountInfo = accountInfo
+        self.availability = availability
+        self.conversationFilter = conversationFilter
+    }
+
+    public var body: some View {
+        SidebarView(
+            accountInfo: accountInfo,
+            availability: availability,
+            conversationFilter: $conversationFilter
+        )
     }
 }

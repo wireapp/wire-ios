@@ -23,7 +23,7 @@ public struct SidebarView: View {
 
     public var accountInfo: SidebarAccountInfo?
     public var availability: Availability?
-    public var conversationFilter: SidebarConversationFilter?
+    @Binding public var conversationFilter: SidebarConversationFilter?
 
     @State private var iconSize: CGSize?
 

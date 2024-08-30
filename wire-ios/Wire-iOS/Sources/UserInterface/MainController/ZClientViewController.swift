@@ -187,16 +187,8 @@ final class ZClientViewController: UIViewController {
         createTopViewConstraints()
 
         // TODO: provide actual values
-        let sidebarViewController = SidebarViewController(
-            accountInfo: .init(
-                displayName: "Firstname Lastname",
-                username: "@username",
-                accountImage: .init(),
-                isTeamAccount: false
-            ),
-            availability: .none,
-            conversationFilter: .none
-        )
+        let sidebarViewController = SidebarViewController()
+        //sidebarViewController.
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
         wireSplitViewController.setViewController(NoConversationPlaceholderViewController(), for: .secondary)
