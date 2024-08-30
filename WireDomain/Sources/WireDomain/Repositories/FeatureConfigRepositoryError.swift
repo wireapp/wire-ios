@@ -26,8 +26,8 @@ enum FeatureConfigRepositoryError: Error {
 
     case failedToStoreConfigLocally(Error)
 
-    /// Unable to fetch config locally
+    /// Unable to fetch feature locally
 
-    case failedToFetchConfigLocally
+    case failedToFetchFeatureLocally
 
 }

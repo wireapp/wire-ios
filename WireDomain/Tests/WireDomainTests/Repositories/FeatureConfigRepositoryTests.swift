@@ -65,20 +65,15 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let featureStates = try await sut.pullFeatureConfigs()
-
-        var localFeatures: [Feature?] = []
-
-        for featureState in featureStates {
-            localFeatures.append(Feature.fetch(name: featureState.name, context: context))
-            XCTAssertEqual(featureState.status, .enabled)
-            XCTAssertEqual(featureState.shouldNotifyUser, false)
-        }
+        try await sut.pullFeatureConfigs()
 
         // Then
 
-        let foundFeatures = localFeatures.compactMap { $0 }
-        XCTAssertEqual(foundFeatures.count, Scaffolding.featureConfigs.count)
+        let features = Feature.Name.allCases.compactMap {
+            Feature.fetch(name: $0, context: context)
+        }
+
+        XCTAssertEqual(features.count, Scaffolding.featureConfigs.count)
     }
 
     func testNeedsToNotifyUser_When_Flag_Set_To_True_Stored_Value_Returns_True() async throws {
@@ -109,7 +104,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let featureStates = try await sut.pullFeatureConfigs()
+        try await sut.pullFeatureConfigs()
 
         // Then
 
