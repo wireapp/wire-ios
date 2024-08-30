@@ -42,10 +42,8 @@ struct SidebarMenuItem: View {
     private(set) var action: () -> Void
 
     var body: some View {
-
         Button(action: action) {
             HStack {
-
                 Label {
                     title()
                         .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)

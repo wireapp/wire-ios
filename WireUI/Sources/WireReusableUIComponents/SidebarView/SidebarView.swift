@@ -29,7 +29,6 @@ public struct SidebarView: View {
 
     public var body: some View {
         ZStack {
-
             // background color
             Rectangle()
                 .foregroundStyle(Color(ColorTheme.Backgrounds.background))
@@ -37,7 +36,6 @@ public struct SidebarView: View {
 
             // content
             VStack(alignment: .leading, spacing: 0) {
-
                 profileSwitcher
 
                 let menuItemsScrollView = ScrollView(.vertical) { menuItems }
@@ -78,7 +76,6 @@ public struct SidebarView: View {
 
     @ViewBuilder
     private var profileSwitcher: some View {
-
         if let accountInfo {
             SidebarProfileSwitcherView(accountInfo.displayName, accountInfo.username) {
                 AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.isTeamAccount, availability)
@@ -90,7 +87,6 @@ public struct SidebarView: View {
 
     @ViewBuilder
     private var menuItems: some View {
-
         VStack(alignment: .leading, spacing: 0) {
             Text("sidebar.conversation_filter.title", bundle: .module)
                 .font(.textStyle(.h2))
@@ -120,10 +116,9 @@ public struct SidebarView: View {
 
 // MARK: - SidebarData.ConversationFilter + label
 
-private extension Optional where Wrapped == SidebarConversationFilter {
+private extension SidebarConversationFilter? {
 
     func label(_ iconSize: CGSize?, isActive: Bool) -> SidebarMenuItem {
-
         let text: Text
         let icon: String
         let action: () -> Void = {}
@@ -132,15 +127,19 @@ private extension Optional where Wrapped == SidebarConversationFilter {
         case .none:
             text = Text("sidebar.conversation_filter.all.title", bundle: .module)
             icon = "text.bubble"
+
         case .favorites:
             text = Text("sidebar.conversation_filter.favorites.title", bundle: .module)
             icon = "star"
+
         case .groups:
             text = Text("sidebar.conversation_filter.groups.title", bundle: .module)
             icon = "person.3"
+
         case .oneOnOne:
             text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
             icon = "person"
+
         case .archived:
             text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
             icon = "archivebox"

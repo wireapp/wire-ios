@@ -48,8 +48,9 @@ public final class SidebarViewController: UIHostingController<SidebarView> {
         super.init(rootView: rootView)
     }
 
+    @available(*, unavailable)
     @MainActor
-    required dynamic init?(coder aDecoder: NSCoder) {
+    dynamic required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 }

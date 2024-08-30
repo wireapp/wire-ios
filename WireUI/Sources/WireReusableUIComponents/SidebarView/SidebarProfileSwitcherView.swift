@@ -20,7 +20,7 @@ import SwiftUI
 import WireDesign
 
 struct SidebarProfileSwitcherView<AccountImageView>: View
-where AccountImageView: View {
+    where AccountImageView: View {
 
     @State private var accountImageDiameter: CGFloat = 0
 
@@ -30,7 +30,6 @@ where AccountImageView: View {
 
     var body: some View {
         HStack {
-
             accountImageView()
                 .frame(width: accountImageDiameter, height: accountImageDiameter)
 

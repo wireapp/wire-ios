@@ -31,12 +31,13 @@ public final class DoubleColumnContainerViewController: UIViewController {
         addChild(primary)
         addChild(secondary)
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         for child in children[0 ... 1] {
@@ -47,7 +48,6 @@ public final class DoubleColumnContainerViewController: UIViewController {
 
         let (primary, secondary) = (children[0].view!, children[1].view!)
         NSLayoutConstraint.activate([
-
             primary.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             primary.topAnchor.constraint(equalTo: view.topAnchor),
             view.bottomAnchor.constraint(equalTo: primary.bottomAnchor),
@@ -57,7 +57,7 @@ public final class DoubleColumnContainerViewController: UIViewController {
             view.trailingAnchor.constraint(equalTo: secondary.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: secondary.bottomAnchor),
 
-            primary.widthAnchor.constraint(equalTo: secondary.widthAnchor, multiplier: 2/3) // TODO: remove if possible
+            primary.widthAnchor.constraint(equalTo: secondary.widthAnchor, multiplier: 2 / 3) // TODO: remove if possible
         ])
     }
 }

@@ -20,8 +20,8 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 import WireReusableUIComponents
+import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
@@ -748,14 +748,14 @@ final class ZClientViewController: UIViewController {
     var isConversationViewVisible: Bool {
         // TODO: fix
         false
-        //wireSplitViewController.isConversationViewVisible
+        // wireSplitViewController.isConversationViewVisible
     }
 
     var isConversationListVisible: Bool {
         // TODO: fix
         return false
-        //return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        //(wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        // return (wireSplitViewController.layoutSize == .regularLandscape) ||
+        // (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(

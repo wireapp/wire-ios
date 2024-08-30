@@ -19,10 +19,10 @@
 import FLAnimatedImage
 import UIKit
 import WireCommonComponents
-import WireUtilitiesPkg
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireUtilitiesPkg
 import Ziphy
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
