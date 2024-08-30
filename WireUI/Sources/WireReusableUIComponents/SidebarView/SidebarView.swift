@@ -167,7 +167,7 @@ private extension SidebarConversationFilter? {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        let sidebarViewController = SidebarViewHostingController(
+        let sidebarViewController = SidebarViewController(
             accountInfo: .init(
                 displayName: "Firstname Lastname",
                 username: "@username",

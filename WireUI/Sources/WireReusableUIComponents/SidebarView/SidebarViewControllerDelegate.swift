@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol SidebarViewHostingControllerDelegate: AnyObject {
+public protocol SidebarViewControllerDelegate: AnyObject {
 
     // TODO: can the user change the availability via the sidebar?
-    // func sidebarViewController(_ hostingController: SidebarViewHostingController, didChange availability: Availability)
+    // func sidebarViewController(_ viewController: SidebarViewController, didChange availability: Availability)
 
-    func sidebarViewHostingController(_ hostingController: SidebarViewHostingController, didSelect conversationFilter: SidebarConversationFilter?)
+    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?)
 }
