@@ -28,27 +28,6 @@ public protocol ConversationRepositoryProtocol {
 
     func pullConversations() async throws
 
-    /// Deletes conversations with qualified conversations ids.
-    /// - Parameter qualifiedIds: The qualified conversations IDs.
-
-    func deleteConversations(
-        withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async throws
-
-    /// Removes `SelfUser` from the specified conversations IDs.
-    /// - Parameter qualifiedIds: The qualified conversations IDs.
-
-    func removeSelfUserFromConversations(
-        withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async
-
-    /// Marks specified conversations as fetched.
-    /// - Parameter qualifiedIds: The qualified conversations IDs.
-
-    func markConversationsAsFetched(
-        qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async
-
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -123,49 +102,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 taskGroup.addTask { [self] in
                     await conversationsLocalStore.storeFailedConversation(
                         withQualifiedId: id
-                    )
-                }
-            }
-        }
-    }
-
-    public func deleteConversations(
-        withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async throws {
-        await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            for qualifiedId in qualifiedIds {
-                taskGroup.addTask { [self] in
-                    do {
-                        try await conversationsLocalStore.deleteConversation(withQualifiedId: qualifiedId)
-                    } catch {
-                        throw ConversationRepositoryError.failedToDeleteConversation(error)
-                    }
-                }
-            }
-        }
-    }
-
-    public func removeSelfUserFromConversations(
-        withQualifiedIds qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async {
-        await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            for qualifiedId in qualifiedIds {
-                taskGroup.addTask { [self] in
-                    await conversationsLocalStore.removeSelfUserFromConversation(withQualifiedId: qualifiedId)
-                }
-            }
-        }
-    }
-
-    public func markConversationsAsFetched(
-        qualifiedIds: Set<WireAPI.QualifiedID>
-    ) async {
-        await withThrowingTaskGroup(of: Void.self) { taskGroup in
-            for qualifiedId in qualifiedIds {
-                taskGroup.addTask { [self] in
-                    await conversationsLocalStore.storeConversationNeedsBackendUpdate(
-                        false,
-                        qualifiedId: qualifiedId
                     )
                 }
             }

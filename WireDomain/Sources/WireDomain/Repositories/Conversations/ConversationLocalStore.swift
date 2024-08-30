@@ -33,20 +33,6 @@ public protocol ConversationLocalStoreProtocol {
         isFederationEnabled: Bool
     ) async throws
 
-    /// Deletes a local conversation given a qualified id.
-    /// - Parameter qualifiedId: The conversation qualified ID.
-
-    func deleteConversation(
-        withQualifiedId qualifiedId: WireAPI.QualifiedID
-    ) async throws
-
-    /// Removes a SelfUser from the specified conversation.
-    /// - Parameter qualifiedId: The conversation qualified ID.
-
-    func removeSelfUserFromConversation(
-        withQualifiedId qualifiedId: WireAPI.QualifiedID
-    ) async
-
     /// Stores a flag indicating whether a conversation requires update from backend.
     /// - Parameter qualifiedId: The conversation qualified ID.
 
@@ -123,63 +109,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         default:
             /// conversation type is nil
             return
-        }
-    }
-
-    public func deleteConversation(
-        withQualifiedId qualifiedId: WireAPI.QualifiedID
-    ) async throws {
-        let conversation = await context.perform { [context] in
-            let conversation = ZMConversation.fetch(
-                with: qualifiedId.uuid,
-                domain: qualifiedId.domain,
-                in: context
-            )
-
-            return conversation?.conversationType == .group ? conversation : nil
-        }
-
-        guard let conversation else { return }
-
-        conversation.isDeletedRemotely = true
-
-        let (mlsService, groupID) = if conversation.messageProtocol == .mls {
-            (MLSServiceInterface?.none, MLSGroupID?.none)
-        } else {
-            (context.mlsService, conversation.mlsGroupID)
-        }
-
-        guard let mlsService, let groupID else {
-            return
-        }
-
-        try await mlsService.wipeGroup(groupID)
-    }
-
-    public func removeSelfUserFromConversation(
-        withQualifiedId qualifiedId: WireAPI.QualifiedID
-    ) async {
-        await context.perform { [context] in
-
-            let conversation = ZMConversation.fetch(
-                with: qualifiedId.uuid,
-                domain: qualifiedId.domain,
-                in: context
-            )
-
-            guard let conversation,
-                  conversation.conversationType == .group,
-                  conversation.isSelfAnActiveMember
-            else {
-                return
-            }
-
-            let selfUser = ZMUser.selfUser(in: context)
-
-            conversation.removeParticipantAndUpdateConversationState(
-                user: selfUser,
-                initiatingUser: selfUser
-            )
         }
     }
 
