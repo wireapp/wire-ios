@@ -1138,8 +1138,8 @@
 		BFFD439E1DE47FFA00505C8C /* UIView+RightToLeft.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFD439D1DE47FFA00505C8C /* UIView+RightToLeft.swift */; };
 		BFFE943C1E7839D10025AD75 /* ConversationRenamedCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */; };
 		BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */; };
+		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
 		CB51204B2C6F6C84000C8FEC /* TabBarChangeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB51204A2C6F6C84000C8FEC /* TabBarChangeHandler.swift */; };
-		CB7979102C737AB7006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79790F2C737AB7006FBA58 /* WireTransportSupport.framework */; };
 		CE2402811E0A992200665A91 /* AnalyticsConsoleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE2402801E0A992200665A91 /* AnalyticsConsoleProvider.swift */; };
 		CEEEAF071CB562BF00111759 /* PlaceholderConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEEAF061CB562BF00111759 /* PlaceholderConversationView.swift */; };
 		D30880FB292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30880FA292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift */; };
@@ -1527,8 +1527,6 @@
 		EED92353278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */; };
 		EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */; };
 		EEE104052126F68A003C779B /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE104042126F68A003C779B /* CameraController.swift */; };
-		EEE25B20297199FC0008B894 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */; };
-		EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B2829719A730008B894 /* Clibsodium.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2629719A730008B894 /* Clibsodium.xcframework */; };
 		EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B2729719A730008B894 /* cryptobox.xcframework */; };
 		EEE25B3529719BD30008B894 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B3429719BD30008B894 /* WireCryptobox.framework */; };
@@ -1553,8 +1551,6 @@
 		EEE25B5129719D2F0008B894 /* avs.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B4F29719D2F0008B894 /* avs.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B5329719D540008B894 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */; };
 		EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EEE25B5629719D840008B894 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5529719D840008B894 /* HTMLString.xcframework */; };
-		EEE25B5729719D850008B894 /* HTMLString.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5529719D840008B894 /* HTMLString.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; };
 		EEE25B5A29719DA80008B894 /* WireImages.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EEE25B5829719DA80008B894 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEE2DB0D2A95C6D10094835F /* GridLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE2DB0C2A95C6D10094835F /* GridLayoutView.swift */; };
@@ -2008,7 +2004,6 @@
 				EEE25B4229719C750008B894 /* WireRequestStrategy.framework in Embed Frameworks */,
 				EEE25B5429719D540008B894 /* libPhoneNumberiOS.xcframework in Embed Frameworks */,
 				EEE25B3C29719C370008B894 /* WireLinkPreview.framework in Embed Frameworks */,
-				EEE25B5729719D850008B894 /* HTMLString.xcframework in Embed Frameworks */,
 				EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */,
 				EEE25B4B29719CDC0008B894 /* WireUtilities.framework in Embed Frameworks */,
 				EEE25B4829719CB30008B894 /* WireTransport.framework in Embed Frameworks */,
@@ -2021,7 +2016,6 @@
 				5996E8A32C19D066007A52F0 /* WireNotificationEngine.framework in Embed Frameworks */,
 				EE67F742296F0EBC001D7C88 /* WireCanvas.framework in Embed Frameworks */,
 				598EA8C82C5BFFFF006DA500 /* WireAPI in Embed Frameworks */,
-				EEE25B21297199FC0008B894 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				EEE25B3F29719C580008B894 /* WireProtos.framework in Embed Frameworks */,
 				59D588962C7CDA7000CAFA0F /* WireUtilitiesPackage in Embed Frameworks */,
 			);
@@ -3260,8 +3254,8 @@
 		BFFD439D1DE47FFA00505C8C /* UIView+RightToLeft.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+RightToLeft.swift"; sourceTree = "<group>"; };
 		BFFE943B1E7839D10025AD75 /* ConversationRenamedCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationRenamedCellTests.swift; sourceTree = "<group>"; };
 		BFFE943D1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataSnapshotTestCase.swift; sourceTree = "<group>"; };
+		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB51204A2C6F6C84000C8FEC /* TabBarChangeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarChangeHandler.swift; sourceTree = "<group>"; };
-		CB79790F2C737AB7006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAsset+VideoConvert.swift"; sourceTree = "<group>"; };
 		CE2402801E0A992200665A91 /* AnalyticsConsoleProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsConsoleProvider.swift; sourceTree = "<group>"; };
 		CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileMetaDataGenerator.swift; sourceTree = "<group>"; };
@@ -3566,7 +3560,6 @@
 		EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AccentColorPickerSnapshotTests.swift; path = "Wire-iOS Tests/AccentColorPickerSnapshotTests.swift"; sourceTree = SOURCE_ROOT; };
 		EEDEA26723ED609C000EF7E3 /* ContactsViewController+Invite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+Invite.swift"; sourceTree = "<group>"; };
 		EEE104042126F68A003C779B /* CameraController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
-		EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = ../Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		EEE25B2629719A730008B894 /* Clibsodium.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Clibsodium.xcframework; path = ../Carthage/Build/Clibsodium.xcframework; sourceTree = "<group>"; };
 		EEE25B2729719A730008B894 /* cryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = cryptobox.xcframework; path = ../Carthage/Build/cryptobox.xcframework; sourceTree = "<group>"; };
 		EEE25B3429719BD30008B894 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3580,7 +3573,6 @@
 		EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
 		EEE25B4F29719D2F0008B894 /* avs.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = avs.xcframework; path = ../Carthage/Build/avs.xcframework; sourceTree = "<group>"; };
 		EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libPhoneNumberiOS.xcframework; path = ../Carthage/Build/libPhoneNumberiOS.xcframework; sourceTree = "<group>"; };
-		EEE25B5529719D840008B894 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = ../Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
 		EEE25B5829719DA80008B894 /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEE2DB0C2A95C6D10094835F /* GridLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutView.swift; sourceTree = "<group>"; };
 		EEE455DF28AFC443005ACD74 /* NotificationServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceError.swift; sourceTree = "<group>"; };
@@ -3977,8 +3969,6 @@
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
-				EEE25B20297199FC0008B894 /* SwiftProtobuf.xcframework in Frameworks */,
-				EEE25B5629719D840008B894 /* HTMLString.xcframework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
 				EEE25B3E29719C580008B894 /* WireProtos.framework in Frameworks */,
@@ -4011,6 +4001,7 @@
 				59D588A32C7CDB2000CAFA0F /* WireUtilitiesPackage in Frameworks */,
 				5996E8A02C19D02C007A52F0 /* WireDataModelSupport.framework in Frameworks */,
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
+				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
@@ -4027,7 +4018,6 @@
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
 				5996E8AA2C19D0D6007A52F0 /* WireSystemSupport.framework in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
-				CB7979102C737AB7006FBA58 /* WireTransportSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
 				59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */,
 				59D588A72C7CDB2500CAFA0F /* WireUtilitiesPackage in Frameworks */,
@@ -4714,7 +4704,6 @@
 		59D5887F2C7CD7C200CAFA0F /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				CB79790F2C737AB7006FBA58 /* WireTransportSupport.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -5477,6 +5466,7 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */,
 				016DB6DD2C261A4900DEB81B /* WireDomain.framework */,
 				EE67F740296F0EBC001D7C88 /* WireCanvas.framework */,
 				EEE25B3429719BD30008B894 /* WireCryptobox.framework */,
@@ -5504,10 +5494,8 @@
 				EEE25B2729719A730008B894 /* cryptobox.xcframework */,
 				EE67F6D4296F06A3001D7C88 /* Down.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
-				EEE25B5529719D840008B894 /* HTMLString.xcframework */,
 				EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */,
 				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
-				EEE25B1A297199800008B894 /* SwiftProtobuf.xcframework */,
 				E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */,
 				EEE25B4C29719D0B0008B894 /* ZipArchive.xcframework */,
 			);
