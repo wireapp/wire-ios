@@ -187,7 +187,7 @@ final class ZClientViewController: UIViewController {
         createTopViewConstraints()
 
         // TODO: provide actual values
-        let sidebarViewController = SidebarViewController()
+        let sidebarViewController = SidebarViewHostingController()
         sidebarViewController.delegate = self
         sidebarViewController.rootView.availability = .away
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
@@ -768,9 +768,9 @@ final class ZClientViewController: UIViewController {
     }
 }
 
-extension ZClientViewController: SidebarViewControllerDelegate {
+extension ZClientViewController: SidebarViewHostingControllerDelegate {
 
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
+    func sidebarViewHostingController(_ hostingController: SidebarViewHostingController, didSelect conversationFilter: SidebarConversationFilter?) {
         print("new conversationFilter: \(String(describing: conversationFilter))")
     }
 }
