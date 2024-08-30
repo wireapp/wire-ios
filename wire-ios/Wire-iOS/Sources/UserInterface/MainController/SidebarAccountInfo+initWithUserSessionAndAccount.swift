@@ -16,10 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireReusableUIComponents
+import WireSyncEngine
 
-/// Creates an image based on a user's or team's initials.
+extension SidebarAccountInfo {
 
-public protocol AccountImageFactory {
-    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage
+    init(_ user: some UserType, _ accountImage: UIImage) {
+        self.init(
+            displayName: user.name ?? "",
+            username: user.handle ?? "",
+            accountImage: accountImage,
+            isTeamAccount: user.membership?.team != nil
+        )
+    }
 }

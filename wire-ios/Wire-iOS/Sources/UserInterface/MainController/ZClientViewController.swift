@@ -27,7 +27,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Private Members
 
-    private let account: Account
+    let account: Account
     let userSession: UserSession
 
     private(set) var conversationRootViewController: UIViewController?
@@ -35,6 +35,8 @@ final class ZClientViewController: UIViewController {
     private(set) var currentConversation: ZMConversation?
 
     weak var router: AuthenticatedRouterProtocol?
+
+    let sidebarViewController = SidebarViewController()
 
     let wireSplitViewController = {
         let splitViewController = UISplitViewController(style: .tripleColumn)
@@ -186,9 +188,8 @@ final class ZClientViewController: UIViewController {
 
         createTopViewConstraints()
 
-        // TODO: provide actual values
-        let sidebarViewController = SidebarViewController()
-        sidebarViewController.delegate = self
+        // TODO: why is the account image not loaded?
+        sidebarViewController.accountInfo = .init(userSession.selfUser, .init())
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
         wireSplitViewController.setViewController(NoConversationPlaceholderViewController(), for: .secondary)
@@ -764,12 +765,5 @@ final class ZClientViewController: UIViewController {
         let viewController = ArchivedListViewController(userSession: userSession)
         viewController.delegate = conversationListViewController
         return UINavigationController(rootViewController: viewController)
-    }
-}
-
-extension ZClientViewController: SidebarViewControllerDelegate {
-
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
-        print("new conversationFilter: \(String(describing: conversationFilter))")
     }
 }

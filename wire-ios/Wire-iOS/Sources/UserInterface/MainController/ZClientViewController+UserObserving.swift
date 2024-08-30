@@ -18,12 +18,19 @@
 
 import UIKit
 import WireSyncEngine
+import WireReusableUIComponents
 
 extension ZClientViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             AppDelegate.shared.mainWindow?.tintColor = UIColor.accent()
+        }
+        if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+            Task { @MainActor [self] in
+                let accountImage = await AccountImage(userSession, account, MiniatureAccountImageFactory())
+                sidebarViewController.accountInfo = .init(userSession.selfUser, accountImage)
+            }
         }
     }
 

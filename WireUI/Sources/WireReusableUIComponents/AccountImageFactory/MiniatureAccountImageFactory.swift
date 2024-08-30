@@ -25,7 +25,7 @@ public struct MiniatureAccountImageFactory: AccountImageFactory {
 
     public init() {}
 
-    public func createImage(initials: String, backgroundColor: UIColor) -> UIImage {
+    public func createImage(initials: String, backgroundColor: UIColor) async -> UIImage {
         let initials = initials.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { return .init() }
 
