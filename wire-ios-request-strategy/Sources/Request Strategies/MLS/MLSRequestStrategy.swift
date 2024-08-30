@@ -19,6 +19,9 @@
 import Foundation
 import WireDataModel
 
+/// A class responsible for setting up action handlers for MLS requests
+/// and for notifying them when a request is allowed.
+
 public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Properties
