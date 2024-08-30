@@ -189,6 +189,7 @@ final class ZClientViewController: UIViewController {
         // TODO: provide actual values
         let sidebarViewController = SidebarViewController()
         sidebarViewController.delegate = self
+        sidebarViewController.rootView.availability = .away
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
         wireSplitViewController.setViewController(NoConversationPlaceholderViewController(), for: .secondary)

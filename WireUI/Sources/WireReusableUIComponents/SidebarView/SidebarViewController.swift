@@ -22,21 +22,6 @@ public final class SidebarViewController: UIHostingController<SidebarAdapter> {
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
-    public var accountInfo: SidebarAccountInfo? {
-        get { rootView.accountInfo }
-        set { rootView.accountInfo = newValue }
-    }
-
-    public var availability: Availability? {
-        get { rootView.availability }
-        set { rootView.availability = newValue }
-    }
-
-    public var conversationFilter: SidebarConversationFilter? {
-        get { rootView.conversationFilter }
-        set { rootView.conversationFilter = newValue }
-    }
-
     public convenience init() {
         self.init(accountInfo: .init(), availability: .none, conversationFilter: .none)
     }
@@ -67,10 +52,10 @@ public final class SidebarViewController: UIHostingController<SidebarAdapter> {
 
 public struct SidebarAdapter: View {
 
-    fileprivate var accountInfo: SidebarAccountInfo?
-    fileprivate var availability: Availability?
+    public var accountInfo: SidebarAccountInfo?
+    public var availability: Availability?
 
-    @State fileprivate var conversationFilter: SidebarConversationFilter?
+    @State public fileprivate(set) var conversationFilter: SidebarConversationFilter?
     let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
 
     init(
