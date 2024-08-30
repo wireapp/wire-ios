@@ -23,7 +23,19 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
+// MARK: - Constants
+
+private let preferredPrimaryColumnWidthPortrait: CGFloat = 260
+private let preferredSupplementaryColumnWidthPortrait: CGFloat = 320
+
+private let preferredPrimaryColumnWidthLandscape: CGFloat = 270
+private let preferredSupplementaryColumnWidthLandscape: CGFloat = 30
+
+// MARK: -
+
 final class ZClientViewController: UIViewController {
+
+    // MARK: - Private Members
 
     private let account: Account
     let userSession: UserSession
@@ -34,13 +46,12 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let splitViewController_ = MainSplitViewController()
     let wireSplitViewController = {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.preferredSplitBehavior = .tile
         splitViewController.preferredDisplayMode = .oneBesideSecondary
-        splitViewController.preferredPrimaryColumnWidth = 260
-        splitViewController.preferredSupplementaryColumnWidth = 320
+        splitViewController.preferredPrimaryColumnWidth = preferredPrimaryColumnWidthPortrait
+        splitViewController.preferredSupplementaryColumnWidth = preferredSupplementaryColumnWidthPortrait
         return splitViewController
     }()
 
@@ -193,7 +204,7 @@ final class ZClientViewController: UIViewController {
                 accountImage: .init(),
                 isTeamAccount: false
             ),
-            availability: .available,
+            availability: .none,
             conversationFilter: .none
         )
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
@@ -246,6 +257,23 @@ final class ZClientViewController: UIViewController {
         return presentedViewController?.shouldAutorotate ?? true
     }
 
+    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        coordinator.animate(alongsideTransition: .none) { [self] _ in
+            switch view.window?.windowScene?.interfaceOrientation {
+            case .portrait, .portraitUpsideDown:
+                wireSplitViewController.preferredPrimaryColumnWidth = preferredPrimaryColumnWidthPortrait
+                wireSplitViewController.preferredSupplementaryColumnWidth = preferredSupplementaryColumnWidthPortrait
+            case .landscapeLeft, .landscapeRight:
+                wireSplitViewController.preferredPrimaryColumnWidth = preferredPrimaryColumnWidthLandscape
+                wireSplitViewController.preferredSupplementaryColumnWidth = preferredSupplementaryColumnWidthLandscape
+            default:
+                break
+            }
+        }
+    }
+
     // MARK: keyboard shortcut
     override var keyCommands: [UIKeyCommand]? {
         [
@@ -286,6 +314,7 @@ final class ZClientViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
+        // TODO: check if still needed
         // if changing from compact width to regular width, make sure current conversation is loaded
         if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
             if let currentConversation {
