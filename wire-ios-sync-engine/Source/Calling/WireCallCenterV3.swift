@@ -673,6 +673,13 @@ extension WireCallCenterV3 {
         return conferenceCalling.status == .enabled
     }
 
+    /// Sets up the MLS conference for a given conversation.
+    ///
+    /// - Parameter conversation: The conversation to set up the MLS conference for.
+    ///
+    /// See documentation:
+    /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/692027483/Use+case+Join+conference+sub-conversation+MLS
+
     private func setUpMLSConference(in conversation: ZMConversation) throws {
         guard let conversationID = conversation.avsIdentifier else {
             throw Failure.failedToSetupMLSConference
@@ -698,11 +705,13 @@ extension WireCallCenterV3 {
 
             Task {
                 do {
+                    // Join the subgroup or create it if it doesn't exist
                     let subgroupID = try await mlsService.createOrJoinSubgroup(
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
 
+                    // Generate and set the conference information for the subgroup
                     let initialConferenceInfo = try await mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
@@ -713,6 +722,8 @@ extension WireCallCenterV3 {
                         info: initialConferenceInfo
                     )
 
+                    // Set up a task to observe changes in the conference information
+                    // and update AVS accordingly
                     let updateConferenceInfoTask = Task {
 
                         let onConferenceInfoChange = mlsService.onConferenceInfoChange(
@@ -733,6 +744,8 @@ extension WireCallCenterV3 {
                         }
                     }
 
+                    // Create the stale participants remover 
+                    // and subscribe to the publisher of participants changes
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
                         mlsService: mlsService,
                         syncContext: syncContext
@@ -742,6 +755,7 @@ extension WireCallCenterV3 {
                         subconversationID: subgroupID
                     ).subscribe(staleParticipantsRemover)
 
+                    // Set up the call snapshot
                     if var snapshot = self.callSnapshots[conversationID] {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
