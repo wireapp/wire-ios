@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 @testable import WireAPI
 import WireAPISupport
 import WireDataModel
@@ -31,6 +32,8 @@ final class FeatureConfigRepositoryTests: XCTestCase {
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
+
+    var subscription: AnyCancellable?
 
     var context: NSManagedObjectContext {
         stack.syncContext
@@ -62,11 +65,11 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let featureStates = sut.pullFeatureConfigs()
+        let featureStates = try await sut.pullFeatureConfigs()
 
         var localFeatures: [Feature?] = []
 
-        for try await featureState in featureStates {
+        for featureState in featureStates {
             localFeatures.append(Feature.fetch(name: featureState.name, context: context))
             XCTAssertEqual(featureState.status, .enabled)
             XCTAssertEqual(featureState.shouldNotifyUser, false)
@@ -106,11 +109,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // When
 
-        let featureStates = sut.pullFeatureConfigs()
-
-        for try await featureState in featureStates {
-            continue
-        }
+        let featureStates = try await sut.pullFeatureConfigs()
 
         // Then
 
@@ -118,6 +117,34 @@ final class FeatureConfigRepositoryTests: XCTestCase {
         XCTAssertEqual(feature.status == .enabled, true)
         XCTAssertEqual(feature.config?.enforceAppLock, true)
         XCTAssertEqual(feature.config?.inactivityTimeoutSecs, 2_147_483_647)
+    }
+
+    func testObserveFeatureChanges() async throws {
+        // Given
+
+        featureConfigsAPI.getFeatureConfigs_MockValue = Scaffolding.featureConfigs
+        let expectation = XCTestExpectation()
+        var featureStates: [FeatureState] = []
+
+        /// Start subscription
+        subscription = sut.observeFeatureStates()
+            .sink { featureState in
+                featureStates.append(featureState)
+                let feature = Feature.fetch(name: featureState.name, context: self.context)
+                XCTAssertNotNil(feature)
+                XCTAssertEqual(featureState.status, .enabled)
+                XCTAssertEqual(featureState.shouldNotifyUser, false)
+
+                expectation.fulfill()
+            }
+
+        // When
+        _ = try await sut.pullFeatureConfigs()
+
+        await fulfillment(of: [expectation], timeout: 5.0)
+
+        // Then
+        XCTAssertEqual(featureStates.count, Scaffolding.featureConfigs.count)
     }
 
 }

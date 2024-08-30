@@ -18,6 +18,7 @@
 
 import Foundation
 
+import Combine
 import WireAPI
 import WireDataModel
 
@@ -27,13 +28,21 @@ protocol FeatureConfigRepositoryProtocol {
 
     /// Pulls feature configs from the server and stores them locally.
     ///
-    /// The `AsyncStream` produces a `FeatureState` value right after the feature is stored locally.
-    /// so actions can be triggered right away at a lower level callsite (e.g an interactor).
-    /// This will allow a user to be notified immediately even if the stream fails afterwards.
-    ///
-    /// - Returns: An async stream of `FeatureState`.
+    /// - Returns: A list of `FeatureState`.
 
-    func pullFeatureConfigs() -> AsyncThrowingStream<FeatureState, Error>
+    func pullFeatureConfigs() async throws -> [FeatureState]
+
+    /// Observes feature states.
+    ///
+    /// Each time `pullFeatureConfigs()` is called, a feature config is
+    /// stored locally and a new `FeatureState` value is produced by the publisher.
+    /// It allows the user to be notified of any feature changes over time.
+    ///
+    /// ⚠️ Use this method before calling `pullFeatureConfigs` to receive all emitted values.
+    ///
+    /// - Returns: A publisher of `FeatureState`.
+
+    func observeFeatureStates() -> AnyPublisher<FeatureState, Never>
 
     /// Fetches a feature config locally.
     ///
@@ -63,6 +72,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     private let featureConfigsAPI: any FeatureConfigsAPI
     private let context: NSManagedObjectContext
+    private let featureStateSubject = PassthroughSubject<FeatureState, Never>()
 
     // MARK: - Object lifecycle
 
@@ -76,29 +86,31 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Public
 
-    func pullFeatureConfigs() -> AsyncThrowingStream<FeatureState, Error> {
-        AsyncThrowingStream<FeatureState, Error> { continuation in
-            Task {
-                do {
-                    let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
+    func pullFeatureConfigs() async throws -> [FeatureState] {
+        let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
 
-                    for featureConfig in featureConfigs {
-                        do {
-                            try await storeFeatureConfig(featureConfig)
-                            if let featureState = try await getFeatureState(forFeatureConfig: featureConfig) {
-                                continuation.yield(featureState)
-                            }
-                        } catch {
-                            continuation.finish(throwing: FeatureConfigRepositoryError.failedToStoreConfigLocally(error))
-                        }
-                    }
+        var featureStates: [FeatureState] = []
 
-                    continuation.finish()
-                } catch {
-                    continuation.finish(throwing: error)
+        for featureConfig in featureConfigs {
+            do {
+                try await storeFeatureConfig(featureConfig)
+
+                if let featureState = try await getFeatureState(
+                    forFeatureConfig: featureConfig
+                ) {
+                    featureStates.append(featureState)
+                    featureStateSubject.send(featureState)
                 }
+            } catch {
+                throw FeatureConfigRepositoryError.failedToStoreConfigLocally(error)
             }
         }
+
+        return featureStates
+    }
+
+    func observeFeatureStates() -> AnyPublisher<FeatureState, Never> {
+        featureStateSubject.eraseToAnyPublisher()
     }
 
     func fetchFeatureConfig<T: Decodable>(withName name: Feature.Name, type: T.Type) async throws -> LocalFeature<T> {
@@ -334,7 +346,6 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
     }
 
 }
-
 
 /// A feature fetched locally
 
