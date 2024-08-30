@@ -93,7 +93,9 @@ public struct SidebarView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
             ForEach([SidebarConversationFilter?.none] + SidebarConversationFilter.allCases, id: \.self) { conversationFilter in
-                conversationFilter.label(iconSize, isActive: self.conversationFilter == conversationFilter)
+                conversationFilter.label(iconSize, isActive: self.conversationFilter == conversationFilter) {
+                    self.conversationFilter = conversationFilter
+                }
             }
 
             Text("sidebar.contacts.title", bundle: .module)
@@ -107,7 +109,7 @@ public struct SidebarView: View {
             ) {
                 Text("sidebar.contacts.connect.title", bundle: .module)
             } action: {
-                //
+                // TODO: implement
             }
         }
         .padding(.horizontal, 16)
@@ -118,10 +120,9 @@ public struct SidebarView: View {
 
 private extension SidebarConversationFilter? {
 
-    func label(_ iconSize: CGSize?, isActive: Bool) -> SidebarMenuItem {
+    func label(_ iconSize: CGSize?, isActive: Bool, action: @escaping () -> Void) -> SidebarMenuItem {
         let text: Text
         let icon: String
-        let action: () -> Void = {}
 
         switch self {
         case .none:

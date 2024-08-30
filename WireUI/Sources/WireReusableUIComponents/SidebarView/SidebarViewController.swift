@@ -22,8 +22,6 @@ public final class SidebarViewController: UIHostingController<SidebarAdapter> {
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
-    @State private var count = 0
-
     public var accountInfo: SidebarAccountInfo? {
         get { rootView.accountInfo }
         set { rootView.accountInfo = newValue }
@@ -48,13 +46,17 @@ public final class SidebarViewController: UIHostingController<SidebarAdapter> {
         availability: Availability?,
         conversationFilter: SidebarConversationFilter?
     ) {
+        var self_: SidebarViewController?
         let rootView = SidebarAdapter(
-            accountInfo: <#T##SidebarAccountInfo?#>,
-            availability: <#T##Availability?#>,
-            initialConversationFilter: <#T##SidebarConversationFilter?#>,
-            conversationFilterUpdated: <#T##(SidebarConversationFilter?) -> Void##(SidebarConversationFilter?) -> Void##(_ conversationFilter: SidebarConversationFilter?) -> Void#>
+            accountInfo: accountInfo,
+            availability: availability,
+            initialConversationFilter: conversationFilter,
+            conversationFilterUpdated: { conversationFilter in
+                self_?.delegate?.sidebarViewController(self_!, didSelect: conversationFilter)
+            }
         )
         super.init(rootView: rootView)
+        self_ = self
     }
 
     @available(*, unavailable) @MainActor
@@ -68,20 +70,19 @@ public struct SidebarAdapter: View {
     fileprivate var accountInfo: SidebarAccountInfo?
     fileprivate var availability: Availability?
 
-    @State fileprivate var conversationFilter: SidebarConversationFilter? {
-        didSet { conversationFilterUpdated(conversationFilter) }
-    }
+    @State fileprivate var conversationFilter: SidebarConversationFilter?
     let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
 
     init(
         accountInfo: SidebarAccountInfo?,
         availability: Availability?,
-        initialConversationFilter: SidebarConversationFilter?,
-        conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
+        initialConversationFilter conversationFilter: SidebarConversationFilter?,
+        conversationFilterUpdated: @escaping (_ conversationFilter: SidebarConversationFilter?) -> Void
     ) {
         self.accountInfo = accountInfo
         self.availability = availability
         self.conversationFilter = conversationFilter
+        self.conversationFilterUpdated = conversationFilterUpdated
     }
 
     public var body: some View {
@@ -90,5 +91,8 @@ public struct SidebarAdapter: View {
             availability: availability,
             conversationFilter: $conversationFilter
         )
+        .onReceive(conversationFilter.publisher) { conversationFilter in
+            conversationFilterUpdated(conversationFilter)
+        }
     }
 }

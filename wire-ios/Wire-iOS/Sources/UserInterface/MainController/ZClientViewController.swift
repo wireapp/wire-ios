@@ -188,7 +188,7 @@ final class ZClientViewController: UIViewController {
 
         // TODO: provide actual values
         let sidebarViewController = SidebarViewController()
-        //sidebarViewController.
+        sidebarViewController.delegate = self
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
         wireSplitViewController.setViewController(NoConversationPlaceholderViewController(), for: .secondary)
@@ -764,5 +764,12 @@ final class ZClientViewController: UIViewController {
         let viewController = ArchivedListViewController(userSession: userSession)
         viewController.delegate = conversationListViewController
         return UINavigationController(rootViewController: viewController)
+    }
+}
+
+extension ZClientViewController: SidebarViewControllerDelegate {
+
+    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
+        print("new conversationFilter: \(String(describing: conversationFilter))")
     }
 }
