@@ -14,7 +14,8 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       },
       {
-        "argument" : "-NSShowNonLocalizedStrings YES"
+        "argument" : "-NSShowNonLocalizedStrings YES",
+        "enabled" : false
       }
     ],
     "environmentVariableEntries" : [
