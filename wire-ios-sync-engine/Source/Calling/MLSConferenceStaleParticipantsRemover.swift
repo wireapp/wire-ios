@@ -21,9 +21,10 @@ import Foundation
 import WireDataModel
 import WireUtilities
 
-/// This class is responsible for removing stale participants in a MLS conference.
+/// A class responsible for removing stale participants in a MLS conference.
 ///
-/// Confluence use case:  https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/698908878/Use+case+remove+stale+participants+MLS
+/// Confluence use case:
+/// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/698908878/Use+case+remove+stale+participants+MLS
 
 class MLSConferenceStaleParticipantsRemover: Subscriber {
 

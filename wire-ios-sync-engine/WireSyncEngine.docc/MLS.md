@@ -1,6 +1,6 @@
 # MLS
 
-This document covers the MLS implemetation in WireSyncEngine. For a more general overview of MLS, see the documentation in WireDataModel.
+This document covers the MLS implementation in WireSyncEngine. For a more general overview of MLS, see the documentation in WireDataModel.
 
 ## Overview
 

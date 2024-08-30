@@ -110,7 +110,7 @@ extension WireCallCenterV3 {
         return (qualifiedID, groupID)
     }
 
-    /// Cancels pending removals of stale participants`
+    /// Cancels pending removals of stale participants.
     ///
     /// - Parameter callSnapshot: The snapshot of the call.
 
@@ -203,7 +203,6 @@ extension WireCallCenterV3 {
             }
         }
     }
-
 
     /// Deletes a subconversation.
     ///
