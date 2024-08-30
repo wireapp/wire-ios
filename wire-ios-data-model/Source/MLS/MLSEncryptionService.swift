@@ -22,12 +22,25 @@ import WireCoreCrypto
 // sourcery: AutoMockable
 public protocol MLSEncryptionServiceInterface {
 
+    /// Encrypts a message for the given group.
+    ///
+    /// - Parameters:
+    ///   - message: data representing the plaintext message
+    ///   - groupID: the id of the MLS group in which to encrypt
+    ///
+    /// - Throws:
+    ///   `MLSMessageEncryptionError` if the message couldn't be encrypted
+    ///
+    /// - Returns:
+    ///   A byte array representing the ciphertext.
     func encrypt(
         message: Data,
         for groupID: MLSGroupID
     ) async throws -> Data
 
 }
+
+/// A class responsible for encrypting messages for MLS groups.
 
 public final class MLSEncryptionService: MLSEncryptionServiceInterface {
 
@@ -53,18 +66,6 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         case failedToEncryptMessage
 
     }
-
-    /// Encrypts a message for the given group.
-    ///
-    /// - Parameters:
-    ///   - message: data representing the plaintext message
-    ///   - groupID: the id of the MLS group in which to encrypt
-    ///
-    /// - Throws:
-    ///   `MLSMessageEncryptionError` if the message couldn't be encrypted
-    ///
-    /// - Returns:
-    ///   A byte array representing the ciphertext.
 
     public func encrypt(
         message: Data,

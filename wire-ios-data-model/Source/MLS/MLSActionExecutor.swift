@@ -22,17 +22,96 @@ import WireCoreCrypto
 
 public protocol MLSActionExecutorProtocol {
 
+    /// Processes a welcome message.
+    ///
+    /// - Parameter message: The welcome message to process.
+    /// - Returns: The group ID of the group the welcome message was for.
+    ///
+    /// If any new CRL distribution points are found, they will be published. 
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+
     func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID
-    func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
+
+    /// Creates and sends a commit bundle to add the invitees to a group.
+    ///
+    /// - Parameters:
+    ///   - invitees: The key packages of the clients to add.
+    ///   - groupID: The group ID of the group to add members to.
+    /// - Returns: Update events returned by the backend.
+    ///
+    /// If any new CRL distribution points are found, they will be published. 
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+
+    func addMembers(
+        _ invitees: [KeyPackage],
+        to groupID: MLSGroupID
+    ) async throws -> [ZMUpdateEvent]
+
+    /// Creates and sends a commit bundle to remove clients from a group.
+    ///
+    /// - Parameters:
+    ///   - clients: The IDs of the clients to remove.
+    ///   - groupID: The group ID of the group to remove clients from.
+    /// - Returns: Update events returned by the backend.
+
+    func removeClients(
+        _ clients: [ClientId],
+        from groupID: MLSGroupID
+    ) async throws -> [ZMUpdateEvent]
+
+    /// Creates and sends a commit bundle to update the key material for a group.
+    ///
+    /// - Parameter groupID: The group ID of the group to update key material for.
+    /// - Returns: Update events returned by the backend.
+
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
+
+    /// Creates and sends a commit bundle to commit the pending proposals for a group.
+    ///
+    /// - Parameter groupID: The group ID of the group to commit pending proposals for.
+    /// - Returns: Update events returned by the backend.
+    /// - Throws: `CommitError.noPendingProposals` if there are no proposals to commit.
+
     func commitPendingProposals(in groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
-    func joinGroup(_ groupID: MLSGroupID, groupInfo: Data) async throws -> [ZMUpdateEvent]
-    func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage
+
+    /// Creates and sends an **external** commit to join a group.
+    ///
+    /// - Parameters:
+    ///   - groupID: The group ID of the group to join.
+    ///   - groupInfo: The group info of the group to join.
+    /// - Returns: Update events returned by the backend.
+    ///
+    /// If any new CRL distribution points are found, they will be published. 
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+
+    func joinGroup(
+        _ groupID: MLSGroupID,
+        groupInfo: Data
+    ) async throws -> [ZMUpdateEvent]
+
+    /// Decrypts a message for a group.
+    ///
+    /// - Parameters:
+    ///   - message: The message to decrypt.
+    ///   - groupID: The group ID of the group this message was for.
+    /// - Returns: The decrypted message.
+
+    func decryptMessage(
+        _ message: Data,
+        in groupID: MLSGroupID
+    ) async throws -> DecryptedMessage
+
+    /// Returns a publisher that emits the group ID of the group when the epoch changes.
+
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
+
+    /// Returns a publisher that emits the new CRL distribution points when they are found
+
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
 
 }
+
+/// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
 
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
@@ -89,7 +168,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     /// Here's it's critical that no other operation like `decryptMessage` is performed
     /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
     /// inside `performNonReentrant`
-    ///
+
     func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
         if continuationsByGroupID.keys.contains(groupID) {
             await withCheckedContinuation { continuation in
