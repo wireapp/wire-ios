@@ -593,7 +593,7 @@ jobs:
         if: ${{ inputs.wire-api || inputs.all }}
         run: |
           echo "Testing WireAPI..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
 
       # WireDomain
@@ -779,7 +779,7 @@ jobs:
         if: ${{ inputs.wire-design || inputs.all }}
         run: |
           echo "Testing WireDesign..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
           exit ${PIPESTATUS[0]}
 
       # WireReusableUIComponents
@@ -810,7 +810,7 @@ jobs:
         if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
         run: |
           echo "Testing WireReusableUIComponents..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
           exit ${PIPESTATUS[0]}
 
       # Wire-iOS
