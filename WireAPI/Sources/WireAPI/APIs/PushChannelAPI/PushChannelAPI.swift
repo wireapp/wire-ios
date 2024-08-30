@@ -17,6 +17,7 @@
 //
 
 /// An API access object for endpoints concerning the push channel.
+
 public protocol PushChannelAPI {
 
     /// Create a new push channel.
@@ -24,6 +25,6 @@ public protocol PushChannelAPI {
     /// - Parameter clientID: The id of the self client.
     /// - Returns: A push channel.
 
-    func createPushChannel(clientID: String) throws -> any PushChannelProtocol
+    func createPushChannel(clientID: String) async throws -> any PushChannelProtocol
 
 }

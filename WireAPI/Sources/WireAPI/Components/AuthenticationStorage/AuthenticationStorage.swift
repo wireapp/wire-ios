@@ -26,24 +26,24 @@ public protocol AuthenticationStorage {
     ///
     /// - Parameter accessToken: The token to store.
 
-    func storeAccessToken(_ accessToken: AccessToken)
+    func storeAccessToken(_ accessToken: AccessToken) async
 
     /// Fetch a stored access token.
     ///
     /// - Returns: The stored access token.
 
-    func fetchAccessToken() -> AccessToken?
+    func fetchAccessToken() async -> AccessToken?
 
     /// Store a cookie.
     ///
     /// - Parameter cookieData: The cookie data to store.
 
-    func storeCookieData(_ cookieData: Data?)
+    func storeCookieData(_ cookieData: Data?) async
 
     /// Fetch a stored cookie.
     ///
     /// - Returns: The stored cookie data.
 
-    func fetchCookieData() -> Data?
+    func fetchCookieData() async throws -> Data?
 
 }

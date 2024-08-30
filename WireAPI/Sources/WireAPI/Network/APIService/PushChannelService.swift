@@ -26,7 +26,7 @@ public protocol PushChannelServiceProtocol {
     /// - Parameter request: A request for a web socket connection.
     /// - Returns: A push channel.
 
-    func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol
+    func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol
 
 }
 
@@ -72,7 +72,7 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
         urlSession.invalidateAndCancel()
     }
 
-    public func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
+    public func createPushChannel(_ request: URLRequest) async throws -> any PushChannelProtocol {
         guard let url = request.url else {
             throw PushChannelServiceError.invalidRequest
         }
@@ -83,7 +83,7 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
             relativeTo: backendWebSocketURL
         )
 
-        guard let accessToken = authenticationStorage.fetchAccessToken() else {
+        guard let accessToken = await authenticationStorage.fetchAccessToken() else {
             throw PushChannelServiceError.missingAccessToken
         }
 

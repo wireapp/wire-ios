@@ -26,7 +26,7 @@ class PushChannelAPIImpl: PushChannelAPI {
         self.pushChannelService = pushChannelService
     }
 
-    func createPushChannel(clientID: String) throws -> any PushChannelProtocol {
+    func createPushChannel(clientID: String) async throws -> any PushChannelProtocol {
         var components = URLComponents(string: "/await")
         components?.queryItems = [URLQueryItem(name: "client", value: clientID)]
 
@@ -38,7 +38,7 @@ class PushChannelAPIImpl: PushChannelAPI {
             .withMethod(.get)
             .build()
 
-        return try pushChannelService.createPushChannel(request)
+        return try await pushChannelService.createPushChannel(request)
     }
 
 }

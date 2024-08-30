@@ -113,7 +113,7 @@ public final class APIService: APIServiceProtocol {
         )
 
         if requiringAccessToken {
-            guard let accessToken = authenticationStorage.fetchAccessToken() else {
+            guard let accessToken = await authenticationStorage.fetchAccessToken() else {
                 throw APIServiceError.missingAccessToken
             }
 
