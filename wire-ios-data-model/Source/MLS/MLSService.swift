@@ -31,7 +31,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///   - groupID: The ID of the group or subgroup to create.
     ///   - parentGroupID: The ID of the parent group, if any.
     /// - Returns: The ciphersuite used to create the group
-    /// - Throws: A ``MLSService/MLSGroupCreationError`` error if the group creation fails, or if the ciphersuite is invalid, or if the external senders cannot be fetched.
+    /// - Throws: A ``MLSService/MLSGroupCreationError`` error if the group creation fails,
+    ///  or if the ciphersuite is invalid, or if the external senders cannot be fetched.
     ///
     /// The group will be created with the default ciphersuite and external senders.
     ///
@@ -40,7 +41,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// If E2EI is enabled, the creator credential type will be set to `.x509`. Otherwise, it will be set to `.basic`
     ///
-    /// Once the group is created, the stale key material detector will be notified through ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``.
+    /// Once the group is created, the stale key material detector will be notified 
+    /// through ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``.
 
     func createGroup(
         for groupID: MLSGroupID,
@@ -57,7 +59,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Then calls ``MLSService/addMembersToConversation(with:for:)`` to add the self user's clients to the group.
     ///
-    /// If it catches ``MLSService/MLSAddMembersError/noMembersToAdd`` it will update the key material to send a commit to the backend and advance to a new epoch.
+    /// If it catches ``MLSService/MLSAddMembersError/noMembersToAdd``
+    /// it will update the key material to send a commit to the backend and advance to a new epoch.
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/791412993/Use+case+join+self+conversation+MLS)
 
@@ -90,11 +93,14 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Fetches the group info of the group from the backend,
     /// and calls ``MLSActionExecutor/joinGroup(_:groupInfo:)`` to send a commit to join the group.
     ///
-    /// If the group is joined successfully, the conversation's ``ZMConversation/mlsStatus`` will be set to ``MLSGroupStatus/ready``
+    /// If the group is joined successfully, the conversation's ``ZMConversation/mlsStatus`` 
+    /// will be set to ``MLSGroupStatus/ready``
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)`` to process the events returned by the backend.
+    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
+    /// to process the events returned by the backend.
     ///
-    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
+    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown 
+    /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/576454924/Use+case+join+existing+conversation+from+a+new+device+MLS)
 
@@ -105,13 +111,15 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Parameter groupID: The ID of the group to join   
     /// - Throws: An error if the group cannot be joined
     ///
-    /// Calls ``MLSService/createGroup(for:parentGroupID:)`` to create the group if it does not exist,
-    /// **Note:** this may be unnecessary if we join the group via external commit, as it may implicitly create the group already.
+    /// Calls ``MLSService/createGroup(for:parentGroupID:)`` to create the group if it does not exist.
+    /// **Note:** this may be unnecessary if we join the group via external commit, as it may implicitly create the
+    /// group already.
     /// To be checked as part of [WPB-9029](https://wearezeta.atlassian.net/browse/WPB-9029)
     ///
     /// Then calls ``MLSService/joinGroup(with:)`` to join the group by external commit
     ///
-    /// Finally, it adds all the clients of the self user to the group by calling ``MLSService/addMembersToConversation(with:for:)``
+    /// Finally, it adds all the clients of the self user to the group 
+    /// by calling ``MLSService/addMembersToConversation(with:for:)``
 
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
@@ -121,7 +129,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Starts by fetching the ``ZMConversation`` objects that have the status ``MLSGroupStatus/pendingJoin``.
     ///
-    /// Then joins each conversation by external commit, similarly to ``MLSService/joinGroup(with:)``. Each conversation is joined in parallel.
+    /// Then joins each conversation by external commit, similarly to ``MLSService/joinGroup(with:)``. 
+    /// Each conversation is joined in parallel.
 
     func performPendingJoins() async throws
 
@@ -152,13 +161,17 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Starts by commiting pending proposals by calling ``MLSService/commitPendingProposals(in:)``.
     ///
     /// Then attempts to claim the key packages of each user's clients.
-    /// Then calls ``MLSActionExecutor/addMembers(_:to:)`` to send a commit bundle to the backend to add the users to the group.
+    /// Then calls ``MLSActionExecutor/addMembers(_:to:)`` to send a commit bundle to the backend to add
+    /// the users to the group.
     ///
-    /// If there are no key packages, it will call ``MLSActionExecutor/updateKeyMaterial(for:)`` to send a commit to the backend to inform we are in the group.
+    /// If there are no key packages, it will call ``MLSActionExecutor/updateKeyMaterial(for:)`` to send a commit
+    /// to the backend to inform we are in the group.
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)`` to process the events returned by the backend.
+    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)`` 
+    /// to process the events returned by the backend.
     ///
-    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
+    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
+    /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/157254323/Use+case+adding+a+participant+to+a+conversation+MLS+Proteus)
 
@@ -176,11 +189,14 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Starts by commiting pending proposals by calling ``MLSService/commitPendingProposals(in:)``.
     ///
-    /// Then calls ``MLSActionExecutor/removeClients(_:from:)`` to send a commit bundle to the backend to remove the clients from the group.
+    /// Then calls ``MLSActionExecutor/removeClients(_:from:)`` to send a commit bundle to the backend 
+    /// to remove the clients from the group.
     ///
-    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)`` to process the events returned by the backend.
+    /// Finally, it will call ``ConversationEventProcessorProtocol/processConversationEvents(_:)`` 
+    /// to process the events returned by the backend.
     ///
-    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
+    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown 
+    /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/621674505/Use+case+removing+a+participant+from+a+group+MLS)
 
@@ -201,13 +217,17 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Fetches the subgroup from the backend and caches it locally with ``SubconversationGroupIDRepository/storeSubconversationGroupID(_:forType:parentGroupID:)``
     ///
-    /// If the subgroup's epoch is less than or equal to 0, it creates the subgroup similarly to ``MLSService/createGroup(for:parentGroupID:)``.
-    /// After the subgroup is created it will call `updateKeyMaterial(for:)` to send a commit and update the epoch. Updating the epoch ensures other clients join the group instead of creating it.
+    /// If the subgroup's epoch is less than or equal to 0, it creates the subgroup 
+    /// similarly to ``MLSService/createGroup(for:parentGroupID:)``.
+    /// After the subgroup is created it will call `updateKeyMaterial(for:)` 
+    /// to send a commit and update the epoch.
+    /// Updating the epoch ensures other clients join the group instead of creating it.
     ///
     /// If the epoch hasn't been updated in a day, it will delete the subgroup remotely and create a new one.
     ///
     /// Otherwise, it will join the subgroup by external commit, similarly to ``MLSService/joinGroup(with:)``,
-    /// except it doesn't update the conversation's ``ZMConversation/mlsStatus`` to `.ready` since it's a subgroup and the `mlsStatus` only applies to parent conversations.
+    /// except it doesn't update the conversation's ``ZMConversation/mlsStatus`` to `.ready` 
+    /// since it's a subgroup and the `mlsStatus` only applies to parent conversations.
 
     func createOrJoinSubgroup(
         parentQualifiedID: QualifiedID,
@@ -226,6 +246,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// It will request the backend to leave the subgroup, and if successful,
     /// remove the subgroup from the ``SubconversationGroupIDRepository``
     /// and from Core Crypto's local storage.
+
     func leaveSubconversation(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,
@@ -268,7 +289,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// - Parameter subconversationGroupID: The group ID of the subgroup
     /// - Returns: An array of `MLSClientID` objects representing the members of the subgroup
-    /// - Throws: ``MLSService/MLSSubconversationMembersError/failedToGetSubconversationMembers`` if the operation fails
+    /// - Throws: ``MLSService/MLSSubconversationMembersError/failedToGetSubconversationMembers``
+    ///  if the operation fails
 
     func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
@@ -278,7 +300,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// Starts by getting a list of groups that have pending proposals.
     /// This is done by fetching conversations that have a ``ZMConversation/commitPendingProposalDate`` set.
-    /// We then compile the ``MLSGroupID`` of each conversation and their subconversation (if they exist) associated with the pending proposal date.
+    /// We then compile the ``MLSGroupID`` of each conversation and their subconversation
+    /// (if they exist) associated with the pending proposal date.
     /// The groups are then sorted by the date of the pending proposal.
     ///
     /// We then iterate through each group and check if the pending proposal date has been passed.
@@ -293,12 +316,16 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// - Parameter groupID: The group ID to commit pending proposals for
     ///
-    /// Commiting proposals entails sending a commit to the backend with ``MLSActionExecutor/commitPendingProposals(in:)``
-    /// and processing the events that are returned with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
+    /// Commiting proposals entails sending a commit to the backend 
+    /// with ``MLSActionExecutor/commitPendingProposals(in:)``
+    /// and processing the events that are returned 
+    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
     ///
-    /// If the commit is successful, or if there are no proposals to commit, we clear the ``ZMConversation/commitPendingProposalDate``
+    /// If the commit is successful, or if there are no proposals to commit, 
+    /// we clear the ``ZMConversation/commitPendingProposalDate``
     ///
-    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
+    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
+    /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
 
     func commitPendingProposals(in groupID: MLSGroupID) async throws
 
@@ -306,23 +333,30 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     /// Updates the key material for all stale groups if it hasn't been done in the past day.
     ///
-    /// Starts by calling ``StaleMLSKeyDetector/groupsWithStaleKeyingMaterial`` to get the groups with stale key material.
+    /// Starts by calling ``StaleMLSKeyDetector/groupsWithStaleKeyingMaterial`` 
+    /// to get the groups with stale key material.
     ///
-    /// Then, for each stale group, it updates the key material by calling ``MLSActionExecutor/updateKeyMaterial(for:)``
+    /// Then, for each stale group, it updates the key material
+    /// by calling ``MLSActionExecutor/updateKeyMaterial(for:)``
     ///
-    /// If successful it notifies that the key material has been updated via ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``,
-    /// then it processes the conversation events returned by the backend with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
+    /// If successful it notifies that the key material has been updated 
+    /// via ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)``,
+    /// then it processes the conversation events returned by the backend 
+    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``
     ///
-    /// Updating the key material is covered by a retry mechanism that will perform a recovery strategy based on errors thrown while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
+    /// Updating the key material is covered by a retry mechanism that will perform a recovery strategy 
+    /// based on errors thrown while sending commits.
+    /// See `MLSService/retryOnCommitFailure(for:operation:)`
 
     func updateKeyMaterialForAllStaleGroupsIfNeeded() async
 
     // MARK: - Key packages
- 
+
     /// Uploads new key packages if needed.
     ///
-    /// To avoid making requests to the backend too frequently, we first check if more than 24 hours have passed since the last time we queried
-    /// the key package count, or if the estimated local key package count is less than 50% of the target unclaimed key package count.
+    /// To avoid making requests to the backend too frequently, 
+    /// we first check if more than 24 hours have passed since the last time we queried the key package count,
+    /// or if the estimated local key package count is less than 50% of the target unclaimed key package count.
     ///
     /// Then we query how many key packages of the self client are available on the backend and
     /// generate and upload new ones if there are less than 50% of the target unclaimed key package count.
@@ -335,13 +369,16 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     /// Fetches and re-joins MLS groups that are out of sync.
     ///
-    /// Out-of-sync groups are characterized by an epoch mismatch between the epoch of the group on the backend
-    /// and the epoch of the group in core crypto's local storage.
+    /// Out-of-sync groups are characterized by an epoch mismatch between the epoch
+    /// of the group on the backend and the epoch of the group in core crypto's local storage.
     ///
-    /// Repairing out-of-sync groups is done by re-joining the group via external commit (using ``MLSService/joinGroup(with:)``.
-    /// After the group is re-joined, we insert a system message indicating that there is a potential gap in the conversation history.
+    /// Repairing out-of-sync groups is done by re-joining the group via external commit 
+    /// (using ``MLSService/joinGroup(with:)``.
+    /// After the group is re-joined, we insert a system message indicating that 
+    /// there is a potential gap in the conversation history.
     ///
-    /// **Note:** this method should be called after quick sync to make sure that the ``ZMConversation/epoch`` is up-to-date.
+    /// **Note:** this method should be called after quick sync to make sure 
+    /// that the ``ZMConversation/epoch`` is up-to-date.
     ///
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/601817267/Use+Case+Detecting+and+Recovering+from+Out+of+Sync+MLS+Group)
 
@@ -354,9 +391,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// If the group ID corresponds to a subgroup, the parent group ID will be used to fetch the subgroup information
     /// from the backend, and it will be re-joined by external commit after checking that it is out of sync.
     ///
-    /// If the group ID corresponds to a parent group, the corresponding ``ZMConversation`` will be synced with the backend
-    /// to ensure the epoch is up-to-date, then it will be re-joined by external commit after checking that it is out of sync.
-    /// If rejoining is successful, a system message will be appended to the conversation to indicate a potential gap in history.
+    /// If the group ID corresponds to a parent group, the corresponding ``ZMConversation`` 
+    /// will be synced with the backend to ensure the epoch is up-to-date,
+    /// then it will be re-joined by external commit after checking that it is out of sync.
+    /// If rejoining is successful, a system message will be appended 
+    /// to the conversation to indicate a potential gap in history.
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
@@ -366,13 +405,17 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// - Parameter groupID: The group ID for which to generate a new epoch.
     ///
-    /// Commits any pending proposals before updating key material with ``MLSActionExecutor/updateKeyMaterial(for:)``,
+    /// Commits any pending proposals before updating key material 
+    /// with ``MLSActionExecutor/updateKeyMaterial(for:)``,
     /// which sends a commit to the backend.
     ///
-    /// Then the ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)`` method is called to note when the key material was updated for the group,
-    /// and any events returned by the backend are processed with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
+    /// Then the ``StaleMLSKeyDetector/keyingMaterialUpdated(for:)`` 
+    /// method is called to note when the key material was updated for the group,
+    /// and any events returned by the backend are processed 
+    /// with ``ConversationEventProcessorProtocol/processConversationEvents(_:)``.
     ///
-    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
+    /// The operation is covered by a retry mechanism that will perform a recovery strategy based on errors thrown
+    /// while sending commits. See `MLSService/retryOnCommitFailure(for:operation:)`
 
     func generateNewEpoch(groupID: MLSGroupID) async throws
 
@@ -415,8 +458,10 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     /// Starts the migration from proteus to MLS.
     ///
-    /// For all team group conversations that use the proteus protocol, this method will update their ``ZMConversation/messageProtocol`` to ``MessageProtocol/mixed``
-    /// and create an MLS group for them. It will then update the keying material and add all participants to the group.
+    /// For all team group conversations that use the proteus protocol, 
+    /// this method will update their ``ZMConversation/messageProtocol`` to ``MessageProtocol/mixed``
+    /// and create an MLS group for them. 
+    /// It will then update the keying material and add all participants to the group.
     ///
     /// In case of a failure, the group will be wiped.
     ///

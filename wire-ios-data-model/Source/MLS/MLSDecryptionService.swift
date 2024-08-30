@@ -45,8 +45,8 @@ public protocol MLSDecryptionServiceInterface {
     ///   The data representing the decrypted message bytes.
     ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
     ///
-    /// In addition to decrypting the message and returning a result, this method will also publish events if the epoch has changed
-    /// or if new CRL distribution points have been found.
+    /// In addition to decrypting the message and returning a result, this method will also publish events 
+    /// if the epoch has changed or if new CRL distribution points have been found.
 
     func decrypt(
         message: String,
@@ -90,7 +90,8 @@ extension DecryptedMessage: DecryptedMessageBundle { }
 extension BufferedDecryptedMessage: DecryptedMessageBundle { }
 
 /// A class responsible for decrypting messages for MLS groups.
-/// It is also responsible for processing welcome messages and publishing events when the epoch changes or new CRL distribution points are found.
+/// It is also responsible for processing welcome messages and publishing events 
+/// when the epoch changes or new CRL distribution points are found.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 

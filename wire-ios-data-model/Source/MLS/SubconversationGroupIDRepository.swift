@@ -41,7 +41,8 @@ public protocol SubconversationGroupIDRepositoryInterface {
     ///   - parentGroupID: The group ID of the parent conversation
     /// - Returns: The group ID of the subconversation
     ///
-    /// **Note:** This will return `nil` if the group ID hasn't previously been stored by calling ``storeSubconversationGroupID(_:forType:parentGroupID:)``
+    /// **Note:** This will return `nil` if the group ID hasn't previously been stored 
+    /// by calling ``storeSubconversationGroupID(_:forType:parentGroupID:)``
 
     func fetchSubconversationGroupID(
         forType type: SubgroupType,
@@ -53,13 +54,13 @@ public protocol SubconversationGroupIDRepositoryInterface {
     /// - Parameter targetGroupID: The group ID of the subconversation
     /// - Returns: The type and parent group ID of the subconversation
     ///
-    /// **Note:** This will return `nil` if the group ID hasn't previously been stored by calling ``storeSubconversationGroupID(_:forType:parentGroupID:)``
+    /// **Note:** This will return `nil` if the group ID hasn't previously been stored 
+    /// by calling ``storeSubconversationGroupID(_:forType:parentGroupID:)``
 
     func findSubgroupTypeAndParentID(
         for targetGroupID: MLSGroupID
     ) async -> (parentID: MLSGroupID, type: SubgroupType)?
 }
-
 
 /// An actor responsible for storing and fetching subconversations group IDs.
 /// It is used to keep track of which subconversation is associated with which conversation.

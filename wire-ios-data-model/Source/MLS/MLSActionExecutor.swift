@@ -27,7 +27,8 @@ public protocol MLSActionExecutorProtocol {
     /// - Parameter message: The welcome message to process.
     /// - Returns: The group ID of the group the welcome message was for.
     ///
-    /// If any new CRL distribution points are found, they will be published. They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+    /// If any new CRL distribution points are found, they will be published. 
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
     func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID
 
@@ -38,7 +39,8 @@ public protocol MLSActionExecutorProtocol {
     ///   - groupID: The group ID of the group to add members to.
     /// - Returns: Update events returned by the backend.
     ///
-    /// If any new CRL distribution points are found, they will be published. They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+    /// If any new CRL distribution points are found, they will be published. 
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
     func addMembers(
         _ invitees: [KeyPackage],
@@ -79,7 +81,8 @@ public protocol MLSActionExecutorProtocol {
     ///   - groupInfo: The group info of the group to join.
     /// - Returns: Update events returned by the backend.
     ///
-    /// If any new CRL distribution points are found, they will be published. They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
+    /// If any new CRL distribution points are found, they will be published. 
+    /// They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
     func joinGroup(
         _ groupID: MLSGroupID,
@@ -165,7 +168,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     /// Here's it's critical that no other operation like `decryptMessage` is performed
     /// between step 1 and 2. We enforce this by wrapping all `decrypt` and `commit` operations
     /// inside `performNonReentrant`
-    ///
+
     func performNonReentrant<T>(groupID: MLSGroupID, operation: () async throws -> T) async rethrows -> T {
         if continuationsByGroupID.keys.contains(groupID) {
             await withCheckedContinuation { continuation in
