@@ -43,8 +43,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "اتاق مهمان";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -53,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "جستجو بر اساس نام یا نام‌کاربری";
 "peoplepicker.header.top_people" = "دوستان محبوب";
-"peoplepicker.button.create_conversation" = "ایجاد گروه";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Add Participants";
 "peoplepicker.header.conversations" = "گروه‌ها";
 "peoplepicker.header.team_conversations" = "%@ Groups";
@@ -104,8 +102,6 @@
 "peoplepicker.invite_more_people" = "Invite more people";
 "peoplepicker.invite_team_members" = "دعوت افراد تا وارد این تیم شوند";
 "peoplepicker.quick-action.open-conversation" = "باز کردن";
-"peoplepicker.quick-action.create-conversation" = "ایجاد گروه";
-"peoplepicker.quick-action.create-guest-room" = "ایجاد اتاق مهمان";
 "peoplepicker.quick-action.admin-services" = "مدیریت سرویس ها";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +125,13 @@
 "conversation_list.empty.all_archived.message" = "همه چیز بایگانی شده";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "علاقه‌مندی‌ها";
+"conversation_list.filter.groups.title" = "گروه‌ها";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "حذف";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "پیوستن";
@@ -138,10 +141,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "تماس‌ها";
 "conversation_list.bottom_bar.conversations.title" = "گفتگو";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "بایگانی";
+"conversation_list.bottom_bar.settings.title" = "تنظیمات";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "در قسمت مخاطبین";

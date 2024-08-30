@@ -43,8 +43,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Habitación de invitados";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Tú)";
 
@@ -53,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Buscar por nombre o usuario";
 "peoplepicker.header.top_people" = "Contactos favoritos";
-"peoplepicker.button.create_conversation" = "Crear grupo";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Añadir Participantes";
 "peoplepicker.header.conversations" = "Grupos";
 "peoplepicker.header.team_conversations" = "%@ grupos";
@@ -104,8 +102,6 @@
 "peoplepicker.invite_more_people" = "Invitar a más contactos";
 "peoplepicker.invite_team_members" = "Invitar personas para unirse al equipo";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
-"peoplepicker.quick-action.create-conversation" = "Crear grupo";
-"peoplepicker.quick-action.create-guest-room" = "Crear una sala de invitados";
 "peoplepicker.quick-action.admin-services" = "Gestionar los servicios";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +125,13 @@
 "conversation_list.empty.all_archived.message" = "Todo archivado";
 "conversation_list.empty.no_contacts.message" = "Iniciar una conversación o crear un grupo.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoritos";
+"conversation_list.filter.groups.title" = "Grupos";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Eliminar";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Entrar";
@@ -138,10 +141,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Tiene mensajes nuevos.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contactos";
 "conversation_list.bottom_bar.conversations.title" = "Chats";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archivar";
+"conversation_list.bottom_bar.settings.title" = "Ajustes";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "en contactos";

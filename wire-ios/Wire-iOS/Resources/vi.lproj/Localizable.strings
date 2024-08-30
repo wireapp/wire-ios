@@ -43,8 +43,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Phòng khách";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Bạn)";
 
@@ -53,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Tìm kiếm bằng tên hoặc tên người dùng";
 "peoplepicker.header.top_people" = "Mọi người Hàng đầu";
-"peoplepicker.button.create_conversation" = "Tạo nhóm";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Thêm người tham gia";
 "peoplepicker.header.conversations" = "Nhóm";
 "peoplepicker.header.team_conversations" = "%@ Nhóm";
@@ -104,8 +102,6 @@
 "peoplepicker.invite_more_people" = "Mời nhiều người hơn";
 "peoplepicker.invite_team_members" = "Mời mọi người vào nhóm";
 "peoplepicker.quick-action.open-conversation" = "Mở";
-"peoplepicker.quick-action.create-conversation" = "Tạo nhóm";
-"peoplepicker.quick-action.create-guest-room" = "Tạo phòng khách";
 "peoplepicker.quick-action.admin-services" = "Quản lý Dịch vụ";
 
 "peoplepicker.federation.domain_unvailable" = "Miền liên kết hiện không có sẵn. [Tìm hiểu thêm] (%@)";
@@ -129,6 +125,13 @@
 "conversation_list.empty.all_archived.message" = "Mọi thứ đã được lưu trữ";
 "conversation_list.empty.no_contacts.message" = "Bắt đầu một cuộc hội thoại hoặc\ntạo một nhóm.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Các ưa thích";
+"conversation_list.filter.groups.title" = "Nhóm";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Xóa bỏ";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Tham gia";
@@ -138,10 +141,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Có tin nhắn mới.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Danh bạ";
 "conversation_list.bottom_bar.conversations.title" = "Các cuộc hội thoại";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Lưu trữ";
+"conversation_list.bottom_bar.settings.title" = "Cài đặt";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "trong Danh bạ";
