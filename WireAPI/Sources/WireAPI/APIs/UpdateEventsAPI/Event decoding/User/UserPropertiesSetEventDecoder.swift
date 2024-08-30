@@ -38,7 +38,7 @@ struct UserPropertiesSetEventDecoder {
                 forKey: .propertyValue
             )
 
-            property = .areReadRecieptsEnabled(value == 1)
+            property = .areReadReceiptsEnabled(value == 1)
 
         case .wireTypingIndicatorMode:
             let value = try container.decode(

@@ -243,7 +243,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 // scale in order to better see it, keeping the
                 // ratio between the border width and total size
                 .scaleEffect(6)
-                .navigationTitle("Conversations")
+                .navigationTitle(Text(verbatim: "Conversations"))
                 .navigationBarTitleDisplayMode(.inline)
                 .background(Color(UIColor.systemGray3))
                 .toolbar {
