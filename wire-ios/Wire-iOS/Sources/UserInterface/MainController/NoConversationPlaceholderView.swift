@@ -20,11 +20,12 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
+// TODO: remove file
+
 final class NoConversationPlaceholderView: UIView {
 
     // MARK: - Properties
     var shieldImageView: UIImageView!
-    let imageColor = SemanticColors.Label.textDefault
 
     // MARK: - Initialization
 
@@ -43,11 +44,13 @@ final class NoConversationPlaceholderView: UIView {
 
     // MARK: Configure Subviews and layout
     private func configureSubviews() {
-        let image = WireStyleKit.imageOfShield(color: imageColor).withRenderingMode(.alwaysTemplate)
+        let image = WireStyleKit.imageOfShield()
+            .withRenderingMode(.alwaysTemplate)
 
         shieldImageView = UIImageView(image: image)
         shieldImageView.alpha = 0.24
-        shieldImageView.tintColor = imageColor
+        shieldImageView.tintColor = SemanticColors.Label.textDefault
+        shieldImageView.contentMode = .scaleAspectFit
         addSubview(shieldImageView)
     }
 
@@ -55,8 +58,11 @@ final class NoConversationPlaceholderView: UIView {
         shieldImageView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
+
             shieldImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            shieldImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+
         ])
     }
 

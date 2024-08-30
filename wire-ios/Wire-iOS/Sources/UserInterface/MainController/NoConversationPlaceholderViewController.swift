@@ -17,11 +17,33 @@
 //
 
 import SwiftUI
+import WireDesign
 
 final class NoConversationPlaceholderViewController: UIViewController {
 
-    override func loadView() {
-        view = NoConversationPlaceholderView()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        view.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
+
+        let image = WireStyleKit.imageOfShield()
+            .withRenderingMode(.alwaysTemplate)
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        imageView.alpha = 0.24
+        imageView.tintColor = SemanticColors.Label.textDefault
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(imageView)
+        NSLayoutConstraint.activate([
+
+            imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+
+            imageView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 3),
+            imageView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 3),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: imageView.trailingAnchor, multiplier: 3),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: imageView.bottomAnchor, multiplier: 3)
+        ])
     }
 }
 

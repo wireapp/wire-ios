@@ -20,5 +20,5 @@ import SwiftUI
 
 func MainSplitViewController(
 ) -> UISplitViewController {
-    fatalError()
+    .init(style: .tripleColumn)
 }
