@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: delete file
+
 import UIKit
 import WireDesign
 
@@ -102,9 +104,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    var leftView: UIView = UIView(frame: UIScreen.main.bounds)
+    var leftView = UIView(frame: UIScreen.main.bounds)
     var rightView: UIView = {
-        let view = PlaceholderConversationView(frame: UIScreen.main.bounds)
+        let view = NoConversationPlaceholderView(frame: UIScreen.main.bounds)
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         return view
@@ -117,7 +119,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     private var sideBySideConstraint: NSLayoutConstraint!
     private var pinLeftViewOffsetConstraint: NSLayoutConstraint!
 
-    private var horizontalPanner: UIPanGestureRecognizer = UIPanGestureRecognizer()
+    private var horizontalPanner = UIPanGestureRecognizer()
 
     private var futureTraitCollection: UITraitCollection?
 

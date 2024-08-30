@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-final class PlaceholderConversationView: UIView {
+final class NoConversationPlaceholderView: UIView {
 
     // MARK: - Properties
     var shieldImageView: UIImageView!
@@ -30,6 +30,8 @@ final class PlaceholderConversationView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+
+        backgroundColor = ColorTheme.Backgrounds.backgroundVariant
         configureSubviews()
         configureConstraints()
     }
@@ -41,7 +43,6 @@ final class PlaceholderConversationView: UIView {
 
     // MARK: Configure Subviews and layout
     private func configureSubviews() {
-        backgroundColor = SemanticColors.View.backgroundDefault
         let image = WireStyleKit.imageOfShield(color: imageColor).withRenderingMode(.alwaysTemplate)
 
         shieldImageView = UIImageView(image: image)

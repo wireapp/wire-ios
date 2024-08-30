@@ -34,6 +34,7 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
+    let splitViewController_ = MainSplitViewController()
     let wireSplitViewController = {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.preferredSplitBehavior = .tile
@@ -197,10 +198,7 @@ final class ZClientViewController: UIViewController {
         )
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
-        let conversationPlaceholder = UIViewController() // TODO: see loadPlaceholderConversationController
-        conversationPlaceholder.navigationItem.leftBarButtonItems = [.init(systemItem: .action)]
-        conversationPlaceholder.view.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
-        wireSplitViewController.setViewController(conversationPlaceholder, for: .secondary)
+        wireSplitViewController.setViewController(NoConversationPlaceholderViewController(), for: .secondary)
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,
@@ -223,6 +221,7 @@ final class ZClientViewController: UIViewController {
             }
         }
 
+        // TODO: enable
         // restoreStartupState()
 
         if Bundle.developerModeEnabled {
