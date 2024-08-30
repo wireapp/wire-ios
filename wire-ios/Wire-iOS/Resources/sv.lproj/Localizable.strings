@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Nästa";
@@ -310,7 +312,7 @@
 "conversation.create.guidance.empty" = "Minst 1 tecken";
 "conversation.create.guidance.toolong" = "För många tecken";
 "conversation.create.options.title" = "Conversation options";
-"conversation.create.options.subtitle" = "Guests: %@, Services: %@, Read receipts: %@";
+"conversation.create.options.subtitle" = "Gäster: %@, Tjänster: %@, Läskvitton: %@";
 "conversation.create.guests.title" = "Tillåt gäster";
 "conversation.create.guests.subtitle" = "Öppna den här konversationen till personer utanför ditt team.";
 "conversation.create.services.title" = "Allow services";
@@ -562,8 +564,8 @@
 "content.system.message_read_receipt_on" = "%@ turned read receipts on for everyone";
 "content.system.message_read_receipt_on-you" = "%@ turned read receipts on for everyone";
 
-"content.system.message_read_receipt_off" = "%@ turned read receipts off for everyone";
-"content.system.message_read_receipt_off-you" = "%@ turned read receipts off for everyone";
+"content.system.message_read_receipt_off" = "%@ stängde av läskvitton för alla";
+"content.system.message_read_receipt_off-you" = "%@ stängde av läskvitton för alla";
 
 "content.system.message_read_receipt_on_add_to_group" = "Läskvitton är på";
 
@@ -941,8 +943,8 @@
 "profile.create_conversation_button_title" = "Skapa grupp";
 "profile.open_conversation_button_title" = "Öppna konversation";
 "profile.start_conversation_button_title" = "Starta konversation";
-"profile.read_receipts_enabled_memo.header" = "YOU HAVE ENABLED READ RECEIPTS";
-"profile.read_receipts_disabled_memo.header" = "YOU HAVE DISABLED READ RECEIPTS";
+"profile.read_receipts_enabled_memo.header" = "DU HAR AKTIVERAT LÄSKVITTON";
+"profile.read_receipts_disabled_memo.header" = "DU HAR INAKTIVERAT LÄSKVITTON";
 "profile.read_receipts_memo.body" = "If both sides turn on read receipts, you can see when messages are read.\n\nYou can change this option in your account settings.";
 
 "profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and services, update group settings, and change a participant's role.";
@@ -1070,7 +1072,7 @@
 
 "self.read_receipts_enabled.title" = "Du har aktiverat läskvitton";
 "self.read_receipts_disabled.title" = "Du har inaktiverat läskvitton";
-"self.read_receipts_description.title" = "Du kan ändra det här alternativet i dina konto-inställningar.";
+"self.read_receipts_description.title" = "Du kan ändra detta alternativ i dina kontoinställningar.";
 
 // Settings - top level
 "self.settings.create_team.title" = "Skapa ett team";
@@ -1803,7 +1805,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "inga fler gifs";
-"giphy.error.no_result" = "ingen gif hittades";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "skicka";
 "giphy.cancel" = "avbryt";

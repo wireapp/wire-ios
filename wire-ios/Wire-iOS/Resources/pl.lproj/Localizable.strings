@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Dalej";
@@ -1803,7 +1805,7 @@
 "giphy.conversation.message" = "%@ · dzięki giphy.com";
 "giphy.conversation.random_message" = "dzięki giphy.com";
 "giphy.error.no_more_results" = "nie ma więcej GIFów";
-"giphy.error.no_result" = "nie znaleziono GIFa";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "wyślij";
 "giphy.cancel" = "anuluj";

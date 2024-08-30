@@ -17,6 +17,57 @@ WireDataModel provides the persistence for Wire, powered by Core Data. As such i
 - ``EARServiceDelegate``
 - ``EARKeyGenerator``
 
+### MLS
+
+- <doc:MLS>
+- ``MLSService``
+- ``MLSDecryptionService``
+- ``MLSEncryptionService``
+- ``MLSActionExecutor``
+- ``StaleMLSKeyDetector``
+- ``SubconversationGroupIDRepository``
+- ``CommitSender``
+- ``MLSGroup``
+- ``MLSGroupID``
+- ``MLSUserID``
+- ``MLSClientID``
+- ``MLSConferenceInfo``
+- ``MLSSubgroup``
+- ``BackendMLSPublicKeys``
+- ``MLSCipherSuite``
+- ``MLSSignatureAlgorithm``
+- ``MLSGroupStatus``
+- ``MessageProtocol``
+
+### MLS Migration
+
+- <doc:MLS-Migration>
+- ``ProteusToMLSMigrationCoordinator``
+- ``OneOnOneResolver``
+- ``OneOnOneProtocolSelector``
+- ``OneOnOneMigrator``
+- ``OneOnOneConversationResolution``
+- ``MigrateMLSOneOnOneConversationError``
+
+### End-to-end identity (E2EI)
+
+- ``E2EIActivationDateRepository``
+- ``E2EIService``
+- ``E2EISetupService``
+- ``E2EIVerificationStatusService``
+- ``MLSVerificationStatus``
+- ``CRLExpirationDatesRepository``
+- ``CRLsDistributionPoints``
+- ``E2EIClientID``
+- ``MLSGroupVerification``
+
+### Core Crypto
+
+- ``SafeCoreCrypto``
+- ``CoreCryptoProvider``
+- ``CoreCryptoKeyProvider``
+- ``CoreCryptoConfigProvider``
+
 ### Entities
 
 These managed object subclasses are frequently used in the business logic and comprise the fundamental building block of Wire's model:

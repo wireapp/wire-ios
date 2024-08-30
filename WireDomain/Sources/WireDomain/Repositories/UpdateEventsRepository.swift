@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireUtilitiesPkg
 
 // sourcery: AutoMockable
 /// Access update events.
@@ -256,7 +257,7 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     }
 
     func stopReceivingLiveEvents() async {
-        await pushChannel.close()
+        pushChannel.close()
     }
 
     func storeLastEventEnvelopeID(_ id: UUID) {

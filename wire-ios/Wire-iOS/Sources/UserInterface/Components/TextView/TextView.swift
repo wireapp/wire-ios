@@ -85,8 +85,6 @@ class TextView: UITextView {
     private var placeholderLabelLeftConstraint: NSLayoutConstraint?
     private var placeholderLabelRightConstraint: NSLayoutConstraint?
 
-    private var shouldDrawPlaceholder = false
-
     override var accessibilityValue: String? {
         get {
             return text.isEmpty ? placeholderLabel.accessibilityValue : super.accessibilityValue

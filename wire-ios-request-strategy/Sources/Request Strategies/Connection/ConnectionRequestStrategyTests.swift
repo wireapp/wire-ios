@@ -19,7 +19,6 @@
 import WireDataModelSupport
 @testable import WireRequestStrategy
 import WireRequestStrategySupport
-@_spi(MockBackendInfo)
 import WireTransport
 import XCTest
 
@@ -54,7 +53,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
                                         syncProgress: mockSyncProgress,
                                         oneOneOneResolver: mockOneOnOneResolver)
 
-        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
@@ -63,7 +61,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         mockSyncProgress = nil
         mockApplicationStatus = nil
         mockOneOnOneResolver = nil
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 

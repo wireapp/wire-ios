@@ -111,7 +111,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             case .password, .passcode:
                 return PasswordRuleSet.localizedErrorMessage
             case .unknown:
-                // swiftlint:disable todo_requires_jira_link
+                // swiftlint:disable:next todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
                 return "unknown.guidance.tooshort".localized
             case .username:
@@ -126,8 +126,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             case .password, .passcode:
                 return L10n.Localizable.Password.Guidance.toolong
             case .unknown:
+                // swiftlint:disable:next todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
-                // swiftlint:enable todo_requires_jira_link
                 return "unknown.guidance.toolong".localized
             case .username:
                 return L10n.Localizable.Name.Guidance.toolong

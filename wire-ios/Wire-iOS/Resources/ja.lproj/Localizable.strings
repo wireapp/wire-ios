@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "次へ";
@@ -1803,7 +1805,7 @@
 "giphy.conversation.message" = "%@ giphy.comから";
 "giphy.conversation.random_message" = "giphy.comから";
 "giphy.error.no_more_results" = "これ以上gifがありません。";
-"giphy.error.no_result" = "gifが見つかりませんでした。";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "送信する";
 "giphy.cancel" = "キャンセル";

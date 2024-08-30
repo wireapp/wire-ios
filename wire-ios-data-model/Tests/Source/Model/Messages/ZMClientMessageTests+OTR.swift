@@ -21,9 +21,8 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: this class is the same tests as ClientMessageTests_OTR_legacy but with proteusViaCoreCrypto true
-// swiftlint:enable todo_requires_jira_link
 // + mockProteusService setup
 // as a cleanup we should remove the duplication and refactor this - WPB-5980
 final class ClientMessageTests_OTR: BaseZMClientMessageTests {
@@ -64,7 +63,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         mockProteusService = nil
 
         DeveloperFlag.storage = UserDefaults.standard
-        BackendInfo.domain = nil
         super.tearDown()
     }
 
@@ -341,7 +339,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {

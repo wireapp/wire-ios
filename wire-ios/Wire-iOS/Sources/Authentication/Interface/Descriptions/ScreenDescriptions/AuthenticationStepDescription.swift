@@ -52,15 +52,8 @@ protocol AuthenticationStepDescription {
     var subtext: NSAttributedString? { get }
     var secondaryView: AuthenticationSecondaryViewDescription? { get }
     var footerView: AuthenticationFooterViewDescription? { get }
-    func shouldSkipFromNavigation() -> Bool
 }
 
 protocol DefaultValidatingStepDescription: AuthenticationStepDescription {
     var initialValidation: ValueValidation { get }
-}
-
-extension AuthenticationStepDescription {
-    func shouldSkipFromNavigation() -> Bool {
-        return false
-    }
 }

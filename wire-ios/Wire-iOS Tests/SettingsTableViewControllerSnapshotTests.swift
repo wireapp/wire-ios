@@ -19,6 +19,8 @@
 import WireUITesting
 import XCTest
 
+import WireTransport
+
 @testable import Wire
 
 final class SettingsTableViewControllerSnapshotTests: XCTestCase {
@@ -72,8 +74,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         selfUser = nil
         SelfUser.provider = nil
         Settings.shared.reset()
-        BackendInfo.storage = .standard
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 
@@ -93,7 +93,6 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) throws {
-        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         BackendInfo.isFederationEnabled = federated
 
         MockUserRight.isPermitted = !disabledEditing

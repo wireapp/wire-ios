@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -300,3 +300,10 @@
 
 "createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
 "createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
+"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";

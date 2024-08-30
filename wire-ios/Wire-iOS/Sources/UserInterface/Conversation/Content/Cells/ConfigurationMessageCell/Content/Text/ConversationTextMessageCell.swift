@@ -188,7 +188,7 @@ extension ConversationTextMessageCellDescription {
         return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
     }
 
-    static func cells(textMessageData: ZMTextMessageData,
+    static func cells(textMessageData: TextMessageData,
                       message: ZMConversationMessage,
                       searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
 
@@ -212,8 +212,7 @@ extension ConversationTextMessageCellDescription {
         }
 
         // Quote
-        if textMessageData.hasQuote {
-            let quotedMessage = textMessageData.quoteMessage
+        if let quotedMessage = textMessageData.quoteMessage {
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }
