@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Ďalej";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Hosťovská miestnosť";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Vy)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Vyhľadať podľa mena, alebo užívateľského mena";
 "peoplepicker.header.top_people" = "Top kontakty";
-"peoplepicker.button.create_conversation" = "Vytvoriť skupinu";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Pridať účastníkov";
 "peoplepicker.header.conversations" = "Skupiny";
 "peoplepicker.header.team_conversations" = "Skupiny %@";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Pozvať viac ľudí";
 "peoplepicker.invite_team_members" = "Pozvať ľudí do tímu";
 "peoplepicker.quick-action.open-conversation" = "Otvoriť";
-"peoplepicker.quick-action.create-conversation" = "Vytvoriť skupinu";
-"peoplepicker.quick-action.create-guest-room" = "Vytvoriť hosťovskú miestnosť";
 "peoplepicker.quick-action.admin-services" = "Správa služieb";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Všetko archivované";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favorites";
+"conversation_list.filter.groups.title" = "Skupiny";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Odstrániť";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Pripojiť";
@@ -138,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakty";
 "conversation_list.bottom_bar.conversations.title" = "Conversations";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archív";
+"conversation_list.bottom_bar.settings.title" = "Nastavenia";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "V kontaktoch";

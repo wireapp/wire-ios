@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "موافق";
 "general.next" = "التالي";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "غرفة الضيوف";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "ابحث باستخدام الاسم أو المعرّف";
 "peoplepicker.header.top_people" = "الأشخاص المفضلين";
-"peoplepicker.button.create_conversation" = "إنشاء مجموعة";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "إضافة مشاركين";
 "peoplepicker.header.conversations" = "المجموعات";
 "peoplepicker.header.team_conversations" = "%@ مجموعات";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "ادعُ أشخاصًا أكثر";
 "peoplepicker.invite_team_members" = "ادعُ أشخاصًا إلى الانضمام إلى الفريق";
 "peoplepicker.quick-action.open-conversation" = "افتح";
-"peoplepicker.quick-action.create-conversation" = "إنشاء مجموعة";
-"peoplepicker.quick-action.create-guest-room" = "أنشئ غرفة ضيوف";
 "peoplepicker.quick-action.admin-services" = "إدارة الخدمات";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "أُرشف كل شيء";
 "conversation_list.empty.no_contacts.message" = "ابدأ محادثة أو\nأنشيء مجموعة.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "المفضلة";
+"conversation_list.filter.groups.title" = "المجموعات";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "إزالة";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "انضم إلى";
@@ -138,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "لديه رسائل جديدة.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "جهات الاتصال";
 "conversation_list.bottom_bar.conversations.title" = "المحادثات";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "حفظ في الأرشيف";
+"conversation_list.bottom_bar.settings.title" = "الإعدادات";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "في جهات الاتصال";

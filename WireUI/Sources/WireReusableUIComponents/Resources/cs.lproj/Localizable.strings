@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Konverzace";
+"sidebar.conversation_filter.all.title" = "Vše";
+"sidebar.conversation_filter.favorites.title" = "Oblíbené";
+"sidebar.conversation_filter.groups.title" = "Skupiny";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Archivovat";
+
+"sidebar.contacts.title" = "Kontakty";
+"sidebar.contacts.connect.title" = "Připojit";
+
+"sidebar.settings.title" = "Nastavení";
+
+"sidebar.support.title" = "Podpora";

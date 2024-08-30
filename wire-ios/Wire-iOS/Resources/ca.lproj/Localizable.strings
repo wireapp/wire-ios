@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "D'ACORD";
 "general.next" = "Següent";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Sala de convidats";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Cerca per nom o nom d'usuari";
 "peoplepicker.header.top_people" = "Gent destacada";
-"peoplepicker.button.create_conversation" = "Crea un grup";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Afegeix participants";
 "peoplepicker.header.conversations" = "Grups";
 "peoplepicker.header.team_conversations" = "%@ Grups";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Invite more people";
 "peoplepicker.invite_team_members" = "Convida gent a afegir-se a l'equip";
 "peoplepicker.quick-action.open-conversation" = "Obre";
-"peoplepicker.quick-action.create-conversation" = "Crea un grup";
-"peoplepicker.quick-action.create-guest-room" = "Crea una sala de convidats";
 "peoplepicker.quick-action.admin-services" = "Gestionar els serveis";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "S'ha arxivat tot";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favorits";
+"conversation_list.filter.groups.title" = "Grups";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Elimina";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Join";
@@ -138,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contactes";
 "conversation_list.bottom_bar.conversations.title" = "Converses";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Arxiva";
+"conversation_list.bottom_bar.settings.title" = "Configuració";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";

@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "다음";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "게스트룸";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "'실제 이름'이나 'Wire 사용자 이름'으로 사람을 찾습니다";
 "peoplepicker.header.top_people" = "자주 대화하는 사람";
-"peoplepicker.button.create_conversation" = "그룹 만들기";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "사용자를 추가하기";
 "peoplepicker.header.conversations" = "그룹";
 "peoplepicker.header.team_conversations" = "%@ 그룹";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "더 많은 사람들을 초대합니다";
 "peoplepicker.invite_team_members" = "사람들을 팀에 초대하세요.";
 "peoplepicker.quick-action.open-conversation" = "대화 열기";
-"peoplepicker.quick-action.create-conversation" = "그룹 만들기";
-"peoplepicker.quick-action.create-guest-room" = "게스트룸 만들기";
 "peoplepicker.quick-action.admin-services" = "서비스 관리하기";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -129,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "모든 항목이 보관처리 되었습니다";
 "conversation_list.empty.no_contacts.message" = "대화를 시작 하거나 그룹을 만듭니다";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favorites";
+"conversation_list.filter.groups.title" = "그룹";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Remove";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "참여하기";
@@ -138,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "새 메시지가 있습니다";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "연락처";
 "conversation_list.bottom_bar.conversations.title" = "대화 목록";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archive";
+"conversation_list.bottom_bar.settings.title" = "설정";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "연락처에서";
