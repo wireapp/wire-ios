@@ -592,8 +592,8 @@
 		3E88BE5E1B1F496600232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
 				EE712FC7295487A8006EA7B3 /* WireSystem.framework */,
+				EE98A0AD296EFBE60055E981 /* WireTesting.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

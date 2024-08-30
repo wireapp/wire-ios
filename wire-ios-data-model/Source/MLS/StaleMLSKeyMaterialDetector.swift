@@ -38,6 +38,9 @@ public protocol StaleMLSKeyDetectorProtocol {
 
 }
 
+/// A class responsible for keeping track of groups that have stale key material.
+/// It relies on Core Data for storage.
+
 public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
 
     // MARK: - Constants
@@ -48,11 +51,11 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         return keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
     }
 
-    // The maximum age of a group's key material before it's considered stale.
+    /// The maximum age of a group's key material before it's considered stale.
 
     private static let keyMaterialMaximumAgeInDays: UInt = 90
 
-    // The number of days the backend will hold a message.
+    /// The number of days the backend will hold a message.
 
     private static let backendMessageHoldTimeInDays: UInt = 28
 
