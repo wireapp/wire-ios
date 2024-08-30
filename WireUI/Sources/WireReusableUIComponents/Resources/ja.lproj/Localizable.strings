@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "会話";
+"sidebar.conversation_filter.all.title" = "すべて";
+"sidebar.conversation_filter.favorites.title" = "お気に入り";
+"sidebar.conversation_filter.groups.title" = "グループ";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "アーカイブ";
+
+"sidebar.contacts.title" = "連絡先";
+"sidebar.contacts.connect.title" = "接続";
+
+"sidebar.settings.title" = "設定";
+
+"sidebar.support.title" = "サポート";

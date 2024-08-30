@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Вперед";
@@ -42,8 +40,6 @@
 
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
-
-"general.guest-room-name" = "Гостевая комната";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Вы)";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Пригласить больше пользователей";
 "peoplepicker.invite_team_members" = "Пригласите пользователей в команду";
 "peoplepicker.quick-action.open-conversation" = "Открыть";
-"peoplepicker.quick-action.create-conversation" = "Создать группу";
-"peoplepicker.quick-action.create-guest-room" = "Создать гостевую комнату";
 "peoplepicker.quick-action.admin-services" = "Управление сервисами";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративный домен в настоящее время недоступен. [Подробнее](%@)";
@@ -129,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Архивировано";
 "conversation_list.empty.no_contacts.message" = "Начните беседу или\nсоздайте группу.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "Все беседы";
+"conversation_list.filter.favorites.title" = "Избранное";
+"conversation_list.filter.groups.title" = "Группы";
+"conversation_list.filter.oneOnOneConversations.title" = "Беседы 1:1";
+"conversation_list.filter_label.text" = "Отфильтровано по %@";
+"conversation_list.filter.remove_button.title" = "Удалить";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Присоединиться";
@@ -138,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Есть новые сообщения.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Контакты";
 "conversation_list.bottom_bar.conversations.title" = "Беседы";
-"conversation_list.bottom_bar.folders.title" = "Папки";
 "conversation_list.bottom_bar.archived.title" = "Архив";
+"conversation_list.bottom_bar.settings.title" = "Настройки";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";

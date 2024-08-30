@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Далі";
@@ -43,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Гостьова кімната";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Ви)";
 
@@ -53,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Пошук за іменем або ніком";
 "peoplepicker.header.top_people" = "Топ-контакти";
-"peoplepicker.button.create_conversation" = "Створити групу";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Додати учасників";
 "peoplepicker.header.conversations" = "Групи";
 "peoplepicker.header.team_conversations" = "Групи %@";
@@ -104,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Запросити більше людей";
 "peoplepicker.invite_team_members" = "Запросіть колег приєднатися до команди";
 "peoplepicker.quick-action.open-conversation" = "Вiдкрити";
-"peoplepicker.quick-action.create-conversation" = "Створити групу";
-"peoplepicker.quick-action.create-guest-room" = "Створити гостьову кімнату";
 "peoplepicker.quick-action.admin-services" = "Керування сервісами";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративний домен наразі не доступний. [Дізнатися більше](%@)";
@@ -129,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Усі розмови заархівовано";
 "conversation_list.empty.no_contacts.message" = "Розпочніть розмову\nабо створіть групу.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Вподобання";
+"conversation_list.filter.groups.title" = "Групи";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Видалити";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Приєднатись";
@@ -138,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Є нові повідомлення.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Контакти";
 "conversation_list.bottom_bar.conversations.title" = "Розмови";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Архівувати";
+"conversation_list.bottom_bar.settings.title" = "Налаштування";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в Контактах";

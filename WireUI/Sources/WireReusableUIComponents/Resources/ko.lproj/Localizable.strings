@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "대화 목록";
+"sidebar.conversation_filter.all.title" = "All";
+"sidebar.conversation_filter.favorites.title" = "Favorites";
+"sidebar.conversation_filter.groups.title" = "그룹";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Archive";
+
+"sidebar.contacts.title" = "연락처";
+"sidebar.contacts.connect.title" = "연결하기";
+
+"sidebar.settings.title" = "설정";
+
+"sidebar.support.title" = "Support";
