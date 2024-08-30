@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "Down",
+        "repositoryURL": "https://github.com/wireapp/Down",
+        "state": {
+          "branch": null,
+          "revision": "609219dda243620bedfef9777b70af92a7fe3494",
+          "version": "2.3.5"
+        }
+      },
+      {
         "package": "FLAnimatedImage",
         "repositoryURL": "https://github.com/Flipboard/FLAnimatedImage",
         "state": {
