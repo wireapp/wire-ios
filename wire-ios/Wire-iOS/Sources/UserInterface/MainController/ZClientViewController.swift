@@ -23,16 +23,6 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-// MARK: - Constants
-
-private let preferredPrimaryColumnWidthPortrait: CGFloat = 260
-private let preferredSupplementaryColumnWidthPortrait: CGFloat = 320
-
-private let preferredPrimaryColumnWidthLandscape: CGFloat = 270
-private let preferredSupplementaryColumnWidthLandscape: CGFloat = 30
-
-// MARK: -
-
 final class ZClientViewController: UIViewController {
 
     // MARK: - Private Members
@@ -50,8 +40,8 @@ final class ZClientViewController: UIViewController {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.preferredSplitBehavior = .tile
         splitViewController.preferredDisplayMode = .oneBesideSecondary
-        splitViewController.preferredPrimaryColumnWidth = preferredPrimaryColumnWidthPortrait
-        splitViewController.preferredSupplementaryColumnWidth = preferredSupplementaryColumnWidthPortrait
+        splitViewController.preferredPrimaryColumnWidth = 260
+        splitViewController.preferredSupplementaryColumnWidth = 320
         return splitViewController
     }()
 
@@ -255,23 +245,6 @@ final class ZClientViewController: UIViewController {
 
     override var shouldAutorotate: Bool {
         return presentedViewController?.shouldAutorotate ?? true
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        coordinator.animate(alongsideTransition: .none) { [self] _ in
-            switch view.window?.windowScene?.interfaceOrientation {
-            case .portrait, .portraitUpsideDown:
-                wireSplitViewController.preferredPrimaryColumnWidth = preferredPrimaryColumnWidthPortrait
-                wireSplitViewController.preferredSupplementaryColumnWidth = preferredSupplementaryColumnWidthPortrait
-            case .landscapeLeft, .landscapeRight:
-                wireSplitViewController.preferredPrimaryColumnWidth = preferredPrimaryColumnWidthLandscape
-                wireSplitViewController.preferredSupplementaryColumnWidth = preferredSupplementaryColumnWidthLandscape
-            default:
-                break
-            }
-        }
     }
 
     // MARK: keyboard shortcut
