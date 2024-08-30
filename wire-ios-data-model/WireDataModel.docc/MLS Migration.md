@@ -1,19 +1,19 @@
 # MLS Migration
 
-The MLS migration is about migrating existing proteus conversations to MLS. The group conversations are migrated following one strategy, whereas the 1:1 conversations are migrated following another.
+MLS migration is about migrating existing proteus conversations to MLS. Group conversations are migrated following one strategy, whereas 1:1 conversations are migrated following another.
 
 ## Group conversations
 
-For group conversations, the migration is designed to be done over a period of time defined by a starting time and an optional finalization time. During this period, the conversations transitions to the ``MessageProtocol/mixed`` protocol until they are ready to be fully migrated to ``MessageProtocol/mls``.
+For group conversations, the migration is designed to be done over a period of time defined by a starting time and an optional finalization time. During this period, the conversations transition to the ``MessageProtocol/mixed`` protocol until they are ready to be fully migrated to the ``MessageProtocol/mls`` protocol.
 
-Conversations in `.mixed` mode use Proteus to encrypt and decrypt message, and retain the capacity to add and remove members from the Proteus part of the conversatin, whilst also maintaining their MLS group counterpart. Meaning that they'll support operations such as committing pending proposals and updating key material.
+Conversations in `.mixed` mode use Proteus to encrypt and decrypt messages, and retain the capacity to add and remove members from the Proteus part of the conversation, whilst also maintaining their MLS group counterpart. This means that they support operations such as committing pending proposals and updating key material.
 Once every member of the conversation is capable of supporting MLS, or once the finalization time is reached, the conversation is fully migrated to MLS.
 
 The configuration of the migration is defined by the backend and is fetched by the client. The client is responsible for starting the migration at the right time and for finalizing it when the time comes. The configuration is defined in ``Feature/MLSMigration``
 
-The ``ProteusToMLSMigrationCoordinator`` class is responsible for managing the migration of group conversation.
+The ``ProteusToMLSMigrationCoordinator`` class is responsible for managing the migration of group conversations.
 
-Documentation about implementation details is available on [Confluence](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration).
+Documentation about the implementation details are available on [Confluence](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration).
 
 ![Diagram about the migration of group conversations](MLS-group-migration)
 

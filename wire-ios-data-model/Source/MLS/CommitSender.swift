@@ -66,7 +66,7 @@ public protocol CommitSending {
 
 }
 
-/// This class is responsible for sending commits and external commits and handling the results.
+/// An actor responsible for sending commits and external commits and handling the results.
 /// In case of failures, it will provide a recovery strategy to handle the failure.
 
 public actor CommitSender: CommitSending {

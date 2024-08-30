@@ -44,9 +44,7 @@ This glossary covers a handful of terms specific to MLS that are being used thro
 
 Core crypto is a wrapper on top of OpenMLS aimed to provide an ergonomic API to create, manage and interact with MLS groups. It abstracts MLS and Proteus. 
 
-The library is written in Rust and provides Swift bindings generated with FFI. The dependency is distributed as an `xcframework` and is managed with Carthage.
-
-[documentation](https://wireapp.github.io/core-crypto/core_crypto/index.html)
+The library is written in Rust and provides Swift bindings generated with FFI. The dependency is distributed as an `xcframework` and is managed with Carthage. [See documentation](https://wireapp.github.io/core-crypto/core_crypto/index.html)
 
 MLS functionalities provided by core crypto include:
 
@@ -65,7 +63,7 @@ In Core Data, conversations are represented by ``ZMConversation`` objects. They 
 
 They're used to represent both MLS and Proteus conversations. The protocol they use is represented by the ``ZMConversation/messageProtocol`` property.
 
-``ZMConversation`` objets have a couple of optionnal properties that are specific to MLS conversations, such as:
+``ZMConversation`` objets have a couple of optional properties that are specific to MLS conversations, such as:
 - ``ZMConversation/mlsGroupID``: The identifier of the group
 - ``ZMConversation/epoch``: The epoch of the group
 - ``ZMConversation/epochTimestamp``: The timestamp of the epoch. Represents the last time the epoch changed

@@ -38,7 +38,7 @@ public protocol StaleMLSKeyDetectorProtocol {
 
 }
 
-/// This class is responsible for keeping track of groups that have stale key material.
+/// A class responsible for keeping track of groups that have stale key material.
 /// It relies on Core Data for storage.
 
 public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {

@@ -28,7 +28,7 @@ public protocol ProteusToMLSMigrationCoordinating {
 
 }
 
-/// This class is responsible for migrating group conversations from Proteus to MLS.
+/// A class responsible for migrating group conversations from Proteus to MLS.
 /// It will start the migration if the conditions are met and finalise it when the time comes.
 ///
 /// See <doc:MLS-Migration> for more information.

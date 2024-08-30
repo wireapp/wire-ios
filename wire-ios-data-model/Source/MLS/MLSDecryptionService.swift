@@ -37,7 +37,7 @@ public protocol MLSDecryptionServiceInterface {
     /// - Parameters:
     ///   - message: a base64 encoded encrypted message
     ///   - groupID: the id of the MLS group
-    ///   - subconversationType: the type of subconversation (if it exists)  to which this message belongs
+    ///   - subconversationType: the type of subconversation (if it exists) to which this message belongs
     ///
     /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted.
     ///
@@ -89,7 +89,7 @@ protocol DecryptedMessageBundle {
 extension DecryptedMessage: DecryptedMessageBundle { }
 extension BufferedDecryptedMessage: DecryptedMessageBundle { }
 
-/// This class is responsible for decrypting messages for MLS groups.
+/// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events when the epoch changes or new CRL distribution points are found.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {

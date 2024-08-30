@@ -24,8 +24,8 @@ public protocol MLSActionExecutorProtocol {
 
     /// Processes a welcome message.
     ///
-    /// - Parameter message: The welcome message to process
-    /// - Returns: The group ID of the group the welcome message was for
+    /// - Parameter message: The welcome message to process.
+    /// - Returns: The group ID of the group the welcome message was for.
     ///
     /// If any new CRL distribution points are found, they will be published. They can be observed with ``MLSActionExecutor/onNewCRLsDistributionPoints()``
 
@@ -108,7 +108,7 @@ public protocol MLSActionExecutorProtocol {
 
 }
 
-/// This class is responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
+/// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
 
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
 

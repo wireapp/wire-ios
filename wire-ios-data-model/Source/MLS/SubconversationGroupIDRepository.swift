@@ -61,7 +61,7 @@ public protocol SubconversationGroupIDRepositoryInterface {
 }
 
 
-/// This class is responsible for storing and fetching subconversations group IDs.
+/// An actor responsible for storing and fetching subconversations group IDs.
 /// It is used to keep track of which subconversation is associated with which conversation.
 
 public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {

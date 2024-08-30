@@ -62,7 +62,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/791412993/Use+case+join+self+conversation+MLS)
 
     func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite
-   
     /// Creates a new group with the given ID and adds users to it
     ///
     /// - Parameters:
@@ -227,7 +226,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// It will request the backend to leave the subgroup, and if successful,
     /// remove the subgroup from the ``SubconversationGroupIDRepository``
     /// and from Core Crypto's local storage.
-    
     func leaveSubconversation(
         parentQualifiedID: QualifiedID,
         parentGroupID: MLSGroupID,

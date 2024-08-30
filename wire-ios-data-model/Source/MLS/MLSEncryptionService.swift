@@ -33,7 +33,6 @@ public protocol MLSEncryptionServiceInterface {
     ///
     /// - Returns:
     ///   A byte array representing the ciphertext.
-    
     func encrypt(
         message: Data,
         for groupID: MLSGroupID
@@ -41,7 +40,7 @@ public protocol MLSEncryptionServiceInterface {
 
 }
 
-/// This class is responsible for encrypting messages for MLS groups.
+/// A class responsible for encrypting messages for MLS groups.
 
 public final class MLSEncryptionService: MLSEncryptionServiceInterface {
 
