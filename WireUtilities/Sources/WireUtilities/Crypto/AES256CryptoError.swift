@@ -16,11 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import CommonCrypto
+import Foundation
 
-@testable import WireSystemPackage
+/// Errors originating from `AES256Crypto`.
 
-final class PlaceholderTests: XCTestCase {
+public enum AES256CryptoError: Error {
 
-    func testNothing() {}
+    /// A supplied key is not the correct length.
+
+    case invalidKeyLength
+
+    /// A crypto error occured.
+
+    case cryptorError(CCCryptorStatus)
+
 }
