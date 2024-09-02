@@ -185,6 +185,7 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(wireSplitViewController.view)
         wireSplitViewController.didMove(toParent: self)
+        wireSplitViewController.delegate = self
 
         createTopViewConstraints()
 
@@ -192,7 +193,8 @@ final class ZClientViewController: UIViewController {
         sidebarViewController.accountInfo = .init(userSession.selfUser, .init())
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
-        wireSplitViewController.setViewController(NoConversationPlaceholderViewController(), for: .secondary)
+        let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
+        wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
 
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,
@@ -325,12 +327,10 @@ final class ZClientViewController: UIViewController {
         animated: Bool = false,
         completion: Completion? = nil
     ) {
+        // TODO: `focus` argument is not used
         conversationRootViewController = viewController
-        wireSplitViewController.setViewController(conversationRootViewController, for: .secondary)
-
-        if focus {
-            wireSplitViewController.show(.secondary)
-        }
+        let secondaryNavigationController = wireSplitViewController.viewController(for: .secondary) as! UINavigationController
+        secondaryNavigationController.setViewControllers([conversationRootViewController!], animated: false)
     }
 
     func loadPlaceholderConversationController(animated: Bool) {
@@ -765,5 +765,66 @@ final class ZClientViewController: UIViewController {
         let viewController = ArchivedListViewController(userSession: userSession)
         viewController.delegate = conversationListViewController
         return UINavigationController(rootViewController: viewController)
+    }
+}
+
+extension ZClientViewController: UISplitViewControllerDelegate {
+
+    // func splitViewController(
+    //     _ svc: UISplitViewController,
+    //     topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
+    // ) -> UISplitViewController.Column {
+    //     //
+    // }
+
+    // func splitViewController(_ svc: UISplitViewController, willHide column: UISplitViewController.Column) {
+    //     print("349ur09e willHide \(column)")
+    // }
+
+    func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+
+        // TODO: remove print
+        print("349ur09e didCollapse")
+
+        // move view controllers from the supplementary column to the tab bar controller
+        fatalError("TODO")
+    }
+
+    // func splitViewController(
+    //     _ svc: UISplitViewController,
+    //     displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode
+    // ) -> UISplitViewController.DisplayMode {
+    //     //
+    // }
+
+    // func splitViewController(_ svc: UISplitViewController, willShow column: UISplitViewController.Column) {
+    //     print("349ur09e willShow \(column)")
+    // }
+
+    func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+
+        // TODO: remove print
+        print("349ur09e didExpand")
+
+        // move view controllers from the tab bar controller to the supplementary column
+        fatalError("TODO")
+    }
+}
+
+// TODO: remove or put sometwhere central
+extension UISplitViewController.Column: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .primary:
+            "primary"
+        case .supplementary:
+            "supplementary"
+        case .secondary:
+            "secondary"
+        case .compact:
+            "compact"
+        @unknown default:
+            fatalError()
+        }
     }
 }
