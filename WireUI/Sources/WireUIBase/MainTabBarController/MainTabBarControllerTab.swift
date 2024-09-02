@@ -77,8 +77,8 @@ enum MainTabBarControllerTab: Int, CaseIterable {
             case .contacts:
                 tabBarItem = .init(
                     title: L10n.Localizable.ConversationList.BottomBar.Contacts.title,
-                    image: .init(resource: .contactsOutline),
-                    selectedImage: .init(resource: .contactsFilled)
+                    image: .init(resource: .Temp.contactsOutline),
+                    selectedImage: .init(resource: .Temp.contactsFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
                 tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Contacts.description
@@ -96,8 +96,8 @@ enum MainTabBarControllerTab: Int, CaseIterable {
             case .folders:
                 tabBarItem = .init(
                     title: L10n.Localizable.ConversationList.BottomBar.Folders.title,
-                    image: .init(resource: .foldersOutline),
-                    selectedImage: .init(resource: .foldersFilled)
+                    image: .init(resource: .Temp.foldersOutline),
+                    selectedImage: .init(resource: .Temp.foldersFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
                 tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Folders.description
@@ -105,8 +105,8 @@ enum MainTabBarControllerTab: Int, CaseIterable {
             case .archive:
                 tabBarItem = .init(
                     title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
-                    image: .init(resource: .archiveOutline),
-                    selectedImage: .init(resource: .archiveFilled)
+                    image: .init(resource: .TabBar.archive),
+                    selectedImage: .init(resource: .TabBar.archiveFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
                 tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Archived.description
