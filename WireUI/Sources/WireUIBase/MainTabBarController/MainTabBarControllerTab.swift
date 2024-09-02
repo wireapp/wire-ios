@@ -19,56 +19,17 @@
 import SwiftUI
 import WireDesign
 
-enum L10n {
-    enum Localizable {
-        enum ConversationList {
-            enum BottomBar {
-                enum Contacts {
-                    static let title = ""
-                }
-                enum Conversations {
-                    static let title = ""
-                }
-                enum Folders {
-                    static let title = ""
-                }
-                enum Archived {
-                    static let title = ""
-                }
-            }
-        }
-    }
-    enum Accessibility {
-        enum TabBar {
-            enum Contacts {
-                static let description = ""
-                static let hint = ""
-            }
-            enum Conversations {
-                static let description = ""
-                static let hint = ""
-            }
-            enum Folders {
-                static let description = ""
-                static let hint = ""
-            }
-            enum Archived {
-                static let description = ""
-                static let hint = ""
-            }
-        }
-    }
-}
-
-enum MainTabBarControllerTab: Int, CaseIterable {
+public enum MainTabBarControllerTab: Int, CaseIterable {
 
     case contacts, conversations, folders, archive
 
+    /// Creates a new instance of `UITabBarController` and configures its `viewControllers` based
+    /// on `MainTabBarControllerTab`'s cases. Each tab is a `UINavigationController` instance.
     @MainActor
-    static func configuredTabBarController() -> UITabBarController {
+    public static func configuredTabBarController() -> UITabBarController {
 
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = .init(repeating: UINavigationController(), count: allCases.count)
+        tabBarController.viewControllers = allCases.map { _ in UINavigationController() }
 
         for tab in allCases {
             let tabBarItem: UITabBarItem
@@ -76,41 +37,43 @@ enum MainTabBarControllerTab: Int, CaseIterable {
 
             case .contacts:
                 tabBarItem = .init(
-                    title: L10n.Localizable.ConversationList.BottomBar.Contacts.title,
+                    title: NSLocalizedString("tabBar.contacts.title", bundle: .module, comment: ""),
                     image: .init(resource: .Temp.contactsOutline),
                     selectedImage: .init(resource: .Temp.contactsFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
-                tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Contacts.description
-                tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Contacts.hint
+                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.contacts.description", bundle: .module, comment: "")
+                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.contacts.hint", bundle: .module, comment: "")
 
             case .conversations:
                 tabBarItem = .init(
-                    title: L10n.Localizable.ConversationList.BottomBar.Conversations.title,
+                    title: NSLocalizedString("tabBar.conversations.title", bundle: .module, comment: ""),
                     image: .init(resource: .TabBar.conversations),
                     selectedImage: .init(resource: .TabBar.conversationsFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
-                tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Conversations.description
+                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.conversations.description", bundle: .module, comment: "")
+                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.conversations.hint", bundle: .module, comment: "")
 
             case .folders:
                 tabBarItem = .init(
-                    title: L10n.Localizable.ConversationList.BottomBar.Folders.title,
+                    title: NSLocalizedString("tabBar.folders.title", bundle: .module, comment: ""),
                     image: .init(resource: .Temp.foldersOutline),
                     selectedImage: .init(resource: .Temp.foldersFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
-                tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Folders.description
+                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.folders.description", bundle: .module, comment: "")
+                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.folders.hint", bundle: .module, comment: "")
 
             case .archive:
                 tabBarItem = .init(
-                    title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
+                    title: NSLocalizedString("tabBar.archived.title", bundle: .module, comment: ""),
                     image: .init(resource: .TabBar.archive),
                     selectedImage: .init(resource: .TabBar.archiveFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
-                tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Archived.description
-                tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Archived.hint
+                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.archived.description", bundle: .module, comment: "")
+                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.archived.hint", bundle: .module, comment: "")
 
             }
             tabBarController.viewControllers[tab].tabBarItem = tabBarItem
@@ -119,8 +82,9 @@ enum MainTabBarControllerTab: Int, CaseIterable {
     }
 }
 
+// TODO: remvoe
 @MainActor
-func MainTabBarController(
+public func MainTabBarController(
     contacts: UIViewController,
     conversations: UIViewController,
     folders: UIViewController,
@@ -128,6 +92,7 @@ func MainTabBarController(
 ) -> UITabBarController {
 
     let mainTabBarController = MainTabBarControllerTab.configuredTabBarController()
+    // TODO: wrap in navigation controller
     mainTabBarController.viewControllers[.contacts].viewControllers = [contacts]
     mainTabBarController.viewControllers[.conversations].viewControllers = [conversations]
     mainTabBarController.viewControllers[.folders].viewControllers = [folders]
@@ -161,13 +126,12 @@ struct MainTabBarController_Previews: PreviewProvider {
 private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UITabBarController {
-        typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
         let tabItem: (String) -> UIHostingController = { .init(rootView: Text($0)) }
         return MainTabBarController(
-            contacts: tabItem(BottomBar.Contacts.title),
-            conversations: tabItem(BottomBar.Conversations.title),
-            folders: tabItem(BottomBar.Folders.title),
-            archive: tabItem(BottomBar.Archived.title)
+            contacts: tabItem(NSLocalizedString("tabBar.contacts.title", bundle: .module, comment: "")),
+            conversations: tabItem(NSLocalizedString("tabBar.conversations.title", bundle: .module, comment: "")),
+            folders: tabItem(NSLocalizedString("tabBar.folders.title", bundle: .module, comment: "")),
+            archive: tabItem(NSLocalizedString("tabBar.archived.title", bundle: .module, comment: ""))
         )
     }
 

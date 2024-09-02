@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUIBase
 import avs
 import UIKit
 import WireCommonComponents
@@ -193,8 +194,8 @@ final class ZClientViewController: UIViewController {
 
         mainTabBarController = MainTabBarController(
             contacts: .init(),
-            conversations: UINavigationController(rootViewController: conversationListViewController),
-            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
+            conversations: conversationListViewController,
+            folders: conversationListWithFoldersViewController,
             archive: .init()
         )
         wireSplitViewController.leftViewController = mainTabBarController

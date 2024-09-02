@@ -20,6 +20,7 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 import WireUITesting
 import XCTest
+import WireUIBase
 
 @testable import Wire
 
@@ -40,51 +41,53 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
-        mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
-        accentColor = .blue
+    override func setUp() async throws {
+        await MainActor.run {
 
-        coreDataFixture = .init()
+            mockMainCoordinator = .init()
+            snapshotHelper = SnapshotHelper()
+            accentColor = .blue
 
-        userSession = .init()
-        userSession.coreDataStack = coreDataFixture.coreDataStack
+            coreDataFixture = .init()
 
-        mockIsSelfUserE2EICertifiedUseCase = .init()
-        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+            userSession = .init()
+            userSession.coreDataStack = coreDataFixture.coreDataStack
 
-        let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
-        let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(
-            account: account,
-            selfUserLegalHoldSubject: selfUser,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-            mainCoordinator: .mock
-        )
+            mockIsSelfUserE2EICertifiedUseCase = .init()
+            mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        sut = ConversationListViewController(
-            viewModel: viewModel,
-            isFolderStatePersistenceEnabled: false,
-            zClientViewController: .init(account: account, userSession: userSession),
-            mainCoordinator: mockMainCoordinator,
-            selfProfileViewControllerBuilder: .mock
-        )
-        tabBarController = MainTabBarController(
-            contacts: .init(),
-            conversations: UINavigationController(rootViewController: sut),
-            folders: .init(),
-            archive: .init()
-        )
+            let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
+            let account = Account.mockAccount(imageData: mockImageData)
+            let viewModel = ConversationListViewController.ViewModel(
+                account: account,
+                selfUserLegalHoldSubject: selfUser,
+                userSession: userSession,
+                isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+                mainCoordinator: .mock
+            )
 
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = tabBarController
-        window.makeKeyAndVisible()
-        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-        tabBarController.overrideUserInterfaceStyle = .dark
+            sut = ConversationListViewController(
+                viewModel: viewModel,
+                isFolderStatePersistenceEnabled: false,
+                zClientViewController: .init(account: account, userSession: userSession),
+                mainCoordinator: mockMainCoordinator,
+                selfProfileViewControllerBuilder: .mock
+            )
+            tabBarController = MainTabBarController(
+                contacts: .init(),
+                conversations: sut,
+                folders: .init(),
+                archive: .init()
+            )
 
-        UIView.setAnimationsEnabled(false)
+            window = UIWindow(frame: UIScreen.main.bounds)
+            window.rootViewController = tabBarController
+            window.makeKeyAndVisible()
+            wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+            tabBarController.overrideUserInterfaceStyle = .dark
+
+            UIView.setAnimationsEnabled(false)
+        }
     }
 
     // MARK: - tearDown
