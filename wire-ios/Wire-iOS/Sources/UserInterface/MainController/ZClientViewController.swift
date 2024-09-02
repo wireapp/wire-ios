@@ -66,18 +66,7 @@ final class ZClientViewController: UIViewController {
         zClientViewController: self,
         mainCoordinator: MainCoordinator(zClientViewController: self),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        configureForSplitView: false
-    )
-    private lazy var iPadConversationListViewController = ConversationListViewController(
-        account: account,
-        selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
-        userSession: userSession,
-        zClientViewController: self,
-        mainCoordinator: MainCoordinator(zClientViewController: self),
-        isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-        configureForSplitView: true
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
     )
 
     var proximityMonitorManager: ProximityMonitorManager?
@@ -213,7 +202,8 @@ final class ZClientViewController: UIViewController {
         // TODO: why is the account image not loaded?
         sidebarViewController.accountInfo = .init(userSession.selfUser, .init())
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
-        wireSplitViewController.setViewController(iPadConversationListViewController, for: .supplementary)
+        let supplementaryNavigationController = UINavigationController(rootViewController: conversationListViewController)
+        wireSplitViewController.setViewController(supplementaryNavigationController, for: .supplementary)
         let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
         wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
 
@@ -793,6 +783,8 @@ extension ZClientViewController: UISplitViewControllerDelegate {
 
         // move view controllers from the supplementary column to the tab bar controller
         fatalError("TODO")
+
+        conversationListViewController.splitViewControllerMode = .collapsed
     }
 
     // func splitViewController(
@@ -813,23 +805,7 @@ extension ZClientViewController: UISplitViewControllerDelegate {
 
         // move view controllers from the tab bar controller to the supplementary column
         fatalError("TODO")
-    }
-}
 
-// TODO: remove or put sometwhere central
-extension UISplitViewController.Column: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        switch self {
-        case .primary:
-            "primary"
-        case .supplementary:
-            "supplementary"
-        case .secondary:
-            "secondary"
-        case .compact:
-            "compact"
-        @unknown default:
-            fatalError()
-        }
+        conversationListViewController.splitViewControllerMode = .expanded
     }
 }

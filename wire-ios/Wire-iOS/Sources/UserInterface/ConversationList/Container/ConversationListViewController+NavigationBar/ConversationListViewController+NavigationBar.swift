@@ -75,8 +75,6 @@ extension ConversationListViewController {
     }
 
     func setupLeftNavigationBarButtons() {
-        // TODO: actually check if it's the compact column
-        guard traitCollection.horizontalSizeClass == .compact else { return }
 
         // in the design the left bar button items are very close to each other,
         // so we'll use a stack view instead
@@ -115,19 +113,20 @@ extension ConversationListViewController {
         parent?.navigationItem.leftBarButtonItem = .init(customView: stackView)
     }
 
+    func setupLeftNavigationBarButtons_SplitView() {
+        navigationItem.leftBarButtonItems = []
+    }
+
     func setupTitleView() {
-        navigationItem.title = if configureForSplitView {
-            L10n.Localizable.ConversationList.Filter.AllConversations.title
-        } else {
-            L10n.Localizable.List.title
+        switch splitViewControllerMode {
+        case .expanded:
+            navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
+        case .collapsed:
+            navigationItem.title = L10n.Localizable.List.title
         }
     }
 
     func setupRightNavigationBarButtons() {
-        // TODO: actually check if it's the compact column
-        if traitCollection.horizontalSizeClass != .compact {
-            return setupRightNavigationBarButtons_SplitView()
-        }
 
         let spacer = UIBarButtonItem(systemItem: .fixedSpace)
         typealias FilterMenuLocale = L10n.Localizable.ConversationList.Filter
@@ -200,7 +199,7 @@ extension ConversationListViewController {
         self.view.setNeedsLayout()
     }
 
-    private func setupRightNavigationBarButtons_SplitView() {
+    func setupRightNavigationBarButtons_SplitView() {
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)

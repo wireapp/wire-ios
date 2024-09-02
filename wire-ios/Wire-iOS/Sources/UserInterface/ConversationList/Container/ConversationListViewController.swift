@@ -96,7 +96,12 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
-    let configureForSplitView: Bool
+    var splitViewControllerMode: SplitViewControllerMode = .collapsed {
+        didSet {
+            updateNavigationItem()
+            applyColorTheme()
+        }
+    }
 
     // MARK: - Init
 
@@ -107,8 +112,7 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinating,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: ViewControllerBuilder,
-        configureForSplitView: Bool
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -121,8 +125,7 @@ final class ConversationListViewController: UIViewController {
             viewModel: viewModel,
             zClientViewController: zClientViewController,
             mainCoordinator: mainCoordinator,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            configureForSplitView: configureForSplitView
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
     }
 
@@ -130,8 +133,7 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinating,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder,
-        configureForSplitView: Bool
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -145,8 +147,6 @@ final class ConversationListViewController: UIViewController {
             zClientViewController: zClientViewController
         )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
-
-        self.configureForSplitView = configureForSplitView
 
         super.init(nibName: nil, bundle: nil)
 
@@ -340,8 +340,8 @@ final class ConversationListViewController: UIViewController {
         ])
     }
 
-    private func applyColorTheme() {
-        view.backgroundColor = configureForSplitView
+    func applyColorTheme() {
+        view.backgroundColor = splitViewControllerMode == .expanded
         ? ColorTheme.Backgrounds.backgroundVariant
         : ColorTheme.Backgrounds.surfaceVariant
     }
@@ -357,6 +357,21 @@ final class ConversationListViewController: UIViewController {
         navigationItem.searchController = searchController
         if #available(iOS 16.0, *) {
             navigationItem.preferredSearchBarPlacement = .stacked
+        }
+    }
+
+    /// Adjusts the navigation item appearance based on the `splitViewControllerMode` value.
+    /// For expanded layouts, the navigation bar should only show a title and a new-conversation-button.
+    /// For collapsed layouts the navigation bar should additionally show an account image and a filter button item.
+    private func updateNavigationItem() {
+
+        switch splitViewControllerMode {
+        case .collapsed:
+            setupLeftNavigationBarButtons()
+            setupRightNavigationBarButtons()
+        case .expanded:
+            setupLeftNavigationBarButtons_SplitView()
+            setupRightNavigationBarButtons_SplitView()
         }
     }
 
@@ -516,5 +531,12 @@ private extension NSAttributedString {
 
         let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
         return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
+    }
+}
+
+extension ConversationListViewController {
+
+    enum SplitViewControllerMode {
+        case collapsed, expanded
     }
 }

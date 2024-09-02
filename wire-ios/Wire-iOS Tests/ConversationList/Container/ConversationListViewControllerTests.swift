@@ -75,8 +75,7 @@ final class ConversationListViewControllerTests: XCTestCase {
                 viewModel: viewModel,
                 zClientViewController: .init(account: account, userSession: userSession),
                 mainCoordinator: mockMainCoordinator,
-                selfProfileViewControllerBuilder: .mock,
-                configureForSplitView: false
+                selfProfileViewControllerBuilder: .mock
             )
 
             tabBarController = MainTabBarController(
