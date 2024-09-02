@@ -181,6 +181,27 @@ final class ZClientViewController: UIViewController {
 
         view.backgroundColor = ColorTheme.Backgrounds.surface
 
+        setupSplitViewController()
+
+        // TODO: enable
+        // restoreStartupState()
+
+        if Bundle.developerModeEnabled {
+            // better way of dealing with this?
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requestLoopNotification(_:)),
+                name: .loggingRequestLoop,
+                object: nil
+            )
+        }
+
+        setupUserChangeInfoObserver()
+        setUpConferenceCallingUnavailableObserver()
+    }
+
+    private func setupSplitViewController() {
+
         addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(wireSplitViewController.view)
@@ -216,22 +237,6 @@ final class ZClientViewController: UIViewController {
                 setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: wireSplitViewController)
             }
         }
-
-        // TODO: enable
-        // restoreStartupState()
-
-        if Bundle.developerModeEnabled {
-            // better way of dealing with this?
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(requestLoopNotification(_:)),
-                name: .loggingRequestLoop,
-                object: nil
-            )
-        }
-
-        setupUserChangeInfoObserver()
-        setUpConferenceCallingUnavailableObserver()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
