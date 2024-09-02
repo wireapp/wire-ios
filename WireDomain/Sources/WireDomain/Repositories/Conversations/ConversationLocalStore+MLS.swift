@@ -83,11 +83,7 @@ extension ConversationLocalStore {
     func createOrJoinSelfConversation(
         from localConversation: ZMConversation
     ) async throws {
-        guard let context = localConversation.managedObjectContext else {
-            return
-        }
-
-        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
+        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform { [context] in
             (
                 localConversation.mlsGroupID,
                 context.mlsService,

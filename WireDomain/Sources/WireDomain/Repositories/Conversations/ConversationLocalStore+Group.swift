@@ -28,7 +28,7 @@ extension ConversationLocalStore {
     func fetchUserAndRole(
         from remoteConversationMember: WireAPI.Conversation.Member,
         for localConversation: ZMConversation
-    ) -> (ZMUser, Role?)? {
+    ) -> (user: ZMUser, role: Role?)? {
         guard let userID = remoteConversationMember.id ?? remoteConversationMember.qualifiedID?.uuid else {
             return nil
         }
@@ -77,7 +77,7 @@ extension ConversationLocalStore {
         let selfUserRole = fetchUserAndRole(
             from: members.selfMember,
             for: localConversation
-        )?.1
+        )?.role
 
         localConversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
     }

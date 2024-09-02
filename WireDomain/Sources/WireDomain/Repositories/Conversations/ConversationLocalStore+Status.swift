@@ -44,9 +44,8 @@ extension ConversationLocalStore {
             if let accessRoles = remoteConversation.accessRoles {
                 localConversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
             } else if
-                let accessRole = remoteConversation.legacyAccessRole,
-                let legacyAccessRole = accessRole.toDomainModel() {
-                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
+                let accessRole = remoteConversation.legacyAccessRole {
+                let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(accessRole.toDomainModel())
                 localConversation.updateAccessStatus(accessModes: accessModes.map(\.rawValue), accessRoles: accessRoles.map(\.rawValue))
             }
         }

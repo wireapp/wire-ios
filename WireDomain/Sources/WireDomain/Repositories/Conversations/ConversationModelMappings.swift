@@ -22,14 +22,38 @@ import WireDataModel
 extension WireAPI.MLSCipherSuite {
 
     func toDomainModel() -> WireDataModel.MLSCipherSuite {
-        .init(rawValue: rawValue)!
+        switch self {
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
+                .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+                .MLS_128_DHKEMP256_AES128GCM_SHA256_P256
+        case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+                .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
+                .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+                .MLS_256_DHKEMP521_AES256GCM_SHA512_P521
+        case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+                .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+                .MLS_256_DHKEMP384_AES256GCM_SHA384_P384
+        }
     }
 }
 
 extension WireAPI.ConversationAccessRoleLegacy {
 
-    func toDomainModel() -> WireDataModel.ConversationAccessRole? {
-        .init(rawValue: rawValue)
+    func toDomainModel() -> WireDataModel.ConversationAccessRole {
+        switch self {
+        case .private:
+                .private
+        case .team:
+                .team
+        case .activated:
+                .activated
+        case .nonActivated:
+                .nonActivated
+        }
     }
 }
 
