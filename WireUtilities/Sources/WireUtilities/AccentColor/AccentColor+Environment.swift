@@ -16,19 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum AccentColor: Int16, CaseIterable, Hashable {
-    case blue = 1
-    case green
-    // yellow used to be defined here
-    case red = 4
-    case amber
-    case turquoise
-    case purple
+import SwiftUI
+
+private struct AccentColorKey: EnvironmentKey {
+    static let defaultValue: AccentColor = .default
 }
 
-// MARK: - Default and random value
+extension EnvironmentValues {
+    var accentColor: AccentColor {
+        get { self[AccentColorKey.self] }
+        set { self[AccentColorKey.self] = newValue }
+    }
+}
 
-extension AccentColor {
-    public static var `default`: Self { .blue }
-    public static var random: Self! { allCases.randomElement() }
+extension View {
+    func accentColor(_ accentColor: AccentColor) -> some View {
+        environment(\.accentColor, accentColor)
+    }
 }

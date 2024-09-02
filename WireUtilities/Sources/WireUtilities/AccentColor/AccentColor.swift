@@ -16,22 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilitiesPkg
-import XCTest
+public enum AccentColor: Int16, CaseIterable, Hashable {
+    case blue = 1
+    case green
+    // yellow used to be defined here
+    case red = 4
+    case amber
+    case turquoise
+    case purple
+}
 
-@testable import WireUtilities
+// MARK: - Default and random value
 
-final class ZMAccentColorTests: XCTestCase {
-
-    func testTwoInstancesAreEqual() {
-        let amber0: ZMAccentColor = .amber
-        let amber1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
-        XCTAssertEqual(amber0, amber1)
-    }
-
-    func testTwoInstancesAreNotEqual() {
-        let blue: ZMAccentColor = .blue
-        let amber: ZMAccentColor = .amber
-        XCTAssertNotEqual(blue, amber)
-    }
+public extension AccentColor {
+    static var `default`: Self { .blue }
+    static var random: Self! { allCases.randomElement() }
 }
