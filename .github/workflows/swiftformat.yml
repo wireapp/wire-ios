@@ -31,3 +31,4 @@ jobs:
           ./WireUI
           ./WireUtilities
           --reporter github-actions-log
+          --config .swiftformat
