@@ -394,7 +394,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         // then
-        XCTAssertEqual(NSNumber(value: ExpirationReason.unknown.rawValue), message.expirationReasonCode)
+        XCTAssertEqual(NSNumber(value: ExpirationReason.other.rawValue), message.expirationReasonCode)
     }
 
     func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {

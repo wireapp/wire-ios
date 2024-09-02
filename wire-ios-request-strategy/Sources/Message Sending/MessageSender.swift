@@ -242,7 +242,7 @@ public final class MessageSender: MessageSenderInterface {
             case .federation:
                 responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)
             case .unknown:
-                responseFailure.updateExpirationReason(for: message, with: .unknown)
+                responseFailure.updateExpirationReason(for: message, with: .other)
             case .none:
                 break
             }

@@ -206,7 +206,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     // given
     ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
-    [message expireWithExpirationReason:ZMExpirationReasonUnknown];
+    [message expireWithExpirationReason:ZMExpirationReasonOther];
     XCTAssert(message.isExpired);
 
     // when
@@ -223,7 +223,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     // given
     ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
-    [message expireWithExpirationReason:ZMExpirationReasonUnknown];
+    [message expireWithExpirationReason:ZMExpirationReasonOther];
 
     // when
     [message resend];
@@ -236,7 +236,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 {
     // given
     ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
-    [message expireWithExpirationReason:ZMExpirationReasonUnknown];
+    [message expireWithExpirationReason:ZMExpirationReasonOther];
     XCTAssertEqualObjects(message.expirationReasonCode, [NSNumber numberWithInt:0]);
 
     // when
@@ -303,7 +303,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertFalse(message.isExpired);
     
     // when
-    [message expireWithExpirationReason:ZMExpirationReasonUnknown];
+    [message expireWithExpirationReason:ZMExpirationReasonOther];
 
     // then
     XCTAssertTrue(message.isExpired);

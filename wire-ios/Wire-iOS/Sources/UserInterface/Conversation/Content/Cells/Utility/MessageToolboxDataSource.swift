@@ -116,7 +116,7 @@ final class MessageToolboxDataSource {
 
             let detailsString: String
             switch message.expirationReason {
-            case .none, .unknown, .timeout:
+            case .none, .other, .timeout:
                 detailsString = Message.generalReason
             case .federationRemoteError:
                 detailsString = Message.federationRemoteErrorReason(

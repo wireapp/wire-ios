@@ -40,7 +40,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         let message = try XCTUnwrap(message)
 
         // when
-        message.expire(withReason: .unknown)
+        message.expire(withReason: .other)
 
         // then
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
@@ -53,7 +53,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         let message = try XCTUnwrap(message)
 
         // when
-        message.expire(withReason: .unknown)
+        message.expire(withReason: .other)
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
         XCTAssertTrue(message.isExpired)
         XCTAssertEqual(message.expirationReasonCode, 0)
@@ -71,11 +71,11 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         let message = try XCTUnwrap(message)
 
         // when
-        message.expire(withReason: .unknown)
+        message.expire(withReason: .other)
 
         // then
         assert(reasonCode: nil, expectedReason: nil)
-        assert(reasonCode: 0, expectedReason: .unknown)
+        assert(reasonCode: 0, expectedReason: .other)
         assert(reasonCode: 1, expectedReason: .federationRemoteError)
     }
 
