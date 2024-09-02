@@ -9,6 +9,10 @@ on:
         type: boolean
         default: false
         required: false
+      wire-ui-base:
+        type: boolean
+        default: false
+        required: false
       wire-design:
         type: boolean
         default: false
