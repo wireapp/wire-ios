@@ -42,32 +42,6 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         }
     }
 
-    // MARK: - Response
-
-    struct ResponsePayload: Codable, Equatable {
-
-        let removal: MLSKeys
-
-        struct MLSKeys: Codable, Equatable {
-
-            enum CodingKeys: String, CodingKey {
-                case ed25519
-                case ed448
-                case p256 = "ecdsa_secp256r1_sha256"
-                case p384 = "ecdsa_secp384r1_sha384"
-                case p521 = "ecdsa_secp521r1_sha512"
-            }
-
-            let ed25519: String?
-            let ed448: String?
-            let p256: String?
-            let p384: String?
-            let p521: String?
-
-        }
-
-    }
-
     override func handleResponse(_ response: ZMTransportResponse, action: FetchBackendMLSPublicKeysAction) {
         var action = action
 
@@ -75,7 +49,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
         case (200, _):
             guard
                 let data = response.rawData,
-                let payload = try? JSONDecoder().decode(ResponsePayload.self, from: data)
+                let payload = try? JSONDecoder().decode(Payload.ExternalSenderKeys.self, from: data)
             else {
                 return action.fail(with: .malformedResponse)
             }
@@ -113,6 +87,34 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             let error = response.errorInfo
             action.fail(with: .unknown(status: error.status, label: error.label, message: error.message))
         }
+    }
+
+}
+
+extension Payload {
+
+    struct ExternalSenderKeys: Codable, Equatable {
+
+        let removal: MLSKeys
+
+        struct MLSKeys: Codable, Equatable {
+
+            enum CodingKeys: String, CodingKey {
+                case ed25519
+                case ed448
+                case p256 = "ecdsa_secp256r1_sha256"
+                case p384 = "ecdsa_secp384r1_sha384"
+                case p521 = "ecdsa_secp521r1_sha512"
+            }
+
+            let ed25519: String?
+            let ed448: String?
+            let p256: String?
+            let p384: String?
+            let p521: String?
+
+        }
+
     }
 
 }

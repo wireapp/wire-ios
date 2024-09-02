@@ -32,9 +32,17 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite
+    func establishGroup(
+        for groupID: MLSGroupID,
+        with users: [MLSUser],
+        removalKeys: BackendMLSPublicKeys?
+    ) async throws -> MLSCipherSuite
 
-    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite
+    func createGroup(
+        for groupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys?,
+        parentGroupID: MLSGroupID?
+    ) async throws -> MLSCipherSuite
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
@@ -433,11 +441,15 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
+    public func establishGroup(
+        for groupID: MLSGroupID,
+        with users: [MLSUser],
+        removalKeys: BackendMLSPublicKeys? = nil
+    ) async throws -> MLSCipherSuite {
         guard let context else { throw MLSGroupCreationError.failedToCreateGroup }
 
         do {
-            let ciphersuite = try await createGroup(for: groupID)
+            let ciphersuite = try await createGroup(for: groupID, removalKeys: removalKeys)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -454,6 +466,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func createGroup(
         for groupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys? = nil,
         parentGroupID: MLSGroupID? = nil
     ) async throws -> MLSCipherSuite {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
@@ -466,7 +479,11 @@ public final class MLSService: MLSServiceInterface {
 
         do {
             let externalSenders: [Data]
-            if let parentGroupID {
+
+            /// TODO: add comment
+            if let removalKeys {
+                externalSenders = removalKeys.externalSenderKey(for: ciphersuite)
+            } else if let parentGroupID {
                 // Anyone in the parent conversation can create a subconversation,
                 // even people from different domains. We need to make sure that
                 // the external senders is the same as the parent, otherwise we

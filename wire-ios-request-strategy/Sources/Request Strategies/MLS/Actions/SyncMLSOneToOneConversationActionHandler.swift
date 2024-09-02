@@ -73,11 +73,32 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
 
             guard
                 let data = response.rawData,
-                let payload = Payload.Conversation(
-                    data,
-                    decoder: decoder
-                )
+                !data.isEmpty
             else {
+                action.fail(with: .invalidResponse)
+                return
+            }
+
+            var payload: Payload.Conversation?
+            let publicKeys: BackendMLSPublicKeys?
+            switch apiVersion {
+            case .v0, .v1, .v2, .v3, .v4:
+                publicKeys = nil
+                action.fail(with: .endpointUnavailable)
+            case .v5:
+                payload = Payload.Conversation(
+                    data,
+                    decoder: decoder)
+                publicKeys = nil
+            case .v6:
+                let result = Payload.ConversationWithRemovalKeys(
+                    data,
+                    decoder: decoder)
+                payload = result?.conversation
+                publicKeys = result?.publicKeys?.toBackendMLSPublicKeys()
+            }
+
+            guard let payload else {
                 action.fail(with: .invalidResponse)
                 return
             }
@@ -100,7 +121,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
                     return
                 }
 
-                action.succeed(with: groupID)
+                action.succeed(with: (groupID: groupID, publicKeys: publicKeys))
             }
 
         case (400, "mls-not-enabled"):
@@ -142,4 +163,52 @@ private extension Payload.Conversation {
             )]
         )
     }
+}
+
+extension Payload {
+
+    struct ConversationWithRemovalKeys: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case conversation
+            case publicKeys = "public_keys"
+        }
+
+        /// TODO: test API version for Conversation
+        let conversation: Payload.Conversation
+        let publicKeys: ExternalSenderKeys?
+
+    }
+
+}
+
+private extension Payload.ExternalSenderKeys {
+
+    func toBackendMLSPublicKeys() -> BackendMLSPublicKeys? {
+        let ed25519RemovalKey = removal.ed25519
+            .flatMap(\.base64DecodedBytes)
+            .map(\.data)
+        let ed448RemovalKey = removal.ed448
+            .flatMap(\.base64DecodedBytes)
+            .map(\.data)
+
+        let p256RemovalKey = removal.p256
+            .flatMap(\.base64DecodedBytes)
+            .map(\.data)
+
+        let p384RemovalKey = removal.p384
+            .flatMap(\.base64DecodedBytes)
+            .map(\.data)
+
+        let p521RemovalKey = removal.p521
+            .flatMap(\.base64DecodedBytes)
+            .map(\.data)
+        return BackendMLSPublicKeys(removal:
+                .init(ed25519: ed25519RemovalKey,
+                      ed448: ed448RemovalKey,
+                      p256: p256RemovalKey,
+                      p384: p384RemovalKey,
+                      p521: p521RemovalKey))
+    }
+
 }
