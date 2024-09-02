@@ -1385,11 +1385,11 @@
 		166902041D7082C7000FE4AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */,
-				598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */,
+				EE668BB12954A7C700D939E7 /* WireDataModel.framework */,
 				59D1C3112B1DF3AD0016F6B2 /* WireDataModelSupport.framework */,
 				EE67F72B296F0CE4001D7C88 /* WireTesting.framework */,
-				EE668BB12954A7C700D939E7 /* WireDataModel.framework */,
+				CB5120522C6FD69F000C8FEC /* WireTransportSupport.framework */,
+				598E870C2BF4E08100FC5438 /* WireUtilitiesSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -354,10 +354,10 @@
 		01D0DCC02C1C8CBA0076CB1C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB7979122C738508006FBA58 /* WireTransportSupport.framework */,
+				01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */,
 				01BDA5442C20762200636E50 /* WireDataModelSupport.framework */,
 				01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */,
-				01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */,
+				CB7979122C738508006FBA58 /* WireTransportSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
