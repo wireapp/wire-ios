@@ -62,8 +62,8 @@ public final class MainTabBarController: UITabBarController {
             case .conversations:
                 tabBarItem = .init(
                     title: NSLocalizedString("tabBar.conversations.title", bundle: .module, comment: ""),
-                    image: .init(resource: .TabBar.conversations),
-                    selectedImage: .init(resource: .TabBar.conversationsFilled)
+                    image: .init(systemName: "text.bubble"),
+                    selectedImage: .init(systemName: "text.bubble.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
                 tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.conversations.description", bundle: .module, comment: "")
@@ -82,8 +82,8 @@ public final class MainTabBarController: UITabBarController {
             case .archive:
                 tabBarItem = .init(
                     title: NSLocalizedString("tabBar.archived.title", bundle: .module, comment: ""),
-                    image: .init(resource: .TabBar.archive),
-                    selectedImage: .init(resource: .TabBar.archiveFilled)
+                    image: .init(systemName: "archivebox"),
+                    selectedImage: .init(systemName: "archivebox.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
                 tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.archived.description", bundle: .module, comment: "")
