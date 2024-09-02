@@ -20,24 +20,20 @@
 import XCTest
 
 class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
-    var message: ZMOTRMessage?
 
-    override func setUp() {
-        super.setUp()
+    func testThatInitialExpirationReasonCodeIsNil() throws {
+        XCTExpectFailure("Remove this line when fixing [WPB-10865]")
 
-        message = try? conversation.appendText(content: "Hallo") as? ZMOTRMessage
-        message?.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
-    }
+        // given
+        let message = try makeMessage()
 
-    override func tearDown() {
-        message = nil
-
-        super.tearDown()
+        // when
+        XCTAssertNil(message.expirationReasonCode)
     }
 
     func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() throws {
         // given
-        let message = try XCTUnwrap(message)
+        let message = try makeMessage()
 
         // when
         message.expire(withReason: .other)
@@ -50,7 +46,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() throws {
         // given
-        let message = try XCTUnwrap(message)
+        let message = try makeMessage()
 
         // when
         message.expire(withReason: .other)
@@ -66,30 +62,65 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         XCTAssertNil(message.expirationReasonCode)
     }
 
-    func testExpirationReasonsParsing() throws {
-        // given
-        let message = try XCTUnwrap(message)
-
-        // when
-        message.expire(withReason: .other)
-
-        // then
-        assert(reasonCode: nil, expectedReason: nil)
-        assert(reasonCode: 0, expectedReason: .other)
-        assert(reasonCode: 1, expectedReason: .federationRemoteError)
+    func testThatExpirationReasonsHaveTheCorrectRawValues() {
+        XCTAssertEqual(ExpirationReason.other.rawValue, 0)
+        XCTAssertEqual(ExpirationReason.federationRemoteError.rawValue, 1)
+        XCTAssertEqual(ExpirationReason.cancelled.rawValue, 2)
+        XCTAssertEqual(ExpirationReason.timeout.rawValue, 3)
     }
 
-    // MARK: - Helper
+    func testExpirationReasonReturnsNilWhenIsExpiredIsFalse() throws {
+        // given
+        let message = try makeMessage()
+        message.expirationReasonCode = NSNumber(value: ExpirationReason.other.rawValue)
+        XCTAssertFalse(message.isExpired)
 
-    private func assert(reasonCode: NSNumber?, expectedReason: ExpirationReason?) {
-        guard let message else {
-            XCTFail("Failed to add message")
-            return
+        // then
+        XCTAssertNil(message.expirationReason)
+    }
+
+    func testExpirationReasonIsCorrectAfterExpiring() throws {
+        // given
+        let testCases: [ExpirationReason] = [
+            .other,
+            .federationRemoteError,
+            .cancelled,
+            .timeout
+        ]
+
+        for reason in testCases {
+            let message = try makeMessage()
+
+            // when
+            message.expire(withReason: reason)
+
+            // then
+            XCTAssertEqual(
+                message.expirationReason?.rawValue,
+                reason.rawValue,
+                "Test case failed - when reason is <\(reason)>"
+            )
         }
-        message.expirationReasonCode = reasonCode
+    }
 
-        XCTAssertTrue(message.isExpired)
-        XCTAssertEqual(message.expirationReason, expectedReason)
+    func testExpirationReasonIsNotOverwrittenWhenExpiredMultipleTimes() throws {
+        // given
+        let message = try makeMessage()
+
+        // when
+        message.expire(withReason: .cancelled)
+        message.expire(withReason: .timeout)
+
+        // then
+        XCTAssertEqual(message.expirationReason, .cancelled)
+    }
+
+    // MARK: Helpers
+
+    private func makeMessage() throws -> ZMOTRMessage {
+        let message = try XCTUnwrap(try conversation.appendText(content: "Hallo") as? ZMOTRMessage)
+        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        return message
     }
 
 }
