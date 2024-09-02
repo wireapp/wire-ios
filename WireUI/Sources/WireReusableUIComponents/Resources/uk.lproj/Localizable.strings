@@ -15,26 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Sidebar
 
-import Foundation
 
-public class TestUserDefaults: UserDefaults {
-    private let suiteName: String
-
-    public var shouldSet: (_ value: Any?, _ key: String) -> Bool = { _, _ in true }
-
-    public override init?(suiteName suitename: String?) {
-        self.suiteName = suitename ?? ""
-        super.init(suiteName: suitename)
-    }
-
-    public override func set(_ value: Any?, forKey defaultName: String) {
-        if shouldSet(value, defaultName) {
-            super.set(value, forKey: defaultName)
-        }
-    }
-
-    public func reset() {
-        removePersistentDomain(forName: suiteName)
-    }
-}
+"sidebar.conversation_filter.title" = "Розмови";
