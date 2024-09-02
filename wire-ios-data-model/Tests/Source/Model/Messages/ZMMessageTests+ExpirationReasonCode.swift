@@ -43,7 +43,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         }
 
         // when
-        message.expire()
+        message.expire(withReason: .unknown)
 
         // then
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
@@ -59,7 +59,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         }
 
         // when
-        message.expire()
+        message.expire(withReason: .unknown)
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
         XCTAssertTrue(message.isExpired)
         XCTAssertEqual(message.expirationReasonCode, 0)
@@ -79,7 +79,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
             return
         }
         // when
-        message.expire()
+        message.expire(withReason: .unknown)
 
         // then
         assert(reasonCode: nil, expectedReason: nil)
@@ -89,7 +89,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     // MARK: - Helper
 
-    private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure?) {
+    private func assert(reasonCode: NSNumber?, expectedReason: ExpirationReason?) {
         guard let message else {
             XCTFail("Failed to add message")
             return
@@ -97,7 +97,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         message.expirationReasonCode = reasonCode
 
         XCTAssertTrue(message.isExpired)
-        XCTAssertEqual(message.failedToSendReason, expectedReason)
+        XCTAssertEqual(message.expirationReason, expectedReason)
     }
 
 }

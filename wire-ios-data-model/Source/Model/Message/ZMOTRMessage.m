@@ -104,9 +104,9 @@ NSString * const DeliveredKey = @"delivered";
     [super markAsSent];
 }
 
-- (void)expire
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
-    [super expire];
+    [super expireWithExpirationReason:expirationReason];
 }
 
 - (void)resend

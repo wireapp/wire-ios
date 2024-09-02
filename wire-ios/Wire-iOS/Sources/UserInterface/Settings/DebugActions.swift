@@ -278,7 +278,7 @@ enum DebugActions {
                 try! clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = ZMUser.selfUser(in: syncContext)
 
-                clientMessage.expire()
+                clientMessage.expire(withReason: .unknown)
                 clientMessage.linkPreviewState = .done
 
                 return clientMessage

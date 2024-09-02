@@ -147,7 +147,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, .uploading)
 
         // when
-        sut.expire()
+        sut.expire(withReason: .unknown)
 
         // then
         XCTAssertEqual(sut.transferState, .uploadingFailed)
@@ -162,7 +162,7 @@ extension ZMAssetClientMessageTests {
             sut.transferState = transferState
 
             // when
-            sut.expire()
+            sut.expire(withReason: .unknown)
 
             // then
             XCTAssertEqual(
@@ -1174,7 +1174,7 @@ extension ZMAssetClientMessageTests {
         if state == .sent || state == .delivered {
             message.delivered = true
         } else if state == .failedToSend {
-            message.expire()
+            message.expire(withReason: .unknown)
         }
         if state == .delivered {
             _ = ZMMessageConfirmation(type: .delivered, message: message, sender: message.sender!, serverTimestamp: Date(), managedObjectContext: message.managedObjectContext!)

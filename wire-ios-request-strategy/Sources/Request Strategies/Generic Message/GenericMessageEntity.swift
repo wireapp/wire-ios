@@ -68,8 +68,9 @@ import Foundation
         // no-op
     }
 
-    public func expire() {
+    public func expire(withReason reason: ExpirationReason) {
         isExpired = true
+        expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 
     public override var hash: Int {

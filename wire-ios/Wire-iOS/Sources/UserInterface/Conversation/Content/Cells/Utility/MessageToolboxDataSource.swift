@@ -115,15 +115,16 @@ final class MessageToolboxDataSource {
             typealias Message = L10n.Localizable.Content.System.FailedtosendMessage
 
             let detailsString: String
-            switch message.failedToSendReason {
-            case .unknown, .none:
-                let userCancelled = message.fileMessageData?.transferState == .uploadingCancelled
-                detailsString = userCancelled ? Message.userCancelledUploadReason : Message.generalReason
+            switch message.expirationReason {
+            case .none, .unknown, .timeout:
+                detailsString = Message.generalReason
             case .federationRemoteError:
                 detailsString = Message.federationRemoteErrorReason(
                     message.conversationLike?.domain ?? "",
                     WireURLs.shared.unreachableBackendInfo.absoluteString
                 )
+            case .cancelled:
+                detailsString = Message.userCancelledUploadReason
             }
 
             content = .sendFailure(detailsString && attributes)

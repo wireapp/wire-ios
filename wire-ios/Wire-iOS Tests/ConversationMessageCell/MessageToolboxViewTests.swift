@@ -77,7 +77,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // GIVEN
         message.deliveryState = .failedToSend
         message.conversationLike = otherUserConversation
-        message.failedToSendReason = .federationRemoteError
+        message.expirationReason = .federationRemoteError
         message.conversation?.domain = "anta.wire.link"
 
         // WHEN

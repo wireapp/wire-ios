@@ -18,25 +18,10 @@
 
 import Foundation
 
-extension ZMMessage: SwiftConversationMessage {
-
-    public var expirationReason: ExpirationReason? {
-        guard
-            isExpired,
-            let reasonCode = expirationReasonCode,
-            let reason = ExpirationReason(rawValue: reasonCode.intValue)
-        else {
-            return nil
-        }
-
-        return reason
-    }
-
-    public var failedToSendUsers: [UserType] {
-        guard let recipients = failedToSendRecipients else {
-            return []
-        }
-        return Array(recipients)
-    }
-
-}
+//@objc(ZMExpirationReason)
+//public enum ExpirationReason: Int {
+//    case unknown
+//    case federationRemoteError
+//    case cancelled
+//    case timeout
+//}

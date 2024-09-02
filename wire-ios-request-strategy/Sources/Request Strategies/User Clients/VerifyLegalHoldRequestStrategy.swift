@@ -151,7 +151,7 @@ private class VerifyClientsParser: OTREntity {
 
     var expirationReasonCode: NSNumber?
 
-    func expire() {
+    func expire(withReason reason: ExpirationReason) {
         // no-op
     }
 
