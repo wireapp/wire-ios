@@ -44,3 +44,18 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
         view.availability = availability
     }
 }
+
+extension AccountImageViewRepresentable {
+
+    init(
+        _ accountImage: UIImage,
+        _ isTeamAccount: Bool,
+        _ availability: Availability?
+    ) {
+        self.init(
+            accountImage: accountImage,
+            isTeamAccount: isTeamAccount,
+            availability: availability
+        )
+    }
+}

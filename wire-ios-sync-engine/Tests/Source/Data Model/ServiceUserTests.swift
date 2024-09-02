@@ -17,6 +17,7 @@
 //
 
 import WireUtilities
+import WireUtilitiesPkg
 import XCTest
 
 @testable import WireSyncEngine

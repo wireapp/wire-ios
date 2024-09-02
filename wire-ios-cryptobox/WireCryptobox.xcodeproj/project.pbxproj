@@ -481,9 +481,9 @@
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EE97411C295493B9000C9340 /* WireUtilities.framework */,
 				EE67F6B8296F05BF001D7C88 /* Clibsodium.xcframework */,
 				EE67F6B9296F05BF001D7C88 /* cryptobox.xcframework */,
-				EE97411C295493B9000C9340 /* WireUtilities.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

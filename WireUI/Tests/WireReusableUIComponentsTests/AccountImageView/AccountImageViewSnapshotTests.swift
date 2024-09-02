@@ -57,7 +57,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
                         .verify(matching: hostingControllerView, named: "dark", testName: testName)
 
                 } else {
-                    XCTFail("")
+                    XCTFail("iOS 16+ is needed")
                 }
             }
         }

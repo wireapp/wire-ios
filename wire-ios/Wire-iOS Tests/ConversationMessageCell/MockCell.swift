@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireUtilitiesPkg
+
 @testable import Wire
 
 final class MockCell: UIView, ConversationMessageCell {

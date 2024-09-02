@@ -589,13 +589,13 @@
 		54C902651B753419007162A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB79AC672C6D0009003CF5F4 /* WireTransportSupport.framework */,
-				59EC73FA2C20B82F00E5C036 /* WireSystem.framework */,
-				5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */,
-				EE67F6FF296F09D8001D7C88 /* WireTesting.framework */,
-				EE974127295498E2000C9340 /* WireTransport.framework */,
 				EE974124295498DA000C9340 /* WireCryptobox.framework */,
 				EE974120295498D2000C9340 /* WireProtos.framework */,
+				59EC73FA2C20B82F00E5C036 /* WireSystem.framework */,
+				EE67F6FF296F09D8001D7C88 /* WireTesting.framework */,
+				EE974127295498E2000C9340 /* WireTransport.framework */,
+				CB79AC672C6D0009003CF5F4 /* WireTransportSupport.framework */,
+				5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

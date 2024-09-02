@@ -16,24 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
+import WireDesign
 import WireUtilitiesPkg
-import XCTest
 
-@testable import WireUtilities
+public extension AccentColor {
 
-final class AccentColorTests: XCTestCase {
+    var uiColor: UIColor {
+        switch self {
+        case .blue:
+            SemanticColors.Accent.blue
+        case .green:
+            SemanticColors.Accent.green
+        case .red:
+            SemanticColors.Accent.red
+        case .amber:
+            SemanticColors.Accent.amber
+        case .turquoise:
+            SemanticColors.Accent.turquoise
+        case .purple:
+            SemanticColors.Accent.purple
+        }
+    }
+}
 
-    /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
-    func testRawValues() {
-
-        XCTAssertEqual(AccentColor.blue.rawValue, 1)
-        XCTAssertEqual(AccentColor.green.rawValue, 2)
-        XCTAssertEqual(AccentColor.red.rawValue, 4)
-        XCTAssertEqual(AccentColor.amber.rawValue, 5)
-        XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
-        XCTAssertEqual(AccentColor.purple.rawValue, 7)
-
-        XCTAssertEqual(ZMAccentColor.min, .from(accentColor: .blue))
-        XCTAssertEqual(ZMAccentColor.max, .from(accentColor: .purple))
+#Preview {
+    VStack {
+        ForEach(AccentColor.allCases, id: \.self) { accentColor in
+            Color(uiColor: accentColor.uiColor)
+        }
     }
 }

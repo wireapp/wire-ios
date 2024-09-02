@@ -28,6 +28,7 @@
 		59909A5E2C5BBEA8009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A5D2C5BBEA8009C41DE /* WireAPI */; };
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
+		59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */; };
 		C9E8A3AA2C7324D10093DD5C /* ConversationLabelsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3A92C7324D10093DD5C /* ConversationLabelsRepositoryError.swift */; };
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B52C738F0A0093DD5C /* ConversationLabelsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B42C738F0A0093DD5C /* ConversationLabelsRepository.swift */; };
@@ -36,7 +37,6 @@
 		C9E8A3C62C7784840093DD5C /* String+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3C32C7783740093DD5C /* String+Error.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
-		59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -354,10 +354,10 @@
 		01D0DCC02C1C8CBA0076CB1C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB7979122C738508006FBA58 /* WireTransportSupport.framework */,
+				01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */,
 				01BDA5442C20762200636E50 /* WireDataModelSupport.framework */,
 				01D0DCC52C1C8CD90076CB1C /* WireTransport.framework */,
-				01D0DCC32C1C8CC20076CB1C /* WireDataModel.framework */,
+				CB7979122C738508006FBA58 /* WireTransportSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -773,7 +773,6 @@
 				C9E8A3C52C77847E0093DD5C /* XCTestCase+Assertions.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
-				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
 				CB7979162C738547006FBA58 /* TestSetup.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,

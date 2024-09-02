@@ -180,6 +180,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-system || inputs.all }}
+        with:
+          results: xcodebuild-wire-system.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireSystem
         if: ${{ inputs.wire-system || inputs.all }}
         run: |
@@ -203,6 +210,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-system.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSystem Project" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-system || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-system.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireSystem Project
         if: ${{ inputs.wire-ios-system || inputs.all }}
@@ -228,6 +242,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTesting" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-testing || inputs.all }}
+        with:
+          results: xcodebuild-wire-testing.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireTesting
         if: ${{ inputs.wire-testing || inputs.all }}
         run: |
@@ -251,6 +272,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-testing.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTesting Project" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-testing || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-testing.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireTesting Project
         if: ${{ inputs.wire-ios-testing || inputs.all }}
@@ -276,6 +304,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireUtilities" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-utilities || inputs.all }}
+        with:
+          results: xcodebuild-wire-utilities.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireUtilities
         if: ${{ inputs.wire-utilities || inputs.all }}
         run: |
@@ -299,6 +334,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-utilities.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireUtilities Project" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-utilities || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-utilities.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireUtilities Project
         if: ${{ inputs.wire-ios-utilities || inputs.all }}
@@ -324,6 +366,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireCryptobox" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-cryptobox.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireCryptobox
         if: ${{ inputs.wire-ios-cryptobox || inputs.all }}
         run: |
@@ -347,6 +396,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-transport.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireTransport" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-transport || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-transport.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireTransport
         if: ${{ inputs.wire-ios-transport || inputs.all }}
@@ -372,6 +428,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireLinkPreview" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-link-preview.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireLinkPreview
         if: ${{ inputs.wire-ios-link-preview || inputs.all }}
         run: |
@@ -395,6 +458,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-images.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireImages" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-images || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-images.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireImages
         if: ${{ inputs.wire-ios-images || inputs.all }}
@@ -420,6 +490,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireProtos" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-protos || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-protos.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireProtos
         if: ${{ inputs.wire-ios-protos || inputs.all }}
         run: |
@@ -443,6 +520,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-mocktransport.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireMockTransport" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-mocktransport.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireMockTransport
         if: ${{ inputs.wire-ios-mocktransport || inputs.all }}
@@ -468,6 +552,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDataModel" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-data-model || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-data-model.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireDataModel
         if: ${{ inputs.wire-ios-data-model || inputs.all }}
         run: |
@@ -491,11 +582,18 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireAPI" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-api || inputs.all }}
+        with:
+          results: xcodebuild-wire-api.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireAPI
         if: ${{ inputs.wire-api || inputs.all }}
         run: |
           echo "Testing WireAPI..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
 
       # WireDomain
@@ -514,6 +612,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-domain.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDomain" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-domain || inputs.all }}
+        with:
+          results: xcodebuild-wire-domain.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireDomain
         if: ${{ inputs.wire-domain || inputs.all }}
@@ -539,6 +644,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDomain Project" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-domain-project || inputs.all }}
+        with:
+          results: xcodebuild-wire-domain-project.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireDomain Project
         if: ${{ inputs.wire-domain-project || inputs.all }}
         run: |
@@ -562,6 +674,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-request-strategy.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireRequestStrategy" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-request-strategy.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireRequestStrategy
         if: ${{ inputs.wire-ios-request-strategy || inputs.all }}
@@ -587,6 +706,13 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireShareEngine" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-share-engine || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-share-engine.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireShareEngine
         if: ${{ inputs.wire-ios-share-engine || inputs.all }}
         run: |
@@ -610,6 +736,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-sync-engine.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireSyncEngine" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-sync-engine.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireSyncEngine
         if: ${{ inputs.wire-ios-sync-engine || inputs.all }}
@@ -635,11 +768,18 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireDesign" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-design || inputs.all }}
+        with:
+          results: xcodebuild-wire-design.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireDesign
         if: ${{ inputs.wire-design || inputs.all }}
         run: |
           echo "Testing WireDesign..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
           exit ${PIPESTATUS[0]}
 
       # WireReusableUIComponents
@@ -659,11 +799,18 @@ jobs:
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireReusableUIComponents" --verbose
 
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
+        with:
+          results: xcodebuild-wire-reusable-ui-components.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Test WireReusableUIComponents
         if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
         run: |
           echo "Testing WireReusableUIComponents..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
           exit ${PIPESTATUS[0]}
 
       # Wire-iOS
@@ -682,6 +829,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for Wire-iOS" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test Wire-iOS
         if: ${{ inputs.wire-ios || inputs.all }}
@@ -723,6 +877,13 @@ jobs:
           XCRESULT_PATH: xcodebuild-wire-ios-notification-engine.xcresult
         run: |
           bundle exec danger --dangerfile=Dangerfile.warning-workaround --danger_id="Run Danger for WireNotificationEngine" --verbose
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-ios-notification-engine || inputs.all }}
+        with:
+          results: xcodebuild-wire-ios-notification-engine.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireNotificationEngine
         if: ${{ inputs.wire-ios-notification-engine || inputs.all }}

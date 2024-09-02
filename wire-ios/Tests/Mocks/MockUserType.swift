@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireUtilitiesPkg
 
 @testable import Wire
 

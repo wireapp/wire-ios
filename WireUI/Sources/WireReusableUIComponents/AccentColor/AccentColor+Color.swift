@@ -16,25 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireDesign
+import SwiftUI
+import WireUtilitiesPkg
 
-extension AccentColor {
+public extension AccentColor {
 
-    var uiColor: UIColor {
-        switch self {
-        case .blue:
-            SemanticColors.Accent.blue
-        case .green:
-            SemanticColors.Accent.green
-        case .red:
-            SemanticColors.Accent.red
-        case .amber:
-            SemanticColors.Accent.amber
-        case .turquoise:
-            SemanticColors.Accent.turquoise
-        case .purple:
-            SemanticColors.Accent.purple
+    var color: Color {
+        Color(uiColor: uiColor)
+    }
+}
+
+#Preview {
+    VStack {
+        ForEach(AccentColor.allCases, id: \.self) { accentColor in
+            accentColor.color
         }
     }
 }

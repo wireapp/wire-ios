@@ -147,7 +147,6 @@
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
 		EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */; };
 		EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
-		EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
 		EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */; };
 		EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */; };
@@ -212,20 +211,6 @@
 			remoteInfo = WireTransportSupport;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		EE7F3DED29548F89000D247D /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		01C83761292CC75F009BB0BF /* ProxyCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentials.swift; sourceTree = "<group>"; };
@@ -529,9 +514,9 @@
 		3E88BDE01B1F44FB00232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */,
-				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
 				EE67F6ED296F074C001D7C88 /* WireTesting.framework */,
+				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
+				CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -964,7 +949,6 @@
 				09A218621B790D330076547A /* Sources */,
 				09A218631B790D330076547A /* Frameworks */,
 				09A218641B790D330076547A /* Resources */,
-				EE7F3DED29548F89000D247D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
