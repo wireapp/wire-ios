@@ -19,27 +19,44 @@
 import SwiftUI
 import WireDesign
 
-public enum MainTabBarControllerTab: Int, CaseIterable {
+/// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
+/// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
+public final class MainTabBarController: UITabBarController {
 
-    case contacts, conversations, folders, archive
+    public enum Tab: Int, CaseIterable {
+        case contacts, conversations, folders, archive
+    }
 
-    /// Creates a new instance of `UITabBarController` and configures its `viewControllers` based
-    /// on `MainTabBarControllerTab`'s cases. Each tab is a `UINavigationController` instance.
-    @MainActor
-    public static func configuredTabBarController() -> UITabBarController {
+    // MARK: - Tab subscript
 
-        let tabBarController = UITabBarController()
-        tabBarController.viewControllers = allCases.map { _ in UINavigationController() }
+    public subscript(tab tab: Tab) -> UINavigationController {
+        get { viewControllers![tab.rawValue] as! UINavigationController }
+    }
 
-        for tab in allCases {
+    // MARK: - Life Cycle
+
+    public required init() {
+        super.init(nibName: nil, bundle: nil)
+        setupTabs()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    private func setupTabs() {
+
+        viewControllers = Tab.allCases.map { _ in UINavigationController() }
+
+        for tab in Tab.allCases {
             let tabBarItem: UITabBarItem
             switch tab {
 
             case .contacts:
                 tabBarItem = .init(
                     title: NSLocalizedString("tabBar.contacts.title", bundle: .module, comment: ""),
-                    image: .init(resource: .Temp.contactsOutline),
-                    selectedImage: .init(resource: .Temp.contactsFilled)
+                    image: .init(resource: .TabBar.contactsOutline),
+                    selectedImage: .init(resource: .TabBar.contactsFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
                 tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.contacts.description", bundle: .module, comment: "")
@@ -58,8 +75,8 @@ public enum MainTabBarControllerTab: Int, CaseIterable {
             case .folders:
                 tabBarItem = .init(
                     title: NSLocalizedString("tabBar.folders.title", bundle: .module, comment: ""),
-                    image: .init(resource: .Temp.foldersOutline),
-                    selectedImage: .init(resource: .Temp.foldersFilled)
+                    image: .init(resource: .TabBar.foldersOutline),
+                    selectedImage: .init(resource: .TabBar.foldersFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
                 tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.folders.description", bundle: .module, comment: "")
@@ -76,64 +93,40 @@ public enum MainTabBarControllerTab: Int, CaseIterable {
                 tabBarItem.accessibilityHint = NSLocalizedString("tabBar.archived.hint", bundle: .module, comment: "")
 
             }
-            tabBarController.viewControllers[tab].tabBarItem = tabBarItem
+            viewControllers?[tab.rawValue].tabBarItem = tabBarItem
         }
-        return tabBarController
-    }
-}
 
-// TODO: remvoe
-@MainActor
-public func MainTabBarController(
-    contacts: UIViewController,
-    conversations: UIViewController,
-    folders: UIViewController,
-    archive: UIViewController
-) -> UITabBarController {
-
-    let mainTabBarController = MainTabBarControllerTab.configuredTabBarController()
-    // TODO: wrap in navigation controller
-    mainTabBarController.viewControllers[.contacts].viewControllers = [contacts]
-    mainTabBarController.viewControllers[.conversations].viewControllers = [conversations]
-    mainTabBarController.viewControllers[.folders].viewControllers = [folders]
-    mainTabBarController.viewControllers[.archive].viewControllers = [archive]
-
-    MainTabBarControllerAppearance().apply(mainTabBarController)
-
-    return mainTabBarController
-}
-
-// MARK: -
-
-private extension Optional where Wrapped == Array<UIViewController> {
-
-    subscript(tab: MainTabBarControllerTab) -> UINavigationController {
-        get { self![tab.rawValue] as! UINavigationController }
-        set { self![tab.rawValue] = newValue }
+        selectedIndex = Tab.conversations.rawValue
+        // TODO: [WPB-6647] use `ColorTheme` instead of `SemanticColors`
+        tabBar.backgroundColor = SemanticColors.View.backgroundDefault
+        tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
     }
 }
 
 // MARK: - Previews
 
-struct MainTabBarController_Previews: PreviewProvider {
-
-    static var previews: some View {
-        MainTabBarControllerWrapper()
-            .ignoresSafeArea(edges: .all)
-    }
+@available(iOS 17, *)
+#Preview {
+    {
+        let tabBarController = MainTabBarController()
+        for tab in MainTabBarController.Tab.allCases {
+            tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
+        }
+        return tabBarController
+    }()
 }
 
-private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
+private final class PlaceholderViewController: UIViewController {
 
-    func makeUIViewController(context: Context) -> UITabBarController {
-        let tabItem: (String) -> UIHostingController = { .init(rootView: Text($0)) }
-        return MainTabBarController(
-            contacts: tabItem(NSLocalizedString("tabBar.contacts.title", bundle: .module, comment: "")),
-            conversations: tabItem(NSLocalizedString("tabBar.conversations.title", bundle: .module, comment: "")),
-            folders: tabItem(NSLocalizedString("tabBar.folders.title", bundle: .module, comment: "")),
-            archive: tabItem(NSLocalizedString("tabBar.archived.title", bundle: .module, comment: ""))
-        )
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        navigationItem.title = navigationController!.tabBarItem.title
+        let imageView = UIImageView(image: navigationController!.tabBarItem.image)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(imageView)
+        imageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        imageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        imageView.transform = .init(scaleX: 3, y: 3)
     }
-
-    func updateUIViewController(_ tabBarController: UITabBarController, context: Context) {}
 }

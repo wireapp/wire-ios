@@ -33,7 +33,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: UITabBarController!
+    private var tabBarController: MainTabBarController!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -73,12 +73,8 @@ final class ConversationListViewControllerTests: XCTestCase {
                 mainCoordinator: mockMainCoordinator,
                 selfProfileViewControllerBuilder: .mock
             )
-            tabBarController = MainTabBarController(
-                contacts: .init(),
-                conversations: sut,
-                folders: .init(),
-                archive: .init()
-            )
+            tabBarController = .init()
+            tabBarController[tab: .conversations].viewControllers = [sut]
 
             window = UIWindow(frame: UIScreen.main.bounds)
             window.rootViewController = tabBarController
