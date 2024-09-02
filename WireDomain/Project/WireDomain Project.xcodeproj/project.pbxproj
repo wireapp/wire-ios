@@ -39,7 +39,6 @@
 		C9E8A3E22C7F5C870093DD5C /* ConversationLocalStore+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */; };
 		C9E8A3E62C7F60910093DD5C /* ConversationLocalStore+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */; };
 		C9E8A3E82C7F6EA40093DD5C /* ConversationRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */; };
-		C9E8A3EA2C80502A0093DD5C /* XCTestCase+Assertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E92C80502A0093DD5C /* XCTestCase+Assertions.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE0E117E2C2C4080004BBD29 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
@@ -167,7 +166,6 @@
 		C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+MLS.swift"; sourceTree = "<group>"; };
 		C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+Metadata.swift"; sourceTree = "<group>"; };
 		C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryTests.swift; sourceTree = "<group>"; };
-		C9E8A3E92C80502A0093DD5C /* XCTestCase+Assertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Assertions.swift"; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -442,7 +440,6 @@
 			children = (
 				EE0E117D2C2C4080004BBD29 /* TestError.swift */,
 				CB7979152C738547006FBA58 /* TestSetup.swift */,
-				C9E8A3E92C80502A0093DD5C /* XCTestCase+Assertions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -831,7 +828,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
-				C9E8A3EA2C80502A0093DD5C /* XCTestCase+Assertions.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
 				CB7979162C738547006FBA58 /* TestSetup.swift in Sources */,
