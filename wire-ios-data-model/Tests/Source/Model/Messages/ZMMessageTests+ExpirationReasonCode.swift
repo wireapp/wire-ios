@@ -35,12 +35,9 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         super.tearDown()
     }
 
-    func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() {
+    func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() throws {
         // given
-        guard let message else {
-            XCTFail("Failed to add message")
-            return
-        }
+        let message = try XCTUnwrap(message)
 
         // when
         message.expire(withReason: .unknown)
@@ -51,12 +48,9 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         XCTAssertEqual(message.expirationReasonCode, 0)
     }
 
-    func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() {
+    func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() throws {
         // given
-        guard let message else {
-            XCTFail("Failed to add message")
-            return
-        }
+        let message = try XCTUnwrap(message)
 
         // when
         message.expire(withReason: .unknown)
@@ -72,12 +66,10 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         XCTAssertNil(message.expirationReasonCode)
     }
 
-    func testExpirationReasonsParsing() {
+    func testExpirationReasonsParsing() throws {
         // given
-        guard let message else {
-            XCTFail("Failed to add message")
-            return
-        }
+        let message = try XCTUnwrap(message)
+
         // when
         message.expire(withReason: .unknown)
 
