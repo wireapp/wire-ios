@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUIBase
 import UIKit
+import WireUIBase
 
 /// Responds to selected tab changes, ensuring the correct _principle_ tab is selected and `Contacts` or `Archive` views
 /// are shown.

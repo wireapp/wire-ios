@@ -29,9 +29,7 @@ public final class MainTabBarController: UITabBarController {
 
     // MARK: - Tab subscript
 
-    public subscript(tab tab: Tab) -> UINavigationController {
-        get { viewControllers![tab.rawValue] as! UINavigationController }
-    }
+    public subscript(tab tab: Tab) -> UINavigationController { viewControllers![tab.rawValue] as! UINavigationController }
 
     // MARK: - Life Cycle
 
@@ -39,19 +37,18 @@ public final class MainTabBarController: UITabBarController {
         super.init(nibName: nil, bundle: nil)
         setupTabs()
     }
-    
+
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
 
     private func setupTabs() {
-
         viewControllers = Tab.allCases.map { _ in UINavigationController() }
 
         for tab in Tab.allCases {
             let tabBarItem: UITabBarItem
             switch tab {
-
             case .contacts:
                 tabBarItem = .init(
                     title: NSLocalizedString("tabBar.contacts.title", bundle: .module, comment: ""),
@@ -91,7 +88,6 @@ public final class MainTabBarController: UITabBarController {
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
                 tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.archived.description", bundle: .module, comment: "")
                 tabBarItem.accessibilityHint = NSLocalizedString("tabBar.archived.hint", bundle: .module, comment: "")
-
             }
             viewControllers?[tab.rawValue].tabBarItem = tabBarItem
         }
