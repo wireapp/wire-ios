@@ -35,7 +35,6 @@ struct SettingsCellDescriptorFactory {
             rootElements.append(manageTeamCell())
         }
 
-        rootElements.append(settingsCell())
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
@@ -101,16 +100,6 @@ struct SettingsCellDescriptorFactory {
                                                     icon: .plus,
                                                     accessoryViewMode: .alwaysHide,
                                                     copiableText: nil)
-    }
-
-    func settingsCell() -> SettingsCellDescriptorType {
-
-        SettingsDismissProfileAndSwitchTabDescriptor(
-            title: L10n.Localizable.Self.settings,
-            identifier: type(of: self).settingsDevicesCellIdentifier,
-            icon: .gear,
-            targetTab: .settings
-        )
     }
 
     func settingsGroup(

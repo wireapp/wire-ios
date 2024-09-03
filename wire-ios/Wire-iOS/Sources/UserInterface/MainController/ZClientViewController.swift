@@ -213,17 +213,10 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUserLegalHoldSubject
         )
 
-        mainTabBarController = MainTabBarController(
-            conversations: UINavigationController(rootViewController: conversationListViewController),
-            archive: createArchivedListViewController(),
-            settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
-        )
-todo
-mainTabBarController = MainTabBarController()
-mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
-mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
-mainTabBarController[tab: .settings].viewControllers = [settingsViewControllerBuilder.build()]
-wireSplitViewController.leftViewController = mainTabBarController
+        mainTabBarController = MainTabBarController()
+        mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
+        mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
+        mainTabBarController[tab: .settings].viewControllers = [settingsViewControllerBuilder.build()]
 
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
