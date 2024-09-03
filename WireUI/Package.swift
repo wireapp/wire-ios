@@ -10,6 +10,7 @@ let package = Package(
     products: [
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
+        .library(name: "WireUIBase", targets: ["WireUIBase"]),
         .library(name: "WireUITesting", targets: ["WireUITesting"])
     ],
     dependencies: [
@@ -31,6 +32,16 @@ let package = Package(
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
+                "WireUITesting"
+            ]
+        ),
+
+        .target(name: "WireUIBase", dependencies: ["WireDesign"]),
+        .testTarget(
+            name: "WireUIBaseTests",
+            dependencies: [
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                "WireUIBase",
                 "WireUITesting"
             ]
         ),
