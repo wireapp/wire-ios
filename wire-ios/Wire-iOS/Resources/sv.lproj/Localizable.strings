@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Nästa";
@@ -311,7 +313,7 @@
 "conversation.create.group_name.placeholder" = "Gruppens namn";
 "conversation.create.guidance.empty" = "Minst 1 tecken";
 "conversation.create.guidance.toolong" = "För många tecken";
-"conversation.create.options.title" = "Conversation options";
+"conversation.create.options.title" = "Konversationsalternativ";
 "conversation.create.options.subtitle" = "Gäster: %@, Tjänster: %@, Läskvitton: %@";
 "conversation.create.guests.title" = "Tillåt gäster";
 "conversation.create.guests.subtitle" = "Öppna den här konversationen till personer utanför ditt team.";
@@ -371,7 +373,7 @@
 "image_confirmer.confirm" = "OK";
 "image_confirmer.cancel" = "Avbryt";
 "image.add_sketch" = "Lägg till en skiss";
-"image.add_emoji" = "Add an emoji";
+"image.add_emoji" = "Lägg till en emoji";
 "image.edit_image" = "Redigera bild";
 
 // Camera access
