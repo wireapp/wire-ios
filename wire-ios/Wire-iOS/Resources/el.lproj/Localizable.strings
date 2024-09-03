@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Δωμάτιο καλεσμένων";
-
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Αναζήτηση βάση ονόματος ή ονόματος χρήστη";
 "peoplepicker.header.top_people" = "Αγαπημένα άτομα";
-"peoplepicker.button.create_conversation" = "Δημιουργία ομάδος";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Add Participants";
 "peoplepicker.header.conversations" = "Ομάδες";
 "peoplepicker.header.team_conversations" = "%@ Groups";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Invite more people";
 "peoplepicker.invite_team_members" = "Invite people to join the team";
 "peoplepicker.quick-action.open-conversation" = "Άνοιγμα";
-"peoplepicker.quick-action.create-conversation" = "Δημιουργία ομάδος";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -127,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Όλα αρχειοθετημένα";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favorites";
+"conversation_list.filter.groups.title" = "Ομάδες";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Αφαίρεση";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Συμμετοχή";
@@ -136,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Επαφές";
 "conversation_list.bottom_bar.conversations.title" = "Conversations";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Αρχείο";
+"conversation_list.bottom_bar.settings.title" = "Ρυθμίσεις";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "στις Επαφές";
@@ -1803,7 +1805,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "no more gifs";
-"giphy.error.no_result" = "no gif found";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "send";
 "giphy.cancel" = "cancel";

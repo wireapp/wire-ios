@@ -25,9 +25,8 @@ protocol TokenizedTextViewDelegate: AnyObject {
 
 // ! Custom UITextView subclass to be used in TokenField.
 // ! Shouldn't be used anywhere else.
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 // TODO: as a inner class of TokenField
-// swiftlint:enable todo_requires_jira_link
 
 class TokenizedTextView: TextView {
 

@@ -275,32 +275,32 @@ class MockCallQualityRouterProtocol: CallQualityRouterProtocol {
 
     // MARK: - presentCallFailureDebugAlert
 
-    var presentCallFailureDebugAlertPresentingViewController_Invocations: [UIViewController] = []
-    var presentCallFailureDebugAlertPresentingViewController_MockMethod: ((UIViewController) -> Void)?
+    var presentCallFailureDebugAlertMainWindow_Invocations: [UIWindow] = []
+    var presentCallFailureDebugAlertMainWindow_MockMethod: ((UIWindow) -> Void)?
 
-    func presentCallFailureDebugAlert(presentingViewController: UIViewController) {
-        presentCallFailureDebugAlertPresentingViewController_Invocations.append(presentingViewController)
+    func presentCallFailureDebugAlert(mainWindow: UIWindow) {
+        presentCallFailureDebugAlertMainWindow_Invocations.append(mainWindow)
 
-        guard let mock = presentCallFailureDebugAlertPresentingViewController_MockMethod else {
-            fatalError("no mock for `presentCallFailureDebugAlertPresentingViewController`")
+        guard let mock = presentCallFailureDebugAlertMainWindow_MockMethod else {
+            fatalError("no mock for `presentCallFailureDebugAlertMainWindow`")
         }
 
-        mock(presentingViewController)
+        mock(mainWindow)
     }
 
     // MARK: - presentCallQualityRejection
 
-    var presentCallQualityRejectionPresentingViewController_Invocations: [UIViewController] = []
-    var presentCallQualityRejectionPresentingViewController_MockMethod: ((UIViewController) -> Void)?
+    var presentCallQualityRejectionMainWindow_Invocations: [UIWindow] = []
+    var presentCallQualityRejectionMainWindow_MockMethod: ((UIWindow) -> Void)?
 
-    func presentCallQualityRejection(presentingViewController: UIViewController) {
-        presentCallQualityRejectionPresentingViewController_Invocations.append(presentingViewController)
+    func presentCallQualityRejection(mainWindow: UIWindow) {
+        presentCallQualityRejectionMainWindow_Invocations.append(mainWindow)
 
-        guard let mock = presentCallQualityRejectionPresentingViewController_MockMethod else {
-            fatalError("no mock for `presentCallQualityRejectionPresentingViewController`")
+        guard let mock = presentCallQualityRejectionMainWindow_MockMethod else {
+            fatalError("no mock for `presentCallQualityRejectionMainWindow`")
         }
 
-        mock(presentingViewController)
+        mock(mainWindow)
     }
 
 }
@@ -847,6 +847,47 @@ public class MockNetworkStatusObservable: NetworkStatusObservable {
 
     public var underlyingReachability: ServerReachability!
 
+
+}
+
+class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - shouldAnimateNetworkStatusView
+
+    var shouldAnimateNetworkStatusView: Bool {
+        get { return underlyingShouldAnimateNetworkStatusView }
+        set(value) { underlyingShouldAnimateNetworkStatusView = value }
+    }
+
+    var underlyingShouldAnimateNetworkStatusView: Bool!
+
+    // MARK: - bottomMargin
+
+    var bottomMargin: CGFloat {
+        get { return underlyingBottomMargin }
+        set(value) { underlyingBottomMargin = value }
+    }
+
+    var underlyingBottomMargin: CGFloat!
+
+
+    // MARK: - didChangeHeight
+
+    var didChangeHeightAnimatedState_Invocations: [(networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState)] = []
+    var didChangeHeightAnimatedState_MockMethod: ((NetworkStatusView, Bool, NetworkStatusViewState) -> Void)?
+
+    func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
+        didChangeHeightAnimatedState_Invocations.append((networkStatusView: networkStatusView, animated: animated, state: state))
+
+        guard let mock = didChangeHeightAnimatedState_MockMethod else {
+            fatalError("no mock for `didChangeHeightAnimatedState`")
+        }
+
+        mock(networkStatusView, animated, state)
+    }
 
 }
 

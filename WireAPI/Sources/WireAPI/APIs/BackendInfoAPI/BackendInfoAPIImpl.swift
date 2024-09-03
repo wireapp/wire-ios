@@ -20,24 +20,26 @@ import Foundation
 
 class BackendInfoAPIImpl: BackendInfoAPI {
 
-    let httpClient: HTTPClient
+    let apiService: any APIServiceProtocol
 
-    init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
+    init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
-    let path = "/api-version"
-
     func getBackendInfo() async throws -> BackendInfo {
-        let request = HTTPRequest(
-            path: path,
-            method: .get
+        let request = try URLRequestBuilder(path: "/api-version")
+            .withMethod(.get)
+            .withAcceptType(.json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: false
         )
 
-        let response = try await httpClient.executeRequest(request)
         return try ResponseParser()
-            .success(code: 200, type: BackendInfoResponse.self)
-            .parse(response)
+            .success(code: .ok, type: BackendInfoResponse.self)
+            .parse(code: response.statusCode, data: data)
     }
 
 }

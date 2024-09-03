@@ -18,6 +18,8 @@
 
 import Foundation
 
+/// Contains metadata about a subgroup. Used when fetching information about subgroup from the backend.
+
 public struct MLSSubgroup: Equatable {
 
     public let cipherSuite: Int

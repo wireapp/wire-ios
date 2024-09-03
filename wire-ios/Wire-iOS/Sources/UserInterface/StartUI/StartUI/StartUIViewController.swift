@@ -38,13 +38,7 @@ final class StartUIViewController: UIViewController {
 
     let searchResultsViewController: SearchResultsViewController
 
-    var addressBookUploadLogicHandled = false
-
     var addressBookHelperType: AddressBookHelperProtocol.Type
-
-    var addressBookHelper: AddressBookHelperProtocol {
-        return addressBookHelperType.sharedHelper
-    }
 
     let userSession: UserSession
 
@@ -170,7 +164,7 @@ final class StartUIViewController: UIViewController {
 
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
-        searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder.capitalizingFirstCharacterOnly
+        searchController.searchBar.placeholder = L10n.Localizable.Peoplepicker.searchPlaceholder
         searchController.searchBar.accessibilityIdentifier = "textViewSearch"
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false

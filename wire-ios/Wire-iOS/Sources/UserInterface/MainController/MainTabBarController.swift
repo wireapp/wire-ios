@@ -31,7 +31,6 @@ func MainTabBarController(
 
     let tabBarAppearance = UITabBarAppearance()
     tabBarAppearance.configureWithDefaultBackground()
-    tabBarAppearance.shadowImage = .from(solidColor: ColorTheme.Strokes.outline)
     tabBarAppearance.backgroundColor = ColorTheme.Backgrounds.background
     tabBarAppearance.inlineLayoutAppearance = tabBarItemAppearance
     tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance

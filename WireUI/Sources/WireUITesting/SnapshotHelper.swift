@@ -208,14 +208,14 @@ public struct SnapshotHelper {
         XCTAssertNil(failure, file: file, line: line)
     }
 
-    ///    Verifiy a`UIView`.
+    /// Verify a `UIView`.
     ///
-    ///     - Parameters:
-    ///        - value: The `UIView` to test.
-    ///        - name: An optional string to name the snapshot. Defaults to `nil`.
-    ///        - file: The invoking file name.
-    ///        - testName: The name of the reference image.
-    ///        - line: The invoking line number.
+    /// - Parameters:
+    ///   - value: The `UIView` to test.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
 
     public func verify(
         matching value: UIView,
@@ -252,13 +252,13 @@ public struct SnapshotHelper {
         (.iPadMini(.portrait), "iPad-portrait")
     ]
 
-    ///    Verifiy a`UIViewController`, in all device sizes
+    /// Verify a `UIViewController`, in all device sizes
     ///
-    ///     - Parameters:
-    ///        - value: The `UIViewController` to test.
-    ///        - file: The invoking file name.
-    ///        - testName: The name of the reference image.
-    ///        - line: The invoking line number.
+    /// - Parameters:
+    ///   - value: The `UIViewController` to test.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number​.
 
     public func verifyInAllDeviceSizes(
         matching value: UIViewController,
@@ -283,14 +283,14 @@ public struct SnapshotHelper {
         }
     }
 
-    ///    Verifiy a`UIViewController`, in all phone sizes
+    /// Verify a `UIViewController`, in all phone sizes
     ///
-    ///     - Parameters:
-    ///        - value: The `UIViewController` to test.
-    ///        - orientation: The orientation to use for the test. Default is portrait.
-    ///        - file: The invoking file name.
-    ///        - testName: The name of the reference image.
-    ///        - line: The invoking line number.
+    /// - Parameters:
+    ///   - value: The `UIViewController` to test.
+    ///   - orientation: The orientation to use for the test. Default is portrait.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
 
     public func verifyInAllIPhoneSizes(
         matching value: UIViewController,
@@ -316,14 +316,14 @@ public struct SnapshotHelper {
         }
     }
 
-    ///    Verifiy a`UIImage`.
+    /// Verify a `UIImage`.
     ///
-    ///     - Parameters:
-    ///        - value: The `UIImage` to test.
-    ///        - name: An optional string to name the snapshot. Defaults to `nil`.
-    ///        - file: The invoking file name.
-    ///        - testName: The name of the reference image.
-    ///        - line: The invoking line number.
+    /// - Parameters:
+    ///   - value: The `UIImage` to test.
+    ///   - name: An optional string to name the snapshot. Defaults to `nil`.
+    ///   - file: The invoking file name.
+    ///   - testName: The name of the reference image.
+    ///   - line: The invoking line number.
 
     public func verify(
         matching value: UIImage,

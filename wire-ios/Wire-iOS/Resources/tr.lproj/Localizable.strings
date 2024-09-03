@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Misafir odası";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Siz)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "İsim veya kullanıcı adına göre ara";
 "peoplepicker.header.top_people" = "Sık Görüşülenler";
-"peoplepicker.button.create_conversation" = "Grup Oluştur";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Katılımcı ekle";
 "peoplepicker.header.conversations" = "Gruplar";
 "peoplepicker.header.team_conversations" = "%@ Grup";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Daha fazla kişi davet et";
 "peoplepicker.invite_team_members" = "İnsanları takıma katılmaya davet edin";
 "peoplepicker.quick-action.open-conversation" = "Aç";
-"peoplepicker.quick-action.create-conversation" = "Grup oluştur";
-"peoplepicker.quick-action.create-guest-room" = "Misafir odası oluştur";
 "peoplepicker.quick-action.admin-services" = "Hizmetleri yönet";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -127,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Her şey arşivlendi";
 "conversation_list.empty.no_contacts.message" = "Bir sohbet başlat veya\nbir grup oluştur.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoriler";
+"conversation_list.filter.groups.title" = "Gruplar";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Kaldır";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Katıl";
@@ -136,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Yeni mesaj var.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kişiler";
 "conversation_list.bottom_bar.conversations.title" = "Konuşmalar";
-"conversation_list.bottom_bar.folders.title" = "Klasörler";
 "conversation_list.bottom_bar.archived.title" = "Arşivle";
+"conversation_list.bottom_bar.settings.title" = "Ayarlar";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "Kişilerde";
@@ -1803,7 +1805,7 @@
 "giphy.conversation.message" = "%@ · giphy.com aracılığıyla";
 "giphy.conversation.random_message" = "giphy.com aracılığıyla";
 "giphy.error.no_more_results" = "daha fazla gif yok";
-"giphy.error.no_result" = "gif bulunamadı";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "gönder";
 "giphy.cancel" = "iptal";

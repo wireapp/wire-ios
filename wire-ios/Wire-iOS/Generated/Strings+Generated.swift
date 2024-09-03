@@ -917,6 +917,26 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "reactionPicker.searchFieldPlaceholder.description", fallback: "Search for emoji")
       }
     }
+    internal enum SearchGifs {
+      internal enum GifItem {
+        /// Tap to select this GIF
+        internal static let accessibilityHint = L10n.tr("Accessibility", "searchGifs.gifItem.accessibilityHint", fallback: "Tap to select this GIF")
+      }
+      internal enum GifItemsLoaded {
+        /// Loaded %@ new GIFs
+        internal static func announcement(_ p1: Any) -> String {
+          return L10n.tr("Accessibility", "searchGifs.gifItems_loaded.announcement", String(describing: p1), fallback: "Loaded %@ new GIFs")
+        }
+      }
+      internal enum NorResultsLabel {
+        /// No Gifs found
+        internal static let description = L10n.tr("Accessibility", "searchGifs.norResultsLabel.description", fallback: "No Gifs found")
+      }
+      internal enum SearchBar {
+        /// Enter text to search for GIFs
+        internal static let accessibilityLabel = L10n.tr("Accessibility", "searchGifs.searchBar.accessibilityLabel", fallback: "Enter text to search for GIFs")
+      }
+    }
     internal enum SearchView {
       internal enum ClearButton {
         /// Clear
@@ -1048,7 +1068,7 @@ internal enum L10n {
     /// Allow Wire to access your camera so you can place video calls and send photos.
     internal static let nsCameraUsageDescription = L10n.tr("InfoPlist", "NSCameraUsageDescription", fallback: "Allow Wire to access your camera so you can place video calls and send photos.")
     /// *  Wire
-    ///  *  Copyright (C) 2016 Wire Swiss GmbH
+    ///  *  Copyright (C) 2024 Wire Swiss GmbH
     ///  *
     ///  *  This program is free software: you can redistribute it and/or modify
     ///  *  it under the terms of the GNU General Public License as published by
@@ -3456,8 +3476,8 @@ internal enum L10n {
       internal enum Error {
         /// no more gifs
         internal static let noMoreResults = L10n.tr("Localizable", "giphy.error.no_more_results", fallback: "no more gifs")
-        /// no gif found
-        internal static let noResult = L10n.tr("Localizable", "giphy.error.no_result", fallback: "no gif found")
+        /// No gif found
+        internal static let noResult = L10n.tr("Localizable", "giphy.error.no_result", fallback: "No gif found")
       }
     }
     internal enum GroupDetails {

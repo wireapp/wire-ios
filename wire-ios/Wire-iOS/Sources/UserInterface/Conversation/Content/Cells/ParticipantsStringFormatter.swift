@@ -100,10 +100,6 @@ final class ParticipantsStringFormatter {
         return [.font: font, .foregroundColor: textColor]
     }
 
-    private var largeAttributes: Attributes {
-        return [.font: largeFont, .foregroundColor: textColor]
-    }
-
     private var linkAttributes: Attributes {
         return [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }

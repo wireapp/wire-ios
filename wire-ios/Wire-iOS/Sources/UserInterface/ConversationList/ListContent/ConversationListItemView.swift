@@ -21,8 +21,6 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 
-typealias ConversationListItemViewConversation = ConversationAvatarViewConversation & ConversationStatusProvider & ConnectedUserProvider
-
 extension Notification.Name {
     static let conversationListItemDidScroll = Notification.Name("ConversationListItemDidScroll")
 }
@@ -57,7 +55,7 @@ final class ConversationListItemView: UIView {
 
     var selected = false {
         didSet {
-            backgroundColor = .clear
+            backgroundColor = selected ? SemanticColors.View.backgroundUserCellHightLighted : SemanticColors.View.backgroundUserCell
         }
     }
 
@@ -172,11 +170,6 @@ final class ConversationListItemView: UIView {
 
     private func configureFont() {
         titleField.font = FontSpec(.normal, .semibold).font!
-    }
-
-    func updateAppearance() {
-        titleField.attributedText = titleText
-        titleField.textColor = SemanticColors.Label.textDefault
     }
 
     // MARK: - Observer

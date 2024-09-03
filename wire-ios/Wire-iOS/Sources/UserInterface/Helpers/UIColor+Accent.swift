@@ -20,8 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireUtilitiesPkg
 
-private var ZM_UNUSED = "UI"
 private var overridenAccentColor: AccentColor?
 
 extension UIColor {

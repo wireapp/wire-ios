@@ -20,6 +20,7 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
+import WireTransport
 import XCTest
 
 @testable import WireAPI
@@ -40,7 +41,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        BackendInfo.storage = .temporary()
+        BackendInfo.isFederationEnabled = false
 
         stack = try await coreDataStackHelper.createStack()
         connectionsAPI = MockConnectionsAPI()
@@ -53,7 +54,6 @@ final class ConnectionsRepositoryTests: XCTestCase {
         connectionsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        BackendInfo.storage = .standard
         try await super.tearDown()
     }
 

@@ -36,6 +36,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
+    @MainActor
     func testAllAccountTypesAndAvailabilities() {
         for isTeamAccount in [false, true] {
             for availability in Availability.allCases + [Availability?.none] {
@@ -56,7 +57,7 @@ final class AccountImageViewSnapshotTests: XCTestCase {
                         .verify(matching: hostingControllerView, named: "dark", testName: testName)
 
                 } else {
-                    XCTFail("")
+                    XCTFail("iOS 16+ is needed")
                 }
             }
         }

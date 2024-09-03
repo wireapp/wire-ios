@@ -14,6 +14,10 @@
         "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       },
       {
+        "argument" : "-NSShowNonLocalizedStrings YES",
+        "enabled" : false
+      },
+      {
         "argument" : "--disable-interactive-keyboard-dismissal",
         "enabled" : false
       },

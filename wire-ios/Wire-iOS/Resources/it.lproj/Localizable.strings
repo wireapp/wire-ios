@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,8 +41,6 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Stanza degli ospiti";
-
 // User Cell
 "user_cell.title.you_suffix" = " (Tu)";
 
@@ -51,7 +49,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Ricerca per nome o username";
 "peoplepicker.header.top_people" = "Più contattati";
-"peoplepicker.button.create_conversation" = "Crea gruppo";
+"peoplepicker.button.create_conversation" = "Create Group";
 "peoplepicker.button.add_to_conversation" = "Aggiungi partecipanti";
 "peoplepicker.header.conversations" = "Gruppi";
 "peoplepicker.header.team_conversations" = "%@ Gruppi";
@@ -102,8 +100,6 @@
 "peoplepicker.invite_more_people" = "Invita più persone";
 "peoplepicker.invite_team_members" = "Invita altre persone ad unirsi al team";
 "peoplepicker.quick-action.open-conversation" = "Apri";
-"peoplepicker.quick-action.create-conversation" = "Crea gruppo";
-"peoplepicker.quick-action.create-guest-room" = "Crea stanza degli ospiti";
 "peoplepicker.quick-action.admin-services" = "Gestisci servizi";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -127,6 +123,13 @@
 "conversation_list.empty.all_archived.message" = "Tutto archiviato";
 "conversation_list.empty.no_contacts.message" = "Inizia una conversazione\no crea un gruppo.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Preferiti";
+"conversation_list.filter.groups.title" = "Gruppi";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Rimuovi";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Entra";
@@ -136,10 +139,9 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ha nuovi messaggi.";
 
 // Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contatti";
 "conversation_list.bottom_bar.conversations.title" = "Conversazioni";
-"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Archivia";
+"conversation_list.bottom_bar.settings.title" = "Impostazioni";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contatti";
@@ -1803,7 +1805,7 @@
 "giphy.conversation.message" = "%@ · via giphy.com";
 "giphy.conversation.random_message" = "via giphy.com";
 "giphy.error.no_more_results" = "nessun altra gif";
-"giphy.error.no_result" = "nessuna gif trovata";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "invia";
 "giphy.cancel" = "annulla";
