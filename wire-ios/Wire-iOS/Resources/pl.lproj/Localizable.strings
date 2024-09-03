@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Aktywuj teraz.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ma nowe wiadomości.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakty";
-"conversation_list.bottom_bar.conversations.title" = "Konwersacje";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archiwum";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "w kontaktach";
 

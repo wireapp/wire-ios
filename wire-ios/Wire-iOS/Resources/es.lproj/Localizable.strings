@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Activar ahora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Tiene mensajes nuevos.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contactos";
-"conversation_list.bottom_bar.conversations.title" = "Chats";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archivar";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "en contactos";
 
@@ -203,7 +197,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // List (labels) - Needs to be revised with updated guidance
-"list.title" = "Chats";
+"list.title" = "Conversaciones";
 "list.archived_conversations" = "ARCHIVO";
 "list.archived_conversations_close" = "Cerrar archivo";
 

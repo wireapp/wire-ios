@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Most aktív.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Új üzenetek érkeztek.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Névjegyek";
-"conversation_list.bottom_bar.conversations.title" = "Beszélgetések";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archiválás";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "Szerepel a Névjegyzékedben is";
 

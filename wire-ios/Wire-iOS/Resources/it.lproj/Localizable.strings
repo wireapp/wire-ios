@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Attiva ora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ha nuovi messaggi.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contatti";
-"conversation_list.bottom_bar.conversations.title" = "Conversazioni";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archivia";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contatti";
 

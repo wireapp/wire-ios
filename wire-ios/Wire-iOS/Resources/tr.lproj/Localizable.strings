@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Şu an aktif.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Yeni mesaj var.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kişiler";
-"conversation_list.bottom_bar.conversations.title" = "Konuşmalar";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arşivle";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "Kişilerde";
 

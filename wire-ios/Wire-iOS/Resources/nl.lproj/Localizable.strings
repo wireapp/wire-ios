@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Nu activeren.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Heeft nieuwe berichten.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contacten";
-"conversation_list.bottom_bar.conversations.title" = "Gesprekken";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archiveren";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacten";
 
