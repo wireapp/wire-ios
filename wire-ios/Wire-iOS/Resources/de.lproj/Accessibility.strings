@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Anrufansicht verkleinern";
 "calling.status.connecting" = "Verbindung wird hergestellt";
 
-"tabBar.contacts.description" = "Kontakte";
-"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
-"tabBar.conversations.description" = "Liste der letzten Unterhaltungen";
-"tabBar.conversations.hint" = "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen";
-"tabBar.folders.description" = "List of conversations organized in folders";
-"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
-"tabBar.archived.description" = "Archiv";
-"tabBar.archived.hint" = "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen";
 "tabBar.item.value" = "Ausgewählt";
 
 "landing.loginEnterpriseButton.description" = "Mit SSO anmelden";

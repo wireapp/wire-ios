@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Trenutno aktivan.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ima nove poruke.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakti";
-"conversation_list.bottom_bar.conversations.title" = "Razgovori";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arhiva";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "u kontaktima";
 

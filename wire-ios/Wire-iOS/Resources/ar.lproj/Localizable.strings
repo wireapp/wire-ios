@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "تفعيل الآن.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "لديه رسائل جديدة.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "جهات الاتصال";
-"conversation_list.bottom_bar.conversations.title" = "المحادثات";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "حفظ في الأرشيف";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "في جهات الاتصال";
 

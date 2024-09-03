@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Kích hoạt ngay.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Có tin nhắn mới.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Danh bạ";
-"conversation_list.bottom_bar.conversations.title" = "Các cuộc hội thoại";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Lưu trữ";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "trong Danh bạ";
 

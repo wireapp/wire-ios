@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Lade weitere Mitglieder ein";
 "peoplepicker.quick-action.open-conversation" = "Öffnen";
 "peoplepicker.quick-action.create-conversation" = "Gruppe erstellen";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
+"peoplepicker.quick-action.create-guest-room" = "Gästebereich erstellen";
 "peoplepicker.quick-action.admin-services" = "Dienste verwalten";
 
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Zum Aktivieren tippen.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiv.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Hat neue Nachrichten.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakte";
-"conversation_list.bottom_bar.conversations.title" = "Unterhaltungen";
-"conversation_list.bottom_bar.folders.title" = "Ordner";
-"conversation_list.bottom_bar.archived.title" = "Archiv";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Kontakte";

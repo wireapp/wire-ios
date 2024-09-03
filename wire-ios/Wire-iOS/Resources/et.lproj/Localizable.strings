@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Praegu aktiivne.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "On uusi sõnumeid.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontaktid";
-"conversation_list.bottom_bar.conversations.title" = "Vestlused";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arhiveeri";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "seadme kontaktides";
 

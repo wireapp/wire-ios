@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiivinen nyt.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "On uusia viestejä.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Yhteystiedot";
-"conversation_list.bottom_bar.conversations.title" = "Keskustelut";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arkistoi";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "yhteystiedoissa";
 

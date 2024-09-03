@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Právě teď aktivní.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Má nové zprávy.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakty";
-"conversation_list.bottom_bar.conversations.title" = "Konverzace";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archivovat";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "je v kontaktech";
 

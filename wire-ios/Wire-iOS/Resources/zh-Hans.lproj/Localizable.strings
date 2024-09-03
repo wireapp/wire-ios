@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "立即激活";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新消息。";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "联络人";
-"conversation_list.bottom_bar.conversations.title" = "会话";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "归档";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
 

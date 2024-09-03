@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "현재 연락 가능합니다";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "새 메시지가 있습니다";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "연락처";
-"conversation_list.bottom_bar.conversations.title" = "대화 목록";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archive";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "연락처에서";
 

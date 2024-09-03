@@ -135,12 +135,6 @@
 "conversation_list.header.self_team.accessibility_value.active" = "Теперь активна.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Есть новые сообщения.";
 
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Контакты";
-"conversation_list.bottom_bar.conversations.title" = "Беседы";
-"conversation_list.bottom_bar.folders.title" = "Папки";
-"conversation_list.bottom_bar.archived.title" = "Архив";
-
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в контактах";
 
