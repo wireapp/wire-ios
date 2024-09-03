@@ -50,12 +50,7 @@ struct SplitViewControllerObserver: SplitLayoutObservable {
     var leftViewControllerWidth: CGFloat { fatalError() }
 }
 
-protocol SplitViewControllerDelegate: AnyObject {
-    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool
-}
-
 final class SplitViewController: UIViewController, SplitLayoutObservable {
-    weak var delegate: SplitViewControllerDelegate?
 
     // MARK: - SplitLayoutObservable
     var layoutSize: SplitViewControllerLayoutSize = .compact {
@@ -119,8 +114,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     private var sideBySideConstraint: NSLayoutConstraint!
     private var pinLeftViewOffsetConstraint: NSLayoutConstraint!
 
-    private var horizontalPanner = UIPanGestureRecognizer()
-
     private var futureTraitCollection: UITraitCollection?
 
     // MARK: - init
@@ -149,10 +142,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         updateActiveConstraints()
 
         openPercentage = 1
-
-        horizontalPanner.addTarget(self, action: #selector(onHorizontalPan(_:)))
-        horizontalPanner.delegate = self
-        view.addGestureRecognizer(horizontalPanner)
     }
 
     override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -498,72 +487,5 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             leftViewWidthConstraint.constant = leftViewMinWidth(size: size)
             rightViewWidthConstraint.constant = size.width
         }
-    }
-
-    // MARK: - gesture
-
-    @objc
-    func onHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer?) {
-
-        guard layoutSize != .regularLandscape,
-            delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
-            isConversationViewVisible,
-            let gestureRecognizer else {
-                return
-        }
-
-        var offset = gestureRecognizer.translation(in: view)
-
-        switch gestureRecognizer.state {
-        case .began:
-            leftViewController?.beginAppearanceTransition(!isLeftViewControllerRevealed, animated: true)
-            rightViewController?.beginAppearanceTransition(isLeftViewControllerRevealed, animated: true)
-            leftView.isHidden = false
-        case .changed:
-            if let width = leftViewController?.view.bounds.size.width {
-                if offset.x > 0, view.isRightToLeft {
-                    offset.x = 0
-                } else if offset.x < 0, !view.isRightToLeft {
-                    offset.x = 0
-                } else if abs(offset.x) > width {
-                    offset.x = width
-                }
-                openPercentage = abs(offset.x) / width
-                view.layoutIfNeeded()
-            }
-        case .cancelled,
-             .ended:
-            let isRevealing = gestureRecognizer.velocity(in: view).x > 0
-            let didCompleteTransition = isRevealing != isLeftViewControllerRevealed
-
-            setLeftViewControllerRevealed(isRevealing, animated: true) { [weak self] in
-                if didCompleteTransition {
-                    self?.leftViewController?.endAppearanceTransition()
-                    self?.rightViewController?.endAppearanceTransition()
-                }
-            }
-        default:
-            break
-        }
-    }
-
-}
-
-extension SplitViewController: UIGestureRecognizerDelegate {
-
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if layoutSize == .regularLandscape {
-            return false
-        }
-
-        if let delegate, !delegate.splitViewControllerShouldMoveLeftViewController(self) {
-            return false
-        }
-
-        if isLeftViewControllerRevealed && !isIPadRegular() {
-            return false
-        }
-
-        return true
     }
 }
