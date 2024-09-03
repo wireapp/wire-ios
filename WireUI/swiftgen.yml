@@ -1,0 +1,13 @@
+# Every input/output paths in the rest of the config will then be expressed relative to these.
+
+input_dir: Sources/WireUIBase/Resources
+output_dir: ${DERIVED_SOURCES_DIR}/Wire-iOS/Generated/
+
+# Generate constants for your localized strings.
+
+strings:
+  inputs:
+    - en.lproj/Localizable.strings
+  outputs:
+    - templateName: structured-swift5
+      output: Strings.generated.swift
