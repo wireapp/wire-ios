@@ -75,11 +75,10 @@ extension ConversationLocalStore {
         localConversation: ZMConversation,
         fallbackGroupID: MLSGroupID?
     ) async {
-        let (messageProtocol, mlsGroupID, mlsService) = await context.perform { [self] in
+        let (messageProtocol, mlsGroupID) = await context.perform {
             (
                 localConversation.messageProtocol,
-                localConversation.mlsGroupID,
-                context.mlsService
+                localConversation.mlsGroupID
             )
         }
 

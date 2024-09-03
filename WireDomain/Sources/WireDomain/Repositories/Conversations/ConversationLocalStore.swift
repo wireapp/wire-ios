@@ -66,6 +66,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Properties
 
     let context: NSManagedObjectContext
+    let mlsService: MLSServiceInterface?
     let eventProcessingLogger = WireLogger.eventProcessing
     let mlsLogger = WireLogger.mls
     let updateEventLogger = WireLogger.updateEvent
@@ -73,9 +74,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     // MARK: - Object lifecycle
 
     public init(
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface?
     ) {
         self.context = context
+        self.mlsService = mlsService
     }
 
     // MARK: - Public

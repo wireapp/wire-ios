@@ -45,7 +45,10 @@ class ConversationRepositoryTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        conversationsLocalStore = ConversationLocalStore(context: context)
+        conversationsLocalStore = ConversationLocalStore(
+            context: context, 
+            mlsService: MockMLSServiceInterface()
+        )
         conversationsAPI = MockConversationsAPI()
 
         sut = ConversationRepository(

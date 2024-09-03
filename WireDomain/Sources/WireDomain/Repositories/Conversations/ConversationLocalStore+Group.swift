@@ -45,7 +45,7 @@ extension ConversationLocalStore {
         ) -> Role {
             Role.fetchOrCreateRole(
                 with: name,
-                teamOrConversation: conversation.team != nil ? .team(conversation.team!) : .conversation(conversation),
+                teamOrConversation: .matching(conversation),
                 in: context
             )
         }
