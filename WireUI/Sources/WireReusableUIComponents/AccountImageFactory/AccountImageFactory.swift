@@ -21,5 +21,5 @@ import UIKit
 /// Creates an image based on a user's or team's initials.
 
 public protocol AccountImageFactory {
-    func createImage(initials: String, backgroundColor: UIColor) -> UIImage
+    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage
 }

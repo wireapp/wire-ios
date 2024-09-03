@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.conversation_filter.title" = "Chats";
+"sidebar.conversation_filter.title" = "Conversaciones";
 "sidebar.conversation_filter.all.title" = "Todas";
 "sidebar.conversation_filter.favorites.title" = "Favoritos";
 "sidebar.conversation_filter.groups.title" = "Grupos";

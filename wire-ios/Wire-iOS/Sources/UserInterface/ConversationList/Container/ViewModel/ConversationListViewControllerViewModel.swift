@@ -102,8 +102,10 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
+        @MainActor
         let miniatureAccountImageFactory = MiniatureAccountImageFactory()
 
+        @MainActor
         init(
             account: Account,
             selfUserLegalHoldSubject: SelfUserLegalHoldable,
@@ -180,39 +182,11 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
+    @MainActor
     private func updateAccountImage() {
-
-        if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
-
-            // Team image
-            if case .teamImage(let data) = teamImageViewContent, let accountImage = UIImage(data: data) {
-                self.accountImage = (accountImage, true)
-                return
-            }
-
-            // Team initials
-            let teamName: String
-            if case .teamName(let value) = teamImageViewContent {
-                teamName = value
-            } else {
-                teamName = team.name ?? account.teamName ?? ""
-            }
-            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
-            let accountImage = miniatureAccountImageFactory.createImage(initials: initials, backgroundColor: .white)
-            self.accountImage = (accountImage, true)
-
-        } else {
-
-            // User image
-            if let data = account.imageData, let accountImage = UIImage(data: data) {
-                self.accountImage = (accountImage, false)
-                return
-            }
-
-            // User initials
-            let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
-            let accountImage = miniatureAccountImageFactory.createImage(initials: personName.initials, backgroundColor: .white)
-            self.accountImage = (accountImage, false)
+        Task {
+            // accountImage.image = await AccountImage(userSession, account, miniatureAccountImageFactory) // TODO: fix
+            accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
         }
     }
 
@@ -310,6 +284,7 @@ extension ConversationListViewController.ViewModel {
 
 extension ConversationListViewController.ViewModel: UserObserving {
 
+    @MainActor
     func userDidChange(_ changeInfo: UserChangeInfo) {
 
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged || changeInfo.teamsChanged {
@@ -343,6 +318,7 @@ extension ConversationListViewController.ViewModel: UserObserving {
 
 extension ConversationListViewController.ViewModel: TeamObserver {
 
+    @MainActor
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
 
         if changeInfo.imageDataChanged {

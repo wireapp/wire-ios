@@ -28,8 +28,8 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
     private var sut: MiniatureAccountImageFactory!
     private var snapshotHelper: SnapshotHelper!
 
-    override func setUp() {
-        sut = .init()
+    override func setUp() async throws {
+        sut = await MainActor.run { .init() }
         snapshotHelper = .init()
             .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
@@ -40,8 +40,9 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
         sut = nil
     }
 
-    func testRenderingWhiteW() {
-        let image = sut.createImage(initials: "W", backgroundColor: .white)
+    @MainActor
+    func testRenderingWhiteW() async {
+        let image = await sut.createImage(initials: "W", backgroundColor: .white)
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
 
@@ -49,8 +50,9 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
             .verify(matching: imageView)
     }
 
-    func testRenderingBlueCA() {
-        let image = sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.LightUI.MainColor.blue500)
+    @MainActor
+    func testRenderingBlueCA() async {
+        let image = await sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.LightUI.MainColor.blue500)
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
 
@@ -58,7 +60,7 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
             .withUserInterfaceStyle(.light)
             .verify(matching: imageView)
 
-        imageView.image = sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.DarkUI.MainColor.blue500)
+        imageView.image = await sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.DarkUI.MainColor.blue500)
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireUIBase
 
 final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreenCellDescriptorType {
 
@@ -27,7 +28,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
     let title: String
     let identifier: String?
     let icon: StyleKitIcon?
-    let targetTab: MainTabBarControllerTab
+    let targetTab: MainTabBarController.Tab
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -38,7 +39,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
         title: String,
         identifier: String?,
         icon: StyleKitIcon? = nil,
-        targetTab: MainTabBarControllerTab
+        targetTab: MainTabBarController.Tab
     ) {
         self.title = title
         self.identifier = identifier
@@ -51,7 +52,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
         // dismiss the profile and switch to the settings tab
 
         guard
-            let presenter = viewController?.presentingViewController as? RootViewController,
+            let presenter = viewController?.presentingViewController as? UIViewController, // TODO: something got merged wrong here
             let zClientViewController = presenter.children.compactMap({ $0 as? ZClientViewController }).first,
             let tabBarController = zClientViewController.mainTabBarController
         else { return assertionFailure("Wrong assumptions about the VC presentation") }

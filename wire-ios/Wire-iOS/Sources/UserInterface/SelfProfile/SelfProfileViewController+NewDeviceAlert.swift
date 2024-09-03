@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import WireUIBase
 
 extension SelfProfileViewController {
 
@@ -84,7 +85,7 @@ extension SelfProfileViewController {
                cellIdentifier == identifier {
 
                 presentingViewController?.dismiss(animated: true) {
-                    tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
+                    tabBarController.selectedIndex = MainTabBarController.Tab.settings.rawValue
                     navigationController.pushViewController(viewController, animated: true)
                 }
                 resultViewController = viewController
@@ -99,7 +100,7 @@ extension SelfProfileViewController {
                        cellIdentifier == identifier {
 
                         presentingViewController?.dismiss(animated: true) {
-                            tabBarController.selectedIndex = MainTabBarControllerTab.settings.rawValue
+                            tabBarController.selectedIndex = MainTabBarController.Tab.settings.rawValue
                             navigationController.pushViewController(topViewController, animated: true)
                             navigationController.pushViewController(viewController, animated: true)
                         }

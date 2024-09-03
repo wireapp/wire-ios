@@ -18,13 +18,14 @@
 
 import UIKit
 
+@MainActor
 public struct MiniatureAccountImageFactory: AccountImageFactory {
 
     private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 40, height: 40))
 
     public init() {}
 
-    public func createImage(initials: String, backgroundColor: UIColor) -> UIImage {
+    public func createImage(initials: String, backgroundColor: UIColor) async -> UIImage {
         let initials = initials.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { return .init() }
 
