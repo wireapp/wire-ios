@@ -1032,18 +1032,6 @@ internal enum L10n {
       }
     }
     internal enum TabBar {
-      internal enum Archived {
-        /// Archive
-        internal static let description = L10n.tr("Accessibility", "tabBar.archived.description", fallback: "Archive")
-        /// Double tap to open list of archived conversations
-        internal static let hint = L10n.tr("Accessibility", "tabBar.archived.hint", fallback: "Double tap to open list of archived conversations")
-      }
-      internal enum Conversations {
-        /// List of recent conversations
-        internal static let description = L10n.tr("Accessibility", "tabBar.conversations.description", fallback: "List of recent conversations")
-        /// Double tap to open list of recent conversations
-        internal static let hint = L10n.tr("Accessibility", "tabBar.conversations.hint", fallback: "Double tap to open list of recent conversations")
-      }
       internal enum Email {
         /// Log in via email
         internal static let description = L10n.tr("Accessibility", "tabBar.email.description", fallback: "Log in via email")
@@ -1055,12 +1043,6 @@ internal enum L10n {
       internal enum Phone {
         /// Log in via phone number
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
-      }
-      internal enum Settings {
-        /// Settings
-        internal static let description = L10n.tr("Accessibility", "tabBar.settings.description", fallback: "Settings")
-        /// Double tap to open settings
-        internal static let hint = L10n.tr("Accessibility", "tabBar.settings.hint", fallback: "Double tap to open settings")
       }
     }
   }
@@ -2733,20 +2715,6 @@ internal enum L10n {
       }
     }
     internal enum ConversationList {
-      internal enum BottomBar {
-        internal enum Archived {
-          /// Archive
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.archived.title", fallback: "Archive")
-        }
-        internal enum Conversations {
-          /// Conversations
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.conversations.title", fallback: "Conversations")
-        }
-        internal enum Settings {
-          /// Settings
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.settings.title", fallback: "Settings")
-        }
-      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived

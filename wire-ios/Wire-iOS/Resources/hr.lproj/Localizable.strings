@@ -43,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Soba za goste";
+
 // User Cell
 "user_cell.title.you_suffix" = " (Vi)";
 
@@ -51,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Pretraži po imenu ili korisničkom imenu";
 "peoplepicker.header.top_people" = "Najčešće kontaktirani";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Kreirajte grupu";
 "peoplepicker.button.add_to_conversation" = "Dodaj sudionike";
 "peoplepicker.header.conversations" = "Grupe";
 "peoplepicker.header.team_conversations" = "%@ grupe";
@@ -102,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Pozovi više ljudi";
 "peoplepicker.invite_team_members" = "Pozovite ljude da se pridruže timu";
 "peoplepicker.quick-action.open-conversation" = "Otvori";
+"peoplepicker.quick-action.create-conversation" = "Kreirajte grupu";
+"peoplepicker.quick-action.create-guest-room" = "Stvori sobu za goste";
 "peoplepicker.quick-action.admin-services" = "Upravljanje uslugama";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -125,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Sve arhivirano";
 "conversation_list.empty.no_contacts.message" = "Započnite razgovor ili\nstvorite grupu.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Favorites";
-"conversation_list.filter.groups.title" = "Grupe";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Ukloni";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Pridruži se";
@@ -141,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ima nove poruke.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Kontakti";
 "conversation_list.bottom_bar.conversations.title" = "Razgovori";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Arhiva";
-"conversation_list.bottom_bar.settings.title" = "Postavke";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "u kontaktima";

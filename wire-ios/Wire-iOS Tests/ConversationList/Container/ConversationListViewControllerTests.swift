@@ -18,6 +18,7 @@
 
 import WireDataModelSupport
 import WireSyncEngineSupport
+import WireUIBase
 import WireUITesting
 import XCTest
 
@@ -32,7 +33,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: UITabBarController!
+    private var tabBarController: MainTabBarController!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -41,57 +42,53 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     // MARK: - setUp
 
+    @MainActor
     override func setUp() async throws {
-        await MainActor.run {
 
-            mockMainCoordinator = .init()
-            snapshotHelper = SnapshotHelper()
-            accentColor = .blue
+        mockMainCoordinator = .init()
+        snapshotHelper = SnapshotHelper()
+        accentColor = .blue
 
-            coreDataFixture = .init()
+        coreDataFixture = .init()
 
-            userSession = .init()
-            userSession.coreDataStack = coreDataFixture.coreDataStack
+        userSession = .init()
+        userSession.coreDataStack = coreDataFixture.coreDataStack
 
-            mockIsSelfUserE2EICertifiedUseCase = .init()
-            mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-            modelHelper = ModelHelper()
+        modelHelper = ModelHelper()
 
-            let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
-            selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
-            selfUser.accentColor = .red
+        let selfUser = modelHelper.createSelfUser(in: coreDataFixture.coreDataStack.viewContext)
+        selfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
+        selfUser.accentColor = .red
 
-            let account = Account.mockAccount(imageData: mockImageData)
-            let viewModel = ConversationListViewController.ViewModel(
-                account: account,
-                selfUserLegalHoldSubject: selfUser,
-                userSession: userSession,
-                isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-                mainCoordinator: .mock
-            )
+        let account = Account.mockAccount(imageData: mockImageData)
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUserLegalHoldSubject: selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock
+        )
 
-            sut = ConversationListViewController(
-                viewModel: viewModel,
-                zClientViewController: .init(account: account, userSession: userSession),
-                mainCoordinator: mockMainCoordinator,
-                selfProfileViewControllerBuilder: .mock
-            )
+        sut = ConversationListViewController(
+            viewModel: viewModel,
+            zClientViewController: .init(account: account, userSession: userSession),
+            mainCoordinator: mockMainCoordinator,
+            selfProfileViewControllerBuilder: .mock
+        )
 
-            tabBarController = MainTabBarController(
-                conversations: UINavigationController(rootViewController: sut),
-                archive: .init(),
-                settings: .init()
-            )
+        tabBarController = MainTabBarController()
+        tabBarController[tab: .conversations].viewControllers = [sut]
 
-            window = .init(frame: UIScreen.main.bounds)
-            window.rootViewController = tabBarController
-            window.makeKeyAndVisible()
-            wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
-            tabBarController.overrideUserInterfaceStyle = .dark
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
 
-            UIView.setAnimationsEnabled(false)
-        }
+        await fulfillment(of: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
+        UIView.setAnimationsEnabled(false)
     }
 
     // MARK: - tearDown
@@ -112,7 +109,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - View controller
+    // MARK: - View Controller
 
     func testForNoConversations() {
         window.rootViewController = nil

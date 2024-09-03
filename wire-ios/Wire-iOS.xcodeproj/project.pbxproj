@@ -350,7 +350,6 @@
 		597C918C2C81C65A00054B4E /* MainSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597C918B2C81C65A00054B4E /* MainSplitViewController.swift */; };
 		597C918E2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */; };
 		59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */; };
-		598D6CC12BF34CF500809AFA /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598D6CC02BF34CF500809AFA /* MainTabBarController.swift */; };
 		598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */; };
 		598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */; };
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
@@ -390,6 +389,7 @@
 		59C4FBF12C45B7130037030B /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE33C48C296485FA00C058D1 /* WireShareEngine.framework */; };
 		59CD83E52C22CE9800186022 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 59CD83E42C22CE9800186022 /* WireDesign */; };
 		59CDB3F62C4EA08F0049D1AB /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */; };
+		59D038272C85D31E009FE583 /* WireUIBase in Frameworks */ = {isa = PBXBuildFile; productRef = 59D038262C85D31E009FE583 /* WireUIBase */; };
 		59D2D9352BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */; };
 		59D53E452C74ADBF007EB3EF /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D53E442C74ADBF007EB3EF /* LaunchScreenViewController.swift */; };
 		59D588952C7CDA7000CAFA0F /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59D588942C7CDA7000CAFA0F /* WireUtilitiesPackage */; };
@@ -400,7 +400,6 @@
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
 		59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */; };
-		59F34AE82C35503D00136AD8 /* MainTabBarControllerTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F34AE72C35503D00136AD8 /* MainTabBarControllerTab.swift */; };
 		59FFAD9B2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFAD9A2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */; };
 		59FFADA82C822D87000C8085 /* AccountImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFADA72C822D87000C8085 /* AccountImage.swift */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
@@ -2395,7 +2394,6 @@
 		597C918B2C81C65A00054B4E /* MainSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSplitViewController.swift; sourceTree = "<group>"; };
 		597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoConversationPlaceholderViewController.swift; sourceTree = "<group>"; };
 		59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainView.swift; sourceTree = "<group>"; };
-		598D6CC02BF34CF500809AFA /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
@@ -4000,6 +3998,7 @@
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
+				59D038272C85D31E009FE583 /* WireUIBase in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
 				EE67F6CF296F067F001D7C88 /* Countly.xcframework in Frameworks */,
@@ -6773,7 +6772,6 @@
 			isa = PBXGroup;
 			children = (
 				597C918B2C81C65A00054B4E /* MainSplitViewController.swift */,
-				598D6CC02BF34CF500809AFA /* MainTabBarController.swift */,
 				59F34AE72C35503D00136AD8 /* MainTabBarControllerTab.swift */,
 				CEEEAF061CB562BF00111759 /* NoConversationPlaceholderView.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
@@ -8694,6 +8692,7 @@
 				598EA8C62C5BFFFE006DA500 /* WireAPI */,
 				CB4E15112C81CC81005DDEC8 /* Down */,
 				59D588942C7CDA7000CAFA0F /* WireUtilitiesPackage */,
+				59D038262C85D31E009FE583 /* WireUIBase */,
 				5990A3C82C7CB2EC00189B21 /* WireUtilitiesPackage */,
 			);
 			productName = "ZClient iOS";
@@ -9694,7 +9693,6 @@
 				D398BB1C2A14BCA600B6EEB8 /* CompleteReactionPickerViewController.swift in Sources */,
 				16719A101D99647D00AA6B63 /* GiphySearchViewController.swift in Sources */,
 				EF2E2F6E223BAF410038D7D9 /* MediaBar.swift in Sources */,
-				59F34AE82C35503D00136AD8 /* MainTabBarControllerTab.swift in Sources */,
 				596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */,
 				EF7F8FC121B5761C00D7723C /* ConversationReadReceiptSettingChangedCellDescription.swift in Sources */,
 				EF3CBC0A2147D81800566295 /* ConversationListViewController+PushPermissions.swift in Sources */,
@@ -9894,7 +9892,6 @@
 				5E0EB1FB2100D80B00B5DC2B /* CompanyLoginFlowOpener.swift in Sources */,
 				870A8C6B1CF719C400874B16 /* RecordingDotView.swift in Sources */,
 				A9275F5F24221AD6007CB2BC /* TextTransform.swift in Sources */,
-				598D6CC12BF34CF500809AFA /* MainTabBarController.swift in Sources */,
 				EF71BFD420EBC39000894A7C /* ConversationInputBarViewController+Location.swift in Sources */,
 				A9CBBEBC24CF09AD006543D4 /* PasscodeSetupPresenter.swift in Sources */,
 				5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */,
@@ -11719,8 +11716,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = exactVersion;
+				version = 1.17.4;
 			};
 		};
 		061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {
@@ -11825,6 +11822,10 @@
 		59CDB3F52C4EA08F0049D1AB /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireReusableUIComponents;
+		};
+		59D038262C85D31E009FE583 /* WireUIBase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUIBase;
 		};
 		59D588942C7CDA7000CAFA0F /* WireUtilitiesPackage */ = {
 			isa = XCSwiftPackageProductDependency;

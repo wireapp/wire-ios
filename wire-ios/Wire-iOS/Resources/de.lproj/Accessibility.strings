@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Mitglied";
 "contactsList.userCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
 "contactsList.pendingConnection.hint" = "Doppeltippen, um Profil zu öffnen";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.closeButton.description" = "Kontaktliste schließen";
 
 "servicesList.serviceCell.hint" = "Doppeltippen, um Dienstdetails zu öffnen";
 
@@ -220,20 +220,6 @@
 "conversationsList.joinButton.hint" = "Doppeltippen, um dem Anruf beizutreten";
 "conversationsList.connectionRequest.description" = "Ausstehende Genehmigung der Kontaktanfrage";
 "conversationsList.connectionRequest.hint" = "Doppeltippen, um Profil zu öffnen";
-
-"conversationsList.filterButton.description" = "Filter conversations";
-
-"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
-
-"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
 "conversationAnnouncement.text.description" = "Textnachricht von %@ erhalten";
 "conversationAnnouncement.picture.description" = "Bild von %@ erhalten";
@@ -273,12 +259,14 @@
 "calling.headerBar.description" = "Anrufansicht verkleinern";
 "calling.status.connecting" = "Verbindung wird hergestellt";
 
+"tabBar.contacts.description" = "Kontakte";
+"tabBar.contacts.hint" = "Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen";
 "tabBar.conversations.description" = "Liste der letzten Unterhaltungen";
 "tabBar.conversations.hint" = "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen";
+"tabBar.folders.description" = "Liste der in Ordnern organisierten Unterhaltungen";
+"tabBar.folders.hint" = "Doppeltippen, um Liste der in Ordnern organisierten Unterhaltungen zu öffnen";
 "tabBar.archived.description" = "Archiv";
 "tabBar.archived.hint" = "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen";
-"tabBar.settings.description" = "Einstellungen";
-"tabBar.settings.hint" = "Doppeltippen, um Einstellungen zu öffnen";
 "tabBar.item.value" = "Ausgewählt";
 
 "landing.loginEnterpriseButton.description" = "Mit SSO anmelden";

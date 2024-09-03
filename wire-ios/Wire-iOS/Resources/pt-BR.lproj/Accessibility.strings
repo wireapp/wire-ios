@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Membro";
 "contactsList.userCell.hint" = "Toque duas vezes para abrir a conversa";
 "contactsList.pendingConnection.hint" = "Toque duas vezes para abrir o perfil";
-"contactsList.cancelButton.description" = "Close contact list";
+"contactsList.closeButton.description" = "Fechar lista de contatos";
 
 "servicesList.serviceCell.hint" = "Toque duas vezes para abrir os detalhes do serviço";
 
@@ -220,20 +220,6 @@
 "conversationsList.joinButton.hint" = "Toque duas vezes para entrar na chamada";
 "conversationsList.connectionRequest.description" = "Aprovação pendente de solicitação de conexão";
 "conversationsList.connectionRequest.hint" = "Toque duas vezes para abrir o perfil";
-
-"conversationsList.filterButton.description" = "Filter conversations";
-
-"conversationsList.filter_menu_options.allConversations.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.description" = "Show all one on one conversations";
-
-"conversationsList.filter_menu_options.allConversations.selected.description" = "Show all conversations";
-"conversationsList.filter_menu_options.favorites.selected.description" = "Show all favorite conversations";
-"conversationsList.filter_menu_options.groups.selected.description" = "Show all group conversations";
-"conversationsList.filter_menu_options.oneOnOne.selected.description" = "Show all one on one conversations";
-
-"conversationsList.filter_view.removeButton.descritpion" = "Remove conversation filter";
 
 "conversationAnnouncement.text.description" = "Mensagem de texto recebida de %@";
 "conversationAnnouncement.picture.description" = "Imagem recebida de %@";
@@ -273,12 +259,14 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
+"tabBar.contacts.description" = "Contatos";
+"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
 "tabBar.conversations.description" = "List of recent conversations";
 "tabBar.conversations.hint" = "Double tap to open list of recent conversations";
+"tabBar.folders.description" = "List of conversations organized in folders";
+"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
 "tabBar.archived.description" = "Arquivar";
 "tabBar.archived.hint" = "Double tap to open list of archived conversations";
-"tabBar.settings.description" = "Ajustes";
-"tabBar.settings.hint" = "Toque duas vezes para abrir as configurações";
 "tabBar.item.value" = "Selecionado";
 
 "landing.loginEnterpriseButton.description" = "Acessar com SSO";

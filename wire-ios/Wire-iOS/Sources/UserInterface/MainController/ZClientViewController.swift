@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUIBase
 
 final class ZClientViewController: UIViewController {
 
@@ -49,7 +50,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: UITabBarController!
+    private(set) var mainTabBarController: MainTabBarController!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -217,6 +218,13 @@ final class ZClientViewController: UIViewController {
             archive: createArchivedListViewController(),
             settings: UINavigationController(rootViewController: settingsViewControllerBuilder.build())
         )
+todo
+mainTabBarController = MainTabBarController()
+mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
+mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
+mainTabBarController[tab: .settings].viewControllers = [settingsViewControllerBuilder.build()]
+wireSplitViewController.leftViewController = mainTabBarController
+
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
         // prevent split view appearance on large phones
@@ -301,7 +309,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
+        mainTabBarController.selectedIndex = MainTabBarController.Tab.conversations.rawValue
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
@@ -759,7 +767,7 @@ final class ZClientViewController: UIViewController {
     private func createArchivedListViewController() -> UIViewController {
         let viewController = ArchivedListViewController(userSession: userSession)
         viewController.delegate = conversationListViewController
-        return UINavigationController(rootViewController: viewController)
+        return viewController
     }
 }
 

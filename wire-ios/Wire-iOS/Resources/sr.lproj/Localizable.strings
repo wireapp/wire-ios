@@ -43,6 +43,8 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
+"general.guest-room-name" = "Гостинска соба";
+
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
 
@@ -51,7 +53,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "Тражи по имену или корисничком имену";
 "peoplepicker.header.top_people" = "Најчешће контактирани";
-"peoplepicker.button.create_conversation" = "Create Group";
+"peoplepicker.button.create_conversation" = "Направи групу";
 "peoplepicker.button.add_to_conversation" = "Add Participants";
 "peoplepicker.header.conversations" = "Групе";
 "peoplepicker.header.team_conversations" = "%@ Groups";
@@ -102,6 +104,8 @@
 "peoplepicker.invite_more_people" = "Позовите још људи";
 "peoplepicker.invite_team_members" = "Позовите људе да се придруже тиму";
 "peoplepicker.quick-action.open-conversation" = "Отвори";
+"peoplepicker.quick-action.create-conversation" = "Направи групу";
+"peoplepicker.quick-action.create-guest-room" = "Направите собу за госте";
 "peoplepicker.quick-action.admin-services" = "Управљање услугама";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -125,13 +129,6 @@
 "conversation_list.empty.all_archived.message" = "Све је архивирано";
 "conversation_list.empty.no_contacts.message" = "Start a conversation or\ncreate a group.";
 
-// Conversation List - Filter Conversations
-"conversation_list.filter.all_conversations.title" = "All Conversations";
-"conversation_list.filter.favorites.title" = "Омиљено";
-"conversation_list.filter.groups.title" = "Групе";
-"conversation_list.filter.oneOnOneConversations.title" = "1:1 Conversations";
-"conversation_list.filter_label.text" = "Filtered by %@";
-"conversation_list.filter.remove_button.title" = "Уклони";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Придружи се";
@@ -141,9 +138,10 @@
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
 
 // Conversation List Bottom Bar
+"conversation_list.bottom_bar.contacts.title" = "Контакти";
 "conversation_list.bottom_bar.conversations.title" = "Разговори";
+"conversation_list.bottom_bar.folders.title" = "Folders";
 "conversation_list.bottom_bar.archived.title" = "Архивирај";
-"conversation_list.bottom_bar.settings.title" = "Поставке";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "у контактима";
