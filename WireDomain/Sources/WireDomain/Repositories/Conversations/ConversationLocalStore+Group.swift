@@ -82,7 +82,7 @@ extension ConversationLocalStore {
         localConversation.updateMembers(otherMembers, selfUserRole: selfUserRole)
     }
 
-    // MARK: 1:1
+    // MARK: - 1:1
 
     func linkOneOnOneUserIfNeeded(
         for localConversation: ZMConversation
