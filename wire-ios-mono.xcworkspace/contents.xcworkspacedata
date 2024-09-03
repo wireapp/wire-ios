@@ -42,6 +42,9 @@
    <FileRef
       location = "group:wire-avs.json">
    </FileRef>
+   <FileRef
+      location = "group:scripts">
+   </FileRef>
    <Group
       location = "group:xcconfigs"
       name = "xcconfigs">
