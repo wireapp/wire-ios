@@ -66,21 +66,16 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
     // MARK: - storeConversation
 
     public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
-    public var storeConversationIsFederationEnabled_MockError: Error?
-    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async throws -> Void)?
+    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async -> Void)?
 
-    public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async throws {
+    public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async {
         storeConversationIsFederationEnabled_Invocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
-
-        if let error = storeConversationIsFederationEnabled_MockError {
-            throw error
-        }
 
         guard let mock = storeConversationIsFederationEnabled_MockMethod else {
             fatalError("no mock for `storeConversationIsFederationEnabled`")
         }
 
-        try await mock(conversation, isFederationEnabled)
+        await mock(conversation, isFederationEnabled)
     }
 
     // MARK: - storeConversationNeedsBackendUpdate

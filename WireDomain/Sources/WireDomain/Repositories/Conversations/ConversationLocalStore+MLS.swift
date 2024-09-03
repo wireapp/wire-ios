@@ -30,6 +30,9 @@ extension ConversationLocalStore {
         for localConversation: ZMConversation
     ) {
         guard let newMessageProtocol = remoteConversation.messageProtocol else {
+            eventProcessingLogger.warn(
+                "message protocol is missing"
+            )
             return
         }
 
@@ -41,6 +44,9 @@ extension ConversationLocalStore {
         for localConversation: ZMConversation
     ) {
         guard let newMessageProtocol = remoteConversation.messageProtocol else {
+            eventProcessingLogger.warn(
+                "message protocol is missing"
+            )
             return
         }
 
@@ -63,7 +69,11 @@ extension ConversationLocalStore {
 
         case .mixed:
             switch newMessageProtocol {
-            case .proteus, .mixed:
+            case .proteus:
+                updateEventLogger.warn(
+                    "update message protocol from \(localConversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
+                )
+            case .mixed:
                 break /// no update, ignore
             case .mls:
                 localConversation.appendMLSMigrationFinalizedSystemMessage(sender: sender, at: .now)
@@ -72,7 +82,11 @@ extension ConversationLocalStore {
 
         case .mls:
             switch newMessageProtocol {
-            case .proteus, .mixed, .mls:
+            case .proteus, .mixed:
+                updateEventLogger.warn(
+                    "update message protocol from '\(localConversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
+                )
+            case .mls:
                 break
             }
         }
@@ -92,8 +106,15 @@ extension ConversationLocalStore {
         }
 
         guard let groupID, let mlsService, hasRegisteredMLSClient else {
+            mlsLogger.warn(
+                "no mlsService or not registered mls client to createOrJoinSelfConversation"
+            )
             return
         }
+        
+        mlsLogger.debug(
+            "createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))"
+        )
 
         if await context.perform({ localConversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)

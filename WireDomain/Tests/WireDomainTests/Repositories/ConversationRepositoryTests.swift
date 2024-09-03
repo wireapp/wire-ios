@@ -210,17 +210,9 @@ class ConversationRepositoryTests: XCTestCase {
         try await sut.pullConversations()
 
         // Then
-        await context.perform { [context] in
-            for uuid in uuids {
-                _ = ZMConversation.fetchOrCreate(
-                    with: uuid,
-                    domain: self.backendInfo.domain,
-                    in: context
-                )
-            }
-
-            let conversations = self.fetchConversations(withIds: uuids)
-
+        await context.perform { [self] in
+            let conversations = fetchConversations(withIds: uuids)
+            
             for conversation in conversations {
                 XCTAssertEqual(conversation.needsToBeUpdatedFromBackend, true)
             }
@@ -340,7 +332,7 @@ extension ConversationRepositoryTests {
 
         static let conversationConnectionType = Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
+            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!,
             type: .connection,
             messageProtocol: .proteus,
@@ -362,7 +354,7 @@ extension ConversationRepositoryTests {
 
         static let conversationGroupType = Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
+            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ad")!,
             type: .group,
             messageProtocol: .proteus,
@@ -384,7 +376,7 @@ extension ConversationRepositoryTests {
 
         static let conversationOneOnOneType = Conversation(
             id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ae")!,
-            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!, domain: "example.com"),
+            qualifiedID: .init(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ae")!, domain: "example.com"),
             teamID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ae")!,
             type: .oneOnOne,
             messageProtocol: .proteus,
@@ -405,7 +397,7 @@ extension ConversationRepositoryTests {
         )
 
         static let conversationNotFound = WireAPI.QualifiedID(
-            uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+            uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4aa")!,
             domain: "example.com"
         )
 

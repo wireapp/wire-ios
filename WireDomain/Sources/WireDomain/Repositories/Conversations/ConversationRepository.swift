@@ -78,14 +78,10 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
             for conversation in foundConversations {
                 taskGroup.addTask { [self] in
-                    do {
-                        try await conversationsLocalStore.storeConversation(
-                            conversation,
-                            isFederationEnabled: backendInfo.isFederationEnabled
-                        )
-                    } catch {
-                        throw ConversationRepositoryError.failedToStoreConversation(error)
-                    }
+                    await conversationsLocalStore.storeConversation(
+                        conversation,
+                        isFederationEnabled: backendInfo.isFederationEnabled
+                    )
                 }
             }
 

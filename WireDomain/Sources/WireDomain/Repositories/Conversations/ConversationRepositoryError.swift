@@ -26,7 +26,4 @@ enum ConversationRepositoryError: Error {
 
     case failedToDeleteConversation(Error)
 
-    /// Unable to store conversation.
-
-    case failedToStoreConversation(Error)
 }

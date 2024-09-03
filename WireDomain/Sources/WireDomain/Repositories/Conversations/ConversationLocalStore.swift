@@ -38,7 +38,7 @@ public protocol ConversationLocalStoreProtocol {
     func storeConversation(
         _ conversation: WireAPI.Conversation,
         isFederationEnabled: Bool
-    ) async throws
+    ) async
 
     /// Stores a flag indicating whether a conversation requires an update from backend.
     /// - Parameter needsUpdate: A flag indicated whether the qualified conversation needs to be updated from backend.
@@ -58,10 +58,17 @@ public protocol ConversationLocalStoreProtocol {
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
+    
+    enum Error: Swift.Error {
+        case noBackendConversationID
+    }
 
     // MARK: - Properties
 
     let context: NSManagedObjectContext
+    let eventProcessingLogger = WireLogger.eventProcessing
+    let mlsLogger = WireLogger.mls
+    let updateEventLogger = WireLogger.updateEvent
 
     // MARK: - Object lifecycle
 
@@ -76,12 +83,30 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     public func storeConversation(
         _ conversation: WireAPI.Conversation,
         isFederationEnabled: Bool
-    ) async throws {
+    ) async {
+        guard let conversationType = conversation.type else {
+            return
+        }
+        
+        Flow.createGroup.checkpoint(
+            description: "create ZMConversation of type \(conversationType))"
+        )
+        
         guard let id = conversation.id ?? conversation.qualifiedID?.uuid else {
+            if conversationType == .group {
+                Flow.createGroup.fail(
+                    Error.noBackendConversationID
+                )
+            }
+            
+            eventProcessingLogger.error(
+                "Missing conversationID in \(conversationType) conversation payload, aborting..."
+            )
+            
             return
         }
 
-        switch conversation.type {
+        switch conversationType {
         case .group:
             await updateOrCreateGroupConversation(
                 remoteConversation: conversation,
@@ -90,7 +115,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             )
 
         case .`self`:
-            try await updateOrCreateSelfConversation(
+            await updateOrCreateSelfConversation(
                 remoteConversation: conversation,
                 remoteConversationID: id,
                 isFederationEnabled: isFederationEnabled
@@ -113,10 +138,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 remoteConversationID: id,
                 isFederationEnabled: isFederationEnabled
             )
-
-        default:
-            /// conversation type is nil
-            return
+            
         }
     }
 
@@ -214,7 +236,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
         isFederationEnabled: Bool
-    ) async throws {
+    ) async {
         let (conversation, mlsGroupID) = await fetchOrCreateConversation(
             conversationID: remoteConversationID,
             domain: remoteConversation.qualifiedID?.domain
@@ -233,7 +255,13 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         }
 
         if mlsGroupID != nil {
-            try await createOrJoinSelfConversation(from: conversation)
+            do {
+                try await createOrJoinSelfConversation(from: conversation)
+            } catch {
+                mlsLogger.error(
+                    "createOrJoinSelfConversation threw error: \(String(reflecting: error))"
+                )
+            }
         }
     }
 
@@ -283,6 +311,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             isInitialFetch ?
                 assignMessageProtocol(from: remoteConversation, for: $0) :
                 updateMessageProtocol(from: remoteConversation, for: $0)
+            
+            Flow.createGroup.checkpoint(
+                description: "conversation created remote id: \($0.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
+            )
 
             return ($0, $0.mlsGroupID)
         }
@@ -299,6 +331,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
                 /// Slow synced conversations should be considered read from the start
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
+                
+                Flow.createGroup.checkpoint(
+                    description: "new system message for conversation inserted"
+                )
             }
 
             /// If we discover this group is actually a fake one on one,
