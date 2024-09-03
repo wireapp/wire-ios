@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "De acuerdo";
 "general.next" = "Siguiente";
@@ -43,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Habitación de invitados";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Tú)";
@@ -105,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Invitar personas para unirse al equipo";
 "peoplepicker.quick-action.open-conversation" = "Abrir";
 "peoplepicker.quick-action.create-conversation" = "Crear grupo";
-"peoplepicker.quick-action.create-guest-room" = "Crear una sala de invitados";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Gestionar los servicios";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -136,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Toca para activar.";
 "conversation_list.header.self_team.accessibility_value.active" = "Activar ahora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Tiene mensajes nuevos.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contactos";
-"conversation_list.bottom_bar.conversations.title" = "Chats";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archivar";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "en contactos";
@@ -205,7 +197,7 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // List (labels) - Needs to be revised with updated guidance
-"list.title" = "Chats";
+"list.title" = "Conversaciones";
 "list.archived_conversations" = "ARCHIVO";
 "list.archived_conversations_close" = "Cerrar archivo";
 

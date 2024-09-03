@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Kontaktuak";
-"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
-"tabBar.conversations.description" = "List of recent conversations";
-"tabBar.conversations.hint" = "Double tap to open list of recent conversations";
-"tabBar.folders.description" = "List of conversations organized in folders";
-"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
-"tabBar.archived.description" = "Archive";
-"tabBar.archived.hint" = "Double tap to open list of archived conversations";
 "tabBar.item.value" = "Selected";
 
 "landing.loginEnterpriseButton.description" = "Log in with SSO";
