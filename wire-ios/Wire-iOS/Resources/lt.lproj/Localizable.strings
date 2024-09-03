@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "GERAI";
 "general.next" = "Kitas";
@@ -43,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Svečių kambarys";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (jūs)";
@@ -105,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Kvieskite žmonių prisijungti prie komandos";
 "peoplepicker.quick-action.open-conversation" = "Atverti";
 "peoplepicker.quick-action.create-conversation" = "Sukurti grupę";
-"peoplepicker.quick-action.create-guest-room" = "Kurti kambarį svečiams";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Valdyti paslaugas";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";

@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Вперед";
@@ -77,7 +75,7 @@
 "peoplepicker.services.add_service.error.default" = "В данный момент сервис недоступен";
 "peoplepicker.services.add_service.error.full" = "Беседа переполнена";
 
-"peoplepicker.title.create_conversation" = "Создать группу";
+"peoplepicker.title.create_conversation" = "Create group";
 "peoplepicker.title.add_to_conversation" = "Добавить участников";
 
 "peoplepicker.no_contacts_title" = "Нет контактов.";
