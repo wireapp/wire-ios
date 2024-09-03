@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.10
 
 import PackageDescription
 
@@ -11,7 +11,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin"),
         .package(name: "WireUtilitiesPackage", path: "../WireUtilities")
     ],
@@ -55,5 +55,7 @@ let package = Package(
 )
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency")
 ]
