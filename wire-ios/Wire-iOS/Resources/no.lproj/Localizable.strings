@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Neste";
@@ -41,7 +43,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
+"general.guest-room-name" = "Gjesterom";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Du)";

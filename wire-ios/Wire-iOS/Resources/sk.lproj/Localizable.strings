@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Ďalej";
@@ -41,7 +43,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
+"general.guest-room-name" = "Hosťovská miestnosť";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Vy)";
@@ -103,7 +105,7 @@
 "peoplepicker.invite_team_members" = "Pozvať ľudí do tímu";
 "peoplepicker.quick-action.open-conversation" = "Otvoriť";
 "peoplepicker.quick-action.create-conversation" = "Vytvoriť skupinu";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
+"peoplepicker.quick-action.create-guest-room" = "Vytvoriť hosťovskú miestnosť";
 "peoplepicker.quick-action.admin-services" = "Správa služieb";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";

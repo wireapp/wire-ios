@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Tiếp theo";
@@ -41,7 +43,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
+"general.guest-room-name" = "Phòng khách";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Bạn)";
@@ -103,7 +105,7 @@
 "peoplepicker.invite_team_members" = "Mời mọi người vào nhóm";
 "peoplepicker.quick-action.open-conversation" = "Mở";
 "peoplepicker.quick-action.create-conversation" = "Tạo nhóm";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
+"peoplepicker.quick-action.create-guest-room" = "Tạo phòng khách";
 "peoplepicker.quick-action.admin-services" = "Quản lý Dịch vụ";
 
 "peoplepicker.federation.domain_unvailable" = "Miền liên kết hiện không có sẵn. [Tìm hiểu thêm] (%@)";

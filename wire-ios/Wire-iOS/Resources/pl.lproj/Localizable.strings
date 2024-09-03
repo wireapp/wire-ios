@@ -15,7 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
+
 
 "general.ok" = "OK";
 "general.next" = "Dalej";
@@ -41,7 +43,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Guest room";
+"general.guest-room-name" = "Pokój gościnny";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Ty)";
@@ -103,7 +105,7 @@
 "peoplepicker.invite_team_members" = "Zaproś osoby do zespołu";
 "peoplepicker.quick-action.open-conversation" = "Otwórz";
 "peoplepicker.quick-action.create-conversation" = "Załóż grupę";
-"peoplepicker.quick-action.create-guest-room" = "Create guest room";
+"peoplepicker.quick-action.create-guest-room" = "Utwórz pokój chatu";
 "peoplepicker.quick-action.admin-services" = "Zarządzaj usługami";
 
 "peoplepicker.federation.domain_unvailable" = "Domena federowana jest obecnie niedostępna. [Dowiedz się więcej](%@)";
@@ -138,7 +140,7 @@
 // Conversation List Bottom Bar
 "conversation_list.bottom_bar.contacts.title" = "Kontakty";
 "conversation_list.bottom_bar.conversations.title" = "Konwersacje";
-"conversation_list.bottom_bar.folders.title" = "Folders";
+"conversation_list.bottom_bar.folders.title" = "Foldery";
 "conversation_list.bottom_bar.archived.title" = "Archiwum";
 
 // Profile Header View

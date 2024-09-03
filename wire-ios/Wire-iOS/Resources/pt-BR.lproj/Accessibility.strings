@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Membro";
 "contactsList.userCell.hint" = "Toque duas vezes para abrir a conversa";
 "contactsList.pendingConnection.hint" = "Toque duas vezes para abrir o perfil";
-"contactsList.closeButton.description" = "Close contact list";
+"contactsList.closeButton.description" = "Fechar lista de contatos";
 
 "servicesList.serviceCell.hint" = "Toque duas vezes para abrir os detalhes do serviço";
 
