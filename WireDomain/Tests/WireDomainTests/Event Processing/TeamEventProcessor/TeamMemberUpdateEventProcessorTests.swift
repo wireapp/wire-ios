@@ -97,6 +97,16 @@ final class ConversationRenameEventProcessorTests: XCTestCase {
         }
     }
 
+    func testProcessEvent_Throws_Error_When_Member_Was_Not_Found() async throws {
+
+        // Then
+        await XCTAssertThrowsError(TeamMemberUpdateEventProcessor.Error.failedToFindMember(Scaffolding.membershipID)) { [self] in
+            // When
+            try await sut.processEvent(Scaffolding.event)
+        }
+
+    }
+
 }
 
 // MARK: - Scaffolding

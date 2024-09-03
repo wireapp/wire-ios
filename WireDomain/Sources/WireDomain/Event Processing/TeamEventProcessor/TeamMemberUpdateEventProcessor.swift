@@ -33,17 +33,23 @@ protocol TeamMemberUpdateEventProcessorProtocol {
 
 struct TeamMemberUpdateEventProcessor: TeamMemberUpdateEventProcessorProtocol {
 
+    enum Error: Swift.Error, Equatable {
+        case failedToFindMember(_ membershipId: UUID)
+    }
+
     let context: NSManagedObjectContext
 
     func processEvent(_ event: TeamMemberUpdateEvent) async throws {
-        await context.perform { [context] in
-
-            let member = Member.fetch(
+        try await context.perform { [context] in
+            
+            guard let member = Member.fetch(
                 with: event.membershipID,
                 in: context
-            )
-
-            member?.needsToBeUpdatedFromBackend = true
+            ) else {
+                throw Error.failedToFindMember(event.membershipID) /// event was not processed
+            }
+            
+            member.needsToBeUpdatedFromBackend = true
         }
     }
 
