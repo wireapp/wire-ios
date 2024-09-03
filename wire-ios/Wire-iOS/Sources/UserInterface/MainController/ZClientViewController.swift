@@ -208,15 +208,10 @@ final class ZClientViewController: UIViewController {
         let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
         wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
 
-        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
-            userSession: userSession,
-            selfUser: userSession.selfUserLegalHoldSubject
-        )
-
         mainTabBarController = MainTabBarController()
-        mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
-        mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
-        mainTabBarController[tab: .settings].viewControllers = [settingsViewControllerBuilder.build()]
+        // mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
+        // mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
+        // mainTabBarController[tab: .settings].viewControllers = [createSettingsViewController()]
 
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
@@ -755,15 +750,26 @@ final class ZClientViewController: UIViewController {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
     }
 
-    // MARK: - Archive Tab
+    // MARK: - Archive
 
     private func createArchivedListViewController() -> UIViewController {
         let viewController = ArchivedListViewController(userSession: userSession)
         viewController.delegate = conversationListViewController
         return viewController
     }
+
+    // MARK: - Settings
+
+    private func createSettingsViewController() -> UIViewController {
+        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
+            userSession: userSession,
+            selfUser: userSession.selfUserLegalHoldSubject
+        )
+        return settingsViewControllerBuilder.build()
+    }
 }
 
+// TODO: could this be implemented by MainCoordinator instead?
 extension ZClientViewController: UISplitViewControllerDelegate {
 
     // func splitViewController(
@@ -777,15 +783,31 @@ extension ZClientViewController: UISplitViewControllerDelegate {
     //     print("349ur09e willHide \(column)")
     // }
 
-    func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+    func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+        let containers = ContainerViewControllers(of: splitViewController)
+
+        // validate assumptions
+        guard
+            // there should never be anything pushed onto the nc of the supplmentary and secondary columns
+            containers.supplementaryColumn.viewControllers.count == 1,
+            containers.secondaryColumn.viewControllers.count == 1
+        else { return assertionFailure("view controller hierarchy invalid assumptions") }
 
         // TODO: remove print
         print("349ur09e didCollapse")
 
-        // move view controllers from the supplementary column to the tab bar controller
-        fatalError("TODO")
-
+        // move view controllers from the split view controller's columns to the tab bar controller
+        let conversationListViewController = containers.supplementaryColumn.viewControllers[0] as! ConversationListViewController
+        containers.supplementaryColumn.viewControllers = []
+        containers.compactColumn[tab: .conversations].viewControllers = [conversationListViewController]
         conversationListViewController.splitViewControllerMode = .collapsed
+
+        // there might be a placeholder view controller in place which will be discarded
+        let conversationViewController = containers.secondaryColumn.viewControllers[0] as? ConversationViewController
+        containers.secondaryColumn.viewControllers = []
+        if let conversationViewController {
+            containers.compactColumn[tab: .conversations].viewControllers += [conversationViewController]
+        }
     }
 
     // func splitViewController(
@@ -808,5 +830,28 @@ extension ZClientViewController: UISplitViewControllerDelegate {
         fatalError("TODO")
 
         conversationListViewController.splitViewControllerMode = .expanded
+    }
+}
+
+private struct ContainerViewControllers {
+
+    var supplementaryColumn: UINavigationController
+    var secondaryColumn: UINavigationController
+    var compactColumn: MainTabBarController
+
+    init(of splitViewController: UISplitViewController) {
+
+        // ensure the compact column contains the tab bar controller, all others navigation controllers
+        guard
+            let supplementaryColumnNavigationController = splitViewController.viewController(for: .supplementary) as? UINavigationController,
+            let secondaryColumnNavigationController = splitViewController.viewController(for: .secondary) as? UINavigationController,
+            let compactColumnTabBarController = splitViewController.viewController(for: .compact) as? MainTabBarController
+        else {
+            fatalError("precondition check fail")
+        }
+
+        supplementaryColumn = supplementaryColumnNavigationController
+        secondaryColumn = secondaryColumnNavigationController
+        compactColumn = compactColumnTabBarController
     }
 }
