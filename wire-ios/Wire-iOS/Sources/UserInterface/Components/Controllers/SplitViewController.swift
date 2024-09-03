@@ -36,16 +36,3 @@ enum SplitViewControllerLayoutSize {
     case regularPortrait
     case regularLandscape
 }
-
-protocol SplitLayoutObservable {
-    var layoutSize: SplitViewControllerLayoutSize { get }
-    var leftViewControllerWidth: CGFloat { get }
-}
-
-struct SplitViewControllerObserver: SplitLayoutObservable {
-
-    private(set) weak var splitViewController: UISplitViewController?
-
-    var layoutSize: SplitViewControllerLayoutSize { fatalError() }
-    var leftViewControllerWidth: CGFloat { fatalError() }
-}

@@ -77,17 +77,20 @@ class CameraKeyboardViewController: UIViewController {
     let goBackButton = IconButton()
     let cameraRollButton = IconButton()
 
-    let splitLayoutObservable: SplitLayoutObservable
+    // let splitLayoutObservable: SplitLayoutObservable
     weak var delegate: CameraKeyboardViewControllerDelegate?
 
     private lazy var activityIndicator = BlockingActivityIndicator(view: view)
 
     // MARK: - Init
 
-    init(splitLayoutObservable: SplitLayoutObservable,
-         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
-         permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()) {
-        self.splitLayoutObservable = splitLayoutObservable
+    init(
+        // splitLayoutObservable: SplitLayoutObservable,
+        imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
+        permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy()
+    ) {
+        // TODO: fix
+        // self.splitLayoutObservable = splitLayoutObservable
         self.imageManagerType = imageManagerType
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
         self.permissions = permissions
@@ -97,7 +100,7 @@ class CameraKeyboardViewController: UIViewController {
             self,
             selector: #selector(splitLayoutChanged(_:)),
             name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
-            object: self.splitLayoutObservable
+            object: nil // self.splitLayoutObservable // TODO: fix
         )
         NotificationCenter.default.addObserver(
             self,
@@ -516,12 +519,13 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     private var cameraCellSize: CGSize {
-        switch self.splitLayoutObservable.layoutSize {
-        case .compact:
-            return CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height)
-        case .regularPortrait, .regularLandscape:
-            return CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
-        }
+        // TODO: fix
+        // switch self.splitLayoutObservable.layoutSize {
+        // case .compact:
+            CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)
+        // case .regularPortrait, .regularLandscape:
+        //     return CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
+        // }
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
