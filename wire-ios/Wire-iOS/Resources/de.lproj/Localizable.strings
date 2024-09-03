@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Weiter";
@@ -105,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Lade weitere Mitglieder ein";
 "peoplepicker.quick-action.open-conversation" = "Öffnen";
 "peoplepicker.quick-action.create-conversation" = "Gruppe erstellen";
-"peoplepicker.quick-action.create-guest-room" = "Gästebereich erstellen";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Dienste verwalten";
 
 "peoplepicker.federation.domain_unvailable" = "Die föderierte Domain ist derzeit nicht verfügbar. [Mehr erfahren](%@)";
