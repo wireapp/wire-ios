@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireSystemPkg
+import WireSystemPackage
 
 extension UITraitEnvironment {
 

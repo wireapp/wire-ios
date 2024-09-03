@@ -7,7 +7,7 @@ let package = Package(
     name: "WireSystemPackage",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireSystemPackage", type: .dynamic, targets: ["WireSystemPkg"]),
+        .library(name: "WireSystemPackage", type: .dynamic, targets: ["WireSystemPackage"]),
         .library(name: "WireSystemPackageSupport", type: .dynamic, targets: ["WireSystemPackageSupport"])
     ],
     dependencies: [
@@ -15,12 +15,12 @@ let package = Package(
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireSystemPkg", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
-        .testTarget(name: "WireSystemPkgTests", dependencies: ["WireSystemPkg"], path: "./Tests/WireSystemTests"),
+        .target(name: "WireSystemPackage", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
+        .testTarget(name: "WireSystemPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/WireSystemTests"),
 
         .target(
             name: "WireSystemPackageSupport",
-            dependencies: ["WireSystemPkg"],
+            dependencies: ["WireSystemPackage"],
             path: "./Sources/WireSystemSupport",
             swiftSettings: swiftSettings,
             plugins: [
