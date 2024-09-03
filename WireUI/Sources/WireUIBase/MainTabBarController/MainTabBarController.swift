@@ -27,9 +27,16 @@ public final class MainTabBarController: UITabBarController {
         case contacts, conversations, folders, archive
     }
 
-    // MARK: - Tab subscript
+    // MARK: - Tab Subscript and Index
 
-    public subscript(tab tab: Tab) -> UINavigationController { viewControllers![tab.rawValue] as! UINavigationController }
+    public subscript(tab tab: Tab) -> UINavigationController {
+        viewControllers![tab.rawValue] as! UINavigationController
+    }
+
+    public var selectedTab: Tab {
+        get { Tab(rawValue: selectedIndex) ?? .conversations }
+        set { selectedIndex = newValue.rawValue }
+    }
 
     // MARK: - Life Cycle
 
@@ -103,13 +110,17 @@ public final class MainTabBarController: UITabBarController {
 
 @available(iOS 17, *)
 #Preview {
-    {
-        let tabBarController = MainTabBarController()
-        for tab in MainTabBarController.Tab.allCases {
-            tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
-        }
-        return tabBarController
-    }()
+    MainTabBarController_Preview()
+}
+
+@MainActor
+func MainTabBarController_Preview() -> MainTabBarController {
+    let tabBarController = MainTabBarController()
+    for tab in MainTabBarController.Tab.allCases {
+        tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
+    }
+    tabBarController.selectedTab = .conversations
+    return tabBarController
 }
 
 private final class PlaceholderViewController: UIViewController {
@@ -117,6 +128,7 @@ private final class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
         navigationItem.title = navigationController!.tabBarItem.title
         let imageView = UIImageView(image: navigationController!.tabBarItem.image)
         imageView.translatesAutoresizingMaskIntoConstraints = false
