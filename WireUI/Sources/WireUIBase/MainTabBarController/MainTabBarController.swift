@@ -100,9 +100,8 @@ public final class MainTabBarController: UITabBarController {
         }
 
         selectedIndex = Tab.conversations.rawValue
-        // TODO: [WPB-6647] use `ColorTheme` instead of `SemanticColors`
-        tabBar.backgroundColor = SemanticColors.View.backgroundDefault
-        tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
+        tabBar.backgroundColor = ColorTheme.Backgrounds.background
+        tabBar.unselectedItemTintColor = ColorTheme.Base.secondaryText
     }
 }
 
