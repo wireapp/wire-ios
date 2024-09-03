@@ -36,7 +36,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double tap to search for people and open contact list"
+            "value" : "List of recent conversations"
           }
         }
       }
@@ -46,7 +46,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contacts"
+            "value" : "Double tap to search for people and open contact list"
           }
         }
       }
