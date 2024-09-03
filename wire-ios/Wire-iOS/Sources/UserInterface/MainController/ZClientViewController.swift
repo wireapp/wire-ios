@@ -770,6 +770,7 @@ final class ZClientViewController: UIViewController {
 }
 
 // TODO: could this be implemented by MainCoordinator instead?
+// TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
 extension ZClientViewController: UISplitViewControllerDelegate {
 
     // func splitViewController(
@@ -792,9 +793,6 @@ extension ZClientViewController: UISplitViewControllerDelegate {
             containers.supplementaryColumn.viewControllers.count == 1,
             containers.secondaryColumn.viewControllers.count == 1
         else { return assertionFailure("view controller hierarchy invalid assumptions") }
-
-        // TODO: remove print
-        print("349ur09e didCollapse")
 
         // move view controllers from the split view controller's columns to the tab bar controller
         let conversationListViewController = containers.supplementaryColumn.viewControllers[0] as! ConversationListViewController
@@ -821,14 +819,29 @@ extension ZClientViewController: UISplitViewControllerDelegate {
     //     print("349ur09e willShow \(column)")
     // }
 
-    func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+    func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+        let containers = ContainerViewControllers(of: splitViewController)
 
-        // TODO: remove print
-        print("349ur09e didExpand")
+        // validate assumptions
+        print(containers.compactColumn.viewControllers!.count)
+        guard
+            // there should never be anything pushed onto the nc of the supplmentary and secondary columns
+            [1, 2].contains(containers.compactColumn.viewControllers!.count)
+        else { return assertionFailure("view controller hierarchy invalid assumptions") }
 
         // move view controllers from the tab bar controller to the supplementary column
-        fatalError("TODO")
+        let conversationViewController = containers.compactColumn.viewControllers![1...].first as! ConversationViewController?
+        if let conversationViewController {
+            containers.compactColumn.viewControllers!.remove(at: 1)
+            containers.secondaryColumn.viewControllers = [conversationViewController]
+        } else {
+            let placeholderViewController = NoConversationPlaceholderViewController()
+            containers.secondaryColumn.viewControllers = [placeholderViewController]
+        }
 
+        let conversationListViewController = containers.compactColumn.viewControllers![0] as! ConversationListViewController
+        containers.compactColumn.viewControllers = []
+        containers.supplementaryColumn.viewControllers = [conversationListViewController]
         conversationListViewController.splitViewControllerMode = .expanded
     }
 }
