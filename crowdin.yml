@@ -41,7 +41,7 @@ files: [
  {
   "source" : "/WireUI/Sources/WireUIBase/Resources/Localizable.xcstrings",
   "dest" : "/App/WireUIBase/Resources/Localizable.xcstrings",
-  "translation" : "/WireUI/Sources/WireUIBase/Resources/%original_file_name%",
+  "translation" : "/WireUI/Sources/WireUIBase/Resources/Localizable.xcstrings",
   "multilingual": true,
  },
  {

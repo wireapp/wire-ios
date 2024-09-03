@@ -58,43 +58,43 @@ public final class MainTabBarController: UITabBarController {
             switch tab {
             case .contacts:
                 tabBarItem = .init(
-                    title: NSLocalizedString("tabBar.contacts.title", bundle: .module, comment: ""),
+                    title: String(localized: "tabBar.contacts.title", bundle: .module),
                     image: .init(resource: .TabBar.contactsOutline),
                     selectedImage: .init(resource: .TabBar.contactsFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
-                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.contacts.description", bundle: .module, comment: "")
-                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.contacts.hint", bundle: .module, comment: "")
+                tabBarItem.accessibilityLabel = String(localized: "tabBar.contacts.description", bundle: .module)
+                tabBarItem.accessibilityHint = String(localized: "tabBar.contacts.hint", bundle: .module)
 
             case .conversations:
                 tabBarItem = .init(
-                    title: NSLocalizedString("tabBar.conversations.title", bundle: .module, comment: ""),
+                    title: String(localized: "tabBar.conversations.title", bundle: .module),
                     image: .init(systemName: "text.bubble"),
                     selectedImage: .init(systemName: "text.bubble.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
-                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.conversations.description", bundle: .module, comment: "")
-                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.conversations.hint", bundle: .module, comment: "")
+                tabBarItem.accessibilityLabel = String(localized: "tabBar.conversations.description", bundle: .module)
+                tabBarItem.accessibilityHint = String(localized: "tabBar.conversations.hint", bundle: .module)
 
             case .folders:
                 tabBarItem = .init(
-                    title: NSLocalizedString("tabBar.folders.title", bundle: .module, comment: ""),
+                    title: String(localized: "tabBar.folders.title", bundle: .module),
                     image: .init(resource: .TabBar.foldersOutline),
                     selectedImage: .init(resource: .TabBar.foldersFilled)
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
-                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.folders.description", bundle: .module, comment: "")
-                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.folders.hint", bundle: .module, comment: "")
+                tabBarItem.accessibilityLabel = String(localized: "tabBar.folders.description", bundle: .module)
+                tabBarItem.accessibilityHint = String(localized: "tabBar.folders.hint", bundle: .module)
 
             case .archive:
                 tabBarItem = .init(
-                    title: NSLocalizedString("tabBar.archived.title", bundle: .module, comment: ""),
+                    title: String(localized: "tabBar.archived.title", bundle: .module),
                     image: .init(systemName: "archivebox"),
                     selectedImage: .init(systemName: "archivebox.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
-                tabBarItem.accessibilityLabel = NSLocalizedString("tabBar.archived.description", bundle: .module, comment: "")
-                tabBarItem.accessibilityHint = NSLocalizedString("tabBar.archived.hint", bundle: .module, comment: "")
+                tabBarItem.accessibilityLabel = String(localized: "tabBar.archived.description", bundle: .module)
+                tabBarItem.accessibilityHint = String(localized: "tabBar.archived.hint", bundle: .module)
             }
             viewControllers?[tab.rawValue].tabBarItem = tabBarItem
         }
