@@ -138,7 +138,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     // MARK: - Private
 
-    func fetchFeature(withName name: Feature.Name) throws -> Feature {
+    private func fetchFeature(withName name: Feature.Name) throws -> Feature {
         guard let feature = Feature.fetch(name: name, context: context) else {
             throw FeatureConfigRepositoryError.failedToFetchFeatureLocally
         }
