@@ -302,13 +302,15 @@ extension ConversationListViewController {
         let settingsViewController = createSettingsViewController(selfUser: selfUser)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
-        if wr_splitViewController?.layoutSize == .compact {
-            present(keyboardAvoidingViewController, animated: true)
-        } else {
-            keyboardAvoidingViewController.modalPresentationStyle = .formSheet
-            keyboardAvoidingViewController.view.backgroundColor = .black
-            present(keyboardAvoidingViewController, animated: true)
-        }
+        // TODO: fix
+        fatalError("TODO")
+        // if wr_splitViewController?.layoutSize == .compact {
+        //     present(keyboardAvoidingViewController, animated: true)
+        // } else {
+        //     keyboardAvoidingViewController.modalPresentationStyle = .formSheet
+        //     keyboardAvoidingViewController.view.backgroundColor = .black
+        //     present(keyboardAvoidingViewController, animated: true)
+        // }
     }
 
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {

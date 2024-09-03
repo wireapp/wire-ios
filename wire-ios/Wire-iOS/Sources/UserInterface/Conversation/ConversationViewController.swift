@@ -301,8 +301,10 @@ final class ConversationViewController: UIViewController {
     }
 
     func openConversationList() {
-        guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
-        wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
+        // TODO: fix
+        fatalError("TODO")
+        // guard let leftControllerRevealed = wr_splitViewController?.isLeftViewControllerRevealed else { return }
+        // wr_splitViewController?.setLeftViewControllerRevealed(!leftControllerRevealed, animated: true, completion: nil)
     }
 
     // MARK: - Application Events & Notifications
