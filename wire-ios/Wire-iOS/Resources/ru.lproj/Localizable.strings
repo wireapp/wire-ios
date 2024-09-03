@@ -75,7 +75,7 @@
 "peoplepicker.services.add_service.error.default" = "В данный момент сервис недоступен";
 "peoplepicker.services.add_service.error.full" = "Беседа переполнена";
 
-"peoplepicker.title.create_conversation" = "Create group";
+"peoplepicker.title.create_conversation" = "Создать группу";
 "peoplepicker.title.add_to_conversation" = "Добавить участников";
 
 "peoplepicker.no_contacts_title" = "Нет контактов.";
