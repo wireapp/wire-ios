@@ -91,3 +91,5 @@ public enum BaseColorPalette {
         public static let gray100 = UIColor(resource: .gray100)
     }
 }
+
+let temporary = String(localized: "temporary")
