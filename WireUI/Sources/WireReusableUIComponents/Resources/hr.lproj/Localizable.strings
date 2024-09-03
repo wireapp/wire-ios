@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Razgovori";
+"sidebar.conversation_filter.all.title" = "Svi";
+"sidebar.conversation_filter.favorites.title" = "Favorites";
+"sidebar.conversation_filter.groups.title" = "Grupe";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Arhiva";
+
+"sidebar.contacts.title" = "Kontakti";
+"sidebar.contacts.connect.title" = "Povežite se";
+
+"sidebar.settings.title" = "Postavke";
+
+"sidebar.support.title" = "Podrška";

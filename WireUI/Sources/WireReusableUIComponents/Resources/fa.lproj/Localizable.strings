@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "گفتگو";
+"sidebar.conversation_filter.all.title" = "همه";
+"sidebar.conversation_filter.favorites.title" = "علاقه‌مندی‌ها";
+"sidebar.conversation_filter.groups.title" = "گروه‌ها";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "بایگانی";
+
+"sidebar.contacts.title" = "تماس‌ها";
+"sidebar.contacts.connect.title" = "اتصال";
+
+"sidebar.settings.title" = "تنظیمات";
+
+"sidebar.support.title" = "پشتیبانی";

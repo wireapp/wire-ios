@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Conversas";
+"sidebar.conversation_filter.all.title" = "Todos";
+"sidebar.conversation_filter.favorites.title" = "Favoritos";
+"sidebar.conversation_filter.groups.title" = "Grupos";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Arquivar";
+
+"sidebar.contacts.title" = "Contatos";
+"sidebar.contacts.connect.title" = "Conectar";
+
+"sidebar.settings.title" = "Ajustes";
+
+"sidebar.support.title" = "Suporte";

@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Розмови";
+"sidebar.conversation_filter.all.title" = "Всі";
+"sidebar.conversation_filter.favorites.title" = "Вподобання";
+"sidebar.conversation_filter.groups.title" = "Групи";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Архівувати";
+
+"sidebar.contacts.title" = "Контакти";
+"sidebar.contacts.connect.title" = "Додати";
+
+"sidebar.settings.title" = "Налаштування";
+
+"sidebar.support.title" = "Служба підтримки";

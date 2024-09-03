@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Vestlused";
+"sidebar.conversation_filter.all.title" = "Kõik";
+"sidebar.conversation_filter.favorites.title" = "Lemmikud";
+"sidebar.conversation_filter.groups.title" = "Grupid";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Arhiveeri";
+
+"sidebar.contacts.title" = "Kontaktid";
+"sidebar.contacts.connect.title" = "Lisa kontakt";
+
+"sidebar.settings.title" = "Seaded";
+
+"sidebar.support.title" = "Klienditugi";

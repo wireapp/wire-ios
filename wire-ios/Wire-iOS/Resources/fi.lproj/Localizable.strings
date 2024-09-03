@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Seuraava";
@@ -136,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Napauta aktivoidaksesi.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiivinen nyt.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "On uusia viestejä.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Yhteystiedot";
-"conversation_list.bottom_bar.conversations.title" = "Keskustelut";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arkistoi";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "yhteystiedoissa";
