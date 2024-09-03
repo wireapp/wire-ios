@@ -99,6 +99,7 @@ public final class MainTabBarController: UITabBarController {
                     selectedImage: .init(systemName: "gearshape.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
+                // TODO: missing strings
                 tabBarItem.accessibilityLabel = String(localized: "tabBar.settings.description", bundle: .module)
                 tabBarItem.accessibilityHint = String(localized: "tabBar.settings.hint", bundle: .module)
 
