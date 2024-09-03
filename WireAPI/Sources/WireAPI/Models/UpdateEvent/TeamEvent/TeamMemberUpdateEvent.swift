@@ -30,4 +30,18 @@ public struct TeamMemberUpdateEvent: Equatable, Codable {
 
     public let membershipID: UUID
 
+    /// Create a new `TeamMemberUpdateEvent`.
+    ///
+    /// - Parameters:
+    ///   - teamID: The id of the team.
+    ///   - membershipID: The membership ID.
+
+    public init(
+        teamID: UUID,
+        membershipID: UUID
+    ) {
+        self.teamID = teamID
+        self.membershipID = membershipID
+    }
+
 }

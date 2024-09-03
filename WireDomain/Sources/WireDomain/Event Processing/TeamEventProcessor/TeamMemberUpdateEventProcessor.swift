@@ -17,6 +17,7 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process team member update events.
 
@@ -32,9 +33,18 @@ protocol TeamMemberUpdateEventProcessorProtocol {
 
 struct TeamMemberUpdateEventProcessor: TeamMemberUpdateEventProcessorProtocol {
 
-    func processEvent(_: TeamMemberUpdateEvent) async throws {
-        // TODO: [WPB-10186]
-        assertionFailure("not implemented yet")
+    let context: NSManagedObjectContext
+
+    func processEvent(_ event: TeamMemberUpdateEvent) async throws {
+        await context.perform { [context] in
+
+            let member = Member.fetch(
+                with: event.membershipID,
+                in: context
+            )
+
+            member?.needsToBeUpdatedFromBackend = true
+        }
     }
 
 }

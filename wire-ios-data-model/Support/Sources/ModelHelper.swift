@@ -167,6 +167,8 @@ public struct ModelHelper {
         let member = Member.insertNewObject(in: context)
         member.user = user
         member.team = team
+        member.remoteIdentifier = user.remoteIdentifier
+
         return member
     }
 
