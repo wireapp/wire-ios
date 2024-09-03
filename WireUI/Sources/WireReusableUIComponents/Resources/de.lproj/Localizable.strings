@@ -17,3 +17,15 @@
 //
 
 "sidebar.conversation_filter.title" = "Unterhaltungen";
+"sidebar.conversation_filter.all.title" = "Alle";
+"sidebar.conversation_filter.favorites.title" = "Favoriten";
+"sidebar.conversation_filter.groups.title" = "Gruppen";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
+"sidebar.conversation_filter.archived.title" = "Archiv";
+
+"sidebar.contacts.title" = "Kontakte";
+"sidebar.contacts.connect.title" = "Kontaktanfrage";
+
+"sidebar.settings.title" = "Einstellungen";
+
+"sidebar.support.title" = "Hilfe";

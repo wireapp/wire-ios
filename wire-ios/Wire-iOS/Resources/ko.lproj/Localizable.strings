@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "다음";
@@ -43,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "게스트룸";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
@@ -105,7 +103,7 @@
 "peoplepicker.invite_team_members" = "사람들을 팀에 초대하세요.";
 "peoplepicker.quick-action.open-conversation" = "대화 열기";
 "peoplepicker.quick-action.create-conversation" = "그룹 만들기";
-"peoplepicker.quick-action.create-guest-room" = "게스트룸 만들기";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "서비스 관리하기";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
