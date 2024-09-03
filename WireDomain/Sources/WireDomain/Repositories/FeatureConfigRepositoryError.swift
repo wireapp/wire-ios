@@ -22,10 +22,6 @@ import Foundation
 
 enum FeatureConfigRepositoryError: Error {
 
-    /// Unable to store config locally
-
-    case failedToStoreConfigLocally(Error)
-
     /// Unable to fetch feature locally
 
     case failedToFetchFeatureLocally

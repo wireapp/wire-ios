@@ -71,6 +71,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
     private let featureConfigsAPI: any FeatureConfigsAPI
     private let context: NSManagedObjectContext
+    private let logger = WireLogger.featureConfigs
     private let featureStateSubject = PassthroughSubject<FeatureState, Never>()
 
     // MARK: - Object lifecycle
@@ -89,16 +90,12 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
 
         for featureConfig in featureConfigs {
-            do {
-                try await storeFeatureConfig(featureConfig)
+            await storeFeatureConfig(featureConfig)
 
-                if let featureState = try await getFeatureState(
-                    forFeatureConfig: featureConfig
-                ) {
-                    featureStateSubject.send(featureState)
-                }
-            } catch {
-                throw FeatureConfigRepositoryError.failedToStoreConfigLocally(error)
+            if let featureState = try? await getFeatureState(
+                forFeatureConfig: featureConfig
+            ) {
+                featureStateSubject.send(featureState)
             }
         }
     }
@@ -207,11 +204,11 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 shouldNotifyUser: needsToNotifyUser
             )
 
-        case .mls(let mLSFeatureConfig):
+        case .mls(let mlsFeatureConfig):
 
             return FeatureState(
                 name: .mls,
-                status: mLSFeatureConfig.status,
+                status: mlsFeatureConfig.status,
                 shouldNotifyUser: false
             )
 
@@ -233,18 +230,21 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             )
 
         case .unknown(let featureName):
-            assertionFailure("Unknown feature: \(featureName)")
+            logger.info(
+                "Unknown feature name: \(featureName)"
+            )
+
             return nil
         }
     }
 
-    private func storeFeatureConfig(_ featureConfig: FeatureConfig) async throws {
-        try await context.perform { [self] in
+    private func storeFeatureConfig(_ featureConfig: FeatureConfig) async {
+        await context.perform { [self] in
 
             switch featureConfig {
             case .appLock(let appLockFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .appLock,
                     isEnabled: appLockFeatureConfig.status == .enabled,
                     config: appLockFeatureConfig.toDomainModel()
@@ -252,7 +252,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             case .classifiedDomains(let classifiedDomainsFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .classifiedDomains,
                     isEnabled: classifiedDomainsFeatureConfig.status == .enabled,
                     config: classifiedDomainsFeatureConfig.toDomainModel()
@@ -260,7 +260,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             case .conferenceCalling(let conferenceCallingFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .conferenceCalling,
                     isEnabled: conferenceCallingFeatureConfig.status == .enabled,
                     config: conferenceCallingFeatureConfig.toDomainModel() /// always nil for api < v6
@@ -268,21 +268,21 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             case .conversationGuestLinks(let conversationGuestLinksFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .conversationGuestLinks,
                     isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
                 )
 
             case .digitalSignature(let digitalSignatureFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .digitalSignature,
                     isEnabled: digitalSignatureFeatureConfig.status == .enabled
                 )
 
             case .endToEndIdentity(let endToEndIdentityFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .e2ei,
                     isEnabled: endToEndIdentityFeatureConfig.status == .enabled,
                     config: endToEndIdentityFeatureConfig.toDomainModel()
@@ -290,22 +290,22 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             case .fileSharing(let fileSharingFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .fileSharing,
                     isEnabled: fileSharingFeatureConfig.status == .enabled
                 )
 
-            case .mls(let mLSFeatureConfig):
+            case .mls(let mlsFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .mls,
-                    isEnabled: mLSFeatureConfig.status == .enabled,
-                    config: mLSFeatureConfig.toDomainModel()
+                    isEnabled: mlsFeatureConfig.status == .enabled,
+                    config: mlsFeatureConfig.toDomainModel()
                 )
 
             case .mlsMigration(let mLSMigrationFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .mlsMigration,
                     isEnabled: mLSMigrationFeatureConfig.status == .enabled,
                     config: mLSMigrationFeatureConfig.toDomainModel()
@@ -313,14 +313,17 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
             case .selfDeletingMessages(let selfDeletingMessagesFeatureConfig):
 
-                try updateOrCreate(
+                updateOrCreate(
                     featureName: .selfDeletingMessages,
                     isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled,
                     config: selfDeletingMessagesFeatureConfig.toDomainModel()
                 )
 
             case .unknown(let featureName):
-                assertionFailure("Unknown feature: \(featureName)")
+
+                logger.info(
+                    "Unknown feature name: \(featureName)"
+                )
             }
         }
     }
@@ -329,17 +332,32 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         featureName: Feature.Name,
         isEnabled: Bool,
         config: (any Codable)? = nil
-    ) throws {
+    ) {
         if let config {
             let encoder = JSONEncoder()
-            let data = try encoder.encode(config)
 
-            Feature.updateOrCreate(havingName: featureName, in: context) {
-                $0.status = isEnabled ? .enabled : .disabled
-                $0.config = data
+            do {
+                let data = try encoder.encode(config)
+
+                Feature.updateOrCreate(
+                    havingName: featureName,
+                    in: context
+                ) {
+                    $0.status = isEnabled ? .enabled : .disabled
+                    $0.config = data
+                }
+
+            } catch {
+                logger.error(
+                    "Failed to encode \(String(describing: config.self)) : \(error)"
+                )
             }
+
         } else {
-            Feature.updateOrCreate(havingName: featureName, in: context) {
+            Feature.updateOrCreate(
+                havingName: featureName,
+                in: context
+            ) {
                 $0.status = isEnabled ? .enabled : .disabled
             }
         }

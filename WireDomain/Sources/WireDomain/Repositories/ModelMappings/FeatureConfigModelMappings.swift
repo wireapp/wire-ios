@@ -31,7 +31,12 @@ extension WireAPI.MLSFeatureConfig {
             },
             defaultCipherSuite: .init(rawValue: defaultCipherSuite.rawValue)!,
             supportedProtocols: Set(supportedProtocols.map {
-                .init(rawValue: $0.rawValue)!
+                switch $0 {
+                case .proteus:
+                    .proteus
+                case .mls:
+                    .mls
+                }
             })
         )
     }
