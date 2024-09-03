@@ -96,12 +96,13 @@ class CameraKeyboardViewController: UIViewController {
         self.permissions = permissions
         super.init(nibName: nil, bundle: nil)
         self.assetLibrary?.delegate = self
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(splitLayoutChanged(_:)),
-            name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
-            object: nil // self.splitLayoutObservable // TODO: fix
-        )
+        // TODO: fix
+        // NotificationCenter.default.addObserver(
+        //     self,
+        //     selector: #selector(splitLayoutChanged(_:)),
+        //     name: NSNotification.Name.SplitLayoutObservableDidChangeToLayoutSize,
+        //     object: splitLayoutObservable
+        // )
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationDidBecomeActive(_:)),
@@ -169,11 +170,11 @@ class CameraKeyboardViewController: UIViewController {
         self.assetLibrary?.refetchAssets()
     }
 
-    @objc
-    func splitLayoutChanged(_ notification: Notification!) {
-        self.collectionViewLayout.invalidateLayout()
-        self.collectionView.reloadData()
-    }
+    // @objc
+    // func splitLayoutChanged(_ notification: Notification!) {
+    //     self.collectionViewLayout.invalidateLayout()
+    //     self.collectionView.reloadData()
+    // }
 
     // MARK: - Setup UI
 

@@ -21,10 +21,6 @@
 import UIKit
 import WireDesign
 
-extension Notification.Name {
-    static let SplitLayoutObservableDidChangeToLayoutSize = Notification.Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
-}
-
 enum SplitViewControllerTransition {
     case `default`
     case present
