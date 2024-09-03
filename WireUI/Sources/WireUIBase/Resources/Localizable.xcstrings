@@ -1239,8 +1239,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to search for people and open contact list"
+            "state" : "translated",
+            "value" : "Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen"
           }
         },
         "el" : {
@@ -1407,8 +1407,8 @@
         },
         "ru" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to search for people and open contact list"
+            "state" : "translated",
+            "value" : "Нажмите дважды, чтобы найти пользователей и открыть список контактов"
           }
         },
         "si" : {
@@ -2729,8 +2729,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "List of conversations organized in folders"
+            "state" : "translated",
+            "value" : "Liste der in Ordnern organisierten Unterhaltungen"
           }
         },
         "el" : {
@@ -3027,8 +3027,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "Double tap to open list of conversations organized in folders"
+            "state" : "translated",
+            "value" : "Doppeltippen, um die Liste der in Ordnern organisierten Unterhaltungen zu öffnen"
           }
         },
         "el" : {
