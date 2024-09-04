@@ -181,7 +181,6 @@ extension Payload {
             case publicKeys = "public_keys"
         }
 
-        /// TODO: test API version for Conversation
         let conversation: Payload.Conversation?
         let publicKeys: ExternalSenderKeys?
 

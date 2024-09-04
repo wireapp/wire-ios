@@ -98,14 +98,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
-        let removalKey = Data([1, 2, 3])
-        let removalKeys = BackendMLSPublicKeys(removal: .init(
-            ed25519: removalKey,
-            ed448: removalKey,
-            p256: removalKey,
-            p384: removalKey,
-            p521: removalKey
-        ))
+        let removalKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
         let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 
         let (connection, proteusConversation, mlsConversation) = await createConversations(

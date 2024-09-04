@@ -438,6 +438,27 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
+    func test_CreateGroup_BackendPublicKeysAreNotFetched() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([4, 5, 6])))
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
+            return backendPublicKeys
+        }
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+
+        // When
+        try await sut.createGroup(for: groupID, removalKeys: removalKeys)
+
+        // Then
+        let invocation = mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_Invocations.first
+        XCTAssertEqual(invocation?.config.externalSenders,
+                       removalKeys.externalSenderKey(for: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519))
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
+    }
+
     // MARK: - Establish group
 
     func test_EstablishGroupWithNoUsers_IsSuccessful() async throws {

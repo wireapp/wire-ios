@@ -130,7 +130,7 @@ final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase
             )
         )
 
-        var payload = Payload.ConversationWithRemovalKeys.stub(
+        var payload = Payload.ConversationWithRemovalKeys(
             conversation: conversation,
             publicKeys: publicKeys)
 
