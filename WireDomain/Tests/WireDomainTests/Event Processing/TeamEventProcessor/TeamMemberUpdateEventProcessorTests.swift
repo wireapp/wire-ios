@@ -24,7 +24,7 @@ import XCTest
 
 @testable import WireDomain
 
-final class ConversationRenameEventProcessorTests: XCTestCase {
+final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
     var sut: TeamMemberUpdateEventProcessor!
 
