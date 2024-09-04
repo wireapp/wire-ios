@@ -770,6 +770,30 @@ final class ZClientViewController: UIViewController {
     }
 }
 
+// MARK: - ZClientViewController + UserObserving
+
+extension ZClientViewController: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.accentColorValueChanged {
+            AppDelegate.shared.mainWindow?.tintColor = UIColor.accent()
+        }
+        if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+            Task { @MainActor [self] in
+                let accountImage = await AccountImage(userSession, account, .init())
+                sidebarViewController.accountInfo = .init(userSession.selfUser, accountImage)
+                conversationListViewController.accountImageView?.accountImage = accountImage
+            }
+        }
+    }
+
+    @objc func setupUserChangeInfoObserver() {
+        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
+    }
+}
+
+// MARK: - ZClientViewController + UISplitViewControllerDelegate
+
 // TODO: could this be implemented by MainCoordinator instead?
 // TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
 extension ZClientViewController: UISplitViewControllerDelegate {

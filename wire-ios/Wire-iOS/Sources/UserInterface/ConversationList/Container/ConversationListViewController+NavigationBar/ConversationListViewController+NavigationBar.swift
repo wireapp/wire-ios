@@ -85,6 +85,11 @@ extension ConversationListViewController {
         let accountImageView = setupAccountImageView()
         stackView.addArrangedSubview(accountImageView)
         self.accountImageView = accountImageView
+        // TODO: this should be in the view model
+        Task {
+            let accountImage = await AccountImage(viewModel.userSession, viewModel.account, .init())
+            accountImageView.accountImage = accountImage
+        }
 
         // legal hold
         switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
@@ -276,6 +281,7 @@ extension ConversationListViewController {
 
     /// Equally distributes the space on the left and on the right side of the filter bar button item.
     func adjustRightBarButtonItemsSpace() {
+        // TODO: fix
 //        guard
 //            let rightBarButtonItems = navigationItem.rightBarButtonItems,
 //            rightBarButtonItems.count == 3, // new conversation, spacer, filter

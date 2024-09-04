@@ -28,6 +28,8 @@ func AccountImage(
     _ miniatureAccountImageFactory: MiniatureAccountImageFactory
 ) async -> UIImage {
 
+    // TODO: trigger fetching?
+
     if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
 
         // Team image
