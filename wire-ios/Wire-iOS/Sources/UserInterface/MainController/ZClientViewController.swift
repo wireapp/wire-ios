@@ -200,8 +200,12 @@ final class ZClientViewController: UIViewController {
 
         createTopViewConstraints()
 
-        // TODO: why is the account image not loaded?
         sidebarViewController.accountInfo = .init(userSession.selfUser, .init())
+        Task {
+            let accountImage = await AccountImage(userSession, account, .init())
+            sidebarViewController.accountInfo?.accountImage = accountImage
+        }
+
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         let supplementaryNavigationController = UINavigationController(rootViewController: conversationListViewController)
         wireSplitViewController.setViewController(supplementaryNavigationController, for: .supplementary)
@@ -209,9 +213,6 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
 
         mainTabBarController = MainTabBarController()
-        // mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
-        // mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
-        // mainTabBarController[tab: .settings].viewControllers = [createSettingsViewController()]
 
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 

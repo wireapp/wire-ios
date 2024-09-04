@@ -215,7 +215,7 @@ extension ConversationListViewController {
         newConversationBarButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         newConversationBarButton.bounds.size = newConversationBarButton.systemLayoutSizeFitting(CGSize(width: .max, height: 32))
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: newConversationBarButton)
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: newConversationBarButton)]
     }
 
     /// Creates a `UIAction` for a filter button with the specified title, filter type, and selection state.
