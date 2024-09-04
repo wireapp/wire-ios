@@ -310,7 +310,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    private(set) var analyticsManager: (any AnalyticsManagerProtocol)?
+    var analyticsManager: (any AnalyticsManagerProtocol)?
 
     public override init() {
         fatal("init() not implemented")
@@ -432,6 +432,8 @@ public final class SessionManager: NSObject, SessionManagerType {
                 name: UIApplication.didBecomeActiveNotification,
                 object: nil
             )
+
+
     }
 
     init(maxNumberAccounts: Int = defaultMaxNumberAccounts,
@@ -479,6 +481,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             preconditionFailure("Unable to get shared container URL")
         }
 
+        self.analyticsSessionConfiguration = analyticsSessionConfiguration
+
         self.sharedContainerURL = sharedContainerURL
         self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
 
@@ -516,13 +520,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = NotificationsTracker(analytics: analytics)
         } else {
             self.notificationsTracker = nil
-        }
-
-        if let analyticsSessionConfiguration {
-            self.analyticsManager = AnalyticsManager(
-                appKey: analyticsSessionConfiguration.countlyKey,
-                host: analyticsSessionConfiguration.host
-            )
         }
 
         super.init()

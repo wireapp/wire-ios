@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAnalytics
+
 extension SessionManager {
 
     enum AnalyticsSessionError: Error {
@@ -27,14 +29,20 @@ extension SessionManager {
     }
 
     public func makeDisableAnalyticsUseCase() throws -> DisableAnalyticsUseCaseProtocol {
+
+        guard let userSession = self.activeUserSession else {
+            throw AnalyticsSessionError.missingActiveUserSession
+        }
+
         guard let analyticsManager else {
             throw AnalyticsSessionError.analyticsNotAvailable
         }
-        return DisableAnalyticsUseCase(analyticsManager: analyticsManager)
+        return DisableAnalyticsUseCase(analyticsManager: analyticsManager, userSession: userSession)
     }
 
     public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
-        guard let analyticsManager else {
+
+        guard let analyticsSessionConfiguration else {
             throw AnalyticsSessionError.analyticsNotAvailable
         }
 
@@ -45,6 +53,12 @@ extension SessionManager {
         guard let analyticsUserProfile = getUserAnalyticsProfile(for: userSession) else {
             throw AnalyticsSessionError.missingAnalyticsUserProfile
         }
+
+        let analyticsManager = AnalyticsManager(
+            appKey: analyticsSessionConfiguration.countlyKey,
+            host: analyticsSessionConfiguration.host
+        )
+        self.analyticsManager = analyticsManager
 
         return EnableAnalyticsUseCase(
             analyticsManager: analyticsManager,

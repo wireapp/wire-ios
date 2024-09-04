@@ -41,6 +41,10 @@ final class TrackingManager: NSObject, TrackingInterface {
         )
 
         super.init()
+
+        if !disableAnalyticsSharing {
+            updateAnalyticsSharing(disabled: false)
+        }
     }
 
     var disableAnalyticsSharing: Bool {
@@ -53,7 +57,7 @@ final class TrackingManager: NSObject, TrackingInterface {
             if isEnabled {
                 self.showAnalyticsConsentAlert { userConsented in
                     if userConsented {
-                        self.updateAnalyticsSharing(disabled: !newValue)
+                        self.updateAnalyticsSharing(disabled: false)
                     } else {
                         // User rejected, so we keep analytics disabled
                         self.updateAnalyticsSharing(disabled: true)
@@ -70,9 +74,11 @@ final class TrackingManager: NSObject, TrackingInterface {
             if disabled {
                 let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
                 disableUseCase.invoke()
+                print("Analytics has been disabled.")
             } else {
                 let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
                 enableUseCase.invoke()
+                print("Analytics has been enabled.")
             }
         } catch {
             WireLogger.analytics.error("Failed to toggle analytics sharing: \(error)")
@@ -80,7 +86,14 @@ final class TrackingManager: NSObject, TrackingInterface {
         }
 
         ExtensionSettings.shared.disableAnalyticsSharing = disabled
-        AVSFlowManager.getInstance()?.setEnableMetrics(!disabled)
+        print("ExtensionSettings.shared.disableAnalyticsSharing set to \(disabled)")
+
+        if let flowManager = AVSFlowManager.getInstance() {
+            flowManager.setEnableMetrics(!disabled)
+            print("AVSFlowManager metrics set to \(!disabled)")
+        } else {
+            print("Failed to get AVSFlowManager instance.")
+        }
     }
 
 }
