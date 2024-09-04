@@ -22,18 +22,76 @@ import XCTest
 
 final class MainSplitViewControllerTests: XCTestCase {
 
-    private var sut: MainSplitViewController!
+    private var sut: MainSplitViewController<UIViewController, UIViewController, UIViewController, UIViewController>!
     private var sidebar: UIViewController!
     private var conversationList: UIViewController!
     private var conversation: UIViewController!
-    private var tabBarContainer: MainTabBarController!
+    private var noConversationPlaceholder: UIViewController!
+    private var tabContainer: UIViewController!
 
     @MainActor
     override func setUp() async throws {
-//        sut = .init(
-//            sidebar: <#T##UIViewController#>,
-//            noConversationPlaceholder: <#T##UIViewController#>,
-//            tabContainer: <#T##MainTabBarController#>
-//        )
+        sidebar = .init()
+        conversationList = .init()
+        conversation = .init()
+        noConversationPlaceholder = .init()
+        tabContainer = .init()
+        sut = .init(
+            sidebar: sidebar,
+            noConversationPlaceholder: noConversationPlaceholder,
+            tabContainer: tabContainer
+        )
+        sut.conversationList = conversationList
+        sut.conversation = conversation
+    }
+
+    @MainActor
+    func testInitializationWithConversation() {
+        XCTAssert(sut.sidebar === sidebar)
+        XCTAssert(sut.conversationList === conversationList)
+        XCTAssert(sut.conversation === conversation)
+        XCTAssert(sut.tabContainer === tabContainer)
+    }
+
+    @MainActor
+    func testPlaceholderIsNotReturnedAsConversation() {
+
+        // Given
+        sut = .init(
+            sidebar: sidebar,
+            noConversationPlaceholder: noConversationPlaceholder,
+            tabContainer: tabContainer
+        )
+        sut.conversationList = conversationList
+
+        // Then
+        XCTAssertNil(sut.conversation)
+        let secondaryNavigationController = sut.viewController(for: .secondary) as! UINavigationController
+        XCTAssert(secondaryNavigationController.viewControllers[0] === noConversationPlaceholder)
+    }
+
+    @MainActor
+    func testConversationListIsReleased() {
+
+        // When
+        weak var conversationList = self.conversationList
+        self.conversationList = nil
+        sut.conversationList = nil
+
+        // Then
+        XCTAssertEqual(conversationList, nil)
+    }
+
+    @MainActor
+    func testConversationIsReleased() async {
+
+        // When
+        weak var conversation = self.conversation
+        self.conversation = nil
+        sut.conversation = nil
+
+        // Then
+        await Task.yield()
+        XCTAssertEqual(conversation, nil)
     }
 }

@@ -20,10 +20,13 @@ import UIKit
 
 @MainActor
 public protocol MainSplitViewControllerProtocol: UISplitViewController {
-    var sidebar: UIViewController { get }
-    var conversationList: UIViewController? { get set }
-    var conversation: UIViewController? { get set }
-    var tabContainer: MainTabBarController { get }
-//    var archive: UIViewController? { get set }
-//    var settings: UIViewController? { get set }
+    associatedtype Sidebar: UIViewController
+    associatedtype ConversationList: UIViewController
+    associatedtype Conversation: UIViewController
+    associatedtype TabContainer: UIViewController
+
+    var sidebar: Sidebar { get }
+    var conversationList: ConversationList? { get set }
+    var conversation: Conversation? { get set }
+    var tabContainer: TabContainer { get }
 }

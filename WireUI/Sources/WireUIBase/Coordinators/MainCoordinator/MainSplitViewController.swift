@@ -18,20 +18,24 @@
 
 import SwiftUI
 
-public final class MainSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+public final class MainSplitViewController<Sidebar, ConversationList, Conversation, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
+Sidebar: UIViewController,
+ConversationList: UIViewController,
+Conversation: UIViewController,
+TabContainer: UIViewController {
 
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
     // MARK: - Public Properties
 
-    public var sidebar: UIViewController {
-        viewController(for: .primary)!
+    public var sidebar: Sidebar {
+        viewController(for: .primary) as! Sidebar
     }
 
-    public var conversationList: UIViewController? {
+    public var conversationList: ConversationList? {
         get {
             let navigationController = viewController(for: .supplementary) as! UINavigationController
-            return navigationController.viewControllers.first
+            return navigationController.viewControllers.first.map { $0 as! ConversationList }
         }
         set {
             let navigationController = viewController(for: .supplementary) as! UINavigationController
@@ -39,13 +43,13 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
         }
     }
 
-    public var conversation: UIViewController? {
+    public var conversation: Conversation? {
         get {
             let navigationController = viewController(for: .secondary) as! UINavigationController
             if navigationController.viewControllers.first === noConversationPlaceholder {
                 return nil
             } else {
-                return navigationController.viewControllers.first
+                return navigationController.viewControllers.first.map { $0 as! Conversation }
             }
         }
         set {
@@ -54,8 +58,8 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
         }
     }
 
-    public var tabContainer: MainTabBarController {
-        viewController(for: .compact) as! MainTabBarController
+    public var tabContainer: TabContainer {
+        viewController(for: .compact) as! TabContainer
     }
 
     // MARK: - Private Properties
@@ -65,9 +69,9 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
     // MARK: - Initialization
 
     public init(
-        sidebar: @autoclosure () -> UIViewController,
+        sidebar: @autoclosure () -> Sidebar,
         noConversationPlaceholder: @autoclosure () -> UIViewController,
-        tabContainer: @autoclosure () -> MainTabBarController
+        tabContainer: @autoclosure () -> TabContainer
     ) {
         let noConversationPlaceholder = noConversationPlaceholder()
         self.noConversationPlaceholder = noConversationPlaceholder
@@ -80,7 +84,7 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
 
         setViewController(sidebar(), for: .primary)
         setViewController(UINavigationController(), for: .supplementary)
-        setViewController(noConversationPlaceholder, for: .secondary)
+        setViewController(UINavigationController(rootViewController: noConversationPlaceholder), for: .secondary)
         setViewController(tabContainer(), for: .compact)
     }
 
@@ -97,7 +101,7 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
         let splitViewController = MainSplitViewController(
             sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
             noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
-            tabContainer: MainTabBarController()
+            tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
         )
         splitViewController.conversationList = UIHostingController(rootView: Text(verbatim: "conversation list"))
         return splitViewController
