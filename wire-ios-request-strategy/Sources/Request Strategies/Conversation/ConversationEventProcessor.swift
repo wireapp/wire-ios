@@ -82,7 +82,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             self.context.saveOrRollback()
         }
     }
-    
+
     private func processConversationEvent(_ event: ZMUpdateEvent) async {
         switch event.type {
         case .conversationCreate:

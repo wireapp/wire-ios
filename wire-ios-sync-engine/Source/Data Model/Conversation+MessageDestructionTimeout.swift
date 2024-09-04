@@ -62,7 +62,7 @@ extension ZMConversation {
                 let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
         }
-       
+
         let request = MessageDestructionTimeoutRequestFactory.set(timeout: Int(timeout.rawValue), for: self, apiVersion: apiVersion)
         request.add(ZMCompletionHandler(on: managedObjectContext) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
