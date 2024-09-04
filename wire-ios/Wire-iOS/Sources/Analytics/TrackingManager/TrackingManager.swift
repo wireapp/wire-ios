@@ -41,10 +41,6 @@ final class TrackingManager: NSObject, TrackingInterface {
         )
 
         super.init()
-
-        if !disableAnalyticsSharing {
-            updateAnalyticsSharing(disabled: false)
-        }
     }
 
     var disableAnalyticsSharing: Bool {

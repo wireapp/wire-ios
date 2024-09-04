@@ -31,15 +31,15 @@ public protocol DisableAnalyticsUseCaseProtocol {
 /// This struct is responsible for disabling analytics sharing.
 public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
-    private let analyticsManager: AnalyticsManagerProtocol
+    private let sessionManager: SessionManager
 
     private let userSession: ZMUserSession
 
     /// Initializes a new instance of DisableAnalyticsUseCase.
     ///
     /// - Parameter analyticsManager: The analytics manager to use for disabling tracking.
-    public init(analyticsManager: AnalyticsManagerProtocol, userSession: ZMUserSession) {
-        self.analyticsManager = analyticsManager
+    public init(sessionManager: SessionManager, userSession: ZMUserSession) {
+        self.sessionManager = sessionManager
         self.userSession = userSession
     }
 
@@ -47,7 +47,8 @@ public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
     ///
     /// This method calls the `disableTracking` method on the analytics manager if it exists.
     public func invoke() {
-        analyticsManager.disableTracking()
+        sessionManager.analyticsManager?.disableTracking()
         userSession.analyticsSession = nil
+        sessionManager.analyticsManager = nil
     }
 }

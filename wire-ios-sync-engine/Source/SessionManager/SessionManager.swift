@@ -608,9 +608,12 @@ public final class SessionManager: NSObject, SessionManagerType {
         unauthenticatedSessionFactory.readyForRequests = ready
     }
 
-    public func start(launchOptions: LaunchOptions) {
+    public func start(
+        launchOptions: LaunchOptions,
+        completion: @escaping () -> Void
+    ) {
         if let account = accountManager.selectedAccount {
-            selectInitialAccount(account, launchOptions: launchOptions)
+            selectInitialAccount(account, launchOptions: launchOptions, completion: completion)
             // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
@@ -619,6 +622,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
+            completion()
         }
     }
 
@@ -638,23 +642,28 @@ public final class SessionManager: NSObject, SessionManagerType {
         return account
     }
 
-    private func selectInitialAccount(_ account: Account, launchOptions: LaunchOptions) {
+    private func selectInitialAccount(
+        _ account: Account,
+        launchOptions: LaunchOptions,
+        completion: @escaping () -> Void
+    ) {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
             if (try? URLAction(url: url))?.causesLogout == true {
                 // Do not log in if the launch URL action causes a logout
-                return
+                return completion()
             }
         }
 
         guard !shouldPerformPostRebootLogout() else {
             performPostRebootLogout()
-            return
+            return completion()
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let self, let session else { return }
+            guard let self, let session else { return completion() }
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
+            completion()
         }
     }
 
@@ -1426,6 +1435,7 @@ extension SessionManager: AccountDeletedObserver {
 
 extension SessionManager {
     @objc fileprivate func applicationWillEnterForeground(_ note: Notification) {
+
         BackgroundActivityFactory.shared.resume()
 
         updateAllUnreadCounts()

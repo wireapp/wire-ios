@@ -37,7 +37,7 @@ extension SessionManager {
         guard let analyticsManager else {
             throw AnalyticsSessionError.analyticsNotAvailable
         }
-        return DisableAnalyticsUseCase(analyticsManager: analyticsManager, userSession: userSession)
+        return DisableAnalyticsUseCase(sessionManager: self, userSession: userSession)
     }
 
     public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
@@ -54,14 +54,9 @@ extension SessionManager {
             throw AnalyticsSessionError.missingAnalyticsUserProfile
         }
 
-        let analyticsManager = AnalyticsManager(
-            appKey: analyticsSessionConfiguration.countlyKey,
-            host: analyticsSessionConfiguration.host
-        )
-        self.analyticsManager = analyticsManager
-
         return EnableAnalyticsUseCase(
-            analyticsManager: analyticsManager,
+            sessionManager: self,
+            analyticsSessionConfiguration: analyticsSessionConfiguration,
             analyticsUserProfile: analyticsUserProfile,
             userSession: userSession
         )

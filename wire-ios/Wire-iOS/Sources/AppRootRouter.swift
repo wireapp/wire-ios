@@ -270,7 +270,15 @@ extension AppRootRouter {
     // MARK: - Navigation Helpers
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            
+            self?.sessionManager.start(launchOptions: launchOptions) { [weak self] in
+                guard let self else { return }
+
+                if trackingManager.disableAnalyticsSharing == false, sessionManager.analyticsSessionConfiguration != nil {
+                    let useCase = try! sessionManager.makeEnableAnalyticsUseCase()
+                    useCase.invoke()
+                }
+            }
         }
     }
 
@@ -394,9 +402,8 @@ extension AppRootRouter {
 
     private func retryStart(completion: @escaping () -> Void) {
         guard let launchOptions = lastLaunchOptions else { return }
-        completion()
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            self?.sessionManager.start(launchOptions: launchOptions, completion: completion)
         }
     }
 

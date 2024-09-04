@@ -37,7 +37,9 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
-    private let analyticsManager: AnalyticsManagerProtocol
+    private let analyticsSessionConfiguration: AnalyticsSessionConfiguration
+
+    private let sessionManager: SessionManager
 
     private let analyticsUserProfile: AnalyticsUserProfile
 
@@ -51,11 +53,13 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     ///   - analyticsManager: The analytics manager to use for enabling tracking.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
     public init(
-        analyticsManager: AnalyticsManagerProtocol,
+        sessionManager: SessionManager,
+        analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
         userSession: ZMUserSession
     ) {
-        self.analyticsManager = analyticsManager
+        self.sessionManager = sessionManager
+        self.analyticsSessionConfiguration = analyticsSessionConfiguration
         self.analyticsUserProfile = analyticsUserProfile
         self.userSession = userSession
     }
@@ -67,6 +71,13 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     /// This method calls the `enableTracking` method on the analytics manager
     /// with the provided user profile.
     public func invoke() {
+        let analyticsManager = AnalyticsManager(
+            appKey: analyticsSessionConfiguration.countlyKey,
+            host: analyticsSessionConfiguration.host
+        )
+
+        sessionManager.analyticsManager = analyticsManager
+
         let analyticsSession = analyticsManager.enableTracking(analyticsUserProfile)
         userSession.analyticsSession = analyticsSession
     }
