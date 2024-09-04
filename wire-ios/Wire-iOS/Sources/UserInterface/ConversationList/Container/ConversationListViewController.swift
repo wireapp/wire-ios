@@ -96,8 +96,9 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
-    var splitViewControllerMode: SplitViewControllerMode = .collapsed {
+    var splitViewControllerMode: SplitViewControllerMode = .expanded {
         didSet {
+            setupTitleView()
             updateNavigationItem()
             applyColorTheme()
         }
@@ -178,8 +179,7 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         setupTitleView()
-        setupLeftNavigationBarButtons()
-        setupRightNavigationBarButtons()
+        updateNavigationItem()
 
         setupObservers()
 
@@ -245,9 +245,9 @@ final class ConversationListViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        setupTitleView()
-        setupLeftNavigationBarButtons()
-        setupRightNavigationBarButtons()
+        // TODO: these methods are called too often, see `splitViewControllerMode`
+        // setupTitleView()
+        // updateNavigationItem()
     }
 
     // MARK: - Setup UI

@@ -275,7 +275,7 @@ final class ZClientViewController: UIViewController {
 
         // TODO: check if still needed
         // if changing from compact width to regular width, make sure current conversation is loaded
-        if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
+        if false, previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
             if let currentConversation {
                 select(conversation: currentConversation)
             } else {
