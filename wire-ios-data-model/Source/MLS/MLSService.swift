@@ -517,9 +517,22 @@ public final class MLSService: MLSServiceInterface {
         return ciphersuite
     }
 
+//    public func createGroup(
+//        for groupID: MLSGroupID,
+//        parentGroupID: MLSGroupID? = nil
+//    ) {
+//        // owning domain.
+//        externalSenders = try await coreCrypto.perform {
+//            [try await $0.getExternalSender(conversationId: parentGroupID.data)]
+//        }
+//
+//        createGroup(externalSenders)
+//    }
+
     public func createGroup(
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
+//        removalKeys: BackendMLSPublicKeys
     ) async throws -> MLSCipherSuite {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
