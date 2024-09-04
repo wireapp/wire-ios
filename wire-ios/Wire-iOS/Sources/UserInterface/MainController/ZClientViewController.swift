@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireDesign
 import WireSyncEngine
 import WireUIBase
+import SwiftUI
 
 final class ZClientViewController: UIViewController {
 
@@ -91,6 +92,8 @@ final class ZClientViewController: UIViewController {
     private var networkAvailabilityObserverToken: Any?
     private var pendingInitialStateRestore = false
 
+    private weak var mainCoordinator: MainCoordinatorProtocol?
+
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
@@ -98,6 +101,16 @@ final class ZClientViewController: UIViewController {
     ) {
         self.account = account
         self.userSession = userSession
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+
+            let svc = MainSplitViewController(
+                sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
+                noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "placeholder"))
+            )
+            svc.conversationList = UIHostingController(rootView: Text(verbatim: "conversationList"))
+            UIApplication.shared.windows.first!.rootViewController = svc
+        }
 
         colorSchemeController = .init(userSession: userSession)
 

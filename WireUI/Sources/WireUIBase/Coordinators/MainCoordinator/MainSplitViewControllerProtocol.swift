@@ -16,32 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public struct AuthenticatedCoordinator<Conversation, ConversationMessage>: AuthenticatedCoordinatorProtocol {
+import UIKit
 
-    public init() {}
-
-    public func showConversationList() {
-        fatalError()
-    }
-
-    public func showSettings() {
-        fatalError()
-    }
-
-    public func openConversation(
-        _ conversation: Conversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        fatalError()
-    }
-
-    public func openConversation(
-        _ conversation: Conversation,
-        andScrollTo message: ConversationMessage,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        fatalError()
-    }
+@MainActor
+public protocol MainSplitViewControllerProtocol: UISplitViewController {
+    var sidebar: UIViewController { get }
+    var conversationList: UIViewController? { get set }
+    var conversation: UIViewController? { get set }
+    var tabContainer: MainTabBarController { get }
+//    var archive: UIViewController? { get set }
+//    var settings: UIViewController? { get set }
 }

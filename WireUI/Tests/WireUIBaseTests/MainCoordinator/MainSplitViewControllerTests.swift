@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Handles the navigation when a user is authenticated.
-public protocol AuthenticatedCoordinatorProtocol {
-    associatedtype Conversation
-    associatedtype ConversationMessage
+import XCTest
 
-    func showConversationList()
+@testable import WireUIBase
 
-    func showSettings()
+final class MainSplitViewControllerTests: XCTestCase {
 
-    func openConversation(
-        _ conversation: Conversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    )
+    private var sut: MainSplitViewController!
+    private var sidebar: UIViewController!
+    private var conversationList: UIViewController!
+    private var conversation: UIViewController!
+    private var tabBarContainer: MainTabBarController!
 
-    func openConversation(
-        _ conversation: Conversation,
-        andScrollTo message: ConversationMessage,
-        focusOnView focus: Bool,
-        animated: Bool
-    )
+    @MainActor
+    override func setUp() async throws {
+//        sut = .init(
+//            sidebar: <#T##UIViewController#>,
+//            noConversationPlaceholder: <#T##UIViewController#>,
+//            tabContainer: <#T##MainTabBarController#>
+//        )
+    }
 }
