@@ -19,24 +19,26 @@
 import XCTest
 
 @testable import WireSyncEngine
+import WireDataModelSupport
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
     var presentationDelegate: MockPresentationDelegate!
     var sut: WireSyncEngine.DeepLinkURLActionProcessor!
     var mockTransportSession: MockTransportSession!
-    var mockUpdateEventProcessor: MockUpdateEventProcessor!
+    var mockEventProcessor: MockConversationEventProcessorProtocol!
 
     override func setUp() {
         super.setUp()
 
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
-        mockUpdateEventProcessor = MockUpdateEventProcessor()
+        mockEventProcessor = MockConversationEventProcessorProtocol()
+        mockEventProcessor.processConversationEvents_MockMethod = { _ in }
         presentationDelegate = MockPresentationDelegate()
 
         sut = WireSyncEngine.DeepLinkURLActionProcessor(contextProvider: coreDataStack!,
                                                         transportSession: mockTransportSession,
-                                                        eventProcessor: mockUpdateEventProcessor)
+                                                        eventProcessor: mockEventProcessor)
     }
 
     override func tearDown() {
@@ -44,7 +46,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
         presentationDelegate = nil
         mockTransportSession = nil
-        mockUpdateEventProcessor = nil
+        mockEventProcessor = nil
 
         super.tearDown()
     }
@@ -123,8 +125,8 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         self.wait(for: [expectation], timeout: 5)
 
         // THEN
-        XCTAssertEqual(mockUpdateEventProcessor.processedEvents.count, 1)
-        XCTAssertEqual(mockUpdateEventProcessor.processedEvents.first?.type, .conversationMemberJoin)
+        XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.count, 1)
+        XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.first?.first?.type, .conversationMemberJoin)
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.first, action)
     }
