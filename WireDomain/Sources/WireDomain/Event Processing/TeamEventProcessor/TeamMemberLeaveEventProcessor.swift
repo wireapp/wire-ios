@@ -17,24 +17,38 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process team member leave events.
+struct TeamMemberLeaveEventProcessor: TeamEventProcessorProtocol {
 
-protocol TeamMemberLeaveEventProcessorProtocol {
+    enum Error: Swift.Error {
+        case failedToFetchUser(UUID)
+        case userNotAMemberInTeam(user: UUID, team: UUID)
+    }
 
-    /// Process a team member leave event.
-    ///
-    /// - Parameter event: A team member leave event.
+    let event: TeamMemberLeaveEvent
+    let context: NSManagedObjectContext
 
-    func processEvent(_ event: TeamMemberLeaveEvent) async throws
+    func processTeamEvent() async throws {
+        try await context.perform {
+            guard let user = ZMUser.fetch(with: event.userID, in: context) else {
+                throw Error.failedToFetchUser(event.userID)
+            }
 
-}
+            guard let member = user.membership else {
+                throw Error.userNotAMemberInTeam(user: event.userID, team: event.teamID)
+            }
 
-struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
+            if user.isSelfUser {
+                let notification = AccountDeletedNotification(context: context)
+                notification.post(in: context.notificationContext)
+            } else {
+                user.markAccountAsDeleted(at: .now)
+            }
 
-    func processEvent(_: TeamMemberLeaveEvent) async throws {
-        // TODO: [WPB-10185]
-        assertionFailure("not implemented yet")
+            context.delete(member)
+        }
     }
 
 }

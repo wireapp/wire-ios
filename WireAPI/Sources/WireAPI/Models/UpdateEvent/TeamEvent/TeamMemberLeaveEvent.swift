@@ -30,4 +30,12 @@ public struct TeamMemberLeaveEvent: Equatable, Codable {
 
     public let userID: UUID
 
+    public init(
+        teamID: UUID,
+        userID: UUID
+    ) {
+        self.teamID = teamID
+        self.userID = userID
+    }
+
 }
