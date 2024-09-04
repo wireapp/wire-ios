@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process user properties set events.
+struct UserPropertiesSetEventProcessor: UserEventProcessorProtocol {
 
-protocol UserPropertiesSetEventProcessorProtocol {
+    let event: UserPropertiesSetEvent
+    let context: NSManagedObjectContext
 
-    /// Process a user properties set event.
-    ///
-    /// - Parameter event: A user properties set event.
-
-    func processEvent(_ event: UserPropertiesSetEvent) async throws
-
-}
-
-struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
-
-    func processEvent(_: UserPropertiesSetEvent) async throws {
+    func processUserEvent() async throws {
         // TODO: [WPB-10197]
         assertionFailure("not implemented yet")
     }

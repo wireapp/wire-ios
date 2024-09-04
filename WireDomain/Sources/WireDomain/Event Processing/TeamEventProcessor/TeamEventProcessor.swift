@@ -16,41 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireAPI
 
 /// Process team update events.
-
 protocol TeamEventProcessorProtocol {
 
-    /// Process a team update event.
-    ///
-    /// Processing an event is the app's only chance to consume
-    /// some remote changes to update its local state.
-    ///
-    /// - Parameter event: A team update event.
-
-    func processEvent(_ event: TeamEvent) async throws
+    func processTeamEvent() async throws
 
 }
 
-struct TeamEventProcessor {
+struct TeamEventProcessor: CategorizedEventProcessorProtocol {
 
-    let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
-    let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol
-    let memberUpdateEventProcessor: any TeamMemberUpdateEventProcessorProtocol
+    private let builder: any TeamEventProcessorBuilder = EventProcessorBuilder()
+    let event: TeamEvent
+    let context: NSManagedObjectContext
 
-    func processEvent(_ event: TeamEvent) async throws {
-        switch event {
-        case .delete:
-            try await deleteEventProcessor.processEvent()
+    func processCategorizedEvent() async throws {
+        let processor = builder.makeTeamProcessor(
+            for: event,
+            context: context
+        )
 
-        case .memberLeave(let event):
-            try await memberLeaveEventProcessor.processEvent(event)
-
-        case .memberUpdate(let event):
-            try await memberUpdateEventProcessor.processEvent(event)
-        }
+        try await processor.processTeamEvent()
     }
 
 }

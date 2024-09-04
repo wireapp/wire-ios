@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process feature config update events.
+struct FeatureConfigUpdateEventProcessor: FeatureConfigEventProcessorProtocol {
 
-protocol FeatureConfigUpdateEventProcessorProtocol {
+    let event: FeatureConfigUpdateEvent
+    let context: NSManagedObjectContext
 
-    /// Process a feature config update event.
-    ///
-    /// - Parameter event: A feature config update event.
-
-    func processEvent(_ event: FeatureConfigUpdateEvent) async throws
-
-}
-
-struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
-
-    func processEvent(_: FeatureConfigUpdateEvent) async throws {
+    func processFeatureConfigEvent() async throws {
         // TODO: [WPB-10183]
         assertionFailure("not implemented yet")
     }

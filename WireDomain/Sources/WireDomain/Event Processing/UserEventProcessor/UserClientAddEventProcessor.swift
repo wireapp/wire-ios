@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process user client add events.
+struct UserClientAddEventProcessor: UserEventProcessorProtocol {
 
-protocol UserClientAddEventProcessorProtocol {
+    let event: UserClientAddEvent
+    let context: NSManagedObjectContext
 
-    /// Process a user client add event.
-    ///
-    /// - Parameter event: A user client add event.
-
-    func processEvent(_ event: UserClientAddEvent) async throws
-
-}
-
-struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
-
-    func processEvent(_: UserClientAddEvent) async throws {
+    func processUserEvent() async throws {
         // TODO: [WPB-10189]
         assertionFailure("not implemented yet")
     }

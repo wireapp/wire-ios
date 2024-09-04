@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process federation connection removed events.
+struct FederationConnectionRemovedEventProcessor: FederationEventProcessorProtocol {
 
-protocol FederationConnectionRemovedEventProcessorProtocol {
+    let event: FederationConnectionRemovedEvent
+    let context: NSManagedObjectContext
 
-    /// Process a federation connection removed event.
-    ///
-    /// - Parameter event: A federation connection removed event.
-
-    func processEvent(_ event: FederationConnectionRemovedEvent) async throws
-
-}
-
-struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
-
-    func processEvent(_: FederationConnectionRemovedEvent) async throws {
+    func processFederationEvent() async throws {
         // TODO: [WPB-10187]
         assertionFailure("not implemented yet")
     }

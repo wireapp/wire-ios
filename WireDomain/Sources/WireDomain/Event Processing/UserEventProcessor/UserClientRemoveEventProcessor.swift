@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process user client remove events.
+struct UserClientRemoveEventProcessor: UserEventProcessorProtocol {
 
-protocol UserClientRemoveEventProcessorProtocol {
+    let event: UserClientRemoveEvent
+    let context: NSManagedObjectContext
 
-    /// Process a user client remove event.
-    ///
-    /// - Parameter event: A user client remove event.
-
-    func processEvent(_ event: UserClientRemoveEvent) async throws
-
-}
-
-struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
-
-    func processEvent(_: UserClientRemoveEvent) async throws {
+    func processUserEvent() async throws {
         // TODO: [WPB-10190]
         assertionFailure("not implemented yet")
     }

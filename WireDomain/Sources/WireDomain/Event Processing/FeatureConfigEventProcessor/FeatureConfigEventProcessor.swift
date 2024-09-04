@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireAPI
 
@@ -28,21 +29,24 @@ protocol FeatureConfigEventProcessorProtocol {
     /// Processing an event is the app's only chance to consume
     /// some remote changes to update its local state.
     ///
-    /// - Parameter event: A feature config update event.
 
-    func processEvent(_ event: FeatureConfigEvent) async throws
+    func processFeatureConfigEvent() async throws
 
 }
 
-struct FeatureConfigEventProcessor {
+struct FeatureConfigEventProcessor: CategorizedEventProcessorProtocol {
 
-    let updateEventProcessor: any FeatureConfigUpdateEventProcessorProtocol
+    private let builder: any FeatureConfigEventProcessorBuilder = EventProcessorBuilder()
+    let event: FeatureConfigEvent
+    let context: NSManagedObjectContext
 
-    func processEvent(_ event: FeatureConfigEvent) async throws {
-        switch event {
-        case .update(let event):
-            try await updateEventProcessor.processEvent(event)
-        }
+    func processCategorizedEvent() async throws {
+        let processor = builder.makeFeatureConfigProcessor(
+            for: event,
+            context: context
+        )
+
+        try await processor.processFeatureConfigEvent()
     }
 
 }

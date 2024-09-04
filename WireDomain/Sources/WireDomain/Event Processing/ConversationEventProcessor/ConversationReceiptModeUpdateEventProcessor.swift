@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process conversation receipt mode update events.
+struct ConversationReceiptModeUpdateEventProcessor: ConversationEventProcessorProtocol {
 
-protocol ConversationReceiptModeUpdateEventProcessorProtocol {
+    let event: ConversationReceiptModeUpdateEvent
+    let context: NSManagedObjectContext
 
-    /// Process a conversation receipt mode update event.
-    ///
-    /// - Parameter event: A conversation receipt mode update event.
-
-    func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws
-
-}
-
-struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
-
-    func processEvent(_: ConversationReceiptModeUpdateEvent) async throws {
+    func processConversationEvent() async throws {
         // TODO: [WPB-10176]
         assertionFailure("not implemented yet")
     }

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireAPI
 
 /// Process user update events.
-
 protocol UserEventProcessorProtocol {
 
     /// Process a user update event.
@@ -28,65 +28,24 @@ protocol UserEventProcessorProtocol {
     /// Processing an event is the app's only chance to consume
     /// some remote changes to update its local state.
     ///
-    /// - Parameter event: A user update event.
 
-    func processEvent(_ event: UserEvent) async throws
+    func processUserEvent() async throws
 
 }
 
-struct UserEventProcessor {
+struct UserEventProcessor: CategorizedEventProcessorProtocol {
 
-    let clientAddEventProcessor: any UserClientAddEventProcessorProtocol
-    let clientRemoveEventProcessor: any UserClientRemoveEventProcessorProtocol
-    let connectionEventProcessor: any UserConnectionEventProcessorProtocol
-    let contactJoinEventProcessor: any UserContactJoinEventProcessorProtocol
-    let deleteEventProcessor: any UserDeleteEventProcessorProtocol
-    let legalholdDisableEventProcessor: any UserLegalholdDisableEventProcessorProtocol
-    let legalholdEnableEventProcessor: any UserLegalholdEnableEventProcessorProtocol
-    let legalholdRequestEventProcessor: any UserLegalholdRequestEventProcessorProtocol
-    let propertiesSetEventProcessor: any UserPropertiesSetEventProcessorProtocol
-    let propertiesDeleteEventProcessor: any UserPropertiesDeleteEventProcessorProtocol
-    let pushRemoveEventProcessor: any UserPushRemoveEventProcessorProtocol
-    let updateEventProcessor: any UserUpdateEventProcessorProtocol
+    private let builder: any UserEventProcessorBuilder = EventProcessorBuilder()
+    let event: UserEvent
+    let context: NSManagedObjectContext
 
-    func processEvent(_ event: UserEvent) async throws {
-        switch event {
-        case .clientAdd(let event):
-            try await clientAddEventProcessor.processEvent(event)
+    func processCategorizedEvent() async throws {
+        let processor = builder.makeUserProcessor(
+            for: event,
+            context: context
+        )
 
-        case .clientRemove(let event):
-            try await clientRemoveEventProcessor.processEvent(event)
-
-        case .connection(let event):
-            try await connectionEventProcessor.processEvent(event)
-
-        case .contactJoin(let event):
-            try await contactJoinEventProcessor.processEvent(event)
-
-        case .delete(let event):
-            try await deleteEventProcessor.processEvent(event)
-
-        case .legalholdDisable(let event):
-            try await legalholdDisableEventProcessor.processEvent(event)
-
-        case .legalholdEnable(let event):
-            try await legalholdEnableEventProcessor.processEvent(event)
-
-        case .legalholdRequest(let event):
-            try await legalholdRequestEventProcessor.processEvent(event)
-
-        case .propertiesSet(let event):
-            try await propertiesSetEventProcessor.processEvent(event)
-
-        case .propertiesDelete(let event):
-            try await propertiesDeleteEventProcessor.processEvent(event)
-
-        case .pushRemove:
-            try await pushRemoveEventProcessor.processEvent()
-
-        case .update(let event):
-            try await updateEventProcessor.processEvent(event)
-        }
+        try await processor.processUserEvent()
     }
 
 }

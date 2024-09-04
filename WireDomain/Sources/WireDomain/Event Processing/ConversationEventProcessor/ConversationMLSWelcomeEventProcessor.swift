@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process conversation mls welcome events.
+struct ConversationMLSWelcomeEventProcessor: ConversationEventProcessorProtocol {
 
-protocol ConversationMLSWelcomeEventProcessorProtocol {
+    let event: ConversationMLSWelcomeEvent
+    let context: NSManagedObjectContext
 
-    /// Process a conversation mls welcome event.
-    ///
-    /// - Parameter event: A conversation mls welcome event.
-
-    func processEvent(_ event: ConversationMLSWelcomeEvent) async throws
-
-}
-
-struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcessorProtocol {
-
-    func processEvent(_: ConversationMLSWelcomeEvent) async throws {
+    func processConversationEvent() async throws {
         // TODO: [WPB-10173]
         assertionFailure("not implemented yet")
     }

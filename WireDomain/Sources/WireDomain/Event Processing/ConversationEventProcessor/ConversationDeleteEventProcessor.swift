@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process conversation delete events.
+struct ConversationDeleteEventProcessor: ConversationEventProcessorProtocol {
 
-protocol ConversationDeleteEventProcessorProtocol {
+    let event: ConversationDeleteEvent
+    let context: NSManagedObjectContext
 
-    /// Process a conversation delete event.
-    ///
-    /// - Parameter event: A conversation delete event.
-
-    func processEvent(_ event: ConversationDeleteEvent) async throws
-
-}
-
-struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
-
-    func processEvent(_: ConversationDeleteEvent) async throws {
+    func processConversationEvent() async throws {
         // TODO: [WPB-10167]
         assertionFailure("not implemented yet")
     }

@@ -16,23 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process user legalhold request events.
+struct UserLegalholdRequestEventProcessor: UserEventProcessorProtocol {
 
-protocol UserLegalholdRequestEventProcessorProtocol {
+    let event: UserLegalholdRequestEvent
+    let context: NSManagedObjectContext
 
-    /// Process a user legalhold request event.
-    ///
-    /// - Parameter event: A user legalhold request event.
-
-    func processEvent(_ event: UserLegalholdRequestEvent) async throws
-
-}
-
-struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorProtocol {
-
-    func processEvent(_: UserLegalholdRequestEvent) async throws {
+    func processUserEvent() async throws {
         // TODO: [WPB-10196]
         assertionFailure("not implemented yet")
     }

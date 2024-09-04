@@ -16,21 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
 
 /// Process team delete events.
+struct TeamDeleteEventProcessor: TeamEventProcessorProtocol {
 
-protocol TeamDeleteEventProcessorProtocol {
+    let context: NSManagedObjectContext
 
-    /// Process a team delete event.
-
-    func processEvent() async throws
-
-}
-
-struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
-
-    func processEvent() async throws {
+    func processTeamEvent() async throws {
         // TODO: [WPB-10184]
         assertionFailure("not implemented yet")
     }
