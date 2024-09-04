@@ -66,7 +66,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     }
 
     /// This method is called from EventProcessor directly
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(_ events: [ZMUpdateEvent]) async {
         await processConversationEvents(events)
     }
 
