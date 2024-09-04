@@ -65,8 +65,11 @@ extension ConversationListViewController {
         accountImageView.accountImage = viewModel.accountImage.image
         accountImageView.availability = viewModel.selfUserStatus.availability.map()
         accountImageView.accessibilityTraits = .button
-        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton"
+        accountImageView.accessibilityIdentifier = "bottomBarSettingsButton" // TODO: fix, can't be correct
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+        accountImageView.translatesAutoresizingMaskIntoConstraints = false
+        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
@@ -85,11 +88,6 @@ extension ConversationListViewController {
         let accountImageView = setupAccountImageView()
         stackView.addArrangedSubview(accountImageView)
         self.accountImageView = accountImageView
-        // TODO: this should be in the view model
-        Task {
-            let accountImage = await AccountImage(viewModel.userSession, viewModel.account, .init())
-            accountImageView.accountImage = accountImage
-        }
 
         // legal hold
         switch viewModel.selfUserLegalHoldSubject.legalHoldStatus {
@@ -115,7 +113,7 @@ extension ConversationListViewController {
             stackView.addArrangedSubview(imageView)
         }
 
-        parent?.navigationItem.leftBarButtonItem = .init(customView: stackView)
+        navigationItem.leftBarButtonItems = [.init(customView: stackView)]
     }
 
     func setupLeftNavigationBarButtons_SplitView() {
@@ -201,7 +199,7 @@ extension ConversationListViewController {
         // Trigger a layout update to ensure the correct positioning
         // of the add conversation button and filter button
         // when the filter button is tapped.
-        self.view.setNeedsLayout()
+        view.setNeedsLayout()
     }
 
     func setupRightNavigationBarButtons_SplitView() {

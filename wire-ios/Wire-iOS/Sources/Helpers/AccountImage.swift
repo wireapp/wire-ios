@@ -21,6 +21,8 @@ import WireDataModel
 import WireSyncEngine
 import WireReusableUIComponents
 
+// TODO: make it a use case
+
 @MainActor
 func AccountImage(
     _ userSession: UserSession,

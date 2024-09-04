@@ -19,6 +19,8 @@
 import WireDataModel
 import WireSystem
 
+// TODO: consider having an `AuthenticatedCoordinator`
+
 struct MainCoordinator: MainCoordinating {
 
     weak var zClientViewController: ZClientViewController?

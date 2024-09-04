@@ -30,6 +30,9 @@ final class ZClientViewController: UIViewController {
 
     let account: Account
     let userSession: UserSession
+    private(set) var cachedAccountImage = UIImage() {
+        didSet { sidebarViewController.accountInfo?.accountImage = cachedAccountImage }
+    }
 
     private(set) var conversationRootViewController: UIViewController?
     // TODO [WPB-8778]: Check if this property is still needed
@@ -200,11 +203,8 @@ final class ZClientViewController: UIViewController {
 
         createTopViewConstraints()
 
-        sidebarViewController.accountInfo = .init(userSession.selfUser, .init())
-        Task {
-            let accountImage = await AccountImage(userSession, account, .init())
-            sidebarViewController.accountInfo?.accountImage = accountImage
-        }
+        sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
+        Task { cachedAccountImage = await AccountImage(userSession, account, .init()) }
 
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         let supplementaryNavigationController = UINavigationController(rootViewController: conversationListViewController)
@@ -780,9 +780,7 @@ extension ZClientViewController: UserObserving {
         }
         if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
             Task { @MainActor [self] in
-                let accountImage = await AccountImage(userSession, account, .init())
-                sidebarViewController.accountInfo = .init(userSession.selfUser, accountImage)
-                conversationListViewController.accountImageView?.accountImage = accountImage
+                cachedAccountImage = await AccountImage(userSession, account, .init())
             }
         }
     }
