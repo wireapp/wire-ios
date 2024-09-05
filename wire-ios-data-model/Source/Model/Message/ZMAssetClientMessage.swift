@@ -173,7 +173,6 @@ import Foundation
         return self.v2Asset ?? self.v3Asset
     }
 
-
     public override func expire(withReason reason: ExpirationReason) {
         super.expire(withReason: reason)
 

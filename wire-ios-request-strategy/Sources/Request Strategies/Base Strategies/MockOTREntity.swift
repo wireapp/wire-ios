@@ -28,9 +28,6 @@ final class MockOTREntity: OTREntity {
     var shouldExpire: Bool = false
     var isExpired: Bool = false
     var shouldIgnoreTheSecurityLevelCheck: Bool = false
-    func expire() {
-        isExpired = true
-    }
     var expirationReasonCode: NSNumber?
 
     let messageData: Data
@@ -63,6 +60,11 @@ final class MockOTREntity: OTREntity {
 
     func addFailedToSendRecipients(_ recipients: [ZMUser]) {
         isFailedToSendUsers = true
+    }
+
+    func expire(withReason reason: ExpirationReason) {
+        isExpired = true
+        expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 
 }
