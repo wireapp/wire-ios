@@ -1,1 +1,3510 @@
-{"strings":{"tabBar.contacts.description":{"localizations":{"pl":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"nl":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"fr":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"pt-BR":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"sl":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"fi":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"ru":{"stringUnit":{"state":"translated","value":"Список недавних бесед"}},"zh-Hans":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"ja":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"ar":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"es":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"zh-Hant":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"de":{"stringUnit":{"state":"translated","value":"Liste der letzten Unterhaltungen"}},"da":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"lt":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"it":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"et":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"uk":{"stringUnit":{"state":"translated","value":"Список недавніх розмов"}},"tr":{"stringUnit":{"state":"new","value":"List of recent conversations"}}}},"tabBar.folders.hint":{"localizations":{"tr":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"de":{"stringUnit":{"state":"translated","value":"Doppeltippen, um die Liste der in Ordnern organisierten Unterhaltungen zu öffnen"}},"es":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"nl":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"zh-Hant":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"fr":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"fi":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"ar":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"it":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"uk":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"ru":{"stringUnit":{"state":"translated","value":"Нажмите дважды, чтобы открыть список бесед, организованных по папкам"}},"zh-Hans":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"pl":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"da":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"pt-BR":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"ja":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"lt":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"et":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}},"sl":{"stringUnit":{"state":"new","value":"Double tap to open list of conversations organized in folders"}}}},"tabBar.archived.description":{"localizations":{"lt":{"stringUnit":{"state":"translated","value":"Archyvuoti"}},"pl":{"stringUnit":{"state":"translated","value":"Archiwum"}},"ja":{"stringUnit":{"state":"translated","value":"アーカイブ"}},"zh-Hant":{"stringUnit":{"state":"translated","value":"封存"}},"nl":{"stringUnit":{"state":"translated","value":"Archiveren"}},"fr":{"stringUnit":{"state":"translated","value":"Archiver"}},"zh-Hans":{"stringUnit":{"state":"translated","value":"归档"}},"pt-BR":{"stringUnit":{"state":"translated","value":"Arquivar"}},"et":{"stringUnit":{"state":"translated","value":"Arhiveeri"}},"es":{"stringUnit":{"state":"translated","value":"Archivar"}},"de":{"stringUnit":{"state":"translated","value":"Archiv"}},"ar":{"stringUnit":{"state":"translated","value":"حفظ في الأرشيف"}},"tr":{"stringUnit":{"state":"translated","value":"Arşivle"}},"sl":{"stringUnit":{"state":"translated","value":"Arhiviraj"}},"da":{"stringUnit":{"state":"translated","value":"Arkiv"}},"uk":{"stringUnit":{"state":"translated","value":"Архівувати"}},"it":{"stringUnit":{"state":"translated","value":"Archivia"}},"ru":{"stringUnit":{"state":"translated","value":"Архивировать"}},"fi":{"stringUnit":{"state":"translated","value":"Arkistoi"}}}},"tabBar.folders.title":{"localizations":{"fi":{"stringUnit":{"state":"new","value":"Folders"}},"de":{"stringUnit":{"state":"translated","value":"Ordner"}},"pl":{"stringUnit":{"state":"new","value":"Folders"}},"ru":{"stringUnit":{"state":"translated","value":"Папки"}},"es":{"stringUnit":{"state":"new","value":"Folders"}},"uk":{"stringUnit":{"state":"new","value":"Folders"}},"pt-BR":{"stringUnit":{"state":"new","value":"Folders"}},"nl":{"stringUnit":{"state":"new","value":"Folders"}},"zh-Hans":{"stringUnit":{"state":"new","value":"Folders"}},"ja":{"stringUnit":{"state":"new","value":"Folders"}},"lt":{"stringUnit":{"state":"new","value":"Folders"}},"fr":{"stringUnit":{"state":"new","value":"Folders"}},"it":{"stringUnit":{"state":"new","value":"Folders"}},"zh-Hant":{"stringUnit":{"state":"new","value":"Folders"}},"da":{"stringUnit":{"state":"new","value":"Folders"}},"et":{"stringUnit":{"state":"new","value":"Folders"}},"tr":{"stringUnit":{"state":"new","value":"Folders"}},"sl":{"stringUnit":{"state":"new","value":"Folders"}},"ar":{"stringUnit":{"state":"new","value":"Folders"}}}},"tabBar.contacts.title":{"localizations":{"pt-BR":{"stringUnit":{"state":"translated","value":"Contatos"}},"ru":{"stringUnit":{"state":"translated","value":"Контакты"}},"uk":{"stringUnit":{"state":"translated","value":"Контакти"}},"pl":{"stringUnit":{"state":"translated","value":"Kontakty"}},"tr":{"stringUnit":{"state":"translated","value":"Kişiler"}},"ja":{"stringUnit":{"state":"translated","value":"連絡先"}},"es":{"stringUnit":{"state":"translated","value":"Contactos"}},"fi":{"stringUnit":{"state":"translated","value":"Yhteystiedot"}},"sl":{"stringUnit":{"state":"translated","value":"Stiki"}},"da":{"stringUnit":{"state":"translated","value":"Kontakter"}},"ar":{"stringUnit":{"state":"translated","value":"جهات الاتصال"}},"nl":{"stringUnit":{"state":"translated","value":"Contacten"}},"et":{"stringUnit":{"state":"translated","value":"Kontaktid"}},"fr":{"stringUnit":{"state":"translated","value":"Contacts"}},"de":{"stringUnit":{"state":"translated","value":"Kontakte"}},"zh-Hans":{"stringUnit":{"state":"translated","value":"联络人"}},"it":{"stringUnit":{"state":"translated","value":"Contatti"}},"lt":{"stringUnit":{"state":"translated","value":"Kontaktai"}},"zh-Hant":{"stringUnit":{"state":"translated","value":"連絡人"}}}},"tabBar.archived.title":{"localizations":{"pt-BR":{"stringUnit":{"state":"translated","value":"Arquivar"}},"sl":{"stringUnit":{"state":"translated","value":"Arhiviraj"}},"ar":{"stringUnit":{"state":"translated","value":"حفظ في الأرشيف"}},"zh-Hans":{"stringUnit":{"state":"translated","value":"归档"}},"nl":{"stringUnit":{"state":"translated","value":"Archiveren"}},"uk":{"stringUnit":{"state":"translated","value":"Архівувати"}},"zh-Hant":{"stringUnit":{"state":"translated","value":"封存"}},"tr":{"stringUnit":{"state":"translated","value":"Arşivle"}},"da":{"stringUnit":{"state":"translated","value":"Arkiv"}},"fr":{"stringUnit":{"state":"translated","value":"Archiver"}},"fi":{"stringUnit":{"state":"translated","value":"Arkistoi"}},"et":{"stringUnit":{"state":"translated","value":"Arhiveeri"}},"de":{"stringUnit":{"state":"translated","value":"Archiv"}},"es":{"stringUnit":{"state":"translated","value":"Archivar"}},"ja":{"stringUnit":{"state":"translated","value":"アーカイブ"}},"ru":{"stringUnit":{"state":"translated","value":"Архивировать"}},"lt":{"stringUnit":{"state":"translated","value":"Archyvuoti"}},"pl":{"stringUnit":{"state":"translated","value":"Archiwum"}},"it":{"stringUnit":{"state":"translated","value":"Archivia"}}}},"tabBar.conversations.description":{"localizations":{"da":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"ja":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"nl":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"fr":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"sl":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"lt":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"ru":{"stringUnit":{"state":"translated","value":"Список недавних бесед"}},"ar":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"tr":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"pl":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"zh-Hans":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"pt-BR":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"fi":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"et":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"zh-Hant":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"it":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"es":{"stringUnit":{"state":"new","value":"List of recent conversations"}},"uk":{"stringUnit":{"state":"translated","value":"Список недавніх розмов"}},"de":{"stringUnit":{"state":"translated","value":"Liste der letzten Unterhaltungen"}}}},"tabBar.archived.hint":{"localizations":{"ar":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"ja":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"it":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"zh-Hant":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"pt-BR":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"lt":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"nl":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"es":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"da":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"uk":{"stringUnit":{"state":"translated","value":"Торкніться двічі, щоб відкрити список заархівованих розмов"}},"pl":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"zh-Hans":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"fi":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"sl":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"fr":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"ru":{"stringUnit":{"state":"translated","value":"Нажмите дважды, чтобы открыть список архивных бесед"}},"tr":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"et":{"stringUnit":{"state":"new","value":"Double tap to open list of archived conversations"}},"de":{"stringUnit":{"state":"translated","value":"Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen"}}}},"tabBar.conversations.title":{"localizations":{"pt-BR":{"stringUnit":{"state":"translated","value":"Conversas"}},"ja":{"stringUnit":{"state":"translated","value":"会話"}},"da":{"stringUnit":{"state":"new","value":"Conversations"}},"nl":{"stringUnit":{"state":"translated","value":"Gesprekken"}},"fr":{"stringUnit":{"state":"translated","value":"Conversations"}},"de":{"stringUnit":{"state":"translated","value":"Unterhaltungen"}},"tr":{"stringUnit":{"state":"translated","value":"Konuşmalar"}},"lt":{"stringUnit":{"state":"translated","value":"Susirašinėjimai"}},"ru":{"stringUnit":{"state":"translated","value":"Беседы"}},"et":{"stringUnit":{"state":"translated","value":"Vestlused"}},"pl":{"stringUnit":{"state":"translated","value":"Konwersacje"}},"zh-Hant":{"stringUnit":{"state":"translated","value":"對話"}},"fi":{"stringUnit":{"state":"translated","value":"Keskustelut"}},"zh-Hans":{"stringUnit":{"state":"translated","value":"会话"}},"es":{"stringUnit":{"state":"translated","value":"Conversaciones"}},"it":{"stringUnit":{"state":"translated","value":"Conversazioni"}},"uk":{"stringUnit":{"state":"translated","value":"Розмови"}},"ar":{"stringUnit":{"state":"translated","value":"المحادثات"}},"sl":{"stringUnit":{"state":"translated","value":"Pogovori"}}}},"tabBar.conversations.hint":{"localizations":{"fi":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"es":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"fr":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"nl":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"it":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"pl":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"tr":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"et":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"ru":{"stringUnit":{"state":"translated","value":"Нажмите дважды, чтобы открыть список последних бесед"}},"lt":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"zh-Hans":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"de":{"stringUnit":{"state":"translated","value":"Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen"}},"ar":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"zh-Hant":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"sl":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"ja":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"da":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"pt-BR":{"stringUnit":{"state":"new","value":"Double tap to open list of recent conversations"}},"uk":{"stringUnit":{"state":"translated","value":"Торкніться двічі, щоб відкрити список недавніх розмов"}}}},"tabBar.folders.description":{"localizations":{"da":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"ru":{"stringUnit":{"state":"translated","value":"Список бесед, организованных по папкам"}},"sl":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"pl":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"tr":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"fi":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"ja":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"zh-Hant":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"lt":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"pt-BR":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"zh-Hans":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"de":{"stringUnit":{"state":"translated","value":"Liste der in Ordnern organisierten Unterhaltungen"}},"et":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"es":{"stringUnit":{"state":"translated","value":"Lista de conversaciones organizadas en carpetas"}},"nl":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"it":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"fr":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"uk":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}},"ar":{"stringUnit":{"state":"new","value":"List of conversations organized in folders"}}}},"tabBar.contacts.hint":{"localizations":{"pt-BR":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"fr":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"uk":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"it":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"zh-Hans":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"lt":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"sl":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"ar":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"da":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"es":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"ru":{"stringUnit":{"state":"translated","value":"Нажмите дважды, чтобы найти пользователей и открыть список контактов"}},"et":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"ja":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"de":{"stringUnit":{"state":"translated","value":"Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen"}},"fi":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"tr":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"zh-Hant":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"pl":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}},"nl":{"stringUnit":{"state":"new","value":"Double tap to search for people and open contact list"}}}}},"version":"1.0","sourceLanguage":"en"}
+{
+    "sourceLanguage" : "en",
+    "strings" : {
+        "tabBar.contacts.description" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.description"
+                    }
+                }
+            }
+        },
+        "tabBar.folders.hint" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.hint"
+                    }
+                }
+            }
+        },
+        "tabBar.archived.description" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.description"
+                    }
+                }
+            }
+        },
+        "tabBar.folders.title" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.title"
+                    }
+                }
+            }
+        },
+        "tabBar.contacts.title" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.title"
+                    }
+                }
+            }
+        },
+        "tabBar.archived.title" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.title"
+                    }
+                }
+            }
+        },
+        "tabBar.conversations.description" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.description"
+                    }
+                }
+            }
+        },
+        "tabBar.archived.hint" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.archived.hint"
+                    }
+                }
+            }
+        },
+        "tabBar.conversations.title" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.title"
+                    }
+                }
+            }
+        },
+        "tabBar.conversations.hint" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.conversations.hint"
+                    }
+                }
+            }
+        },
+        "tabBar.folders.description" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.folders.description"
+                    }
+                }
+            }
+        },
+        "tabBar.contacts.hint" : {
+            "localizations" : {
+                "ar" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "be" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "bg" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "bn" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ca" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "cs" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "da" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "de" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "el" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "es" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "et" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "eu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "fa" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "fi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "fr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "he" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "hr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "hu" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "id" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "is" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "it" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ja" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ka" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ko" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "lt" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "lv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ms" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "my" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "nl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "no" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "pl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "pt-BR" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "pt-PT" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ro" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ru" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "si" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "sk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "sl" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "sr-CS" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "sr-SP" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "sv" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "th" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "tr" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "uk" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "ur-PK" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "vi" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "zh-Hans" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                },
+                "zh-Hant" : {
+                    "stringUnit" : {
+                        "state" : "new",
+                        "value" : "tabBar.contacts.hint"
+                    }
+                }
+            }
+        }
+    },
+    "version" : "1.0"
+}
