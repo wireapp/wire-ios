@@ -29,6 +29,7 @@
 		59909A692C5BC001009C41DE /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A682C5BC001009C41DE /* WireAPI */; };
 		59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */ = {isa = PBXBuildFile; productRef = 59909A6C2C5BC08B009C41DE /* WireAPISupport */; };
 		59AAD2E32C763F6C0095E6C2 /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59AAD2E22C763F6C0095E6C2 /* WireUtilitiesPackage */; };
+		C90E8B352C89EBE50017494F /* TeamDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90E8B342C89EBE50017494F /* TeamDeleteEventProcessorTests.swift */; };
 		C9E8A3AA2C7324D10093DD5C /* ConversationLabelsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3A92C7324D10093DD5C /* ConversationLabelsRepositoryError.swift */; };
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B52C738F0A0093DD5C /* ConversationLabelsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B42C738F0A0093DD5C /* ConversationLabelsRepository.swift */; };
@@ -152,6 +153,7 @@
 		162356512C2B223B00C6666C /* UserRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		162356522C2B223B00C6666C /* UserRepositoryError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRepositoryError.swift; sourceTree = "<group>"; };
 		162356562C2B22A300C6666C /* UserModelMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelMappings.swift; sourceTree = "<group>"; };
+		C90E8B342C89EBE50017494F /* TeamDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9E8A3A92C7324D10093DD5C /* ConversationLabelsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepositoryError.swift; sourceTree = "<group>"; };
 		C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryTests.swift; sourceTree = "<group>"; };
 		C9E8A3B42C738F0A0093DD5C /* ConversationLabelsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLabelsRepository.swift; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 		017F679A2C20801800B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				C90E8B322C89EBA90017494F /* Event Processing */,
 				EEC410252C60D48900E89394 /* Synchronization */,
 				EE0E117C2C2C4076004BBD29 /* Helpers */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
@@ -379,6 +382,22 @@
 			);
 			name = Tests;
 			path = ../Tests;
+			sourceTree = "<group>";
+		};
+		C90E8B322C89EBA90017494F /* Event Processing */ = {
+			isa = PBXGroup;
+			children = (
+				C90E8B332C89EBC80017494F /* TeamEventProcessor */,
+			);
+			path = "Event Processing";
+			sourceTree = "<group>";
+		};
+		C90E8B332C89EBC80017494F /* TeamEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				C90E8B342C89EBE50017494F /* TeamDeleteEventProcessorTests.swift */,
+			);
+			path = TeamEventProcessor;
 			sourceTree = "<group>";
 		};
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
@@ -778,6 +797,7 @@
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
+				C90E8B352C89EBE50017494F /* TeamDeleteEventProcessorTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 				C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */,
 			);
