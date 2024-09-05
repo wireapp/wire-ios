@@ -41,7 +41,7 @@ public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
     ///   - userSession: The user session that contains the user's session information.
     public init(
         sessionManager: AnalyticsManagerProviding,
-        userSession: UserSession
+        userSession: ZMUserSession
     ) {
         self.sessionManager = sessionManager
         self.userSession = userSession
