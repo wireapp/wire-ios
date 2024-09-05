@@ -42,7 +42,7 @@ jobs:
       wire-ios-utilities: ${{ steps.filter.outputs.wire-ios-utilities }}
       wire-utilitiess: ${{ steps.filter.outputs.wire-utilitiess }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
-      wire-testing: ${{ steps.filter.outputs.wire-testing }}
+      wire-foundation: ${{ steps.filter.outputs.wire-foundation }}
 
     steps:
       - uses: actions/checkout@v4
@@ -99,8 +99,8 @@ jobs:
               - 'WireUtilities/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
-            wire-testing:
-              - 'WireTesting/**'
+            wire-foundation:
+              - 'WireFoundation/**'
             wire-ios-system:
               - 'wire-ios-system/**'
             wire-system:
@@ -135,5 +135,5 @@ jobs:
       wire-ios-utilities: ${{ needs.detect-changes.outputs.wire-ios-utilities == 'true' }}
       wire-utilities: ${{ needs.detect-changes.outputs.wire-utilities == 'true' }}
       wire-ios-testing: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
-      wire-testing: ${{ needs.detect-changes.outputs.wire-testing == 'true' }}
+      wire-foundation: ${{ needs.detect-changes.outputs.wire-foundation == 'true' }}
     secrets: inherit
