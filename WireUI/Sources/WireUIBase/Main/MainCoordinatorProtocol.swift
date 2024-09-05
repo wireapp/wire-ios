@@ -19,23 +19,7 @@
 /// Handles the navigation when a user is authenticated.
 @MainActor
 public protocol MainCoordinatorProtocol: AnyObject {
-    // associatedtype Conversation
-    // associatedtype ConversationMessage
-
     func showConversations()
     func showArchivedConversation()
     func showSettings()
-
-    // func openConversation(
-    //     _ conversation: Conversation,
-    //     focusOnView focus: Bool,
-    //     animated: Bool
-    // )
-
-    // func openConversation(
-    //     _ conversation: Conversation,
-    //     andScrollTo message: ConversationMessage,
-    //     focusOnView focus: Bool,
-    //     animated: Bool
-    // )
 }
