@@ -21,14 +21,67 @@ import WireDesign
 
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
-public final class MainTabBarController: UITabBarController {
+public final class MainTabBarController<ConversationList, Conversation, Archive, Settings>: UITabBarController, MainTabBarControllerProtocol where
+ConversationList: UIViewController,
+Conversation: UIViewController,
+Archive: UIViewController,
+Settings: UIViewController {
 
     public enum Tab: Int, CaseIterable {
         case conversations, archive, settings
     }
 
+    // Navigation Overhaul mapping, is be removed in the epic branch
+    private let NO_conversations = Tab.contacts
+    private let NO_archive = Tab.conversations
+    private let NO_settings = Tab.folders
+
+    // MARK: - Public Properties
+
+    public var conversations: (conversationList: ConversationList, conversation: Conversation?)? {
+        get {
+            let navigationController = viewControllers![NO_conversations.rawValue] as! UINavigationController
+            guard !navigationController.viewControllers.isEmpty else { return nil }
+
+            let conversationList = navigationController.viewControllers.removeFirst() as! ConversationList
+            let conversation = navigationController.viewControllers.first.map { $0 as! Conversation }
+            return (conversationList, conversation)
+        }
+        set {
+            let navigationController = viewControllers![NO_conversations.rawValue] as! UINavigationController
+            if let newValue {
+                navigationController.viewControllers = [newValue.conversationList, newValue.conversation].compactMap { $0 }
+            } else {
+                navigationController.viewControllers.removeAll()
+            }
+        }
+    }
+
+    public var archive: Archive? {
+        get {
+            let navigationController = viewControllers![NO_archive.rawValue] as! UINavigationController
+            return navigationController.viewControllers.first.map { $0 as! Archive }
+        }
+        set {
+            let navigationController = viewControllers![NO_archive.rawValue] as! UINavigationController
+            navigationController.viewControllers = [newValue].compactMap { $0 }
+        }
+    }
+
+    public var settings: Settings? {
+        get {
+            let navigationController = viewControllers![NO_settings.rawValue] as! UINavigationController
+            return navigationController.viewControllers.first.map { $0 as! Settings }
+        }
+        set {
+            let navigationController = viewControllers![NO_settings.rawValue] as! UINavigationController
+            navigationController.viewControllers = [newValue].compactMap { $0 }
+        }
+    }
+
     // MARK: - Tab Subscript and Index
 
+    @available(*, deprecated, message: "Use properties")
     public subscript(tab tab: Tab) -> UINavigationController {
         viewControllers![tab.rawValue] as! UINavigationController
     }
@@ -121,7 +174,7 @@ public final class MainTabBarController: UITabBarController {
 }
 
 @MainActor
-func MainTabBarController_Preview() -> MainTabBarController {
+func MainTabBarController_Preview() -> some MainTabBarControllerProtocol {
     let tabBarController = MainTabBarController()
     for tab in MainTabBarController.Tab.allCases {
         tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
