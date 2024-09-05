@@ -78,10 +78,3 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 }
 
 // private nonisolated(unsafe) var associatedObjectKey = 0
-
-public protocol MainTabBarControllerProtocol: UITabBarController {
-    var conversationList: UIViewController? { get set }
-    var conversation: UIViewController? { get set }
-    var archive: UIViewController? { get set }
-    var settings: UIViewController? { get set }
-}

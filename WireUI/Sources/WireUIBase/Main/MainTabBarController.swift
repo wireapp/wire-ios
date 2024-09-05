@@ -23,6 +23,7 @@ import WireDesign
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController: UITabBarController {
 
+    @available(*, deprecated, message: "Use properties")
     public enum Tab: Int, CaseIterable {
         case contacts, conversations, folders, archive
     }
