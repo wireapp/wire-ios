@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1240"
+   LastUpgradeVersion = "1540"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUtilitiesPackageSupport"
-               BuildableName = "WireUtilitiesPackageSupport"
-               BlueprintName = "WireUtilitiesPackageSupport"
+               BlueprintIdentifier = "WireTestingPackage"
+               BuildableName = "WireTestingPackage"
+               BlueprintName = "WireTestingPackage"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireUtilitiesPackageSupport"
-            BuildableName = "WireUtilitiesPackageSupport"
-            BlueprintName = "WireUtilitiesPackageSupport"
+            BlueprintIdentifier = "WireTestingPackage"
+            BuildableName = "WireTestingPackage"
+            BlueprintName = "WireTestingPackage"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

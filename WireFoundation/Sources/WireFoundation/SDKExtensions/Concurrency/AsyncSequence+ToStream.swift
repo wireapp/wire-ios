@@ -16,12 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-// sourcery: AutoMockable
-/// A protocol which allows for abstracting `UIDevice`.
-public protocol DeviceAbstraction {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
-    var orientation: UIDeviceOrientation { get }
-    var model: String { get }
+public extension AsyncSequence {
+
+    /// Convert the async sequence to an asynchronous stream.
+    ///
+    /// - Returns: An `AsyncThrowingStream` of the same element.
+
+    func toStream() -> AsyncThrowingStream<Element, any Error> {
+        var iterator = makeAsyncIterator()
+        return AsyncThrowingStream {
+            try await iterator.next()
+        }
+    }
+
 }

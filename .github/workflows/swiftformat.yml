@@ -27,8 +27,6 @@ jobs:
           ./WireAnalytics
           ./WireDomain
           ./WireFoundation
-          ./WireSystem
           ./WireUI
-          ./WireUtilities
           --reporter github-actions-log
           --config .swiftformat

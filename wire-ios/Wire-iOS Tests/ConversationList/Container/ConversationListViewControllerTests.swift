@@ -18,8 +18,8 @@
 
 import WireDataModelSupport
 import WireSyncEngineSupport
-import WireUIFoundation
 import WireTestingPackage
+import WireUIFoundation
 import XCTest
 
 @testable import Wire
@@ -33,7 +33,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
+    private var tabBarController: MainTabBarController!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!

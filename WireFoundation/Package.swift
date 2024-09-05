@@ -7,9 +7,9 @@ let package = Package(
     name: "WireFoundation",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireFoundation", type: .dynamic, targets: ["WireFoundation"]),
-        .library(name: "WireFoundationSupport", type: .dynamic, targets: ["WireFoundationSupport"]),
-        .library(name: "WireTestingPackage", type: .dynamic, targets: ["WireTestingPackage"])
+        .library(name: "WireFoundation", targets: ["WireFoundation"]),
+        .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
+        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),

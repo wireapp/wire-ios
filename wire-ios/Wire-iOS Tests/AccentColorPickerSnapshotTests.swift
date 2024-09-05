@@ -18,8 +18,8 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireFoundation
 import WireTestingPackage
-import WireUtilitiesPkg
 import XCTest
 
 @testable import Wire

@@ -19,8 +19,8 @@
 import SnapshotTesting
 import WireSyncEngine
 import WireSyncEngineSupport
-import WireTransport
 import WireTestingPackage
+import WireTransport
 import XCTest
 
 @testable import Wire
