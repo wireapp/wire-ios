@@ -43,18 +43,15 @@ final class ZClientViewController: UIViewController {
 
     let sidebarViewController = SidebarViewController()
 
-    let wireSplitViewController = {
-        let splitViewController = UISplitViewController(style: .tripleColumn)
-        splitViewController.preferredSplitBehavior = .tile
-        splitViewController.preferredDisplayMode = .oneBesideSecondary
-        splitViewController.preferredPrimaryColumnWidth = 260
-        splitViewController.preferredSupplementaryColumnWidth = 320
-        return splitViewController
-    }()
+    private(set) lazy var wireSplitViewController = MainSplitViewController(
+        sidebar: sidebarViewController,
+        noConversationPlaceholder: NoConversationPlaceholderViewController(),
+        tabContainer: mainTabBarController
+    )
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
+    let mainTabBarController = MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>()
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -96,17 +93,6 @@ final class ZClientViewController: UIViewController {
     ) {
         self.account = account
         self.userSession = userSession
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
-
-            let svc = MainSplitViewController(
-                sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
-                noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "placeholder")),
-                tabContainer: MainTabBarController()
-            )
-            svc.conversationList = UIHostingController(rootView: Text(verbatim: "conversationList"))
-            UIApplication.shared.windows.first!.rootViewController = svc
-        }
 
         colorSchemeController = .init(userSession: userSession)
 
@@ -225,8 +211,6 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.setViewController(supplementaryNavigationController, for: .supplementary)
         let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
         wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
-
-        mainTabBarController = MainTabBarController()
 
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
