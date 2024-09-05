@@ -279,7 +279,27 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyUserStatus() {
-        nameLabel.text = userStatus.name
+        let icon1 = NSTextAttachment()
+        let iconBounds = CGRect(x: 0,
+                                y: 10,
+                                width: 16,
+                                height:16)
+
+        icon1.bounds = iconBounds
+        icon1.image = UIImage(resource: .certificateValid)
+        let e2eiIconString = NSAttributedString(attachment: icon1)
+        let icon2 = NSTextAttachment()
+        icon2.image = UIImage(resource: .verifiedShield)
+        let proteusIconString = NSAttributedString(attachment: icon2)
+        var mainName = NSMutableAttributedString(string: userStatus.name)
+      //  if userStatus.isE2EICertified {
+            mainName.append(e2eiIconString)
+       // }
+
+      //  if userStatus.isProteusVerified {
+            mainName.append(proteusIconString)
+       // }
+        nameLabel.text = mainName.string
         userStatusViewController.userStatus = userStatus
        // e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
         proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
