@@ -17,7 +17,7 @@
 //
 
 @testable import Wire
-import WireUITesting
+import WireTestingPackage
 import WireUtilities
 import XCTest
 

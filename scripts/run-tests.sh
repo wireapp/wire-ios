@@ -23,11 +23,10 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 XCODEBUILD="xcrun xcodebuild"
 
 SCHEMES=(
-    WireSystemPackage
+    WireFoundation
     WireSystem
     WireTestingPackage
     WireTesting
-    WireUtilitiesPackage
     WireUtilities
     WireDomainPackage
     WireDomain

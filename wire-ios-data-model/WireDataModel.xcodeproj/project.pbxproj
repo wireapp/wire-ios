@@ -298,11 +298,11 @@
 		598796302B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5987962F2B45880400A6FC63 /* ZMUpdateEvent+allTypes.swift */; };
 		5996E8C72C1A0000007A52F0 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C62C1A0000007A52F0 /* OCMock.xcframework */; };
 		59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */; };
+		59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 59B48C5B2C89CBBD00EA7999 /* WireFoundation */; };
 		59D1C3032B1DE6FF0016F6B2 /* WireDataModelSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 59D1C3022B1DE6FF0016F6B2 /* WireDataModelSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59D1C3062B1DE6FF0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
 		59D1C30D2B1DE8750016F6B2 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */; };
 		59D1C30E2B1DEC300016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C3002B1DE6FF0016F6B2 /* WireDataModelSupport.framework */; };
-		59D588892C7CD9B900CAFA0F /* WireUtilitiesPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 59D588882C7CD9B900CAFA0F /* WireUtilitiesPackage */; };
 		59EC73F72C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h in Headers */ = {isa = PBXBuildFile; fileRef = 59EC73F62C20B03100E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		59EC73F92C20B04600E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC73F82C20B04600E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */; };
 		59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4B6F12B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift */; };
@@ -1893,7 +1893,7 @@
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
 				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
-				59D588892C7CD9B900CAFA0F /* WireUtilitiesPackage in Frameworks */,
+				59B48C5C2C89CBBD00EA7999 /* WireFoundation in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				EE8DA96A2954A03100F58B79 /* WireTransport.framework in Frameworks */,
 				017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */,
@@ -3822,7 +3822,7 @@
 			name = WireDataModel;
 			packageProductDependencies = (
 				E6707E8F2BBD683F00469D57 /* PINCache */,
-				59D588882C7CD9B900CAFA0F /* WireUtilitiesPackage */,
+				59B48C5B2C89CBBD00EA7999 /* WireFoundation */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -5184,9 +5184,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		59D588882C7CD9B900CAFA0F /* WireUtilitiesPackage */ = {
+		59B48C5B2C89CBBD00EA7999 /* WireFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WireUtilitiesPackage;
+			productName = WireFoundation;
 		};
 		E6707E8F2BBD683F00469D57 /* PINCache */ = {
 			isa = XCSwiftPackageProductDependency;

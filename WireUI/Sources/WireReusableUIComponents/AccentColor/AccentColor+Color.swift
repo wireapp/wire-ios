@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireUtilitiesPkg
+import WireFoundation
 
 public extension AccentColor {
 
