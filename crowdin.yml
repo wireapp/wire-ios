@@ -39,8 +39,8 @@ files: [
   "translation" : "/wire-ios/Wire-iOS Share Extension/%osx_code%/%original_file_name%",
  },
  {
-  "source" : "/WireUI/Sources/WireUIBase/Resources/Localizable.xcstrings",
-  "dest" : "/App/WireUIBase/Resources/Localizable.xcstrings",
+  "source" : "/WireUI/Sources/WireUIFoundation/Resources/Localizable.xcstrings",
+  "dest" : "/App/WireUIFoundation/Resources/Localizable.xcstrings",
   "translation" : "%original_path%/%original_file_name%",
   "multilingual": true,
  },

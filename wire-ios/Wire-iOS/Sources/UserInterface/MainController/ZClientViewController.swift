@@ -17,11 +17,12 @@
 //
 
 import avs
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
-import WireUIBase
+import WireUIFoundation
 
 final class ZClientViewController: UIViewController {
 
@@ -73,6 +74,8 @@ final class ZClientViewController: UIViewController {
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
     private var pendingInitialStateRestore = false
+
+    private weak var mainCoordinator: MainCoordinatorProtocol?
 
     /// init method for testing allows injecting an Account object and self user
     required init(

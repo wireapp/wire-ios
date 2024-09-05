@@ -17,8 +17,9 @@
 //
 
 import Foundation
-@testable import Wire
 import WireTesting
+
+@testable import Wire
 
 final class MentionsHandlerTests: XCTestCase {
 
