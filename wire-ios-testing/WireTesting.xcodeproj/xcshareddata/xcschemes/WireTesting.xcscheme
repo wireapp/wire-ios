@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1340"
+   LastUpgradeVersion = "1240"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,24 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-               BuildableName = "WireSystem.framework"
-               BlueprintName = "WireSystem"
-               ReferencedContainer = "container:WireSystem Project.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "54A3272B1B99A3190004EB95"
-               BuildableName = "WireSystem Tests.xctest"
-               BlueprintName = "WireSystem Tests"
-               ReferencedContainer = "container:WireSystem Project.xcodeproj">
+               BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+               BuildableName = "WireTesting.framework"
+               BlueprintName = "WireTesting"
+               ReferencedContainer = "container:WireTesting.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -40,15 +26,14 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-            BuildableName = "WireSystem.framework"
-            BlueprintName = "WireSystem"
-            ReferencedContainer = "container:WireSystem Project.xcodeproj">
+            BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+            BuildableName = "WireTesting.framework"
+            BlueprintName = "WireTesting"
+            ReferencedContainer = "container:WireTesting.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -56,10 +41,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "54A3272B1B99A3190004EB95"
-               BuildableName = "WireSystem Tests.xctest"
-               BlueprintName = "WireSystem Tests"
-               ReferencedContainer = "container:WireSystem Project.xcodeproj">
+               BlueprintIdentifier = "096AD7C51B68D41D00E007A8"
+               BuildableName = "WireTesting-Tests.xctest"
+               BlueprintName = "WireTesting-Tests"
+               ReferencedContainer = "container:WireTesting.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -77,10 +62,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-            BuildableName = "WireSystem.framework"
-            BlueprintName = "WireSystem"
-            ReferencedContainer = "container:WireSystem Project.xcodeproj">
+            BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+            BuildableName = "WireTesting.framework"
+            BlueprintName = "WireTesting"
+            ReferencedContainer = "container:WireTesting.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </LaunchAction>
@@ -93,10 +78,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3ECC350F1AD436750089FD4B"
-            BuildableName = "WireSystem.framework"
-            BlueprintName = "WireSystem"
-            ReferencedContainer = "container:WireSystem Project.xcodeproj">
+            BlueprintIdentifier = "096AD7BA1B68D41D00E007A8"
+            BuildableName = "WireTesting.framework"
+            BlueprintName = "WireTesting"
+            ReferencedContainer = "container:WireTesting.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
