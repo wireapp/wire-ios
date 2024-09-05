@@ -137,10 +137,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func setUpDatadog() {
         WireAnalytics.Datadog.enable()
-        // pass tags to DataDog through WireLogger
-        WireLogger.shareExtension.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
-        WireLogger.shareExtension.addTag(.processName, value: ProcessInfo.processInfo.processName)
-
     }
 
     override func viewDidLoad() {

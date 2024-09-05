@@ -53,6 +53,10 @@ extension WireAnalytics {
             
             shared.enable()
             WireLogger.addLogger(shared)
+
+            // pass tags to DataDog through WireLogger
+            WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+            WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
         })
     }
 }
