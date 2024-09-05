@@ -25,8 +25,8 @@ public protocol MainTabBarControllerProtocol: UITabBarController {
     associatedtype Archive: UIViewController
     associatedtype Settings: UIViewController
 
-    var conversationList: ConversationList? { get set }
-    var conversation: Conversation? { get set }
+    /// In the compact layout the conversation view controller will be pushed onto the navigation controller of the conversation list.
+    var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
     var archive: Archive? { get set }
     var settings: Settings? { get set }
 }

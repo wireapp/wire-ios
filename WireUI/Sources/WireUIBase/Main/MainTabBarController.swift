@@ -27,35 +27,61 @@ Conversation: UIViewController,
 Archive: UIViewController,
 Settings: UIViewController {
 
-    @available(*, deprecated, message: "Use properties")
     public enum Tab: Int, CaseIterable {
         case contacts, conversations, folders, archive
     }
 
+    // Navigation Overhaul mapping, is be removed in the epic branch
+    private let NO_conversations = Tab.contacts
+    private let NO_archive = Tab.conversations
+    private let NO_settings = Tab.folders
+
     // MARK: - Public Properties
 
-    public var conversationList: ConversationList? {
-        get { fatalError() }
-        set { fatalError() }
-    }
+    public var conversations: (conversationList: ConversationList, conversation: Conversation?)? {
+        get {
+            let navigationController = viewControllers![NO_conversations.rawValue] as! UINavigationController
+            guard !navigationController.viewControllers.isEmpty else { return nil }
 
-    public var conversation: Conversation? {
-        get { fatalError() }
-        set { fatalError() }
+            let conversationList = navigationController.viewControllers.removeFirst() as! ConversationList
+            let conversation = navigationController.viewControllers.first.map { $0 as! Conversation }
+            return (conversationList, conversation)
+        }
+        set {
+            let navigationController = viewControllers![NO_conversations.rawValue] as! UINavigationController
+            if let newValue {
+                navigationController.viewControllers = [newValue.conversationList, newValue.conversation].compactMap { $0 }
+            } else {
+                navigationController.viewControllers.removeAll()
+            }
+        }
     }
 
     public var archive: Archive? {
-        get { fatalError() }
-        set { fatalError() }
+        get {
+            let navigationController = viewControllers![NO_archive.rawValue] as! UINavigationController
+            return navigationController.viewControllers.first.map { $0 as! Archive }
+        }
+        set {
+            let navigationController = viewControllers![NO_archive.rawValue] as! UINavigationController
+            navigationController.viewControllers = [newValue].compactMap { $0 }
+        }
     }
 
     public var settings: Settings? {
-        get { fatalError() }
-        set { fatalError() }
+        get {
+            let navigationController = viewControllers![NO_settings.rawValue] as! UINavigationController
+            return navigationController.viewControllers.first.map { $0 as! Settings }
+        }
+        set {
+            let navigationController = viewControllers![NO_settings.rawValue] as! UINavigationController
+            navigationController.viewControllers = [newValue].compactMap { $0 }
+        }
     }
 
     // MARK: - Tab Subscript and Index
 
+    @available(*, deprecated, message: "Use properties")
     public subscript(tab tab: Tab) -> UINavigationController {
         viewControllers![tab.rawValue] as! UINavigationController
     }
