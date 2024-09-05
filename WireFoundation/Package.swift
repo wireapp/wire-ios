@@ -18,7 +18,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "WireFoundation"),
-        .testTarget(name: "WireFoundationTests", dependencies: ["WireFoundation"]),
+        .testTarget(name: "WireFoundationTests", dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]),
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],

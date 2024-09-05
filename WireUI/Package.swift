@@ -10,8 +10,7 @@ let package = Package(
     products: [
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUIBase", targets: ["WireUIBase"]),
-        .library(name: "WireUITesting", targets: ["WireUITesting"])
+        .library(name: "WireUIBase", targets: ["WireUIBase"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -27,13 +26,19 @@ let package = Package(
             dependencies: ["WireDesign", .product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         ),
 
-        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireSystemPackage", "WireUtilitiesPackage"]),
+        .target(
+            name: "WireReusableUIComponents",
+            dependencies: [
+                "WireDesign",
+                "WireSystemPackage",
+                "WireUtilitiesPackage",
+                .product(name: "WireTestingPackage", package: "WireFoundation")
+            ]),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
-                "WireUITesting",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
         ),
@@ -44,15 +49,8 @@ let package = Package(
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireUIBase",
-                "WireUITesting",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
-        ),
-
-        // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
-        .target(
-            name: "WireUITesting",
-            dependencies: [.product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         )
     ]
 )
