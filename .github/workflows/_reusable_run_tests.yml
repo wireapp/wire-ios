@@ -9,7 +9,7 @@ on:
         type: boolean
         default: false
         required: false
-      wire-ui-base:
+      wire-ui-foundation:
         type: boolean
         default: false
         required: false
@@ -626,27 +626,27 @@ jobs:
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
           exit ${PIPESTATUS[0]}
 
-      # WireUIBase
+      # WireUIFoundation
 
-      - name: Test WireUIBase
-        if: ${{ inputs.wire-ui-base || inputs.all }}
+      - name: Test WireUIFoundation
+        if: ${{ inputs.wire-ui-foundation || inputs.all }}
         run: |
-          echo "WireUIBase has changes"
-          echo "Building WireUIBase..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUIBase -resultBundlePath xcodebuild-wire-ui-base.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui-base.log | bundle exec xcpretty
+          echo "WireUIFoundation has changes"
+          echo "Building WireUIFoundation..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUIFoundation -resultBundlePath xcodebuild-wire-ui-foundation.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui-foundation.log | bundle exec xcpretty
 
       - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ui-base || inputs.all }}
+        if: ${{ inputs.wire-ui-foundation || inputs.all }}
         with:
-          results: xcodebuild-wire-ui-base.xcresult
+          results: xcodebuild-wire-ui-foundation.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test WireUIBase
-        if: ${{ inputs.wire-ui-base || inputs.all }}
+      - name: Test WireUIFoundation
+        if: ${{ inputs.wire-ui-foundation || inputs.all }}
         run: |
-          echo "Testing WireUIBase..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUIBase -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui-base.log | bundle exec xcpretty --report junit --output build/reports/WireUIBase.junit
+          echo "Testing WireUIFoundation..."
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUIFoundation -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui-foundation.log | bundle exec xcpretty --report junit --output build/reports/WireUIFoundation.junit
           exit ${PIPESTATUS[0]}
 
       # WireReusableUIComponents
