@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process user contact join events.
-struct UserContactJoinEventProcessor: UserEventProcessorProtocol {
 
-    let event: UserContactJoinEvent
-    let context: NSManagedObjectContext
+protocol UserContactJoinEventProcessorProtocol {
 
-    func processUserEvent() async throws {
+    /// Process a user contact join event.
+    ///
+    /// - Parameter event: A user contact join event.
+
+    func processEvent(_ event: UserContactJoinEvent) async throws
+
+}
+
+struct UserContactJoinEventProcessor: UserContactJoinEventProcessorProtocol {
+
+    func processEvent(_: UserContactJoinEvent) async throws {
         // TODO: [WPB-10192]
         assertionFailure("not implemented yet")
     }

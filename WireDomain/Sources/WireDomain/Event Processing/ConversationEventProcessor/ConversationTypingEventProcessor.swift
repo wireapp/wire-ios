@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation typing events.
-struct ConversationTypingEventProcessor: ConversationEventProcessorProtocol {
 
-    let event: ConversationTypingEvent
-    let context: NSManagedObjectContext
+protocol ConversationTypingEventProcessorProtocol {
 
-    func processConversationEvent() async throws {
+    /// Process a conversation typing event.
+    ///
+    /// - Parameter event: A conversation typing event.
+
+    func processEvent(_ event: ConversationTypingEvent) async throws
+
+}
+
+struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
+
+    func processEvent(_: ConversationTypingEvent) async throws {
         // TODO: [WPB-10178]
         assertionFailure("not implemented yet")
     }

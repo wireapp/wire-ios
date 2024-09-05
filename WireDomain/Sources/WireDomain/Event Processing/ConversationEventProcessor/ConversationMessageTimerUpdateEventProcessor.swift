@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation message timer update events.
-struct ConversationMessageTimerUpdateEventProcessor: ConversationEventProcessorProtocol {
 
-    let event: ConversationMessageTimerUpdateEvent
-    let context: NSManagedObjectContext
+protocol ConversationMessageTimerUpdateEventProcessorProtocol {
 
-    func processConversationEvent() async throws {
+    /// Process a conversation message timer update event.
+    ///
+    /// - Parameter event: A conversation message timer update event.
+
+    func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws
+
+}
+
+struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
+
+    func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {
         // TODO: [WPB-10171]
         assertionFailure("not implemented yet")
     }

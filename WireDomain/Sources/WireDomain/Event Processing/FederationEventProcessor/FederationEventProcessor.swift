@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import Foundation
 import WireAPI
 
 /// Process federation update events.
+
 protocol FederationEventProcessorProtocol {
 
     /// Process a federation update event.
@@ -28,23 +28,25 @@ protocol FederationEventProcessorProtocol {
     /// Processing an event is the app's only chance to consume
     /// some remote changes to update its local state.
     ///
-    func processFederationEvent() async throws
+    /// - Parameter event: A federation update event.
+
+    func processEvent(_ event: FederationEvent) async throws
 
 }
 
-struct FederationEventProcessor: CategorizedEventProcessorProtocol {
+struct FederationEventProcessor {
 
-    private let builder: any FederationEventProcessorBuilder = EventProcessorBuilder()
-    let event: FederationEvent
-    let context: NSManagedObjectContext
+    let connectionRemovedEventProcessor: any FederationConnectionRemovedEventProcessorProtocol
+    let deleteEventProcessor: any FederationDeleteEventProcessorProtocol
 
-    func processCategorizedEvent() async throws {
-        let processor = builder.makeFederationProcessor(
-            for: event,
-            context: context
-        )
+    func processEvent(_ event: FederationEvent) async throws {
+        switch event {
+        case .connectionRemoved(let event):
+            try await connectionRemovedEventProcessor.processEvent(event)
 
-        try await processor.processFederationEvent()
+        case .delete(let event):
+            try await deleteEventProcessor.processEvent(event)
+        }
     }
 
 }

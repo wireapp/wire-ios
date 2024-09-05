@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process user properties delete events.
-struct UserPropertiesDeleteEventProcessor: UserEventProcessorProtocol {
 
-    let event: UserPropertiesDeleteEvent
-    let context: NSManagedObjectContext
+protocol UserPropertiesDeleteEventProcessorProtocol {
 
-    func processUserEvent() async throws {
+    /// Process a user properties delete event.
+    ///
+    /// - Parameter event: A user properties delete event.
+
+    func processEvent(_ event: UserPropertiesDeleteEvent) async throws
+
+}
+
+struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorProtocol {
+
+    func processEvent(_: UserPropertiesDeleteEvent) async throws {
         // TODO: [WPB-10198]
         assertionFailure("not implemented yet")
     }

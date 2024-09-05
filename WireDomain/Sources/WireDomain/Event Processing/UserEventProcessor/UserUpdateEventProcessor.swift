@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process user update events.
-struct UserUpdateEventProcessor: UserEventProcessorProtocol {
 
-    let event: UserUpdateEvent
-    let context: NSManagedObjectContext
+protocol UserUpdateEventProcessorProtocol {
 
-    func processUserEvent() async throws {
+    /// Process a user update event.
+    ///
+    /// - Parameter event: A user update event.
+
+    func processEvent(_ event: UserUpdateEvent) async throws
+
+}
+
+struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
+
+    func processEvent(_: UserUpdateEvent) async throws {
         // TODO: [WPB-10200]
         assertionFailure("not implemented yet")
     }

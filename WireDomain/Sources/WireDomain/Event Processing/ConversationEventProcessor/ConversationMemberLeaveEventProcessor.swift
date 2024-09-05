@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation member leave events.
-struct ConversationMemberLeaveEventProcessor: ConversationEventProcessorProtocol {
 
-    let event: ConversationMemberLeaveEvent
-    let context: NSManagedObjectContext
+protocol ConversationMemberLeaveEventProcessorProtocol {
 
-    func processConversationEvent() async throws {
+    /// Process a conversation member leave event.
+    ///
+    /// - Parameter event: A conversation member leave event.
+
+    func processEvent(_ event: ConversationMemberLeaveEvent) async throws
+
+}
+
+struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
+
+    func processEvent(_: ConversationMemberLeaveEvent) async throws {
         // TODO: [WPB-10169]
         assertionFailure("not implemented yet")
     }

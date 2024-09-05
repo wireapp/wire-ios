@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import Foundation
 import WireAPI
 
@@ -35,24 +34,34 @@ protocol UpdateEventProcessorProtocol {
 
 }
 
-/// Process a categorized event (`conversation`, `featureConfig`, `federation`, `user`, `team`)
-protocol CategorizedEventProcessorProtocol {
+struct UpdateEventProcessor {
 
-    func processCategorizedEvent() async throws
-}
-
-struct UpdateEventProcessor: UpdateEventProcessorProtocol {
-
-    private let builder: any CategorizedEventProcessorBuilder = EventProcessorBuilder()
-    let context: NSManagedObjectContext
+    let conversationEventProcessor: any ConversationEventProcessorProtocol
+    let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
+    let federationEventProcessor: any FederationEventProcessorProtocol
+    let userEventProcessor: any UserEventProcessorProtocol
+    let teamEventProcessor: any TeamEventProcessorProtocol
 
     func processEvent(_ event: UpdateEvent) async throws {
-        let processor = try builder.makeCategorizedEventProcessor(
-            for: event,
-            context: context
-        )
+        switch event {
+        case .conversation(let event):
+            try await conversationEventProcessor.processEvent(event)
 
-        try await processor.processCategorizedEvent()
+        case .featureConfig(let event):
+            try await featureconfigEventProcessor.processEvent(event)
+
+        case .federation(let event):
+            try await federationEventProcessor.processEvent(event)
+
+        case .user(let event):
+            try await userEventProcessor.processEvent(event)
+
+        case .team(let event):
+            try await teamEventProcessor.processEvent(event)
+
+        case .unknown(let event):
+            print("can not process unknown event: \(event)")
+        }
     }
 
 }

@@ -16,34 +16,88 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation update events.
+
 protocol ConversationEventProcessorProtocol {
 
     /// Process a conversation update event.
     ///
     /// Processing an event is the app's only chance to consume
     /// some remote changes to update its local state.
+    ///
+    /// - Parameter event: A conversation update event.
 
-    func processConversationEvent() async throws
+    func processEvent(_ event: ConversationEvent) async throws
 
 }
 
-struct ConversationEventProcessor: CategorizedEventProcessorProtocol {
+struct ConversationEventProcessor {
 
-    private let builder: any ConversationEventProcessorBuilder = EventProcessorBuilder()
-    let event: ConversationEvent
-    let context: NSManagedObjectContext
+    let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
+    let codeUpdateEventProcessor: any ConversationCodeUpdateEventProcessorProtocol
+    let createEventProcessor: any ConversationCreateEventProcessorProtocol
+    let deleteEventProcessor: any ConversationDeleteEventProcessorProtocol
+    let memberJoinEventProcessor: any ConversationMemberJoinEventProcessorProtocol
+    let memberLeaveEventProcessor: any ConversationMemberLeaveEventProcessorProtocol
+    let memberUpdateEventProcessor: any ConversationMemberUpdateEventProcessorProtocol
+    let messageTimerUpdateEventProcessor: any ConversationMessageTimerUpdateEventProcessorProtocol
+    let mlsMessageAddEventProcessor: any ConversationMLSMessageAddEventProcessorProtocol
+    let mlsWelcomeEventProcessor: any ConversationMLSWelcomeEventProcessorProtocol
+    let proteusMessageAddEventProcessor: any ConversationProteusMessageAddEventProcessorProtocol
+    let protocolUpdateEventProcessor: any ConversationProtocolUpdateEventProcessorProtocol
+    let receiptModeUpdateEventProcessor: any ConversationReceiptModeUpdateEventProcessorProtocol
+    let renameEventProcessor: any ConversationRenameEventProcessorProtocol
+    let typingEventProcessor: any ConversationTypingEventProcessorProtocol
 
-    func processCategorizedEvent() async throws {
-        let processor = builder.makeConversationProcessor(
-            for: event,
-            context: context
-        )
+    func processEvent(_ event: ConversationEvent) async throws {
+        switch event {
+        case .accessUpdate(let event):
+            try await accessUpdateEventProcessor.processEvent(event)
 
-        try await processor.processConversationEvent()
+        case .codeUpdate(let event):
+            try await codeUpdateEventProcessor.processEvent(event)
+
+        case .create(let event):
+            try await createEventProcessor.processEvent(event)
+
+        case .delete(let event):
+            try await deleteEventProcessor.processEvent(event)
+
+        case .memberJoin(let event):
+            try await memberJoinEventProcessor.processEvent(event)
+
+        case .memberLeave(let event):
+            try await memberLeaveEventProcessor.processEvent(event)
+
+        case .memberUpdate(let event):
+            try await memberUpdateEventProcessor.processEvent(event)
+
+        case .messageTimerUpdate(let event):
+            try await messageTimerUpdateEventProcessor.processEvent(event)
+
+        case .mlsMessageAdd(let event):
+            try await mlsMessageAddEventProcessor.processEvent(event)
+
+        case .mlsWelcome(let event):
+            try await mlsWelcomeEventProcessor.processEvent(event)
+
+        case .proteusMessageAdd(let event):
+            try await proteusMessageAddEventProcessor.processEvent(event)
+
+        case .protocolUpdate(let event):
+            try await protocolUpdateEventProcessor.processEvent(event)
+
+        case .receiptModeUpdate(let event):
+            try await receiptModeUpdateEventProcessor.processEvent(event)
+
+        case .rename(let event):
+            try await renameEventProcessor.processEvent(event)
+
+        case .typing(let event):
+            try await typingEventProcessor.processEvent(event)
+        }
     }
 
 }

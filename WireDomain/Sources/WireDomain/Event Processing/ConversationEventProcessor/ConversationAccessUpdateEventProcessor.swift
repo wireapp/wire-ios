@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation access update events.
-struct ConversationAccessUpdateEventProcessor: ConversationEventProcessorProtocol {
 
-    let event: ConversationAccessUpdateEvent
-    let context: NSManagedObjectContext
+protocol ConversationAccessUpdateEventProcessorProtocol {
 
-    func processConversationEvent() async throws {
+    /// Process a conversation access update event.
+    ///
+    /// - Parameter event: A conversation access update event.
+
+    func processEvent(_ event: ConversationAccessUpdateEvent) async throws
+
+}
+
+struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
+
+    func processEvent(_: ConversationAccessUpdateEvent) async throws {
         // TODO: [WPB-10164]
         assertionFailure("not implemented yet")
     }

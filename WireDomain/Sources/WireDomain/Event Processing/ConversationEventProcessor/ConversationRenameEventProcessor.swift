@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import WireAPI
 
 /// Process conversation rename events.
-struct ConversationRenameEventProcessor: ConversationEventProcessorProtocol {
 
-    let event: ConversationRenameEvent
-    let context: NSManagedObjectContext
+protocol ConversationRenameEventProcessorProtocol {
 
-    func processConversationEvent() async throws {
+    /// Process a conversation rename event.
+    ///
+    /// - Parameter event: A conversation rename event.
+
+    func processEvent(_ event: ConversationRenameEvent) async throws
+
+}
+
+struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
+
+    func processEvent(_: ConversationRenameEvent) async throws {
         // TODO: [WPB-10177]
         assertionFailure("not implemented yet")
     }
