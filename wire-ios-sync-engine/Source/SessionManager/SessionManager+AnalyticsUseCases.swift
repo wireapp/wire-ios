@@ -34,9 +34,6 @@ extension SessionManager {
             throw AnalyticsSessionError.missingActiveUserSession
         }
 
-        guard let analyticsManager else {
-            throw AnalyticsSessionError.analyticsNotAvailable
-        }
         return DisableAnalyticsUseCase(sessionManager: self, userSession: userSession)
     }
 
