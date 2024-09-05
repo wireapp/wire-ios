@@ -19,8 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireSyncEngine
-import WireUtilitiesPkg
 
 private var overridenAccentColor: AccentColor?
 

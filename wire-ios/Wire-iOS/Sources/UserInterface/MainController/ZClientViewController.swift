@@ -17,13 +17,13 @@
 //
 
 import avs
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireUIBase
-import SwiftUI
+import WireUIFoundation
 
 final class ZClientViewController: UIViewController {
 

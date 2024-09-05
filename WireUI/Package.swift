@@ -10,14 +10,12 @@ let package = Package(
     products: [
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUIBase", targets: ["WireUIBase"]),
-        .library(name: "WireUITesting", targets: ["WireUITesting"])
+        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
-        .package(name: "WireSystemPackage", path: "../WireSystem"),
-        .package(name: "WireUtilitiesPackage", path: "../WireUtilities")
+        .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
         .target(name: "WireDesign"),
@@ -26,30 +24,30 @@ let package = Package(
             dependencies: ["WireDesign", .product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         ),
 
-        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireSystemPackage", "WireUtilitiesPackage"]),
+        .target(
+            name: "WireReusableUIComponents",
+            dependencies: [
+                "WireDesign",
+                .product(name: "WireFoundation", package: "WireFoundation")
+            ]
+        ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
-                "WireUITesting"
+                .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
         ),
 
-        .target(name: "WireUIBase", dependencies: ["WireDesign"]),
+        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
         .testTarget(
-            name: "WireUIBaseTests",
+            name: "WireUIFoundationTests",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                "WireUIBase",
-                "WireUITesting"
+                "WireUIFoundation",
+                .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
-        ),
-
-        // TODO: [WPB-8907]: Once WireTesting is a Swift package, move everything from here to there.
-        .target(
-            name: "WireUITesting",
-            dependencies: [.product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         )
     ]
 )

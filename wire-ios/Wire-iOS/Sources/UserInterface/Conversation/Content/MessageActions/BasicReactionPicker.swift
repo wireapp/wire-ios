@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSystemPackage
+import WireFoundation
 
 protocol ReactionPickerDelegate: AnyObject {
     func didPickReaction(reaction: Emoji)
