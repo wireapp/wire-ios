@@ -28,12 +28,18 @@ struct TeamMemberLeaveEventDecoder {
             forKey: .teamID
         )
 
+        let time = try container.decode(
+            UTCTimeMillis.self,
+            forKey: .time
+        )
+
         let payload = try container.decode(
             Payload.self,
             forKey: .payload
         )
 
         return TeamMemberLeaveEvent(
+            time: time.date,
             teamID: teamID,
             userID: payload.userID
         )

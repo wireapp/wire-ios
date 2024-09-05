@@ -22,6 +22,10 @@ import Foundation
 
 public struct TeamMemberLeaveEvent: Equatable, Codable {
 
+    /// The time at which the member left.
+
+    public let time: Date
+
     /// The team id.
 
     public let teamID: UUID
@@ -31,9 +35,11 @@ public struct TeamMemberLeaveEvent: Equatable, Codable {
     public let userID: UUID
 
     public init(
+        time: Date,
         teamID: UUID,
         userID: UUID
     ) {
+        self.time = time
         self.teamID = teamID
         self.userID = userID
     }
