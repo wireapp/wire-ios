@@ -31,14 +31,14 @@ public protocol DisableAnalyticsUseCaseProtocol {
 /// This struct is responsible for disabling analytics sharing.
 public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
-    private let sessionManager: SessionManager
+    private let sessionManager: AnalyticsManagerProviding
 
     private let userSession: ZMUserSession
 
     /// Initializes a new instance of DisableAnalyticsUseCase.
     ///
-    /// - Parameter analyticsManager: The analytics manager to use for disabling tracking.
-    public init(sessionManager: SessionManager, userSession: ZMUserSession) {
+    /// - Parameter analyticsManager: The analytics manager to use for disabling tracking. // TODO: fix
+    public init(sessionManager: AnalyticsManagerProviding, userSession: ZMUserSession) {
         self.sessionManager = sessionManager
         self.userSession = userSession
     }
@@ -52,3 +52,10 @@ public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
         sessionManager.analyticsManager = nil
     }
 }
+
+// sourcery: AutoMockable
+public protocol AnalyticsManagerProviding: AnyObject {
+    var analyticsManager: (any AnalyticsManagerProtocol)? { get set }
+}
+
+extension SessionManager: AnalyticsManagerProviding {}

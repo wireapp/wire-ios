@@ -39,7 +39,7 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     private let analyticsSessionConfiguration: AnalyticsSessionConfiguration
 
-    private let sessionManager: SessionManager
+    private let sessionManager: AnalyticsManagerProviding
 
     private let analyticsUserProfile: AnalyticsUserProfile
 
@@ -53,7 +53,7 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     ///   - analyticsManager: The analytics manager to use for enabling tracking.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
     public init(
-        sessionManager: SessionManager,
+        sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
         userSession: ZMUserSession
