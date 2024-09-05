@@ -296,7 +296,7 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
+        mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
             return ciphersuite
         }
 
@@ -342,10 +342,10 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 1)
 
         // Then we created the mls group once with no users.
-        let createGroupCalls = mlsService.createGroupForParentGroupID_Invocations
+        let createGroupCalls = mlsService.createGroupForRemovalKeys_Invocations
         XCTAssertEqual(createGroupCalls.count, 1)
         XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
-        XCTAssertEqual(createGroupCalls.first?.parentGroupID, nil)
+        XCTAssertEqual(createGroupCalls.first?.removalKeys, nil)
 
         // Then we only added the user.
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
@@ -378,7 +378,7 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
+        mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
             return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
@@ -422,10 +422,10 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(mockActionHandler.performedActions.count, 2)
 
         // Then we created the mls group
-        let createGroupCalls = mlsService.createGroupForParentGroupID_Invocations
+        let createGroupCalls = mlsService.createGroupForRemovalKeys_Invocations
         XCTAssertEqual(createGroupCalls.count, 1)
         XCTAssertEqual(createGroupCalls.first?.groupID, groupID)
-        XCTAssertEqual(createGroupCalls.first?.parentGroupID, nil)
+        XCTAssertEqual(createGroupCalls.first?.removalKeys, nil)
 
         // Then we only added the reachable user.
         let addParticipantCalls = mockConversationParticipantsService.addParticipantsTo_Invocations
@@ -460,7 +460,7 @@ final class ConversationServiceTests: MessagingTestBase {
         }
 
         let mlsService = MockMLSServiceInterface()
-        mlsService.createGroupForParentGroupID_MockMethod = { groupId, _ in
+        mlsService.createGroupForRemovalKeys_MockMethod = { groupId, _ in
             self.syncMOC.performAndWait {
                 XCTAssertEqual(groupId, self.groupConversation.mlsGroupID)
             }
