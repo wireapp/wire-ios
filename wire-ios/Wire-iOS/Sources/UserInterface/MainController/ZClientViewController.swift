@@ -217,7 +217,7 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
         // prevent split view appearance on large phones
-        if traitCollection.userInterfaceIdiom == .phone {
+        if traitCollection.userInterfaceIdiom != .pad {
             if #available(iOS 17.0, *) {
                 wireSplitViewController.traitOverrides.horizontalSizeClass = .compact
             } else {
