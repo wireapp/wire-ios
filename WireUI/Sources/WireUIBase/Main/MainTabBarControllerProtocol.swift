@@ -18,14 +18,15 @@
 
 import UIKit
 
+@MainActor
 public protocol MainTabBarControllerProtocol: UITabBarController {
     associatedtype ConversationList: UIViewController
     associatedtype Conversation: UIViewController
     associatedtype Archive: UIViewController
     associatedtype Settings: UIViewController
 
-    var conversationList: UIViewController? { get set }
-    var conversation: UIViewController? { get set }
+    var conversationList: ConversationList? { get set }
+    var conversation: Conversation? { get set }
     var archive: Archive? { get set }
     var settings: Settings? { get set }
 }
