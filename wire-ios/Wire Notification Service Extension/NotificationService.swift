@@ -27,6 +27,15 @@ final class NotificationService: UNNotificationServiceExtension {
 
     let simpleService = SimpleNotificationService()
     let legacyService = LegacyNotificationService()
+    
+    override init() {
+        super.init()
+        WireAnalytics.Datadog.enable()
+        // pass tags to DataDog through WireLogger
+        WireLogger.notifications.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
+        WireLogger.notifications.addTag(.processName, value: ProcessInfo.processInfo.processName)
+    }
+
 
     // MARK: - Methods
 
