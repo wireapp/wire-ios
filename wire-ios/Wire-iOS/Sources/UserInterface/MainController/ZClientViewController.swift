@@ -54,7 +54,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController!
+    private(set) var mainTabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -101,7 +101,8 @@ final class ZClientViewController: UIViewController {
 
             let svc = MainSplitViewController(
                 sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
-                noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "placeholder"))
+                noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "placeholder")),
+                tabContainer: MainTabBarController()
             )
             svc.conversationList = UIHostingController(rootView: Text(verbatim: "conversationList"))
             UIApplication.shared.windows.first!.rootViewController = svc
@@ -886,7 +887,7 @@ private struct ContainerViewControllers {
 
     var supplementaryColumn: UINavigationController
     var secondaryColumn: UINavigationController
-    var compactColumn: MainTabBarController
+    var compactColumn: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>
 
     init(of splitViewController: UISplitViewController) {
 
