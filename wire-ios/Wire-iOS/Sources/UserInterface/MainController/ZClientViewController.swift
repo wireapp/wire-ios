@@ -38,7 +38,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController!
+    private(set) var mainTabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
     // TODO [WPB-6647]: Remove in navigation overhaul
     private var tabBarChangeHandler: TabBarChangeHandler!
 
@@ -101,16 +101,6 @@ final class ZClientViewController: UIViewController {
     ) {
         self.account = account
         self.userSession = userSession
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
-
-            let svc = MainSplitViewController(
-                sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
-                noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "placeholder"))
-            )
-            svc.conversationList = UIHostingController(rootView: Text(verbatim: "conversationList"))
-            UIApplication.shared.windows.first!.rootViewController = svc
-        }
 
         colorSchemeController = .init(userSession: userSession)
 
