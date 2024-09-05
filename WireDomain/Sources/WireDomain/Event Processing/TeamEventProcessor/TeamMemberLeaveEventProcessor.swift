@@ -20,17 +20,27 @@ import WireAPI
 import WireDataModel
 
 /// Process team member leave events.
-struct TeamMemberLeaveEventProcessor: TeamEventProcessorProtocol {
+///
+protocol TeamMemberLeaveEventProcessorProtocol {
+
+    /// Process a team member leave event.
+    ///
+    /// - Parameter event: A team member leave event.
+
+    func processEvent(_ event: TeamMemberLeaveEvent) async throws
+
+}
+
+struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
 
     enum Error: Swift.Error {
         case failedToFetchUser(UUID)
         case userNotAMemberInTeam(user: UUID, team: UUID)
     }
 
-    let event: TeamMemberLeaveEvent
     let context: NSManagedObjectContext
 
-    func processTeamEvent() async throws {
+    func processEvent(_ event: TeamMemberLeaveEvent) async throws {
         try await context.perform {
             guard let user = ZMUser.fetch(with: event.userID, in: context) else {
                 throw Error.failedToFetchUser(event.userID)
@@ -44,7 +54,7 @@ struct TeamMemberLeaveEventProcessor: TeamEventProcessorProtocol {
                 let notification = AccountDeletedNotification(context: context)
                 notification.post(in: context.notificationContext)
             } else {
-                user.markAccountAsDeleted(at: .now)
+                user.markAccountAsDeleted(at: event.time)
             }
 
             context.delete(member)

@@ -39,7 +39,6 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     override func setUp() async throws {
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = TeamMemberLeaveEventProcessor(
-            event: Scaffolding.event,
             context: context
         )
         try await super.setUp()
@@ -54,7 +53,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Deletes_A_Member_When_Receiving_A_Team_Member_Leave_Update_Event_For_Another_User_() async throws {
+    func testProcessEvent_It_Deletes_A_Member_When_Receiving_A_Team_Member_Leave_Update_Event_For_Another_User() async throws {
         // Given
 
         await context.perform { [context] in
@@ -76,7 +75,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processTeamEvent()
+        try await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -99,7 +98,12 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
             let team = Team.insertNewObject(in: context)
             team.remoteIdentifier = Scaffolding.teamID
-            let member = Member.getOrUpdateMember(for: user, in: team, context: context)
+
+            let member = Member.getOrUpdateMember(
+                for: user,
+                in: team,
+                context: context
+            )
 
             XCTAssertNotNil(member)
             XCTAssertEqual(user.membership, member)
@@ -123,10 +127,10 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processTeamEvent()
+        try await sut.processEvent(Scaffolding.event)
     }
 
-    func testProcessEvent_It_Removes_A_Member_From_All_Group_Conversations_She_Was_Part_Of_When_Receiving_A_Member_Leave_For_That_Member() async throws {
+    func testProcessEvent_It_Removes_A_Member_From_All_Group_Conversations_They_Were_Part_Of_When_Receiving_A_Member_Leave_Event_For_That_Member() async throws {
         // Given
 
         await context.perform { [context] in
@@ -142,7 +146,10 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
             let teamConversation1 = ZMConversation.insertNewObject(in: context)
             teamConversation1.remoteIdentifier = Scaffolding.teamConversationID
             teamConversation1.conversationType = .group
-            teamConversation1.addParticipantAndUpdateConversationState(user: user, role: nil)
+            teamConversation1.addParticipantAndUpdateConversationState(
+                user: user,
+                role: nil
+            )
             teamConversation1.team = team
 
             let conversation = ZMConversation.insertGroupConversation(
@@ -164,7 +171,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processTeamEvent()
+        try await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -183,12 +190,13 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
         }
     }
 
-    func testProcessEvent_It_Appends_A_System_Message_To_All_Team_Conversations_She_Was_Part_Of_When_Receiving_A_Member_Leave_For_That_Member() async throws {
+    func testProcessEvent_It_Appends_A_System_Message_To_All_Team_Conversations_They_Were_Part_Of_When_Receiving_A_Member_Leave_Event_For_That_Member() async throws {
         // Given
 
         await context.perform { [context] in
             let user = ZMUser.insertNewObject(in: context)
             user.remoteIdentifier = Scaffolding.userID
+
             let otherUser = ZMUser.insertNewObject(in: context)
             otherUser.remoteIdentifier = UUID()
 
@@ -223,10 +231,11 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
             XCTAssertEqual(user.membership, member)
         }
 
+        let timestamp = Scaffolding.date(from: Scaffolding.time)
+
         // When
 
-        let timestamp = Date.now
-        try await sut.processTeamEvent()
+        try await sut.processEvent(Scaffolding.event)
 
         // Then
 
@@ -284,13 +293,27 @@ private enum Scaffolding {
 
     static let teamID = UUID()
     static let userID = UUID()
+    static let time = "2021-05-12T10:52:02.671Z"
     static let teamConversationID = UUID()
     static let anotherTeamConversationID = UUID()
     static let conversationID = UUID()
 
+    static func date(from string: String) -> Date {
+        ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
+    }
+
     static let event = TeamMemberLeaveEvent(
+        time: date(from: time),
         teamID: teamID,
         userID: userID
     )
 
+}
+
+private extension ISO8601DateFormatter {
+    static let fractionalInternetDateTime = {
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return dateFormatter
+    }()
 }
