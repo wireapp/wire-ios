@@ -2105,10 +2105,10 @@
 "device.details.section.e2ei.update_certificate" = "Uppdatera certifikat";
 "device.details.section.e2ei.status.title" = "Status";
 "device.details.section.e2ei.status.not_activated" = "Not activated";
-"device.details.section.e2ei.status.valid" = "Valid";
+"device.details.section.e2ei.status.valid" = "Giltig";
 "device.details.section.e2ei.status.revoked" = "Revoked";
 "device.details.section.e2ei.status.expired" = "Expired";
-"device.details.section.e2ei.status.invalid" = "Invalid";
+"device.details.section.e2ei.status.invalid" = "Ogiltig";
 "device.details.section.e2ei.serial_number" = "Serienummer";
 "device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
