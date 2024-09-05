@@ -32,13 +32,17 @@ public protocol DisableAnalyticsUseCaseProtocol {
 public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
     private let sessionManager: AnalyticsManagerProviding
-
     private let userSession: ZMUserSession
 
-    /// Initializes a new instance of DisableAnalyticsUseCase.
+    /// Initializes a new instance of `DisableAnalyticsUseCase`.
     ///
-    /// - Parameter analyticsManager: The analytics manager to use for disabling tracking. // TODO: fix
-    public init(sessionManager: AnalyticsManagerProviding, userSession: ZMUserSession) {
+    /// - Parameters:
+    ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
+    ///   - userSession: The user session that contains the user's session information.
+    public init(
+        sessionManager: AnalyticsManagerProviding,
+        userSession: UserSession
+    ) {
         self.sessionManager = sessionManager
         self.userSession = userSession
     }
@@ -53,7 +57,6 @@ public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
     }
 }
 
-// sourcery: AutoMockable
 public protocol AnalyticsManagerProviding: AnyObject {
     var analyticsManager: (any AnalyticsManagerProtocol)? { get set }
 }
