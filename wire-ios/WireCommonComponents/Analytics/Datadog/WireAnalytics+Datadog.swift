@@ -47,10 +47,10 @@ extension WireAnalytics {
         public static func enable() {
             enableOnlyOnce.execute()
         }
-        
+
         static var enableOnlyOnce = OnceOnlyThreadSafeFunction({
             guard let shared else { return }
-            
+
             shared.enable()
             WireLogger.addLogger(shared)
 
@@ -66,7 +66,7 @@ class OnceOnlyThreadSafeFunction {
     private let lock = NSLock()
     private var executed = false
     private let function: () -> Void
-    
+
     init(_ function: @escaping () -> Void) {
         self.function = function
     }
