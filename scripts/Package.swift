@@ -16,6 +16,8 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     targets: [
+        .executableTarget(name: "TrimStringCatalogs", path: "./TrimStringCatalogs"),
+
         .binaryTarget(
             name: "LicensePlist",
             url: "https://github.com/mono0926/LicensePlist/releases/download/3.25.1/LicensePlistBinary-macos.artifactbundle.zip",
