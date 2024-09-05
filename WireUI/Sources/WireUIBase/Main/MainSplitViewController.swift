@@ -19,10 +19,10 @@
 import SwiftUI
 
 public final class MainSplitViewController<Sidebar, ConversationList, Conversation, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
-Sidebar: UIViewController,
-ConversationList: UIViewController,
-Conversation: UIViewController,
-TabContainer: UIViewController {
+    Sidebar: UIViewController,
+    ConversationList: UIViewController,
+    Conversation: UIViewController,
+    TabContainer: UIViewController {
 
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
@@ -88,6 +88,7 @@ TabContainer: UIViewController {
         setViewController(tabContainer(), for: .compact)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }

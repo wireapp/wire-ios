@@ -19,7 +19,7 @@
 import UIKit
 
 public final class MainCoordinator<MainSplitViewController, MainTabBarController, Conversation, ConversationMessage>: MainCoordinatorProtocol, UISplitViewControllerDelegate
-where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol {
+    where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol {
 
     private weak var mainSplitViewContent: MainSplitViewController?
     private weak var mainTabBarContent: MainTabBarController?

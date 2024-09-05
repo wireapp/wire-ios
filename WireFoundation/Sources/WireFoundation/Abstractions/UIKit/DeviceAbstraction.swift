@@ -20,6 +20,7 @@ import UIKit
 
 // sourcery: AutoMockable
 /// A protocol which allows for abstracting `UIDevice`.
+@MainActor
 public protocol DeviceAbstraction {
     var userInterfaceIdiom: UIUserInterfaceIdiom { get }
     var orientation: UIDeviceOrientation { get }

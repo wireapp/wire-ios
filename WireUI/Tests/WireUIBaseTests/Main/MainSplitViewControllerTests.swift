@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireUITesting
 import SwiftUI
+import WireUITesting
+import XCTest
 
 @testable import WireUIBase
 
@@ -35,7 +35,6 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-
         let hostingController: (String, Color) -> UIHostingController<AnyView> = { text, backgroundColor in
             UIHostingController(
                 rootView: AnyView(
@@ -44,7 +43,6 @@ final class MainSplitViewControllerTests: XCTestCase {
                         HStack {
                             Spacer()
                             Text(text)
-                                //.frame(minWidth: .infinity, minHeight: .infinity)
                                 .ignoresSafeArea()
                             Spacer()
                         }
@@ -91,7 +89,6 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     func testPlaceholderIsNotReturnedAsConversation() {
-
         // Given
         sut = .init(
             sidebar: sidebar,
@@ -108,9 +105,8 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     func testConversationListIsReleased() {
-
         // When
-        weak var conversationList = self.conversationList
+        weak var conversationList = conversationList
         self.conversationList = nil
         sut.conversationList = nil
 
@@ -120,9 +116,8 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     func testConversationIsReleased() async {
-
         // When
-        weak var conversation = self.conversation
+        weak var conversation = conversation
         self.conversation = nil
         sut.conversation = nil
 
@@ -133,8 +128,7 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearanceLandscape() {
-
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 1024, height: 768))
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 1_024, height: 768))
         window.rootViewController = sut
         window.makeKeyAndVisible()
         sut.traitOverrides.horizontalSizeClass = .regular
@@ -152,8 +146,7 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearancePortrait() {
-
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 768, height: 1024))
+        let window = UIWindow(frame: .init(x: 0, y: 0, width: 768, height: 1_024))
         window.rootViewController = sut
         window.makeKeyAndVisible()
         sut.traitOverrides.horizontalSizeClass = .regular

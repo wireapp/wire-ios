@@ -22,10 +22,10 @@ import WireDesign
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<ConversationList, Conversation, Archive, Settings>: UITabBarController, MainTabBarControllerProtocol where
-ConversationList: UIViewController,
-Conversation: UIViewController,
-Archive: UIViewController,
-Settings: UIViewController {
+    ConversationList: UIViewController,
+    Conversation: UIViewController,
+    Archive: UIViewController,
+    Settings: UIViewController {
 
     public enum Tab: Int, CaseIterable {
         case contacts, conversations, folders, archive
