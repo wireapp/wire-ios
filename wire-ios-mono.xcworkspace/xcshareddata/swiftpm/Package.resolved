@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "AppAuth",
+        "repositoryURL": "https://github.com/openid/AppAuth-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "c89ed571ae140f8eb1142735e6e23d7bb8c34cb2",
+          "version": "1.7.5"
+        }
+      },
+      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
@@ -17,6 +26,24 @@
           "branch": null,
           "revision": "c4cb52b90dbddde8e0ffc7d89f2b6e5680acce7e",
           "version": "2.16.0"
+        }
+      },
+      {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/wireapp/DifferenceKit/",
+        "state": {
+          "branch": null,
+          "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "FLAnimatedImage",
+        "repositoryURL": "https://github.com/Flipboard/FLAnimatedImage",
+        "state": {
+          "branch": null,
+          "revision": "d4f07b6f164d53c1212c3e54d6460738b1981e9f",
+          "version": "1.0.17"
         }
       },
       {
