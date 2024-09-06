@@ -23,17 +23,14 @@ import XCTest
 final class Tests: XCTestCase {
 
     func testTrimmingStringCatalog() throws {
+        // Given
         let input = try XCTUnwrap(Bundle.module.url(forResource: "Untrimmed_xcstrings", withExtension: nil))
         let expectedOutput = try XCTUnwrap(Bundle.module.url(forResource: "Trimmed_xcstrings", withExtension: nil))
 
-        // create copy so that the file can be overwritten
-        let temporaryDirectory = NSTemporaryDirectory()
-        let inputCopyPath = temporaryDirectory + input.lastPathComponent
-        try? FileManager.default.removeItem(atPath: inputCopyPath)
-        try FileManager.default.copyItem(atPath: input.path, toPath: inputCopyPath)
-
+        // When
         try TrimStringCatalogs(paths: [input.path])
 
+        // Then
         try XCTAssertEqual(Data(contentsOf: input), Data(contentsOf: expectedOutput))
     }
 }
