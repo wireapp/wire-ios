@@ -106,7 +106,7 @@ public final class WireDatadog {
     public func log(
         level: LogLevel,
         message: String,
-        error: Error? = nil,
+        error: (any Error)? = nil,
         attributes: [String: any Encodable]
     ) {
         var finalAttributes = attributes
