@@ -131,7 +131,7 @@ final class E2ETests: XCTestCase {
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
-    /// TODO: check why CI got `XCTAssertNil failed: "<OpenGraphData> nil: https://instagram.com/404:`
+    // TODO: check why CI got `XCTAssertNil failed: "<OpenGraphData> nil: https://instagram.com/404:`
     func testThatItDoesNotParse404Links() {
         let mockSite = OpenGraphMockData(head: "", expected: nil, urlString: "https://instagram.com/404", urlVersion: nil)
         assertThatItCanParseSampleData(mockSite, expected: nil)
@@ -149,19 +149,16 @@ final class E2ETests: XCTestCase {
     private func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData,
                                                 expected: OpenGraphDataExpectation?,
                                                 line: UInt = #line) {
-
         // given
         let completionExpectation = expectation(description: "It should parse the data")
         let sut = PreviewDownloader(resultsQueue: .main, parsingQueue: .main)
 
         // when
 
-        var resolvedURL: URL
-
-        if let version = mockData.urlVersion {
-            resolvedURL = URL(string: "http://web.archive.org/web/\(version)/\(mockData.urlString)")!
+        var resolvedURL = if let version = mockData.urlVersion {
+            URL(string: "http://web.archive.org/web/\(version)/\(mockData.urlString)")!
         } else {
-            resolvedURL = URL(string: mockData.urlString)!
+            URL(string: mockData.urlString)!
         }
 
         var result: OpenGraphData?

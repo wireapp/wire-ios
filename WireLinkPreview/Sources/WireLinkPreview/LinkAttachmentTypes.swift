@@ -120,7 +120,7 @@ extension LinkAttachment {
         }
 
         let thumbnails = openGraphData.imageUrls.compactMap(URL.init)
-        guard let permalink = URL.init(string: openGraphData.resolvedURL) else { return nil }
+        guard let permalink = URL(string: openGraphData.resolvedURL) else { return nil }
 
         self.init(type: detectedType, title: openGraphData.title, permalink: permalink, thumbnails: thumbnails, originalRange: originalRange)
     }

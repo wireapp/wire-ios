@@ -39,11 +39,11 @@ import Foundation
 
     public var isBlacklisted: Bool {
         if let permanentURL {
-            return PreviewBlacklist.isBlacklisted(permanentURL)
+            PreviewBlacklist.isBlacklisted(permanentURL)
         } else if let resolvedURL {
-            return PreviewBlacklist.isBlacklisted(resolvedURL)
+            PreviewBlacklist.isBlacklisted(resolvedURL)
         } else {
-            return false
+            false
         }
     }
 

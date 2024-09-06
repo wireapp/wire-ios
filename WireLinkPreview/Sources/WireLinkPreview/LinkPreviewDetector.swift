@@ -33,7 +33,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
 
     public typealias DetectCompletion = ([LinkMetadata]) -> Void
 
-    public convenience override init() {
+    override public convenience init() {
         let workerQueue = OperationQueue()
         self.init(
             previewDownloader: PreviewDownloader(resultsQueue: workerQueue),
@@ -56,7 +56,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
 
      The completion block will be called on private background queue, make sure to switch to main or other queue.
 
-     **Attention: For now this method only downloads the preview data (and only one image for this link preview) 
+     **Attention: For now this method only downloads the preview data (and only one image for this link preview)
      for the first link found in the text!**
 
      - parameter text:       The text with potentially contained links, if links are found the preview data is downloaded.
@@ -71,7 +71,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
             guard let data = openGraphData else { return completion([]) }
 
             let linkPreview = data.linkPreview(originalURLString, offset: range.location)
-            linkPreview.requestAssets(withImageDownloader: self.imageDownloader) { _ in
+            linkPreview.requestAssets(withImageDownloader: imageDownloader) { _ in
                 completion([linkPreview])
             }
         }

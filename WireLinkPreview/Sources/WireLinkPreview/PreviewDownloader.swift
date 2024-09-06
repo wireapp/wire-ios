@@ -76,13 +76,13 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         // We do not want to call the completion handler when we cancelled the task,
         // as we cancel it when we received enough data to generate the link preview and will call the completion handler
         // once we parsde the data.
-        if !cancelledTaskIDs.contains(task.taskIdentifier) && error != nil {
+        if !cancelledTaskIDs.contains(task.taskIdentifier), error != nil {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
 
         // In case the `MetaStreamContainer` fails to produce a string to parse, we need to ensure that we still
         // call the completion handler.
-        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead && error == nil {
+        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead, error == nil {
             return completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
     }
@@ -98,19 +98,20 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         containerByTaskID[identifier] = container
 
         guard let url = task.originalRequest?.url,
-            let completion = completionByURL[url] else { return }
+              let completion = completionByURL[url] else { return }
 
         switch task.state {
         case .running:
             guard container.reachedEndOfHead else { return }
             cancel(task: task)
+
         default:
             break
         }
 
         parseMetaHeader(container, url: url) { [weak self] result in
             guard let self else { return }
-            self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
+            completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
 
@@ -123,9 +124,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
     func completeAndCleanUp(_ completion: DownloadCompletion, result: OpenGraphData?, url: URL, taskIdentifier: Int) {
         completion(result)
-        self.containerByTaskID[taskIdentifier] = nil
-        self.completionByURL[url] = nil
-        self.cancelledTaskIDs.remove(taskIdentifier)
+        containerByTaskID[taskIdentifier] = nil
+        completionByURL[url] = nil
+        cancelledTaskIDs.remove(taskIdentifier)
     }
 
     func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {
@@ -147,8 +148,8 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
 extension PreviewDownloader {
 
-     /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
-     /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
+    /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
+    /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
     func urlSession(_ session: URLSessionType, dataTask: URLSessionDataTaskType, didReceiveHTTPResponse response: HTTPURLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
@@ -167,7 +168,7 @@ extension HTTPURLResponse {
 
     /// Whether the response is a success.
     var isSuccess: Bool {
-        return statusCode < 400
+        statusCode < 400
     }
 
 }

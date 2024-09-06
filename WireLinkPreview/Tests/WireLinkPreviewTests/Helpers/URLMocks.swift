@@ -29,7 +29,7 @@ final class MockURLSessionDataTask: URLSessionDataTaskType {
     var state: URLSessionTask.State = .completed
 
     var originalRequest: URLRequest? {
-        return mockOriginalRequest
+        mockOriginalRequest
     }
 
     func resume() {

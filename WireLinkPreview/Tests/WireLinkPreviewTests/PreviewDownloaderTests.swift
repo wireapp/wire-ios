@@ -308,7 +308,6 @@ class PreviewDownloaderTests: XCTestCase {
             XCTAssertNotNil(sut.completionByURL[url], line: line)
             XCTAssertNotNil(sut.containerByTaskID[mockDataTask.taskIdentifier], line: line)
         }
-
     }
 
 }

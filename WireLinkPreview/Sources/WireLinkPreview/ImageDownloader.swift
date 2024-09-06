@@ -55,9 +55,9 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
             var result = [URL: ImageData]()
             let group = DispatchGroup()
 
-            urls.forEach { url in
+            for url in urls {
                 group.enter()
-                self.session.dataTaskWithURL(url) { data, response, _ in
+                session.dataTaskWithURL(url) { data, response, _ in
                     if let httpResponse = response as? HTTPURLResponse, httpResponse.contentTypeImage {
                         result[url] = data
                     }
@@ -66,7 +66,7 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
             }
 
             _ = group.wait(timeout: DispatchTime.distantFuture)
-            self.resultsQueue.addOperation {
+            resultsQueue.addOperation {
                 completion(result)
             }
         }

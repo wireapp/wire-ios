@@ -152,7 +152,7 @@ class LinkPreviewDetectorTests: XCTestCase {
 
         guard let twitterStatus = result.first as? TwitterStatusMetadata else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(twitterStatus.imageURLs.count, 4)
-        XCTAssertEqual(twitterStatus.imageURLs.map { $0.absoluteString }, openGraphData.imageUrls)
+        XCTAssertEqual(twitterStatus.imageURLs.map(\.absoluteString), openGraphData.imageUrls)
         XCTAssertEqual(twitterStatus.characterOffsetInText, 36)
         XCTAssertEqual(twitterStatus.permanentURL?.absoluteString, openGraphData.url)
         XCTAssertEqual(twitterStatus.originalURLString, "www.example.com")

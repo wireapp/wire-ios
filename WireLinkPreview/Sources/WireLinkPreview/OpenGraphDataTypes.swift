@@ -39,6 +39,7 @@ enum OpenGraphPropertyType: String {
     case userGeneratedImage = "og:image:user_generated"
 
     // MARK: Foursquare
+
     case latitudeFSQ = "playfoursquare:location:latitude"
     case longitudeFSQ = "playfoursquare:location:longitude"
 }
@@ -57,8 +58,8 @@ enum OpenGraphSiteName: String {
 }
 
 enum OpenGraphTypeType: String {
-    case article = "article"
-    case website = "website"
+    case article
+    case website
     case foursquare = "playfoursquare:venue"
     case instagram = "instapp:photo"
 }

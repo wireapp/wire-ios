@@ -21,11 +21,11 @@ import Foundation
 /// A URL and its range in the parent text.
 public typealias URLWithRange = (URL: URL, range: NSRange)
 
-extension NSDataDetector {
+public extension NSDataDetector {
 
     /// A data detector configured to detect only links.
-    @objc public static var linkDetector: NSDataDetector? {
-        return try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+    @objc static var linkDetector: NSDataDetector? {
+        try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
     }
 
     /**
@@ -35,8 +35,8 @@ extension NSDataDetector {
      */
 
     @objc(containsLinkInText:)
-    public func containsLink(in text: String) -> Bool {
-        return !detectLinks(in: text).isEmpty
+    func containsLink(in text: String) -> Bool {
+        !detectLinks(in: text).isEmpty
     }
 
     /**
@@ -46,7 +46,7 @@ extension NSDataDetector {
      */
 
     @objc(detectLinksInText:)
-    public func detectLinks(in text: String) -> [URL] {
+    func detectLinks(in text: String) -> [URL] {
         let textRange = NSRange(text.startIndex ..< text.endIndex, in: text)
         return matches(in: text, options: [], range: textRange).compactMap(\.url)
     }
@@ -58,7 +58,7 @@ extension NSDataDetector {
      * - returns: The list of URLs in the text.
      */
 
-    public func detectLinksAndRanges(in text: String, excluding excludedRanges: [NSRange] = []) -> [URLWithRange] {
+    func detectLinksAndRanges(in text: String, excluding excludedRanges: [NSRange] = []) -> [URLWithRange] {
         let wholeTextRange = NSRange(text.startIndex ..< text.endIndex, in: text)
         let validRangeIndexSet = NSMutableIndexSet(indexesIn: wholeTextRange)
         excludedRanges.forEach(validRangeIndexSet.remove)

@@ -46,7 +46,7 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
 
     /// Returns the root element of the document.
     var rootElement: xmlNodePtr? {
-        return xmlDocGetRootElement(self)
+        xmlDocGetRootElement(self)
     }
 
     /// Releases the resources used by an HTML document after we are done processing it.
@@ -60,7 +60,7 @@ extension UnsafeMutablePointer where Pointee == xmlNode {
 
     /// The name of the HTML tag.
     var tagName: HTMLStringBuffer {
-        return HTMLStringBuffer(unowned: pointee.name)
+        HTMLStringBuffer(unowned: pointee.name)
     }
 
     /// The textual content of the element.
@@ -94,16 +94,14 @@ final class HTMLChildrenIterator: IteratorProtocol {
 
     init(rootElement: HTMLElement) {
         self.rootElement = rootElement
-        self.currentChild = nil
+        currentChild = nil
     }
 
     func next() -> HTMLElement? {
-        let nextPtr: xmlNodePtr?
-
-        if let currentChild = self.currentChild {
-            nextPtr = xmlNextElementSibling(currentChild)
+        let nextPtr: xmlNodePtr? = if let currentChild {
+            xmlNextElementSibling(currentChild)
         } else {
-            nextPtr = xmlFirstElementChild(rootElement)
+            xmlFirstElementChild(rootElement)
         }
 
         currentChild = nextPtr
@@ -125,29 +123,27 @@ final class HTMLStringBuffer {
 
     /// Creates a new string wrapper.
     init(unowned ptr: UnsafePointer<xmlChar>) {
-        self.storage = .unowned(ptr)
+        storage = .unowned(ptr)
     }
 
     /// Creates a new string wrapper.
     init(retaining ptr: UnsafeMutablePointer<xmlChar>) {
-        self.storage = .retained(ptr)
+        storage = .retained(ptr)
     }
 
     deinit {
-        if case let .retained(ptr) = storage {
+        if case .retained(let ptr) = storage {
             xmlFree(ptr)
         }
     }
 
     /// Returns the value of the string, with unescaped HTML entities.
     func stringValue(removingEntities removeEntities: Bool) -> String {
-        let stringValue: String
-
-        switch storage {
+        let stringValue = switch storage {
         case .retained(let ptr):
-            stringValue = String(cString: ptr)
+            String(cString: ptr)
         case .unowned(let ptr):
-            stringValue = String(cString: ptr)
+            String(cString: ptr)
         }
 
         return removeEntities ? stringValue.removingHTMLEntities() : stringValue
@@ -159,8 +155,8 @@ final class HTMLStringBuffer {
 func == (lhs: HTMLStringBuffer, rhs: String) -> Bool {
     switch lhs.storage {
     case .retained(let ptr):
-        return xmlStrEqual(ptr, rhs) == 1
+        xmlStrEqual(ptr, rhs) == 1
     case .unowned(let ptr):
-        return xmlStrEqual(ptr, rhs) == 1
+        xmlStrEqual(ptr, rhs) == 1
     }
 }
