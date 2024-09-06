@@ -125,7 +125,7 @@ extension PushChannelService: URLSessionDataDelegate {
     public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
-        didCompleteWithError error: Error?
+        didCompleteWithError error: (any Error)?
     ) {
         // When does this get called? My guess is that it's for the initial request.
         if let error {

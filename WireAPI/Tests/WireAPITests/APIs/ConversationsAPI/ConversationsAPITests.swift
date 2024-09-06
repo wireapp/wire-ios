@@ -23,7 +23,7 @@ import XCTest
 final class ConversationsAPITests: XCTestCase {
 
     private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
-    private var apiSnapshotHelper: APISnapshotHelper<ConversationsAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any ConversationsAPI>!
 
     // MARK: - Setup
 
@@ -31,7 +31,7 @@ final class ConversationsAPITests: XCTestCase {
         super.setUp()
 
         httpRequestSnapshotHelper = HTTPRequestSnapshotHelper()
-        apiSnapshotHelper = APISnapshotHelper<ConversationsAPI> { httpClient, apiVersion in
+        apiSnapshotHelper = APISnapshotHelper<any ConversationsAPI> { httpClient, apiVersion in
             let builder = ConversationsAPIBuilder(httpClient: httpClient)
             return builder.makeAPI(for: apiVersion)
         }
