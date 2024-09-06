@@ -32,7 +32,7 @@
 @class ZMReaction;
 @class ZMClientMessage;
 
-typedef NS_ENUM(NSInteger, ZMExpirationReason) {
+typedef NS_CLOSED_ENUM(NSInteger, ZMExpirationReason) {
     ZMExpirationReasonOther = 0,
     ZMExpirationReasonFederationRemoteError,
     ZMExpirationReasonCancelled,
