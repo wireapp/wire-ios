@@ -38,8 +38,7 @@
     self.appState = @"authenticated";
 
     self.currentUserIdentifier = [NSUUID createUUID];
-    
-    [self enableBackendInfoMocking];
+
     [self setBackendInfoAPIVersion: APIVersionV0];
     [self setBackendInfoDomain: @"wire.com"];
     [self setBackendInfoIsFederationEnabled: YES];
@@ -59,7 +58,6 @@
 
     WaitForAllGroupsToBeEmpty(0.5);
     [NSFileManager.defaultManager removeItemAtURL:[MockUserClient mockEncryptionSessionDirectory] error:nil];
-    [self resetBackendInfoMocking];
 
     [self.lastEventIDRepository storeLastEventID:nil];
     [super tearDown];

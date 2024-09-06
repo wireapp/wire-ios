@@ -82,5 +82,5 @@ public struct SelfUser: Equatable {
 
     /// Messaging protocols which this user supports
 
-    public let supportedProtocols: Set<SupportedProtocol>?
+    public let supportedProtocols: Set<MessageProtocol>?
 }

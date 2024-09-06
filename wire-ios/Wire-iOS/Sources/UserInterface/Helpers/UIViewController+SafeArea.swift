@@ -18,16 +18,21 @@
 
 import UIKit
 
+// TODO: [WPB-8778] remove the whole file
+
 extension UIViewController {
 
+    @available(*, deprecated, message: "Will be removed")
     var safeBottomAnchor: NSLayoutYAxisAnchor {
         return self.view.safeAreaLayoutGuide.bottomAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeTopAnchor: NSLayoutYAxisAnchor {
         return self.view.safeAreaLayoutGuide.topAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
         return view.safeAreaLayoutGuide.centerYAnchor
     }
@@ -35,36 +40,44 @@ extension UIViewController {
 }
 
 extension UIView {
+
+    @available(*, deprecated, message: "Will be removed")
     var safeAreaLayoutGuideOrFallback: UILayoutGuide {
         return safeAreaLayoutGuide
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeAreaInsetsOrFallback: UIEdgeInsets {
         return safeAreaInsets
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeLeadingAnchor: NSLayoutXAxisAnchor {
         return safeAreaLayoutGuide.leadingAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeTrailingAnchor: NSLayoutXAxisAnchor {
         return safeAreaLayoutGuide.trailingAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeBottomAnchor: NSLayoutYAxisAnchor {
         return safeAreaLayoutGuide.bottomAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeTopAnchor: NSLayoutYAxisAnchor {
         return safeAreaLayoutGuide.topAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
         return safeAreaLayoutGuide.centerYAnchor
     }
 
+    @available(*, deprecated, message: "Will be removed")
     var safeCenterXAnchor: NSLayoutXAxisAnchor {
         return safeAreaLayoutGuide.centerXAnchor
     }
-
 }

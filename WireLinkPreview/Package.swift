@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -11,7 +11,8 @@ let package = Package(
         .library(name: "WireLinkPreview", type: .dynamic, targets: ["WireLinkPreview"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0")
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(url: "https://github.com/wireapp/HTMLString", exact: "6.0.1")
     ],
     targets: [
         .target(
@@ -20,11 +21,12 @@ let package = Package(
             path: "./Sources/WireLinkPreview",
             swiftSettings: swiftSettings
         ),
-        .testTarget(name: "WireLinkPreviewTests", dependencies: ["WireLinkPreview"], path: "./Tests/WireLinkPreviewTests"),
-        .binaryTarget(name: "HTMLString", path: "../Carthage/Build/HTMLString.xcframework")
+        .testTarget(name: "WireLinkPreviewTests", dependencies: ["WireLinkPreview"], path: "./Tests/WireLinkPreviewTests")
     ]
 )
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency")
 ]

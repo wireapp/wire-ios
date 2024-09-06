@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
+
 /// The representation of a user that is going through the registration process.
 ///
 /// Typically, you create this object once you start the registration flow and start asking

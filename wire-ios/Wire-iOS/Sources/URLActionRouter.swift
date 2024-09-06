@@ -33,6 +33,7 @@ protocol URLActionRouterDelegate: AnyObject {
 }
 
 // MARK: - URLActionRouterProtocol
+
 protocol URLActionRouterProtocol {
     func open(url: URL) -> Bool
 }
@@ -43,26 +44,30 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - URLActionRouter
 class URLActionRouter: URLActionRouterProtocol {
 
-    // MARK: - Public Property
-    var sessionManager: SessionManager?
+    // MARK: - Public Properties
+
+    private(set) var sessionManager: SessionManager?
     weak var delegate: URLActionRouterDelegate?
     weak var authenticatedRouter: AuthenticatedRouterProtocol?
 
-    // MARK: - Private Property
-    private let rootViewController: RootViewController
+    // MARK: - Private Properties
+
+    private let rootViewController: () -> UIViewController
     private var pendingDestination: NavigationDestination?
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
+
     init(
-        viewController: RootViewController,
-        sessionManager: SessionManager? = nil
+        viewController: @autoclosure @escaping () -> UIViewController,
+        sessionManager: SessionManager?
     ) {
-        self.rootViewController = viewController
+        rootViewController = viewController
         self.sessionManager = sessionManager
     }
 
     // MARK: - Public Implementation
+
     @discardableResult
     func open(url: URL) -> Bool {
         do {
@@ -71,9 +76,9 @@ class URLActionRouter: URLActionRouterProtocol {
             if error is CompanyLoginError {
                 delegate?.urlActionRouterWillShowCompanyLoginError()
 
-                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true, completion: {
+                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true) {
                     UIApplication.shared.topmostViewController()?.showAlert(for: error)
-                })
+                }
             } else {
                 UIApplication.shared.topmostViewController()?.showAlert(for: error)
             }
@@ -127,7 +132,7 @@ class URLActionRouter: URLActionRouterProtocol {
     }
 
     func internalPresentAlert(_ alert: UIAlertController) {
-        rootViewController.present(alert, animated: true, completion: nil)
+        rootViewController().present(alert, animated: true, completion: nil)
     }
 }
 
@@ -168,7 +173,7 @@ extension URLActionRouter: PresentationDelegate {
 
         // Use the rootViewController to present the alert
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
-            rootViewController.present(alertController, animated: true)
+            rootViewController().present(alertController, animated: true)
         } else {
             pendingAlert = alertController
         }
@@ -283,7 +288,7 @@ extension URLActionRouter: PresentationDelegate {
 
         let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
-        rootViewController.present(hostingController, animated: true)
+        rootViewController().present(hostingController, animated: true)
     }
 
 }

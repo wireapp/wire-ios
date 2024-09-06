@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
-"general.guest-room-name" = "ゲストルーム";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (あなた)";
@@ -51,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "名前またはユーザーネームで検索する";
 "peoplepicker.header.top_people" = "Top people";
-"peoplepicker.button.create_conversation" = "グループを作成";
+"peoplepicker.button.create_conversation" = "グループを作成します";
 "peoplepicker.button.add_to_conversation" = "参加者を追加";
 "peoplepicker.header.conversations" = "グループ";
 "peoplepicker.header.team_conversations" = "%@ グループ";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "チームに招待する";
 "peoplepicker.quick-action.open-conversation" = "開く";
 "peoplepicker.quick-action.create-conversation" = "グループを作成します";
-"peoplepicker.quick-action.create-guest-room" = "ゲストルームを作成する";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "サービスを管理";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "タップしてアクティブにする";
 "conversation_list.header.self_team.accessibility_value.active" = "有効";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "新しいメッセージ";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "連絡先";
-"conversation_list.bottom_bar.conversations.title" = "会話";
-"conversation_list.bottom_bar.folders.title" = "フォルダ";
-"conversation_list.bottom_bar.archived.title" = "アーカイブ";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "連絡先";
@@ -1803,7 +1797,7 @@
 "giphy.conversation.message" = "%@ giphy.comから";
 "giphy.conversation.random_message" = "giphy.comから";
 "giphy.error.no_more_results" = "これ以上gifがありません。";
-"giphy.error.no_result" = "gifが見つかりませんでした。";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "送信する";
 "giphy.cancel" = "キャンセル";

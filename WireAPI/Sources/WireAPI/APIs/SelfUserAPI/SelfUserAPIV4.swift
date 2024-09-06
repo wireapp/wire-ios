@@ -33,7 +33,7 @@ class SelfUserAPIV4: SelfUserAPIV3 {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: SelfUserV4.self)
+            .success(code: .ok, type: SelfUserV4.self)
             .parse(response)
     }
 
@@ -56,7 +56,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let qualifiedID: UserID
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
-    let supportedProtocols: Set<SupportedProtocol>?
+    let supportedProtocols: Set<MessageProtocol>?
     let teamID: UUID?
 
     enum CodingKeys: String, CodingKey {

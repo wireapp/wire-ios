@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Membro";
 "contactsList.userCell.hint" = "Toque duas vezes para abrir a conversa";
 "contactsList.pendingConnection.hint" = "Toque duas vezes para abrir o perfil";
-"contactsList.closeButton.description" = "Fechar lista de contatos";
+"contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Toque duas vezes para abrir os detalhes do serviço";
 
@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Contatos";
-"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
-"tabBar.conversations.description" = "List of recent conversations";
-"tabBar.conversations.hint" = "Double tap to open list of recent conversations";
-"tabBar.folders.description" = "List of conversations organized in folders";
-"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
-"tabBar.archived.description" = "Arquivar";
-"tabBar.archived.hint" = "Double tap to open list of archived conversations";
 "tabBar.item.value" = "Selecionado";
 
 "landing.loginEnterpriseButton.description" = "Acessar com SSO";
@@ -299,3 +291,10 @@
 
 "createSecureGuestLink.CreateLinkButton.description" = "Create guest link";
 "createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Enter text to search for GIFs";
+"searchGifs.norResultsLabel.description" = "No Gifs found";
+"searchGifs.gifItem.accessibilityHint" = "Tap to select this GIF";
+"searchGifs.gifItems_loaded.announcement" = "Loaded %@ new GIFs";

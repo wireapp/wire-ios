@@ -26,7 +26,7 @@ class ConnectionsAPITests: XCTestCase {
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
         // given
-        let apiSnapshotHelper = APISnapshotHelper<ConnectionsAPI> { httpClient, apiVersion in
+        let apiSnapshotHelper = APISnapshotHelper<any ConnectionsAPI> { httpClient, apiVersion in
             let builder = ConnectionsAPIBuilder(httpClient: httpClient)
             return builder.makeAPI(for: apiVersion)
         }
@@ -44,7 +44,7 @@ class ConnectionsAPITests: XCTestCase {
     func testGetConnections_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetConnectionsSuccessResponseV0"
         )
 
@@ -72,7 +72,7 @@ class ConnectionsAPITests: XCTestCase {
     func testGetConnections_FailureResponse_400_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 400, errorLabel: ""
+            code: .badRequest, errorLabel: ""
         )
 
         let sut = ConnectionsAPIV0(httpClient: httpClient)
@@ -100,7 +100,8 @@ class ConnectionsAPITests: XCTestCase {
             let response = HTTPClientMock.PredefinedResponse(resourceName: "GetConnectionsMultiplePagesSuccessResponseV0.\(requestIndex)")
             requestIndex += 1
 
-            return HTTPResponse(code: 200, payload: try response.data())
+            let statusOk = HTTPStatusCode.ok.rawValue
+            return HTTPResponse(code: statusOk, payload: try response.data())
         }
 
         // WHEN

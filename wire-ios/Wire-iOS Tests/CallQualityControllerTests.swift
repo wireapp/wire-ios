@@ -17,7 +17,7 @@
 //
 
 import WireCommonComponents
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -46,7 +46,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
             otherUser: otherUser
         )
         callConversationProvider = MockCallConversationProvider()
-        sut = MockCallQualityController(rootViewController: .init())
+        sut = MockCallQualityController(mainWindow: .init())
         sut.router = router
         sut.usesCallSurveyBudget = false
 
@@ -54,6 +54,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callQualityViewController = CallQualityViewController(questionLabelText: questionLabelText, callDuration: 10)
         callQualityViewController?.delegate = sut
 
+        Analytics.shared = Analytics(optedOut: true)
     }
 
     // MARK: - teardown
@@ -140,7 +141,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         let terminatingCallState: CallState = .terminating(reason: .timeout)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
-        router.presentCallFailureDebugAlertPresentingViewController_MockMethod = { _ in }
+        router.presentCallFailureDebugAlertMainWindow_MockMethod = { _ in }
 
         callQualityController_callCenterDidChange(callState: establishedCallState, conversation: conversation)
 
@@ -171,7 +172,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         let terminatingCallState: CallState = .terminating(reason: .internalError)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
-        router.presentCallFailureDebugAlertPresentingViewController_MockMethod = { _ in }
+        router.presentCallFailureDebugAlertMainWindow_MockMethod = { _ in }
 
         callQualityController_callCenterDidChange(callState: establishedCallState, conversation: conversation)
 
@@ -179,7 +180,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertFalse(router.presentCallFailureDebugAlertPresentingViewController_Invocations.isEmpty)
+        XCTAssertFalse(router.presentCallFailureDebugAlertMainWindow_Invocations.isEmpty)
     }
 
     func testThatCallFailureDebugAlertIsNotPresented_WhenCallIsTerminated() {
@@ -195,7 +196,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callQualityController_callCenterDidChange(callState: terminatingCallState, conversation: conversation)
 
         // THEN
-        XCTAssertTrue(router.presentCallFailureDebugAlertPresentingViewController_Invocations.isEmpty)
+        XCTAssertTrue(router.presentCallFailureDebugAlertMainWindow_Invocations.isEmpty)
     }
 
 }

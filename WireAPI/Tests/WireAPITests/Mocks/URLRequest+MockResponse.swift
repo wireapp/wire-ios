@@ -23,7 +23,7 @@ import Foundation
 extension URLRequest {
 
     func mockResponse(
-        statusCode: Int,
+        statusCode: HTTPStatusCode,
         jsonResourceName: String
     ) throws -> (Data, HTTPURLResponse) {
         guard let url else {
@@ -32,7 +32,7 @@ extension URLRequest {
 
         guard let response = HTTPURLResponse(
             url: url,
-            statusCode: statusCode,
+            statusCode: statusCode.rawValue,
             httpVersion: nil,
             headerFields: ["Content-Type": HTTPContentType.json.rawValue]
         ) else {

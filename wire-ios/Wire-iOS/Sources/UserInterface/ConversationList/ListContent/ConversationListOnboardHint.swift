@@ -23,20 +23,9 @@ import WireDesign
 final class ConversationListOnboardingHint: UIView {
 
     let messageLabel: UILabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
-    let arrowView: UIImageView = UIImageView()
-    weak var arrowPointToView: UITabBar? {
-        didSet {
-            guard let arrowPointToTabBar = arrowPointToView,
-                  let items = arrowPointToTabBar.items else { return }
-            let itemWidth = UIScreen.main.bounds.width / CGFloat(items.count)
-
-            NSLayoutConstraint.activate([
-                arrowView.centerXAnchor.constraint(equalTo: arrowPointToTabBar.leadingAnchor, constant: itemWidth / 2)])
-        }
-    }
+    let arrowView = UIImageView()
 
     override init(frame: CGRect) {
-
         super.init(frame: frame)
 
         arrowView.setTemplateIcon(.longDownArrow, size: .large)
@@ -46,7 +35,7 @@ final class ConversationListOnboardingHint: UIView {
         messageLabel.textAlignment = .left
         messageLabel.text = L10n.Localizable.ConversationList.Empty.NoContacts.message
 
-        [arrowView, messageLabel].forEach(self.addSubview)
+        [arrowView, messageLabel].forEach(addSubview)
 
         createConstraints()
     }

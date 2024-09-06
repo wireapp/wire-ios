@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 
 struct AccentColorPicker: View {

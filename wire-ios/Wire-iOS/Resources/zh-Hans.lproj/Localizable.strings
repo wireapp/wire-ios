@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
-"general.guest-room-name" = "访客聊天室";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = "(你)";
@@ -51,7 +51,7 @@
 // People picker/start UI
 "peoplepicker.search_placeholder" = "通过您的名字或用户名搜索";
 "peoplepicker.header.top_people" = "常联系的人";
-"peoplepicker.button.create_conversation" = "创建群聊";
+"peoplepicker.button.create_conversation" = "创建群聊\n";
 "peoplepicker.button.add_to_conversation" = "添加参与者";
 "peoplepicker.header.conversations" = "群组";
 "peoplepicker.header.team_conversations" = "%@ 组";
@@ -102,8 +102,8 @@
 "peoplepicker.invite_more_people" = "邀请更多人";
 "peoplepicker.invite_team_members" = "邀请好友使用Wire";
 "peoplepicker.quick-action.open-conversation" = "开启";
-"peoplepicker.quick-action.create-conversation" = "创建群聊";
-"peoplepicker.quick-action.create-guest-room" = "创建访客聊天室";
+"peoplepicker.quick-action.create-conversation" = "创建群聊\n";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "管理服务";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "点击激活";
 "conversation_list.header.self_team.accessibility_value.active" = "立即激活";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新消息。";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "联络人";
-"conversation_list.bottom_bar.conversations.title" = "会话";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "归档";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在联系人中";
@@ -1803,7 +1797,7 @@
 "giphy.conversation.message" = "%@ · 来源 giphy.com";
 "giphy.conversation.random_message" = "来源 giphy.com";
 "giphy.error.no_more_results" = "没有更多的gif图片";
-"giphy.error.no_result" = "找不到gif图片";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "发送";
 "giphy.cancel" = "取消";

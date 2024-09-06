@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Soba za goste";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Vi)";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Pozovite ljude da se pridruže timu";
 "peoplepicker.quick-action.open-conversation" = "Otvori";
 "peoplepicker.quick-action.create-conversation" = "Kreirajte grupu";
-"peoplepicker.quick-action.create-guest-room" = "Stvori sobu za goste";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Upravljanje uslugama";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Dodirnite za aktivaciju.";
 "conversation_list.header.self_team.accessibility_value.active" = "Trenutno aktivan.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ima nove poruke.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakti";
-"conversation_list.bottom_bar.conversations.title" = "Razgovori";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arhiva";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "u kontaktima";
@@ -1803,7 +1797,7 @@
 "giphy.conversation.message" = "%@ · putem giphy.com";
 "giphy.conversation.random_message" = "putem giphy.com";
 "giphy.error.no_more_results" = "nema više gifova";
-"giphy.error.no_result" = "nijedan gif nije pronađen";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "pošalji";
 "giphy.cancel" = "otkaži";

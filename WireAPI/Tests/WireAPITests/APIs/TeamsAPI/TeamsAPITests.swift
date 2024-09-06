@@ -23,7 +23,7 @@ import XCTest
 
 final class TeamsAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<TeamsAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any TeamsAPI>!
 
     // MARK: - Setup
 
@@ -73,7 +73,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamForID_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetTeamSuccessResponseV0"
         )
 
@@ -99,7 +99,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_InvalidID_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -111,7 +111,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "no-team")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "no-team")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -124,7 +124,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamRolesForID_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetTeamRolesSuccessResponseV0"
         )
 
@@ -150,7 +150,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_NoTeamMember_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 403, errorLabel: "no-team-member")
+        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "no-team-member")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -162,7 +162,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -175,7 +175,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetMembers_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetTeamMembersSuccessResponseV0"
         )
 
@@ -207,7 +207,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_InvalidQueryParameter_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -222,7 +222,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_NoTeamMember_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 403, errorLabel: "no-team-member")
+        let httpClient = try HTTPClientMock(code: .forbidden, errorLabel: "no-team-member")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -237,7 +237,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_TeamNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -253,7 +253,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetLegalholdStatus_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             jsonResponse: """
             {
                 "status": "pending"
@@ -275,7 +275,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetLegalholdStatus_FailureResponse_InvalidRequest_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -290,7 +290,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetLegalholdStatus_FailureResponse_MemberNotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "no-team-member")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "no-team-member")
         let sut = TeamsAPIV0(httpClient: httpClient)
 
         // Then
@@ -308,7 +308,7 @@ final class TeamsAPITests: XCTestCase {
     func testGetTeamForID_SuccessResponse_200_V2() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetTeamSuccessResponseV2"
         )
 
@@ -336,7 +336,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_InvalidID_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
@@ -348,7 +348,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
@@ -360,7 +360,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamMembers_FailureResponse_InvalidRequest_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
@@ -375,7 +375,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetLegalholdStatus_FailureResponse_InvalidRequest_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = TeamsAPIV4(httpClient: httpClient)
 
         // Then
@@ -392,7 +392,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = TeamsAPIV5(httpClient: httpClient)
 
         // Then
@@ -404,7 +404,7 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetLegalholdStatus_FailureResponse_InvalidRequest_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = TeamsAPIV5(httpClient: httpClient)
 
         // Then

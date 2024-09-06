@@ -17,19 +17,53 @@
 //
 
 import Foundation
+import WireFoundation
 
-// sourcery: AutoMockable
-/// Make a direct connection to a server to receive update events.
-public protocol PushChannelProtocol {
+final class PushChannel: PushChannelProtocol {
 
-    /// Open the push channel and start receiving update events.
-    ///
-    /// - Returns: An async stream of live update event envelopes.
+    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
-    func open() async throws -> AsyncStream<UpdateEventEnvelope>
+    private let request: URLRequest
+    private let webSocket: any WebSocketProtocol
+    private let decoder = JSONDecoder()
 
-    /// Close the push channel and stop receiving update events.
+    init(
+        request: URLRequest,
+        webSocket: any WebSocketProtocol
+    ) {
+        self.request = request
+        self.webSocket = webSocket
+    }
 
-    func close()
+    func open() throws -> Stream {
+        print("opening new push channel")
+        return try webSocket.open().map { [weak self, decoder] message in
+            do {
+                switch message {
+                case .data(let data):
+                    print("received web socket data, decoding...")
+                    let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
+                    return envelope.toAPIModel()
+
+                case .string:
+                    print("received web socket string, ignoring...")
+                    throw PushChannelError.receivedInvalidMessage
+
+                @unknown default:
+                    print("received web socket message, ignoring...")
+                    throw PushChannelError.receivedInvalidMessage
+                }
+            } catch {
+                print("failed to get next web socket message: \(error)")
+                self?.close()
+                throw error
+            }
+        }.toStream()
+    }
+
+    func close() {
+        print("closing push channel")
+        webSocket.close()
+    }
 
 }

@@ -38,8 +38,6 @@ final class ConversationListViewController: UIViewController {
     /// internal View Model
     var state: ConversationListState = .conversationList
 
-    private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
-
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -163,6 +161,10 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.savePendingLastRead()
         viewModel.requestMarketingConsentIfNeeded()
+
+        // there are currently always four tab items
+        let offset = (view.bounds.width / 4 * -1.5)
+        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -180,12 +182,8 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.updateE2EICertifiedStatus()
 
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
-
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
-
-            tabBarController?.delegate = self
 
             zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
@@ -199,10 +197,6 @@ final class ConversationListViewController: UIViewController {
         })
 
         super.viewWillTransition(to: size, with: coordinator)
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -338,31 +332,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         updateTitleView()
-    }
-}
-
-// MARK: - UITabBarControllerDelegate
-
-extension ConversationListViewController: UITabBarControllerDelegate {
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
-        case .contacts:
-            presentPeoplePicker { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-        case .conversations, .folders:
-            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
-        case .archive:
-            setState(.archived, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-        case .none:
-            fallthrough
-        default:
-            fatalError("unexpected selected tab index")
-        }
     }
 }
 

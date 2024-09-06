@@ -110,28 +110,22 @@
       location = "group:wire-ios-utilities/../wire-ios-images/WireImages.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-utilities/WireUtilities Project.xcodeproj">
+      location = "group:wire-ios-utilities/WireUtilities.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:WireUtilities">
+      location = "group:wire-ios-testing/WireTesting.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:wire-ios-testing/WireTesting Project.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:WireTesting">
-   </FileRef>
-   <FileRef
-      location = "group:wire-ios-system/WireSystem Project.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:WireSystem">
+      location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:WireAnalytics">
    </FileRef>
    <FileRef
       location = "group:WireAPI">
+   </FileRef>
+   <FileRef
+      location = "group:WireFoundation">
    </FileRef>
    <FileRef
       location = "group:SourceryPlugin">

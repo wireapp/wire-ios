@@ -4,7 +4,7 @@
 import PackageDescription
 
 // How to add/update packages?
-// 
+//
 // 1. Go to GitHub repository, the latest release.
 // 2. Copy url of <*.artifactbundle.zip> and enter here as 'url'.
 // 3. Download <*.artifactbundle.zip>, open terminal, go to the folder like '~/Downloads/'.
@@ -16,6 +16,24 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     targets: [
+        .executableTarget(
+            name: "TrimStringCatalogs",
+            path: "./TrimStringCatalogs",
+            exclude: ["./Tests.swift", "./TestResources"],
+            sources: ["./main.swift"]
+        ),
+        .testTarget(
+            name: "TrimStringCatalogsTests",
+            dependencies: ["TrimStringCatalogs"],
+            path: "./TrimStringCatalogs",
+            exclude: ["./main.swift"],
+            sources: ["./Tests.swift"],
+            resources: [
+                .copy("./TestResources/Trimmed_xcstrings"),
+                .copy("./TestResources/Untrimmed_xcstrings")
+            ]
+        ),
+
         .binaryTarget(
             name: "LicensePlist",
             url: "https://github.com/mono0926/LicensePlist/releases/download/3.25.1/LicensePlistBinary-macos.artifactbundle.zip",
@@ -27,9 +45,9 @@ let package = Package(
             checksum: "722a705de1cf4e0e07f2b7d2f9f631f3a8b2635a0c84cce99f9677b38aa4a1d6"
         ),
         .binaryTarget(
-          name: "swiftgen",
-          url: "https://github.com/SwiftGen/SwiftGen/releases/download/6.6.2/swiftgen-6.6.2.artifactbundle.zip",
-          checksum: "7586363e24edcf18c2da3ef90f379e9559c1453f48ef5e8fbc0b818fbbc3a045"
+            name: "swiftgen",
+            url: "https://github.com/SwiftGen/SwiftGen/releases/download/6.6.2/swiftgen-6.6.2.artifactbundle.zip",
+            checksum: "7586363e24edcf18c2da3ef90f379e9559c1453f48ef5e8fbc0b818fbbc3a045"
         ),
         .binaryTarget(
             name: "swiftformat",
