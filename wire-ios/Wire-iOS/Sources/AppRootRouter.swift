@@ -272,7 +272,7 @@ extension AppRootRouter {
         enqueueTransition(to: .headless) { [weak self] in
 
             self?.sessionManager.start(launchOptions: launchOptions) { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
 
                 if !trackingManager.disableAnalyticsSharing, let analyticsConfig = sessionManager.analyticsSessionConfiguration {
                     do {
