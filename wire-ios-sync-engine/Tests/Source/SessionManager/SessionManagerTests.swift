@@ -192,7 +192,6 @@ final class SessionManagerTests: IntegrationTest {
             XCTAssertEqual([account.userIdentifier], observer.destroyedUserSessions)
         }
 
-
     }
 
     func testThatItNotifiesDestroyedSessionObserverWhenCurrentSessionIsLoggedOut() {
@@ -292,7 +291,6 @@ final class SessionManagerTests: IntegrationTest {
             // THEN
             XCTAssertEqual([account1.userIdentifier], observer.destroyedUserSessions)
         }
-
 
     }
 
@@ -402,7 +400,6 @@ final class SessionManagerTests: IntegrationTest {
             }
         }
 
-
     }
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNoPreviousBootTimeExists() {
@@ -417,13 +414,12 @@ final class SessionManagerTests: IntegrationTest {
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertEqual(sut.accountManager.accounts.count, 1)
             ZMKeychain.deleteAllKeychainItems(withAccountName: SessionManager.previousSystemBootTimeContainer)
-            
+
             // THEN
             performIgnoringZMLogError {
                 XCTAssertFalse(sut.shouldPerformPostRebootLogout())
             }
         }
-
 
     }
 

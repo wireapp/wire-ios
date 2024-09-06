@@ -77,7 +77,6 @@ final class SessionManagerProxyTests: IntegrationTest {
             XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         }
 
-
     }
 
     func test_markNetworkSessionsAsReady_createsUnauthenticatedSession() {

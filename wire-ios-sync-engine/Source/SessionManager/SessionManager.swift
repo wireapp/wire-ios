@@ -433,7 +433,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 object: nil
             )
 
-
     }
 
     init(maxNumberAccounts: Int = defaultMaxNumberAccounts,

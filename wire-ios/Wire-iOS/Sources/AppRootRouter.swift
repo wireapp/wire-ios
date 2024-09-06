@@ -270,7 +270,7 @@ extension AppRootRouter {
     // MARK: - Navigation Helpers
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            
+
             self?.sessionManager.start(launchOptions: launchOptions) { [weak self] in
                 guard let self else { return }
 

@@ -134,7 +134,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
-        
+
         testSessionManager.start(launchOptions: [:]) { [self] in
             testSessionManager.loadSession(for: account) { userSession in
                 XCTAssertNotNil(userSession)
@@ -155,7 +155,6 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             // CLEANUP
             testSessionManager.tearDownAllBackgroundSessions()
         }
-
 
     }
 
