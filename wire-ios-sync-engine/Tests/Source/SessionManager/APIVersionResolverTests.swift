@@ -76,7 +76,29 @@ class APIVersionResolverTests: ZMTBaseTest {
 
     // MARK: - Endpoint unavailable
 
-    func testThatItDefaultsToNothingIfEndpointIsUnavailable() throws {
+    func testThatItDefaultsToVersionZeroIfEndpointIsUnavailable404() throws {
+        // Given the client supports API versioning.
+        let sut = createSUT(
+            clientProdVersions: Set(APIVersion.allCases),
+            clientDevVersions: []
+        )
+
+        // Given the backend does not.
+        transportSession.isAPIVersionEndpointAvailable = false
+
+        // When version is resolved.
+        let done = customExpectation(description: "done")
+        sut.resolveAPIVersion(completion: { _ in done.fulfill() })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // Then it resolves to v0.
+        let resolvedVersion = try XCTUnwrap(BackendInfo.apiVersion)
+        XCTAssertEqual(resolvedVersion, .v0)
+        XCTAssertEqual(BackendInfo.domain, "wire.com")
+        XCTAssertEqual(BackendInfo.isFederationEnabled, false)
+    }
+
+    func testThatItDefaultsToNothingIfFailureOtherThan404() throws {
         let previousApiVersion = BackendInfo.apiVersion
         let previousDomain = BackendInfo.domain
         let previousIsFederationEnabled = BackendInfo.isFederationEnabled
@@ -88,7 +110,7 @@ class APIVersionResolverTests: ZMTBaseTest {
         )
 
         // Given the backend does not.
-        transportSession.isAPIVersionEndpointAvailable = false
+        transportSession.isInternalError = true
 
         // When version is resolved.
         let done = customExpectation(description: "done")
