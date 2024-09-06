@@ -52,6 +52,9 @@ let package = Package(
 )
 
 for target in package.targets {
+    // remove this once we updated the Sourcery stencil to support existential any
+    guard target.name != "WireAPISupport" else { continue }
+
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
