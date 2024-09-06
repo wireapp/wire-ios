@@ -271,7 +271,7 @@ extension AppRootRouter {
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
             self?.sessionManager.start(launchOptions: launchOptions) { [weak self] success in
-                guard let self = self, success else {
+                guard let self, success else {
                     WireLogger.analytics.error("Failed to start the session")
                     return
                 }
