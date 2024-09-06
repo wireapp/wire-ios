@@ -21,6 +21,7 @@ jobs:
     outputs:
       wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
       wire-reusable-ui-components: ${{ steps.filter.outputs.wire-reusable-ui-components }}
+      wire-ui-base: ${{ steps.filter.outputs.wire-ui-base }}
       wire-design: ${{ steps.filter.outputs.wire-design }}
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
@@ -54,6 +55,9 @@ jobs:
             wire-reusable-ui-components:
               - 'WireUI/Sources/WireReusableUIComponents/**'
               - 'WireUI/Tests/WireReusableUIComponentsTests/**'
+            wire-ui-base:
+              - 'WireUI/Sources/WireUIBase/**'
+              - 'WireUI/Tests/WireUIBaseTests/**'
             wire-design:
               - 'WireUI/Sources/WireDesign/**'
               - 'WireUI/Tests/WireDesignTests/**'
@@ -110,6 +114,7 @@ jobs:
     with:
       wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
       wire-reusable-ui-components: ${{ needs.detect-changes.outputs.wire-reusable-ui-components == 'true' }}
+      wire-ui-base: ${{ needs.detect-changes.outputs.wire-ui-base == 'true' }}
       wire-design: ${{ needs.detect-changes.outputs.wire-design == 'true' }}
       wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
       wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}

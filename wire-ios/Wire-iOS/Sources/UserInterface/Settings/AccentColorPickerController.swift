@@ -20,6 +20,7 @@ import SwiftUI
 import WireDataModel
 import WireSyncEngine
 import WireUtilities
+import WireUtilitiesPkg
 
 final class AccentColorPickerController: UIHostingController<AccentColorPicker> {
 

@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.10
 
 import PackageDescription
 
@@ -11,20 +11,18 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.16.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin"),
         .package(name: "WireUtilitiesPackage", path: "../WireUtilities")
     ],
     targets: [
         .target(
             name: "WireAPI",
-            dependencies: ["WireUtilitiesPackage"],
-            swiftSettings: swiftSettings
+            dependencies: ["WireUtilitiesPackage"]
         ),
         .target(
             name: "WireAPISupport",
             dependencies: ["WireAPI"],
-            swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
@@ -48,12 +46,18 @@ let package = Package(
                 .process("APIs/UserPropertiesAPI/Resources"),
                 .process("APIs/SelfUserAPI/Resources"),
                 .process("Network/PushChannel/Resources")
-            ],
-            swiftSettings: swiftSettings
+            ]
         )
     ]
 )
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
-]
+for target in package.targets {
+    // remove this once we updated the Sourcery stencil to support existential any
+    guard target.name != "WireAPISupport" else { continue }
+
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}

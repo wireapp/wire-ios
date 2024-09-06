@@ -22,7 +22,7 @@ import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
 
-    private func createSnapshotter() -> APISnapshotHelper<UpdateEventsAPI> {
+    private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {
         APISnapshotHelper { httpClient, apiVersion in
             UpdateEventsAPIBuilder(httpClient: httpClient)
                 .makeAPI(for: apiVersion)

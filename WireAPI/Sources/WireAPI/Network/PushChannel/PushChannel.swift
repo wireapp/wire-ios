@@ -21,7 +21,7 @@ import WireUtilitiesPkg
 
 final class PushChannel: PushChannelProtocol {
 
-    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, Error>
+    typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     private let request: URLRequest
     private let webSocket: any WebSocketProtocol

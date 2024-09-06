@@ -20,14 +20,46 @@ import Foundation
 
 class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
     var apiVersion: APIVersion {
         .v0
+    }
+
+    var areTypingIndicatorsEnabled: Bool {
+        get async throws {
+            let result = try await getProperty(forKey: .wireTypingIndicatorMode)
+            guard case .areTypingIndicatorsEnabled(let isEnabled) = result else {
+                throw UserPropertiesAPIError.invalidKey
+            }
+
+            return isEnabled
+        }
+    }
+
+    var areReadReceiptsEnabled: Bool {
+        get async throws {
+            let result = try await getProperty(forKey: .wireReceiptMode)
+            guard case .areReadReceiptsEnabled(let isEnabled) = result else {
+                throw UserPropertiesAPIError.invalidKey
+            }
+
+            return isEnabled
+        }
+    }
+
+    func getLabels() async throws -> [ConversationLabel] {
+        let result = try await getProperty(forKey: .labels)
+
+        guard case .conversationLabels(let labels) = result else {
+            throw UserPropertiesAPIError.invalidKey
+        }
+
+        return labels
     }
 
     // MARK: - Fetch user property
@@ -78,7 +110,7 @@ struct ReceiptModeResponseV0: UserPropertiesResponseAPIV0 {
     init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(Int.self)
-        self.value = .areReadRecieptsEnabled(value == 1)
+        self.value = .areReadReceiptsEnabled(value == 1)
     }
 }
 

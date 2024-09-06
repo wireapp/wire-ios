@@ -23,7 +23,7 @@ import XCTest
 
 final class UserPropertiesAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<UserPropertiesAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any UserPropertiesAPI>!
 
     // MARK: - Setup
 
@@ -42,9 +42,21 @@ final class UserPropertiesAPITests: XCTestCase {
 
     // MARK: - Request generation
 
-    func testGetUserPropertyRequest() async throws {
+    func testGetLabelsRequest() async throws {
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
-            _ = try await sut.getProperty(forKey: .wireTypingIndicatorMode)
+            _ = try await sut.getLabels()
+        }
+    }
+
+    func testGetWireIndicatorModeRequest() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.areTypingIndicatorsEnabled
+        }
+    }
+
+    func testGetWireReceiptModeRequest() async throws {
+        try await apiSnapshotHelper.verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.areReadReceiptsEnabled
         }
     }
 
@@ -62,12 +74,12 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV0(httpClient: httpClient)
 
         // When
-        let result = try await sut.getProperty(forKey: .wireReceiptMode)
+        let result = try await sut.areReadReceiptsEnabled
 
         // Then
         XCTAssertEqual(
             result,
-            .areReadRecieptsEnabled(true)
+            true
         )
     }
 
@@ -81,12 +93,12 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV0(httpClient: httpClient)
 
         // When
-        let result = try await sut.getProperty(forKey: .wireTypingIndicatorMode)
+        let result = try await sut.areTypingIndicatorsEnabled
 
         // Then
         XCTAssertEqual(
             result,
-            .areTypingIndicatorsEnabled(false)
+            false
         )
     }
 
@@ -100,21 +112,15 @@ final class UserPropertiesAPITests: XCTestCase {
         let sut = UserPropertiesAPIV0(httpClient: httpClient)
 
         // When
-        let result = try await sut.getProperty(forKey: .labels)
+        let labels = try await sut.getLabels()
 
         // Then
-        switch result {
-        case .conversationLabels(let labels):
-            XCTAssertEqual(labels.count, 2)
-            XCTAssertEqual(labels[0].name, "Foo")
-            XCTAssertEqual(labels[1].name, nil)
-
-        default:
-            XCTFail()
-        }
+        XCTAssertEqual(labels.count, 2)
+        XCTAssertEqual(labels[0].name, "Foo")
+        XCTAssertEqual(labels[1].name, nil)
     }
 
-    func testGetUserProperties_FailureResponse_PropertyNotFound_V0() async throws {
+    func testGetLabels_FailureResponse_PropertyNotFound_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = UserPropertiesAPIV4(httpClient: httpClient)
@@ -122,7 +128,31 @@ final class UserPropertiesAPITests: XCTestCase {
         // Then
         await XCTAssertThrowsError(UserPropertiesAPIError.propertyNotFound) {
             // When
-            try await sut.getProperty(forKey: .wireReceiptMode)
+            _ = try await sut.getLabels()
+        }
+    }
+
+    func testGetUserTypingIndicatorModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
+        let sut = UserPropertiesAPIV4(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(UserPropertiesAPIError.propertyNotFound) {
+            // When
+            _ = try await sut.areTypingIndicatorsEnabled
+        }
+    }
+
+    func testGetUserReceiptModeProperty_FailureResponse_PropertyNotFound_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
+        let sut = UserPropertiesAPIV4(httpClient: httpClient)
+
+        // Then
+        await XCTAssertThrowsError(UserPropertiesAPIError.propertyNotFound) {
+            // When
+            _ = try await sut.areReadReceiptsEnabled
         }
     }
 
@@ -136,7 +166,7 @@ final class UserPropertiesAPITests: XCTestCase {
         // Then
         await XCTAssertThrowsError(UserPropertiesAPIError.invalidKey) {
             // When
-            try await sut.getProperty(forKey: .wireReceiptMode)
+            try await sut.getLabels()
         }
     }
 }

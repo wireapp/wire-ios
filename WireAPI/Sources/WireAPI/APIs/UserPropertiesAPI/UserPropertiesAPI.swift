@@ -22,10 +22,17 @@ import Foundation
 /// An API access object for endpoints concerning user properties.
 public protocol UserPropertiesAPI {
 
-    /// Get the property value for a given key.
-    ///
-    /// - Parameter key: The key of the property fo fetch.
-    /// - Returns: A `UserProperty` enum
+    /// Indicates whether typing indicators is enabled.
 
-    func getProperty(forKey key: UserProperty.Key) async throws -> UserProperty
+    var areTypingIndicatorsEnabled: Bool { get async throws }
+
+    /// Indicates whether read receipts is enabled.
+
+    var areReadReceiptsEnabled: Bool { get async throws }
+
+    /// Get the conversation labels.
+    ///
+    /// - Returns: A `ConversationLabel` list.
+
+    func getLabels() async throws -> [ConversationLabel]
 }

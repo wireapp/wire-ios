@@ -161,6 +161,10 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.savePendingLastRead()
         viewModel.requestMarketingConsentIfNeeded()
+
+        // there are currently always four tab items
+        let offset = (view.bounds.width / 4 * -1.5)
+        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -177,8 +181,6 @@ final class ConversationListViewController: UIViewController {
         zClientViewController?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
-
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
