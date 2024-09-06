@@ -41,6 +41,14 @@ on:
         type: boolean
         default: false
         required: false
+      wire-analytics:
+        type: boolean
+        default: false
+        required: false
+      wire-datadog:
+        type: boolean
+        default: false
+        required: false
       wire-domain-project:
         type: boolean
         default: false
@@ -487,6 +495,42 @@ jobs:
           echo "Testing WireAPI..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireAPI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-api.log | bundle exec xcpretty --report junit --output build/reports/WireAPI.junit
           exit ${PIPESTATUS[0]}
+
+      # WireDatadog
+
+      - name: Build WireDatadog
+        if: ${{ inputs.wire-datadog || inputs.all }}
+        run: |
+          echo "WireDatadog has changes"
+          echo "Building WireDatadog..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDatadog -resultBundlePath xcodebuild-wire-datadog.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-datadog.log | bundle exec xcpretty
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-datadog || inputs.all }}
+        with:
+          results: xcodebuild-wire-datadog.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # No tests exist for WireDatadog currently
+
+      # WireAnalytics
+
+      - name: Build WireAnalytics
+        if: ${{ inputs.wire-analytics || inputs.all }}
+        run: |
+          echo "WireAnalytics has changes"
+          echo "Building WireAnalytics..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireAnalytics -resultBundlePath xcodebuild-wire-analytics.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-analytics.log | bundle exec xcpretty
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-analytics || inputs.all }}
+        with:
+          results: xcodebuild-wire-analytics.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # No tests exist for WireAnalytics currently
 
       # WireDomain
 
