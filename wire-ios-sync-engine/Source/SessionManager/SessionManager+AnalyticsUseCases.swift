@@ -34,7 +34,14 @@ extension SessionManager {
             throw AnalyticsSessionError.missingActiveUserSession
         }
 
-        return DisableAnalyticsUseCase(sessionManager: self, userSession: userSession)
+        let didDisableAnalyticsClosure: () -> Void = {
+            userSession.analyticsSession = nil
+        }
+
+        return DisableAnalyticsUseCase(
+            sessionManager: self,
+            didDisableAnalytics: didDisableAnalyticsClosure
+        )
     }
 
     public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
