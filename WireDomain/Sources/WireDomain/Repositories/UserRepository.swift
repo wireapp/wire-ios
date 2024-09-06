@@ -43,17 +43,28 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    func removeUsersFromFederatedConversations(
+        on domain: String,
+        and otherDomain: String
+    ) async
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
+
+    // MARK: - Object lifecycle
 
     public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
         self.context = context
         self.usersAPI = usersAPI
     }
+
+    // MARK: - Public
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
@@ -89,6 +100,30 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
+    public func removeUsersFromFederatedConversations(
+        on domain: String,
+        and otherDomain: String
+    ) async {
+        await context.perform { [self] in
+            removeUsers(
+                with: [domain, otherDomain],
+                fromConversationsNotOwnedBy: [domain, otherDomain]
+            )
+
+            removeUsers(
+                with: domain,
+                fromConversationsOwnedBy: otherDomain
+            )
+
+            removeUsers(
+                with: otherDomain,
+                fromConversationsOwnedBy: domain
+            )
+        }
+    }
+
+    // MARK: - Private
+
     private func persistUser(from user: WireAPI.User) {
         let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
 
@@ -110,4 +145,119 @@ public final class UserRepository: UserRepositoryProtocol {
         persistedUser.needsToBeUpdatedFromBackend = false
     }
 
+    private func removeUsers(
+        with userDomains: Set<String>,
+        fromConversationsNotOwnedBy domains: Set<String>
+    ) {
+        let notHostedConversations = fetchNotHostedConversations(
+            on: domains,
+            withParticipantsOn: userDomains
+        )
+
+        for notHostedConversation in notHostedConversations {
+            let participants = getParticipants(from: notHostedConversation, on: domains)
+
+            processFederatedConversation(
+                conversation: notHostedConversation,
+                participants: participants,
+                domains: userDomains
+            )
+        }
+    }
+
+    private func removeUsers(
+        with userDomain: String,
+        fromConversationsOwnedBy domain: String
+    ) {
+        let hostedConversations = fetchHostedConversations(
+            on: domain,
+            withParticipantsOn: userDomain
+        )
+
+        for hostedConversation in hostedConversations {
+            let participants = getParticipants(from: hostedConversation, on: [userDomain])
+
+            processFederatedConversation(
+                conversation: hostedConversation,
+                participants: participants,
+                domains: [userDomain, domain]
+            )
+        }
+    }
+
+    private func processFederatedConversation(
+        conversation: ZMConversation,
+        participants: Set<ZMUser>,
+        domains: Set<String>
+    ) {
+        let selfUser = ZMUser.selfUser(in: context)
+
+        conversation.appendFederationTerminationSystemMessage(
+            domains: Array(domains),
+            sender: selfUser,
+            at: .now
+        )
+
+        conversation.removeParticipantsLocally(participants)
+
+        conversation.appendParticipantsRemovedAnonymouslySystemMessage(
+            users: participants,
+            sender: selfUser,
+            removedReason: .federationTermination,
+            at: .now
+        )
+    }
+
+    private func getParticipants(
+        from conversation: ZMConversation,
+        on domains: Set<String>
+    ) -> Set<ZMUser> {
+        let localParticipants = Set(conversation.participantRoles.compactMap(\.user))
+
+        let participants = localParticipants.filter { user in
+            if let domain = user.domain {
+                domain.isOne(of: domains)
+            } else {
+                false
+            }
+        }
+
+        return participants
+    }
+
+    private func fetchHostedConversations(
+        on domain: String,
+        withParticipantsOn userDomain: String
+    ) -> [ZMConversation] {
+        let groupConversation = ZMConversation.groupConversations(
+            hostedOnDomain: domain,
+            in: context
+        )
+
+        return groupConversation.filter {
+            let localParticipants = Set($0.participantRoles.compactMap(\.user))
+            let localParticipantDomains = Set(localParticipants.compactMap(\.domain))
+
+            let userDomains = Set([userDomain])
+
+            return userDomains.isSubset(of: localParticipantDomains)
+        }
+    }
+
+    private func fetchNotHostedConversations(
+        on domains: Set<String>,
+        withParticipantsOn userDomains: Set<String>
+    ) -> [ZMConversation] {
+        let groupConversation = ZMConversation.groupConversations(
+            notHostedOnDomains: Array(domains),
+            in: context
+        )
+
+        return groupConversation.filter {
+            let localParticipants = Set($0.participantRoles.compactMap(\.user))
+            let localParticipantDomains = Set(localParticipants.compactMap(\.domain))
+
+            return userDomains.isSubset(of: localParticipantDomains)
+        }
+    }
 }
