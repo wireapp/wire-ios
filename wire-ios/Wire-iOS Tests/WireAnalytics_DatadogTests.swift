@@ -16,19 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireCommonComponents
+import XCTest
 
-public extension AsyncSequence {
+class WireAnalytics_DatadogTests: XCTestCase {
 
-    /// Convert the async sequence to an asynchronous stream.
-    ///
-    /// - Returns: An `AsyncThrowingStream` of the same element.
+    func test_enable_isExecutedOnlyOnce() {
+        // GIVEN
+        var count = 0
+        WireAnalytics.Datadog.enableOnlyOnce = .init({
+            count += 1
+        })
+        let concurrentQueue = DispatchQueue(label: "test", attributes: .concurrent)
 
-    func toStream() -> AsyncThrowingStream<Element, any Error> {
-        var iterator = makeAsyncIterator()
-        return AsyncThrowingStream {
-            try await iterator.next()
+        // WHEN
+        for i in 1...1000 {
+            concurrentQueue.async {
+                WireAnalytics.Datadog.enable()
+            }
         }
-    }
 
+        // THEN
+        XCTAssertEqual(count, 1)
+    }
 }
