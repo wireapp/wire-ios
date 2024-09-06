@@ -30,5 +30,6 @@ jobs:
           ./WireTesting
           ./WireUI
           ./WireUtilities
+          ./scripts
           --reporter github-actions-log
           --config .swiftformat

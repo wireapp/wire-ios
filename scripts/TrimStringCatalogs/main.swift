@@ -28,7 +28,6 @@ guard CommandLine.arguments.count > 1 else {
 try TrimStringCatalogs(paths: CommandLine.arguments[1...])
 
 func TrimStringCatalogs(paths: some Collection<String>) throws {
-
     let whitelistedLocalizationKeys = [
         "Base",
         "ar",
@@ -54,7 +53,6 @@ func TrimStringCatalogs(paths: some Collection<String>) throws {
     ]
 
     for path in paths {
-
         let url = URL(fileURLWithPath: path)
         var data = try Data(contentsOf: url)
         print("Trimming \(path) ...")

@@ -23,7 +23,6 @@ import XCTest
 final class Tests: XCTestCase {
 
     func testTrimmingStringCatalog() throws {
-
         let input = try XCTUnwrap(Bundle.module.url(forResource: "Untrimmed_xcstrings", withExtension: nil))
         let expectedOutput = try XCTUnwrap(Bundle.module.url(forResource: "Trimmed_xcstrings", withExtension: nil))
 
