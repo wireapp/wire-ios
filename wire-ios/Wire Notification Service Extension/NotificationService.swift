@@ -28,14 +28,17 @@ final class NotificationService: UNNotificationServiceExtension {
     let simpleService = SimpleNotificationService()
     let legacyService = LegacyNotificationService()
 
+    override init() {
+        super.init()
+        WireAnalytics.Datadog.enable()
+    }
+
     // MARK: - Methods
 
     override func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
-        WireAnalytics.Datadog.enable()
-
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
         if DeveloperFlag.nseV2.isOn {
