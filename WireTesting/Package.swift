@@ -21,15 +21,16 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 .product(name: "WireSystemPackageSupport", package: "WireSystemPackage")
             ],
-            path: "./Sources/WireTesting",
-            swiftSettings: swiftSettings
+            path: "./Sources/WireTesting"
         ),
         .testTarget(name: "WireTestingPkgTests", dependencies: ["WireTestingPkg"], path: "./Tests/WireTestingTests")
     ]
 )
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
-]
+for target in package.targets {
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}
