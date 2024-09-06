@@ -72,9 +72,11 @@ final class APIVersionResolver {
         WireLogger.environment.info("received api version response")
 
         guard response.result == .success else {
-            guard response.httpStatus == 404 else {
+            if response.httpStatus == 404 {
+                WireLogger.environment.warn("api version response was not success, falling back to v0")
                 BackendInfo.apiVersion = .v0
-                
+                BackendInfo.domain = "wire.com"
+                BackendInfo.isFederationEnabled = false
                 return
             }
             WireLogger.environment.warn("api version response was not successful")
