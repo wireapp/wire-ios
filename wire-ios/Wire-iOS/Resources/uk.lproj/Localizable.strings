@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Далі";
@@ -43,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Гостьова кімната";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Ви)";
@@ -105,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Запросіть колег приєднатися до команди";
 "peoplepicker.quick-action.open-conversation" = "Вiдкрити";
 "peoplepicker.quick-action.create-conversation" = "Створити групу";
-"peoplepicker.quick-action.create-guest-room" = "Створити гостьову кімнату";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Керування сервісами";
 
 "peoplepicker.federation.domain_unvailable" = "Федеративний домен наразі не доступний. [Дізнатися більше](%@)";
@@ -136,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Торкніться, щоб активувати.";
 "conversation_list.header.self_team.accessibility_value.active" = "Наразі активна.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Є нові повідомлення.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Контакти";
-"conversation_list.bottom_bar.conversations.title" = "Розмови";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Архівувати";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "в Контактах";

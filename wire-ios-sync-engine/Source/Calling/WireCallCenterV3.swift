@@ -433,7 +433,11 @@ extension WireCallCenterV3 {
     /// Call this method when the callParticipants changed and avs calls the handler `wcall_participant_changed_h`
     func callParticipantsChanged(conversationId: AVSIdentifier, participants: [AVSCallMember]) {
         guard isEnabled else { return }
-        guard !shouldEndCall(conversationId: conversationId, participants: participants) else {
+        let shouldEndCall = shouldEndCall(
+            conversationId: conversationId,
+            previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
+            newParticipants: participants)
+        guard !shouldEndCall else {
             endAllCalls()
             return
         }
@@ -456,15 +460,18 @@ extension WireCallCenterV3 {
 
 }
 
-// MARK: - Call ending helpers
+// MARK: - Call ending for oneOnOne conversations
 
 extension WireCallCenterV3 {
 
-    /// This is a short term solution for 1:1 calls via SFT.
     /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
     /// If the other user hangs up, we should end the call for the self user.
     /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
-    private func shouldEndCall(conversationId: AVSIdentifier, participants: [AVSCallMember]) -> Bool {
+    private func shouldEndCall(
+        conversationId: AVSIdentifier,
+        previousParticipants: [AVSCallMember],
+        newParticipants: [AVSCallMember]
+    ) -> Bool {
         guard let context = uiMOC,
               let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
@@ -478,23 +485,36 @@ extension WireCallCenterV3 {
 
         switch conversation.messageProtocol {
         case .mls:
-            return shouldEndCallForMLS(participants: participants)
+            return shouldEndCallForMLS(
+                previousParticipants: previousParticipants,
+                newParticipants: newParticipants)
         case .mixed, .proteus:
-            return shouldEndCallForProteus(participants: participants)
+            return shouldEndCallForProteus(
+                previousParticipants: previousParticipants,
+                newParticipants: newParticipants)
         }
     }
 
-    private func shouldEndCallForMLS(participants: [AVSCallMember]) -> Bool {
+    private func shouldEndCallForMLS(
+        previousParticipants: [AVSCallMember],
+        newParticipants: [AVSCallMember]
+    ) -> Bool {
         /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the call should end.
-        guard participants.count == 2,
-              participants[1].audioState == .connecting else {
+        guard
+            previousParticipants.count == 2,
+            newParticipants.count == 2,
+            newParticipants[1].audioState == .connecting
+        else {
             return false
         }
         return true
     }
 
-    private func shouldEndCallForProteus(participants: [AVSCallMember]) -> Bool {
-        return participants.count == 1
+    private func shouldEndCallForProteus(
+        previousParticipants: [AVSCallMember],
+        newParticipants: [AVSCallMember]
+    ) -> Bool {
+        return previousParticipants.count == 2 && newParticipants.count == 1
     }
 
 }

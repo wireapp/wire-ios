@@ -15,9 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // General strings
-
 
 "general.ok" = "OK";
 "general.next" = "Næste";
@@ -43,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Gæsterum";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (You)";
@@ -105,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Inviter personer til holdet";
 "peoplepicker.quick-action.open-conversation" = "Åbn";
 "peoplepicker.quick-action.create-conversation" = "Opret gruppe";
-"peoplepicker.quick-action.create-guest-room" = "Opret gæsterum";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Manage Services";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -136,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tap to activate.";
 "conversation_list.header.self_team.accessibility_value.active" = "Active now.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Has new messages.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Kontakter";
-"conversation_list.bottom_bar.conversations.title" = "Conversations";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arkiv";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "i Kontaktpersoner";
