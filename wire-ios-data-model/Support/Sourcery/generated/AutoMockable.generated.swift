@@ -308,19 +308,19 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
         await mock(events)
     }
 
-    // MARK: - processPayload
+    // MARK: - processAndSaveConversationEvents
 
-    public var processPayload_Invocations: [ZMTransportData] = []
-    public var processPayload_MockMethod: ((ZMTransportData) -> Void)?
+    public var processAndSaveConversationEvents_Invocations: [[ZMUpdateEvent]] = []
+    public var processAndSaveConversationEvents_MockMethod: (([ZMUpdateEvent]) async -> Void)?
 
-    public func processPayload(_ payload: ZMTransportData) {
-        processPayload_Invocations.append(payload)
+    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
+        processAndSaveConversationEvents_Invocations.append(events)
 
-        guard let mock = processPayload_MockMethod else {
-            fatalError("no mock for `processPayload`")
+        guard let mock = processAndSaveConversationEvents_MockMethod else {
+            fatalError("no mock for `processAndSaveConversationEvents`")
         }
 
-        mock(payload)
+        await mock(events)
     }
 
 }

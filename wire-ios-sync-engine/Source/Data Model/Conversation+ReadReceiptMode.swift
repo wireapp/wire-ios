@@ -49,18 +49,11 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-                let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
-                Task {
-                    // TODO: [WPB-10283] [F] clean this
-                    await userSession.conversationEventProcessor.processConversationEvents([event])
-                    await userSession.syncContext.perform {
-                        // compared to eventProcessor the conversationEventProcessor does not save the context so we do it here
-                       _ = userSession.syncContext.saveOrRollback()
-                    }
+
+                userSession.processConversationEvents([event]) {
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))
                     }
-                    userSession.syncContext.leaveAllGroups(groups)
                 }
             } else if response.httpStatus == 204 {
                 self.hasReadReceiptsEnabled = enabled

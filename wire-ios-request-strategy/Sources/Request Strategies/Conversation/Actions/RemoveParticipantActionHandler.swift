@@ -107,7 +107,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
                 action.notifyResult(.success(Void()))
             }
             WaitingGroupTask(context: context) { [self] in
-                await eventProcessor.processConversationEvents([updateEvent])
+                await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }
 

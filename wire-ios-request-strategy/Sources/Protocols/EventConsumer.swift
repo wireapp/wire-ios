@@ -44,9 +44,6 @@ public protocol ZMEventAsyncConsumer: NSObjectProtocol {
 
     /// Process events received either through a live update (websocket / notification / notification stream)
     /// or through history download
-    /// @param liveEvents true if the events were received through websocket / notifications / notification stream,
-    ///    false if received from history download
-    /// @param prefetchResult prefetched conversations and messages that the events belong to, indexed by remote identifier and
-    func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async
+    func processEvents(_ events: [ZMUpdateEvent]) async
 
 }
