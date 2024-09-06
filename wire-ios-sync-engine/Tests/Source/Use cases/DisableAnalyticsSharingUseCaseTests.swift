@@ -17,6 +17,7 @@
 //
 
 import WireAnalyticsSupport
+import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -26,21 +27,35 @@ final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: DisableAnalyticsUseCase!
+    private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
     private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
+    private var didDisableAnalyticsCalled: Bool!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         mockAnalyticsManager = MockAnalyticsManagerProtocol()
-        sut = DisableAnalyticsUseCase(analyticsManager: mockAnalyticsManager)
+        mockAnalyticsManagerProvider = MockAnalyticsManagerProviding()
+        mockAnalyticsManagerProvider.analyticsManager = mockAnalyticsManager
+        didDisableAnalyticsCalled = false
+
+        sut = DisableAnalyticsUseCase(
+            sessionManager: mockAnalyticsManagerProvider,
+            didDisableAnalytics: { [weak self] in
+                self?.didDisableAnalyticsCalled = true
+            }
+        )
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
+        mockAnalyticsManagerProvider = nil
         mockAnalyticsManager = nil
+        didDisableAnalyticsCalled = nil
+
         super.tearDown()
     }
 
@@ -57,5 +72,27 @@ final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
         // THEN
         XCTAssertTrue(mockAnalyticsManager.invokedDisableTracking, "disableTracking should be called on the analytics manager")
         XCTAssertEqual(mockAnalyticsManager.invokedDisableTrackingCount, 1, "disableTracking should be called exactly once")
+    }
+
+    func testInvoke_SetsAnalyticsManagerToNil() {
+        // GIVEN
+        XCTAssertNotNil(mockAnalyticsManagerProvider.analyticsManager)
+
+        // WHEN
+        sut.invoke()
+
+        // THEN
+        XCTAssertNil(mockAnalyticsManagerProvider.analyticsManager, "analyticsManager should be set to nil after invoke")
+    }
+
+    func testInvoke_CallsDidDisableAnalyticsClosure() {
+        // GIVEN
+        XCTAssertFalse(didDisableAnalyticsCalled)
+
+        // WHEN
+        sut.invoke()
+
+        // THEN
+        XCTAssertTrue(didDisableAnalyticsCalled, "didDisableAnalytics closure should be called after invoke")
     }
 }
