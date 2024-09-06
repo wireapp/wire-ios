@@ -16,7 +16,23 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     targets: [
-        .executableTarget(name: "TrimStringCatalogs", path: "./TrimStringCatalogs"),
+        .executableTarget(
+            name: "TrimStringCatalogs",
+            path: "./TrimStringCatalogs",
+            exclude: ["./Tests.swift", "./TestResources"],
+            sources: ["./main.swift"]
+        ),
+        .testTarget(
+            name: "TrimStringCatalogsTests",
+            dependencies: ["TrimStringCatalogs"],
+            path: "./TrimStringCatalogs",
+            exclude: ["./main.swift"],
+            sources: ["./Tests.swift"],
+            resources: [
+                .copy("./TestResources/Trimmed_xcstrings"),
+                .copy("./TestResources/Untrimmed_xcstrings")
+            ]
+        ),
 
         .binaryTarget(
             name: "LicensePlist",
