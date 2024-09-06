@@ -635,7 +635,7 @@ public final class ZMUserSession: NSObject {
     // might be replaced by something more elegant
     public func processConversationEvents(_ events: [ZMUpdateEvent], completion: (() -> Void)?) {
         WaitingGroupTask(context: self.syncContext) { [weak self] in
-            guard let self else { 
+            guard let self else {
                 completion?()
                 return
             }
