@@ -667,7 +667,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
-            completion(true) // Success, session is loaded and updated
+            completion(true)
         }
     }
 
