@@ -23,6 +23,7 @@ extension SessionManager {
     enum AnalyticsSessionError: Error {
 
         case analyticsNotAvailable
+        case analyticsConfigurationNotAvailable
         case missingAnalyticsUserProfile
         case missingActiveUserSession
 
@@ -47,7 +48,7 @@ extension SessionManager {
     public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
 
         guard let analyticsSessionConfiguration else {
-            throw AnalyticsSessionError.analyticsNotAvailable
+            throw AnalyticsSessionError.analyticsConfigurationNotAvailable
         }
 
         guard let userSession = self.activeUserSession else {
