@@ -118,8 +118,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
-      
-      
+    
     steps:
       - name: Add Masks
         run: |
@@ -162,6 +161,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
+      - name: Trim unused localizations from string catalogs
+        run: find . -name "*.xcstrings" | xargs xcrun swift run --package-path ./scripts TrimStringCatalogs
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
       - name: Archiving Logs
