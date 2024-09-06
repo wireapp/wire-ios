@@ -167,6 +167,15 @@ jobs:
         run: |
           bundle exec fastlane prepare_for_tests
 
+      # Scripts
+
+      - name: Test Scripts
+        if: ${{ inputs.scripts || inputs.all }}
+        run: |
+          echo "Scripts has changes"
+          echo "Testing Scripts..."
+          xcrun swift test --package-path ./scripts
+
       # WireSystem
 
       - name: Build WireSystem
