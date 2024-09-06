@@ -25,7 +25,7 @@ guard CommandLine.arguments.count > 1 else {
     exit(1)
 }
 
-let whitelisted = [
+let whitelistedLocalizationKeys = [
     "Base",
     "ar",
     "da",
@@ -49,9 +49,38 @@ let whitelisted = [
 ]
 
 for path in CommandLine.arguments[1...] {
+
     let url = URL(fileURLWithPath: path)
-    let data = try Data(contentsOf: url)
+    var data = try Data(contentsOf: url)
     print("Trimming \(path) ...")
-    let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-    // WIP
+
+    /*
+     {
+       "version" : "1.0",
+       "sourceLanguage" : "en",
+       "strings" : {
+         "tabBar.archived.description" : {
+           "localizations" : {
+             "ar" : {
+               "stringUnit" : {
+                 "state" : "translated",
+                 "value" : "حفظ في الأرشيف"
+               },
+               ...
+     */
+
+    var json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+    var strings = json["strings"] as! [String: Any]
+    for stringKey in strings.keys {
+        var string = strings[stringKey] as! [String: Any]
+        var localizations = string["localizations"] as! [String: Any]
+        for localizationKey in localizations.keys where !whitelistedLocalizationKeys.contains(localizationKey) {
+            localizations.removeValue(forKey: localizationKey)
+        }
+        string["localizations"] = localizations
+        strings[stringKey] = string
+    }
+    json["strings"] = strings
+    data = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys])
+    try data.write(to: url)
 }
