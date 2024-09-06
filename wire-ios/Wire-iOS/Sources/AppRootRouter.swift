@@ -272,11 +272,15 @@ extension AppRootRouter {
         enqueueTransition(to: .headless) { [weak self] in
 
             self?.sessionManager.start(launchOptions: launchOptions) { [weak self] in
-                guard let self else { return }
+                guard let self = self else { return }
 
-                if trackingManager.disableAnalyticsSharing == false, sessionManager.analyticsSessionConfiguration != nil {
-                    let useCase = try! sessionManager.makeEnableAnalyticsUseCase()
-                    useCase.invoke()
+                if !trackingManager.disableAnalyticsSharing, let analyticsConfig = sessionManager.analyticsSessionConfiguration {
+                    do {
+                        let useCase = try sessionManager.makeEnableAnalyticsUseCase()
+                        useCase.invoke()
+                    } catch {
+                        WireLogger.analytics.error("Failed to create the use case")
+                    }
                 }
             }
         }
