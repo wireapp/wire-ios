@@ -23,6 +23,8 @@ import UIKit
 import AppKit
 #endif
 
+import WireAnalytics
+
 @testable import WireSyncEngine
 
 public class MockMessageSenderInterface: MessageSenderInterface {
@@ -225,4 +227,24 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
             fatalError("no mock for `appendLocation`")
         }
     }
+}
+
+class MockDisableAnalyticsUseCaseUserSession: DisableAnalyticsUseCaseUserSession {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - analyticsSession
+
+    var analyticsSession: (any AnalyticsSessionProtocol)?
+}
+
+class MockEnableAnalyticsUseCaseUserSession: EnableAnalyticsUseCaseUserSession {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - analyticsSession
+
+    var analyticsSession: (any AnalyticsSessionProtocol)?
 }

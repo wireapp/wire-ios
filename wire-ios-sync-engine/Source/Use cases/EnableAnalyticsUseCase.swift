@@ -33,7 +33,7 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
 /// Concrete implementation of the EnableAnalyticsUseCaseProtocol.
 /// This struct is responsible for enabling analytics sharing for a specific user profile.
-public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
+struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
@@ -52,7 +52,7 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     /// - Parameters:
     ///   - analyticsManager: The analytics manager to use for enabling tracking.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
-    public init(
+    init(
         sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
@@ -70,7 +70,7 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     ///
     /// This method calls the `enableTracking` method on the analytics manager
     /// with the provided user profile.
-    public func invoke() {
+    func invoke() {
         let analyticsManager = AnalyticsManager(
             appKey: analyticsSessionConfiguration.countlyKey,
             host: analyticsSessionConfiguration.host
@@ -81,4 +81,8 @@ public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
         let analyticsSession = analyticsManager.enableTracking(analyticsUserProfile)
         userSession.analyticsSession = analyticsSession
     }
+}
+
+protocol EnableAnalyticsUseCaseUserSession: AnyObject {
+    var analyticsSession: (any AnalyticsSessionProtocol)? { get set }
 }

@@ -41,7 +41,7 @@ extension SessionManager {
 
         return DisableAnalyticsUseCase(
             sessionManager: self,
-            didDisableAnalytics: didDisableAnalyticsClosure
+            userSession: userSession
         )
     }
 
@@ -68,3 +68,6 @@ extension SessionManager {
     }
 
 }
+
+extension ZMUserSession: EnableAnalyticsUseCaseUserSession {}
+extension ZMUserSession: DisableAnalyticsUseCaseUserSession {}

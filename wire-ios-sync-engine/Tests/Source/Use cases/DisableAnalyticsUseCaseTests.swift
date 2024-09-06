@@ -17,34 +17,32 @@
 //
 
 import WireAnalyticsSupport
-import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
-final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
+final class DisableAnalyticsUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: DisableAnalyticsUseCase!
+    private var sut: DisableAnalyticsUseCase<MockDisableAnalyticsUseCaseUserSession>!
     private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
     private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
-    private var didDisableAnalyticsCalled: Bool!
+    private var mockUserSession: MockDisableAnalyticsUseCaseUserSession!
 
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
+
         mockAnalyticsManager = MockAnalyticsManagerProtocol()
         mockAnalyticsManagerProvider = MockAnalyticsManagerProviding()
         mockAnalyticsManagerProvider.analyticsManager = mockAnalyticsManager
-        didDisableAnalyticsCalled = false
+        mockUserSession = .init()
 
-        sut = DisableAnalyticsUseCase(
+        sut = .init(
             sessionManager: mockAnalyticsManagerProvider,
-            didDisableAnalytics: { [weak self] in
-                self?.didDisableAnalyticsCalled = true
-            }
+            userSession: mockUserSession
         )
     }
 
@@ -54,9 +52,6 @@ final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
         sut = nil
         mockAnalyticsManagerProvider = nil
         mockAnalyticsManager = nil
-        didDisableAnalyticsCalled = nil
-
-        super.tearDown()
     }
 
     // MARK: - Unit Tests
@@ -85,14 +80,14 @@ final class DisableAnalyticsSharingUseCaseTests: XCTestCase {
         XCTAssertNil(mockAnalyticsManagerProvider.analyticsManager, "analyticsManager should be set to nil after invoke")
     }
 
-    func testInvoke_CallsDidDisableAnalyticsClosure() {
+    func testInvoke_ClearsAnalyticsSession() {
         // GIVEN
-        XCTAssertFalse(didDisableAnalyticsCalled)
+        mockUserSession.analyticsSession = MockAnalyticsSessionProtocol()
 
         // WHEN
         sut.invoke()
 
         // THEN
-        XCTAssertTrue(didDisableAnalyticsCalled, "didDisableAnalytics closure should be called after invoke")
+        XCTAssertNil(mockUserSession.analyticsSession, "userSession.analyticsSession is not set to nil")
     }
 }
