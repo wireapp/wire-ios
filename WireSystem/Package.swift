@@ -15,14 +15,13 @@ let package = Package(
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireSystemPackage", path: "./Sources/WireSystem", swiftSettings: swiftSettings),
+        .target(name: "WireSystemPackage", path: "./Sources/WireSystem"),
         .testTarget(name: "WireSystemPackageTests", dependencies: ["WireSystemPackage"], path: "./Tests/WireSystemTests"),
 
         .target(
             name: "WireSystemPackageSupport",
             dependencies: ["WireSystemPackage"],
             path: "./Sources/WireSystemSupport",
-            swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
@@ -30,8 +29,10 @@ let package = Package(
     ]
 )
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
-]
+for target in package.targets {
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}

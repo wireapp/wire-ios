@@ -18,13 +18,11 @@ let package = Package(
     targets: [
         .target(
             name: "WireAPI",
-            dependencies: ["WireUtilitiesPackage"],
-            swiftSettings: swiftSettings
+            dependencies: ["WireUtilitiesPackage"]
         ),
         .target(
             name: "WireAPISupport",
             dependencies: ["WireAPI"],
-            swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
@@ -48,14 +46,18 @@ let package = Package(
                 .process("APIs/UserPropertiesAPI/Resources"),
                 .process("APIs/SelfUserAPI/Resources"),
                 .process("Network/PushChannel/Resources")
-            ],
-            swiftSettings: swiftSettings
+            ]
         )
     ]
 )
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
-]
+for target in package.targets {
+    // remove this once we updated the Sourcery stencil to support existential any
+    guard target.name != "WireAPISupport" else { continue }
+
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}

@@ -24,7 +24,7 @@ public extension AsyncSequence {
     ///
     /// - Returns: An `AsyncThrowingStream` of the same element.
 
-    func toStream() -> AsyncThrowingStream<Element, Error> {
+    func toStream() -> AsyncThrowingStream<Element, any Error> {
         var iterator = makeAsyncIterator()
         return AsyncThrowingStream {
             try await iterator.next()

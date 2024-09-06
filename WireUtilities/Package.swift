@@ -16,14 +16,13 @@ let package = Package(
         .package(name: "WireSystemPackage", path: "../WireSystem")
     ],
     targets: [
-        .target(name: "WireUtilitiesPkg", dependencies: ["WireSystemPackage"], path: "./Sources/WireUtilities", swiftSettings: swiftSettings),
-        .testTarget(name: "WireUtilitiesPkgTests", dependencies: ["WireUtilitiesPkg"], path: "./Tests/WireUtilitiesTests", swiftSettings: swiftSettings),
+        .target(name: "WireUtilitiesPkg", dependencies: ["WireSystemPackage"], path: "./Sources/WireUtilities"),
+        .testTarget(name: "WireUtilitiesPkgTests", dependencies: ["WireUtilitiesPkg"], path: "./Tests/WireUtilitiesTests"),
 
         .target(
             name: "WireUtilitiesPkgSupport",
             dependencies: ["WireUtilitiesPkg"],
             path: "./Sources/WireUtilitiesSupport",
-            swiftSettings: swiftSettings,
             plugins: [
                 .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
             ]
@@ -31,8 +30,10 @@ let package = Package(
     ]
 )
 
-let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableExperimentalFeature("StrictConcurrency")
-]
+for target in package.targets {
+    target.swiftSettings = [
+        .enableUpcomingFeature("ExistentialAny"),
+        .enableUpcomingFeature("GlobalConcurrency"),
+        .enableExperimentalFeature("StrictConcurrency")
+    ]
+}
