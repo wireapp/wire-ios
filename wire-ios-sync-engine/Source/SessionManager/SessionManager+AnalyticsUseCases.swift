@@ -35,10 +35,6 @@ extension SessionManager {
             throw AnalyticsSessionError.missingActiveUserSession
         }
 
-        let didDisableAnalyticsClosure: () -> Void = {
-            userSession.analyticsSession = nil
-        }
-
         return DisableAnalyticsUseCase(
             sessionManager: self,
             userSession: userSession
