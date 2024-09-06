@@ -609,10 +609,12 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func start(
         launchOptions: LaunchOptions,
-        completion: @escaping () -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         if let account = accountManager.selectedAccount {
-            selectInitialAccount(account, launchOptions: launchOptions, completion: completion)
+            selectInitialAccount(account, launchOptions: launchOptions) { success in
+                completion(success)
+            }
             // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
@@ -621,7 +623,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
-            completion()
+            completion(false)
         }
     }
 
@@ -644,25 +646,28 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func selectInitialAccount(
         _ account: Account,
         launchOptions: LaunchOptions,
-        completion: @escaping () -> Void
+        completion: @escaping (Bool) -> Void
     ) {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
             if (try? URLAction(url: url))?.causesLogout == true {
                 // Do not log in if the launch URL action causes a logout
-                return completion()
+                return completion(false)
             }
         }
 
         guard !shouldPerformPostRebootLogout() else {
             performPostRebootLogout()
-            return completion()
+            return completion(false)
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let self, let session else { return completion() }
+            guard let self = self, let session = session else {
+                return completion(false)
+            }
+
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
-            completion()
+            completion(true) // Success, session is loaded and updated
         }
     }
 
