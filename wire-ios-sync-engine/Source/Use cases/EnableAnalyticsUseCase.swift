@@ -33,7 +33,8 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
 /// Concrete implementation of the EnableAnalyticsUseCaseProtocol.
 /// This struct is responsible for enabling analytics sharing for a specific user profile.
-struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
+struct EnableAnalyticsUseCase<UserSession>: EnableAnalyticsUseCaseProtocol
+where UserSession: EnableAnalyticsUseCaseUserSession {
 
     // MARK: - Properties
 
@@ -43,7 +44,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     private let analyticsUserProfile: AnalyticsUserProfile
 
-    private let userSession: ZMUserSession
+    private let userSession: UserSession
 
     // MARK: - Initialization
 
@@ -56,7 +57,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
         sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
-        userSession: ZMUserSession
+        userSession: UserSession
     ) {
         self.sessionManager = sessionManager
         self.analyticsSessionConfiguration = analyticsSessionConfiguration
