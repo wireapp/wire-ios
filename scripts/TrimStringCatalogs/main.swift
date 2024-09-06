@@ -25,62 +25,67 @@ guard CommandLine.arguments.count > 1 else {
     exit(1)
 }
 
-let whitelistedLocalizationKeys = [
-    "Base",
-    "ar",
-    "da",
-    "de",
-    "es",
-    "et",
-    "fi",
-    "fr",
-    "it",
-    "ja",
-    "lt",
-    "nl",
-    "pl",
-    "pt-BR",
-    "ru",
-    "sl",
-    "tr",
-    "uk",
-    "zh-Hans",
-    "zh-Hant"
-]
+try TrimStringCatalogs(paths: CommandLine.arguments[1...])
 
-for path in CommandLine.arguments[1...] {
+func TrimStringCatalogs(paths: some Collection<String>) throws {
+    let whitelistedLocalizationKeys = [
+        "Base",
+        "ar",
+        "da",
+        "de",
+        "en",
+        "es",
+        "et",
+        "fi",
+        "fr",
+        "it",
+        "ja",
+        "lt",
+        "nl",
+        "pl",
+        "pt-BR",
+        "ru",
+        "sl",
+        "tr",
+        "uk",
+        "zh-Hans",
+        "zh-Hant"
+    ]
 
-    let url = URL(fileURLWithPath: path)
-    var data = try Data(contentsOf: url)
-    print("Trimming \(path) ...")
+    for path in paths {
+        let url = URL(fileURLWithPath: path)
+        var data = try Data(contentsOf: url)
+        print("Trimming \(path) ...")
 
-    /*
-     {
-       "version" : "1.0",
-       "sourceLanguage" : "en",
-       "strings" : {
-         "tabBar.archived.description" : {
-           "localizations" : {
-             "ar" : {
-               "stringUnit" : {
-                 "state" : "translated",
-                 "value" : "حفظ في الأرشيف"
-               },
-               ...
-     */
+        /*
+         {
+           "version" : "1.0",
+           "sourceLanguage" : "en",
+           "strings" : {
+             "tabBar.archived.description" : {
+               "localizations" : {
+                 "ar" : {
+                   "stringUnit" : {
+                     "state" : "translated",
+                     "value" : "حفظ في الأرشيف"
+                   },
+                   ...
+         */
 
-    var json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
-    var strings = json["strings"] as! [String: Any]
-    for stringKey in strings.keys {
-        var string = strings[stringKey] as! [String: Any]
-        var localizations = string["localizations"] as! [String: Any]
-        for localizationKey in localizations.keys where !whitelistedLocalizationKeys.contains(localizationKey) {
-            localizations.removeValue(forKey: localizationKey)
+        var json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
+        var strings = json["strings"] as! [String: Any]
+        for stringKey in strings.keys {
+            var string = strings[stringKey] as! [String: Any]
+            var localizations = string["localizations"] as! [String: Any]
+            for localizationKey in localizations.keys where !whitelistedLocalizationKeys.contains(localizationKey) {
+                localizations.removeValue(forKey: localizationKey)
+            }
+            string["localizations"] = localizations
+            strings[stringKey] = string
         }
-        string["localizations"] = localizations
-        strings[stringKey] = string
+        json["strings"] = strings
+        data = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys])
+        data.append(.init("\n".utf8))
+        try data.write(to: url)
     }
-    json["strings"] = strings
-    data = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys])
-    try data.write(to: url)
 }

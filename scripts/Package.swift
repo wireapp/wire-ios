@@ -4,7 +4,7 @@
 import PackageDescription
 
 // How to add/update packages?
-// 
+//
 // 1. Go to GitHub repository, the latest release.
 // 2. Copy url of <*.artifactbundle.zip> and enter here as 'url'.
 // 3. Download <*.artifactbundle.zip>, open terminal, go to the folder like '~/Downloads/'.
@@ -16,7 +16,23 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     targets: [
-        .executableTarget(name: "TrimStringCatalogs", path: "./TrimStringCatalogs"),
+        .executableTarget(
+            name: "TrimStringCatalogs",
+            path: "./TrimStringCatalogs",
+            exclude: ["./Tests.swift", "./TestResources"],
+            sources: ["./main.swift"]
+        ),
+        .testTarget(
+            name: "TrimStringCatalogsTests",
+            dependencies: ["TrimStringCatalogs"],
+            path: "./TrimStringCatalogs",
+            exclude: ["./main.swift"],
+            sources: ["./Tests.swift"],
+            resources: [
+                .copy("./TestResources/Trimmed_xcstrings"),
+                .copy("./TestResources/Untrimmed_xcstrings")
+            ]
+        ),
 
         .binaryTarget(
             name: "LicensePlist",
