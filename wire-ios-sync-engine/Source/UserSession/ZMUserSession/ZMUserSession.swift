@@ -395,7 +395,7 @@ public final class ZMUserSession: NSObject {
     }
 
     func trackAppOpenAnalyticEventWhenAppBecomesActive() {
-        let appOpenEvent = AppOpenAnalyticsEvent() // TODO: on a fresh app start, should it be triggered as well?
+        let appOpenEvent = AppOpenAnalyticsEvent()
         analyticsSession?.trackEvent(appOpenEvent)
     }
 
