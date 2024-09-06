@@ -101,6 +101,10 @@ on:
         type: boolean
         default: false
         required: false
+      scripts:
+        type: boolean
+        default: false
+        required: false
       all:
         type: boolean
         default: false
