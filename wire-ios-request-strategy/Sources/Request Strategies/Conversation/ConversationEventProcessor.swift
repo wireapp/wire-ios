@@ -56,7 +56,7 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     // MARK: - Methods
 
-    public func processPayload(_ payload: ZMTransportData) {
+    func processPayload(_ payload: ZMTransportData) {
         // here's no uuid is needed since we process it directly it's just convenience to get the payload
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
             Task {
@@ -65,13 +65,21 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
         }
     }
 
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    /// This method is called from EventProcessor directly
+    public func processEvents(_ events: [ZMUpdateEvent]) async {
         await processConversationEvents(events)
     }
 
     public func processConversationEvents(_ events: [ZMUpdateEvent]) async {
         for event in events {
             await processConversationEvent(event)
+        }
+    }
+
+    public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
+        await processConversationEvents(events)
+        _ = await context.perform {
+            self.context.saveOrRollback()
         }
     }
 

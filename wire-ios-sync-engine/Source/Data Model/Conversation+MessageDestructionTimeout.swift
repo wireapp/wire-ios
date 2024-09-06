@@ -38,11 +38,12 @@ public enum MessageDestructionTimerError: Error {
 }
 
 extension ZMTransportResponse {
+    /// Convenience method to pass events from REST api calls response to processors, not storing the event
+    /// - Note: this will need to be cleared out when moving calls to WireAPI
     var updateEvent: ZMUpdateEvent? {
         guard let payload else {
             return nil
         }
-        // TODO: [WPB-10283] [F] this method is used to pass events from REST api calls response to processors, not storing the event - to be cleaned
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())
     }
 }
@@ -57,18 +58,19 @@ extension ZMConversation {
     ) {
         // TODO: [WPB-5730] move this method to a useCase
 
-        guard let apiVersion = BackendInfo.apiVersion else {
+        guard let apiVersion = BackendInfo.apiVersion,
+                let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
         let request = MessageDestructionTimeoutRequestFactory.set(timeout: Int(timeout.rawValue), for: self, apiVersion: apiVersion)
-        request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
+        request.add(ZMCompletionHandler(on: managedObjectContext) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
-                // Process `conversation.message-timer-update` event
-                // swiftlint:disable:next todo_requires_jira_link
-                // FIXME: [WPB-9089] replace with ConversationEventProcessor
-                userSession.processConversationEvents([event])
-                completion(.success(()))
+                userSession.processConversationEvents([event]) {
+                    managedObjectContext.perform {
+                        completion(.success(()))
+                    }
+                }
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 log.debug("Error updating message destruction timeout \(error): \(response)")
