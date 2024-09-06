@@ -81,7 +81,7 @@ final class SessionManagerTests: IntegrationTest {
         sut.delegate = mockDelegate
 
         // when
-        sut.start(launchOptions: [:]) { [self] in
+        sut.start(launchOptions: [:]) { [self] _ in
             // then
             XCTAssert(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.isEmpty)
             XCTAssertEqual(mockDelegate.sessionManagerDidFailToLoginError_Invocations.count, 1)
@@ -106,7 +106,7 @@ final class SessionManagerTests: IntegrationTest {
         sut.delegate = mockDelegate
 
         // when
-        sut.start(launchOptions: [:]) { [self] in
+        sut.start(launchOptions: [:]) { [self] _ in
             let observer = MockSessionManagerObserver()
             let token = sut.addSessionManagerCreatedSessionObserver(observer)
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -165,7 +165,7 @@ final class SessionManagerTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
-        testSessionManager.start(launchOptions: [:]) { [self] in
+        testSessionManager.start(launchOptions: [:]) { [self] _ in
 
             // WHEN
             createToken = testSessionManager.addSessionManagerCreatedSessionObserver(observer)
@@ -265,7 +265,7 @@ final class SessionManagerTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
-        testSessionManager.start(launchOptions: [:]) { [self] in
+        testSessionManager.start(launchOptions: [:]) { [self] _ in
             // WHEN
             destroyToken = testSessionManager.addSessionManagerDestroyedSessionObserver(observer)
 
@@ -341,7 +341,7 @@ final class SessionManagerTests: IntegrationTest {
         sut.delegate = mockDelegate
 
         // WHEN
-        sut.start(launchOptions: [:]) { [self] in
+        sut.start(launchOptions: [:]) { [self] _ in
             sut.accountManager.addAndSelect(createAccount())
             XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
@@ -372,7 +372,7 @@ final class SessionManagerTests: IntegrationTest {
 
         // WHEN && THEN
         sut.accountManager.addAndSelect(createAccount())
-        sut.start(launchOptions: [:]) { [self] in
+        sut.start(launchOptions: [:]) { [self] _ in
             XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
             performIgnoringZMLogError {
@@ -389,7 +389,7 @@ final class SessionManagerTests: IntegrationTest {
         let sut = sessionManagerBuilder.build()
         sut.configuration.authenticateAfterReboot = true
         sut.accountManager.addAndSelect(createAccount())
-        sut.start(launchOptions: [:]) { [self] in
+        sut.start(launchOptions: [:]) { [self] _ in
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertEqual(sut.accountManager.accounts.count, 1)
             SessionManager.previousSystemBootTime = ProcessInfo.processInfo.bootTime()
@@ -410,7 +410,7 @@ final class SessionManagerTests: IntegrationTest {
         sut.accountManager.addAndSelect(createAccount())
 
         // WHEN
-        sut.start(launchOptions: [:]) { [self] in
+        sut.start(launchOptions: [:]) { [self] _ in
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             XCTAssertEqual(sut.accountManager.accounts.count, 1)
             ZMKeychain.deleteAllKeychainItems(withAccountName: SessionManager.previousSystemBootTimeContainer)
