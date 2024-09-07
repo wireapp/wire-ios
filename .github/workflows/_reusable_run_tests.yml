@@ -77,7 +77,7 @@ on:
         type: boolean
         default: false
         required: false
-      wire-ios-link-preview:
+      wire-link-preview:
         type: boolean
         default: false
         required: false
@@ -321,24 +321,24 @@ jobs:
       # WireLinkPreview
 
       - name: Build WireLinkPreview
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
+        if: ${{ inputs.wire-link-preview || inputs.all }}
         run: |
           echo "WireLinkPreview has changes"
           echo "Building WireLinkPreview..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -resultBundlePath xcodebuild-wire-ios-link-preview.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -resultBundlePath xcodebuild-wire-link-preview.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-link-preview.log | bundle exec xcpretty
 
       - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
+        if: ${{ inputs.wire-link-preview || inputs.all }}
         with:
-          results: xcodebuild-wire-ios-link-preview.xcresult
+          results: xcodebuild-wire-link-preview.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test WireLinkPreview
-        if: ${{ inputs.wire-ios-link-preview || inputs.all }}
+        if: ${{ inputs.wire-link-preview || inputs.all }}
         run: |
           echo "Testing WireLinkPreview..."
-          xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-link-preview.log | bundle exec xcpretty --report junit --output build/reports/WireLinkPreview.junit
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireLinkPreview -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-link-preview.log | bundle exec xcpretty --report junit --output build/reports/WireLinkPreview.junit
           exit ${PIPESTATUS[0]}
 
       # WireImages

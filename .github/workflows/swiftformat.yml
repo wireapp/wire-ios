@@ -27,6 +27,7 @@ jobs:
           ./WireAnalytics
           ./WireDomain
           ./WireFoundation
+          ./WireLinkPreview
           ./WireUI
           ./scripts
           --reporter github-actions-log

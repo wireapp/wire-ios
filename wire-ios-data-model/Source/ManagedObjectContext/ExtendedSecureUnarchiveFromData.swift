@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLinkPreview
 
 /// An extension of the NSSecureUnarchiveFromData which supports encoding/decoding our
 /// custom classes.
