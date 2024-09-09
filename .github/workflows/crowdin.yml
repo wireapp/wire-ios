@@ -16,13 +16,13 @@ concurrency:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-22.04
-    container: swift:5.9.2-jammy-slim
+    container: swift:5.9.2-jammy
 
     steps:
-      - name: Install Git
-        run: |
-          apt-get update
-          apt-get install -y git
+      #- name: Install Git
+      #  run: |
+      #    apt-get update
+      #    apt-get install -y git
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,7 +58,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          find . -name "*.xcstrings" > string-catalogs.txt
+          find . -name "*.xcstrings" | tee string-catalogs.txt
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
           git commit --no-verify -m "trim string catalogs"
