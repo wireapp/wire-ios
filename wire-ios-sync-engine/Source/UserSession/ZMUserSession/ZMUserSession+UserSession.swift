@@ -371,6 +371,10 @@ extension ZMUserSession: UserSession {
         return AppendLocationMessageUseCase(analyticsSession: analyticsSession)
     }
 
+    public func makeAppendFileMessageUseCase() -> AppendFileMessageUseCaseProtocol {
+        return AppendFileMessageUseCase(analyticsSession: analyticsSession)
+    }
+
 }
 
 extension UInt64 {
