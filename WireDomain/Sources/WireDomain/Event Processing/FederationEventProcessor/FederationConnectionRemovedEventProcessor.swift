@@ -45,7 +45,7 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
             throw Error.missingDomains(event.domains)
         }
 
-        await repository.terminateFederationConnection(with: domain, and: otherDomain)
+        await repository.removeFederationConnection(between: domain, and: otherDomain)
     }
 
 }
