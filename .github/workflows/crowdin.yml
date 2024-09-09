@@ -54,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trim unused localizations from string catalogs
-        if: steps.crowdin.outputs.pull_request_url
+        #if: steps.crowdin.outputs.pull_request_url
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
