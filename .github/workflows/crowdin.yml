@@ -44,24 +44,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          BASE_BRANCH=${GITHUB_REF#refs/heads/}
+          HEAD_BRANCH="chore/update-localization"
+
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
           find . -name "*.xcstrings" | tee string-catalogs.txt
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
+
           # abort if there are no changes
-          if git diff --quiet && git diff --cached --quiet; then echo "No changes to commit."; exit 0; fi
+          if git diff --quiet && git diff --cached --quiet; then
+          echo "No changes to commit."
+          exit 0
+          fi
           git commit --no-verify -m "trim string catalogs"
-          git push --no-verify origin chore/update-localization
+          git push --no-verify origin "$HEAD_BRANCH"
+
           # abort if there no changes to be merged
-          BASE_BRANCH=${GITHUB_REF#refs/heads/}
-          if git diff --quiet "origin/$BASE_BRANCH"; then echo "No changes compared to the base branch, aborting."; exit 0; fi
-          # abourt if the pr already exists
+          if git diff --quiet "origin/$BASE_BRANCH"; then
+          echo "No changes compared to the base branch, aborting."
+          exit 0
+          fi
+
+          # abort if the pr already exists
           apt update && apt install -y gh
-          PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head chore/update-localization --state open --json number --jq '.[0].number')
-          if [ -z "$PR_EXISTS" ]; then echo "A PR already exists, aborting."; exit 0; fi
+          PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head "$HEAD_BRANCH" --state open --json number --jq '.[0].number')
+          if [ -z "$PR_EXISTS" ]; then
+          echo "A PR already exists, aborting."
+          exit 0
+          fi
+
           gh pr create --fill \
           --base "$BASE_BRANCH" \
-          --head chore/update-localization \
+          --head "$HEAD_BRANCH" \
           --title "chore: Update localization - no ticket" \
           --body "This PR pulls in the latest localization translations from Crowdin." \
           --reviewer "wireapp/ios"
