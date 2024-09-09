@@ -314,7 +314,7 @@ public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
 
     public var eventsProcessed: [ZMUpdateEvent] = []
     public var processEventsCalled: Bool = false
-    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         processEventsCalled = true
         eventsProcessed.append(contentsOf: events)
     }

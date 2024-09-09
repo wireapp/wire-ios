@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 private let zmLog = ZMSLog(tag: "Services")
 
@@ -189,14 +190,14 @@ public extension ServiceUser {
     func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
 
         createConversation(transportSession: userSession.transportSession,
-                           eventProcessor: userSession.updateEventProcessor!,
+                           eventProcessor: userSession.conversationEventProcessor,
                            contextProvider: userSession,
                            completionHandler: completionHandler)
     }
 
     internal func createConversation(
         transportSession: TransportSessionType,
-        eventProcessor: UpdateEventProcessor,
+        eventProcessor: ConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
@@ -290,14 +291,14 @@ public extension ZMConversation {
     func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         add(serviceUser: serviceUserData,
             transportSession: userSession.transportSession,
-            eventProcessor: userSession.updateEventProcessor!,
+            eventProcessor: userSession.conversationEventProcessor,
             contextProvider: userSession.coreDataStack,
             completionHandler: completionHandler)
     }
 
     internal func add(serviceUser serviceUserData: ServiceUserData,
                       transportSession: TransportSessionType,
-                      eventProcessor: UpdateEventProcessor,
+                      eventProcessor: ConversationEventProcessorProtocol,
                       contextProvider: ContextProvider,
                       completionHandler: @escaping (Result<Void, Error>) -> Void) {
 
@@ -317,14 +318,13 @@ public extension ZMConversation {
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),
                   let userAddEventPayload = responseDictionary["event"] as? ZMTransportData,
-                  // TODO: [WPB-10283] [F] uuid set in order to pass the stored events and be processed
                   let event = ZMUpdateEvent(fromEventStreamPayload: userAddEventPayload, uuid: UUID()) else {
                       completionHandler(.failure(AddBotError(response: response)))
                       return
                   }
 
             WaitingGroupTask(context: contextProvider.viewContext) {
-                try? await eventProcessor.processEvents([event])
+                await eventProcessor.processConversationEvents([event])
                 await contextProvider.viewContext.perform {
                     completionHandler(.success(()))
                 }

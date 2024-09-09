@@ -28,6 +28,8 @@ jobs:
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
       wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
       wire-api: ${{ steps.filter.outputs.wire-api }}
+      wire-analytics: ${{ steps.filter.outputs.wire-analytics }}
+      wire-datadog: ${{ steps.filter.outputs.wire-datadog }}
       wire-domain-project: ${{ steps.filter.outputs.wire-domain-project }}
       wire-domain: ${{ steps.filter.outputs.wire-domain }}
       wire-ios-transport: ${{ steps.filter.outputs.wire-ios-transport }}
@@ -70,6 +72,10 @@ jobs:
               - 'wire-ios-request-strategy/**'
             wire-api:
               - 'WireAPI/**'
+            wire-analytics:
+              - 'WireAnalytics/Sources/WireAnalytics/**'
+            wire-datadog:
+              - 'WireAnalytics/Sources/WireDatadog/**'
             wire-domain-project:
               - 'WireDomain/Project/**'
               - 'WireDomain/Sources/WireDomain/**'
@@ -118,6 +124,8 @@ jobs:
       wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
       wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
       wire-api: ${{ needs.detect-changes.outputs.wire-api == 'true' }}
+      wire-analytics: ${{ needs.detect-changes.outputs.wire-analytics == 'true' }}
+      wire-datadog: ${{ needs.detect-changes.outputs.wire-datadog == 'true' }}
       wire-domain-project: ${{ needs.detect-changes.outputs.wire-domain-project == 'true' }}
       wire-domain: ${{ needs.detect-changes.outputs.wire-domain == 'true' }}
       wire-ios-transport: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
