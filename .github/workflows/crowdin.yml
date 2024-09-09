@@ -50,12 +50,12 @@ jobs:
 
       - name: Trim unused localizations from string catalogs
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          export REPO_URL="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@${INPUT_GITHUB_BASE_URL}/${GITHUB_REPOSITORY}.git"
           find . -name "*.xcstrings" | tee string-catalogs.txt
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
           git commit --no-verify -m "trim string catalogs"
-          git push --no-verify "$REPO_URL"
+          git remote -v
+          git push --no-verify origin chore/update-localization
