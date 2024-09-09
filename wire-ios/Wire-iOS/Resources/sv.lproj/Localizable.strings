@@ -816,7 +816,7 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Alternativ";
 "participants.footer.add_title" = "Lägg till deltagare";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Upp till %1$d deltagare kan delta i en gruppkonversation.";
 "participants.section.admins.footer" = "Det finns inga administratörer.";
 "participants.section.members.footer" = "There are no members.";
 
@@ -2105,10 +2105,10 @@
 "device.details.section.e2ei.update_certificate" = "Uppdatera certifikat";
 "device.details.section.e2ei.status.title" = "Status";
 "device.details.section.e2ei.status.not_activated" = "Not activated";
-"device.details.section.e2ei.status.valid" = "Valid";
+"device.details.section.e2ei.status.valid" = "Giltig";
 "device.details.section.e2ei.status.revoked" = "Revoked";
 "device.details.section.e2ei.status.expired" = "Expired";
-"device.details.section.e2ei.status.invalid" = "Invalid";
+"device.details.section.e2ei.status.invalid" = "Ogiltig";
 "device.details.section.e2ei.serial_number" = "Serienummer";
 "device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";

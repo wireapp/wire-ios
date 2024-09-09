@@ -290,7 +290,7 @@
 "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
 
 "createSecureGuestLink.CreateLinkButton.description" = "Skapa gästlänk";
-"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tryck för att skapa en säker gästlänk";
 
 // MARK: - Search Gifs
 

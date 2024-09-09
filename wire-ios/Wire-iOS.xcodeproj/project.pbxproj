@@ -8963,7 +8963,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/../SourceryPlugin\" \\\n    \"$PROJECT_DIR/../WireAPI\" \\\n    \"$PROJECT_DIR/../WireAnalytics\" \\\n    \"$PROJECT_DIR/../WireDomain\" \\\n    \"$PROJECT_DIR/../WireSystem\" \\\n    \"$PROJECT_DIR/../WireTesting\" \\\n    \"$PROJECT_DIR/../WireUI\" \\\n    \"$PROJECT_DIR/../WireUtilities\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
+			shellScript = "# Format\n\"$PROJECT_DIR/../scripts/run-swiftformat.sh\" \\\n    \"$PROJECT_DIR/../SourceryPlugin\" \\\n    \"$PROJECT_DIR/../WireAPI\" \\\n    \"$PROJECT_DIR/../WireAnalytics\" \\\n    \"$PROJECT_DIR/../WireDomain\" \\\n    \"$PROJECT_DIR/../WireSystem\" \\\n    \"$PROJECT_DIR/../WireTesting\" \\\n    \"$PROJECT_DIR/../WireUI\" \\\n    \"$PROJECT_DIR/../WireUtilities\" \\\n    \"$PROJECT_DIR/../scripts\"\n\n# Lint\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --fix \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n\"$PROJECT_DIR/../scripts/run-swiftlint.sh\" \\\n    --strict \\\n    --no-cache \\\n    --quiet \\\n    \"$PROJECT_DIR/..\"\n";
 		};
 		5E055B28228AAF1500E91314 /* Update Settings.bundle */ = {
 			isa = PBXShellScriptBuildPhase;
