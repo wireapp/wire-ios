@@ -17,7 +17,7 @@
 //
 
 import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import WireUtilities
 import XCTest
 

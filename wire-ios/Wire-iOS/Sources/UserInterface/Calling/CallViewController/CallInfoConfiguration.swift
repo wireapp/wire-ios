@@ -19,8 +19,8 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireFoundation
 import WireSyncEngine
-import WireSystemPackage
 
 extension VoiceChannel {
     func accessoryType() -> CallInfoViewControllerAccessoryType {
@@ -67,6 +67,7 @@ extension VoiceChannel {
         return true
     }
 
+    @MainActor
     func mediaState(with permissions: CallPermissionsConfiguration) -> MediaState {
         let device = DeviceWrapper(device: .current)
         let isPadOrPod = device.userInterfaceIdiom == .pad || device.model.contains("iPod")
@@ -121,6 +122,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
 
     private let voiceChannelSnapshot: VoiceChannelSnapshot
 
+    @MainActor
     init(
         voiceChannel: VoiceChannel,
         preferedVideoPlaceholderState: CallVideoPlaceholderState,

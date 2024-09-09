@@ -61,10 +61,10 @@
 		54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */; };
 		54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */; };
 		54AE5AAB1B78FA62002757E9 /* MockTransportSessionRequestsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9C1B78FA62002757E9 /* MockTransportSessionRequestsTests.m */; };
-		54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
 		5502C6EE22B8EC31000684B7 /* MockPendingLegalHoldClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5502C6ED22B8EC31000684B7 /* MockPendingLegalHoldClient.swift */; };
-		5996E8C32C19FFDB007A52F0 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */; };
+		591B6E562C8B09D6009F8A7B /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5996E8C22C19FFDB007A52F0 /* OCMock.xcframework */; };
+		591B6E592C8B09DA009F8A7B /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59EC73FA2C20B82F00E5C036 /* WireSystem.framework */; };
 		59EC74002C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EC73FF2C20B87F00E5C036 /* NSManagedObjectContext+executeFetchRequestOrAssert.m */; };
 		63128BB3247C014300673D18 /* MockTransportSession+OTR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */; };
@@ -135,18 +135,6 @@
 			remoteInfo = WireMockTransport;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		54CE5E731B753568007F3065 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06392CFA23C36D30003186E6 /* MockParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockParticipantRole.swift; sourceTree = "<group>"; };
@@ -294,8 +282,8 @@
 				59EC73FB2C20B82F00E5C036 /* WireSystem.framework in Frameworks */,
 				EE67F700296F09D8001D7C88 /* WireTesting.framework in Frameworks */,
 				CB79AC682C6D0009003CF5F4 /* WireTransportSupport.framework in Frameworks */,
+				591B6E562C8B09D6009F8A7B /* OCMock.xcframework in Frameworks */,
 				EE974128295498E2000C9340 /* WireTransport.framework in Frameworks */,
-				5996E8C32C19FFDB007A52F0 /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +291,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */,
+				591B6E592C8B09DA009F8A7B /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -841,7 +829,6 @@
 				54C9023A1B7532DD007162A8 /* Sources */,
 				54C9023B1B7532DD007162A8 /* Frameworks */,
 				54C9023C1B7532DD007162A8 /* Resources */,
-				54CE5E731B753568007F3065 /* CopyFiles */,
 			);
 			buildRules = (
 			);

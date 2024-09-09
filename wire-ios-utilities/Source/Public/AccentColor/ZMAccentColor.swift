@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilitiesPkg
+import WireFoundation
 
 /// A type which only exists because optional `AccentColor?` cannot be represented in Objective C.
 @objc(ZMAccentColor) @objcMembers
