@@ -63,7 +63,7 @@ jobs:
           fi
 
           # commit and push the changes
-          git commit --no-verify -m "trim string catalogs"
+          git commit --no-verify -m "chore: trim string catalogs"
           git push --no-verify origin "$HEAD_BRANCH"
 
           # abort if there no changes to be merged
