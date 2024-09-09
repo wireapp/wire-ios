@@ -54,7 +54,7 @@ jobs:
           git push --no-verify origin chore/update-localization
           # abort if there no changes to be merged
           BASE_BRANCH=${GITHUB_REF#refs/heads/}
-          if git diff --quiet "origin/$BASE_BRANCH"; then exit 0; fi
+          if git diff --quiet "origin/$BASE_BRANCH"; then echo "No changes compared to the base branch, aborting."; exit 0; fi
           # abourt if the pr already exists
           apt update && apt install -y gh
           PR_EXISTS=$(gh pr list --base "$BASE_BRANCH" --head chore/update-localization --state open --json number --jq '.[0].number')
