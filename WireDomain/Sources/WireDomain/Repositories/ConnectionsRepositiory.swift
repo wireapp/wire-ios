@@ -31,12 +31,12 @@ protocol ConnectionsRepositoryProtocol {
 
     func pullConnections() async throws
 
-    /// Terminates a federation connection with specified domains.
+    /// Removes a federation connection between two domains.
     ///
-    /// - Parameter domain : The domain for which the federation connection was removed.
-    /// - Parameter otherDomain: The other domain for which the federation connection was removed.
+    /// - Parameter domain : The domain for which the connection was removed.
+    /// - Parameter otherDomain: The other domain for which the connection was removed.
 
-    func terminateFederationConnection(with domain: String, and otherDomain: String) async
+    func removeFederationConnection(between domain: String, and otherDomain: String) async
 }
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
@@ -74,29 +74,29 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         }
     }
 
-    public func terminateFederationConnection(
-        with domain: String,
+    public func removeFederationConnection(
+        between domain: String,
         and otherDomain: String
     ) async {
         await context.perform { [self] in
 
             /// For all conversations that are NOT owned by `domain` or `otherDomain` and contain users from `domain` and `otherDomain`, remove users from `domain` and `otherDomain` from those conversations.
 
-            terminateFederationConnection(
+            removeFederationConnection(
                 with: [domain, otherDomain],
                 forConversationsNotOwnedBy: [domain, otherDomain]
             )
 
             /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
 
-            terminateFederationConnection(
+            removeFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: otherDomain
             )
 
             /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations.
 
-            terminateFederationConnection(
+            removeFederationConnection(
                 with: otherDomain,
                 forConversationsOwnedBy: domain
             )
@@ -105,7 +105,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     // MARK: - Private
 
-    private func terminateFederationConnection(
+    private func removeFederationConnection(
         with userDomains: Set<String>,
         forConversationsNotOwnedBy domains: Set<String>
     ) {
@@ -117,7 +117,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         for notHostedConversation in notHostedConversations {
             let participants = getParticipants(from: notHostedConversation, on: userDomains)
 
-            terminateFederationConnection(
+            removeFederationConnection(
                 for: notHostedConversation,
                 with: participants,
                 on: userDomains
@@ -125,7 +125,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         }
     }
 
-    private func terminateFederationConnection(
+    private func removeFederationConnection(
         with userDomain: String,
         forConversationsOwnedBy domain: String
     ) {
@@ -137,7 +137,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         for hostedConversation in hostedConversations {
             let participants = getParticipants(from: hostedConversation, on: [userDomain])
 
-            terminateFederationConnection(
+            removeFederationConnection(
                 for: hostedConversation,
                 with: participants,
                 on: [userDomain, domain]
@@ -145,7 +145,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         }
     }
 
-    private func terminateFederationConnection(
+    private func removeFederationConnection(
         for conversation: ZMConversation,
         with participants: Set<ZMUser>,
         on domains: Set<String>
