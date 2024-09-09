@@ -110,7 +110,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         forConversationsNotOwnedBy domains: Set<String>
     ) {
         let notHostedConversations = fetchNotHostedConversations(
-            on: domains,
+            excludedDomains: domains,
             withParticipantsOn: userDomains
         )
 
@@ -188,11 +188,11 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
     }
 
     private func fetchNotHostedConversations(
-        on domains: Set<String>,
+        excludedDomains: Set<String>,
         withParticipantsOn userDomains: Set<String>
     ) -> [ZMConversation] {
         let groupConversation = ZMConversation.groupConversations(
-            notHostedOnDomains: Array(domains),
+            notHostedOnDomains: Array(excludedDomains),
             in: context
         )
 
