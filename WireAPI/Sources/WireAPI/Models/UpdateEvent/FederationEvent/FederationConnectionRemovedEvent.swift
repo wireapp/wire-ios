@@ -28,4 +28,8 @@ public struct FederationConnectionRemovedEvent: Equatable, Codable {
 
     public let domains: Set<String>
 
+    public init(domains: Set<String>) {
+        self.domains = domains
+    }
+
 }

@@ -32,9 +32,20 @@ protocol FederationConnectionRemovedEventProcessorProtocol {
 
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
 
-    func processEvent(_: FederationConnectionRemovedEvent) async throws {
-        // TODO: [WPB-10187]
-        assertionFailure("not implemented yet")
+    enum Error: Swift.Error {
+        case missingDomains(Set<String>)
+    }
+
+    let repository: any ConnectionsRepositoryProtocol
+
+    func processEvent(_ event: FederationConnectionRemovedEvent) async throws {
+        guard let domain = Array(event.domains).first,
+              let otherDomain = Array(event.domains).last
+        else {
+            throw Error.missingDomains(event.domains)
+        }
+
+        await repository.terminateFederationConnection(with: domain, and: otherDomain)
     }
 
 }

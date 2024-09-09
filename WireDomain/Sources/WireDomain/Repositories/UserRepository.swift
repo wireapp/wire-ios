@@ -47,13 +47,19 @@ public protocol UserRepositoryProtocol {
 
 public final class UserRepository: UserRepositoryProtocol {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
+
+    // MARK: - Object lifecycle
 
     public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
         self.context = context
         self.usersAPI = usersAPI
     }
+
+    // MARK: - Public
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
@@ -89,6 +95,8 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
+    // MARK: - Private
+
     private func persistUser(from user: WireAPI.User) {
         let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
 
@@ -109,5 +117,4 @@ public final class UserRepository: UserRepositoryProtocol {
         persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
         persistedUser.needsToBeUpdatedFromBackend = false
     }
-
 }
