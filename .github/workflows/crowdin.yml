@@ -3,8 +3,6 @@ name: Crowdin Action
 on:
   push:
     branches: [ develop ]
-  pull_request:
-    types: [opened, synchronize, edited, ready_for_review]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,8 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with: # TODO: might not be needed for workflow_dispatch trigger
-          fetch-depth: 0
 
       - name: Crowdin action
         uses: crowdin/github-action@v2
@@ -57,8 +53,6 @@ jobs:
           git commit --no-verify -m "trim string catalogs"
           git push --no-verify origin chore/update-localization
           # abort if there no changes to be merged
-          echo git diff "origin/$GITHUB_REF"
-          git diff "origin/$GITHUB_REF"
           if git diff --quiet "origin/$GITHUB_REF"; then exit 0; fi
           # abourt if the pr already exists
           apt update && apt install -y gh
