@@ -3,6 +3,8 @@ name: Crowdin Action
 on:
   push:
     branches: [ develop ]
+  pull_request:
+    types: [opened, synchronize, edited, ready_for_review]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -14,8 +16,9 @@ concurrency:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-latest
+    if: false
 
-    steps:      
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -23,7 +26,7 @@ jobs:
         uses: crowdin/github-action@v2
         with:
           # For more info: https://github.com/crowdin/github-action/blob/master/action.yml
-          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}          
+          project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
           token: ${{ secrets.CROWDIN_API_TOKEN }}
           config: crowdin.yml
 
@@ -41,3 +44,14 @@ jobs:
           pull_request_team_reviewers: "wireapp/ios"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trim-string-catalog:
+    runs-on: ubuntu-latest
+    container: swift:5.9-slim
+    steps:
+      - name: tmp0
+        run: pwd
+      - name: tmp1
+        run: ls
+      - name: Trim unused localizations from string catalogs
+        run: find . -name "*.xcstrings" | xargs echo xcrun swift run --package-path ./scripts TrimStringCatalogs
