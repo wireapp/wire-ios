@@ -36,7 +36,7 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
         case missingDomains(Set<String>)
     }
 
-    let repository: any UserRepositoryProtocol
+    let repository: any ConnectionsRepositoryProtocol
 
     func processEvent(_ event: FederationConnectionRemovedEvent) async throws {
         guard let domain = Array(event.domains).first,
@@ -45,7 +45,7 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
             throw Error.missingDomains(event.domains)
         }
 
-        await repository.removeUsersFromFederatedConversations(on: domain, and: otherDomain)
+        await repository.terminateFederationConnection(with: domain, and: otherDomain)
     }
 
 }

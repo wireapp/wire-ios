@@ -362,21 +362,6 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
-    // MARK: - removeUsersFromFederatedConversations
-
-    public var removeUsersFromFederatedConversationsOnAnd_Invocations: [(domain: String, otherDomain: String)] = []
-    public var removeUsersFromFederatedConversationsOnAnd_MockMethod: ((String, String) async -> Void)?
-
-    public func removeUsersFromFederatedConversations(on domain: String, and otherDomain: String) async {
-        removeUsersFromFederatedConversationsOnAnd_Invocations.append((domain: domain, otherDomain: otherDomain))
-
-        guard let mock = removeUsersFromFederatedConversationsOnAnd_MockMethod else {
-            fatalError("no mock for `removeUsersFromFederatedConversationsOnAnd`")
-        }
-
-        await mock(domain, otherDomain)
-    }
-
 }
 
 // swiftlint:enable variable_name

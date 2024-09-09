@@ -32,7 +32,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
     var coreDataStack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
-    let mockAPI = MockUsersAPI()
+    let mockAPI = MockConnectionsAPI()
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -41,7 +41,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
     override func setUp() async throws {
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationConnectionRemovedEventProcessor(
-            repository: UserRepository(context: context, usersAPI: mockAPI)
+            repository: ConnectionsRepository(connectionsAPI: mockAPI, context: context)
         )
         try await super.setUp()
     }
@@ -55,7 +55,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Removes_Participants_From_Group_Conversations_On_Specified_Not_Hosted_Domains() async throws {
+    func testProcessEvent_It_Removes_Participants_From_A_Group_Conversation_That_Is_Not_Hosted_On_Specified_Domains() async throws {
         // Given
 
         await context.perform { [self] in
@@ -82,12 +82,12 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
             )
 
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
-            XCTAssertEqual(conversation.localParticipants.count, 0) /// All participants were removed from the conversation with domain name "domain.com".
-            XCTAssertEqual(conversation.allMessages.count, 2) /// A federation termination system message and a participant removed anonymously system message.
+            XCTAssertEqual(conversation.localParticipants.count, 0) /// All participants were removed from the conversation that is not hosted on specified domains.
+            XCTAssertEqual(conversation.allMessages.count, 2) /// A federation termination system message + a participant removed system message.
         }
     }
 
-    func testProcessEvent_It_Removes_Participants_From_Group_Conversations_On_Specified_Hosted_Domains() async throws {
+    func testProcessEvent_It_Removes_Participant_On_A_Domain_From_A_Group_Conversation_That_Is_Hosted_On_Another_Domain() async throws {
         // Given
 
         await context.perform { [self] in
@@ -114,14 +114,13 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
             )
 
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
-            XCTAssertEqual(conversation.localParticipants.count, 1) /// The user not part of the specified domain was removed from the conversation, the one remaining is part of the specified domain.
+            XCTAssertEqual(conversation.localParticipants.count, 1) /// The user not part of the specified hosted domain was removed from the conversation.
             XCTAssertEqual(conversation.allMessages.count, 2) /// A federation termination system message and a participant removed anonymously system message.
         }
     }
 
     /// Creates a conversation with domain "domain.com" with participants of "domain3.com" and "domain4.com",
-    /// The federation event domains are "domain3.com" and "domain4.com".
-    /// It enables testing that the participants are all removed from the conversation that is not hosted on these domains.
+    /// It enables testing that the participants are all removed from the conversation that is not hosted on "domain3.com" and "domain4.com".
     private func makeNotHostedConversation() -> ZMConversation {
         var created = false
 
@@ -176,7 +175,6 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
     }
 
     /// Creates a conversation with domain "domain4.com" with participants of "domain3.com" and "domain4.com",
-    /// The federation event domains are "domain3.com" and "domain4.com".
     /// It enables testing that the participant with domain "domain3.com" is removed from the conversation that is hosted on "domain4.com"
     private func makeHostedConversation() -> ZMConversation {
         let user = ZMUser.fetchOrCreate(
