@@ -15,8 +15,8 @@ concurrency:
 
 jobs:
   synchronize-with-crowdin:
-    runs-on: ubuntu-latest
-    if: false
+    runs-on: ubuntu-22.04
+    container: swift:5.9.2-jammy-slim
 
     steps:
       - name: Checkout
@@ -45,13 +45,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  trim-string-catalog:
-    runs-on: ubuntu-latest
-    container: swift:5.9-slim
-    steps:
-      - name: tmp0
-        run: pwd
-      - name: tmp1
-        run: ls
       - name: Trim unused localizations from string catalogs
         run: find . -name "*.xcstrings" | xargs echo xcrun swift run --package-path ./scripts TrimStringCatalogs
