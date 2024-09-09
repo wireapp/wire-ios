@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import WireUtilities
-import WireUtilitiesPkg
 
 /// An object containing the details required to create a team.
 public struct UnregisteredTeam: Equatable {

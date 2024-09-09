@@ -17,7 +17,7 @@
 //
 
 import WireCommonComponents
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire

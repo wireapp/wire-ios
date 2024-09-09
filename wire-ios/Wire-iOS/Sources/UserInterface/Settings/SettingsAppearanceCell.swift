@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 import WireUtilities
-import WireUtilitiesPkg
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
 

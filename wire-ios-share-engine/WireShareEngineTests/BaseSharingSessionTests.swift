@@ -17,13 +17,14 @@
 //
 
 import WireDataModel
-@testable import WireDataModelSupport
 import WireLinkPreview
 import WireMockTransport
 import WireRequestStrategy
 @testable import WireShareEngine
 import WireTesting
 import XCTest
+
+@testable import WireDataModelSupport
 
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated

@@ -19,9 +19,10 @@
 import Foundation
 import WireDataModel
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
 import XCTest
+
+@testable import WireShareEngine
 
 final class OperationLoopTests: ZMTBaseTest {
 

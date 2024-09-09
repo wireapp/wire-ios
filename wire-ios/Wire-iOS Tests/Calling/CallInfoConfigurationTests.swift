@@ -86,6 +86,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     // MARK: - OneToOne Audio
 
+    @MainActor
     func testOneToOneIncomingAudioRinging() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -102,6 +103,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneIncomingAudioRinging, configuration)
     }
 
+    @MainActor
     func testOneToOneOutgoingAudioRinging() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -118,6 +120,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneOutgoingAudioRinging, configuration)
     }
 
+    @MainActor
     func testOneToOneProteusConversationIncomingAudioDegraded() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -141,6 +144,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneIncomingAudioDegraded, configuration)
     }
 
+    @MainActor
     func testOneToOneProteusConversationOutgoingAudioDegraded() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -167,6 +171,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneOutgoingAudioDegraded, configuration)
     }
 
+    @MainActor
     func testOneToOneMlsConversationOutgoingAudioDegraded() {
         // given
         let mockConversation = createOneOnOneConversation(messageProtocol: .mls)
@@ -192,6 +197,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneMlsOutgoingAudioDegraded, configuration)
     }
 
+    @MainActor
     func testOneToOneAudioConnecting() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -208,6 +214,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneAudioConnecting, configuration)
     }
 
+    @MainActor
     func testOneToOneAudioEstablishedUpgradedToVideo() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -227,6 +234,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneVideoEstablished, configuration)
     }
 
+    @MainActor
     func testOneToOneAudioEstablished() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -245,6 +253,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneAudioEstablished, configuration)
     }
 
+    @MainActor
     func testOneToOneAudioEstablishedCBR() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -264,6 +273,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneAudioEstablishedCBR, configuration)
     }
 
+    @MainActor
     func testOneToOneAudioEstablishedVBR() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -285,6 +295,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     // MARK: - OneToOne Video
 
+    @MainActor
     func testOneToOneIncomingVideoRinging() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -303,6 +314,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneIncomingVideoRinging, configuration)
     }
 
+    @MainActor
     func testOneToOneIncomingVideoRingingVideoTurnedOff() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -321,6 +333,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneIncomingVideoRingingVideoTurnedOff, configuration)
     }
 
+    @MainActor
     func testOneToOneOutgoingVideoRinging() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -339,6 +352,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneOutgoingVideoRinging, configuration)
     }
 
+    @MainActor
     func testOneToOneVideoConnecting() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -357,6 +371,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneVideoConnecting, configuration)
     }
 
+    @MainActor
     func testOneToOneVideoEstablished() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -381,6 +396,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneVideoEstablished, configuration)
     }
 
+    @MainActor
     func testOneToOneVideoEstablishedWithScreenSharing() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -405,6 +421,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneVideoEstablished, configuration)
     }
 
+    @MainActor
     func testOneToOneVideoEstablishedDowngradedToAudio() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -427,6 +444,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     // MARK: - Group Audio
 
+    @MainActor
     func testGroupIncomingAudioRinging() {
         // given
         let mockConversation = createGroupConversation()
@@ -444,6 +462,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupIncomingAudioRinging, configuration)
     }
 
+    @MainActor
     func testGroupOutgoingAudioRinging() {
         // given
         let mockConversation = createGroupConversation()
@@ -461,6 +480,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupOutgoingAudioRinging, configuration)
     }
 
+    @MainActor
     func testGroupAudioConnecting() {
         // given
         let mockConversation = createGroupConversation()
@@ -478,6 +498,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupAudioConnecting, configuration)
     }
 
+    @MainActor
     func testGroupAudioEstablished() {
         // given
         let mockConversation = createGroupConversation()
@@ -497,6 +518,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupAudioEstablished(mockUsers: mockUsers), configuration)
     }
 
+    @MainActor
     func testGroupAudioEstablishedNonTeamUser() {
         // given
         let mockConversation = createGroupConversation()
@@ -520,6 +542,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupAudioEstablishedVideoUnavailable(mockUsers: mockUsers), configuration)// canToggleMediaType
     }
 
+    @MainActor
     func testGroupAudioEstablishedNonTeamUserRemoteTurnedVideoOn() {
         // given
         let mockConversation = createGroupConversation()
@@ -538,6 +561,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupAudioEstablishedRemoteTurnedVideoOn(mockUsers: mockUsers), configuration)
     }
 
+    @MainActor
     func testGroupAudioEstablishedLargeGroup() {
         // given        
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, groupSize: .large, mockUsers: mockUsers)
@@ -559,6 +583,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupAudioEstablishedVideoUnavailable(mockUsers: mockUsers), configuration)
     }
 
+    @MainActor
     func testOneToOneIncomingVideoRingingWithVideoPermissionsDeniedForever() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -577,6 +602,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.oneToOneIncomingVideoRingingWithPermissionsDeniedForever, configuration)
     }
 
+    @MainActor
     func testOneToOneIncomingVideoRingingWithUndeterminedVideoPermissions() {
         // given
         let mockConversation = createOneOnOneConversation()
@@ -597,6 +623,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     // MARK: - Group Video
 
+    @MainActor
     func testGroupIncomingVideoRinging() {
         // given
         let mockConversation = createGroupConversation()
@@ -615,6 +642,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupIncomingVideoRinging, configuration)
     }
 
+    @MainActor
     func testGroupOutgoingVideoRinging() {
         // given
         let mockConversation = createGroupConversation()
@@ -633,6 +661,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupOutgoingVideoRinging, configuration)
     }
 
+    @MainActor
     func testGroupVideoConnecting() {
         // given
         let mockConversation = createGroupConversation()
@@ -651,6 +680,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         assertEquals(fixture.groupVideoConnecting, configuration)
     }
 
+    @MainActor
     func testGroupVideoEstablished() {
         // given
         let mockConversation = createGroupConversation()
@@ -673,6 +703,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     // MARK: - Video Placeholder
 
+    @MainActor
     func testVideoPermissionsPlaceholderRespectsPreferenceInIncomingVideoCall() {
         // given
         let mockConversation = createGroupConversation()
@@ -691,6 +722,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         XCTAssertEqual(configuration.videoPlaceholderState, .statusTextHidden)
     }
 
+    @MainActor
     func testVideoPermissionsPlaceholderHiddenInIncomingAudioCall() {
         // given
         let mockConversation = createGroupConversation()
@@ -709,6 +741,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         XCTAssertEqual(configuration.videoPlaceholderState, .hidden)
     }
 
+    @MainActor
     func testVideoPermissionsPlaceholderHiddenInEstablishedVideoCall() {
         // given
         let mockConversation = createGroupConversation()

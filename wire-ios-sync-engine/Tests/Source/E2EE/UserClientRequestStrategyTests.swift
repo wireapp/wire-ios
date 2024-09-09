@@ -19,11 +19,12 @@
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
-@testable import WireSyncEngine
 import WireTesting
 import WireTransportSupport
 import WireUtilities
 import XCTest
+
+@testable import WireSyncEngine
 
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {

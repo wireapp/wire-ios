@@ -18,8 +18,9 @@
 
 import Foundation
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
+
+@testable import WireShareEngine
 
 final class RequestGeneratorStoreTests: ZMTBaseTest {
 
