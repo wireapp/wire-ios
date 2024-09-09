@@ -99,11 +99,11 @@ public final class UserRepository: UserRepositoryProtocol {
 
     private func persistUser(from user: WireAPI.User) {
         let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
-        
+
         guard user.deleted == false else {
             return persistedUser.markAccountAsDeleted(at: Date())
         }
-        
+
         persistedUser.name = user.name
         persistedUser.handle = user.handle
         persistedUser.teamIdentifier = user.teamID

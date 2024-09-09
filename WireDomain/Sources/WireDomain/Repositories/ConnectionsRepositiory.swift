@@ -30,7 +30,7 @@ protocol ConnectionsRepositoryProtocol {
     /// Pull self team metadata frmo the server and store locally.
 
     func pullConnections() async throws
-    
+
     /// Terminates a federation connection with specified domains.
     ///
     /// - Parameter domain : The domain for which the federation connection was removed.
@@ -42,12 +42,12 @@ protocol ConnectionsRepositoryProtocol {
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
     // MARK: - Properties
-    
+
     private let connectionsAPI: any ConnectionsAPI
     private let context: NSManagedObjectContext
 
     // MARK: - Object lifecycle
-    
+
     init(
         connectionsAPI: any ConnectionsAPI,
         context: NSManagedObjectContext
@@ -55,7 +55,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         self.connectionsAPI = connectionsAPI
         self.context = context
     }
-    
+
     // MARK: - Public
 
     /// Retrieve from backend and store connections locally
@@ -79,32 +79,32 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         and otherDomain: String
     ) async {
         await context.perform { [self] in
-            
+
             /// For all conversations that are NOT owned by `domain` or `otherDomain` and contain users from `domain` and `otherDomain`, remove users from `domain` and `otherDomain` from those conversations.
-            
+
             terminateFederationConnection(
                 with: [domain, otherDomain],
                 forConversationsNotOwnedBy: [domain, otherDomain]
             )
 
-            /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations.
-            
+            /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
+
             terminateFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: otherDomain
             )
 
-            /// For all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
-            
+            /// For all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations.
+
             terminateFederationConnection(
                 with: otherDomain,
                 forConversationsOwnedBy: domain
             )
         }
     }
-    
+
     // MARK: - Private
-    
+
     private func terminateFederationConnection(
         with userDomains: Set<String>,
         forConversationsNotOwnedBy domains: Set<String>
@@ -167,7 +167,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             at: .now
         )
     }
-    
+
     private func fetchHostedConversations(
         on domain: String,
         withParticipantsOn userDomain: String
@@ -203,7 +203,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             return userDomains.isSubset(of: localParticipantDomains)
         }
     }
-    
+
     private func getParticipants(
         from conversation: ZMConversation,
         on domains: Set<String>
