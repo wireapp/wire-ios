@@ -35,14 +35,12 @@ jobs:
           upload_sources: true
           download_translations: true
           upload_translations: false
+          create_pull_request: false
           push_translations: true
           localization_branch_name: chore/update-localization
           commit_message: "chore: Update localization"
-          # pull_request_title: "chore: Update localization - no ticket"
-          # pull_request_body: "This PR pulls in the latest localization translations from Crowdin."
           github_user_name: "zenkins"
           github_user_email: "iosx@wire.com"
-          # pull_request_team_reviewers: "wireapp/ios"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -68,4 +66,5 @@ jobs:
           --base "$GITHUB_REF" \
           --head chore/update-localization \
           --title "chore: Update localization - no ticket" \
-          --body "This PR pulls in the latest localization translations from Crowdin."
+          --body "This PR pulls in the latest localization translations from Crowdin." \
+          --reviewer "wireapp/ios"
