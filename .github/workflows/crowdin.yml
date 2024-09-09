@@ -59,7 +59,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
           find . -name "*.xcstrings" > string-catalogs.txt
-          xargs xcrun swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
+          xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
           git commit --no-verify -m "trim string catalogs"
           git push --no-verify
