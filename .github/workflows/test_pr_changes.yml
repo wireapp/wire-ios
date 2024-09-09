@@ -45,6 +45,7 @@ jobs:
       wire-utilitiess: ${{ steps.filter.outputs.wire-utilitiess }}
       wire-ios-testing: ${{ steps.filter.outputs.wire-ios-testing }}
       wire-testing: ${{ steps.filter.outputs.wire-testing }}
+      scripts: ${{ steps.filter.outputs.scripts }}
 
     steps:
       - uses: actions/checkout@v4
@@ -111,6 +112,8 @@ jobs:
               - 'wire-ios-system/**'
             wire-system:
               - 'WireSystem/**'
+            scripts:
+              - 'scripts/**'
             carthage:
               - 'Cartfile.resolved'
 
@@ -144,4 +147,5 @@ jobs:
       wire-utilities: ${{ needs.detect-changes.outputs.wire-utilities == 'true' }}
       wire-ios-testing: ${{ needs.detect-changes.outputs.wire-ios-testing == 'true' }}
       wire-testing: ${{ needs.detect-changes.outputs.wire-testing == 'true' }}
+      scripts: ${{ needs.detect-changes.outputs.scripts == 'true' }}
     secrets: inherit
