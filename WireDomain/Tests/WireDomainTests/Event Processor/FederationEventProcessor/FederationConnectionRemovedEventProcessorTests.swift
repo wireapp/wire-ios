@@ -60,7 +60,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
         await context.perform { [self] in
 
-            let conversation = makeNotHostedConversation()
+            let conversation = makeGroupConversation(hostedBy: Scaffolding.firstDomain)
 
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
             XCTAssertEqual(conversation.localParticipants.count, 2)
@@ -81,9 +81,27 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
                 )
             )
 
-            XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
-            XCTAssertEqual(conversation.localParticipants.count, 0) /// All participants were removed from the conversation that is not hosted on specified domains.
-            XCTAssertEqual(conversation.allMessages.count, 2) /// A federation termination system message + a participant removed system message.
+            let user = try XCTUnwrap(
+                ZMUser.fetch(
+                    with: Scaffolding.userID,
+                    in: context
+                )
+            )
+
+            let otherUser = try XCTUnwrap(
+                ZMUser.fetch(
+                    with: Scaffolding.otherUserID,
+                    in: context
+                )
+            )
+
+            XCTAssertFalse(conversation.localParticipants.contains(user))
+            XCTAssertFalse(conversation.localParticipants.contains(otherUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
@@ -92,7 +110,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
         await context.perform { [self] in
 
-            let conversation = makeHostedConversation()
+            let conversation = makeGroupConversation(hostedBy: Scaffolding.thirdDomain)
 
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
             XCTAssertEqual(conversation.localParticipants.count, 2)
@@ -113,15 +131,33 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
                 )
             )
 
-            XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
-            XCTAssertEqual(conversation.localParticipants.count, 1) /// The user not part of the specified hosted domain was removed from the conversation.
-            XCTAssertEqual(conversation.allMessages.count, 2) /// A federation termination system message and a participant removed anonymously system message.
+            let user = try XCTUnwrap(
+                ZMUser.fetch(
+                    with: Scaffolding.userID,
+                    in: context
+                )
+            )
+
+            let otherUser = try XCTUnwrap(
+                ZMUser.fetch(
+                    with: Scaffolding.otherUserID,
+                    in: context
+                )
+            )
+
+            XCTAssertFalse(conversation.localParticipants.contains(user))
+            XCTAssertTrue(conversation.localParticipants.contains(otherUser))
+
+            let lastMessages = conversation.lastMessages(limit: 2)
+
+            XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, ZMSystemMessageType.participantsRemoved)
+            XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
 
-    /// Creates a conversation with domain "domain.com" with participants of "domain3.com" and "domain4.com",
-    /// It enables testing that the participants are all removed from the conversation that is not hosted on "domain3.com" and "domain4.com".
-    private func makeNotHostedConversation() -> ZMConversation {
+    private func makeGroupConversation(
+        hostedBy domain: String
+    ) -> ZMConversation {
         var created = false
 
         let user = ZMUser.fetchOrCreate(
@@ -136,8 +172,8 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
             in: context
         )
 
-        user.domain = Scaffolding.thirdDomain
-        otherUser.domain = Scaffolding.fourthDomain
+        user.domain = Scaffolding.secondDomain
+        otherUser.domain = Scaffolding.thirdDomain
 
         let conversation = ZMConversation.fetchOrCreate(
             with: Scaffolding.groupConversationID,
@@ -147,62 +183,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
         )
 
         conversation.conversationType = .group
-        conversation.domain = Scaffolding.firstDomain
-
-        let userRole = ParticipantRole.create(
-            managedObjectContext: context,
-            user: user,
-            conversation: conversation
-        )
-
-        let otherUserRole = ParticipantRole.create(
-            managedObjectContext: context,
-            user: otherUser,
-            conversation: conversation
-        )
-
-        userRole.conversation = conversation
-        otherUserRole.conversation = conversation
-
-        user.participantRoles = [userRole]
-        otherUser.participantRoles = [otherUserRole]
-
-        conversation.addParticipantsAndUpdateConversationState(
-            users: [user, otherUser]
-        )
-
-        return conversation
-    }
-
-    /// Creates a conversation with domain "domain4.com" with participants of "domain3.com" and "domain4.com",
-    /// It enables testing that the participant with domain "domain3.com" is removed from the conversation that is hosted on "domain4.com"
-    private func makeHostedConversation() -> ZMConversation {
-        let user = ZMUser.fetchOrCreate(
-            with: Scaffolding.userID,
-            domain: nil,
-            in: context
-        )
-
-        let otherUser = ZMUser.fetchOrCreate(
-            with: Scaffolding.otherUserID,
-            domain: nil,
-            in: context
-        )
-
-        user.domain = Scaffolding.thirdDomain
-        otherUser.domain = Scaffolding.fourthDomain
-
-        var created = false
-
-        let conversation = ZMConversation.fetchOrCreate(
-            with: Scaffolding.groupConversationID,
-            domain: Scaffolding.fourthDomain,
-            in: context,
-            created: &created
-        )
-
-        conversation.domain = Scaffolding.fourthDomain
-        conversation.conversationType = .group
+        conversation.domain = domain
 
         let userRole = ParticipantRole.create(
             managedObjectContext: context,
@@ -235,16 +216,20 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
 
 private enum Scaffolding {
 
+    /// UUIDs
+
     static let userID = UUID()
     static let otherUserID = UUID()
     static let groupConversationID = UUID()
+
+    /// Domains
+
     static let firstDomain = "domain.com"
     static let secondDomain = "domain2.com"
     static let thirdDomain = "domain3.com"
-    static let fourthDomain = "domain4.com"
 
     static let event = FederationConnectionRemovedEvent(
-        domains: Set([thirdDomain, fourthDomain])
+        domains: Set([secondDomain, thirdDomain])
     )
 
 }
