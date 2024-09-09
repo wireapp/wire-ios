@@ -16,7 +16,7 @@ concurrency:
 jobs:
   synchronize-with-crowdin:
     runs-on: ubuntu-22.04
-    container: swift:5.9.2-jammy
+    container: swift:5.10.1
 
     steps:
       #- name: Install Git
