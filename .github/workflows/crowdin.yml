@@ -3,6 +3,8 @@ name: Crowdin Action
 on:
   push:
     branches: [ develop ]
+  pull_request:
+    types: [opened, synchronize, edited, ready_for_review]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with: # TODO: might not be needed for workflow_dispatch trigger
+          fetch-depth: 0
 
       - name: Crowdin action
         uses: crowdin/github-action@v2
@@ -51,5 +55,6 @@ jobs:
           find . -name "*.xcstrings" | tee string-catalogs.txt
           xargs swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
           xargs git add < string-catalogs.txt
+          #if git diff --quiet && git diff --cached --quiet; then echo "No changes to commit."; exit 0; fi
           git commit --no-verify -m "trim string catalogs"
           git push --no-verify origin chore/update-localization
