@@ -45,6 +45,12 @@ files: [
   "multilingual": true,
  },
  {
+  "source" : "/WireUI/Sources/WireDesign/Resources/Localizable.xcstrings",
+  "dest" : "/App/WireDesign/Resources/Localizable.xcstrings",
+  "translation" : "%original_path%/%original_file_name%",
+  "multilingual": true,
+ },
+ {
   "source" : "/WireUI/Sources/WireReusableUIComponents/Resources/en.lproj/Localizable.strings",
   "dest" : "/App/WireReusableUIComponents/Resources/Localizable.strings",
   "translation" : "/WireUI/Sources/WireReusableUIComponents/Resources/%osx_code%/%original_file_name%",
