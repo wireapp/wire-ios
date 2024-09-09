@@ -131,7 +131,6 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
 
     public var draftMessage: DraftMessage?
 
-
     // MARK: - appendText
 
     public var appendTextContentMentionsReplyingToFetchLinkPreviewNonce_Invocations: [(content: String, mentions: [Mention], quotedMessage: (any ZMConversationMessage)?, fetchLinkPreview: Bool, nonce: UUID)] = []
@@ -233,7 +232,6 @@ class MockDisableAnalyticsUseCaseUserSession: DisableAnalyticsUseCaseUserSession
 
     // MARK: - Life cycle
 
-
     // MARK: - analyticsSession
 
     var analyticsSession: (any AnalyticsSessionProtocol)?
@@ -242,7 +240,6 @@ class MockDisableAnalyticsUseCaseUserSession: DisableAnalyticsUseCaseUserSession
 class MockEnableAnalyticsUseCaseUserSession: EnableAnalyticsUseCaseUserSession {
 
     // MARK: - Life cycle
-
 
     // MARK: - analyticsSession
 
