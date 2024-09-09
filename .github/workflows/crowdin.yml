@@ -31,6 +31,7 @@ jobs:
 
       - name: Crowdin action
         uses: crowdin/github-action@v2
+        id: crowdin
         with:
           # For more info: https://github.com/crowdin/github-action/blob/master/action.yml
           project_id: ${{ secrets.CROWDIN_PROJECT_ID }}
@@ -53,4 +54,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trim unused localizations from string catalogs
-        run: find . -name "*.xcstrings" | xargs echo xcrun swift run --package-path ./scripts TrimStringCatalogs
+        if: steps.crowdin.outputs.pull_request_url
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          find . -name "*.xcstrings" > string-catalogs.txt
+          xargs xcrun swift run --package-path ./scripts TrimStringCatalogs < string-catalogs.txt
+          xargs git add < string-catalogs.txt
+          git commit --no-verify -m "trim string catalogs"
+          git push --no-verify
