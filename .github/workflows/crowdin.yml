@@ -35,15 +35,14 @@ jobs:
           upload_sources: true
           download_translations: true
           upload_translations: false
-
-          create_pull_request: true
-          localization_branch_name: chore/update-localization
+          push_translations: true
+          localization_branch_name: chore/update-localization-WPB-10903
           commit_message: "chore: Update localization"
-          pull_request_title: "chore: Update localization - no ticket"
-          pull_request_body: "This PR pulls in the latest localization translations from Crowdin."
+          # pull_request_title: "chore: Update localization - no ticket"
+          # pull_request_body: "This PR pulls in the latest localization translations from Crowdin."
           github_user_name: "zenkins"
           github_user_email: "iosx@wire.com"
-          pull_request_team_reviewers: "wireapp/ios"
+          # pull_request_team_reviewers: "wireapp/ios"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -58,3 +57,8 @@ jobs:
           #if git diff --quiet && git diff --cached --quiet; then echo "No changes to commit."; exit 0; fi
           git commit --no-verify -m "trim string catalogs"
           git push --no-verify origin chore/update-localization
+          gh pr create --fill \
+          --base "$GITHUB_REF" \
+          --head chore/update-localization-WPB-10903 \
+          --title "chore: Update localization - no ticket" \
+          --body "This PR pulls in the latest localization translations from Crowdin."
