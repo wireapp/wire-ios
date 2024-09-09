@@ -824,7 +824,7 @@
 "participants.section.services" = "Services (%d)";
 "participants.section.settings" = "Alternativ";
 "participants.footer.add_title" = "Lägg till deltagare";
-"participants.section.name.footer" = "Up to %1$d participants can join a group conversation.";
+"participants.section.name.footer" = "Upp till %1$d deltagare kan delta i en gruppkonversation.";
 "participants.section.admins.footer" = "Det finns inga administratörer.";
 "participants.section.members.footer" = "There are no members.";
 

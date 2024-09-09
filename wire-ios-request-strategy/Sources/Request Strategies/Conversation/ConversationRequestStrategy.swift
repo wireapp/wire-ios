@@ -387,7 +387,10 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         else {
             return false
         }
-        // TODO: [WPB-10283] [F] check if we need to wait for the processPayload
+
+        // There is one case where you end up here:
+        // 1) selfUser edits the conversation name: a save will be enqueue when user is done editing
+        // Note: when another user edited the conversation name, ConversationEventProcessor is called directly as EventAsyncConsumer and a save will be done in EventProcessor
         conversationEventProcessor.processPayload(payload)
 
         return false
