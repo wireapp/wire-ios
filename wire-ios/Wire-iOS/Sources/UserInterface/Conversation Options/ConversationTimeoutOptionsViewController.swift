@@ -25,7 +25,6 @@ import WireSyncEngine
 private enum Item {
     case supportedValue(MessageDestructionTimeoutValue)
     case unsupportedValue(MessageDestructionTimeoutValue)
-    case customValue
 }
 
 extension ZMConversation {
@@ -35,10 +34,6 @@ extension ZMConversation {
         let groupTimeout = messageDestructionTimeoutValue(for: .groupConversation)
         if case .custom = groupTimeout {
             newItems.append(.unsupportedValue(groupTimeout))
-        }
-
-        if Bundle.developerModeEnabled {
-            newItems.append(.customValue)
         }
 
         return newItems
@@ -150,9 +145,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             configure(cell, for: value, disabled: false)
         case .unsupportedValue(let value):
             configure(cell, for: value, disabled: true)
-        case .customValue:
-            cell.title = "Custom"
-            cell.showCheckmark = false
         }
 
         cell.showSeparator = indexPath.row < (items.count - 1)
@@ -189,23 +181,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         present(controller, animated: true)
     }
 
-    private func requestCustomValue() {
-        UIAlertController.requestCustomTimeInterval(over: self) { [weak self] result in
-
-            guard let self else {
-                return
-            }
-
-            switch result {
-            case .success(let value):
-                self.updateTimeout(MessageDestructionTimeoutValue(rawValue: value))
-            default:
-                break
-            }
-
-        }
-    }
-
     // MARK: Saving Changes
 
     private func canSelectItem(with value: MessageDestructionTimeoutValue) -> Bool {
@@ -224,9 +199,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
                 break
             }
             updateTimeout(value)
-        case .customValue:
-            requestCustomValue()
-        default:
+        case .unsupportedValue:
             break
         }
     }
