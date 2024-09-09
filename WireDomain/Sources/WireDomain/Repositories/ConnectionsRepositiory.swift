@@ -30,6 +30,12 @@ protocol ConnectionsRepositoryProtocol {
     /// Pull self team metadata frmo the server and store locally.
 
     func pullConnections() async throws
+    
+    /// Deletes a federation connection with the specified domain.
+    ///
+    /// - Parameter domain: The domain to delete the connection for.
+
+    func deleteFederationConnection(with domain: String) async throws
 
     /// Removes a federation connection between two domains.
     ///
@@ -99,6 +105,51 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             removeFederationConnection(
                 with: otherDomain,
                 forConversationsOwnedBy: domain
+            )
+        }
+    }
+    
+    public func deleteFederationConnection(with domain: String) async throws {
+        await context.perform { [self] in
+            let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
+            
+            /// For all conversations owned by self domain, remove all users that belong to `domain` from those conversations.
+            
+            removeFederationConnection(
+                with: domain,
+                forConversationsOwnedBy: selfUserDomain
+            )
+            
+            /// For all conversations owned by `domain`, remove all users from self domain from those conversations.
+            
+            removeFederationConnection(
+                with: selfUserDomain,
+                forConversationsOwnedBy: domain
+            )
+            
+            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain and `domain`, remove users from `domain` and `otherDomain` from those conversations.
+                    
+            removeFederationConnection(
+                with: [selfUserDomain, domain],
+                forConversationsNotOwnedBy: [selfUserDomain, domain]
+            )
+            
+            /// For any connection from a user on self domain to a user on `domain`, delete the connection.
+        
+            removeConnectionRequests(
+                with: domain
+            )
+            
+            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
+            
+            markOneToOneConversationsAsReadOnly(
+                with: domain
+            )
+            
+            /// Remove connection for all connected users owned by `domain`.
+            
+            removeConnectedUsers(
+                with: domain
             )
         }
     }
@@ -202,6 +253,70 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
 
             return userDomains.isSubset(of: localParticipantDomains)
         }
+    }
+    
+    private func removeConnectionRequests(with domain: String) {
+        let sentAndPendingConnectionsPredicate = ZMUser.predicateForSentAndPendingConnections(hostedOnDomain: domain)
+        
+        let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: sentAndPendingConnectionsPredicate)
+        
+        if let pendingUsers = context.fetchOrAssert(
+            request: pendingUsersFetchRequest
+        ) as? [ZMUser] {
+            pendingUsers.forEach { user in
+                let isPendingConnection = user.connection?.status == .pending
+                user.connection?.status = isPendingConnection ? .ignored : .cancelled
+            }
+        }
+    }
+    
+    private func markOneToOneConversationsAsReadOnly(with domain: String) {
+        let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(
+            hostedOnDomain: domain
+        )
+        
+        let fetchRequest = ZMUser.sortedFetchRequest(
+            with: connectedUsersPredicate
+        )
+        
+        let selfUser = ZMUser.selfUser(in: context)
+        let selfUserDomain = selfUser.domain ?? ""
+        
+        if let users = context.fetchOrAssert(
+            request: fetchRequest
+        ) as? [ZMUser] {
+            users
+                .compactMap(\.oneOnOneConversation)
+                .filter { !$0.isForcedReadOnly }
+                .forEach { conversation in
+                    conversation.appendFederationTerminationSystemMessage(
+                        domains: [domain, selfUserDomain],
+                        sender: selfUser,
+                        at: .now
+                    )
+                    
+                    conversation.isForcedReadOnly = true
+                }
+        }
+    }
+    
+    private func removeConnectedUsers(with domain: String) {
+        let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(
+            hostedOnDomain: domain
+        )
+        
+        let fetchRequest = ZMUser.sortedFetchRequest(
+            with: connectedUsersPredicate
+        )
+        
+        guard let connectedUsers = context.fetchOrAssert(
+            request: fetchRequest
+        ) as? [ZMUser] else { return }
+        
+        connectedUsers.forEach { user in
+            user.connection = nil
+        }
+        
     }
 
     private func getParticipants(

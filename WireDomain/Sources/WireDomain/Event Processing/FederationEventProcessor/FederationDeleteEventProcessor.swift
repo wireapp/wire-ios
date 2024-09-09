@@ -31,10 +31,11 @@ protocol FederationDeleteEventProcessorProtocol {
 }
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
+    
+    let repository: any ConnectionsRepositoryProtocol
 
-    func processEvent(_: FederationDeleteEvent) async throws {
-        // TODO: [WPB-10188]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: FederationDeleteEvent) async throws {
+        try await repository.deleteFederationConnection(with: event.domain)
     }
 
 }
