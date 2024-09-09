@@ -21,14 +21,14 @@ import Foundation
 final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
 
     var transportSession: TransportSessionType
-    var eventProcessor: UpdateEventProcessor
+    var eventProcessor: ConversationEventProcessorProtocol
     var contextProvider: ContextProvider
     var searchUsersCache: SearchUsersCache?
 
     init(
         contextprovider: ContextProvider,
         transportSession: TransportSessionType,
-        eventProcessor: UpdateEventProcessor,
+        eventProcessor: ConversationEventProcessorProtocol,
         searchUsersCache: SearchUsersCache?
     ) {
         self.contextProvider = contextprovider

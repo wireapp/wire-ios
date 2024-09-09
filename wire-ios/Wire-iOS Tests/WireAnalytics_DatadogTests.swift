@@ -16,21 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import WireCommonComponents
 import XCTest
 
-@testable import TrimStringCatalogs
+class WireAnalytics_DatadogTests: XCTestCase {
 
-final class Tests: XCTestCase {
+    func test_enable_isExecutedOnlyOnce() {
+        // GIVEN
+        var count = 0
+        WireAnalytics.Datadog.enableOnlyOnce = .init({
+            count += 1
+        })
+        let concurrentQueue = DispatchQueue(label: "test", attributes: .concurrent)
 
-    func testTrimmingStringCatalog() throws {
-        // Given
-        let input = try XCTUnwrap(Bundle.module.url(forResource: "Untrimmed_xcstrings", withExtension: nil))
-        let expectedOutput = try XCTUnwrap(Bundle.module.url(forResource: "Trimmed_xcstrings", withExtension: nil))
+        // WHEN
+        for i in 1...1000 {
+            concurrentQueue.async {
+                WireAnalytics.Datadog.enable()
+            }
+        }
 
-        // When
-        try TrimStringCatalogs(paths: [input.path])
-
-        // Then
-        try XCTAssertEqual(Data(contentsOf: input), Data(contentsOf: expectedOutput))
+        // THEN
+        XCTAssertEqual(count, 1)
     }
 }

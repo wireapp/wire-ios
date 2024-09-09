@@ -161,8 +161,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      - name: Trim unused localizations from string catalogs
-        run: find . -name "*.xcstrings" | xargs xcrun swift run --package-path ./scripts TrimStringCatalogs
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
       - name: Archiving Logs
