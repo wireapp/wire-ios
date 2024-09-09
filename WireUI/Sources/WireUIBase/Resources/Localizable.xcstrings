@@ -9,6 +9,36 @@
             "value" : "حفظ في الأرشيف"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -19,6 +49,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiv"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "en" : {
@@ -39,6 +75,18 @@
             "value" : "Arhiveeri"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -49,6 +97,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiver"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "it" : {
@@ -63,16 +141,52 @@
             "value" : "アーカイブ"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archyvuoti"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiveren"
+          }
+        },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "pl" : {
@@ -87,16 +201,64 @@
             "value" : "Arquivar"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архивировать"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arhiviraj"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "tr" : {
@@ -109,6 +271,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архівувати"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "zh-Hans" : {
@@ -133,6 +307,36 @@
             "value" : "Double tap to open list of archived conversations"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -143,6 +347,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "en" : {
@@ -163,6 +373,18 @@
             "value" : "Double tap to open list of archived conversations"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -170,6 +392,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of archived conversations"
@@ -187,13 +439,49 @@
             "value" : "Double tap to open list of archived conversations"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of archived conversations"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of archived conversations"
@@ -211,13 +499,61 @@
             "value" : "Double tap to open list of archived conversations"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Нажмите дважды, чтобы открыть список архивных бесед"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of archived conversations"
@@ -233,6 +569,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Торкніться двічі, щоб відкрити список заархівованих розмов"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of archived conversations"
           }
         },
         "zh-Hans" : {
@@ -257,6 +605,36 @@
             "value" : "حفظ في الأرشيف"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -267,6 +645,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiv"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "en" : {
@@ -287,6 +671,18 @@
             "value" : "Arhiveeri"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -297,6 +693,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiver"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "it" : {
@@ -311,16 +737,52 @@
             "value" : "アーカイブ"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archyvuoti"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archiveren"
+          }
+        },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "pl" : {
@@ -335,16 +797,64 @@
             "value" : "Arquivar"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архивировать"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arhiviraj"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "tr" : {
@@ -357,6 +867,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Архівувати"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Archive"
           }
         },
         "zh-Hans" : {
@@ -381,6 +903,36 @@
             "value" : "List of recent conversations"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -391,6 +943,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liste der letzten Unterhaltungen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "en" : {
@@ -411,6 +969,18 @@
             "value" : "List of recent conversations"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -418,6 +988,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
@@ -435,13 +1035,49 @@
             "value" : "List of recent conversations"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
@@ -459,13 +1095,61 @@
             "value" : "List of recent conversations"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Список недавних бесед"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
@@ -481,6 +1165,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Список недавніх розмов"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "zh-Hans" : {
@@ -505,6 +1201,36 @@
             "value" : "Double tap to search for people and open contact list"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -515,6 +1241,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
           }
         },
         "en" : {
@@ -535,6 +1267,18 @@
             "value" : "Double tap to search for people and open contact list"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -542,6 +1286,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to search for people and open contact list"
@@ -559,13 +1333,49 @@
             "value" : "Double tap to search for people and open contact list"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to search for people and open contact list"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to search for people and open contact list"
@@ -583,13 +1393,61 @@
             "value" : "Double tap to search for people and open contact list"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Нажмите дважды, чтобы найти пользователей и открыть список контактов"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to search for people and open contact list"
@@ -602,6 +1460,18 @@
           }
         },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to search for people and open contact list"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to search for people and open contact list"
@@ -629,6 +1499,36 @@
             "value" : "جهات الاتصال"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "translated",
@@ -639,6 +1539,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kontakte"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
           }
         },
         "en" : {
@@ -659,6 +1565,18 @@
             "value" : "Kontaktid"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -668,6 +1586,36 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Contacts"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "Contacts"
           }
         },
@@ -683,16 +1631,52 @@
             "value" : "連絡先"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kontaktai"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Contacten"
+          }
+        },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
           }
         },
         "pl" : {
@@ -707,16 +1691,64 @@
             "value" : "Contatos"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Контакты"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stiki"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
           }
         },
         "tr" : {
@@ -729,6 +1761,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Контакти"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contacts"
           }
         },
         "zh-Hans" : {
@@ -753,6 +1797,36 @@
             "value" : "List of recent conversations"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -763,6 +1837,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liste der letzten Unterhaltungen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "en" : {
@@ -783,6 +1863,18 @@
             "value" : "List of recent conversations"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -790,6 +1882,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
@@ -807,13 +1929,49 @@
             "value" : "List of recent conversations"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
@@ -831,13 +1989,61 @@
             "value" : "List of recent conversations"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Список недавних бесед"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of recent conversations"
@@ -853,6 +2059,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Список недавніх розмов"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of recent conversations"
           }
         },
         "zh-Hans" : {
@@ -877,6 +2095,36 @@
             "value" : "Double tap to open list of recent conversations"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -887,6 +2135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "en" : {
@@ -907,6 +2161,18 @@
             "value" : "Double tap to open list of recent conversations"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -914,6 +2180,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of recent conversations"
@@ -931,13 +2227,49 @@
             "value" : "Double tap to open list of recent conversations"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of recent conversations"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of recent conversations"
@@ -955,13 +2287,61 @@
             "value" : "Double tap to open list of recent conversations"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Нажмите дважды, чтобы открыть список последних бесед"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of recent conversations"
@@ -977,6 +2357,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Торкніться двічі, щоб відкрити список недавніх розмов"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of recent conversations"
           }
         },
         "zh-Hans" : {
@@ -1001,6 +2393,36 @@
             "value" : "المحادثات"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -1011,6 +2433,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unterhaltungen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "en" : {
@@ -1031,6 +2459,18 @@
             "value" : "Vestlused"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1040,6 +2480,36 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Conversations"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "is" : {
+          "stringUnit" : {
+            "state" : "new",
             "value" : "Conversations"
           }
         },
@@ -1055,16 +2525,52 @@
             "value" : "会話"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Susirašinėjimai"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gesprekken"
+          }
+        },
+        "no" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "pl" : {
@@ -1079,16 +2585,64 @@
             "value" : "Conversas"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Беседы"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
         "sl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pogovori"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "tr" : {
@@ -1101,6 +2655,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Розмови"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Conversations"
           }
         },
         "zh-Hans" : {
@@ -1125,6 +2691,36 @@
             "value" : "List of conversations organized in folders"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -1135,6 +2731,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Liste der in Ordnern organisierten Unterhaltungen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
           }
         },
         "en" : {
@@ -1155,6 +2757,18 @@
             "value" : "List of conversations organized in folders"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -1162,6 +2776,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of conversations organized in folders"
@@ -1179,13 +2823,49 @@
             "value" : "List of conversations organized in folders"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of conversations organized in folders"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of conversations organized in folders"
@@ -1203,13 +2883,61 @@
             "value" : "List of conversations organized in folders"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Список бесед, организованных по папкам"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of conversations organized in folders"
@@ -1222,6 +2950,18 @@
           }
         },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "List of conversations organized in folders"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "List of conversations organized in folders"
@@ -1249,6 +2989,36 @@
             "value" : "Double tap to open list of conversations organized in folders"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -1259,6 +3029,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Doppeltippen, um die Liste der in Ordnern organisierten Unterhaltungen zu öffnen"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
           }
         },
         "en" : {
@@ -1279,6 +3055,18 @@
             "value" : "Double tap to open list of conversations organized in folders"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -1286,6 +3074,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of conversations organized in folders"
@@ -1303,13 +3121,49 @@
             "value" : "Double tap to open list of conversations organized in folders"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of conversations organized in folders"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of conversations organized in folders"
@@ -1327,13 +3181,61 @@
             "value" : "Double tap to open list of conversations organized in folders"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Нажмите дважды, чтобы открыть список бесед, организованных по папкам"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of conversations organized in folders"
@@ -1346,6 +3248,18 @@
           }
         },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Double tap to open list of conversations organized in folders"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Double tap to open list of conversations organized in folders"
@@ -1373,6 +3287,36 @@
             "value" : "Folders"
           }
         },
+        "be" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "bg" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "bn" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ca" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "da" : {
           "stringUnit" : {
             "state" : "new",
@@ -1383,6 +3327,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ordner"
+          }
+        },
+        "el" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
           }
         },
         "en" : {
@@ -1403,6 +3353,18 @@
             "value" : "Folders"
           }
         },
+        "eu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "fa" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "fi" : {
           "stringUnit" : {
             "state" : "new",
@@ -1410,6 +3372,36 @@
           }
         },
         "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "he" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "hr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "hu" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "id" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "is" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -1427,13 +3419,49 @@
             "value" : "Folders"
           }
         },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "lt" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
           }
         },
+        "lv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ms" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "my" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "nl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "no" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -1451,13 +3479,61 @@
             "value" : "Folders"
           }
         },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ro" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Папки"
           }
         },
+        "si" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
         "sl" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sr-CS" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sr-SP" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "sv" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "th" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
@@ -1470,6 +3546,18 @@
           }
         },
         "uk" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "ur-PK" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "vi" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Folders"
