@@ -156,4 +156,3 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
     }
 
 }
-
