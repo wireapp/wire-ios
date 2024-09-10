@@ -48,7 +48,8 @@
     redundantOptionalBinding, \
     redundantParens, \
     redundantRawValues, \
-    redundantReturn
+    redundantReturn, \
+    # redundantSelf, \ TODO
 
 # Options
 
@@ -64,3 +65,4 @@
 --patternlet hoist # hoistPatternLet
 --indent 4 # indent
 --anonymousforeach ignore # preferForLoop
+# --self init-only # redundantSelf TODO
