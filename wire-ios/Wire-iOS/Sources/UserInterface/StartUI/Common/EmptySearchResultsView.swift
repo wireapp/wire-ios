@@ -195,7 +195,7 @@ final class EmptySearchResultsView: UIView {
             stackView,
             iconView,
             statusLabel,
-            actionButton
+            actionButton,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -207,7 +207,7 @@ final class EmptySearchResultsView: UIView {
 
             // Center the stackView within the scrollView
             stackView.centerXAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerYAnchor)
+            stackView.centerYAnchor.constraint(equalTo: scrollView.frameLayoutGuide.centerYAnchor),
         ])
     }
 

@@ -40,7 +40,7 @@ extension SettingsCellDescriptorFactory {
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
             isAppLockAvailable ? appLockSection : nil,
-            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil
+            SecurityFlags.generateLinkPreviews.isEnabled ? linkPreviewSection : nil,
         ].compactMap { $0 }
 
         return SettingsGroupCellDescriptor(

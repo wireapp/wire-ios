@@ -48,11 +48,11 @@ public final class PushDispatcherTests: ZMTBaseTest {
     static let userID = UUID().transportString()
     static let payload: [AnyHashable: Any] = ["data": [
         "user": userID,
-        "type": "notice"
+        "type": "notice",
     ]]
 
     static let payloadWithoutUser: [AnyHashable: Any] = ["data": [
-        "type": "notice"
+        "type": "notice",
     ]]
 
     override public func setUp() {

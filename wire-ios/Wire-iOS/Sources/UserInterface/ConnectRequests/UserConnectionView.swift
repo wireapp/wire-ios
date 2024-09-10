@@ -103,7 +103,7 @@ final class UserConnectionView: UIView, Copyable {
 
         return handle && [
             .foregroundColor: SemanticColors.Label.textDefault,
-            .font: UIFont.smallSemiboldFont
+            .font: UIFont.smallSemiboldFont,
         ]
     }
 
@@ -119,7 +119,7 @@ final class UserConnectionView: UIView, Copyable {
             userImageView,
             labelContainer,
             guestIndicator,
-            guestWarningView
+            guestWarningView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -139,7 +139,7 @@ final class UserConnectionView: UIView, Copyable {
             guestWarningView.topAnchor.constraint(equalTo: guestIndicator.bottomAnchor, constant: 30.0),
             guestWarningView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18.0),
             guestWarningView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -23.0),
-            guestWarningView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor)
+            guestWarningView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
         ])
     }
 

@@ -51,7 +51,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
     func testThatSettingAccessModeReturnsErrorWhenMissingAccess() {
         // given
         let payload = [
-            "access_role": "activated"
+            "access_role": "activated",
         ] as ZMTransportData
 
         // when
@@ -64,7 +64,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
     func testThatSettingAccessModeReturnsErrorWhenMissingAccessRole() {
         // given
         let payload = [
-            "access": ["invite"]
+            "access": ["invite"],
         ] as ZMTransportData
 
         // when
@@ -82,7 +82,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         let payload = [
             "access_role": role,
             "access_role_v2": accessRoleV2,
-            "access": access
+            "access": access,
         ] as ZMTransportData
 
         // when

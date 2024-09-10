@@ -59,7 +59,7 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
 
         let payload = [
             "email": email,
-            "inviter_name": ZMUser.selfUser(in: managedObjectContext).name
+            "inviter_name": ZMUser.selfUser(in: managedObjectContext).name,
         ]
 
         let request = ZMTransportRequest(path: "/teams/\(teamId.transportString())/invitations", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)

@@ -70,7 +70,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func userData(previewAssetKey: String?, completeAssetKey: String? = nil, for userID: UUID) -> [String: Any] {
         [
             "id": userID.transportString(),
-            "assets": assetPayload(previewAssetKey: previewAssetKey, completeAssetKey: completeAssetKey)
+            "assets": assetPayload(previewAssetKey: previewAssetKey, completeAssetKey: completeAssetKey),
         ]
     }
 
@@ -79,13 +79,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
             [
                 "size": "preview",
                 "type": "image",
-                "key": previewAssetKey ?? UUID().transportString()
+                "key": previewAssetKey ?? UUID().transportString(),
             ],
             [
                 "size": "complete",
                 "type": "image",
-                "key": completeAssetKey ?? UUID().transportString()
-            ]
+                "key": completeAssetKey ?? UUID().transportString(),
+            ],
         ]
     }
 
@@ -183,7 +183,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
 
         let payload = [
             userData(previewAssetKey: previewAssetKey1, completeAssetKey: completeAssetKey1, for: searchUser1.remoteIdentifier!),
-            userData(previewAssetKey: previewAssetKey2, completeAssetKey: completeAssetKey2, for: searchUser2.remoteIdentifier!)
+            userData(previewAssetKey: previewAssetKey2, completeAssetKey: completeAssetKey2, for: searchUser2.remoteIdentifier!),
         ]
 
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -240,7 +240,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
 
         let payload = [
             userData(previewAssetKey: UUID().transportString(), for: searchUsers.first!.remoteIdentifier!),
-            userData(previewAssetKey: UUID().transportString(), for: searchUsers.last!.remoteIdentifier!)
+            userData(previewAssetKey: UUID().transportString(), for: searchUsers.last!.remoteIdentifier!),
         ]
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 

@@ -129,7 +129,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func dummyMemberJoinEvent() -> ZMUpdateEvent {
         let payload: NSDictionary = [
             "type": "conversation.member-join",
-            "data": "foo"
+            "data": "foo",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -138,7 +138,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func dummyMemberLeaveEvent() -> ZMUpdateEvent {
         let payload: NSDictionary = [
             "type": "conversation.member-leave",
-            "data": "foo"
+            "data": "foo",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -228,7 +228,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             members: [
                 MLSConferenceInfo.Member(id: member1, isInSubconversation: true),
                 MLSConferenceInfo.Member(id: member2, isInSubconversation: true),
-                MLSConferenceInfo.Member(id: member3, isInSubconversation: false)
+                MLSConferenceInfo.Member(id: member3, isInSubconversation: false),
             ]
         )
 
@@ -1378,7 +1378,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             [
                 createConversation(outOfSync: true),
                 createConversation(outOfSync: true),
-                createConversation(outOfSync: false)
+                createConversation(outOfSync: false),
             ]
         }
 
@@ -1648,7 +1648,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         let keyPackages: [Data] = [
             Data.secureRandomData(length: 1),
-            Data.secureRandomData(length: 1)
+            Data.secureRandomData(length: 1),
         ]
 
         // we need more than half the target number to have a sufficient amount
@@ -2906,7 +2906,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 updateConversationProtocolExpectation,
                 createConversationExpectation,
                 updateKeyMaterialExpectation,
-                commitPendingProposalsExpectation
+                commitPendingProposalsExpectation,
             ],
             timeout: 0.5,
             enforceOrder: true

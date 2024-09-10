@@ -105,7 +105,7 @@ final class AppLockChangeWarningViewController: UIViewController {
             contentView,
             titleLabel,
             confirmButton,
-            messageLabel
+            messageLabel,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let contentPadding: CGFloat = 24
@@ -130,7 +130,7 @@ final class AppLockChangeWarningViewController: UIViewController {
             confirmButton.heightAnchor.constraint(equalToConstant: CGFloat.WipeCompletion.buttonHeight),
             confirmButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -contentPadding),
             confirmButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: contentPadding),
-            confirmButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentPadding)
+            confirmButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -contentPadding),
         ])
     }
 

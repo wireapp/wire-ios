@@ -245,7 +245,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
             imagePreview.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             imagePreview.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56)
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
         ])
     }
 
@@ -361,7 +361,7 @@ final class SettingsTextCell: SettingsTableCell,
             textInput.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8),
             textInput.trailingAnchor.constraint(equalTo: trailingBoundaryView.trailingAnchor, constant: -textInputSpacing),
 
-            cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing)
+            cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing),
         ])
     }
 

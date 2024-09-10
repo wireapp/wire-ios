@@ -88,7 +88,7 @@ final class SearchResultsView: UIView {
             accessoryContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             accessoryContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
             accessoryContainerHeightConstraint!,
-            accessoryViewBottomOffsetConstraint!
+            accessoryViewBottomOffsetConstraint!,
         ])
     }
 
@@ -117,7 +117,7 @@ final class SearchResultsView: UIView {
                     accessoryView.leadingAnchor.constraint(equalTo: accessoryContainer.leadingAnchor),
                     accessoryView.topAnchor.constraint(equalTo: accessoryContainer.topAnchor),
                     accessoryView.trailingAnchor.constraint(equalTo: accessoryContainer.trailingAnchor),
-                    accessoryView.bottomAnchor.constraint(equalTo: accessoryContainer.bottomAnchor)
+                    accessoryView.bottomAnchor.constraint(equalTo: accessoryContainer.bottomAnchor),
                 ])
             } else {
                 accessoryContainerHeightConstraint?.isActive = true
@@ -141,7 +141,7 @@ final class SearchResultsView: UIView {
                     emptyResultView.leadingAnchor.constraint(equalTo: emptyResultContainer.leadingAnchor),
                     emptyResultView.topAnchor.constraint(equalTo: emptyResultContainer.topAnchor),
                     emptyResultView.trailingAnchor.constraint(equalTo: emptyResultContainer.trailingAnchor),
-                    emptyResultView.bottomAnchor.constraint(equalTo: emptyResultContainer.bottomAnchor)
+                    emptyResultView.bottomAnchor.constraint(equalTo: emptyResultContainer.bottomAnchor),
                 ])
             }
 

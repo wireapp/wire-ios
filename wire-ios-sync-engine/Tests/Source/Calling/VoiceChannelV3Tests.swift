@@ -100,7 +100,7 @@ class VoiceChannelV3Tests: MessagingTest {
                 conversationId: conversationId,
                 user: user,
                 callCenter: wireCallCenterMock!
-            )
+            ),
         ]
 
         // When / Then
@@ -117,7 +117,7 @@ class VoiceChannelV3Tests: MessagingTest {
             conversationId: CallSnapshotTestFixture.callSnapshot(
                 conversationId: conversationId,
                 callCenter: wireCallCenterMock!,
-                clients: [])
+                clients: []),
         ]
 
         // When

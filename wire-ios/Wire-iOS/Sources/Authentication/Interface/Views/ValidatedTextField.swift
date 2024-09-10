@@ -271,7 +271,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
 
         NSLayoutConstraint.activate([
             confirmButton.widthAnchor.constraint(equalToConstant: ValidatedTextField.ConfirmButtonWidth),
-            confirmButton.heightAnchor.constraint(equalToConstant: ValidatedTextField.ConfirmButtonWidth)
+            confirmButton.heightAnchor.constraint(equalToConstant: ValidatedTextField.ConfirmButtonWidth),
         ])
     }
 

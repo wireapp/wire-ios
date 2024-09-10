@@ -53,7 +53,7 @@ import Foundation
         self.teamIdentifier = team.identifier
         self.conversationIdentifier = conversation.identifier
         self.data = [
-            "conv": conversation.identifier
+            "conv": conversation.identifier,
         ]
     }
 
@@ -62,7 +62,7 @@ import Foundation
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
-            "data": data
+            "data": data,
         ] as ZMTransportData
     }
 

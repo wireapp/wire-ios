@@ -72,7 +72,7 @@ class LaunchImageViewController: UIViewController {
                 loadingScreenLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40),
 
                 activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                activityIndicator.bottomAnchor.constraint(equalTo: loadingScreenLabel.topAnchor, constant: -24)
+                activityIndicator.bottomAnchor.constraint(equalTo: loadingScreenLabel.topAnchor, constant: -24),
             ]
         )
     }

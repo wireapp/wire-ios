@@ -246,8 +246,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         let payload: [AnyHashable: Any] = [
             "data": [
-                "user": currentUserIdentifier.transportString()
-            ]
+                "user": currentUserIdentifier.transportString(),
+            ],
         ]
 
         // WHEN
@@ -275,8 +275,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         let payload: [AnyHashable: Any] = [
             "data": [
-                "user": currentUserIdentifier.transportString()
-            ]
+                "user": currentUserIdentifier.transportString(),
+            ],
         ]
 
         // WHEN

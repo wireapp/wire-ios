@@ -110,7 +110,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
             containerView,
             descriptionLabel,
             settingsButton,
-            cameraIcon
+            cameraIcon,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
@@ -118,7 +118,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
             descriptionLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: trailingAnchor)
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ]
 
         defer {
@@ -143,7 +143,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
             settingsButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
             settingsButton.heightAnchor.constraint(equalToConstant: 44),
             settingsButton.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            descriptionLabel.topAnchor.constraint(equalTo: containerView.topAnchor)
+            descriptionLabel.topAnchor.constraint(equalTo: containerView.topAnchor),
         ]
     }
 
@@ -157,7 +157,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
             descriptionLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             descriptionLabel.topAnchor.constraint(equalTo: cameraIcon.bottomAnchor, constant: 16),
             cameraIcon.topAnchor.constraint(equalTo: containerView.topAnchor),
-            cameraIcon.centerXAnchor.constraint(equalTo: containerView.centerXAnchor)
+            cameraIcon.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
         ]
     }
 }

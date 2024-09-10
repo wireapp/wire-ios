@@ -247,7 +247,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             cancelButton,
             bottomToolbar,
             topContainer,
-            topSeparator
+            topSeparator,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -299,7 +299,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             redoButton.leftAnchor.constraint(equalTo: bottomToolbar.leftAnchor, constant: 8),
 
             cancelButton.centerYAnchor.constraint(equalTo: bottomToolbar.centerYAnchor),
-            cancelButton.rightAnchor.constraint(equalTo: bottomToolbar.rightAnchor, constant: -8)
+            cancelButton.rightAnchor.constraint(equalTo: bottomToolbar.rightAnchor, constant: -8),
         ])
     }
 

@@ -428,7 +428,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let action = MockCallAnswerAction(call: callKitCall.id)
@@ -456,7 +456,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let action = MockCallAnswerAction(call: callKitCall.id)
@@ -501,7 +501,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let action = MockStartCallAction(
@@ -545,7 +545,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let action = MockStartCallAction(
@@ -574,7 +574,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let action = MockStartCallAction(
@@ -946,7 +946,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let mockEndCallAction = MockEndCallAction(call: callKitCall.id)
@@ -1017,7 +1017,7 @@ class CallKitManagerTest: DatabaseTest {
         }
 
         mockCallKitManagerDelegate.mockConversations = [
-            callKitCall.handle: conversation
+            callKitCall.handle: conversation,
         ]
 
         let mockAnswerCallAction = MockCallAnswerAction(call: callKitCall.id)

@@ -140,7 +140,7 @@ private enum Scaffolding {
         id: UUID(uuidString: "66c7731b-9985-4b5e-90d7-b8f8ce1cadb9")!,
         events: [
             .conversation(.proteusMessageAdd(proteusMessageAddEvent)),
-            .conversation(.protocolUpdate(protocolUpdateEvent))
+            .conversation(.protocolUpdate(protocolUpdateEvent)),
         ],
         isTransient: false
     )
@@ -149,7 +149,7 @@ private enum Scaffolding {
         id: UUID(uuidString: "7b406b6e-df92-4844-b20b-2e673ca2d027")!,
         events: [
             .conversation(.receiptModeUpdate(receiptModeUpdateEvent)),
-            .conversation(.rename(renameEvent))
+            .conversation(.rename(renameEvent)),
         ],
         isTransient: false
     )
@@ -158,7 +158,7 @@ private enum Scaffolding {
         id: UUID(uuidString: "eb660720-079c-43f3-9a80-1168638c928f")!,
         events: [
             .conversation(.typing(typingEvent)),
-            .conversation(.delete(deleteEvent))
+            .conversation(.delete(deleteEvent)),
         ],
         isTransient: false
     )

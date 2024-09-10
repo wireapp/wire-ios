@@ -96,7 +96,7 @@ extension MockTransportSession {
                     "type": "conversation.create",
                     "data": conversation.transportData(),
                     "conversation": conversation.identifier,
-                    "time": Date().transportString()
+                    "time": Date().transportString(),
                 ]
                 return payload as ZMTransportData
             }
@@ -110,7 +110,7 @@ extension MockTransportSession {
                     "type": "conversation.access-update",
                     "data": conversation.changePushPayload!,
                     "conversation": conversation.identifier,
-                    "time": Date().transportString()
+                    "time": Date().transportString(),
                 ]
                 return payload as ZMTransportData
             }

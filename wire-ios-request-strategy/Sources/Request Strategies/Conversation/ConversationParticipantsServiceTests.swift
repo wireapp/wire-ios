@@ -381,11 +381,11 @@ extension ConversationParticipantsServiceTests {
 
             return (
                 reachables: [
-                    (applesDomain, applesUser)
+                    (applesDomain, applesUser),
                 ],
                 unreachables: [
                     (bananasDomain, bananasUser),
-                    (carrotsDomain, carrotsUser)
+                    (carrotsDomain, carrotsUser),
                 ]
             )
         }

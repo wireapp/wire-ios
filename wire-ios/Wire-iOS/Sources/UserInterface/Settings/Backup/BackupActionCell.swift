@@ -42,7 +42,7 @@ final class BackupActionCell: UITableViewCell {
             actionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
             actionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
             actionTitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            actionTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0)
+            actionTitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
         ])
         actionTitleLabel.heightAnchor.constraint(equalToConstant: 44).isActive = true
         addBorder(for: .bottom)

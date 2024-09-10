@@ -358,7 +358,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                             hiddenReference: nil,
                             mutedStatus: nil,
                             mutedReference: nil
-                        )
+                        ),
                     ],
                     selfMember: Conversation.Member(
                         qualifiedID: QualifiedID(
@@ -419,7 +419,7 @@ final class ConversationEventDecodingTests: XCTestCase {
                     hiddenReference: nil,
                     mutedStatus: nil,
                     mutedReference: nil
-                )
+                ),
             ]
         )
 

@@ -191,7 +191,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             toolbar,
             separatorLine,
             hintImageView,
-            hintLabel
+            hintLabel,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -218,7 +218,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             hintImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             hintLabel.topAnchor.constraint(equalTo: colorPicker.bottomAnchor, constant: 16),
             hintLabel.layoutMarginsGuide.leftAnchor.constraint(equalTo: view.layoutMarginsGuide.leftAnchor),
-            hintLabel.layoutMarginsGuide.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor)
+            hintLabel.layoutMarginsGuide.rightAnchor.constraint(equalTo: view.layoutMarginsGuide.rightAnchor),
         ])
     }
 
@@ -301,7 +301,7 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
             emojiKeyboardView.heightAnchor.constraint(equalToConstant: KeyboardHeight.current),
             emojiKeyboardView.leftAnchor.constraint(equalTo: view.leftAnchor),
             emojiKeyboardView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            emojiKeyboardView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            emojiKeyboardView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         if animated {

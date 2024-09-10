@@ -120,7 +120,7 @@ extension ZMMessage {
                         self.fileCategory,
                         self.locationCategory,
                         self.knockCategory,
-                        self.systemMessageCategory
+                        self.systemMessageCategory,
         ]
         .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
             current.union(other)
@@ -253,7 +253,7 @@ extension MessageCategory: CustomDebugStringConvertible {
         .knock: "Knock",
         .systemMessage: "System message",
         .excludedFromCollection: "Excluded from collection",
-        .linkPreview: "Link preview"
+        .linkPreview: "Link preview",
     ]
 
     public var debugDescription: String {

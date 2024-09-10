@@ -81,8 +81,8 @@ extension MockTransportSession {
             "data": [
                 "access_role": conversation.accessRole,
                 "access_role_v2": conversation.accessRoleV2,
-                "access": conversation.accessMode
-            ]
+                "access": conversation.accessMode,
+            ],
         ] as ZMTransportData
         return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
@@ -114,7 +114,7 @@ extension MockTransportSession {
 
         let roles = conversation.team?.roles ?? conversation.nonTeamRoles!
         let payload: [String: Any] = [
-            "conversation_roles": roles.map(\.payload)
+            "conversation_roles": roles.map(\.payload),
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
@@ -146,11 +146,11 @@ extension MockTransportSession {
                 "data": [
                     "uri": link,
                     "key": "test-key",
-                    "code": "test-code"
+                    "code": "test-code",
                 ],
                 "type": "conversation.code-update",
                 "time": Date().transportString(),
-                "from": selfUser.identifier
+                "from": selfUser.identifier,
             ] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
@@ -184,7 +184,7 @@ extension MockTransportSession {
         }
 
         let responsePayload = [
-            "status": conversation.guestLinkFeatureStatus
+            "status": conversation.guestLinkFeatureStatus,
         ] as ZMTransportData
 
         return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -219,12 +219,12 @@ extension MockTransportSession {
                     "users": [
                         [
                             "conversation_role": "wire_member",
-                            "id": selfUser.identifier
-                        ]
+                            "id": selfUser.identifier,
+                        ],
                     ],
                     "user_ids": [
-                        selfUser.identifier
-                    ]
+                        selfUser.identifier,
+                    ],
                 ],
                 "from": selfUser.identifier] as ZMTransportData
             return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -292,7 +292,7 @@ extension MockTransportSession {
             "redundant": [:],
             "missing": missedClients,
             "deleted": deletedClients,
-            "time": Date().transportString()
+            "time": Date().transportString(),
         ]
 
         var statusCode = 412

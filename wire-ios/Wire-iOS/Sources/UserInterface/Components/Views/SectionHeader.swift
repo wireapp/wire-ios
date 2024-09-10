@@ -48,7 +48,7 @@ final class SectionHeaderView: UIView {
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
         ])
     }
 }
@@ -98,7 +98,7 @@ final class SectionTableHeader: UITableViewHeaderFooterView {
             headerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             headerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             headerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            headerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            headerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 }

@@ -57,7 +57,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
         [
             videoContainerView,
-            scalableView
+            scalableView,
         ].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
             $0?.fitIn(view: self)

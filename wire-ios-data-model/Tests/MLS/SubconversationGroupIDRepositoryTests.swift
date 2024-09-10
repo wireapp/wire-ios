@@ -62,7 +62,7 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
             .random(): [.conference: .random()],
             .random(): [.conference: .random()],
             .random(): [.conference: .random()],
-            parentGroupID: [.conference: subgroupID]
+            parentGroupID: [.conference: subgroupID],
         ]
 
         for parent in repositoryData {

@@ -74,7 +74,7 @@ final class ThreeDotsLoadingView: UIView {
             dot3.rightAnchor.constraint(equalTo: rightAnchor),
 
             dot2.leftAnchor.constraint(equalTo: dot1.rightAnchor, constant: 4),
-            dot3.leftAnchor.constraint(equalTo: dot2.rightAnchor, constant: 4)
+            dot3.leftAnchor.constraint(equalTo: dot2.rightAnchor, constant: 4),
         ]
 
         for dot in [dot1, dot2, dot3] {
@@ -82,7 +82,7 @@ final class ThreeDotsLoadingView: UIView {
                 dot.topAnchor.constraint(equalTo: topAnchor),
                 dot.bottomAnchor.constraint(equalTo: bottomAnchor),
                 dot.widthAnchor.constraint(equalToConstant: dotRadius * 2),
-                dot.heightAnchor.constraint(equalToConstant: dotRadius * 2)
+                dot.heightAnchor.constraint(equalToConstant: dotRadius * 2),
             ])
         }
 
@@ -112,7 +112,7 @@ final class ThreeDotsLoadingView: UIView {
             activeColor.cgColor,
             inactiveColor.cgColor,
             inactiveColor.cgColor,
-            activeColor.cgColor
+            activeColor.cgColor,
         ]
         colorShift.keyTimes = [0, 0.33, 0.66, 1]
         colorShift.duration = 4 * stepDuration

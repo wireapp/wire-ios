@@ -291,7 +291,7 @@ final class AddParticipantsViewController: UIViewController {
             searchHeaderView,
             searchResultsView,
             confirmButton,
-            searchGroupSelector
+            searchGroupSelector,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
@@ -306,7 +306,7 @@ final class AddParticipantsViewController: UIViewController {
             confirmButton.heightAnchor.constraint(equalToConstant: confirmButtonHeight),
             confirmButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: margin),
             confirmButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -margin),
-            bottomConstraint
+            bottomConstraint,
         ]
 
         if viewModel.botCanBeAdded {
@@ -314,7 +314,7 @@ final class AddParticipantsViewController: UIViewController {
                 searchGroupSelector.topAnchor.constraint(equalTo: searchHeaderView.bottomAnchor),
                 searchGroupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                 searchGroupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                searchResultsView.topAnchor.constraint(equalTo: searchGroupSelector.bottomAnchor)
+                searchResultsView.topAnchor.constraint(equalTo: searchGroupSelector.bottomAnchor),
             ])
         } else {
             constraints.append(

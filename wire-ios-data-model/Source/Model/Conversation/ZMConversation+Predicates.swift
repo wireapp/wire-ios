@@ -45,7 +45,7 @@ extension ZMConversation {
             queryMatching,
             selfUserIsMember,
             groupOnly,
-            notTeamOneToOne
+            notTeamOneToOne,
         ])
     }
 
@@ -61,7 +61,7 @@ extension ZMConversation {
             format: "SUBQUERY(%K, $role, $role.user != %@ AND (\(roleNameMatchingConditions))).@count > 0",
             argumentArray: [
                 ZMConversationParticipantRolesKey,
-                selfUser
+                selfUser,
             ] + roleNameMatchingRegexes
         )
     }

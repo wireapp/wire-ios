@@ -534,7 +534,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
-            (user2, role2)
+            (user2, role2),
         ])
 
         // then
@@ -560,7 +560,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
-            (user2, role2)
+            (user2, role2),
         ])
 
         // then
@@ -582,13 +582,13 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         user2.name = "user2"
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
-            (user2, role1)
+            (user2, role1),
         ])
 
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
-            (user2, role2)
+            (user2, role2),
         ])
 
         // then

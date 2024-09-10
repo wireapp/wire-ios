@@ -111,7 +111,7 @@ class BottomSheetContainerViewController: UIViewController {
                 .constraint(equalTo: self.view.leftAnchor),
             bottomSheetViewController.view.rightAnchor
                 .constraint(equalTo: self.view.rightAnchor),
-            topConstraint
+            topConstraint,
         ])
         bottomSheetViewController.didMove(toParent: self)
     }
@@ -130,7 +130,7 @@ class BottomSheetContainerViewController: UIViewController {
                 .constraint(equalTo: self.view.rightAnchor),
             contentViewController.view.topAnchor
                 .constraint(equalTo: self.view.topAnchor).withPriority(.defaultLow),
-            visibleControllerBottomConstraint
+            visibleControllerBottomConstraint,
         ])
         contentViewController.didMove(toParent: self)
     }

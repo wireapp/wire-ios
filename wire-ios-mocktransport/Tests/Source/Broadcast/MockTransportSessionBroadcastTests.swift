@@ -54,9 +54,9 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             "recipients": [
                 otherUser.identifier: [
                     otherUserClient.identifier!: base64Content,
-                    otherUserRedundantClient.identifier!: base64Content
-                ]
-            ]
+                    otherUserRedundantClient.identifier!: base64Content,
+                ],
+            ],
         ]
 
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, otherUserRedundantClient], plainText: messageData).serializedData()
@@ -78,7 +78,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing": [selfUser.identifier: [secondSelfClient.identifier!], otherUser.identifier: [secondOtherUserClient.identifier!]],
-                    "deleted": [otherUser.identifier: [otherUserRedundantClient.identifier!]]
+                    "deleted": [otherUser.identifier: [otherUserRedundantClient.identifier!]],
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -109,7 +109,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [:]
+            "recipients": [:],
         ]
 
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [], plainText: messageData).serializedData()
@@ -127,7 +127,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing": [otherUser.identifier: [otherUserClient.identifier!]],
-                    "deleted": [:]
+                    "deleted": [:],
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -159,7 +159,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]]
+            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]],
         ]
 
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
@@ -177,7 +177,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing": [:],
-                    "deleted": [:]
+                    "deleted": [:],
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -210,7 +210,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]]
+            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]],
         ]
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
 
@@ -227,7 +227,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing": [:],
-                    "deleted": [:]
+                    "deleted": [:],
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)

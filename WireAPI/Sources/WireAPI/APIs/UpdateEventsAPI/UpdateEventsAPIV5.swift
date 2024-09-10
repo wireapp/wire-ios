@@ -63,7 +63,7 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
             components?.queryItems = [
                 URLQueryItem(name: "client", value: selfClientID),
                 URLQueryItem(name: "since", value: nextSince),
-                URLQueryItem(name: "size", value: "500")
+                URLQueryItem(name: "size", value: "500"),
             ]
 
             guard let path = components?.string else {

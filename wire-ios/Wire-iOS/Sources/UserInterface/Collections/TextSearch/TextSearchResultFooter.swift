@@ -57,7 +57,7 @@ final class TextSearchResultFooter: UIView {
             dateLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             nameLabel.topAnchor.constraint(equalTo: topAnchor),
             nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor)
+            dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
         ])
     }
 

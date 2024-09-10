@@ -30,7 +30,7 @@ let package = Package(
             sources: ["./Tests.swift"],
             resources: [
                 .copy("./TestResources/Trimmed_xcstrings"),
-                .copy("./TestResources/Untrimmed_xcstrings")
+                .copy("./TestResources/Untrimmed_xcstrings"),
             ]
         ),
 
@@ -53,6 +53,6 @@ let package = Package(
             name: "swiftformat",
             url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.54.0/swiftformat.artifactbundle.zip",
             checksum: "edf4ed2f1664ad621ae71031ff915e0c6ef80ad66e87ea0e5a10c3580a27a6dd"
-        )
+        ),
     ]
 )

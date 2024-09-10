@@ -59,7 +59,7 @@ extension UIViewController {
 
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: 290),
-            view.widthAnchor.constraint(equalToConstant: 375)
+            view.widthAnchor.constraint(equalToConstant: 375),
         ])
 
         beginAppearanceTransition(true, animated: false)

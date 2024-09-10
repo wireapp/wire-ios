@@ -33,7 +33,7 @@ extension Analytics {
 
         return [
             "conversation_guests": numGuests.logRound(),
-            "user_type": userType
+            "user_type": userType,
         ]
     }
 }

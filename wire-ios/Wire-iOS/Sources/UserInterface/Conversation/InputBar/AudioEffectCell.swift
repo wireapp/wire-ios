@@ -70,7 +70,7 @@ final class AudioEffectCell: UICollectionViewCell {
             borderBottomView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             borderBottomView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0.5),
             borderBottomView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            borderBottomView.heightAnchor.constraint(equalToConstant: .hairline)
+            borderBottomView.heightAnchor.constraint(equalToConstant: .hairline),
         ])
 
         updateForSelectedState()

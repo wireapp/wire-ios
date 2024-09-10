@@ -39,7 +39,7 @@ final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
             "SOCKSProxy": host,
             "SOCKSPort": port,
             kCFProxyTypeKey: kCFProxyTypeSOCKS,
-            kCFStreamPropertySOCKSVersion: kCFStreamSocketSOCKSVersion5
+            kCFStreamPropertySOCKSVersion: kCFStreamSocketSOCKSVersion5,
         ]
 
         if let username = proxyUsername, let password = proxyPassword, needsAuthentication {

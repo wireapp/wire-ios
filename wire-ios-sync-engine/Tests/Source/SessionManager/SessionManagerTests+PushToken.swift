@@ -58,7 +58,7 @@ final class SessionManagerPushTokenTests: IntegrationTest {
         // Given some tokens are registered remotely
         pushService.registeredTokensByClientID[clientID] = [
             .createAPNSToken(from: .secureRandomData(length: 8)),
-            .createVOIPToken(from: .secureRandomData(length: 8))
+            .createVOIPToken(from: .secureRandomData(length: 8)),
         ]
 
         let registrationDone = customExpectation(description: "registration done")
@@ -103,7 +103,7 @@ final class SessionManagerPushTokenTests: IntegrationTest {
         // Given some tokens are registered remotely
         pushService.registeredTokensByClientID[clientID] = [
             .createAPNSToken(from: .secureRandomData(length: 8)),
-            .createVOIPToken(from: .secureRandomData(length: 8))
+            .createVOIPToken(from: .secureRandomData(length: 8)),
         ]
 
         let registrationDone = customExpectation(description: "registration done")
@@ -146,7 +146,7 @@ final class SessionManagerPushTokenTests: IntegrationTest {
 
         // Given some tokens are registered remotely
         pushService.registeredTokensByClientID[clientID] = [
-            pushService.localToken!
+            pushService.localToken!,
         ]
 
         let registrationDone = customExpectation(description: "registration done")

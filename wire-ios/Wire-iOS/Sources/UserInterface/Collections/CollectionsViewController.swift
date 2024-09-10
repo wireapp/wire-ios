@@ -293,7 +293,7 @@ final class CollectionsViewController: UIViewController {
             titleView.topAnchor.constraint(equalTo: titleViewWrapper.topAnchor, constant: 4),
             titleView.leftAnchor.constraint(equalTo: titleViewWrapper.leftAnchor),
             titleView.rightAnchor.constraint(equalTo: titleViewWrapper.rightAnchor),
-            titleView.bottomAnchor.constraint(equalTo: titleViewWrapper.bottomAnchor)
+            titleView.bottomAnchor.constraint(equalTo: titleViewWrapper.bottomAnchor),
         ])
 
         titleViewWrapper.setNeedsLayout()

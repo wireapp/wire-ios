@@ -127,7 +127,7 @@ final class MarkdownBarView: UIView {
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackViewWidth,
-            stackViewTrailingConstraint
+            stackViewTrailingConstraint,
         ])
 
         headerButton.itemIcons = [.markdownH1, .markdownH2, .markdownH3]

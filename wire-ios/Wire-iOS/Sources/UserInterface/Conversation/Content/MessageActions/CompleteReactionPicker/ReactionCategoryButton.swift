@@ -51,7 +51,7 @@ final class ReactionCategoryButton: UIButton {
             selectionIndicator.bottomAnchor.constraint(equalTo: bottomAnchor),
             selectionIndicator.leadingAnchor.constraint(equalTo: leadingAnchor),
             selectionIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
-            selectionIndicator.heightAnchor.constraint(equalToConstant: 4.0)
+            selectionIndicator.heightAnchor.constraint(equalToConstant: 4.0),
         ])
     }
 }

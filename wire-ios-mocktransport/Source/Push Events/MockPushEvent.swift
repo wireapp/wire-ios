@@ -41,7 +41,7 @@ import Foundation
         [
             "id": uuid.transportString(),
             "payload": [payload],
-            "transient": isTransient
+            "transient": isTransient,
         ] as ZMTransportData
     }
 

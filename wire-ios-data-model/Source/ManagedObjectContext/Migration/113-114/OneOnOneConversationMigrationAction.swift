@@ -94,7 +94,7 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
             sameTeam,
             groupConversation,
             noUserDefinedName,
-            sameParticipant
+            sameParticipant,
         ])
 
         guard

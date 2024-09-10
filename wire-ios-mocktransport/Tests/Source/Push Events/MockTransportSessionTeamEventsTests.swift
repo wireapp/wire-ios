@@ -108,7 +108,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         XCTAssertEqual(events.count, 1)
 
         let updateData = [
-            "user": user.identifier
+            "user": user.identifier,
         ]
         check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
@@ -136,7 +136,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         XCTAssertEqual(events.count, 1)
 
         let updateData = [
-            "user": selfUser.identifier
+            "user": selfUser.identifier,
         ]
         check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
@@ -169,7 +169,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         XCTAssertEqual(events.count, 1)
 
         let updateData = [
-            "conv": conversation.identifier
+            "conv": conversation.identifier,
         ]
         check(event: events.first, hasType: .teamConversationCreate, team: team, data: updateData)
     }
@@ -203,7 +203,7 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         XCTAssertEqual(events.count, 1)
 
         let updateData = [
-            "conv": conversationIdentifier!
+            "conv": conversationIdentifier!,
         ]
         check(event: events.first, hasType: .teamConversationDelete, team: team, data: updateData)
     }

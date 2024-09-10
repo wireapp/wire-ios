@@ -43,7 +43,7 @@ struct RequestLog: Codable {
         "Sec-WebSocket-key",
         "Authorization",
         "sec-websocket-accept",
-        "Set-cookie"
+        "Set-cookie",
     ].map { $0.lowercased() })
 
     static let authorizedHeaderFields = Set([
@@ -72,7 +72,7 @@ struct RequestLog: Codable {
         "X-Amz-Meta-User",
         "X-cache",
         "Sec-WebSocket-key",
-        "sec-websocket-accept"
+        "sec-websocket-accept",
     ].map { $0.lowercased() }
     )
 }

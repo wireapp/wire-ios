@@ -91,9 +91,9 @@ extension ZMAssetClientMessageTests_Ephemeral {
             "time": Date().transportString(),
             "data": [
                 "id": "fooooo",
-                "text": data ?? ""
+                "text": data ?? "",
             ],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
     }

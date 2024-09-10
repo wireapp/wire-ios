@@ -40,7 +40,7 @@ final class NetworkConditionIndicatorView: UIView {
         NSLayoutConstraint.activate([
             label.firstBaselineAnchor.constraint(equalTo: centerYAnchor, constant: 4),
             label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10)
+            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
         ])
         backgroundColor = UIColor.accent()
     }

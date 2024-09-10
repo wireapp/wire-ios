@@ -116,7 +116,7 @@ extension AuthenticationCoordinatorAction {
             Alert.Message.backendName,
             env.title,
             Alert.Message.backendUrl,
-            env.backendURL.absoluteString
+            env.backendURL.absoluteString,
         ].joined(separator: "\n")
 
         return .presentAlert(

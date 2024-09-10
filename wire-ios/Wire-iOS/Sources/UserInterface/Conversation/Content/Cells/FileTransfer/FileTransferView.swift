@@ -97,7 +97,7 @@ final class FileTransferView: UIView, TransferView {
             fileTypeIconView,
             progressView,
             bottomLabel,
-            loadingView
+            loadingView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -124,7 +124,7 @@ final class FileTransferView: UIView, TransferView {
             bottomLabel.leftAnchor.constraint(equalTo: topLabel.leftAnchor),
             bottomLabel.rightAnchor.constraint(equalTo: topLabel.rightAnchor),
             loadingView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            loadingView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            loadingView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 

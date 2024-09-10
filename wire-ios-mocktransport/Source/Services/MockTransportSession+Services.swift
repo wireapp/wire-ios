@@ -29,7 +29,7 @@ extension MockTransportSession {
 
         let payload: [String: Any] = [
             "services": services.map(\.payload),
-            "has_more": false
+            "has_more": false,
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
@@ -125,12 +125,12 @@ extension MockTransportSession {
                 "conversation": conversation.identifier,
                 "from": selfUser.identifier,
                 "time": Date().transportString(),
-                "data": ["user_ids": [newServiceUser.identifier]]
+                "data": ["user_ids": [newServiceUser.identifier]],
             ],
             "service": [
                 "provider": newServiceUser.providerIdentifier,
-                "id": newServiceUser.serviceIdentifier
-            ]
+                "id": newServiceUser.serviceIdentifier,
+            ],
         ]
 
         return ZMTransportResponse(payload: responsePayload as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: request.apiVersion)

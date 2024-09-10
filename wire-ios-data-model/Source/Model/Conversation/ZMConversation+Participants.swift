@@ -69,7 +69,7 @@ extension ZMConversation {
             "participantRoles.user.name",
             #keyPath(ZMConversation.oneOnOneUser.name),
             #keyPath(ZMConversation.oneOnOneUser.availability),
-            ZMConversationUserDefinedNameKey
+            ZMConversationUserDefinedNameKey,
         ] + ZMConversation.participantRolesKeys)
     }
 

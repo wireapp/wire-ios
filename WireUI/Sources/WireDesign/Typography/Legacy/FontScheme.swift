@@ -63,7 +63,7 @@ extension FontWeight {
         .semibold: UIFont.Weight.semibold,
         .bold: UIFont.Weight.bold,
         .heavy: UIFont.Weight.heavy,
-        .black: UIFont.Weight.black
+        .black: UIFont.Weight.black,
     ]
 
     /// Weight mapping used when the bold text accessibility setting is
@@ -78,7 +78,7 @@ extension FontWeight {
         .semibold: UIFont.Weight.semibold,
         .bold: UIFont.Weight.bold,
         .heavy: UIFont.Weight.heavy,
-        .black: UIFont.Weight.black
+        .black: UIFont.Weight.black,
     ]
 
     public func fontWeight(accessibilityBoldText: Bool? = nil) -> UIFont.Weight {
@@ -171,7 +171,7 @@ public final class FontScheme {
             (size: .large, point: 40),
             (size: .normal, point: 26),
             (size: .medium, point: 20),
-            (size: .small, point: 18)
+            (size: .small, point: 18),
         ]
 
         mapFontTextStyleAndFontSizeAndPoint(fontSizeTuples: largeTitleFontSizeTuples,
@@ -183,7 +183,7 @@ public final class FontScheme {
             (size: .large, point: 21),
             (size: .normal, point: 14),
             (size: .medium, point: 11),
-            (size: .small, point: 10)
+            (size: .small, point: 10),
         ]
 
         mapFontTextStyleAndFontSizeAndPoint(fontSizeTuples: inputTextFontSizeTuples,

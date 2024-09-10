@@ -71,7 +71,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             containerView.topAnchor.constraint(equalTo: topAnchor),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 
@@ -96,7 +96,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
             view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             view.topAnchor.constraint(equalTo: containerView.topAnchor),
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
 
@@ -110,7 +110,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
             view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             view.topAnchor.constraint(equalTo: containerView.topAnchor),
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
 

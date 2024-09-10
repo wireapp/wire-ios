@@ -158,7 +158,7 @@ final class AudioEffectsPickerViewController: UIViewController {
             subtitleLabel.topAnchor.constraint(equalTo: statusBoxView.topAnchor),
             subtitleLabel.bottomAnchor.constraint(equalTo: statusBoxView.bottomAnchor),
             subtitleLabel.leftAnchor.constraint(equalTo: statusBoxView.leftAnchor),
-            subtitleLabel.rightAnchor.constraint(equalTo: statusBoxView.rightAnchor)
+            subtitleLabel.rightAnchor.constraint(equalTo: statusBoxView.rightAnchor),
         ])
 
         // Do not load in tests, which may cause exception break point to break when loading audio assets

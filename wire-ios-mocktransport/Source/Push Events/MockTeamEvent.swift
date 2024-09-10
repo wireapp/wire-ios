@@ -69,7 +69,7 @@ import Foundation
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
-            "data": data
+            "data": data,
         ] as ZMTransportData
     }
 

@@ -136,7 +136,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
                 .ignored,
                 .pending,
                 .sent,
-                .cancelled
+                .cancelled,
             ]
 
             for status in allCases {

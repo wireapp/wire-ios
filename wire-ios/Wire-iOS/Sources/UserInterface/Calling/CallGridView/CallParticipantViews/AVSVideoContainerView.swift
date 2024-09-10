@@ -42,7 +42,7 @@ final class AVSVideoContainerView: UIView {
             view.leadingAnchor.constraint(equalTo: leadingAnchor),
             view.topAnchor.constraint(equalTo: topAnchor),
             trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 }

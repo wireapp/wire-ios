@@ -58,7 +58,7 @@ extension MockTransportSession {
         let payload = [
             "key": asset.identifier,
             "domain": domain,
-            "token": asset.token
+            "token": asset.token,
         ].compactMapValues { $0 } as ZMTransportData
 
         let location = String(format: "/asset/v4/%@", arguments: [asset.identifier])

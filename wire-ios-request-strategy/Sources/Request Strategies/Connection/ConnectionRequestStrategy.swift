@@ -20,7 +20,7 @@ import Foundation
 
 public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
     let eventsToProcess: [ZMUpdateEventType] = [
-        .userConnection
+        .userConnection,
     ]
 
     var isFetchingAllConnections = false
@@ -69,7 +69,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         self.updateConnectionActionHandler = UpdateConnectionActionHandler(context: managedObjectContext)
         self.actionSync = EntityActionSync(actionHandlers: [
             connectToUserActionHandler,
-            updateConnectionActionHandler
+            updateConnectionActionHandler,
         ])
 
         self.oneOnOneResolver = oneOneOneResolver
@@ -144,13 +144,13 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         if syncProgress.currentSyncPhase == .fetchingConnections {
             [
                 connectionListSync,
-                localConnectionListSync
+                localConnectionListSync,
             ]
         } else {
             [
                 connectionByIDSync,
                 connectionByQualifiedIDSync,
-                actionSync
+                actionSync,
             ]
         }
     }

@@ -153,7 +153,7 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
             .mlsMigrationOngoingCall,
             .mlsMigrationJoinAfterwards,
             .mlsMigrationStarted,
-            .mlsMigrationUpdateVersion
+            .mlsMigrationUpdateVersion,
         ]
 
         for systemMessageType in nonUnreadCountGeneratingSystemMessages {

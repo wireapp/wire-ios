@@ -73,7 +73,7 @@ final class UserImageViewContainer: UIView {
             userImageView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             userImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
             userImageView.widthAnchor.constraint(lessThanOrEqualToConstant: maxSize),
-            userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: maxSize)
+            userImageView.heightAnchor.constraint(lessThanOrEqualToConstant: maxSize),
         ])
     }
 }

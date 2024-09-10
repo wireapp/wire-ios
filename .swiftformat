@@ -72,7 +72,8 @@
     strongOutlets, \
     strongifiedSelf, \
     todos, \
-    trailingClosures
+    trailingClosures, \
+    trailingCommas
 
 
 # Options

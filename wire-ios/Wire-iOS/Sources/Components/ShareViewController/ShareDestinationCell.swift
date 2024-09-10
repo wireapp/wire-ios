@@ -154,7 +154,7 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
 
             checkImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             checkImageView.widthAnchor.constraint(equalToConstant: checkmarkSize),
-            checkImageView.heightAnchor.constraint(equalToConstant: checkmarkSize)
+            checkImageView.heightAnchor.constraint(equalToConstant: checkmarkSize),
         ])
     }
 

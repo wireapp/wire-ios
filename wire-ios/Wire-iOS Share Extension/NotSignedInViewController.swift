@@ -58,7 +58,7 @@ final class NotSignedInViewController: UIViewController {
             messageLabel.topAnchor.constraint(equalTo: view.topAnchor),
             messageLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             messageLabel.leftAnchor.constraint(equalTo: view.leftAnchor),
-            messageLabel.rightAnchor.constraint(equalTo: view.rightAnchor)
+            messageLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 

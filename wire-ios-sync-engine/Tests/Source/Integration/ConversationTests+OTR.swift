@@ -35,9 +35,9 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        "key": Data("invalid key".utf8).base64String()
-                    ]
-                ]
+                        "key": Data("invalid key".utf8).base64String(),
+                    ],
+                ],
             ]
             return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
@@ -88,9 +88,9 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
-                        "key": Data("invalid key".utf8).base64String()
-                    ]
-                ]
+                        "key": Data("invalid key".utf8).base64String(),
+                    ],
+                ],
             ]
             return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }

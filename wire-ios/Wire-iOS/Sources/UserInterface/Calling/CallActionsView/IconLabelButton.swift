@@ -93,7 +93,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
             subtitleTransformLabel.topAnchor.constraint(equalTo: iconButton.bottomAnchor, constant: 8.0),
             subtitleTransformLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             subtitleTransformLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            subtitleTransformLabel.heightAnchor.constraint(equalToConstant: 16)
+            subtitleTransformLabel.heightAnchor.constraint(equalToConstant: 16),
         ])
     }
 

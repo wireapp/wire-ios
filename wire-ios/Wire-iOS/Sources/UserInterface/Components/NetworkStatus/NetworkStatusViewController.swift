@@ -80,7 +80,7 @@ final class NetworkStatusViewController: UIViewController {
             networkStatusView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             networkStatusView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             networkStatusView.topAnchor.constraint(equalTo: view.topAnchor),
-            networkStatusView.heightAnchor.constraint(equalTo: view.heightAnchor)
+            networkStatusView.heightAnchor.constraint(equalTo: view.heightAnchor),
         ])
     }
 

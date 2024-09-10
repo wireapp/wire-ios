@@ -22,10 +22,10 @@ extension NSAttributedString {
     static func companyLoginString(withMessage message: String, error: String) -> NSAttributedString {
         let errorAttributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12.0),
-            NSAttributedString.Key.foregroundColor: UIColor.red
+            NSAttributedString.Key.foregroundColor: UIColor.red,
         ]
         let defaultAttributes: [NSAttributedString.Key: Any] = [
-            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13.0)
+            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13.0),
         ]
 
         let attributedMessage = NSAttributedString(string: "\n\(message)\n\n", attributes: defaultAttributes)

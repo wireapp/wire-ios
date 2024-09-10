@@ -140,7 +140,7 @@ extension UnlockViewController {
             hintLabel,
             passcodeTextField,
             errorLabel,
-            unlockButton
+            unlockButton,
         ].forEach(stackView.addArrangedSubview)
 
         createConstraints()
@@ -149,7 +149,7 @@ extension UnlockViewController {
     private func createConstraints() {
         [
             contentView,
-            stackView
+            stackView,
         ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -174,7 +174,7 @@ extension UnlockViewController {
             stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
             // unlock button
-            unlockButton.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.buttonHeight)
+            unlockButton.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.buttonHeight),
         ])
     }
 

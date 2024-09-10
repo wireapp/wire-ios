@@ -97,7 +97,7 @@ final class ConversationReactionMessageTests: XCTestCase {
             thumbsUpReaction,
             thumbsDownReaction,
             slightlySmilingReaction,
-            frowningFaceReaction
+            frowningFaceReaction,
         ]
 
         // WHEN

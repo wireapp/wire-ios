@@ -36,7 +36,7 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
         return [
             .button(ButtonItem(title: "Delete Device", action: { Task { await deleteDevice() } })),
             .button(ButtonItem(title: "Duplicate Session", action: { Task { await duplicateClient() } })),
-            .button(ButtonItem(title: "Corrupt Session", action: { Task { await corruptSession() } }))
+            .button(ButtonItem(title: "Corrupt Session", action: { Task { await corruptSession() } })),
         ]
     }
 

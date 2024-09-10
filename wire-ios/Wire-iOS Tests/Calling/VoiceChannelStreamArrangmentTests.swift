@@ -85,7 +85,7 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
         // GIVEN
         let participants = [
             participantStub(for: mockUser1, videoEnabled: enabled),
-            participantStub(for: mockUser2, videoEnabled: enabled)
+            participantStub(for: mockUser2, videoEnabled: enabled),
         ]
 
         // WHEN

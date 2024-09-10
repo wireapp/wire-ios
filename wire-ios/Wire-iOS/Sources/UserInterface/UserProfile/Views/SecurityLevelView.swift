@@ -72,7 +72,7 @@ final class SecurityLevelView: UIView {
         let securityLevelText = SecurityLocalization.securityLevel.uppercased()
         securityLevelLabel.text = [
             securityLevelText,
-            levelText
+            levelText,
         ].joined(separator: " ")
 
         accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
@@ -102,7 +102,7 @@ final class SecurityLevelView: UIView {
             topBorder,
             securityLevelLabel,
             iconImageView,
-            bottomBorder
+            bottomBorder,
         ].forEach { addSubview($0) }
 
         topBorder.addConstraintsForBorder(for: .top, borderWidth: 1.0, to: self)
@@ -112,7 +112,7 @@ final class SecurityLevelView: UIView {
     private func createConstraints() {
         [
             securityLevelLabel,
-            iconImageView
+            iconImageView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -123,7 +123,7 @@ final class SecurityLevelView: UIView {
             iconImageView.widthAnchor.constraint(equalToConstant: 11.0),
             iconImageView.heightAnchor.constraint(equalToConstant: 11.0),
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            securityLevelLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 4)
+            securityLevelLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 4),
         ])
     }
 

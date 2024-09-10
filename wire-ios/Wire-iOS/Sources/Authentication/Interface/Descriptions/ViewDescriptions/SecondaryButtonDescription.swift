@@ -43,7 +43,7 @@ extension SecondaryButtonDescription: ViewDescriptor {
         button.addTarget(self, action: #selector(SecondaryButtonDescription.buttonTapped(_:)), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
-            button.heightAnchor.constraint(equalToConstant: 32)
+            button.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         return button

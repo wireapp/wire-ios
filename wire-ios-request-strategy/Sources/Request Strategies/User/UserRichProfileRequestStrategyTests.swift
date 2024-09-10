@@ -72,8 +72,8 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             let value = "value"
             let payload = [
                 "fields": [
-                    ["type": type, "value": value]
-                ]
+                    ["type": type, "value": value],
+                ],
             ]
             let response = ZMTransportResponse(payload: payload as NSDictionary as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
             self.sut.update(user, with: response, downstreamSync: nil)

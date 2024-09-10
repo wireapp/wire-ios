@@ -114,7 +114,7 @@ final class EphemeralKeyboardViewController: UIViewController {
             picker.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
             picker.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
             picker.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
+            picker.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
         ])
     }
 

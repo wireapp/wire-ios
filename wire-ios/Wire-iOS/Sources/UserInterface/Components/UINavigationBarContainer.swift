@@ -45,7 +45,7 @@ final class UINavigationBarContainer: UIViewController {
             navHeight,
             navigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),
             navigationBar.rightAnchor.constraint(equalTo: view.rightAnchor),
-            view.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor)
+            view.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor),
         ])
 
         navigationBar.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true

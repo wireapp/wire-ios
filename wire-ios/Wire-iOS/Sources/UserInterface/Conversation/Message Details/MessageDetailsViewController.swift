@@ -217,7 +217,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
             container.view.topAnchor.constraint(equalTo: topBar.bottomAnchor),
             container.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             container.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            container.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            container.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 

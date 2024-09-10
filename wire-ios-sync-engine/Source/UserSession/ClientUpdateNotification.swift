@@ -54,7 +54,7 @@ import WireDataModel
         NotificationInContext(name: self.name, context: context.notificationContext, userInfo: [
             errorKey: error as Any,
             clientObjectIDsKey: clients.map(\.objectID).filter { !$0.isTemporaryID },
-            typeKey: type
+            typeKey: type,
         ]).post()
     }
 

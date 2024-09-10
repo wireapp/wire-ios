@@ -43,7 +43,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         // given
         let payload = [
             "code": "test-code",
-            "key": "test-key"
+            "key": "test-key",
         ] as ZMTransportData
 
         // when
@@ -67,7 +67,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         // given
         let payload = [
             "code": "existing-conversation-code",
-            "key": "test-key"
+            "key": "test-key",
         ] as ZMTransportData
 
         // when
@@ -81,7 +81,7 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         // given
         let payload = [
             "code": "wrong-code",
-            "key": "test-key"
+            "key": "test-key",
         ] as ZMTransportData
 
         // when

@@ -83,7 +83,7 @@ final class AnimatedPenView: UIView {
 
             pen.rightAnchor.constraint(equalTo: rightAnchor),
             pen.topAnchor.constraint(equalTo: topAnchor),
-            pen.bottomAnchor.constraint(equalTo: bottomAnchor)
+            pen.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 
@@ -164,7 +164,7 @@ final class TypingIndicatorView: UIView {
             nameLabel,
             container,
             animatedPen,
-            expandingLine
+            expandingLine,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         // Lower the priority to prevent this breaks when container's height = 0
@@ -193,7 +193,7 @@ final class TypingIndicatorView: UIView {
             expandingLine.centerXAnchor.constraint(equalTo: centerXAnchor),
             expandingLine.centerYAnchor.constraint(equalTo: centerYAnchor),
             expandingLine.heightAnchor.constraint(equalToConstant: 1),
-            expandingLineWidth
+            expandingLineWidth,
         ])
     }
 

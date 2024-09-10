@@ -27,7 +27,7 @@ class EmojiOnlyStringTests: XCTestCase {
                            "❤︎", "❤️", "🈚︎", "🀄︎", // emoji variation
                            "👩", "👩🏻", "👩🏼", "👩🏽", "👩🏾", "👩🏿", // Fitzpatrick modifiers
                            "👨‍👩‍👧", "🏳️‍🌈", // Joining
-                           "🧘🏿‍♀️", "🧡", "🦒", "🧦", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🧟‍♂️" // Emoji 5.0
+                           "🧘🏿‍♀️", "🧡", "🦒", "🧦", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🧟‍♂️", // Emoji 5.0
                            // swiftlint:disable:next todo_requires_jira_link
                            // TODO: Test for Emoji 11.0 new emoji "🥮" after iOS 12.1 is released
         ]
@@ -107,7 +107,7 @@ class EmojiOnlyStringTests: XCTestCase {
                                "Ⴀჟჯჰ", // Georgian, updated in uncodie 11.0
                                "ქართული", // Georgian, updated in uncodie 11.0
                                " Α α, Β β, Γ γ, Δ δ, Ε ε, Ζ ζ, Η η, Θ θ, Ι ι, Κ κ, Λ λ, Μ μ, Ν ν, Ξ ξ, Ο ο, Π π, Ρ ρ, Σ σ/ς, Τ τ, Υ υ, Φ φ, Χ χ, Ψ ψ, Ω ω.", // Greek
-                               "。，？！" // Chinese punctuation marks
+                               "。，？！", // Chinese punctuation marks
         ]
         // then
         for langaugeString in langaugeStrings {

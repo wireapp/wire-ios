@@ -77,7 +77,7 @@ final class OutgoingConnectionViewController: UIViewController {
             cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
             cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
             archiveButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
-            archiveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+            archiveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
         ])
     }
 

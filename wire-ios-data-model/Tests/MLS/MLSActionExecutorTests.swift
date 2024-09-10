@@ -63,7 +63,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func mockMemberJoinUpdateEvent() -> ZMUpdateEvent {
         let payload: NSDictionary = [
             "type": "conversation.member-join",
-            "data": "foo"
+            "data": "foo",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -72,7 +72,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func mockMemberLeaveUpdateEvent() -> ZMUpdateEvent {
         let payload: NSDictionary = [
             "type": "conversation.member-leave",
-            "data": "foo"
+            "data": "foo",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!

@@ -64,7 +64,7 @@ final class LocationDataTests: XCTestCase {
         let sut = LocationData.locationData(fromDictionary: [
             "LastLocationLatitudeKey": 45.0,
             "LastLocationLongitudeKey": 75.0,
-            "LastLocationZoomLevelKey": 5
+            "LastLocationZoomLevelKey": 5,
         ])
 
         // then

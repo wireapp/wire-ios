@@ -105,7 +105,7 @@ final class ClientTableViewCell: UITableViewCell {
             nameLabel,
             proteusIdLabel,
             mlsThumbprintLabel,
-            statusStackView
+            statusStackView,
         ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(view)
@@ -127,7 +127,7 @@ final class ClientTableViewCell: UITableViewCell {
             proteusIdLabel.topAnchor.constraint(equalTo: mlsThumbprintLabel.bottomAnchor, constant: 0),
             proteusIdLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             proteusIdLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
-            proteusIdLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            proteusIdLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
         ])
         statusStackView.axis = .horizontal
         statusStackView.spacing = 4

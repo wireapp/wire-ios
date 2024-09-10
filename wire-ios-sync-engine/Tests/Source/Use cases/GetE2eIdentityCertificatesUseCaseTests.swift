@@ -139,7 +139,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
                 validIdentity,
                 identityWithInvalidHandle,
                 identityWithInvalidName,
-                identityWithInvalidStatus
+                identityWithInvalidStatus,
             ]
         }
 

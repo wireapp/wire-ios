@@ -143,7 +143,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionViewHeight
+            collectionViewHeight,
         ])
     }
 

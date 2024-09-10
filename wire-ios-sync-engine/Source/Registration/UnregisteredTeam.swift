@@ -47,13 +47,13 @@ public struct UnregisteredTeam: Equatable {
             "email_code": emailCode,
             "team": [
                 "name": teamName,
-                "icon": "abc"
+                "icon": "abc",
             ],
             "accent_id": accentColor.rawValue,
             "locale": locale,
             "name": fullName,
             "password": password,
-            "label": label?.uuidString ?? UUID().uuidString
+            "label": label?.uuidString ?? UUID().uuidString,
         ] as ZMTransportData
     }
 }

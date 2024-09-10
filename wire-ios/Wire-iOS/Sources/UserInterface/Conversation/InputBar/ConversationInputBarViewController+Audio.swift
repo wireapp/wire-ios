@@ -121,7 +121,7 @@ extension ConversationInputBarViewController {
             audioRecordViewController.view.trailingAnchor.constraint(equalTo: audioRecordViewContainer.trailingAnchor),
             audioRecordViewController.view.leadingAnchor.constraint(equalTo: audioRecordViewContainer.leadingAnchor),
             audioRecordViewController.view.bottomAnchor.constraint(equalTo: audioRecordViewContainer.bottomAnchor),
-            audioRecordViewController.view.topAnchor.constraint(equalTo: inputBar.topAnchor, constant: -0.5)
+            audioRecordViewController.view.topAnchor.constraint(equalTo: inputBar.topAnchor, constant: -0.5),
         ])
 
         self.audioRecordViewController = audioRecordViewController

@@ -29,7 +29,7 @@ extension UIView {
         self.frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: size.width),
-            heightAnchor.constraint(equalToConstant: size.height)
+            heightAnchor.constraint(equalToConstant: size.height),
         ])
     }
 }

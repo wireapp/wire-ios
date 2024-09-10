@@ -76,7 +76,7 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
 
             spinner.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             spinner.topAnchor.constraint(greaterThanOrEqualTo: titleLabel.bottomAnchor, constant: 4),
-            spinner.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
+            spinner.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16),
         ])
 
         contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56).isActive = true

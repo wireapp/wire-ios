@@ -111,7 +111,7 @@ struct SettingsCellDescriptorFactory {
             optionsGroup,
             advancedGroup(userSession: userSession),
             helpSection(),
-            aboutSection()
+            aboutSection(),
         ]
 
         if Bundle.developerModeEnabled {

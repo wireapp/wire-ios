@@ -171,7 +171,7 @@ class BaseCallParticipantView: OrientableView {
             avatarView.centerYAnchor.constraint(equalTo: centerYAnchor),
             avatarView.widthAnchor.constraint(equalToConstant: avatarWidth),
             avatarView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor, multiplier: 0.7),
-            avatarView.heightAnchor.constraint(equalTo: avatarView.widthAnchor)
+            avatarView.heightAnchor.constraint(equalTo: avatarView.widthAnchor),
         ])
     }
 

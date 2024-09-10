@@ -119,7 +119,7 @@ extension ZMSystemMessage {
          "isObfuscatedChanged: \(isObfuscatedChanged)",
          "underlyingMessageChanged: \(underlyingMessageChanged)",
          "linkAttachmentsChanged: \(linkAttachmentsChanged)",
-         "buttonStatesChanged: \(buttonStatesChanged)"
+         "buttonStatesChanged: \(buttonStatesChanged)",
         ].joined(separator: ", ")
     }
 

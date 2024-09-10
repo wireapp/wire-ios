@@ -142,7 +142,7 @@ final class MessageToolboxView: UIView {
             timestampSeparatorLabel,
             statusLabel,
             statusSeparatorLabel,
-            countdownLabel
+            countdownLabel,
         ].forEach(contentStack.addArrangedSubview)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
@@ -173,7 +173,7 @@ final class MessageToolboxView: UIView {
             messageFailureView.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
             messageFailureView.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageFailureView.topAnchor.constraint(equalTo: topAnchor),
-            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            messageFailureView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

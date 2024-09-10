@@ -127,15 +127,15 @@ final class TeamRepositoryTests: XCTestCase {
                 name: "admin",
                 actions: [
                     .addConversationMember,
-                    .deleteConversation
+                    .deleteConversation,
                 ]
             ),
             ConversationRole(
                 name: "member",
                 actions: [
-                    .addConversationMember
+                    .addConversationMember,
                 ]
-            )
+            ),
         ]
 
         // When
@@ -160,7 +160,7 @@ final class TeamRepositoryTests: XCTestCase {
                 Set(firstRole.actions.map(\.name)),
                 [
                     "add_conversation_member",
-                    "delete_conversation"
+                    "delete_conversation",
                 ]
             )
 
@@ -206,7 +206,7 @@ final class TeamRepositoryTests: XCTestCase {
                     copyPermissions: Scaffolding.member2Permissions,
                     selfPermissions: Scaffolding.member2Permissions
                 )
-            )
+            ),
         ]
 
         // When

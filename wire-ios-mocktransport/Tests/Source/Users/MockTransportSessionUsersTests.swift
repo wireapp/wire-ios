@@ -108,7 +108,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let userId = "123456"
         let richProfile = [
             (type: "Department", value: "Sales & Marketing"),
-            (type: "Favorite color", value: "Blue")
+            (type: "Favorite color", value: "Blue"),
         ]
         sut.performRemoteChanges {
             let user = $0.insertUser(withName: "some")
@@ -136,7 +136,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let userId = "123456"
         let richProfile = [
             (type: "Department", value: "Sales & Marketing"),
-            (type: "Favorite color", value: "Blue")
+            (type: "Favorite color", value: "Blue"),
         ]
         sut.performRemoteChanges {
             let selfUser = $0.insertSelfUser(withName: "I am")

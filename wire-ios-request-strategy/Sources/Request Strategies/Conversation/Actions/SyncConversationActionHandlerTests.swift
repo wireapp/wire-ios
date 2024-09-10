@@ -205,7 +205,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         }
 
         let payload = [
-            "label": "invalid-body"
+            "label": "invalid-body",
         ]
 
         let response = ZMTransportResponse(
@@ -238,7 +238,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         let payload = [
             "label": "foo",
-            "message": "bar"
+            "message": "bar",
         ]
 
         let response = ZMTransportResponse(

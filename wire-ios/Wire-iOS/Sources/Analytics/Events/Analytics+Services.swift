@@ -61,7 +61,7 @@ struct ServiceAddedEvent: Event {
             Keys.serviceID: serviceIdentifier,
             Keys.conversationSize: conversationSize,
             Keys.servicesSize: servicesSize,
-            Keys.methods: context.rawValue
+            Keys.methods: context.rawValue,
         ]
     }
 }

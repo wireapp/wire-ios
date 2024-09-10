@@ -130,7 +130,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
             "code": "SOME-UNIQUE-CODE",
             "has_password": false,
             "key": "sampleKey123",
-            "uri": expectedUri
+            "uri": expectedUri,
         ]
 
         // WHEN

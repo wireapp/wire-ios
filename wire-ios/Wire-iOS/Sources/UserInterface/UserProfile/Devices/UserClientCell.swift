@@ -106,7 +106,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
             nameLabel,
             proteusIdLabel,
             mlsThumbprintLabel,
-            statusStackView
+            statusStackView,
         ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             contentWrapView.addSubview(view)
@@ -154,7 +154,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
             contentStackView.rightAnchor.constraint(equalTo: contentView.rightAnchor,
                                                     constant: -EdgeInsetConstants.default),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 

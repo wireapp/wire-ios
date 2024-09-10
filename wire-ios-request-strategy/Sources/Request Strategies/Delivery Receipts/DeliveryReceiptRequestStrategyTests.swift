@@ -209,7 +209,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         let dict: NSDictionary = [
             "recipient": self.selfClient.remoteIdentifier!,
             "sender": self.selfClient.remoteIdentifier!,
-            "text": try! message.serializedData().base64String()
+            "text": try! message.serializedData().base64String(),
         ]
 
         let payload: NSDictionary = [
@@ -217,7 +217,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             "data": dict,
             "from": sender.remoteIdentifier!.transportString(),
             "conversation": conversation.remoteIdentifier!.transportString(),
-            "time": timestamp.transportString()
+            "time": timestamp.transportString(),
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!

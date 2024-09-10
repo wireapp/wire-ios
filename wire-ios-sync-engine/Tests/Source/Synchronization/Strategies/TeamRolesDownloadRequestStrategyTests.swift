@@ -51,17 +51,17 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             [
                 "actions": [
                     "leave_conversation",
-                    "delete_conversation"
+                    "delete_conversation",
                 ],
-                "conversation_role": "superuser"
+                "conversation_role": "superuser",
             ],
             [
                 "actions": [
-                    "leave_conversation"
+                    "leave_conversation",
                 ],
-                "conversation_role": "weakling"
-            ]
-        ]
+                "conversation_role": "weakling",
+            ],
+        ],
     ]
 
     // MARK: - Helper

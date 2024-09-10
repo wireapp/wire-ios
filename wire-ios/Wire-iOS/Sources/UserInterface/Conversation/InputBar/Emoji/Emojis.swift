@@ -61,7 +61,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
             Section(id: .travel, items: travelAndPlaces),
             Section(id: .objects, items: objects),
             Section(id: .symbols, items: symbols),
-            Section(id: .flags, items: flags)
+            Section(id: .flags, items: flags),
         ]
 
         recentlyUsed = RecentlyUsedEmojiSection(

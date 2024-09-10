@@ -61,7 +61,7 @@ final class CollectionLinkCell: CollectionCell {
             articleView.topAnchor.constraint(greaterThanOrEqualTo: headerView.bottomAnchor, constant: -4),
             articleView.leftAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leftAnchor),
             articleView.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor),
-            articleView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor)
+            articleView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
         ])
 
         secureContentsView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor

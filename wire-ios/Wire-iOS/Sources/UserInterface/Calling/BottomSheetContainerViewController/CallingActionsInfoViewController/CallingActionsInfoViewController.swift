@@ -104,7 +104,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             securityLevelView,
             actionsView,
             participantsHeaderView,
-            collectionView
+            collectionView,
         ].forEach(stackView.addArrangedSubview)
 
         CallParticipantsListCellConfiguration.prepare(collectionView)
@@ -132,7 +132,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             participantsHeaderView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             participantsHeaderView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            securityLevelView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
+            securityLevelView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
     }
 

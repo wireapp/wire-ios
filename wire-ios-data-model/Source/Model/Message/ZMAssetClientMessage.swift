@@ -276,7 +276,7 @@ extension ZMAssetClientMessage {
                 #keyPath(ZMAssetClientMessage.downloadState),
                 #keyPath(ZMAssetClientMessage.progress),
                 #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data),
-                #keyPath(ZMAssetClientMessage.version)
+                #keyPath(ZMAssetClientMessage.version),
             ])
     }
 

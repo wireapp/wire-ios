@@ -84,7 +84,7 @@ final class PersonalAccountView: BaseAccountView {
             dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -3),
             dotView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor, constant: -6),
             dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-            dotView.widthAnchor.constraint(equalToConstant: dotSize)
+            dotView.widthAnchor.constraint(equalToConstant: dotSize),
         ]
     }
 }

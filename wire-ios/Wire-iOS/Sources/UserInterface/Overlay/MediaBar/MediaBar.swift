@@ -100,7 +100,7 @@ final class MediaBar: UIView {
             titleLabel,
             playPauseButton,
             closeButton,
-            bottomSeparatorLine
+            bottomSeparatorLine,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         contentView.fitIn(view: self)
@@ -124,7 +124,7 @@ final class MediaBar: UIView {
         NSLayoutConstraint.activate([
             bottomSeparatorLine.leadingAnchor.constraint(equalTo: leadingAnchor),
             bottomSeparatorLine.trailingAnchor.constraint(equalTo: trailingAnchor),
-            bottomSeparatorLine.bottomAnchor.constraint(equalTo: bottomAnchor)
+            bottomSeparatorLine.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 }

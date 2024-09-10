@@ -59,7 +59,7 @@ extension SolidButtonDescription: ViewDescriptor {
             button.widthAnchor.constraint(equalToConstant: 300),
             button.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
             button.bottomAnchor.constraint(equalTo: buttonContainer.bottomAnchor),
-            button.centerXAnchor.constraint(equalTo: buttonContainer.centerXAnchor)
+            button.centerXAnchor.constraint(equalTo: buttonContainer.centerXAnchor),
         ])
 
         return buttonContainer

@@ -69,16 +69,16 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
                     "from": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
                     "qualified_conversation": [
                         "domain": "example.com",
-                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
                     ],
                     "qualified_from": [
                         "domain": "example.com",
-                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
                     ],
-                    "data": []
-                ]
+                    "data": [],
+                ],
             ],
-            "time": "2021-05-12T10:52:02.671Z"
+            "time": "2021-05-12T10:52:02.671Z",
         ]
 
         // When
@@ -110,7 +110,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
             .failure(status: 409, error: .mlsClientMismatch, label: "mls-client-mismatch"),
             .failure(status: 422, error: .mlsUnsupportedProposal, label: "mls-unsupported-proposal"),
             .failure(status: 422, error: .mlsUnsupportedMessage, label: "mls-unsupported-message"),
-            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
+            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo"),
         ])
     }
 }

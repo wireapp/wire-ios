@@ -500,7 +500,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         let payload: [String: Any] = [
             "type": "user.delete",
             "id": userID.transportString(),
-            "time": Date()
+            "time": Date(),
         ]
 
         return ZMUpdateEvent(uuid: UUID(),
@@ -513,7 +513,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     func userUpdateEvent(userProfile: Payload.UserProfile) -> ZMUpdateEvent {
         let payload: [String: Any] = [
             "type": "user.update",
-            "user": try! JSONSerialization.jsonObject(with: userProfile.payloadData()!, options: [])
+            "user": try! JSONSerialization.jsonObject(with: userProfile.payloadData()!, options: []),
         ]
 
         return ZMUpdateEvent(uuid: UUID(),

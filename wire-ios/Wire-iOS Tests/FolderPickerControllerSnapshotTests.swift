@@ -67,7 +67,7 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
             ),
             MockLabel(
                 name: "Folder C"
-            )
+            ),
         ]
 
         // WHEN

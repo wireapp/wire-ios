@@ -65,7 +65,7 @@ final class NoResultsView: UIView {
             label.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 24),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
             label.leadingAnchor.constraint(equalTo: leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: trailingAnchor)
+            label.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
 

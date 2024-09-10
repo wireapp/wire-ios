@@ -102,7 +102,7 @@ final class TextSearchResultCell: UITableViewCell {
             separatorView.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
             separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separatorView.heightAnchor.constraint(equalToConstant: .hairline)
+            separatorView.heightAnchor.constraint(equalToConstant: .hairline),
         ])
     }
 

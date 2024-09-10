@@ -83,7 +83,7 @@ final class ImageResourceView: FLAnimatedImageView {
         addSubview(loadingView)
         NSLayoutConstraint.activate([
             centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
-            centerYAnchor.constraint(equalTo: loadingView.centerYAnchor)
+            centerYAnchor.constraint(equalTo: loadingView.centerYAnchor),
         ])
     }
 

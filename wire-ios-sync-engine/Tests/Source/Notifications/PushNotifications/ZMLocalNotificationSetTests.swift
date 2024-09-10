@@ -158,7 +158,7 @@ class ZMLocalNotificationSetTests: MessagingTest {
             "from": senderID.transportString(),
             "time": Date().transportString(),
             "data": ["text": try? genericMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!

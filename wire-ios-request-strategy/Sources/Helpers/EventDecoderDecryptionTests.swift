@@ -88,7 +88,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
             let innerPayload = ["recipient": self.selfClient.remoteIdentifier!,
                                 "sender": self.otherClient.remoteIdentifier!,
                                 "id": UUID.create().transportString(),
-                                "key": Data("bah".utf8).base64String()
+                                "key": Data("bah".utf8).base64String(),
             ]
 
             let payload = [
@@ -96,11 +96,11 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
                 "from": self.otherUser.remoteIdentifier!.transportString(),
                 "data": innerPayload,
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                "time": Date().transportString()
+                "time": Date().transportString(),
             ] as [String: Any]
             let wrapper = [
                 "id": UUID.create().transportString(),
-                "payload": [payload]
+                "payload": [payload],
             ] as [String: Any]
 
             event = ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: .download)!.first!
@@ -147,10 +147,10 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
                         "data": [
                             "recipient": self.selfClient.remoteIdentifier!,
                             "sender": self.otherClient.remoteIdentifier!,
-                            "text": self.encryptedMessageToSelf(message: message, from: self.otherClient).base64String()
-                        ]
-                    ]
-                ]
+                            "text": self.encryptedMessageToSelf(message: message, from: self.otherClient).base64String(),
+                        ],
+                    ],
+                ],
             ])
         }
 
@@ -197,10 +197,10 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
                             "data": text,
                             "recipient": self.selfClient.remoteIdentifier!,
                             "sender": self.otherClient.remoteIdentifier!,
-                            "text": Data("something with less than 18000 characters count".utf8).base64String()
-                        ]
-                    ]
-                ]
+                            "text": Data("something with less than 18000 characters count".utf8).base64String(),
+                        ],
+                    ],
+                ],
             ])
         }
 

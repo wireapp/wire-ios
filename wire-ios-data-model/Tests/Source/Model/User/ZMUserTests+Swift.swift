@@ -76,7 +76,7 @@ extension ZMUserTests_Swift {
     func assetPayload(previewId: String, completeId: String) -> NSArray {
         [
             ["size": "preview", "type": "image", "key": previewId],
-            ["size": "complete", "type": "image", "key": completeId]
+            ["size": "complete", "type": "image", "key": completeId],
         ] as NSArray
     }
 
@@ -694,7 +694,7 @@ extension ZMUserTests_Swift {
             selfUser!,
             selfTeamUser1,
             selfTeamUser2,
-            selfTeamUser3
+            selfTeamUser3,
         ]
 
         createConversation(in: uiMOC, with: allRecipients)
@@ -731,7 +731,7 @@ extension ZMUserTests_Swift {
             selfTeamUser1,
             selfTeamUser2,
             connectedTeamUser1,
-            connectedTeamUser2
+            connectedTeamUser2,
         ]
 
         createConversation(in: uiMOC, with: allRecipients)
@@ -758,7 +758,7 @@ extension ZMUserTests_Swift {
             teamUser1,
             teamUser2,
             teamUser3,
-            teamUser4
+            teamUser4,
         ]
 
         createConversation(in: uiMOC, with: allRecipients)

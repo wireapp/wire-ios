@@ -72,16 +72,16 @@ final class EventProcessorTests: MessagingTest {
     func createSampleEvents(conversationID: UUID = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
         let payload1: [String: Any] = [
             "type": "conversation.member-join",
-            "conversation": conversationID
+            "conversation": conversationID,
         ]
 
         let payload2: [String: Any] = [
             "type": "conversation.message-add",
             "data": [
                 "content": "www.wire.com",
-                "nonce": messageNonce
+                "nonce": messageNonce,
             ],
-            "conversation": conversationID
+            "conversation": conversationID,
         ]
 
         let event1 = ZMUpdateEvent(

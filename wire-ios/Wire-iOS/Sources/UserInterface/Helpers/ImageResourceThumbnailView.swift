@@ -70,7 +70,7 @@ final class ImageResourceThumbnailView: RoundedView {
             assetTypeBadge.heightAnchor.constraint(equalToConstant: 16),
             assetTypeBadge.topAnchor.constraint(greaterThanOrEqualTo: coverView.topAnchor, constant: 6),
             assetTypeBadge.leadingAnchor.constraint(equalTo: coverView.leadingAnchor, constant: 8),
-            assetTypeBadge.bottomAnchor.constraint(equalTo: coverView.bottomAnchor, constant: -6)
+            assetTypeBadge.bottomAnchor.constraint(equalTo: coverView.bottomAnchor, constant: -6),
         ])
     }
 

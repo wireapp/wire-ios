@@ -315,7 +315,7 @@ final class ConfirmAssetViewController: UIViewController {
 
             // confirmButtons
             acceptImageButton.heightAnchor.constraint(equalToConstant: 48),
-            rejectImageButton.heightAnchor.constraint(equalToConstant: 48)
+            rejectImageButton.heightAnchor.constraint(equalToConstant: 48),
         ]
 
         // Image Toolbar
@@ -328,7 +328,7 @@ final class ConfirmAssetViewController: UIViewController {
                 toolbar.heightAnchor.constraint(equalToConstant: 48),
 
                 // buttons
-                confirmButtonsStack.topAnchor.constraint(equalTo: toolbar.bottomAnchor, constant: margin)
+                confirmButtonsStack.topAnchor.constraint(equalTo: toolbar.bottomAnchor, constant: margin),
             ]
 
             // Separator
@@ -336,11 +336,11 @@ final class ConfirmAssetViewController: UIViewController {
                 imageToolbarSeparatorView.leadingAnchor.constraint(equalTo: toolbar.leadingAnchor),
                 imageToolbarSeparatorView.trailingAnchor.constraint(equalTo: toolbar.trailingAnchor),
                 imageToolbarSeparatorView.bottomAnchor.constraint(equalTo: toolbar.bottomAnchor),
-                imageToolbarSeparatorView.heightAnchor.constraint(equalToConstant: 0.5)
+                imageToolbarSeparatorView.heightAnchor.constraint(equalToConstant: 0.5),
             ]
         } else {
             constraints += [
-                confirmButtonsStack.topAnchor.constraint(equalTo: bottomPanel.topAnchor)
+                confirmButtonsStack.topAnchor.constraint(equalTo: bottomPanel.topAnchor),
             ]
         }
 
@@ -362,7 +362,7 @@ final class ConfirmAssetViewController: UIViewController {
                     imagePreviewView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
                     imagePreviewView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor, constant: margin),
                     imagePreviewView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
-                    imagePreviewView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor, constant: -margin)
+                    imagePreviewView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor, constant: -margin),
                 ]
 
                 // Image Toolbar Inside Image
@@ -371,7 +371,7 @@ final class ConfirmAssetViewController: UIViewController {
                         imageToolbarViewInsideImage.leadingAnchor.constraint(equalTo: imagePreviewView.leadingAnchor),
                         imageToolbarViewInsideImage.trailingAnchor.constraint(equalTo: imagePreviewView.trailingAnchor),
                         imageToolbarViewInsideImage.bottomAnchor.constraint(equalTo: imagePreviewView.bottomAnchor),
-                        imageToolbarViewInsideImage.heightAnchor.constraint(equalToConstant: 48)
+                        imageToolbarViewInsideImage.heightAnchor.constraint(equalToConstant: 48),
                     ]
                 }
             }
@@ -382,7 +382,7 @@ final class ConfirmAssetViewController: UIViewController {
                     playerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                     playerView.topAnchor.constraint(equalTo: contentLayoutGuide.topAnchor, constant: -margin),
                     playerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                    playerView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor, constant: -margin)
+                    playerView.bottomAnchor.constraint(equalTo: contentLayoutGuide.bottomAnchor, constant: -margin),
                 ]
             }
         }

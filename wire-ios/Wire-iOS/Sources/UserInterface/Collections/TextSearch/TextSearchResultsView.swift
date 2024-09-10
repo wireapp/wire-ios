@@ -57,7 +57,7 @@ final class TextSearchResultsView: UIView {
             noResultsView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 12),
             noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
             noResultsView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            noResultsView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            noResultsView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 

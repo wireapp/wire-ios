@@ -72,7 +72,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext,
-                coreDataStack.searchContext
+                coreDataStack.searchContext,
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,

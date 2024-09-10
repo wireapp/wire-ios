@@ -113,7 +113,7 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
             // when
             let payload: [String: Any] = [
                 "user": user.remoteIdentifier!.transportString(),
-                "permissions": ["self": 17, "copy": 0]
+                "permissions": ["self": 17, "copy": 0],
             ]
 
             let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
@@ -185,8 +185,8 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
             "created_at": createdAt,
             "permissions": [
                 "copy": 1587,
-                "self": 1587
-            ]
+                "self": 1587,
+            ],
         ]
 
         // when
@@ -207,7 +207,7 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
         let userID = UUID()
 
         let payload: [String: Any] = [
-            "user": userID.transportString()
+            "user": userID.transportString(),
         ]
 
         // when

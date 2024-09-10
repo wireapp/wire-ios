@@ -88,7 +88,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
                 payload: [
                     "code": apiFailure.statusCode,
                     "label": apiFailure.rawValue,
-                    "message": "<ignored>"
+                    "message": "<ignored>",
                 ] as ZMTransportData,
                 expectedError: .api(apiFailure)
             )
@@ -101,7 +101,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         let wrongPayload = [
             "code": apiFailure.statusCode,
             "label": apiFailure.rawValue,
-            "message": "<ignored>"
+            "message": "<ignored>",
         ] as ZMTransportData
 
         // When, Then
@@ -117,7 +117,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         let payload = [
             "code": 123,
             "label": "unexpected-label",
-            "message": "Unexpected message"
+            "message": "Unexpected message",
         ] as ZMTransportData
 
         // When, Then

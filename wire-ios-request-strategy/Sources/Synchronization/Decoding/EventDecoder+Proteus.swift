@@ -57,7 +57,7 @@ extension EventDecoder {
                 let additionalInfo: LogAttributes = [
                     .recipientID: event.recipientID?.redactedAndTruncated() ?? "<nil>",
                     .selfClientId: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
-                    .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
+                    .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>",
                 ]
                 WireLogger.updateEvent.error("decrypting proteus event... failed: is not for self client, dropping...)", attributes: event.logAttributes, additionalInfo, .safePublic)
                 return (UserClient?.none, ProteusSessionID?.none)
@@ -194,7 +194,7 @@ extension EventDecoder {
 
         let userInfo: [String: Any] = [
             "cause": error?.rawValue as Any,
-            "deviceClass": sender.deviceClass ?? ""
+            "deviceClass": sender.deviceClass ?? "",
         ]
 
         NotificationInContext(

@@ -106,7 +106,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
             toggle,
             iconImageView,
             imageContainer,
-            subtitleLabel
+            subtitleLabel,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -127,7 +127,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
             subtitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: subtitleInsets.leading),
             subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -subtitleInsets.trailing),
             subtitleTopConstraint,
-            subtitleBottomConstraint
+            subtitleBottomConstraint,
         ])
     }
 

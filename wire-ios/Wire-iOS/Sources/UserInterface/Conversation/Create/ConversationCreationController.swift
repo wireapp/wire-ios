@@ -60,7 +60,7 @@ final class ConversationCreationController: UIViewController {
         guestsSection,
         servicesSection,
         receiptsSection,
-        shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
+        shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil,
     ].compactMap { $0 }
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
@@ -193,7 +193,7 @@ final class ConversationCreationController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
         ])
 
         collectionViewController.collectionView = collectionView
@@ -212,7 +212,7 @@ final class ConversationCreationController: UIViewController {
             navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
+            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor),
         ])
     }
 
@@ -510,7 +510,7 @@ extension ConversationCreationController {
         ))
         alert.popoverPresentationController?.permittedArrowDirections = [
             .up,
-            .down
+            .down,
         ]
 
         return alert

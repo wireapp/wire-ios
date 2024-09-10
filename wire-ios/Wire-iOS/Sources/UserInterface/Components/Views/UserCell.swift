@@ -213,7 +213,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
                 connectButton,
                 checkmarkIconView,
                 accessoryIconView,
-                connectingLabel
+                connectingLabel,
             ]
         )
         iconStackView.spacing = 16
@@ -269,7 +269,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
             unconnectedStateOverlay.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             unconnectedStateOverlay.topAnchor.constraint(equalTo: contentView.topAnchor),
             unconnectedStateOverlay.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            unconnectedStateOverlay.trailingAnchor.constraint(equalTo: titleStackView.trailingAnchor)
+            unconnectedStateOverlay.trailingAnchor.constraint(equalTo: titleStackView.trailingAnchor),
         ])
     }
 

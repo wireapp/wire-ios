@@ -68,7 +68,7 @@ final class ConnectionsRepositoryTests: XCTestCase {
             WireAPI.PayloadPager.Page(
                 element: [
                     brokenConnection,
-                    connection
+                    connection,
                 ],
                 hasMore: false,
                 nextStart: "first"

@@ -209,7 +209,7 @@ class TextView: UITextView {
         NSLayoutConstraint.activate([
             placeholderLabelLeftConstraint!,
             placeholderLabelRightConstraint!,
-            placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 }

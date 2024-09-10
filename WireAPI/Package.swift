@@ -7,13 +7,13 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireAPI", targets: ["WireAPI"]),
-        .library(name: "WireAPISupport", targets: ["WireAPISupport"])
+        .library(name: "WireAPISupport", targets: ["WireAPISupport"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(name: "WireFoundation", path: "../WireFoundation"),
     ],
     targets: [
         .target(
@@ -24,7 +24,7 @@ let package = Package(
             name: "WireAPISupport",
             dependencies: ["WireAPI"],
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin"),
             ]
         ),
         .testTarget(
@@ -32,7 +32,7 @@ let package = Package(
             dependencies: [
                 "WireAPI",
                 "WireAPISupport",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             resources: [
                 .process("APIs/BackendInfoAPI/Resources"),
@@ -45,9 +45,9 @@ let package = Package(
                 .process("APIs/FeatureConfigsAPI/Resources"),
                 .process("APIs/UserPropertiesAPI/Resources"),
                 .process("APIs/SelfUserAPI/Resources"),
-                .process("Network/PushChannel/Resources")
+                .process("Network/PushChannel/Resources"),
             ]
-        )
+        ),
     ]
 )
 
@@ -58,6 +58,6 @@ for target in package.targets {
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableExperimentalFeature("StrictConcurrency"),
     ]
 }

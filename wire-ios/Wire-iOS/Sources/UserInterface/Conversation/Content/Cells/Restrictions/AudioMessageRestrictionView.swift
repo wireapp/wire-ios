@@ -56,7 +56,7 @@ final class AudioMessageRestrictionView: BaseMessageRestrictionView {
             iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
             iconView.widthAnchor.constraint(equalToConstant: 32),
-            iconView.heightAnchor.constraint(equalToConstant: 32)
+            iconView.heightAnchor.constraint(equalToConstant: 32),
         ])
     }
 }

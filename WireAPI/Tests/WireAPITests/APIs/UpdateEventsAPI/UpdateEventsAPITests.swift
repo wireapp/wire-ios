@@ -42,7 +42,7 @@ final class UpdateEventsAPITests: XCTestCase {
             // Given
             try HTTPClientMock(responses: [
                 .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page1"),
-                .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2")
+                .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2"),
             ])
         } when: { sut in
             for try await _ in sut.getUpdateEvents(
@@ -102,7 +102,7 @@ final class UpdateEventsAPITests: XCTestCase {
         // Given
         let httpClient = try HTTPClientMock(responses: [
             .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page1"),
-            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2")
+            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2"),
         ])
 
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
@@ -194,7 +194,7 @@ final class UpdateEventsAPITests: XCTestCase {
         // Given
         let httpClient = try HTTPClientMock(responses: [
             .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page1"),
-            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2")
+            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2"),
         ])
 
         let sut = UpdateEventsAPIV5(httpClient: httpClient)
@@ -258,7 +258,7 @@ final class UpdateEventsAPITests: XCTestCase {
                 id: UUID(uuidString: "688ad9fc-6906-4dd6-9ccc-db8d849c41ad")!,
                 events: [.unknown(eventType: "some transient event")],
                 isTransient: true
-            )
+            ),
         ]
 
         static let updateEventPage2 = [
@@ -271,7 +271,7 @@ final class UpdateEventsAPITests: XCTestCase {
                 id: UUID(uuidString: "7ed84e3d-108c-4d50-904e-78a4e6908956")!,
                 events: [.unknown(eventType: "some event")],
                 isTransient: false
-            )
+            ),
         ]
     }
 }

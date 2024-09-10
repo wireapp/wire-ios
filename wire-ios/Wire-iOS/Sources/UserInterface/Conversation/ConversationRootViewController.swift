@@ -149,7 +149,7 @@ final class ConversationRootViewController: UIViewController {
             inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             inputBarContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor)
+            inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
         ])
 
         self.addToSelf(networkStatusViewController)
@@ -157,7 +157,7 @@ final class ConversationRootViewController: UIViewController {
         [
             contentView,
             conversationViewController.view,
-            networkStatusViewController.view
+            networkStatusViewController.view,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -178,7 +178,7 @@ final class ConversationRootViewController: UIViewController {
             conversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             conversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             conversationViewController.view.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            conversationViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor)
+            conversationViewController.view.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
 
         navBarContainer.navigationBar.pushItem(conversationViewController.navigationItem, animated: false)

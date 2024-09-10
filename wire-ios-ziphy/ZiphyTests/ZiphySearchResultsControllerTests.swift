@@ -257,7 +257,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         let url = Bundle(for: ZiphySearchResultsControllerTests.self).url(forResource: "craig", withExtension: "gif")!
 
         let images: [ZiphyImageType: ZiphyAnimatedImage] = [
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000)
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000),
         ]
 
         return Ziph(identifier: "000000", images: ZiphyAnimatedImageList(images: images), title: "Craig dot GIF")

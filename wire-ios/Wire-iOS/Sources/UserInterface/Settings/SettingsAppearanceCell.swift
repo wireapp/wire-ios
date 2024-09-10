@@ -137,7 +137,7 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
             accessoryIconView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             accessoryIconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
 
-            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56)
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56),
         ])
     }
 

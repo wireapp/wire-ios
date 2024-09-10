@@ -48,7 +48,7 @@ enum CallParticipantsListCellConfiguration: Hashable {
     static var allCellTypes: [UICollectionViewCell.Type] {
         [
             UserCell.self,
-            ShowAllParticipantsCell.self
+            ShowAllParticipantsCell.self,
         ]
     }
 

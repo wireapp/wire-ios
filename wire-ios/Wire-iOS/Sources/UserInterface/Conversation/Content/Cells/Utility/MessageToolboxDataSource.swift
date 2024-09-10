@@ -233,7 +233,7 @@ final class MessageToolboxDataSource {
         case .group:
             let attributes: [NSAttributedString.Key: AnyObject] = [
                 .font: UIFont.monospacedDigitSystemFont(ofSize: 10, weight: .semibold),
-                .foregroundColor: statusTextColor
+                .foregroundColor: statusTextColor,
             ]
 
             let imageIcon = seenTextAttachment()

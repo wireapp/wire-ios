@@ -39,7 +39,7 @@ extension ContactsViewController {
             searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            searchHeaderViewController.view.bottomAnchor.constraint(equalTo: separatorView.topAnchor)
+            searchHeaderViewController.view.bottomAnchor.constraint(equalTo: separatorView.topAnchor),
         ]
 
         constraints += [
@@ -51,18 +51,18 @@ extension ContactsViewController {
 
             tableView.leadingAnchor.constraint(equalTo: tableView.superview!.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: tableView.superview!.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: bottomContainerView.topAnchor),
         ]
 
         constraints += [
             emptyResultsLabel.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
-            emptyResultsLabel.centerYAnchor.constraint(equalTo: tableView.centerYAnchor)
+            emptyResultsLabel.centerYAnchor.constraint(equalTo: tableView.centerYAnchor),
         ]
 
         constraints += [
             noContactsLabel.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor, constant: standardOffset),
             noContactsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: standardOffset),
-            noContactsLabel.trailingAnchor.constraint(equalTo: noContactsLabel.superview!.trailingAnchor)
+            noContactsLabel.trailingAnchor.constraint(equalTo: noContactsLabel.superview!.trailingAnchor),
         ]
 
         let bottomContainerBottomConstraint = bottomContainerView.bottomAnchor.constraint(equalTo: bottomContainerView.superview!.bottomAnchor)
@@ -75,7 +75,7 @@ extension ContactsViewController {
             bottomContainerSeparatorView.topAnchor.constraint(equalTo: bottomContainerSeparatorView.superview!.topAnchor),
             bottomContainerSeparatorView.leadingAnchor.constraint(equalTo: bottomContainerSeparatorView.superview!.leadingAnchor),
             bottomContainerSeparatorView.trailingAnchor.constraint(equalTo: bottomContainerSeparatorView.superview!.trailingAnchor),
-            bottomContainerSeparatorView.heightAnchor.constraint(equalToConstant: 0.5)
+            bottomContainerSeparatorView.heightAnchor.constraint(equalToConstant: 0.5),
         ]
 
         let bottomEdgeConstraint = inviteOthersButton.bottomAnchor.constraint(equalTo: inviteOthersButton.superview!.bottomAnchor, constant: -(standardOffset / 2.0 + UIScreen.safeArea.bottom))
@@ -85,7 +85,7 @@ extension ContactsViewController {
             bottomEdgeConstraint,
             inviteOthersButton.topAnchor.constraint(equalTo: inviteOthersButton.superview!.topAnchor, constant: standardOffset / CGFloat(2)),
             inviteOthersButton.leadingAnchor.constraint(equalTo: inviteOthersButton.superview!.leadingAnchor, constant: standardOffset),
-            inviteOthersButton.trailingAnchor.constraint(equalTo: inviteOthersButton.superview!.trailingAnchor, constant: -standardOffset)
+            inviteOthersButton.trailingAnchor.constraint(equalTo: inviteOthersButton.superview!.trailingAnchor, constant: -standardOffset),
         ]
 
         constraints += [inviteOthersButton.heightAnchor.constraint(equalToConstant: 56)]

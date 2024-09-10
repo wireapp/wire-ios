@@ -70,7 +70,7 @@ final class FederationEventDecodingTests: XCTestCase {
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
                 "a.com",
-                "b.com"
+                "b.com",
             ]
         )
 

@@ -97,7 +97,7 @@ enum CellConfiguration {
             TextCell.self,
             GuestLinkInfoCell.self,
             IconActionCell.self,
-            SettingsAppearanceCell.self
+            SettingsAppearanceCell.self,
         ]
     }
 

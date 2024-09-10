@@ -64,7 +64,7 @@ import Foundation
                 ["type": "image",
                  "size": "preview",
                  "key": $0.identifier] as [String: String]
-            }
+            },
         ]
     }
 

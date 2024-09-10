@@ -171,7 +171,7 @@ extension MemberTests {
                 "user": user.remoteIdentifier!.transportString(),
                 "permissions": ["self": 17, "copy": 0],
                 "created_at": createdAt.transportString(),
-                "created_by": createdByUUID.transportString()
+                "created_by": createdByUUID.transportString(),
             ]
 
             // when
@@ -197,7 +197,7 @@ extension MemberTests {
                 "user": userId.transportString(),
                 "permissions": ["self": 5951, "copy": 0],
                 "created_at": createdAt.transportString(),
-                "created_by": createdByUUID.transportString()
+                "created_by": createdByUUID.transportString(),
             ]
 
             // when

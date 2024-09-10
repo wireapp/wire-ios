@@ -193,7 +193,7 @@ final class MessageDetailsContentViewController: UIViewController {
 
             // subtitleLabel
             subtitleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            subtitleBottom!
+            subtitleBottom!,
         ])
     }
 

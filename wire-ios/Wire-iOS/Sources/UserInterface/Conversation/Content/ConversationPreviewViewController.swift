@@ -75,7 +75,7 @@ final class ConversationPreviewViewController: UIViewController {
             conversationView.topAnchor.constraint(equalTo: view.topAnchor),
             conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            conversationView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 

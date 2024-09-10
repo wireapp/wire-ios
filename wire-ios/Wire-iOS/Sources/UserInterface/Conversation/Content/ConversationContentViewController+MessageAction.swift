@@ -70,7 +70,7 @@ extension ConversationContentViewController {
                 WireLogger.messaging.info(
                     "cancel message",
                     attributes: [
-                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
                     ], .safePublic
                 )
 
@@ -81,7 +81,7 @@ extension ConversationContentViewController {
                 WireLogger.messaging.info(
                     "resend message",
                     attributes: [
-                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
                     ], .safePublic
                 )
 

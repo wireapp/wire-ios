@@ -87,7 +87,7 @@ final class CallStatusView: UIView {
             bitrateLabel.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 16),
             bitrateLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             bitrateLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            bitrateLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            bitrateLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

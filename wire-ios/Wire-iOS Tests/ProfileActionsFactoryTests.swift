@@ -66,7 +66,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .createGroup,
             .manageNotifications,
             .archive,
-            .deleteContents
+            .deleteContents,
         ])
     }
 
@@ -87,7 +87,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .createGroup,
             .manageNotifications,
             .archive,
-            .deleteContents
+            .deleteContents,
         ])
     }
 
@@ -109,7 +109,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .manageNotifications,
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -131,7 +131,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .manageNotifications,
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -155,7 +155,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .manageNotifications,
             .archive,
-            .deleteContents
+            .deleteContents,
         ])
     }
 
@@ -178,7 +178,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .manageNotifications,
             .archive,
-            .deleteContents
+            .deleteContents,
         ])
     }
 
@@ -202,7 +202,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .manageNotifications,
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -226,7 +226,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .manageNotifications,
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -252,7 +252,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .mute(isMuted: false),
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -277,7 +277,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .mute(isMuted: false),
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -302,7 +302,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .mute(isMuted: false),
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -324,7 +324,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
-            .block(isBlocked: true)
+            .block(isBlocked: true),
         ])
     }
 
@@ -349,7 +349,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             .mute(isMuted: false),
             .archive,
             .deleteContents,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -370,7 +370,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .removeFromGroup
+            .removeFromGroup,
         ])
     }
 
@@ -407,7 +407,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .removeFromGroup
+            .removeFromGroup,
         ])
     }
 
@@ -423,7 +423,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .openOneToOne,
             .removeFromGroup,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -439,7 +439,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .openOneToOne,
             .removeFromGroup,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -453,7 +453,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
-            .removeFromGroup
+            .removeFromGroup,
         ])
     }
 
@@ -470,7 +470,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .connect,
-            .removeFromGroup
+            .removeFromGroup,
         ])
     }
 
@@ -487,7 +487,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .cancelConnectionRequest,
-            .removeFromGroup
+            .removeFromGroup,
         ])
     }
 
@@ -503,7 +503,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
-            .removeFromGroup
+            .removeFromGroup,
         ])
     }
 
@@ -536,7 +536,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
-            .openOneToOne
+            .openOneToOne,
         ])
     }
 
@@ -556,7 +556,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
-            .openOneToOne
+            .openOneToOne,
         ])
     }
 
@@ -573,7 +573,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -590,7 +590,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -608,7 +608,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
-            .connect
+            .connect,
         ])
     }
 
@@ -626,7 +626,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: selfUser, conversation: conversation, expectedActions: [
-            .cancelConnectionRequest
+            .cancelConnectionRequest,
         ])
     }
 
@@ -663,7 +663,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -682,7 +682,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
-            .connect
+            .connect,
         ])
     }
 
@@ -701,7 +701,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -720,7 +720,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -738,7 +738,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
-            .block(isBlocked: true)
+            .block(isBlocked: true),
         ])
     }
 
@@ -757,7 +757,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
             .openOneToOne,
-            .block(isBlocked: false)
+            .block(isBlocked: false),
         ])
     }
 
@@ -777,7 +777,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
-            .connect
+            .connect,
         ])
     }
 
@@ -797,7 +797,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
-            .cancelConnectionRequest
+            .cancelConnectionRequest,
         ])
     }
 
@@ -816,7 +816,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
         // THEN
         verifyActions(user: otherUser, viewer: guest, conversation: conversation, expectedActions: [
-            .openOneToOne
+            .openOneToOne,
         ])
     }
 

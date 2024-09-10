@@ -180,7 +180,7 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         message.backingUsersReaction = [
             Emoji.ID.thumbsUp: Array(users.prefix(upTo: 6)),
             Emoji.ID.like: Array(users.prefix(upTo: 4)),
-            Emoji.ID.frown: Array(users.prefix(upTo: 1))
+            Emoji.ID.frown: Array(users.prefix(upTo: 1)),
         ]
 
         // WHEN

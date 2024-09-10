@@ -73,7 +73,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey
+            UserClient.needsToUploadMLSPublicKeysKey,
         ]
 
         self.modifiedSync = ZMUpstreamModifiedObjectSync(
@@ -131,8 +131,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 needToUploadKeysPredicate,
                 needsToUploadSignalingKeysPredicate,
                 needsToUpdateCapabilitiesPredicate,
-                needsToUploadMLSPublicKeysPredicate
-            ])
+                needsToUploadMLSPublicKeysPredicate,
+            ]),
         ])
 
         return modifiedPredicate

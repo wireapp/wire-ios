@@ -55,7 +55,7 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
             NSSortDescriptor(
                 keyPath: \StoredUpdateEventEnvelope.sortIndex,
                 ascending: asending
-            )
+            ),
         ]
         return request
     }

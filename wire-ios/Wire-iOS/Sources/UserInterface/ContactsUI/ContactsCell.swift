@@ -185,7 +185,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -buttonMargin)
+            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -buttonMargin),
         ])
 
         [actionButton, buttonSpacer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
@@ -195,7 +195,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
 
             actionButton.widthAnchor.constraint(equalToConstant: actionButtonWidth),
             buttonSpacer.trailingAnchor.constraint(equalTo: actionButton.trailingAnchor),
-            buttonSpacer.leadingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -buttonMargin)
+            buttonSpacer.leadingAnchor.constraint(equalTo: actionButton.leadingAnchor, constant: -buttonMargin),
         ])
     }
 

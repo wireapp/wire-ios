@@ -79,7 +79,7 @@ final class SenderNameCellComponent: UIView {
             label.leadingAnchor.constraint(equalTo: leadingAnchor),
             label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.trailingAnchor.constraint(equalTo: indicatorView.leadingAnchor, constant: -8)
+            label.trailingAnchor.constraint(equalTo: indicatorView.leadingAnchor, constant: -8),
         ])
     }
 

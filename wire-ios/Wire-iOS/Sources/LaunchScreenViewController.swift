@@ -29,7 +29,7 @@ final class LaunchScreenViewController: UIViewController {
         view.addSubview(shieldImageView)
         NSLayoutConstraint.activate([
             shieldImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+            shieldImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
         ])
     }
 }

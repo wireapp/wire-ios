@@ -106,7 +106,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         // Given some events already in the db.
         try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
-            Scaffolding.envelope2
+            Scaffolding.envelope2,
         ])
 
         // There is a last event id.
@@ -239,7 +239,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
             Scaffolding.envelope4,
             Scaffolding.envelope1,
             Scaffolding.envelope5,
-            Scaffolding.envelope2
+            Scaffolding.envelope2,
         ])
 
         // When
@@ -263,7 +263,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
             Scaffolding.envelope2,
-            Scaffolding.envelope3
+            Scaffolding.envelope3,
         ])
 
         // When it deletes more than 3.
@@ -282,7 +282,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         try await insertStoredEventEnvelopes([
             Scaffolding.envelope1,
             Scaffolding.envelope2,
-            Scaffolding.envelope3
+            Scaffolding.envelope3,
         ])
 
         // When it deletes 2 envelopes.

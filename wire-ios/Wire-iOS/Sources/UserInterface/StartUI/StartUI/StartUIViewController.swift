@@ -178,29 +178,29 @@ final class StartUIViewController: UIViewController {
         NSLayoutConstraint.activate([
             searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchHeaderViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            searchHeaderViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
         ])
 
         if showsGroupSelector {
             NSLayoutConstraint.activate([
                 groupSelector.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
-                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor)
+                searchResultsViewController.view.topAnchor.constraint(equalTo: groupSelector.bottomAnchor),
             ])
 
             NSLayoutConstraint.activate([
                 groupSelector.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+                groupSelector.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             ])
         } else {
             NSLayoutConstraint.activate([
-                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
+                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
             ])
         }
 
         NSLayoutConstraint.activate([
             searchResultsViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchResultsViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            searchResultsViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 

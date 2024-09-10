@@ -80,7 +80,7 @@ final class GuestsBarController: UIViewController {
             container.topAnchor.constraint(equalTo: view.topAnchor),
 
             heightConstraint,
-            containerHeightConstraint
+            containerHeightConstraint,
         ])
     }
 

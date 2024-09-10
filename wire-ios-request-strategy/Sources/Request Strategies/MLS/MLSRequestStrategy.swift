@@ -47,7 +47,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             LeaveSubconversationActionHandler(context: managedObjectContext),
             ReplaceSelfMLSKeyPackagesActionHandler(context: managedObjectContext),
             FetchSupportedProtocolsActionHandler(context: managedObjectContext),
-            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext)
+            SyncMLSOneToOneConversationActionHandler(context: managedObjectContext),
         ])
 
         super.init(
@@ -59,7 +59,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsDuringSlowSync,
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileWaitingForWebsocket,
         ]
     }
 

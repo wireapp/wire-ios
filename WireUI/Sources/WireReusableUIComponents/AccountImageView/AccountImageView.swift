@@ -108,7 +108,7 @@ public final class AccountImageView: UIView {
             accountImageViewWrapper.leadingAnchor.constraint(equalTo: leadingAnchor), // lower priority
             accountImageViewWrapper.topAnchor.constraint(equalTo: topAnchor), // lower priority
             trailingAnchor.constraint(equalTo: accountImageViewWrapper.trailingAnchor), // lower priority
-            bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor) // lower priority
+            bottomAnchor.constraint(equalTo: accountImageViewWrapper.bottomAnchor), // lower priority
         ]
         constraints[constraints.endIndex - 4 ..< constraints.endIndex].forEach { $0.priority = .defaultHigh }
         NSLayoutConstraint.activate(constraints)
@@ -123,7 +123,7 @@ public final class AccountImageView: UIView {
             accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: accountImageBorderWidth),
             accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: accountImageBorderWidth),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: accountImageBorderWidth),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth)
+            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth),
         ]
         constraints[0 ... 1].forEach { $0.priority = .defaultLow }
         NSLayoutConstraint.activate(constraints)
@@ -135,7 +135,7 @@ public final class AccountImageView: UIView {
             availabilityIndicatorView.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: availabilityIndicatorDiameterFraction),
             availabilityIndicatorView.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: availabilityIndicatorDiameterFraction),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor)
+            accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor),
         ])
 
         updateAccountImage()

@@ -98,7 +98,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         let expirationDate = Date.now
         mockCRLRegistration(with: [
             dp2: (dirty: true, expiration: expirationDate),
-            dp3: (dirty: false, expiration: nil)
+            dp3: (dirty: false, expiration: nil),
         ])
 
         // mock other methods
@@ -189,12 +189,12 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         mockCRLExpirationDatesRepository.fetchAllCRLExpirationDates_MockValue = [
             dp1Url: crl1Expiration,
             dp2Url: crl2Expiration,
-            dp3Url: crl3Expiration
+            dp3Url: crl3Expiration,
         ]
 
         // mock the results of CRL registration
         mockCRLRegistration(with: [
-            dp2: (dirty: true, expiration: Date.distantFuture)
+            dp2: (dirty: true, expiration: Date.distantFuture),
         ])
 
         // mock other methods

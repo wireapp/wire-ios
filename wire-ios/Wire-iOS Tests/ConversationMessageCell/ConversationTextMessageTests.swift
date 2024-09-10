@@ -138,7 +138,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.linkAttachments = [
             LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
                            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
-                           thumbnails: [], originalRange: NSRange(location: 0, length: 43))
+                           thumbnails: [], originalRange: NSRange(location: 0, length: 43)),
         ]
 
         // THEN
@@ -151,7 +151,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.linkAttachments = [
             LinkAttachment(type: .soundCloudTrack, title: "Bridgit Mendler - Atlantis feat. Kaiydo",
                            permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
-                           thumbnails: [], originalRange: NSRange(location: 0, length: 74))
+                           thumbnails: [], originalRange: NSRange(location: 0, length: 74)),
         ]
 
         // THEN
@@ -172,7 +172,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.linkAttachments = [
             LinkAttachment(type: .soundCloudPlaylist, title: "Artists To Watch 2019",
                            permalink: URL(string: "https://soundcloud.com/playback/sets/2019-artists-to-watch")!,
-                           thumbnails: [], originalRange: NSRange(location: 0, length: 58))
+                           thumbnails: [], originalRange: NSRange(location: 0, length: 58)),
         ]
 
         // THEN
@@ -195,7 +195,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.linkAttachments = [
             LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
                            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
-                           thumbnails: [], originalRange: NSRange(location: 14, length: 43))
+                           thumbnails: [], originalRange: NSRange(location: 14, length: 43)),
         ]
 
         // THEN

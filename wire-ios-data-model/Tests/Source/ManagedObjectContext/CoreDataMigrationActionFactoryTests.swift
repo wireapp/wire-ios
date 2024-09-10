@@ -25,7 +25,7 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         .v116,
         .v114,
         .v111,
-        .v107
+        .v107,
     ]
 
     // MARK: - Version 116

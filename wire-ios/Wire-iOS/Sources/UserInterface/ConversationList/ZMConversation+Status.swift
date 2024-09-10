@@ -127,7 +127,7 @@ extension StatusMessageType {
         .participantsAdded: .addParticipants,
         .participantsRemoved: .removeParticipants,
         .missedCall: .missedCall,
-        .newConversation: .newConversation
+        .newConversation: .newConversation,
     ]
 
     init?(message: ZMConversationMessage) {
@@ -476,7 +476,7 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
         .location: "location",
         .audio: "audio",
         .video: "video",
-        .file: "file"
+        .file: "file",
     ]
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {

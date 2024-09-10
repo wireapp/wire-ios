@@ -101,7 +101,7 @@ final class OptionalComparisonTests: XCTestCase {
         let values = [
             MockBook(title: "B"),
             MockBook(title: "A"),
-            MockBook(title: nil)
+            MockBook(title: nil),
         ]
 
         // when
@@ -113,7 +113,7 @@ final class OptionalComparisonTests: XCTestCase {
             [
                 MockBook(title: nil),
                 MockBook(title: "A"),
-                MockBook(title: "B")
+                MockBook(title: "B"),
             ]
         )
     }
@@ -123,7 +123,7 @@ final class OptionalComparisonTests: XCTestCase {
         let values = [
             MockBook(title: "B"),
             MockBook(title: "A"),
-            MockBook(title: nil)
+            MockBook(title: nil),
         ]
 
         // when
@@ -135,7 +135,7 @@ final class OptionalComparisonTests: XCTestCase {
             [
                 MockBook(title: nil),
                 MockBook(title: "A"),
-                MockBook(title: "B")
+                MockBook(title: "B"),
             ]
         )
     }

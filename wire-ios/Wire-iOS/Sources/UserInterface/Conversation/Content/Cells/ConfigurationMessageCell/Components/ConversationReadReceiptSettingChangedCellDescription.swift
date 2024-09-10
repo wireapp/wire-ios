@@ -29,7 +29,7 @@ struct ReadReceiptViewModel {
 
     private let baseAttributes: [NSAttributedString.Key: Any] = [
         .font: UIFont.mediumFont,
-        .foregroundColor: SemanticColors.Label.textDefault
+        .foregroundColor: SemanticColors.Label.textDefault,
     ]
 
     func image() -> UIImage? {

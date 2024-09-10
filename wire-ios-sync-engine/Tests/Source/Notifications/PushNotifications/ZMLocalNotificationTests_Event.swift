@@ -29,10 +29,10 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
                 "message": "Please add me",
                 "from": UUID.create().transportString(),
                 "status": status,
-                "to": remoteID.transportString()
+                "to": remoteID.transportString(),
             ],
             "type": "user.connection",
-            "user": ["name": "Special User"]
+            "user": ["name": "Special User"],
         ]
     }
 
@@ -146,7 +146,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         let payload = [
             "user": ["id": senderID.transportString(), "name": "Stimpy"],
             "type": EventNewConnection,
-            "time": Date().transportString()
+            "time": Date().transportString(),
         ] as ZMTransportData
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
@@ -178,7 +178,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             "You and Super User are now connected": [sender!, accepted],
             "You and Special User are now connected": [accepted],
             "Super User wants to connect": [sender!, pending],
-            "Special User wants to connect": [pending]
+            "Special User wants to connect": [pending],
         ]
 
         for (expectedBody, arguments) in cases {

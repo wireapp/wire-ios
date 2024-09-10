@@ -75,7 +75,7 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
             .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
             .failure(status: 400, error: .invalidBodyOrCiphersuites),
             .failure(status: 403, error: .mlsIdentityMismatch, label: "mls-identity-mismatch"),
-            .failure(status: 999, error: .unknown(status: 999))
+            .failure(status: 999, error: .unknown(status: 999)),
         ])
     }
 }

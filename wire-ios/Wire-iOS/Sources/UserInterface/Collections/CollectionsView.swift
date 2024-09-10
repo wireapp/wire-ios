@@ -125,7 +125,7 @@ final class CollectionsView: UIView {
             resultsView.topAnchor.constraint(equalTo: collectionView.topAnchor),
             resultsView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor),
             resultsView.leftAnchor.constraint(equalTo: collectionView.leftAnchor),
-            resultsView.rightAnchor.constraint(equalTo: collectionView.rightAnchor)
+            resultsView.rightAnchor.constraint(equalTo: collectionView.rightAnchor),
         ])
     }
 }

@@ -98,7 +98,7 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
             collectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             collectionView.leftAnchor.constraint(greaterThanOrEqualTo: view.leftAnchor),
             collectionView.rightAnchor.constraint(lessThanOrEqualTo: view.rightAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         let widthConstraint = collectionView.widthAnchor.constraint(equalToConstant: 414)

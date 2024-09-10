@@ -189,7 +189,7 @@ extension MockUserClient {
         data["address"] = self.address
         data["location"] = [
             "lat": self.locationLatitude,
-            "lon": self.locationLongitude
+            "lon": self.locationLongitude,
         ]
         return data as NSDictionary
     }

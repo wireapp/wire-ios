@@ -54,7 +54,7 @@ extension UserClientRequestFactory {
             "lastkey": lastPreKeyPayloadData,
             "prekeys": preKeysPayloadData,
             "sigkeys": signalingKeysPayloadData,
-            "cookie": cookieLabel
+            "cookie": cookieLabel,
         ]
 
         if let password = credentials?.password {
@@ -114,7 +114,7 @@ extension UserClientRequestFactory {
     func payloadForLastPreKey(_ lastResortPrekey: IdPrekeyTuple) -> [String: Any] {
         [
             "key": lastResortPrekey.prekey,
-            "id": NSNumber(value: lastResortPrekey.id)
+            "id": NSNumber(value: lastResortPrekey.id),
         ]
     }
 
@@ -134,7 +134,7 @@ extension UserClientRequestFactory {
 
         let preKeysPayloadData = payloadForPreKeys(prekeys)
         let payload: [String: Any] = [
-            "prekeys": preKeysPayloadData
+            "prekeys": preKeysPayloadData,
         ]
         let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         request.add(storeMaxRangeID(client, maxRangeID: preKeysRangeMax))
@@ -148,7 +148,7 @@ extension UserClientRequestFactory {
             let (signalingKeysPayloadData, signalingKeys) = payloadForSignalingKeys()
             let payload: [String: Any] = [
                 "sigkeys": signalingKeysPayloadData,
-                "prekeys": [] // NOTE backend always expects 'prekeys' to be present atm
+                "prekeys": [], // NOTE backend always expects 'prekeys' to be present atm
             ]
             let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
             request.add(storeAPSSignalingKeys(client, signalingKeys: signalingKeys))
@@ -189,7 +189,7 @@ extension UserClientRequestFactory {
             throw UserClientRequestError.clientNotRegistered
         }
         let payload: [String: Any] = [
-            "capabilities": ["legalhold-implicit-consent"]
+            "capabilities": ["legalhold-implicit-consent"],
         ]
         let request = ZMTransportRequest(path: "/clients/\(remoteIdentifier)", method: ZMTransportRequestMethod.put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         request.add(storeCapabilitiesHandler(client))
@@ -205,7 +205,7 @@ extension UserClientRequestFactory {
                                              let password = credentials.password {
             [
                 "email": email,
-                "password": password
+                "password": password,
             ]
         } else {
             [:]

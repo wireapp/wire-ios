@@ -46,7 +46,7 @@ final class AccessoryTextFieldCell: UITableViewCell {
             textField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             textField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8)
+            textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8),
         ])
     }
 }

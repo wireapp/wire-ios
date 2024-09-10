@@ -20,11 +20,11 @@ import UIKit
 
 private let monospacedFeatureSettingsAttribute = [
     UIFontDescriptor.FeatureKey.type: kNumberSpacingType,
-    UIFontDescriptor.FeatureKey.selector: kMonospacedNumbersSelector
+    UIFontDescriptor.FeatureKey.selector: kMonospacedNumbersSelector,
 ]
 
 private let monospaceAttribute = [
-    UIFontDescriptor.AttributeName.featureSettings: [monospacedFeatureSettingsAttribute]
+    UIFontDescriptor.AttributeName.featureSettings: [monospacedFeatureSettingsAttribute],
 ]
 
 extension UIFont {

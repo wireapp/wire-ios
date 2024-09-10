@@ -123,7 +123,7 @@ final class LabelIndicator: UIView {
             titleLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             titleLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: indicatorIcon.trailingAnchor, constant: 6)
+            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: indicatorIcon.trailingAnchor, constant: 6),
         ])
     }
 }

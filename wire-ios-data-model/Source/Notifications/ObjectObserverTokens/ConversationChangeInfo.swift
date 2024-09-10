@@ -50,7 +50,7 @@ extension ZMConversation: ObjectInSnapshot {
             ZMConversation.mlsVerificationStatusKey,
             #keyPath(ZMConversation.isDeletedRemotely),
             ZMConversation.messageProtocolKey,
-            #keyPath(ZMConversation.oneOnOneUser)
+            #keyPath(ZMConversation.oneOnOneUser),
         ]
     }
 
@@ -210,7 +210,7 @@ extension ZMConversation: ObjectInSnapshot {
             "labelsChanged: \(labelsChanged)",
             "mlsStatusChanged: \(mlsStatusChanged)",
             "messageProtocolChanged: \(messageProtocolChanged)",
-            "oneOnOneUserChanged: \(oneOnOneUserChanged)"
+            "oneOnOneUserChanged: \(oneOnOneUserChanged)",
         ].joined(separator: ", ")
     }
 

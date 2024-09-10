@@ -81,7 +81,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"),
         ]
 
         // when
@@ -102,11 +102,11 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200")
+            HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"),
         ]
 
         let expectedIDs: [UUID] = try [
-            XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483"))
+            XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -125,7 +125,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable")
+            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable"),
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -148,7 +148,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"),
         ]
 
         // when
@@ -169,14 +169,14 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200")
+            HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"),
         ]
 
         let expectedIDs: [QualifiedID] = try [
             QualifiedID(
                 uuid: XCTUnwrap(UUID(uuidString: "14c3f0ff-1a46-4e66-8845-ae084f09c483")),
                 domain: "staging.zinfra.io"
-            )
+            ),
         ]
 
         let api = ConversationsAPIV1(httpClient: httpClient)
@@ -195,7 +195,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable")
+            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable"),
         ]
 
         let api = ConversationsAPIV1(httpClient: httpClient)
@@ -237,7 +237,7 @@ final class ConversationsAPITests: XCTestCase {
             HTTPResponse.mockJSONResource(
                 code: .ok,
                 name: "testGetConversations_givenV0AndSuccessResponse200"
-            )
+            ),
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -254,7 +254,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .badRequest, label: "invalid body")
+            HTTPResponse.mockError(code: .badRequest, label: "invalid body"),
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -275,7 +275,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable")
+            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable"),
         ]
 
         let api = ConversationsAPIV0(httpClient: httpClient)
@@ -299,7 +299,7 @@ final class ConversationsAPITests: XCTestCase {
             HTTPResponse.mockJSONResource(
                 code: .ok,
                 name: "testGetConversations_givenV2AndSuccessResponse200"
-            )
+            ),
         ]
 
         let api = ConversationsAPIV2(httpClient: httpClient)
@@ -316,7 +316,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .badRequest, label: "invalid body")
+            HTTPResponse.mockError(code: .badRequest, label: "invalid body"),
         ]
 
         let api = ConversationsAPIV2(httpClient: httpClient)
@@ -337,7 +337,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable")
+            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable"),
         ]
 
         let api = ConversationsAPIV2(httpClient: httpClient)
@@ -361,7 +361,7 @@ final class ConversationsAPITests: XCTestCase {
             HTTPResponse.mockJSONResource(
                 code: .ok,
                 name: "testGetConversations_givenV3AndSuccessResponse200"
-            )
+            ),
         ]
 
         let api = ConversationsAPIV3(httpClient: httpClient)
@@ -382,7 +382,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .badRequest, label: "invalid body")
+            HTTPResponse.mockError(code: .badRequest, label: "invalid body"),
         ]
 
         let api = ConversationsAPIV3(httpClient: httpClient)
@@ -403,7 +403,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable")
+            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable"),
         ]
 
         let api = ConversationsAPIV3(httpClient: httpClient)
@@ -427,7 +427,7 @@ final class ConversationsAPITests: XCTestCase {
             HTTPResponse.mockJSONResource(
                 code: .ok,
                 name: "testGetConversations_givenV5AndSuccessResponse200"
-            )
+            ),
         ]
 
         let api = ConversationsAPIV5(httpClient: httpClient)
@@ -448,7 +448,7 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable")
+            HTTPResponse.mockError(code: .serviceUnavailable, label: "service unavailable"),
         ]
 
         let api = ConversationsAPIV5(httpClient: httpClient)

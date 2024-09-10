@@ -256,7 +256,7 @@ final class ConversationListViewController: UIViewController {
 
             noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
-            noConversationLabel.widthAnchor.constraint(equalToConstant: 240)
+            noConversationLabel.widthAnchor.constraint(equalToConstant: 240),
         ])
     }
 
@@ -344,7 +344,7 @@ extension NSAttributedString {
         let titleAttributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key.foregroundColor: SemanticColors.Label.textDefault,
             NSAttributedString.Key.font: UIFont.font(for: .h3),
-            NSAttributedString.Key.paragraphStyle: paragraphStyle
+            NSAttributedString.Key.paragraphStyle: paragraphStyle,
         ]
 
         paragraphStyle.paragraphSpacing = 4

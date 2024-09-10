@@ -62,7 +62,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             "name": "Wire GmbH",
             "icon": "",
             "icon_key": "",
-            "binding": isBound ? true : false
+            "binding": isBound ? true : false,
         ]
     }
 
@@ -327,7 +327,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
                 "data": ["user": userId.transportString()],
                 "time": Date().transportString(),
                 "team": teamId.transportString(),
-                "type": "team.member-leave"
+                "type": "team.member-leave",
             ]
 
             event = ZMUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: nil)!
@@ -474,8 +474,8 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         let payload: [String: Any] = [
             "has_more": false,
             "teams": [
-                sampleResponse(teamID: teamID, creatorId: teamCreatorID)
-            ]
+                sampleResponse(teamID: teamID, creatorId: teamCreatorID),
+            ],
         ]
 
         request.complete(with: .init(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
@@ -517,7 +517,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
             let payload: [String: Any] = [
                 "has_more": false,
-                "teams": [sampleResponse(teamID: UUID(), creatorId: UUID())]
+                "teams": [sampleResponse(teamID: UUID(), creatorId: UUID())],
             ]
             request.complete(with: .init(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -537,7 +537,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
             let payload: [String: Any] = [
                 "has_more": false,
-                "teams": []
+                "teams": [],
             ]
             request.complete(with: .init(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))

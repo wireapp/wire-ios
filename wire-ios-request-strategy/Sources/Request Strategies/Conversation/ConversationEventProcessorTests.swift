@@ -298,7 +298,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                 "conversation": self.groupConversation!.remoteIdentifier!.transportString(),
                 "time": Date(timeIntervalSinceNow: 100).transportString(),
                 "data": NSNull(),
-                "type": "conversation.delete"
+                "type": "conversation.delete",
             ]
 
             // WHEN
@@ -345,7 +345,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             "conversation": self.groupConversation.remoteIdentifier!.transportString(),
             "time": Date().transportString(),
             "data": ["receipt_mode": enabled ? 1 : 0],
-            "type": "conversation.receipt-mode-update"
+            "type": "conversation.receipt-mode-update",
         ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
@@ -445,7 +445,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      timestamp: Date(),
                                      dataPayload: [
                                          "access": newAccessMode.stringValue,
-                                         "access_role_v2": newAccessRole.map(\.rawValue)
+                                         "access_role_v2": newAccessRole.map(\.rawValue),
                                      ])
         }
         // WHEN
@@ -475,7 +475,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                 timestamp: Date(),
                 dataPayload: [
                     "access": newAccessMode.stringValue,
-                    "access_role": legacyAccessRole.rawValue
+                    "access_role": legacyAccessRole.rawValue,
                 ])
         }
 
@@ -728,7 +728,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      timestamp: Date(timeIntervalSinceNow: 100),
                                      dataPayload: [
                                          "target": userId.transportString(),
-                                         "conversation_role": "new"
+                                         "conversation_role": "new",
                                      ])
         }
         // WHEN
@@ -771,7 +771,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      timestamp: Date(timeIntervalSinceNow: 100),
                                      dataPayload: [
                                          "target": selfUser.remoteIdentifier.transportString(),
-                                         "conversation_role": "new"
+                                         "conversation_role": "new",
                                      ])
         }
         // WHEN
@@ -797,7 +797,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             "conversation": conversationID.transportString(),
             "time": timestamp.transportString(),
             "data": dataPayload,
-            "type": type
+            "type": type,
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!

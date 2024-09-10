@@ -124,7 +124,7 @@ final class CallActionsView: UIView {
             cameraButtonDisabled.topAnchor.constraint(equalTo: cameraButton.topAnchor),
             cameraButtonDisabled.bottomAnchor.constraint(equalTo: cameraButton.bottomAnchor),
             speakersAllSegmentedView.widthAnchor.constraint(equalToConstant: 180),
-            speakersAllSegmentedView.heightAnchor.constraint(equalToConstant: 25)
+            speakersAllSegmentedView.heightAnchor.constraint(equalToConstant: 25),
         ])
 
         regularConstraints = [
@@ -132,7 +132,7 @@ final class CallActionsView: UIView {
             bottomStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             bottomStackView.widthAnchor.constraint(equalTo: verticalStackView.widthAnchor),
             bottomStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            bottomStackView.heightAnchor.constraint(equalTo: endCallButton.heightAnchor)
+            bottomStackView.heightAnchor.constraint(equalTo: endCallButton.heightAnchor),
         ]
 
         compactConstraints = [
@@ -140,7 +140,7 @@ final class CallActionsView: UIView {
             bottomStackView.heightAnchor.constraint(equalTo: endCallButton.heightAnchor),
             bottomStackView.trailingAnchor.constraint(lessThanOrEqualTo: topStackView.leadingAnchor),
             bottomStackView.leadingAnchor.constraint(equalTo: safeLeadingAnchor, constant: 40),
-            verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ]
     }
 

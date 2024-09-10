@@ -35,7 +35,7 @@ extension ZMConversation {
         if let timeout = activeMessageDestructionTimeoutValue {
             [
                 "is_ephemeral": true,
-                "ephemeral_time": Int(timeout.rawValue)
+                "ephemeral_time": Int(timeout.rawValue),
             ]
         } else {
             ["is_ephemeral": false]

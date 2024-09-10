@@ -49,7 +49,7 @@ class RoundedPageIndicator: RoundedBlurView {
         NSLayoutConstraint.activate([
             pageControl.centerYAnchor.constraint(equalTo: centerYAnchor),
             pageControl.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.pageControlMargin),
-            pageControl.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.pageControlMargin)
+            pageControl.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.pageControlMargin),
         ])
     }
 

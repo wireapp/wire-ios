@@ -83,17 +83,17 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
         let keyauth: [String: Any] = [
             CodingKeys.essential.rawValue: true,
-            CodingKeys.value.rawValue: "\(keyauth)"
+            CodingKeys.value.rawValue: "\(keyauth)",
         ]
         let acmeAud: [String: Any] = [
             CodingKeys.essential.rawValue: true,
-            CodingKeys.value.rawValue: "\(acmeAudience)"
+            CodingKeys.value.rawValue: "\(acmeAudience)",
         ]
         let idToken = [
             CodingKeys.idToken.rawValue: [
                 CodingKeys.keyauth.rawValue: keyauth,
-                CodingKeys.acmeAud.rawValue: acmeAud
-            ]
+                CodingKeys.acmeAud.rawValue: acmeAud,
+            ],
         ]
         guard let jsonData = try? JSONSerialization.data(withJSONObject: idToken, options: .prettyPrinted),
               let idTokenString = String(bytes: jsonData, encoding: String.Encoding.utf8) else {

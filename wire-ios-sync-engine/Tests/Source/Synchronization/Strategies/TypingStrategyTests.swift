@@ -119,7 +119,7 @@ final class TypingStrategyTests: MessagingTest {
                        "data": ["status": isTyping ? "started" : "stopped"],
                        "from": userA.remoteIdentifier!.transportString(),
                        "time": Date().transportString(),
-                       "type": "conversation.typing"
+                       "type": "conversation.typing",
         ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
@@ -129,7 +129,7 @@ final class TypingStrategyTests: MessagingTest {
                        "data": ["user_ids": [userA.remoteIdentifier!.transportString()]],
                        "from": userA.remoteIdentifier!.transportString(),
                        "time": Date().transportString(),
-                       "type": "conversation.member-leave"
+                       "type": "conversation.member-leave",
         ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
@@ -241,7 +241,7 @@ final class TypingStrategyTests: MessagingTest {
                            "data": ["status": "foo"],
                            "from": userA.remoteIdentifier!.transportString(),
                            "time": Date().transportString(),
-                           "type": "conversation.typing"
+                           "type": "conversation.typing",
             ] as [String: Any]
             let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 
@@ -310,7 +310,7 @@ final class TypingStrategyTests: MessagingTest {
                 "data": ["text": data],
                 "from": userA.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
-                "type": "conversation.otr-message-add"
+                "type": "conversation.otr-message-add",
         ] as [String: Any]
     }
 
@@ -321,7 +321,7 @@ final class TypingStrategyTests: MessagingTest {
                            "data": [],
                            "from": userA.remoteIdentifier!.transportString(),
                            "time": Date().transportString(),
-                           "type": "conversation.rename"
+                           "type": "conversation.rename",
             ] as [String: Any]
             let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 

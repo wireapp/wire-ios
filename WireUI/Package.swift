@@ -10,12 +10,12 @@ let package = Package(
     products: [
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"])
+        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
-        .package(name: "WireFoundation", path: "../WireFoundation")
+        .package(name: "WireFoundation", path: "../WireFoundation"),
     ],
     targets: [
         .target(name: "WireDesign"),
@@ -28,7 +28,7 @@ let package = Package(
             name: "WireReusableUIComponents",
             dependencies: [
                 "WireDesign",
-                .product(name: "WireFoundation", package: "WireFoundation")
+                .product(name: "WireFoundation", package: "WireFoundation"),
             ]
         ),
         .testTarget(
@@ -36,7 +36,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
+                .product(name: "WireTestingPackage", package: "WireFoundation"),
             ]
         ),
 
@@ -46,9 +46,9 @@ let package = Package(
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireUIFoundation",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
+                .product(name: "WireTestingPackage", package: "WireFoundation"),
             ]
-        )
+        ),
     ]
 )
 
@@ -56,6 +56,6 @@ for target in package.targets {
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableExperimentalFeature("StrictConcurrency"),
     ]
 }

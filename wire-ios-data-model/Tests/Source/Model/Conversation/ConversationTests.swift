@@ -125,9 +125,9 @@ extension ConversationTests {
             "from": XCTUnwrap(message.sender?.remoteIdentifier.transportString()),
             "time": Date().transportString(),
             "data": [
-                "text": genericMessageData?.base64String()
+                "text": genericMessageData?.base64String(),
             ],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
         let updateEvent = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID.create())
 
@@ -173,7 +173,7 @@ extension ConversationTests {
                 "time": newLastRead.transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
 
@@ -207,7 +207,7 @@ extension ConversationTests {
                 "time": Date().transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
 
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -252,7 +252,7 @@ extension ConversationTests {
                 "time": Date().transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
 
@@ -305,7 +305,7 @@ extension ConversationTests {
                 "time": Date().transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
 
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -344,7 +344,7 @@ extension ConversationTests {
                 "time": Date().transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
 
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -381,7 +381,7 @@ extension ConversationTests {
                 "time": Date().transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
 
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -418,7 +418,7 @@ extension ConversationTests {
                 "time": Date().transportString(),
                 "data": data,
                 "from": XCTUnwrap(selfUserID?.transportString()),
-                "type": "conversation.client-message-add"
+                "type": "conversation.client-message-add",
             ]
 
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)

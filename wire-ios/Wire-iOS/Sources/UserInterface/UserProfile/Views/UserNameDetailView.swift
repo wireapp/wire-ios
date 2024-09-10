@@ -169,7 +169,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
             correlationLabel.topAnchor.constraint(equalTo: subtitleLabel.bottomAnchor),
             correlationLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             correlationLabel.heightAnchor.constraint(equalToConstant: 16),
-            correlationLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            correlationLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

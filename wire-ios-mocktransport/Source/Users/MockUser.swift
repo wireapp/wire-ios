@@ -210,7 +210,7 @@ extension MockUser {
                 "id": identifier,
                 "deleted": true,
                 "picture": [],
-                "assets": []
+                "assets": [],
             ]
 
             return payload
@@ -225,8 +225,8 @@ extension MockUser {
                 "picture": pictureData,
                 "assets": assetData,
                 "supported_protocols": [
-                    "proteus"
-                ]
+                    "proteus",
+                ],
             ]
 
             if let providerIdentifier = self.providerIdentifier,
@@ -242,7 +242,7 @@ extension MockUser {
             if let domain {
                 payload["qualified_id"] = [
                     "id": identifier,
-                    "domain": domain
+                    "domain": domain,
                 ]
             }
 
@@ -254,7 +254,7 @@ extension MockUser {
         guard let previewId = previewProfileAssetIdentifier, let completeId = completeProfileAssetIdentifier else { return nil }
         return [
             ["size": "preview", "type": "image", "key": previewId],
-            ["size": "complete", "type": "image", "key": completeId]
+            ["size": "complete", "type": "image", "key": completeId],
         ]
     }
 

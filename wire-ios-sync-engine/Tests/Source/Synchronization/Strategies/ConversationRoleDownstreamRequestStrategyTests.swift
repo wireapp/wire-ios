@@ -173,17 +173,17 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             [
                 "actions": [
                     "leave_conversation",
-                    "delete_conversation"
+                    "delete_conversation",
                 ],
-                "conversation_role": "wire_admin"
+                "conversation_role": "wire_admin",
             ],
             [
                 "actions": [
-                    "leave_conversation"
+                    "leave_conversation",
                 ],
-                "conversation_role": "wire_member"
-            ]
-        ]
+                "conversation_role": "wire_member",
+            ],
+        ],
     ]
 
     private func boostrapChangeTrackers(with objects: ZMManagedObject...) {

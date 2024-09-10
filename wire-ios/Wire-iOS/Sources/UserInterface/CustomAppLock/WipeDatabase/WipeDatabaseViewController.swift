@@ -96,7 +96,7 @@ final class WipeDatabaseViewController: UIViewController {
 
         [
             stackView,
-            confirmButton
+            confirmButton,
         ].forEach {
             view.addSubview($0)
         }
@@ -106,7 +106,7 @@ final class WipeDatabaseViewController: UIViewController {
         [
             titleLabel,
             SpacingView(25),
-            infoLabel
+            infoLabel,
         ].forEach {
             stackView.addArrangedSubview($0)
         }

@@ -210,7 +210,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
         static let connectionRemovedEvent = FederationConnectionRemovedEvent(
             domains: [
                 "a.com",
-                "b.com"
+                "b.com",
             ]
         )
 
@@ -230,7 +230,7 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                     status: .enabled,
                     domains: [
                         "a.com",
-                        "b.com"
+                        "b.com",
                     ]
                 )
             )
@@ -287,18 +287,18 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                     status: .enabled,
                     protocolToggleUsers: [
                         UUID(uuidString: "b8ffd03e-425a-468c-8cfe-1b1c1e1e274c")!,
-                        UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!
+                        UUID(uuidString: "ef84379d-9bd6-432f-b2d6-ff636343596b")!,
                     ],
                     defaultProtocol: .mls,
                     allowedCipherSuites: [
                         .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                         .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                        .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519,
                     ],
                     defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                     supportedProtocols: [
                         .proteus,
-                        .mls
+                        .mls,
                     ]
                 )
             )

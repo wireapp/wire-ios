@@ -25,7 +25,7 @@ private let zmLog = ZMSLog(tag: "UI")
 final class FileBackupExcluder: BackupExcluder {
     private static let filesToExclude: [FileInDirectory] = [
         (.libraryDirectory, "Preferences/com.apple.EmojiCache.plist"),
-        (.libraryDirectory, ".")
+        (.libraryDirectory, "."),
     ]
 
     init() {

@@ -41,7 +41,7 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
             label.topAnchor.constraint(equalTo: container.topAnchor, constant: 16),
             label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
             label.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
-            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16)
+            label.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -16),
         ])
     }
 

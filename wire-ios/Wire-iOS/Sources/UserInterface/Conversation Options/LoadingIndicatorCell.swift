@@ -35,7 +35,7 @@ final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable
             spinner.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             spinner.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             spinner.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            spinner.heightAnchor.constraint(equalToConstant: 120)
+            spinner.heightAnchor.constraint(equalToConstant: 120),
         ])
     }
 

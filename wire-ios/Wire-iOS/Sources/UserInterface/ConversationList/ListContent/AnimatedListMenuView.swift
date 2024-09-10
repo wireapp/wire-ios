@@ -119,7 +119,7 @@ final class AnimatedListMenuView: UIView {
             leftDotLeftConstraint,
 
             centerToRightDistanceConstraint!,
-            leftToCenterDistanceConstraint!
+            leftToCenterDistanceConstraint!,
         ]
         NSLayoutConstraint.activate(subviewConstraints)
 

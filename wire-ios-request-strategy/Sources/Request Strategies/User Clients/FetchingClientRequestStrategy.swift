@@ -58,7 +58,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         self.userClientsByQualifiedUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByQualifiedUserIDTranscoder)
 
         entitySync = EntityActionSync(actionHandlers: [
-            FetchUserClientsActionHandler(context: managedObjectContext)
+            FetchUserClientsActionHandler(context: managedObjectContext),
         ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)

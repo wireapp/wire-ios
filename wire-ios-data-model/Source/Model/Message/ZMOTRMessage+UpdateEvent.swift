@@ -52,7 +52,7 @@ extension ZMOTRMessage {
             .eventId: updateEvent.safeUUID,
             .conversationId: updateEvent.safeLoggingConversationId,
             .nonce: updateEvent.messageNonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: updateEvent.safeType
+            .messageType: updateEvent.safeType,
         ]
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
         // Update the legal hold state in the conversation

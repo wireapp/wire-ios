@@ -42,7 +42,7 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 31),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -31),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 }
@@ -127,7 +127,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

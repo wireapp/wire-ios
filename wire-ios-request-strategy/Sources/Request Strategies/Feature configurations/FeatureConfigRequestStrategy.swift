@@ -58,7 +58,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsDuringQuickSync,
             .allowsRequestsDuringSlowSync,
             .allowsRequestsWhileWaitingForWebsocket,
-            .allowsRequestsWhileInBackground
+            .allowsRequestsWhileInBackground,
         ]
     }
 

@@ -146,7 +146,7 @@ final class ReplyComposingView: UIView {
             messagePreviewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6),
             messagePreviewContainer.leadingAnchor.constraint(equalTo: leftSideView.trailingAnchor),
             messagePreviewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -margins.right),
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 48)
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
         ]
 
         NSLayoutConstraint.activate(constraints)

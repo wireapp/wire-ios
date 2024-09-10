@@ -82,7 +82,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
             token(clientID: "clientB", data: Data([0x02, 0x02, 0x02]), type: "APNS_SANDBOX"),
             token(clientID: "clientA", data: Data([0x03, 0x03, 0x03]), type: "APNS_VOIP"),
             token(clientID: "clientB", data: Data([0x04, 0x04, 0x04]), type: "APNS_VOIP_SANDBOX"),
-            token(clientID: "clientA", data: Data([0x05, 0x05, 0x05]), type: "GCM")
+            token(clientID: "clientA", data: Data([0x05, 0x05, 0x05]), type: "GCM"),
         ])
 
         sut.handleResponse(response(payload: payload, status: 200), action: action)

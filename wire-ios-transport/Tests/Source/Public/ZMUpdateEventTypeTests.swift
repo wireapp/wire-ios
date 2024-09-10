@@ -23,7 +23,7 @@ final class ZMUpdateEventTypeTests: XCTestCase {
 
     func testRawValuesOfDeletedCasesArentReused() {
         let deletedEvents: [String: UInt] = [
-            "teamMemberJoin": 26
+            "teamMemberJoin": 26,
         ]
         let forbiddenRawValues = Set(deletedEvents.values)
 

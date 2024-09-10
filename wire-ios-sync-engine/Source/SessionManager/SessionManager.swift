@@ -1016,7 +1016,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             conversationListObserver,
             connectionRequestObserver,
             unreadCountObserver,
-            databaseEncryptionObserverToken
+            databaseEncryptionObserverToken,
         ]
     }
 

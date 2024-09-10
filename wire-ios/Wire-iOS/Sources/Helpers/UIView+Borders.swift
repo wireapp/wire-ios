@@ -38,28 +38,28 @@ extension UIView {
                 self.topAnchor.constraint(equalTo: parentView.topAnchor),
                 self.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
                 self.trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
-                self.heightAnchor.constraint(equalToConstant: borderWidth)
+                self.heightAnchor.constraint(equalToConstant: borderWidth),
             ])
         case .bottom:
             NSLayoutConstraint.activate([
                 self.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
                 self.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
                 self.trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
-                self.heightAnchor.constraint(equalToConstant: borderWidth)
+                self.heightAnchor.constraint(equalToConstant: borderWidth),
             ])
         case .leading:
             NSLayoutConstraint.activate([
                 self.leadingAnchor.constraint(equalTo: parentView.leadingAnchor),
                 self.topAnchor.constraint(equalTo: parentView.topAnchor),
                 self.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
-                self.widthAnchor.constraint(equalToConstant: borderWidth)
+                self.widthAnchor.constraint(equalToConstant: borderWidth),
             ])
         case .trailing:
             NSLayoutConstraint.activate([
                 self.trailingAnchor.constraint(equalTo: parentView.trailingAnchor),
                 self.topAnchor.constraint(equalTo: parentView.topAnchor),
                 self.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
-                self.widthAnchor.constraint(equalToConstant: borderWidth)
+                self.widthAnchor.constraint(equalToConstant: borderWidth),
             ])
         }
     }

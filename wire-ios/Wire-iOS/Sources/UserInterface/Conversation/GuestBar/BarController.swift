@@ -86,7 +86,7 @@ final class BarController: UIViewController {
             stackView.topAnchor.constraint(equalTo: view.topAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             stackView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            stackView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            stackView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 }

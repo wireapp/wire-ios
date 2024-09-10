@@ -89,7 +89,7 @@ final class ParticipantDeviceHeaderView: UIView {
         let textAttributes = [
             NSAttributedString.Key.foregroundColor: textColor,
             NSAttributedString.Key.font: font,
-            NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint
+            NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint,
         ]
 
         return NSAttributedString(string: fingerprintExplanation, attributes: textAttributes)
@@ -100,7 +100,7 @@ final class ParticipantDeviceHeaderView: UIView {
             NSAttributedString.Key.font: font,
             NSAttributedString.Key.foregroundColor: linkAttributeColor,
             NSAttributedString.Key.link: WireURLs.shared.whyToVerifyFingerprintArticle,
-            NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint
+            NSAttributedString.Key.paragraphStyle: paragraphStyleForFingerprint,
         ]
     }
 
@@ -117,7 +117,7 @@ final class ParticipantDeviceHeaderView: UIView {
             textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             textView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
             textView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            textView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
+            textView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
         ])
     }
 

@@ -95,7 +95,7 @@ final class ImageToolbarView: UIView {
             buttonContainer.topAnchor.constraint(equalTo: topAnchor),
             buttonContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
             buttonContainer.leftAnchor.constraint(greaterThanOrEqualTo: leftAnchor),
-            buttonContainer.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor)
+            buttonContainer.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor),
         ])
     }
 
@@ -151,7 +151,7 @@ final class ImageToolbarView: UIView {
             constraints.append(contentsOf: [
                 button.widthAnchor.constraint(equalToConstant: 16),
                 button.heightAnchor.constraint(equalToConstant: 16),
-                button.centerYAnchor.constraint(equalTo: buttonContainer.centerYAnchor)
+                button.centerYAnchor.constraint(equalTo: buttonContainer.centerYAnchor),
             ])
         }
 

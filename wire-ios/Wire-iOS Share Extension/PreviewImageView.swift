@@ -96,7 +96,7 @@ final class PreviewImageView: UIImageView {
             detailsContainer.bottomAnchor.constraint(equalTo: bottomAnchor),
             detailsContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
             detailsContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            detailsContainer.heightAnchor.constraint(equalToConstant: 24)
+            detailsContainer.heightAnchor.constraint(equalToConstant: 24),
         ]
 
         NSLayoutConstraint.activate(constraints)

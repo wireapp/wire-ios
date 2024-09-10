@@ -69,7 +69,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel1,
-            Scaffolding.conversationLabel2
+            Scaffolding.conversationLabel2,
         ]
 
         // When
@@ -105,7 +105,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
 
         userPropertiesAPI.getLabels_MockValue = [
-            Scaffolding.updatedConversationLabel1
+            Scaffolding.updatedConversationLabel1,
         ]
 
         // When
@@ -142,7 +142,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
 
         userPropertiesAPI.getLabels_MockValue = [
-            Scaffolding.updatedConversationLabel1
+            Scaffolding.updatedConversationLabel1,
         ]
 
         // When
@@ -183,7 +183,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel2,
-            Scaffolding.conversationLabel3
+            Scaffolding.conversationLabel3,
         ]
 
         // When
@@ -225,7 +225,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         userPropertiesAPI.getLabels_MockValue = [
             Scaffolding.conversationLabel2,
-            Scaffolding.conversationLabel3
+            Scaffolding.conversationLabel3,
         ]
 
         // When
@@ -241,7 +241,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let expected = [
                 Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
-                Scaffolding.conversationLabel3.name!
+                Scaffolding.conversationLabel3.name!,
             ]
 
             expected.forEach { XCTAssert(labelNames.contains($0)) }
@@ -275,7 +275,7 @@ private enum Scaffolding {
         type: 0,
         conversationIDs: [
             UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
+            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!,
         ]
     )
 
@@ -286,7 +286,7 @@ private enum Scaffolding {
         conversationIDs: [
             UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
             UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d2")! /// new conversation added
+            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d2")!, /// new conversation added
         ]
     )
 
@@ -296,7 +296,7 @@ private enum Scaffolding {
         type: 1, /// this label is favorite
         conversationIDs: [
             UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
-            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
+            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!,
         ]
     )
 
@@ -306,7 +306,7 @@ private enum Scaffolding {
         type: 0,
         conversationIDs: [
             UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc")!,
-            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!
+            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!,
         ]
     )
 
@@ -316,7 +316,7 @@ private enum Scaffolding {
         type: 0,
         conversationIDs: [
             UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ff3")!,
-            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf9")!
+            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf9")!,
         ]
     )
 
@@ -326,7 +326,7 @@ private enum Scaffolding {
         type: 0,
         conversationIDs: [
             UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ff0")!,
-            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf2")!
+            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf2")!,
         ]
     )
 }

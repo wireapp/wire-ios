@@ -103,7 +103,7 @@ final class ArchivedListViewController: UIViewController {
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 
@@ -137,7 +137,7 @@ final class ArchivedListViewController: UIViewController {
             view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
             view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1),
 
-            stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272)
+            stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
         ])
         stackView.isHidden = !viewModel.isEmptyArchivePlaceholderVisible
     }

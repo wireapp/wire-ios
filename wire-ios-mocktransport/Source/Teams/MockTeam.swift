@@ -62,7 +62,7 @@ extension MockTeam {
         team.roles = Set(
             [
                 MockRole.insert(in: context, name: MockConversation.admin, actions: createAdminActions(context: context)),
-                MockRole.insert(in: context, name: MockConversation.member, actions: createMemberActions(context: context))
+                MockRole.insert(in: context, name: MockConversation.member, actions: createMemberActions(context: context)),
             ])
         return team
     }
@@ -74,7 +74,7 @@ extension MockTeam {
             "icon_key": pictureAssetKey,
             "icon": pictureAssetId,
             "creator": creator?.identifier,
-            "binding": isBound
+            "binding": isBound,
         ]
     }
 

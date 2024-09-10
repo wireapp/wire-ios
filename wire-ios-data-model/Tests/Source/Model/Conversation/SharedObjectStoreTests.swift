@@ -23,7 +23,7 @@ extension Notification {
         self.init(name: .NSManagedObjectContextDidSave, userInfo: [
             NSInsertedObjectsKey: Set<NSManagedObject>(inserted),
             NSUpdatedObjectsKey: Set<NSManagedObject>(updated),
-            NSDeletedObjectsKey: Set<NSManagedObject>(deleted)
+            NSDeletedObjectsKey: Set<NSManagedObject>(deleted),
         ])
     }
 }
@@ -98,11 +98,11 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
         // Then
         let firstExpected = [
             NSInsertedObjectsKey: [firstURI] as AnyObject,
-            NSDeletedObjectsKey: [secondURI] as AnyObject
+            NSDeletedObjectsKey: [secondURI] as AnyObject,
         ] as [AnyHashable: AnyObject]
 
         let secondExpected = [
-            NSUpdatedObjectsKey: [secondURI] as AnyObject
+            NSUpdatedObjectsKey: [secondURI] as AnyObject,
         ] as [AnyHashable: AnyObject]
 
         guard sut.storedNotifications.count == 2 else { return XCTFail("Wrong amount of notifications") }

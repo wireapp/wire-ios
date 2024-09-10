@@ -133,7 +133,7 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
         let options: [AnyHashable: Any] = [
             kCGImageSourceCreateThumbnailWithTransform as AnyHashable: true,
             kCGImageSourceCreateThumbnailFromImageAlways as AnyHashable: true,
-            kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(self.thumbnailSize.width, self.thumbnailSize.height)
+            kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(self.thumbnailSize.width, self.thumbnailSize.height),
         ]
         guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else {
             return

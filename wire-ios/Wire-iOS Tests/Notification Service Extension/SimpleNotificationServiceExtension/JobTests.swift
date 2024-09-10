@@ -55,7 +55,7 @@ class JobTests: XCTestCase {
 
         content.userInfo["data"] = [
             "user": userID.uuidString,
-            "data": ["id": eventID.uuidString]
+            "data": ["id": eventID.uuidString],
         ]
 
         return UNNotificationRequest(
@@ -122,8 +122,8 @@ class JobTests: XCTestCase {
                 "time": "2022-09-21T12:13:32.173Z",
                 "type": "conversation.otr-message-add",
                 "payload": [
-                    "conversation": "c06684dd-2865-4ff8-aef5-e0b07ae3a4e0"
-                ]
+                    "conversation": "c06684dd-2865-4ff8-aef5-e0b07ae3a4e0",
+                ],
             ]
 
             return ZMUpdateEvent(
@@ -156,8 +156,8 @@ class JobTests: XCTestCase {
                 "time": "2022-09-21T12:13:32.173Z",
                 "type": "conversation.member-join",
                 "payload": [
-                    "conversation": "c06684dd-2865-4ff8-aef5-e0b07ae3a4e0"
-                ]
+                    "conversation": "c06684dd-2865-4ff8-aef5-e0b07ae3a4e0",
+                ],
             ]
 
             return ZMUpdateEvent(

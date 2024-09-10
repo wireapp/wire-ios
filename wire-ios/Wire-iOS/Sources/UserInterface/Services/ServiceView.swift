@@ -129,7 +129,7 @@ final class ServiceView: UIView {
             // providerLabel
             providerLabel.leadingAnchor.constraint(equalTo: logoView.trailingAnchor, constant: 16),
             providerLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-            providerLabel.trailingAnchor.constraint(equalTo: trailingAnchor)
+            providerLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
 

@@ -87,7 +87,7 @@ class ConversationIconBasedCell: UIView {
 
         textLabel.linkTextAttributes = [
             NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber,
-            NSAttributedString.Key.foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent()
+            NSAttributedString.Key.foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent(),
         ]
 
         lineView.backgroundColor = SemanticColors.View.backgroundSeparatorConversationView
@@ -152,7 +152,7 @@ class ConversationIconBasedCell: UIView {
             bottomContentView.topAnchor.constraint(greaterThanOrEqualTo: textLabel.bottomAnchor),
             bottomContentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomContentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            contentViewTopConstraint
+            contentViewTopConstraint,
         ])
     }
 

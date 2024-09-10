@@ -170,7 +170,7 @@ final class WaveformProgressView: UIView {
             foregroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
             foregroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
             foregroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
-            foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor)
+            foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor),
         ])
     }
 

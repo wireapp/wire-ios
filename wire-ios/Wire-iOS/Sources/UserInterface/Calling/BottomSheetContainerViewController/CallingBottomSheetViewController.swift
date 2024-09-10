@@ -126,7 +126,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             overlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             overlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             overlay.topAnchor.constraint(equalTo: view.topAnchor),
-            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            overlay.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 

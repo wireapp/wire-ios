@@ -102,8 +102,8 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
             "failed": [
                 [
                     "domain": domain,
-                    "id": uuidString
-                ]
+                    "id": uuidString,
+                ],
             ],
             "found": [
                 [
@@ -112,8 +112,8 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
                         [
                             "key": "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",
                             "size": "preview",
-                            "type": "image"
-                        ]
+                            "type": "image",
+                        ],
                     ],
                     "deleted": true,
                     "email": "string",
@@ -123,22 +123,22 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
                     "legalhold_status": "enabled",
                     "name": "string",
                     "picture": [
-                        "string"
+                        "string",
                     ],
                     "qualified_id": [
                         "domain": "example.com",
-                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                        "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
                     ],
                     "service": [
                         "id": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
-                        "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
+                        "provider": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
                     ],
                     "supported_protocols": [
-                        "proteus"
+                        "proteus",
                     ],
-                    "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab"
-                ]
-            ]
+                    "team": "99db9768-04e3-4b5d-9268-831b6a25c4ab",
+                ],
+            ],
         ]
 
         // THEN

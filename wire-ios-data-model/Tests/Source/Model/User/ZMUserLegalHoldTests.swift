@@ -197,7 +197,7 @@ extension UserClient {
             "id": UUID().transportString() as NSString,
             "type": DeviceType.legalHold.rawValue as NSString,
             "class": DeviceClass.legalHold.rawValue as NSString,
-            "time": NSDate()
+            "time": NSDate(),
         ]
 
         return createOrUpdateSelfUserClient(payload, context: moc)!
@@ -209,7 +209,7 @@ extension UserClient {
             "id": UUID().transportString() as NSString,
             "type": DeviceType.permanent.rawValue as NSString,
             "class": DeviceClass.phone.rawValue as NSString,
-            "time": NSDate()
+            "time": NSDate(),
         ]
 
         return createOrUpdateSelfUserClient(payload, context: moc)!

@@ -44,9 +44,9 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
                 "data": [
-                    "name": "New Name"
+                    "name": "New Name",
                 ],
-                "type": "conversation.rename"
+                "type": "conversation.rename",
             ] as [String: Any]
             let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
 

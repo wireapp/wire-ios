@@ -23,7 +23,7 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
         [
             "app": "some.app",
             "token": token,
-            "transport": "APNS"
+            "transport": "APNS",
         ] as NSDictionary
     }
 

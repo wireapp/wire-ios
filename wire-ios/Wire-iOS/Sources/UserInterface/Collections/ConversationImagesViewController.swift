@@ -178,7 +178,7 @@ final class ConversationImagesViewController: UIViewController {
             separator.heightAnchor.constraint(equalToConstant: .hairline),
             separator.topAnchor.constraint(equalTo: buttonsBar.topAnchor),
             separator.trailingAnchor.constraint(equalTo: buttonsBar.trailingAnchor),
-            separator.leadingAnchor.constraint(equalTo: buttonsBar.leadingAnchor)
+            separator.leadingAnchor.constraint(equalTo: buttonsBar.leadingAnchor),
         ])
     }
 

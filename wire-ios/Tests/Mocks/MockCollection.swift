@@ -32,13 +32,13 @@ final class MockCollection: NSObject, ZMCollection {
 
     convenience init(fileMessages: [ZMConversationMessage]) {
         self.init(messages: [
-            MockCollection.onlyFilesCategory: fileMessages
+            MockCollection.onlyFilesCategory: fileMessages,
         ])
     }
 
     convenience init(linkMessages: [ZMConversationMessage]) {
         self.init(messages: [
-            MockCollection.onlyLinksCategory: linkMessages
+            MockCollection.onlyLinksCategory: linkMessages,
         ])
     }
 

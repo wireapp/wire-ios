@@ -122,7 +122,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
 
         return [
             NSAttributedString.Key.font: tokenField.tokenTitleFont,
-            NSAttributedString.Key.foregroundColor: titleColor
+            NSAttributedString.Key.foregroundColor: titleColor,
         ]
     }
 

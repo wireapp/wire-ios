@@ -116,7 +116,7 @@ final class CallParticipantDetailsView: RoundedBlurView {
             microphoneImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             microphoneImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             microphoneImageView.heightAnchor.constraint(equalToConstant: 22),
-            microphoneWidth!
+            microphoneWidth!,
         ])
         updateMicrophoneView()
     }

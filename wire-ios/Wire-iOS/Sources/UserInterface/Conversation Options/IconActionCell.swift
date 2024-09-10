@@ -42,7 +42,7 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
         [
             label,
             imageContainer,
-            iconImageView
+            iconImageView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             imageContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -56,7 +56,7 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
             label.topAnchor.constraint(equalTo: contentView.topAnchor),
             label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            label.heightAnchor.constraint(equalToConstant: 56)
+            label.heightAnchor.constraint(equalToConstant: 56),
         ])
     }
 

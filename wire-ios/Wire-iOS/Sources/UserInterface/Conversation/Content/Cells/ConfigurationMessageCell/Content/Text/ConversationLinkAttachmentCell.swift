@@ -78,7 +78,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
             attachmentView.topAnchor.constraint(equalTo: topAnchor),
             attachmentView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             attachmentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            widthConstraint
+            widthConstraint,
         ])
     }
 

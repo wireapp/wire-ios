@@ -19,7 +19,7 @@
 public struct WireLogger: LoggerProtocol {
     private static var provider = AggregatedLogger(loggers: [
         SystemLogger(),
-        CocoaLumberjackLogger()
+        CocoaLumberjackLogger(),
     ])
 
     public let tag: String

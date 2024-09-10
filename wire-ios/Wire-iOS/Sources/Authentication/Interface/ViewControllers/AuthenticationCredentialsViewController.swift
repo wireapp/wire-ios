@@ -136,7 +136,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         let attributes: [NSAttributedString.Key: Any] = [
             .font: FontSpec.smallSemiboldFont.font!,
             .foregroundColor: SemanticColors.Button.textUnderlineEnabled,
-            .underlineStyle: NSUnderlineStyle.single.rawValue
+            .underlineStyle: NSUnderlineStyle.single.rawValue,
         ]
 
         let attributeString = NSMutableAttributedString(
@@ -297,7 +297,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         super.createConstraints()
         loginButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            loginButton.heightAnchor.constraint(equalToConstant: 48)
+            loginButton.heightAnchor.constraint(equalToConstant: 48),
         ])
 
         if shouldUseScrollView {
@@ -306,7 +306,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
                 contentStack.trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor),
                 contentStack.widthAnchor.constraint(equalToConstant: 375),
                 contentStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                contentStack.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 86)
+                contentStack.topAnchor.constraint(greaterThanOrEqualTo: view.topAnchor, constant: 86),
             ])
         }
     }

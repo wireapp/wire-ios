@@ -556,10 +556,10 @@ extension NSPersistentStoreCoordinator {
             NSSQLitePragmasOption: [
                 "journal_mode": "WAL",
                 "synchronous": "FULL",
-                "secure_delete": "TRUE"
+                "secure_delete": "TRUE",
             ],
             NSMigratePersistentStoresAutomaticallyOption: supportsMigration,
-            NSInferMappingModelAutomaticallyOption: supportsMigration
+            NSInferMappingModelAutomaticallyOption: supportsMigration,
         ]
     }
 }

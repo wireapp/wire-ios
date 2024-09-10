@@ -205,11 +205,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             let query = [
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrService: "wire.com",
-                kSecAttrAccount: account
+                kSecAttrAccount: account,
             ] as CFDictionary
 
             let update = [
-                kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+                kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
             ] as CFDictionary
 
             SecItemUpdate(query, update)
@@ -220,7 +220,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         let query = [
             kSecClass: kSecClassGenericPassword,
             kSecReturnAttributes: kCFBooleanTrue!,
-            kSecMatchLimit: kSecMatchLimitAll
+            kSecMatchLimit: kSecMatchLimitAll,
         ] as CFDictionary
 
         var result: AnyObject?

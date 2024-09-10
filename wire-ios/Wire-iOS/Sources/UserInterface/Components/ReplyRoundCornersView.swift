@@ -77,7 +77,7 @@ final class ReplyRoundCornersView: UIControl {
             highlightLayer.leadingAnchor.constraint(equalTo: leadingAnchor),
             highlightLayer.topAnchor.constraint(equalTo: topAnchor),
             highlightLayer.bottomAnchor.constraint(equalTo: bottomAnchor),
-            highlightLayer.trailingAnchor.constraint(equalTo: trailingAnchor)
+            highlightLayer.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
 

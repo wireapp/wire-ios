@@ -38,7 +38,7 @@ class FileManagerMoveTests: XCTestCase {
             "foo/bar/x.dat",
             "bam/bar/dat.txt",
             "baz.md",
-            "foo/eh.ah"
+            "foo/eh.ah",
         ]
         self.createFiles(in: self.tempFolder1, relativeFilePaths: files)
 
@@ -58,11 +58,11 @@ class FileManagerMoveTests: XCTestCase {
             "foo/bar/x.dat",
             "bam/bar/dat.txt",
             "baz.md",
-            "foo/eh.ah"
+            "foo/eh.ah",
         ]
         let preExistingFiles = [
             "foo/bar/extra.file",
-            "meh.bah"
+            "meh.bah",
         ]
         self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove)
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles)
@@ -84,7 +84,7 @@ class FileManagerMoveTests: XCTestCase {
         let preExistingFiles = [overwrittenExistingFile, nonOverwrittenExistingFile]
         let filesToMove = [
             "baz.md",
-            overwrittenExistingFile
+            overwrittenExistingFile,
         ]
 
         self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
@@ -105,7 +105,7 @@ class FileManagerMoveTests: XCTestCase {
         let preExistingFiles = [overwrittenExistingFile, nonOverwrittenExistingFile]
         let filesToMove = [
             "baz.md",
-            overwrittenExistingFile
+            overwrittenExistingFile,
         ]
 
         self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
@@ -129,7 +129,7 @@ extension FileManagerMoveTests {
             "foo/bar/x.dat",
             "bam/bar/dat.txt",
             "baz.md",
-            "foo/eh.ah"
+            "foo/eh.ah",
         ]
         self.createFiles(in: self.tempFolder1, relativeFilePaths: files)
 
@@ -149,11 +149,11 @@ extension FileManagerMoveTests {
             "foo/bar/x.dat",
             "bam/bar/dat.txt",
             "baz.md",
-            "foo/eh.ah"
+            "foo/eh.ah",
         ]
         let preExistingFiles = [
             "foo/bar/extra.file",
-            "meh.bah"
+            "meh.bah",
         ]
         self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove)
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles)
@@ -174,7 +174,7 @@ extension FileManagerMoveTests {
         let preExistingFiles = [overwrittenExistingFile, nonOverwrittenExistingFile]
         let filesToMove = [
             "baz.md",
-            overwrittenExistingFile
+            overwrittenExistingFile,
         ]
 
         self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")
@@ -195,7 +195,7 @@ extension FileManagerMoveTests {
         let preExistingFiles = [overwrittenExistingFile, nonOverwrittenExistingFile]
         let filesToMove = [
             "baz.md",
-            overwrittenExistingFile
+            overwrittenExistingFile,
         ]
 
         self.createFiles(in: self.tempFolder1, relativeFilePaths: filesToMove, content: "SOURCE")

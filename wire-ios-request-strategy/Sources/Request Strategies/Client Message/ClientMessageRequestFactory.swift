@@ -63,7 +63,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 domain,
                 conversationId.transportString(),
                 "proteus",
-                "messages"
+                "messages",
             ].joined(separator: "/")
 
             message = Proteus_QualifiedNewOtrMessage(

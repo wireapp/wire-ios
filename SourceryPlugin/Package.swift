@@ -6,7 +6,7 @@ let package = Package(
     name: "SourceryPlugin",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .plugin(name: "SourceryPlugin", targets: ["SourceryPlugin"])
+        .plugin(name: "SourceryPlugin", targets: ["SourceryPlugin"]),
     ],
     dependencies: [],
     targets: [
@@ -19,6 +19,6 @@ let package = Package(
             name: "SourceryPlugin",
             capability: .buildTool(),
             dependencies: ["sourcery"]
-        )
+        ),
     ]
 )

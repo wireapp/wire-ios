@@ -32,7 +32,7 @@ extension URLSessionConfiguration {
             "timeoutIntervalForResource: \(self.timeoutIntervalForResource)",
             "tlsMaximumSupportedProtocol: \(self.tlsMaximumSupportedProtocol)",
             "tlsMinimumSupportedProtocol: \(self.tlsMinimumSupportedProtocol)",
-            "networkServiceType: \(self.networkServiceType.rawValue)"
+            "networkServiceType: \(self.networkServiceType.rawValue)",
         ]
         dump.append("shouldUseExtendedBackgroundIdleMode: \(self.shouldUseExtendedBackgroundIdleMode)")
 

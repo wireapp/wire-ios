@@ -78,7 +78,7 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 16),
             subtitleLabel.leadingAnchor.constraint(equalTo: iconImageView.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: topSeparator.trailingAnchor),
-            subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
+            subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
         ])
     }
 

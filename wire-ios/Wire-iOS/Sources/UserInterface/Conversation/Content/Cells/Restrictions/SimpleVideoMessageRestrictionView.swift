@@ -55,7 +55,7 @@ final class SimpleVideoMessageRestrictionView: BaseMessageRestrictionView {
             iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
             iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             iconView.widthAnchor.constraint(equalToConstant: 32),
-            iconView.heightAnchor.constraint(equalToConstant: 32)
+            iconView.heightAnchor.constraint(equalToConstant: 32),
         ])
     }
 }

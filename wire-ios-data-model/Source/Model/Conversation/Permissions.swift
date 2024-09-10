@@ -70,7 +70,7 @@ extension Permissions: CustomDebugStringConvertible {
         .setBilling: "SetBilling",
         .setTeamData: "SetTeamData",
         .deleteTeam: "DeleteTeam",
-        .setMemberPermissions: "SetMemberPermissions"
+        .setMemberPermissions: "SetMemberPermissions",
     ]
 
     public var debugDescription: String {

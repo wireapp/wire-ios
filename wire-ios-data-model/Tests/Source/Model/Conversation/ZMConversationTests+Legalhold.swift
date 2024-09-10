@@ -709,8 +709,8 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
                 "time": Date(),
                 "type": "conversation.otr-message-add",
                 "data": [
-                    "text": genericMessageData?.base64String()
-                ]
+                    "text": genericMessageData?.base64String(),
+                ],
             ]
 
             let updateEvent = ZMUpdateEvent(uuid: UUID(), payload: payload, transient: false, decrypted: true, source: .download)!

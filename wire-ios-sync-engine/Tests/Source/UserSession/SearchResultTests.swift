@@ -54,7 +54,7 @@ final class SearchResultTests: DatabaseTest {
             ["id": UUID.create().uuidString,
              "name": "Fabio",
              "accent_id": 5,
-             "handle": handle]
+             "handle": handle],
         ]]
 
         // when
@@ -93,7 +93,7 @@ final class SearchResultTests: DatabaseTest {
             ["id": UUID.create().uuidString,
              "name": "Fabio",
              "accent_id": 5,
-             "handle": handle]
+             "handle": handle],
         ]]
 
         // when
@@ -119,7 +119,7 @@ final class SearchResultTests: DatabaseTest {
             ["id": UUID.create().uuidString,
              "name": "Fabio",
              "accent_id": 5,
-             "handle": "aa\(name.lowercased())"]
+             "handle": "aa\(name.lowercased())"],
         ]]
 
         // when
@@ -147,7 +147,7 @@ final class SearchResultTests: DatabaseTest {
             ["id": UUID.create().uuidString,
              "name": "Fabio",
              "accent_id": 5,
-             "handle": "aa\(name.lowercased())"]
+             "handle": "aa\(name.lowercased())"],
         ]]
 
         // when
@@ -181,8 +181,8 @@ final class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 5
-            ]]
+                "accent_id": 5,
+            ]],
         ]
 
         // when
@@ -191,7 +191,7 @@ final class SearchResultTests: DatabaseTest {
             query: .fullTextSearch(""),
             searchOptions: [
                 .directory,
-                .teamMembers
+                .teamMembers,
             ],
             contextProvider: coreDataStack!,
             searchUsersCache: mockCache
@@ -219,8 +219,8 @@ final class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 5
-            ]]
+                "accent_id": 5,
+            ]],
         ]
 
         // when
@@ -230,7 +230,7 @@ final class SearchResultTests: DatabaseTest {
             searchOptions: [
                 .directory,
                 .teamMembers,
-                .excludeNonActiveTeamMembers
+                .excludeNonActiveTeamMembers,
             ],
             contextProvider: coreDataStack!,
             searchUsersCache: mockCache
@@ -257,8 +257,8 @@ final class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 5
-            ]]
+                "accent_id": 5,
+            ]],
         ]
 
         var result = SearchResult(
@@ -266,7 +266,7 @@ final class SearchResultTests: DatabaseTest {
             query: .fullTextSearch(""),
             searchOptions: [
                 .directory,
-                .teamMembers
+                .teamMembers,
             ],
             contextProvider: coreDataStack!,
             searchUsersCache: mockCache
@@ -304,8 +304,8 @@ final class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 5
-            ]]
+                "accent_id": 5,
+            ]],
         ]
 
         var result = SearchResult(
@@ -313,7 +313,7 @@ final class SearchResultTests: DatabaseTest {
             query: .fullTextSearch(""),
             searchOptions: [
                 .directory,
-                .teamMembers
+                .teamMembers,
             ],
             contextProvider: coreDataStack!,
             searchUsersCache: mockCache
@@ -348,8 +348,8 @@ final class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 5
-            ]]
+                "accent_id": 5,
+            ]],
         ]
 
         var result = SearchResult(
@@ -357,7 +357,7 @@ final class SearchResultTests: DatabaseTest {
             query: .fullTextSearch(""),
             searchOptions: [
                 .directory,
-                .teamMembers
+                .teamMembers,
             ],
             contextProvider: coreDataStack!,
             searchUsersCache: mockCache
@@ -393,8 +393,8 @@ final class SearchResultTests: DatabaseTest {
                 "team": team.remoteIdentifier!.transportString(),
                 "handle": "aaa",
                 "name": "Member A",
-                "accent_id": 5
-            ]]
+                "accent_id": 5,
+            ]],
         ]
 
         var result = SearchResult(
@@ -402,7 +402,7 @@ final class SearchResultTests: DatabaseTest {
             query: .fullTextSearch(""),
             searchOptions: [
                 .directory,
-                .teamMembers
+                .teamMembers,
             ],
             contextProvider: coreDataStack!,
             searchUsersCache: mockCache

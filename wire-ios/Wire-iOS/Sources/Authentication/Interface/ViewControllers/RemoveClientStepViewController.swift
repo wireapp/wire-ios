@@ -72,7 +72,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         NSLayoutConstraint.activate([
             clientListController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             clientListController.view.topAnchor.constraint(equalTo: safeTopAnchor),
-            clientListController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            clientListController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         // Adaptive Constraints

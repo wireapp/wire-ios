@@ -68,7 +68,7 @@ final class MessageActionsViewController: UIAlertController {
             reactionPicker.widthAnchor.constraint(equalTo: customContainer.widthAnchor),
             reactionPicker.leadingAnchor.constraint(equalTo: customContainer.leadingAnchor),
             reactionPicker.topAnchor.constraint(equalTo: customContainer.topAnchor),
-            customContainer.heightAnchor.constraint(equalTo: reactionPicker.heightAnchor)
+            customContainer.heightAnchor.constraint(equalTo: reactionPicker.heightAnchor),
         ])
     }
 

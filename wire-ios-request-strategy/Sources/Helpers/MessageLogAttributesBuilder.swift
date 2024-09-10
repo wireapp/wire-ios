@@ -45,7 +45,7 @@ struct MessageLogAttributesBuilder {
         [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ]
     }
 
@@ -65,7 +65,7 @@ struct MessageLogAttributesBuilder {
         [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ]
     }
 
@@ -85,7 +85,7 @@ struct MessageLogAttributesBuilder {
         [
             .nonce: message.message.safeIdForLoggingDescription,
             .messageType: message.message.safeTypeForLoggingDescription,
-            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ]
     }
 

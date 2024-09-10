@@ -89,7 +89,7 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         generator.reset()
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // then
@@ -107,7 +107,7 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         generator.reset()
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // then
@@ -122,7 +122,7 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
 
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // when
@@ -140,7 +140,7 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
 
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // when
@@ -158,7 +158,7 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
 
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // when
@@ -178,7 +178,7 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         sut.updateParticipants([
             first,
             second,
-            third
+            third,
         ])
 
         // when
@@ -208,13 +208,13 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         let stopped = CallParticipant(user: firstUser, clientId: clientId1, state: .connected(videoState: .stopped, microphoneState: .unmuted), activeSpeakerState: .inactive)
         let started = CallParticipant(user: firstUser, clientId: clientId1, state: .connected(videoState: .started, microphoneState: .unmuted), activeSpeakerState: .inactive)
         sut.updateParticipants([
-            started
+            started,
         ])
 
         // when
         generator.reset()
         sut.updateParticipants([
-            stopped
+            stopped,
         ])
 
         // then
@@ -240,14 +240,14 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
 
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // when
         generator.reset()
         sut.updateParticipants([
             first,
-            second
+            second,
         ])
 
         // then
@@ -259,13 +259,13 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         let first = CallParticipant(user: firstUser, clientId: clientId1, state: .connected(videoState: .started, microphoneState: .unmuted), activeSpeakerState: .inactive)
 
         sut.updateParticipants([
-            first
+            first,
         ])
 
         // when
         generator.reset()
         sut.updateParticipants([
-            first
+            first,
         ])
 
         // then

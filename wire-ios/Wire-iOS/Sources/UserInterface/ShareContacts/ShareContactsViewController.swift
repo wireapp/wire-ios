@@ -90,7 +90,7 @@ final class ShareContactsViewController: UIViewController {
 
         attributedText.addAttributes([
             NSAttributedString.Key.foregroundColor: SemanticColors.Label.textDefault,
-            NSAttributedString.Key.font: FontSpec.largeThinFont.font!
+            NSAttributedString.Key.font: FontSpec.largeThinFont.font!,
         ], range: (text as NSString).range(of: paragraph))
 
         return attributedText
@@ -153,7 +153,7 @@ final class ShareContactsViewController: UIViewController {
 
             shareContactsButton.bottomAnchor.constraint(equalTo: shareContactsButton.superview!.bottomAnchor, constant: -28),
             shareContactsButton.leadingAnchor.constraint(equalTo: shareContactsButton.superview!.leadingAnchor, constant: 28),
-            shareContactsButton.trailingAnchor.constraint(equalTo: shareContactsButton.superview!.trailingAnchor, constant: -28)
+            shareContactsButton.trailingAnchor.constraint(equalTo: shareContactsButton.superview!.trailingAnchor, constant: -28),
         ])
     }
 

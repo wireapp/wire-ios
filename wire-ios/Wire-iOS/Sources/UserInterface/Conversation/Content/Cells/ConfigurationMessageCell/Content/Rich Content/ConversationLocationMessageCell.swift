@@ -120,7 +120,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
             addressLabel.leadingAnchor.constraint(equalTo: addressContainerView.leadingAnchor, constant: 12),
             addressLabel.topAnchor.constraint(equalTo: addressContainerView.topAnchor),
             addressLabel.trailingAnchor.constraint(equalTo: addressContainerView.trailingAnchor, constant: -12),
-            addressLabel.bottomAnchor.constraint(equalTo: addressContainerView.bottomAnchor)
+            addressLabel.bottomAnchor.constraint(equalTo: addressContainerView.bottomAnchor),
         ])
     }
 

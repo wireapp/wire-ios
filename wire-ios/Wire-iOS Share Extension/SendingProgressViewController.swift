@@ -112,7 +112,7 @@ final class SendingProgressViewController: UIViewController {
         [
             circularShadow,
             circularProgress,
-            connectionStatusLabel
+            connectionStatusLabel,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -129,7 +129,7 @@ final class SendingProgressViewController: UIViewController {
             circularProgress.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
             connectionStatusLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -5),
-            connectionStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            connectionStatusLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
 

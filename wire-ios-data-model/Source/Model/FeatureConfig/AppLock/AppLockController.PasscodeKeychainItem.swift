@@ -44,7 +44,7 @@ extension AppLockController {
             [
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrAccount: itemIdentifier,
-                kSecReturnData: true
+                kSecReturnData: true,
             ]
         }
 
@@ -52,7 +52,7 @@ extension AppLockController {
             [
                 kSecClass: kSecClassGenericPassword,
                 kSecAttrAccount: itemIdentifier,
-                kSecValueData: value
+                kSecValueData: value,
             ]
         }
 

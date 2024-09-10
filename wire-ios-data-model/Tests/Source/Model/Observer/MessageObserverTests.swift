@@ -77,7 +77,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
                 #keyPath(MessageChangeInfo.transferStateChanged),
                 #keyPath(MessageChangeInfo.confirmationsChanged),
                 #keyPath(MessageChangeInfo.underlyingMessageChanged),
-                #keyPath(MessageChangeInfo.linkAttachmentsChanged)
+                #keyPath(MessageChangeInfo.linkAttachmentsChanged),
             ]
 
             guard !expectedChangedFields.isEmpty else { return }

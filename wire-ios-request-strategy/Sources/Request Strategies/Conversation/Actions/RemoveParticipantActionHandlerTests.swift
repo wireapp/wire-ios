@@ -101,7 +101,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     func testThatItParsesAllKnownRemoveParticipantErrorResponses() {
         let errorResponses: [(ConversationRemoveParticipantError, ZMTransportResponse)] = [
             (ConversationRemoveParticipantError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (ConversationRemoveParticipantError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            (ConversationRemoveParticipantError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
         ]
 
         for (expectedError, response) in errorResponses {

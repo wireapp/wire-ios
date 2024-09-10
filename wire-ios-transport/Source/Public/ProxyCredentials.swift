@@ -94,7 +94,7 @@ struct GenericPasswordKeychainItem: KeychainItem {
         [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: itemIdentifier,
-            kSecReturnData: true
+            kSecReturnData: true,
         ]
     }
 
@@ -102,7 +102,7 @@ struct GenericPasswordKeychainItem: KeychainItem {
         [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: itemIdentifier,
-            kSecValueData: value
+            kSecValueData: value,
         ]
     }
 }

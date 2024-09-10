@@ -222,7 +222,7 @@ final class ConversationReplyContentView: UIView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
             assetThumbnail.heightAnchor.constraint(lessThanOrEqualToConstant: 140),
-            contentTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
+            contentTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
     }
 

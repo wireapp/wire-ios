@@ -35,10 +35,10 @@ extension PermissionDeniedViewController {
         let attributedText = text.withCustomParagraphSpacing()
 
         attributedText.addAttributes([
-            NSAttributedString.Key.font: FontSpec.largeThinFont.font!
+            NSAttributedString.Key.font: FontSpec.largeThinFont.font!,
         ], range: (text as NSString).range(of: [paragraph1, paragraph2].joined(separator: "\u{2029}")))
         attributedText.addAttributes([
-            NSAttributedString.Key.font: FontSpec.largeSemiboldFont.font!
+            NSAttributedString.Key.font: FontSpec.largeSemiboldFont.font!,
         ], range: (text as NSString).range(of: title))
         vc.heroLabel.attributedText = attributedText
 

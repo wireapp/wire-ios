@@ -25,7 +25,7 @@ extension UIViewController {
 
         let titleTextAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: SemanticColors.Label.textDefault,
-            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold),
         ]
 
         navigationController?.navigationBar.titleTextAttributes = titleTextAttributes

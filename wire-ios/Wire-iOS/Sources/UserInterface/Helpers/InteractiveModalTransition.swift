@@ -125,7 +125,7 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
                 dimView.topAnchor.constraint(equalTo: view.topAnchor),
                 dimView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 dimView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                dimView.rightAnchor.constraint(equalTo: view.rightAnchor)
+                dimView.rightAnchor.constraint(equalTo: view.rightAnchor),
             ])
         }
     }

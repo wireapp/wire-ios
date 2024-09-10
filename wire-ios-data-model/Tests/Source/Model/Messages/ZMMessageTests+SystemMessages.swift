@@ -38,13 +38,13 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
             CBOX_PREKEY_NOT_FOUND,
             CBOX_PANIC,
             CBOX_INIT_ERROR,
-            CBOX_DEGENERATED_KEY
+            CBOX_DEGENERATED_KEY,
         ]
 
         let recoverableEncryptionErrors = [
             CBOX_TOO_DISTANT_FUTURE,
             CBOX_DEGENERATED_KEY,
-            CBOX_PREKEY_NOT_FOUND
+            CBOX_PREKEY_NOT_FOUND,
         ]
 
         for encryptionError in allEncryptionErrors {
@@ -114,14 +114,14 @@ extension ZMMessageTests_SystemMessages {
         let updateEventTypeDict: [ZMUpdateEventType: String] = [
             .conversationMemberJoin: "conversation.member-join",
             .conversationMemberLeave: "conversation.member-leave",
-            .conversationRename: "conversation.rename"
+            .conversationRename: "conversation.rename",
         ]
 
         var data: [String: Any] = if let domain {
             if updateEventType == .conversationMemberJoin {
                 ["users": usersIDs.map {
                     ["qualified_id":
-                        ["id": $0.transportString(), "domain": domain]
+                        ["id": $0.transportString(), "domain": domain],
                     ]
                 }] as [String: Any]
             } else {

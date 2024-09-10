@@ -116,7 +116,7 @@ import Foundation
             objectID: message.objectID,
             changedKeys: [
                 ZMClientMessage.linkPreviewKey,
-                #keyPath(ZMAssetClientMessage.hasDownloadedPreview)
+                #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
             ],
             uiContext: uiMOC
         )

@@ -147,7 +147,7 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
             .failure(status: 403, error: .unsupportedConversationType, label: "mls-subconv-unsupported-convtype"),
             .failure(status: 404, error: .conversationIdOrDomainNotFound),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
-            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
+            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo"),
         ])
     }
 }

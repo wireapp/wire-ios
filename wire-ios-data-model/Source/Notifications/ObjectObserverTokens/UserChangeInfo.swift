@@ -51,7 +51,7 @@ extension ZMUser: ObjectInSnapshot {
             #keyPath(ZMUser.providerIdentifier),
             ZMUserKeys.legalHoldRequest,
             #keyPath(ZMUser.isUnderLegalHold),
-            #keyPath(ZMUser.analyticsIdentifier)
+            #keyPath(ZMUser.analyticsIdentifier),
         ]
     }
 

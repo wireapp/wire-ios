@@ -114,7 +114,7 @@ final class LocationSendViewController: UIViewController {
 
             // sendButton
             sendButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            sendButton.centerYAnchor.constraint(equalTo: addressLabel.centerYAnchor)
+            sendButton.centerYAnchor.constraint(equalTo: addressLabel.centerYAnchor),
         ])
 
         sendButton.setContentCompressionResistancePriority(.required, for: .horizontal)

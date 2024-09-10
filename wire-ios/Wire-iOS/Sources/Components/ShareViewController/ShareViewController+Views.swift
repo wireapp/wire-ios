@@ -130,7 +130,7 @@ extension ShareViewController {
             bottomSeparatorLine,
             topSeparatorView,
             closeButton,
-            sendButton
+            sendButton,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let shareablePreviewWrapperMargin: CGFloat = 16
@@ -158,13 +158,13 @@ extension ShareViewController {
                 sendButton.widthAnchor.constraint(equalToConstant: 32),
                 sendButton.widthAnchor.constraint(equalTo: sendButton.heightAnchor),
                 sendButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-                sendButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -sendButtonMargin)
+                sendButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -sendButtonMargin),
             ]
         } else {
             tokenFieldHeightConstraint = tokenField.heightAnchor.constraint(equalToConstant: 0)
 
             allowsMultipleSelectionConstraints = [
-                bottomSeparatorLine.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+                bottomSeparatorLine.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             ]
         }
 

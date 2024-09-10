@@ -70,7 +70,7 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
             sut.view.bottomAnchor.constraint(equalTo: mockContentView.topAnchor),
             mockContentView.leadingAnchor.constraint(equalTo: mockContainerViewController.view.leadingAnchor),
             mockContentView.trailingAnchor.constraint(equalTo: mockContainerViewController.view.trailingAnchor),
-            mockContentView.bottomAnchor.constraint(equalTo: mockContainerViewController.safeBottomAnchor)
+            mockContentView.bottomAnchor.constraint(equalTo: mockContainerViewController.safeBottomAnchor),
         ])
     }
 

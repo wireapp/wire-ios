@@ -127,7 +127,7 @@ final class MessageThumbnailPreviewView: UIView {
             imagePreview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
             imagePreview.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
             imagePreview.widthAnchor.constraint(equalToConstant: MessageThumbnailPreviewView.thumbnailSize),
-            imagePreview.heightAnchor.constraint(equalToConstant: MessageThumbnailPreviewView.thumbnailSize)
+            imagePreview.heightAnchor.constraint(equalToConstant: MessageThumbnailPreviewView.thumbnailSize),
         ])
 
         if displaySender {
@@ -136,7 +136,7 @@ final class MessageThumbnailPreviewView: UIView {
                 senderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
                 senderLabel.trailingAnchor.constraint(equalTo: imagePreview.leadingAnchor, constant: inset),
                 contentTextView.topAnchor.constraint(equalTo: senderLabel.bottomAnchor, constant: inset),
-                contentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset)
+                contentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
             ])
         } else {
             contentTextView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
@@ -266,7 +266,7 @@ final class MessagePreviewView: UIView {
         NSLayoutConstraint.activate([
             contentTextView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
             contentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -inset),
-            contentTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset)
+            contentTextView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
         ])
 
         if displaySender {
@@ -274,7 +274,7 @@ final class MessagePreviewView: UIView {
                 senderLabel.topAnchor.constraint(equalTo: topAnchor, constant: inset),
                 senderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
                 senderLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -inset),
-                contentTextView.topAnchor.constraint(equalTo: senderLabel.bottomAnchor, constant: inset / 2)
+                contentTextView.topAnchor.constraint(equalTo: senderLabel.bottomAnchor, constant: inset / 2),
             ])
         } else {
             contentTextView.topAnchor.constraint(equalTo: topAnchor, constant: inset).isActive = true

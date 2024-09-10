@@ -68,7 +68,7 @@ final class OfflineBar: UIView {
             offlineLabel.leftAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.leftAnchor),
             offlineLabel.rightAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.rightAnchor),
 
-            heightConstraint
+            heightConstraint,
         ])
     }
 

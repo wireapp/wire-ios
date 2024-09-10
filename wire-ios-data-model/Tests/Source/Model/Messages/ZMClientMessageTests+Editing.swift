@@ -337,9 +337,9 @@ extension ZMClientMessageTests_Editing {
             "from": senderID.transportString(),
             "time": Date().transportString(),
             "data": [
-                "text": data ?? ""
+                "text": data ?? "",
             ],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         return ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID.create())
@@ -354,9 +354,9 @@ extension ZMClientMessageTests_Editing {
             "from": senderID.transportString(),
             "time": Date().transportString(),
             "data": [
-                "text": data ?? ""
+                "text": data ?? "",
             ],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         return ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID.create())

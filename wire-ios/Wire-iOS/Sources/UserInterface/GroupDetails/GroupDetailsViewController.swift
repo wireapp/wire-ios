@@ -106,7 +106,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             collectionView.bottomAnchor.constraint(equalTo: footerView.topAnchor),
             footerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             footerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            footerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         collectionViewController.collectionView = collectionView
@@ -421,7 +421,7 @@ extension GroupDetailsViewController {
 
     private func attributedString(title: String, icon: UIImage) -> NSAttributedString {
         let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: verificationStatusColor
+            .foregroundColor: verificationStatusColor,
         ]
         let attributedString = NSMutableAttributedString(string: title, attributes: attributes)
         let imageTextAttachment = NSTextAttachment(image: icon)

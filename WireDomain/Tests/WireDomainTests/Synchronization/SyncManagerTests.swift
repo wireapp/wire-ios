@@ -173,7 +173,7 @@ final class SyncManagerTests: XCTestCase {
             storedEvents = [
                 Scaffolding.makeEnvelope(with: Scaffolding.event1),
                 Scaffolding.makeEnvelope(with: Scaffolding.event2),
-                Scaffolding.makeEnvelope(with: Scaffolding.event3)
+                Scaffolding.makeEnvelope(with: Scaffolding.event3),
             ]
         }
 

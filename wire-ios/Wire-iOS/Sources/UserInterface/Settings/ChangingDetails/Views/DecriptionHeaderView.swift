@@ -39,7 +39,7 @@ final class DescriptionHeaderView: UIView {
             descriptionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             descriptionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             descriptionLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            descriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
+            descriptionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24),
         ])
     }
 

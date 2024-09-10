@@ -97,7 +97,7 @@ final class MediaPreviewView: RoundedView {
 
             // playButton
             playButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            playButton.centerYAnchor.constraint(equalTo: centerYAnchor)
+            playButton.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 }

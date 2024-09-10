@@ -43,7 +43,7 @@ extension MockConversation {
         conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: otherUsers)
         let roles = Set([
             MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context)),
-            MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
+            MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context)),
         ])
         conversation.nonTeamRoles = roles
 

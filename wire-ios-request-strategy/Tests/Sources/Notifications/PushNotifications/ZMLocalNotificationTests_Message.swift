@@ -534,7 +534,7 @@ extension ZMLocalNotificationTests_Message {
             "from": sender.remoteIdentifier.transportString(),
             "time": Date.distantFuture.transportString(),
             "data": ["text": try? assetMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
@@ -617,7 +617,7 @@ extension ZMLocalNotificationTests_Message {
             "from": sender.remoteIdentifier.transportString(),
             "time": Date.distantFuture.transportString(),
             "data": ["text": try? assetMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
@@ -698,7 +698,7 @@ extension ZMLocalNotificationTests_Message {
             "from": sender.remoteIdentifier.transportString(),
             "time": Date.distantFuture.transportString(),
             "data": ["text": try? knockMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
@@ -744,7 +744,7 @@ extension ZMLocalNotificationTests_Message {
             "from": sender.remoteIdentifier.transportString(),
             "time": Date.distantFuture.transportString(),
             "data": ["text": try? editTextMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!

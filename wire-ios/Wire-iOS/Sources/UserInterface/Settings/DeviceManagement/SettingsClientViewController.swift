@@ -158,7 +158,7 @@ final class SettingsClientViewController: UIViewController,
 
             topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
             topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor)
+            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
         ])
     }
 

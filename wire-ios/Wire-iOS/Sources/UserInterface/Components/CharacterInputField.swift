@@ -133,7 +133,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
             label.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 label.centerXAnchor.constraint(equalTo: centerXAnchor),
-                label.centerYAnchor.constraint(equalTo: centerYAnchor)
+                label.centerYAnchor.constraint(equalTo: centerYAnchor),
             ])
         }
 
@@ -170,7 +170,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         accessibilityCustomActions = [
             UIAccessibilityCustomAction(name: L10n.Localizable.General.paste,
                                         target: self,
-                                        selector: #selector(UIResponderStandardEditActions.paste))
+                                        selector: #selector(UIResponderStandardEditActions.paste)),
         ]
 
         stackView.spacing = 8
@@ -197,7 +197,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.leftAnchor.constraint(equalTo: leftAnchor),
-            stackView.rightAnchor.constraint(equalTo: rightAnchor)
+            stackView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
     }
 

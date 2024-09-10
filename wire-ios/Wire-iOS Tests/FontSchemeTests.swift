@@ -27,7 +27,7 @@ final class FontSchemeTests: XCTestCase {
             (fontSize: .large, point: round(points[FontSize.large]! * multiplier)),
             (fontSize: .normal, point: round(points[FontSize.normal]! * multiplier)),
             (fontSize: .medium, point: round(points[FontSize.medium]! * multiplier)),
-            (fontSize: .small, point: round(points[FontSize.small]! * multiplier))
+            (fontSize: .small, point: round(points[FontSize.small]! * multiplier)),
         ]
 
         let allFontWeightTuples: [(fontWeight: FontWeight?, name: String)] = [
@@ -40,7 +40,7 @@ final class FontSchemeTests: XCTestCase {
             (fontWeight: .bold, name: "Bold"),
             (fontWeight: .heavy, name: "Heavy"),
             (fontWeight: .black, name: "Black"),
-            (fontWeight: .none, name: "Light")
+            (fontWeight: .none, name: "Light"),
         ]
 
         for fontWeightTuple in allFontWeightTuples {
@@ -57,7 +57,7 @@ final class FontSchemeTests: XCTestCase {
             FontSize.large: 21,
             FontSize.normal: 14,
             FontSize.medium: 11,
-            FontSize.small: 10
+            FontSize.small: 10,
         ]
 
         insertFontSizeItems(points, multiplier, &fixedFontNames, fontTextStyle)
@@ -69,7 +69,7 @@ final class FontSchemeTests: XCTestCase {
             FontSize.large: 40,
             FontSize.normal: 26,
             FontSize.medium: 20,
-            FontSize.small: 18
+            FontSize.small: 18,
         ]
 
         insertFontSizeItems(points, multiplier, &fixedFontNames, fontTextStyle)

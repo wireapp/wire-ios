@@ -78,7 +78,7 @@ extension TextFieldDescription: ViewDescriptor {
             textField.bottomAnchor.constraint(equalTo: textfieldContainer.bottomAnchor),
             textField.centerXAnchor.constraint(equalTo: textfieldContainer.centerXAnchor),
             textField.leadingAnchor.constraint(equalTo: textfieldContainer.leadingAnchor, constant: 31),
-            textField.leadingAnchor.constraint(equalTo: textfieldContainer.trailingAnchor, constant: -31)
+            textField.leadingAnchor.constraint(equalTo: textfieldContainer.trailingAnchor, constant: -31),
         ])
 
         return textfieldContainer

@@ -122,7 +122,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             .allowsRequestsWhileInBackground,
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileWaitingForWebsocket,
         ]
 
         observers.append(

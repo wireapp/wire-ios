@@ -48,7 +48,7 @@ extension RegistrationStatusStrategyTestHelper {
         let expectedError = NSError(userSessionErrorCode: code, userInfo: [:])
         let payload = [
             "label": errorLabel,
-            "message": "some"
+            "message": "some",
         ]
 
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: httpStatus, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)

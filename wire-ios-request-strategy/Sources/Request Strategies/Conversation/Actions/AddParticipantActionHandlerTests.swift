@@ -130,7 +130,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             (ConversationAddParticipantsError.accessDenied, ZMTransportResponse(payload: ["label": "access-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (ConversationAddParticipantsError.notConnectedToUser, ZMTransportResponse(payload: ["label": "not-connected"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (ConversationAddParticipantsError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (ConversationAddParticipantsError.missingLegalHoldConsent, ZMTransportResponse(payload: ["label": "missing-legalhold-consent"] as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            (ConversationAddParticipantsError.missingLegalHoldConsent, ZMTransportResponse(payload: ["label": "missing-legalhold-consent"] as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
         ]
 
         for (expectedError, response) in errorResponses {

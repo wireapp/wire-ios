@@ -72,7 +72,7 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
             "/Applications/MxTube.app",
             "/Applications/IntelliScreen.app",
             "/Applications/FakeCarrier.app",
-            "/Applications/blackra1n.app"
+            "/Applications/blackra1n.app",
         ]
 
         for path in paths where fm.fileExists(atPath: path) {
@@ -102,7 +102,7 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
             "/usr/include",
             "/usr/libexec",
             "/usr/share",
-            "/Applications"
+            "/Applications",
         ]
 
         for link in symlinks {

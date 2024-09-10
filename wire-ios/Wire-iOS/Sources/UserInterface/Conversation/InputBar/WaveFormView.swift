@@ -98,7 +98,7 @@ final class WaveFormView: UIView {
             leftAnchor.constraint(equalTo: leftGradient.leftAnchor),
             rightAnchor.constraint(equalTo: rightGradient.rightAnchor),
             leftGradientWidthConstraint,
-            rightGradientWidthConstraint
+            rightGradientWidthConstraint,
         ])
     }
 

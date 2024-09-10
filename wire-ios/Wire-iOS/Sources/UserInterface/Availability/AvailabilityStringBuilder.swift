@@ -74,7 +74,7 @@ enum AvailabilityStringBuilder {
             title: title,
             trailingIcons: [
                 isE2EICertified ? e2eiCertifiedShield : nil,
-                isProteusVerified ? proteusVerifiedShield : nil
+                isProteusVerified ? proteusVerifiedShield : nil,
             ].compactMap { $0 },
             interactive: false,
             color: textColor

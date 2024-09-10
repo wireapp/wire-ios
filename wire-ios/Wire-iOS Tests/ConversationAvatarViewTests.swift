@@ -179,7 +179,7 @@ extension UIView {
             container.topAnchor.constraint(equalTo: topAnchor),
             container.bottomAnchor.constraint(equalTo: bottomAnchor),
             container.leadingAnchor.constraint(equalTo: leadingAnchor),
-            container.trailingAnchor.constraint(equalTo: trailingAnchor)
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
 
         return container

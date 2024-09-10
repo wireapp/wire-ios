@@ -39,7 +39,7 @@ final class GiphyCollectionViewCell: UICollectionViewCell {
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
+            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
     }
 

@@ -112,7 +112,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             let clientUUID = UUID()
             let payload = [
                 "id": clientUUID.transportString(),
-                "class": "phone"
+                "class": "phone",
             ]
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             let clientSet: Set<NSManagedObject> = [client]
@@ -189,9 +189,9 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
                         Payload.UserClient(
                             id: clientUUID.transportString(),
                             deviceClass: "phone"
-                        )
-                    ]
-                ]
+                        ),
+                    ],
+                ],
             ])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
@@ -229,7 +229,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             let clientSet: Set<NSManagedObject> = [client]
             let userID = self.otherUser.remoteIdentifier.transportString()
             let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
-                "example.com": [userID: []]
+                "example.com": [userID: []],
             ])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             self.otherUser.domain = "example.com"
@@ -262,8 +262,8 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             let payload = UserClientByQualifiedUserIDTranscoder.ResponsePayload(qualifiedUsers: [
                 "example.com": [userID.transportString(): [
                     Payload.UserClient(id: newClientID.transportString(),
-                                       deviceClass: "phone")
-                ]]
+                                       deviceClass: "phone"),
+                ]],
             ])
             let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
             existingClient = UserClient.fetchUserClient(withRemoteId: UUID().transportString(), forUser: self.otherUser, createIfNeeded: true)!
@@ -304,7 +304,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         identifiers.reduce(into: []) { partialResult, identifier in
             partialResult.append([
                 "id": identifier,
-                "class": "phone"
+                "class": "phone",
             ])
         } as ZMTransportData
     }
@@ -315,12 +315,12 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         let payload = [
             [
                 "id": firstIdentifier,
-                "class": "phone"
+                "class": "phone",
             ],
             [
                 "id": secondIdentifier,
-                "class": "tablet"
-            ]
+                "class": "tablet",
+            ],
         ]
 
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)

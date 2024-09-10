@@ -109,7 +109,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .markdownID: markdown,
                 .font: style.baseFont,
                 .foregroundColor: style.baseFontColor,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case .h1, .h2, .h3,
              [.h1, .bold],
@@ -119,7 +119,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .markdownID: markdown,
                 .font: style.baseFont.withSize(style.headerSize(for: markdown.headerValue!)!).bold,
                 .foregroundColor: style.baseFontColor,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case [.h1, .italic], [.h1, .bold, .italic],
              [.h2, .italic], [.h2, .bold, .italic],
@@ -128,7 +128,7 @@ final class MarkdownTextViewTests: XCTestCase {
                 .markdownID: markdown,
                 .font: style.baseFont.withSize(style.headerSize(for: markdown.headerValue!)!).bold.italic,
                 .foregroundColor: style.baseFontColor,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case [.h1, .code],
              [.h2, .code],
@@ -137,35 +137,35 @@ final class MarkdownTextViewTests: XCTestCase {
                 .markdownID: markdown,
                 .font: style.codeFont.withSize(style.headerSize(for: markdown.headerValue!)!).bold,
                 .foregroundColor: style.codeColor!,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case .bold:
             return [
                 .markdownID: markdown,
                 .font: style.baseFont.bold,
                 .foregroundColor: style.baseFontColor,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case .italic:
             return [
                 .markdownID: markdown,
                 .font: style.baseFont.italic,
                 .foregroundColor: style.baseFontColor,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case .code:
             return [
                 .markdownID: markdown,
                 .font: style.codeFont,
                 .foregroundColor: style.codeColor!,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         case [.bold, .italic]:
             return [
                 .markdownID: markdown,
                 .font: style.baseFont.bold.italic,
                 .foregroundColor: style.baseFontColor,
-                .paragraphStyle: style.baseParagraphStyle
+                .paragraphStyle: style.baseParagraphStyle,
             ]
         default:
             break

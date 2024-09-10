@@ -95,7 +95,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
         [
             wireLogoInfoView,
             progressView,
-            informationLabel
+            informationLabel,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([

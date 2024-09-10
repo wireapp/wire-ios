@@ -52,7 +52,7 @@ extension PasswordRuleSet {
             .lowercase,
             .uppercase,
             .digits,
-            .special
+            .special,
         ]
     )
 

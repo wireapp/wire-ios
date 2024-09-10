@@ -25,7 +25,7 @@ extension Team: ObjectInSnapshot {
             #keyPath(Team.name),
             #keyPath(Team.members),
             #keyPath(Team.imageData),
-            #keyPath(Team.pictureAssetId)
+            #keyPath(Team.pictureAssetId),
         ]
     }
 

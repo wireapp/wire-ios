@@ -63,7 +63,7 @@ final class WipeCompletionViewController: UIViewController {
 
             loginButton.bottomAnchor.constraint(equalTo: wireLogoInfoView.contentView.bottomAnchor, constant: -24),
             loginButton.leadingAnchor.constraint(equalTo: wireLogoInfoView.contentView.leadingAnchor),
-            loginButton.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor)
+            loginButton.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor),
         ])
     }
 

@@ -161,7 +161,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             "conversationID": callEvent.conversationID,
             "shouldRing": callEvent.shouldRing,
             "callerName": callEvent.callerName,
-            "hasVideo": callEvent.hasVideo
+            "hasVideo": callEvent.hasVideo,
         ])
     }
 

@@ -35,14 +35,14 @@ class Payload_ConversationTests: MessagingTestBase {
         // GIVEN
         let accessRoles = [
             AccessRole.teamMember,
-            AccessRole.guest
+            AccessRole.guest,
         ].map(\.rawValue)
 
         let legacyAccessRole = ConversationAccessRole.team.rawValue
 
         let payload: [String: Any] = [
             "access_role": legacyAccessRole,
-            "access_role_v2": accessRoles
+            "access_role_v2": accessRoles,
         ]
 
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
@@ -59,11 +59,11 @@ class Payload_ConversationTests: MessagingTestBase {
         // GIVEN
         let accessRoles = [
             AccessRole.teamMember,
-            AccessRole.guest
+            AccessRole.guest,
         ].map(\.rawValue)
 
         let payload = [
-            "access_role": accessRoles
+            "access_role": accessRoles,
         ]
 
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
@@ -79,7 +79,7 @@ class Payload_ConversationTests: MessagingTestBase {
     func test_Conversation_DecodesCipherSuite_APIVersionV4() throws {
         // GIVEN
         let payload = [
-            "cipherSuite": 0
+            "cipherSuite": 0,
         ]
 
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
@@ -95,7 +95,7 @@ class Payload_ConversationTests: MessagingTestBase {
     func test_Conversation_DecodesCipherSuite_APIVersionV5() throws {
         // GIVEN
         let payload = [
-            "cipher_suite": 0
+            "cipher_suite": 0,
         ]
 
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
@@ -111,7 +111,7 @@ class Payload_ConversationTests: MessagingTestBase {
     func test_Conversation_DecodesEpochTimestamp_APIVersionV4() throws {
         // GIVEN
         let payload = [
-            "epoch_timestamp": "2021-05-12T10:52:02.671Z"
+            "epoch_timestamp": "2021-05-12T10:52:02.671Z",
         ]
 
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
@@ -127,7 +127,7 @@ class Payload_ConversationTests: MessagingTestBase {
     func test_Conversation_DecodesEpochTimestamp_APIVersionV5() throws {
         // GIVEN
         let payload = [
-            "epoch_timestamp": "2021-05-12T10:52:02.671Z"
+            "epoch_timestamp": "2021-05-12T10:52:02.671Z",
         ]
 
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
@@ -146,7 +146,7 @@ class Payload_ConversationTests: MessagingTestBase {
         // GIVEN
         let accessRoles = [
             AccessRole.teamMember,
-            AccessRole.guest
+            AccessRole.guest,
         ].map(\.rawValue)
 
         let legacyAccessRole = ConversationAccessRole.team.rawValue
@@ -172,7 +172,7 @@ class Payload_ConversationTests: MessagingTestBase {
         // GIVEN
         let accessRoles = [
             AccessRole.teamMember,
-            AccessRole.guest
+            AccessRole.guest,
         ].map(\.rawValue)
 
         let newConversation = Payload.NewConversation(accessRoles: accessRoles)

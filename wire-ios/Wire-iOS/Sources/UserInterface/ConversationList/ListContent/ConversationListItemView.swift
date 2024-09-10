@@ -126,7 +126,7 @@ final class ConversationListItemView: UIView {
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.ConversationList.horizontalMargin),
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.ConversationList.horizontalMargin),
-            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
+            contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
         ])
     }
 

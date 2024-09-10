@@ -120,8 +120,8 @@ public enum KeychainManager {
             kSecPrivateKeyAttrs: [
                 kSecAttrIsPermanent: true,
                 kSecAttrAccessControl: access,
-                kSecAttrLabel: identifierData
-            ]
+                kSecAttrLabel: identifierData,
+            ],
         ]
 
         if !isRunningOnSimulator {

@@ -140,9 +140,9 @@ final class TeamsAPITests: XCTestCase {
                     name: "admin",
                     actions: [
                         .addConversationMember,
-                        .removeConversationMember
+                        .removeConversationMember,
                     ]
-                )
+                ),
             ]
         )
     }
@@ -199,7 +199,7 @@ final class TeamsAPITests: XCTestCase {
                         copyPermissions: 123,
                         selfPermissions: 456
                     )
-                )
+                ),
             ]
         )
     }

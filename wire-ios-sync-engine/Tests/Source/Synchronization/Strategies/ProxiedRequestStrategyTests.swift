@@ -113,7 +113,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         let data = "Foobar".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let HTTPResponse = HTTPURLResponse(url: URL(string: "http://www.example.com/")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [
             "Content-Length": "\(data.count)",
-            "Server": "nginx"
+            "Server": "nginx",
         ]
         )!
 

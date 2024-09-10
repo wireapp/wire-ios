@@ -320,24 +320,24 @@ public class TextSearchQuery: NSObject {
     /// Predicate matching messages containing the query in the conversation
     private lazy var predicateForQueryMatch: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
         ZMClientMessage.predicateForMessagesMatching(self.queryStrings),
-        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
+        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
     ])
 
     /// Predicate matching indexed messages containing the query in the conversation
     private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
         self.predicateForQueryMatch,
-        ZMClientMessage.predicateForIndexedMessages()
+        ZMClientMessage.predicateForIndexedMessages(),
     ])
 
     /// Predicate matching messages without a populated `normalizedText` field in the conversation
     private lazy var predicateForNotIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
         ZMClientMessage.predicateForNotIndexedMessages(),
-        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
+        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
     ])
 
     /// Predicate matching messages with a populated `normalizedText` field in the conversation
     private lazy var predicateForIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
         ZMClientMessage.predicateForIndexedMessages(),
-        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
+        ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier),
     ])
 }

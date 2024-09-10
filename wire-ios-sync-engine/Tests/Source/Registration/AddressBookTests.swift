@@ -41,7 +41,7 @@ extension AddressBookTests {
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com", "janet@example.com"], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "สยาม", emailAddresses: ["siam@example.com"], phoneNumbers: ["+15550101", "+15550102"])
+            MockAddressBookContact(firstName: "สยาม", emailAddresses: ["siam@example.com"], phoneNumbers: ["+15550101", "+15550102"]),
         ]
 
         // when
@@ -59,7 +59,7 @@ extension AddressBookTests {
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: []),
-            MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550101"])
+            MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550101"]),
         ]
 
         // when
@@ -77,7 +77,7 @@ extension AddressBookTests {
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: [])
+            MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: []),
         ]
 
         // when
@@ -95,7 +95,7 @@ extension AddressBookTests {
     func testThatItFilterlContactsThatHaveAnInvalidPhoneAndNoEmail() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["aabbccdd"])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["aabbccdd"]),
         ]
 
         // when
@@ -108,7 +108,7 @@ extension AddressBookTests {
     func testThatIgnoresInvalidPhones() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet@example.com"], phoneNumbers: ["aabbccdd"])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet@example.com"], phoneNumbers: ["aabbccdd"]),
         ]
 
         // when
@@ -123,7 +123,7 @@ extension AddressBookTests {
     func testThatItFilterlContactsThatHaveNoPhoneAndInvalidEmail() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: [])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: []),
         ]
 
         // when
@@ -136,7 +136,7 @@ extension AddressBookTests {
     func testThatIgnoresInvalidEmails() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: ["+15550103"])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: ["+15550103"]),
         ]
 
         // when
@@ -151,7 +151,7 @@ extension AddressBookTests {
     func testThatItNormalizesPhoneNumbers() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+1 (555) 0103"])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+1 (555) 0103"]),
         ]
 
         // when
@@ -165,7 +165,7 @@ extension AddressBookTests {
     func testThatItNormalizesEmails() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["Olaf Karlsson <janet+1@example.com>"], phoneNumbers: [])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["Olaf Karlsson <janet+1@example.com>"], phoneNumbers: []),
         ]
 
         // when
@@ -179,7 +179,7 @@ extension AddressBookTests {
     func testThatItDoesNotIgnoresPhonesWithPlusZero() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+012345678"])
+            MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+012345678"]),
         ]
 
         // when
@@ -199,7 +199,7 @@ extension AddressBookTests {
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
+            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
@@ -216,7 +216,7 @@ extension AddressBookTests {
                     self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
                                                                    "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
                     self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
-                    self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
+                    self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="],
                 ]
                 checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
             } else {
@@ -255,7 +255,7 @@ extension AddressBookTests {
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
+            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
@@ -271,7 +271,7 @@ extension AddressBookTests {
                 let expected = [
                     self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
                                                                    "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
-                    self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="]
+                    self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
                 ]
                 checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
             } else {
@@ -291,7 +291,7 @@ extension AddressBookTests {
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
-            MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: [])
+            MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: []),
         ]
 
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -307,7 +307,7 @@ extension AddressBookTests {
                 XCTAssertEqual(chunk.includedContacts, UInt(1) ..< UInt(3))
                 let expected = [
                     self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
-                    self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
+                    self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="],
                 ]
                 checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
             } else {
@@ -327,7 +327,7 @@ extension AddressBookTests {
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: []),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
+            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
 
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -343,7 +343,7 @@ extension AddressBookTests {
                 XCTAssertEqual(chunk.includedContacts, UInt(2) ..< UInt(4))
                 let expected = [
                     self.addressBook.contacts[2].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
-                    self.addressBook.contacts[3].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
+                    self.addressBook.contacts[3].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="],
                 ]
                 checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
             } else {
@@ -362,7 +362,7 @@ extension AddressBookTests {
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: []),
-            MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"])
+            MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
         ]
 
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -393,7 +393,7 @@ extension AddressBookTests {
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
+            MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()

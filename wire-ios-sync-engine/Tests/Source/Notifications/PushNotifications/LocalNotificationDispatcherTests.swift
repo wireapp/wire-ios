@@ -125,7 +125,7 @@ extension LocalNotificationDispatcherTests {
                 "conversation": self.conversation1.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
                 "data": ["message_timer": messageTimer.rawValue * 1000],
-                "type": "conversation.message-timer-update"
+                "type": "conversation.message-timer-update",
             ]
             let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
             event.source = .pushNotification
@@ -345,9 +345,9 @@ extension LocalNotificationDispatcherTests {
                 "data": [
                     "user_ids": [self.selfUser.remoteIdentifier.transportString()],
                     "users": ["id": self.selfUser.remoteIdentifier.transportString(),
-                              "conversation_role": "wire_admin"]
+                              "conversation_role": "wire_admin"],
                 ],
-                "type": "conversation.member-join"
+                "type": "conversation.member-join",
             ]
         }
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
@@ -375,9 +375,9 @@ extension LocalNotificationDispatcherTests {
                 "data": [
                     "user_ids": [self.user2.remoteIdentifier.transportString()],
                     "users": ["id": self.user2.remoteIdentifier.transportString(),
-                              "conversation_role": "wire_admin"]
+                              "conversation_role": "wire_admin"],
                 ],
-                "type": "conversation.member-join"
+                "type": "conversation.member-join",
             ]
             event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
             event.source = .pushNotification
@@ -493,22 +493,22 @@ extension LocalNotificationDispatcherTests {
     func payloadForOTRAsset(with message: GenericMessage) -> [String: Any] {
         [
             "data": [
-                "info": try? message.serializedData().base64String()
+                "info": try? message.serializedData().base64String(),
             ],
             "conversation": self.conversation1.remoteIdentifier!.transportString(),
             "type": EventConversationAddOTRAsset,
-            "time": Date().transportString()
+            "time": Date().transportString(),
         ]
     }
 
     func payloadForOTRMessage(with message: GenericMessage) -> [String: Any] {
         [
             "data": [
-                "text": try? message.serializedData().base64String()
+                "text": try? message.serializedData().base64String(),
             ],
             "conversation": self.conversation1.remoteIdentifier!.transportString(),
             "type": EventConversationAddOTRAsset,
-            "time": Date().transportString()
+            "time": Date().transportString(),
         ]
     }
 
@@ -519,7 +519,7 @@ extension LocalNotificationDispatcherTests {
             "from": senderID.transportString(),
             "time": Date().transportString(),
             "data": ["text": try? genericMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         return ZMUpdateEvent(uuid: nonce,

@@ -38,7 +38,7 @@ final class NetworkStatusViewTests: XCTestCase {
         rootView.addSubview(sut)
         NSLayoutConstraint.activate([
             sut.centerXAnchor.constraint(equalTo: rootView.centerXAnchor),
-            sut.centerYAnchor.constraint(equalTo: rootView.centerYAnchor)
+            sut.centerYAnchor.constraint(equalTo: rootView.centerYAnchor),
         ])
     }
 

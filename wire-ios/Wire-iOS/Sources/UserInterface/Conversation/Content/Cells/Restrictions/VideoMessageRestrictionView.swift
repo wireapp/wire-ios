@@ -59,7 +59,7 @@ final class VideoMessageRestrictionView: BaseMessageRestrictionView {
 
             // bottom label
             bottomLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            bottomLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 12)
+            bottomLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 12),
         ])
     }
 }

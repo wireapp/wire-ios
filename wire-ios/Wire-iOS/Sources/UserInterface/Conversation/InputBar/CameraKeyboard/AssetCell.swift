@@ -53,7 +53,7 @@ final class AssetCell: UICollectionViewCell {
             durationView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             durationView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             durationView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            durationView.heightAnchor.constraint(equalToConstant: 20)
+            durationView.heightAnchor.constraint(equalToConstant: 20),
         ])
     }
 

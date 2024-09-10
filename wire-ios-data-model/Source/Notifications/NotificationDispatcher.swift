@@ -128,7 +128,7 @@ import Foundation
                     Team.classIdentifier,
                     Member.classIdentifier,
                     Label.classIdentifier,
-                    ParticipantRole.classIdentifier
+                    ParticipantRole.classIdentifier,
                 ]
 
                 return ExplicitChangeDetector(

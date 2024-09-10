@@ -109,7 +109,7 @@ final class SearchHeaderViewController: UIViewController {
             tokenFieldContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tokenFieldContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tokenFieldContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tokenFieldContainer.heightAnchor.constraint(equalToConstant: 56)
+            tokenFieldContainer.heightAnchor.constraint(equalToConstant: 56),
         ])
     }
 

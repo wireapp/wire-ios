@@ -140,7 +140,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             items: [
                 .text(TextItem(title: "App version", value: appVersion)),
                 .text(TextItem(title: "Build number", value: buildNumber)),
-                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier))
+                .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
             ]
         ))
     }
@@ -159,7 +159,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                         title: "Supported protocols",
                         value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
                     ),
-                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"))
+                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None")),
                 ]
             ))
         }
@@ -174,7 +174,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(title: "Token data", value: pushToken.deviceTokenString)),
                     .button(ButtonItem(title: "Check registered tokens", action: { [weak self] in
                         self?.checkRegisteredTokens()
-                    }))
+                    })),
                 ]
             ))
         }
@@ -186,7 +186,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 header: "Datadog",
                 items: [
                     .text(TextItem(title: "User ID", value: datadogUserIdentifier)),
-                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") })),
                 ]
             ))
         }
@@ -194,7 +194,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func setupContextualItems() {
         let actionsProviders: [DeveloperToolsContextItemsProvider?] = [
-            UserClientDeveloperItemsProvider(context: Self.context)
+            UserClientDeveloperItemsProvider(context: Self.context),
             // add new builder here
         ]
 
@@ -227,7 +227,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                         router: self?.router,
                         onDismiss: self?.onDismiss ?? { $0() }
                     )))
-                }))
+                })),
             ]
         ))
     }

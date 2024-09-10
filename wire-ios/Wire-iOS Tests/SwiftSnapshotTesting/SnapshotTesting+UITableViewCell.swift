@@ -40,7 +40,7 @@ extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
         tableView.layoutIfNeeded()
 
         NSLayoutConstraint.activate([
-            tableView.heightAnchor.constraint(equalToConstant: size.height)
+            tableView.heightAnchor.constraint(equalToConstant: size.height),
         ])
 
         self.layoutSubviews()

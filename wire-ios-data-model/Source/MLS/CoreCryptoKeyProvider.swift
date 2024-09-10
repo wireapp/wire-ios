@@ -83,7 +83,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecReturnData: true,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
         ]
     }
 
@@ -92,7 +92,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecValueData: value,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
+            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
         ]
     }
 }
@@ -111,7 +111,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecReturnData: true,
-            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked,
         ]
     }
 
@@ -120,7 +120,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecValueData: value,
-            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlocked,
         ]
     }
 }

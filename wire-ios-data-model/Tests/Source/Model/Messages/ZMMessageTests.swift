@@ -38,7 +38,7 @@ extension ZMMessageTests {
                 "conversation": remoteIdentifier,
                 "time": serverTimeStamp.transportString(),
                 "from": from.transportString(),
-                "data": data
+                "data": data,
             ]
         }
 

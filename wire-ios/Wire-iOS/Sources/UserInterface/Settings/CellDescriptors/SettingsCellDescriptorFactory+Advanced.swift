@@ -28,7 +28,7 @@ extension SettingsCellDescriptorFactory {
         let items = [
             troubleshootingSection(userSession: userSession),
             debuggingToolsSection,
-            pushSection
+            pushSection,
         ]
 
         return SettingsGroupCellDescriptor(
@@ -100,7 +100,7 @@ extension SettingsCellDescriptorFactory {
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
                 selectAction: DebugActions.enterDebugCommand
-            )
+            ),
         ])
 
         // Inner group

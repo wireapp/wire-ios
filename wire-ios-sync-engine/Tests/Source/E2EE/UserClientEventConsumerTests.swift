@@ -82,18 +82,18 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
                 "id": clientId,
                 "label": label,
                 "time": time.transportString(),
-                "type": "permanent"
+                "type": "permanent",
             ],
-            "type": "user.client-add"
+            "type": "user.client-add",
         ] as ZMTransportData
     }
 
     static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
         [
             "client": [
-                "id": clientId
+                "id": clientId,
             ],
-            "type": "user.client-remove"
+            "type": "user.client-remove",
         ] as ZMTransportData
     }
 
@@ -117,9 +117,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         let payload: [String: Any] = [
             "id": "27330a52-bab6-11e5-8183-22000b080265",
             "payload": [
-                type(of: self).payloadForAddingClient(clientId, label: clientLabel, time: clientTime)
+                type(of: self).payloadForAddingClient(clientId, label: clientLabel, time: clientTime),
             ],
-            "transient": false
+            "transient": false,
         ]
 
         let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
@@ -190,9 +190,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             let payload: [String: Any] = [
                 "id": "27330a52-bab6-11e5-8183-22000b080265",
                 "payload": [
-                    type(of: self).payloadForAddingClient(existingClient.remoteIdentifier!)
+                    type(of: self).payloadForAddingClient(existingClient.remoteIdentifier!),
                 ],
-                "transient": false
+                "transient": false,
             ]
 
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
@@ -235,9 +235,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             let payload: [String: Any] = [
                 "id": "27330a52-bab6-11e5-8183-22000b080265",
                 "payload": [
-                    type(of: self).payloadForDeletingClient(existingClient2.remoteIdentifier!)
+                    type(of: self).payloadForDeletingClient(existingClient2.remoteIdentifier!),
                 ],
-                "transient": false
+                "transient": false,
             ]
 
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
@@ -287,9 +287,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             let payload: [String: Any] = [
                 "id": "27330a52-bab6-11e5-8183-22000b080265",
                 "payload": [
-                    type(of: self).payloadForDeletingClient(existingClient.remoteIdentifier!)
+                    type(of: self).payloadForDeletingClient(existingClient.remoteIdentifier!),
                 ],
-                "transient": false
+                "transient": false,
             ] as [String: Any]
 
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)

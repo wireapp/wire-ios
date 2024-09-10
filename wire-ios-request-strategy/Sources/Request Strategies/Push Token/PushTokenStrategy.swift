@@ -41,7 +41,7 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
         actionSync = EntityActionSync(actionHandlers: [
             registerPushTokenActionHandler,
             removePushTokenActionHandler,
-            getPushTokensActionHandler
+            getPushTokensActionHandler,
         ])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)

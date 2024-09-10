@@ -66,7 +66,7 @@ final class CollectionVideoCell: CollectionCell {
             containerView.leadingAnchor.constraint(equalTo: secureContentsView.leadingAnchor),
             containerView.topAnchor.constraint(equalTo: secureContentsView.topAnchor),
             containerView.trailingAnchor.constraint(equalTo: secureContentsView.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: secureContentsView.bottomAnchor)
+            containerView.bottomAnchor.constraint(equalTo: secureContentsView.bottomAnchor),
         ])
     }
 
@@ -85,7 +85,7 @@ final class CollectionVideoCell: CollectionCell {
             view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             view.topAnchor.constraint(equalTo: containerView.topAnchor),
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
 

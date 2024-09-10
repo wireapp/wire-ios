@@ -99,7 +99,7 @@ final class ConversationImageMessageCell: UIView,
             top,
             bottom,
             widthConstraint!,
-            heightConstraint!
+            heightConstraint!,
         ])
     }
 
@@ -147,7 +147,7 @@ final class ConversationImageMessageCell: UIView,
             view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             view.topAnchor.constraint(equalTo: containerView.topAnchor),
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
         ])
     }
 

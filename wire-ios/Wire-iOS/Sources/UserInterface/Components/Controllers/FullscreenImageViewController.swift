@@ -217,7 +217,7 @@ final class FullscreenImageViewController: UIViewController {
             snapshotBackgroundView.topAnchor.constraint(equalTo: view.topAnchor, constant: topBarHeight),
             snapshotBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             snapshotBackgroundView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width),
-            snapshotBackgroundView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height)
+            snapshotBackgroundView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height),
         ])
         snapshotBackgroundView.alpha = 0
 
@@ -234,7 +234,7 @@ final class FullscreenImageViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -inputBarButtonViewHeight)
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -inputBarButtonViewHeight),
         ])
         scrollView.contentInsetAdjustmentBehavior = .never
 

@@ -143,7 +143,7 @@ enum ConsentRequestFactory {
         let payload: [String: Any] = [
             "type": consentType.rawValue,
             "value": value ? 1 : 0,
-            "source": sourceString
+            "source": sourceString,
         ]
         return .init(path: consentPath,
                      method: .put,

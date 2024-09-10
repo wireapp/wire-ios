@@ -55,7 +55,7 @@ extension ZMUpdateEvent {
             LogAttributesKey.eventId: safeUUID,
             LogAttributesKey.nonce: messageNonce?.safeForLoggingDescription ?? "<nil>",
             LogAttributesKey.conversationId: safeLoggingConversationId,
-            LogAttributesKey.eventSource: source.rawValue
+            LogAttributesKey.eventSource: source.rawValue,
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 

@@ -90,7 +90,7 @@ final class NetworkInfoTests: XCTestCase {
         // given
         let networkInfo = makeNetworkInfo()
         let radioAccessTechnology = [
-            "0": CTRadioAccessTechnologyEdge
+            "0": CTRadioAccessTechnologyEdge,
         ]
 
         // when
@@ -105,7 +105,7 @@ final class NetworkInfoTests: XCTestCase {
         let networkInfo = makeNetworkInfo()
         let radioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
-            "1": CTRadioAccessTechnologyLTE
+            "1": CTRadioAccessTechnologyLTE,
         ]
 
         // when
@@ -121,7 +121,7 @@ final class NetworkInfoTests: XCTestCase {
         let radioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
             "1": CTRadioAccessTechnologyLTE,
-            "2": CTRadioAccessTechnologyHSDPA
+            "2": CTRadioAccessTechnologyHSDPA,
         ]
 
         // when
@@ -135,7 +135,7 @@ final class NetworkInfoTests: XCTestCase {
         // given
         let networkInfo = makeNetworkInfo()
         let radioAccessTechnology = [
-            "0": "some invalid value"
+            "0": "some invalid value",
         ]
 
         // when

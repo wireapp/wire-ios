@@ -111,7 +111,7 @@ final class LocationPreviewController: UIViewController {
             addressContainerView.topAnchor.constraint(equalTo: addressLabel.topAnchor, constant: -12),
             addressLabel.bottomAnchor.constraint(equalTo: addressContainerView.bottomAnchor, constant: -12),
             addressLabel.leftAnchor.constraint(equalTo: addressContainerView.leftAnchor, constant: 12),
-            addressLabel.rightAnchor.constraint(equalTo: addressContainerView.rightAnchor, constant: -12)
+            addressLabel.rightAnchor.constraint(equalTo: addressContainerView.rightAnchor, constant: -12),
         ])
     }
 

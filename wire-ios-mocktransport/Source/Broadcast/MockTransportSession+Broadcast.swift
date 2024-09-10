@@ -35,7 +35,7 @@ extension MockTransportSession {
         let payload: [String: Any] = [
             "missing": missedClients,
             "deleted": deletedClients,
-            "time": Date().transportString()
+            "time": Date().transportString(),
         ]
 
         let statusCode = missedClients.isEmpty ? 201 : 412

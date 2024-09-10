@@ -30,7 +30,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         "name",
         "normalizedEmailAddress",
         "normalizedName",
-        "handle"
+        "handle",
     ]
 
     func testEventsLatestModelHasMigrationVersion() throws {

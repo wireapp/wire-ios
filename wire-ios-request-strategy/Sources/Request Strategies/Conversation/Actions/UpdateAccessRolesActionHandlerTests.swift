@@ -97,7 +97,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             (UpdateAccessRolesError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (UpdateAccessRolesError.accessDenied, ZMTransportResponse(payload: ["label": "access-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (UpdateAccessRolesError.actionDenied, ZMTransportResponse(payload: ["label": "action-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (UpdateAccessRolesError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            (UpdateAccessRolesError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
         ]
 
         for (expectedError, response) in errorResponses {

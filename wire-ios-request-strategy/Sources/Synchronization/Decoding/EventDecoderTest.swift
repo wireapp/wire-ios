@@ -777,7 +777,7 @@ extension EventDecoderTest {
         let innerPayload = payloadForMessage(in: conversation, type: EventConversation.add, data: ["foo": "bar"])!
         let payload = [
             "id": (uuid ?? UUID.create()).transportString(),
-            "payload": [innerPayload]
+            "payload": [innerPayload],
         ] as [String: Any]
         let events = ZMUpdateEvent.eventsArray(from: payload as NSDictionary, source: .pushNotification)
         return events!.first!

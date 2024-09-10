@@ -166,7 +166,7 @@ struct ZMUserSessionBuilder {
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext,
-                coreDataStack.searchContext
+                coreDataStack.searchContext,
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,

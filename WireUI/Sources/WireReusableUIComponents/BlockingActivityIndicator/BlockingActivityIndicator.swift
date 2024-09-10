@@ -111,7 +111,7 @@ extension UIView {
                 bottomAnchor.constraint(equalTo: blockingView.bottomAnchor),
 
                 state.activityIndicatorView.centerXAnchor.constraint(equalTo: blockingView.centerXAnchor),
-                state.activityIndicatorView.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor)
+                state.activityIndicatorView.centerYAnchor.constraint(equalTo: blockingView.centerYAnchor),
             ])
         }
 
@@ -153,7 +153,7 @@ private var stateKey = 0
             targetView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             targetView.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentView.trailingAnchor.constraint(equalTo: targetView.trailingAnchor),
-            targetView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 2 / 3)
+            targetView.heightAnchor.constraint(equalTo: contentView.heightAnchor, multiplier: 2 / 3),
         ])
 
         let testButtonAction = UIAction(title: "Tap here!") {
@@ -173,7 +173,7 @@ private var stateKey = 0
         let controlsView = UIStackView(
             arrangedSubviews: [
                 UIButton(primaryAction: .init(title: "Start") { _ in blockingActivityIndicator.start() }),
-                UIButton(primaryAction: .init(title: "Stop") { _ in blockingActivityIndicator.stop() })
+                UIButton(primaryAction: .init(title: "Stop") { _ in blockingActivityIndicator.stop() }),
             ]
         )
         controlsView.spacing = 24

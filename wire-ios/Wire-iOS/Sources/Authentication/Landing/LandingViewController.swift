@@ -314,14 +314,14 @@ final class LandingViewController: AuthenticationStepViewController {
         [
             contentViewLeadingConstraint,
             contentViewTrailingConstraint,
-            createAccountButtomBottomConstraint
+            createAccountButtomBottomConstraint,
         ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass == .compact
         }
 
         [
             contentViewWidthConstraint,
-            createAccountInfoLabelTopConstraint
+            createAccountInfoLabelTopConstraint,
         ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass != .compact
         }
@@ -343,7 +343,7 @@ final class LandingViewController: AuthenticationStepViewController {
             createAccountButton,
             messageLabel,
             subMessageLabel,
-            createAccountInfoLabel
+            createAccountInfoLabel,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
 
@@ -418,7 +418,7 @@ final class LandingViewController: AuthenticationStepViewController {
             createAccountButton.leadingAnchor.constraint(equalTo: buttonStackView.leadingAnchor),
             createAccountButton.trailingAnchor.constraint(equalTo: buttonStackView.trailingAnchor),
             createAccountButton.heightAnchor.constraint(equalToConstant: 32),
-            createAccountButtomBottomConstraint // iPhone
+            createAccountButtomBottomConstraint, // iPhone
         ])
     }
 

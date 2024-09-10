@@ -82,7 +82,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         let types = [
             ZMSystemMessageType.teamMemberLeave,
             ZMSystemMessageType.conversationNameChanged,
-            ZMSystemMessageType.messageTimerUpdate
+            ZMSystemMessageType.messageTimerUpdate,
         ]
 
         for type in types {

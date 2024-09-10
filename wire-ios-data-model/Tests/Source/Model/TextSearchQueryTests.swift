@@ -562,7 +562,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     func verifyAllMessagesAreIndexed(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             ZMClientMessage.predicateForNotIndexedMessages(),
-            ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)
+            ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!),
         ])
         let request = ZMClientMessage.sortedFetchRequest(with: predicate)
         let notIndexedMessageCount = (try? uiMOC.count(for: request)) ?? 0

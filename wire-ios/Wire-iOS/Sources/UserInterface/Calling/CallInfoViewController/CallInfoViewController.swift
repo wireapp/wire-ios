@@ -141,7 +141,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
             actionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             actionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            accessoryViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor)
+            accessoryViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
     }
 

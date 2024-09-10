@@ -273,11 +273,11 @@ final class ConversationListCellTests: XCTestCase {
             hasUnsentMessages: false,
             messagesRequiringAttention: [
                 message,
-                mentionMessage
+                mentionMessage,
             ],
             messagesRequiringAttentionByType: [
                 .mention: 1,
-                .text: 1
+                .text: 1,
             ],
             isTyping: false,
             mutedMessageTypes: [],
@@ -304,7 +304,7 @@ final class ConversationListCellTests: XCTestCase {
             messagesRequiringAttention: [replyMessage],
             messagesRequiringAttentionByType: [
                 .mention: 1,
-                .reply: 1
+                .reply: 1,
             ],
             isTyping: false,
             mutedMessageTypes: [],
@@ -360,11 +360,11 @@ final class ConversationListCellTests: XCTestCase {
             hasUnsentMessages: false,
             messagesRequiringAttention: [
                 mentionMessage,
-                message
+                message,
             ],
             messagesRequiringAttentionByType: [
                 .text: 1,
-                .mention: 1
+                .mention: 1,
             ],
             isTyping: false,
             mutedMessageTypes: [],
@@ -391,11 +391,11 @@ final class ConversationListCellTests: XCTestCase {
             hasUnsentMessages: false,
             messagesRequiringAttention: [
                 mentionMessage,
-                message
+                message,
             ],
             messagesRequiringAttentionByType: [
                 .text: 1,
-                .mention: 1
+                .mention: 1,
             ],
             isTyping: false,
             mutedMessageTypes: [.all],
@@ -424,11 +424,11 @@ final class ConversationListCellTests: XCTestCase {
             hasUnsentMessages: false,
             messagesRequiringAttention: [
                 message,
-                mentionMessage
+                mentionMessage,
             ],
             messagesRequiringAttentionByType: [
                 .mention: 1,
-                .text: 1
+                .text: 1,
             ],
             isTyping: false,
             mutedMessageTypes: [.all],

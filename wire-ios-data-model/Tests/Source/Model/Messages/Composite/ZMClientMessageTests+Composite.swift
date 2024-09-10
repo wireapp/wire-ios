@@ -62,7 +62,7 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
             compositeItemButton(buttonID: "1"),
             compositeItemButton(buttonID: "2"),
             compositeItemButton(buttonID: "3"),
-            compositeItemButton(buttonID: "4")
+            compositeItemButton(buttonID: "4"),
         ]
 
         let message = compositeMessage(with: compositeProto(items: buttonItems[0], buttonItems[1], buttonItems[2], buttonItems[3]), nonce: nonce)

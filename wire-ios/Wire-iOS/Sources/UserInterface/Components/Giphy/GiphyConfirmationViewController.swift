@@ -140,7 +140,7 @@ final class GiphyConfirmationViewController: UIViewController {
             imagePreview,
             buttonContainer,
             cancelButton,
-            acceptButton
+            acceptButton,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -167,7 +167,7 @@ final class GiphyConfirmationViewController: UIViewController {
             buttonContainer.rightAnchor.constraint(lessThanOrEqualTo: view.rightAnchor, constant: -32),
             buttonContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32),
             widthConstraint,
-            buttonContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            buttonContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
 }

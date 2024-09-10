@@ -348,7 +348,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus
-            )
+            ),
         ]
 
         return strategies

@@ -58,7 +58,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.create",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": NSNull()
+            "data": NSNull(),
         ]
 
         // when
@@ -84,7 +84,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.create",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": NSNull()
+            "data": NSNull(),
         ]
 
         // when
@@ -122,7 +122,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.delete",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": NSNull()
+            "data": NSNull(),
         ]
 
         customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
@@ -164,7 +164,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.delete",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": NSNull()
+            "data": NSNull(),
         ]
 
         customExpectation(forNotification: AccountDeletedNotification.notificationName, object: nil) { wrappedNote in
@@ -207,7 +207,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.member-leave",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
+            "data": ["user": userId.transportString()],
         ]
 
         // when
@@ -253,7 +253,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.member-leave",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
+            "data": ["user": userId.transportString()],
         ]
         processEvent(fromPayload: payload)
 
@@ -291,7 +291,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.member-leave",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
+            "data": ["user": userId.transportString()],
         ]
         processEvent(fromPayload: payload)
 
@@ -347,7 +347,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.member-leave",
             "team": teamId.transportString(),
             "time": timestamp.transportString(),
-            "data": ["user": userId.transportString()]
+            "data": ["user": userId.transportString()],
         ]
         processEvent(fromPayload: payload)
 
@@ -400,7 +400,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.member-update",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": ["user": userId.transportString()]
+            "data": ["user": userId.transportString()],
         ]
 
         // when
@@ -438,7 +438,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             "type": "team.conversation-create",
             "team": teamId.transportString(),
             "time": Date().transportString(),
-            "data": ["conv": conversationId.transportString()]
+            "data": ["conv": conversationId.transportString()],
         ]
 
         // when

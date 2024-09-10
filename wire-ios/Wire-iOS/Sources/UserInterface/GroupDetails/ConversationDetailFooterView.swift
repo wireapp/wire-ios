@@ -118,7 +118,7 @@ class ConversationDetailFooterView: UIView {
             // leftButton
             rightButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             rightButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
-            rightButton.leadingAnchor.constraint(greaterThanOrEqualTo: leftButton.leadingAnchor, constant: 16)
+            rightButton.leadingAnchor.constraint(greaterThanOrEqualTo: leftButton.leadingAnchor, constant: 16),
         ])
     }
 

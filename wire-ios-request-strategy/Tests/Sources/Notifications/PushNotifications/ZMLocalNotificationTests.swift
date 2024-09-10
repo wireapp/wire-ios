@@ -153,7 +153,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
             "data": data ?? [:],
             "from": userRemoteID.transportString(),
             "type": type,
-            "time": serverTimeStamp.transportString()
+            "time": serverTimeStamp.transportString(),
         ]).mutableCopy() as! NSMutableDictionary
     }
 
@@ -164,7 +164,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
             "from": senderID.transportString(),
             "time": Date().transportString(),
             "data": ["text": try? genericMessage.serializedData().base64String()],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
@@ -183,9 +183,9 @@ class ZMLocalNotificationTests: MessagingTestBase {
             "time": Date().transportString(),
             "data": [
                 "user_ids": userIds,
-                "users": usersWithRoles
+                "users": usersWithRoles,
             ],
-            "type": "conversation.member-join"
+            "type": "conversation.member-join",
         ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
@@ -197,9 +197,9 @@ class ZMLocalNotificationTests: MessagingTestBase {
             "conversation": conversationID.transportString(),
             "time": Date().transportString(),
             "data": [
-                "user_ids": userIds
+                "user_ids": userIds,
             ],
-            "type": "conversation.member-leave"
+            "type": "conversation.member-leave",
         ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
@@ -214,7 +214,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
             "conversation": conversationID.transportString(),
             "time": timestamp.transportString(),
             "data": ["message_timer": timer],
-            "type": "conversation.message-timer-update"
+            "type": "conversation.message-timer-update",
         ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }

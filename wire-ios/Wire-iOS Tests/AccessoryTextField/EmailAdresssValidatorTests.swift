@@ -39,7 +39,7 @@ final class EmailAdresssValidatorTests: XCTestCase {
                 "  some@email.com  ",
                 // edge case: detector removes leading "=" but say this is a valid email address
                 // "=?iso-8859-1?q?keld_j=f8rn_simonsen?=@example.com",
-                "x@something_odd.example.com"
+                "x@something_odd.example.com",
             ]
 
         // WHEN & THEN
@@ -81,7 +81,7 @@ final class EmailAdresssValidatorTests: XCTestCase {
              "<Meep.Moop@EXample.com>",
              "abc.\"defghi\".xyz@example.com",
              "\"abcdefghixyz\"@example.com",
-             "user@localserver"
+             "user@localserver",
             ]
 
         // WHEN & THEN

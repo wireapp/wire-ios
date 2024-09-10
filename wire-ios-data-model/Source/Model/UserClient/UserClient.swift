@@ -154,7 +154,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             ZMUserClientMissingKey,
             ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey
+            UserClient.needsToUploadMLSPublicKeysKey,
         ]
     }
 
@@ -174,7 +174,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             baseModifiedPredicate!,
             notDeletedPredicate,
-            remoteIdentifierPresentPredicate
+            remoteIdentifierPresentPredicate,
         ])
         return modifiedPredicate
     }

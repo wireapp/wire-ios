@@ -52,7 +52,7 @@ extension ZMUserSession {
             DebugCommandLogEncryption(),
             DebugCommandShowIdentifiers(),
             DebugCommandHelp(),
-            DebugCommandVariables()
+            DebugCommandVariables(),
         ]
         return commands.reduce(into: [:]) { partialResult, command in
             partialResult[command.keyword] = command

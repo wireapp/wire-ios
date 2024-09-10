@@ -123,7 +123,7 @@ class DatabaseTest: ZMTBaseTest {
          "data": conversation,
          "from": user.remoteIdentifier!.transportString(),
          "time": timestamp.transportString(),
-         "type": ZMUpdateEvent.eventTypeString(for: type)!
+         "type": ZMUpdateEvent.eventTypeString(for: type)!,
         ]
     }
 }

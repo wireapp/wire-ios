@@ -382,7 +382,7 @@ public final class SharingSession {
             accountID: accountIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
-                coreDataStack.syncContext
+                coreDataStack.syncContext,
             ],
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: AuthenticationContext(storage: contextStorage)

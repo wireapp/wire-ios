@@ -87,7 +87,7 @@ final class FolderCreationController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
         ])
 
         collectionViewController.collectionView = collectionView
@@ -102,7 +102,7 @@ final class FolderCreationController: UIViewController {
             navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
+            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor),
         ])
     }
 

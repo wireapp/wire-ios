@@ -1480,10 +1480,10 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                     "conversation": "ee8824c5-95d0-4e59-9862-e9bb0fc6e921",
                     "data": [
                         "qualified_user_ids": [
-                            ["id": users[userIndex].remoteIdentifier.transportString(), "domain": owningDomain]
+                            ["id": users[userIndex].remoteIdentifier.transportString(), "domain": owningDomain],
                         ],
-                        "reason": "user-delete"
-                    ]
+                        "reason": "user-delete",
+                    ],
                 ],
                 transient: false,
                 decrypted: true,

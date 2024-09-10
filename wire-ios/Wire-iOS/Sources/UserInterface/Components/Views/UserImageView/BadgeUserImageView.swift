@@ -90,7 +90,7 @@ final class BadgeUserImageView: UserImageView {
             badgeImageViewWidthConstraint,
             badgeImageViewHeightConstraint,
             badgeImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            badgeImageView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+            badgeImageView.centerYAnchor.constraint(equalTo: container.centerYAnchor),
         ])
     }
 

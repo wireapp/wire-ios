@@ -37,7 +37,7 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
                 mockUserClient(),
                 mockUserClient(),
                 mockUserClient(),
-                mockUserClient()
+                mockUserClient(),
             ]
         )
     }

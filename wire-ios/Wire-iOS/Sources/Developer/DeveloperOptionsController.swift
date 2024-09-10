@@ -51,7 +51,7 @@ final class DeveloperOptionsController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 
@@ -116,7 +116,7 @@ final class DeveloperOptionsController: UIViewController {
             for: .normal)
         if let titleLabel = button.titleLabel {
             NSLayoutConstraint.activate([
-                titleLabel.rightAnchor.constraint(equalTo: button.rightAnchor)
+                titleLabel.rightAnchor.constraint(equalTo: button.rightAnchor),
             ])
         }
         button.addTarget(self, action: #selector(DeveloperOptionsController.didPressButton(sender:)), for: .touchDown)
@@ -153,7 +153,7 @@ final class DeveloperOptionsController: UIViewController {
 
             view.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -20),
             label.trailingAnchor.constraint(equalTo: view.leadingAnchor),
-            view.centerYAnchor.constraint(equalTo: label.centerYAnchor)
+            view.centerYAnchor.constraint(equalTo: label.centerYAnchor),
         ])
 
         return cell

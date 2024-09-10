@@ -56,7 +56,7 @@ final class PlaceholderConversationView: UIView {
 
         NSLayoutConstraint.activate([
             shieldImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            shieldImageView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            shieldImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 }

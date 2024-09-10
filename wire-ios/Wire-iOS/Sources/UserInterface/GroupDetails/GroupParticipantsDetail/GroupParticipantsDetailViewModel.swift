@@ -99,7 +99,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         let trimmedQuery = query.trim()
         var predicates = [
             NSPredicate(format: "name contains[cd] %@", trimmedQuery),
-            NSPredicate(format: "handle contains[cd] %@", trimmedQuery)
+            NSPredicate(format: "handle contains[cd] %@", trimmedQuery),
         ]
 
         if query.hasPrefix("@") {

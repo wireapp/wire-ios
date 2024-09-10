@@ -173,7 +173,7 @@ enum ConversationJoinRequestFactory {
 
         var payload: [String: Any] = [
             URLQueryItem.Key.conversationKey: key,
-            URLQueryItem.Key.conversationCode: code
+            URLQueryItem.Key.conversationCode: code,
         ]
 
         if apiVersion >= .v4, let password {
@@ -191,7 +191,7 @@ enum ConversationJoinRequestFactory {
 
         url.queryItems = [
             URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
-            URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)
+            URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code),
         ]
 
         guard let urlString = url.string else {

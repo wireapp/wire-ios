@@ -171,7 +171,7 @@ final class CallGridViewController: UIViewController {
             gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             gridView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
             gridView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            gridView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
+            gridView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
         ])
 
         let topStackTopDistance = 6.0
@@ -182,7 +182,7 @@ final class CallGridViewController: UIViewController {
             topStack.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             pageIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             pageIndicator.heightAnchor.constraint(equalToConstant: CGFloat.pageIndicatorHeight),
-            pageIndicator.centerXAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -22)
+            pageIndicator.centerXAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -22),
         ])
 
         pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)

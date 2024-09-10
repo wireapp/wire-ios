@@ -134,7 +134,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     private func setupViews() {
         [stackView,
-         certificateDetailsButton
+         certificateDetailsButton,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -143,7 +143,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         [titleLabel,
          shieldImageView,
          detailsLabel,
-         confirmationButton
+         confirmationButton,
         ].forEach {
             stackView.addArrangedSubview($0)
         }
@@ -168,7 +168,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             certificateDetailsButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             certificateDetailsButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             certificateDetailsButton.heightAnchor.constraint(equalToConstant: 32),
-            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64)
+            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64),
         ])
     }
 

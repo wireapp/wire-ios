@@ -44,7 +44,7 @@ extension AddressBookSearchTests {
         // given
         addressBook.contacts = [
             MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"], phoneNumbers: []),
-            MockAddressBookContact(firstName: "Ada", emailAddresses: [], phoneNumbers: ["+155505012"])
+            MockAddressBookContact(firstName: "Ada", emailAddresses: [], phoneNumbers: ["+155505012"]),
         ]
 
         // when
@@ -61,7 +61,7 @@ extension AddressBookSearchTests {
         let identifier = "233124"
         addressBook.contacts = [
             MockAddressBookContact(firstName: "Olivia 1", emailAddresses: ["oli@example.com"], phoneNumbers: [], identifier: identifier),
-            MockAddressBookContact(firstName: "Olivia 2", emailAddresses: [], phoneNumbers: ["+155505012"])
+            MockAddressBookContact(firstName: "Olivia 2", emailAddresses: [], phoneNumbers: ["+155505012"]),
         ]
 
         // when
@@ -77,7 +77,7 @@ extension AddressBookSearchTests {
         // given
         addressBook.contacts = [
             MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"], phoneNumbers: []),
-            MockAddressBookContact(firstName: "Ada", emailAddresses: [], phoneNumbers: ["+155505012"])
+            MockAddressBookContact(firstName: "Ada", emailAddresses: [], phoneNumbers: ["+155505012"]),
         ]
 
         // when

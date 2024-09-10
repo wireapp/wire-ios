@@ -104,11 +104,11 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         case .decryptionFailedResolved:
             components = [
                 messageString,
-                errorDetailsString
+                errorDetailsString,
             ]
         case .decryptionFailed_RemoteIdentityChanged:
             components = [
-                messageString
+                messageString,
             ]
         default:
             fatal("Incorrect cell configuration")

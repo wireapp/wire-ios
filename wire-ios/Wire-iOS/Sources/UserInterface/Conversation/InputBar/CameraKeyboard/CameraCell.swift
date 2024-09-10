@@ -91,7 +91,7 @@ final class CameraCell: UICollectionViewCell {
         [
             expandButton,
             takePictureButton,
-            changeCameraButton
+            changeCameraButton,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([

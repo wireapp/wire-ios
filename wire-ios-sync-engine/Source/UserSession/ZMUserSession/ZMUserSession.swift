@@ -525,7 +525,7 @@ public final class ZMUserSession: NSObject {
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers
-            )
+            ),
         ]
     }
 

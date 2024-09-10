@@ -97,7 +97,7 @@ extension MessageDestructionTimeoutValue {
             .oneHour,
             .oneDay,
             .oneWeek,
-            .fourWeeks
+            .fourWeeks,
         ]
     }
 

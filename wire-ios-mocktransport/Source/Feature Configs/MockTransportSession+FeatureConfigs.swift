@@ -26,26 +26,26 @@ extension MockTransportSession {
                 "status": "enabled",
                 "config": [
                     "enforceAppLock": false,
-                    "inactivityTimeoutSecs": 60
-                ]
+                    "inactivityTimeoutSecs": 60,
+                ],
             ],
             "classifiedDomains": [
                 "status": "disabled",
                 "config": [
-                    "domains": []
-                ]
+                    "domains": [],
+                ],
             ],
             "conferenceCalling": [
-                "status": "enabled"
+                "status": "enabled",
             ],
             "conversationGuestLinks": [
-                "status": "enabled"
+                "status": "enabled",
             ],
             "digitalSignatures": [
-                "status": "disabled"
+                "status": "disabled",
             ],
             "fileSharing": [
-                "status": "enabled"
+                "status": "enabled",
             ],
             "mls": [
                 "status": "disabled",
@@ -54,22 +54,22 @@ extension MockTransportSession {
                     "defaultProtocol": "proteus",
                     "allowedCipherSuites": [1],
                     "defaultCipherSuite": 1,
-                    "supportedProtocols": []
-                ]
+                    "supportedProtocols": [],
+                ],
             ],
             "selfDeletingMessages": [
                 "status": "enabled",
                 "config": [
-                    "enforcedTimeoutSeconds": 0
-                ]
+                    "enforcedTimeoutSeconds": 0,
+                ],
             ],
             "mlsMigration": [
                 "status": "disabled",
                 "config": [
                     "startTime": nil,
-                    "finaliseRegardlessAfter": nil
-                ]
-            ]
+                    "finaliseRegardlessAfter": nil,
+                ],
+            ],
         ]
 
         return ZMTransportResponse(

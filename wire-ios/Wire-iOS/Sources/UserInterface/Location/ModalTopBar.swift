@@ -155,7 +155,7 @@ final class ModalTopBar: UIView {
             separatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
             separatorView.trailingAnchor.constraint(equalTo: trailingAnchor),
             separatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            sepeatorHeight
+            sepeatorHeight,
         ])
 
         dismissButton.setContentCompressionResistancePriority(UILayoutPriority(rawValue: 1000), for: .horizontal)

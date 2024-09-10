@@ -205,7 +205,7 @@ final class ProfileHeaderViewController: UIViewController {
                 externalIndicator,
                 federatedIndicator,
                 groupRoleIndicator,
-                warningView
+                warningView,
             ]
         )
 
@@ -253,7 +253,7 @@ final class ProfileHeaderViewController: UIViewController {
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
-            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
+            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
         ])
     }
 

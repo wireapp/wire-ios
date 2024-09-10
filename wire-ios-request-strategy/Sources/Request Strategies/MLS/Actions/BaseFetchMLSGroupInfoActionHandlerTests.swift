@@ -65,7 +65,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
             .failure(status: 404, error: .conversationIdOrDomainNotFound),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
             .failure(status: 404, error: .missingGroupInfo, label: "mls-missing-group-info"),
-            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
+            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo"),
         ])
     }
 }

@@ -145,7 +145,7 @@ final class PasscodeSetupViewController: UIViewController {
             infoLabel,
             UILabel.createHintLabel(),
             passcodeTextField,
-            SpacingView(useCompactLayout ? 2 : 16)
+            SpacingView(useCompactLayout ? 2 : 16),
         ].forEach {
             stackView.addArrangedSubview($0)
         }
@@ -202,7 +202,7 @@ final class PasscodeSetupViewController: UIViewController {
             // create Button
             createButton.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.buttonHeight),
             createButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
-            createButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor)
+            createButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
         ])
     }
 

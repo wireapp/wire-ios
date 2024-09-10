@@ -40,7 +40,7 @@ enum MessageAction: CaseIterable, Equatable {
         .openQuote,
         .resetSession,
         .delete,
-        .react("❤️")
+        .react("❤️"),
     ]
 
     case

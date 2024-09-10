@@ -174,14 +174,14 @@ extension ClientMessageRequestStrategyTests {
             let payload = [
                 "recipient": self.selfClient.remoteIdentifier,
                 "sender": self.otherClient.remoteIdentifier,
-                "text": base64Text
+                "text": base64Text,
             ]
             let eventPayload = [
                 "type": "conversation.otr-message-add",
                 "data": payload,
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
-                "from": self.otherUser.remoteIdentifier.transportString()
+                "from": self.otherUser.remoteIdentifier.transportString(),
             ] as NSDictionary
             guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
                 XCTFail("Failed to create event")

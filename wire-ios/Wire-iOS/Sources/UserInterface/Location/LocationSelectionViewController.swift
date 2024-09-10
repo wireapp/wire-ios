@@ -149,7 +149,7 @@ final class LocationSelectionViewController: UIViewController {
             locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.locationButtonLeadingOffset),
             locationButton.bottomAnchor.constraint(equalTo: sendController.topAnchor, constant: LayoutConstants.locationButtonBottomOffset),
             locationButton.widthAnchor.constraint(equalToConstant: LayoutConstants.locationButtonWidth),
-            locationButton.heightAnchor.constraint(equalToConstant: LayoutConstants.locationButtonHeight)
+            locationButton.heightAnchor.constraint(equalToConstant: LayoutConstants.locationButtonHeight),
         ])
     }
 

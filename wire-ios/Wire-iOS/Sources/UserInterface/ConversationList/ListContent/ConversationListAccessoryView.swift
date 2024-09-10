@@ -131,7 +131,7 @@ final class ConversationListAccessoryView: UIView {
             expandTransparentIconViewWidthConstraint,
             expandWidthConstraint,
             transparentIconView.topAnchor.constraint(equalTo: topAnchor),
-            transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ]
         )
         badgeView.fitIn(view: self)
@@ -286,7 +286,7 @@ final class ConversationListAccessoryView: UIView {
                 view.topAnchor.constraint(equalTo: parentView.topAnchor),
                 view.bottomAnchor.constraint(equalTo: parentView.bottomAnchor),
                 view.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 6),
-                view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6)
+                view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6),
             ])
         }
     }

@@ -153,7 +153,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             subtextLabel.attributedText = stepDescription.subtext
             subtextLabel.font = AuthenticationStepController.subtextFont
             subtextLabel.linkTextAttributes = [
-                NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue
+                NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue,
             ]
             subtextLabelContainer.isHidden = stepDescription.subtext == nil
         }
@@ -262,7 +262,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             // height
             mainView.heightAnchor.constraint(greaterThanOrEqualToConstant: AuthenticationStepController.mainViewHeight),
             secondaryViewsStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 13),
-            errorLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 19)
+            errorLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 19),
 
         ])
 
@@ -270,7 +270,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
             NSLayoutConstraint.activate([
                 footerViewStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 31),
                 footerViewStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -31),
-                footerViewStackView.safeBottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -20)
+                footerViewStackView.safeBottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -20),
             ])
         }
 

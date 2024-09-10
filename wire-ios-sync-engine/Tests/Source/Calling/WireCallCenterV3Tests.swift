@@ -1245,7 +1245,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         sut.callSnapshots = [
             activeCallConversationId: activeCall,
-            incomingCallConversationId: incomingCall
+            incomingCallConversationId: incomingCall,
         ]
         sut.isMuted = false
 
@@ -1659,7 +1659,7 @@ extension WireCallCenterV3Tests {
             AVSClient(userId: userId1, clientId: "client1"),
             AVSClient(userId: userId1, clientId: "client2"),
             AVSClient(userId: userId2, clientId: "client1"),
-            AVSClient(userId: userId2, clientId: "client2")
+            AVSClient(userId: userId2, clientId: "client2"),
         ]
 
         // when
@@ -1674,7 +1674,7 @@ extension WireCallCenterV3Tests {
                     AVSClient(userId: userId1, clientId: "client1"),
                     AVSClient(userId: userId1, clientId: "client2"),
                     AVSClient(userId: userId2, clientId: "client1"),
-                    AVSClient(userId: userId2, clientId: "client2")
+                    AVSClient(userId: userId2, clientId: "client2"),
                 ]
 
                 XCTAssertEqual(actual, expected)
@@ -1713,7 +1713,7 @@ extension WireCallCenterV3Tests {
                 conversationId: conversationId,
                 user: otherUser,
                 callCenter: sut
-            )
+            ),
         ]
 
         // When
@@ -1759,7 +1759,7 @@ extension WireCallCenterV3Tests {
                 conversationId: conversationId,
                 callCenter: sut,
                 clients: clients
-            )
+            ),
         ]
     }
 
@@ -1912,7 +1912,7 @@ extension WireCallCenterV3Tests {
         let conversationId = groupConversationID!
         let clients = [
             AVSClient(userId: selfUserID, clientId: UUID().transportString()),
-            AVSClient(userId: otherUserID, clientId: UUID().transportString())
+            AVSClient(userId: otherUserID, clientId: UUID().transportString()),
         ]
 
         sut.callSnapshots = callSnapshot(conversationId: conversationId, clients: clients)
@@ -1979,7 +1979,7 @@ extension WireCallCenterV3Tests {
         let conversationId = groupConversationID!
         let clients = [
             AVSClient(userId: selfUserID, clientId: clientId1),
-            AVSClient(userId: otherUserID, clientId: clientId2)
+            AVSClient(userId: otherUserID, clientId: clientId2),
         ]
 
         let expectedResult = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
@@ -2066,7 +2066,7 @@ extension WireCallCenterV3Tests {
 
         mockTransport.mockClientsRequestResponse = [
             AVSClient(userId: selfUserID, clientId: "client1"),
-            AVSClient(userId: otherUserID, clientId: "client2")
+            AVSClient(userId: otherUserID, clientId: "client2"),
         ]
 
         let didReceiveClientList = customExpectation(description: "didReceiveClientList")
@@ -2150,7 +2150,7 @@ extension WireCallCenterV3Tests {
         changeInfo.changedKeys = ["mlsVerificationStatus"]
         let clients = [
             AVSClient(userId: selfUserID, clientId: UUID().transportString()),
-            AVSClient(userId: otherUserID, clientId: UUID().transportString())
+            AVSClient(userId: otherUserID, clientId: UUID().transportString()),
         ]
 
         sut.callSnapshots = callSnapshot(conversationId: conversationID, clients: clients)

@@ -54,13 +54,13 @@ extension UIBarButtonItem {
             .selected,
             .focused,
             .application,
-            .reserved
+            .reserved,
         ]
 
         for buttonState in buttonStates {
             barButtonItem.setTitleTextAttributes(
                 [
-                    .font: buttonFont
+                    .font: buttonFont,
                 ],
                 for: buttonState
             )

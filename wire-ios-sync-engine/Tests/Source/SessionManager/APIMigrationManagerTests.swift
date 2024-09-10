@@ -52,7 +52,7 @@ final class APIMigrationManagerTests: MessagingTest {
         let sut = APIMigrationManager(migrations: [
             migrationV1,
             migrationV2,
-            migrationV3
+            migrationV3,
         ])
 
         sut.persistLastUsedAPIVersion(for: session1, apiVersion: .v3)
@@ -74,7 +74,7 @@ final class APIMigrationManagerTests: MessagingTest {
 
         let sut = APIMigrationManager(migrations: [
             migrationV1,
-            migrationV2
+            migrationV2,
         ])
 
         sut.persistLastUsedAPIVersion(for: session1, apiVersion: .v3)
@@ -100,7 +100,7 @@ final class APIMigrationManagerTests: MessagingTest {
         let sut = APIMigrationManager(migrations: [
             migrationV1,
             migrationV2,
-            migrationV3
+            migrationV3,
         ])
 
         sut.persistLastUsedAPIVersion(for: userSession, apiVersion: .v2)

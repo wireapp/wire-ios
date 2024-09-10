@@ -78,7 +78,7 @@ public final class ConversationPredicateFactory: NSObject {
         return .all(of: [
             predicateForConversationsExcludingArchived(),
             groupConversationPredicate,
-            notInFolderPredicate
+            notInFolderPredicate,
         ])
     }
 
@@ -119,7 +119,7 @@ public final class ConversationPredicateFactory: NSObject {
         let isActive = NSPredicate(format: "NOT \(ZMConversationOneOnOneUserKey).connection.status IN %@", [
             NSNumber(value: ZMConnectionStatus.pending.rawValue),
             NSNumber(value: ZMConnectionStatus.ignored.rawValue),
-            NSNumber(value: ZMConnectionStatus.cancelled.rawValue)
+            NSNumber(value: ZMConnectionStatus.cancelled.rawValue),
         ])
 
         return .all(of: [isConnection, isActive])

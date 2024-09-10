@@ -54,7 +54,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
             kSecClass: kSecClassKey,
             kSecAttrKeyClass: kSecAttrKeyClassPrivate,
             kSecAttrLabel: tag,
-            kSecReturnRef: true
+            kSecReturnRef: true,
         ]
 
         #if !targetEnvironment(simulator)

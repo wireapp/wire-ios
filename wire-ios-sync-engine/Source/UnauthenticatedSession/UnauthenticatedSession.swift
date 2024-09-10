@@ -74,7 +74,7 @@ public class UnauthenticatedSession: NSObject {
         self.urlActionProcessors = [CompanyLoginURLActionProcessor(delegate: self,
                                                                    authenticationStatus: authenticationStatus),
                                     StartLoginURLActionProcessor(delegate: self,
-                                                                 authenticationStatus: authenticationStatus)
+                                                                 authenticationStatus: authenticationStatus),
         ]
         self.operationLoop = UnauthenticatedOperationLoop(
             transportSession: transportSession,
@@ -83,7 +83,7 @@ public class UnauthenticatedSession: NSObject {
                 ZMLoginTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus),
                 ZMLoginCodeRequestTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!,
                 RegistationCredentialVerificationStrategy(groupQueue: groupQueue, status: registrationStatus),
-                RegistrationStrategy(groupQueue: groupQueue, status: registrationStatus, userInfoParser: self)
+                RegistrationStrategy(groupQueue: groupQueue, status: registrationStatus, userInfoParser: self),
             ]
         )
     }

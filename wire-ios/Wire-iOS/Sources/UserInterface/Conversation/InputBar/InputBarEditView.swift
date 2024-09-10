@@ -96,7 +96,7 @@ final class InputBarEditView: UIView {
             confirmButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             confirmButton.widthAnchor.constraint(equalTo: heightAnchor),
             cancelButton.centerXAnchor.constraint(equalTo: trailingAnchor, constant: -buttonMargin),
-            cancelButton.widthAnchor.constraint(equalTo: heightAnchor)
+            cancelButton.widthAnchor.constraint(equalTo: heightAnchor),
         ])
     }
 

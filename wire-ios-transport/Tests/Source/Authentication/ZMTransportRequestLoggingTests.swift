@@ -27,7 +27,7 @@ final class ZMTransportRequestLoggingTests: ZMTBaseTest {
 
         let payload: [String: String] = [
             "username": "test@test.xyz",
-            "password": password
+            "password": password,
         ]
 
         // when

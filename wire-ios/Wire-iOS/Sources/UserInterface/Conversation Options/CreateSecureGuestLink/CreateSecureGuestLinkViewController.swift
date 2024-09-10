@@ -200,7 +200,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             securedGuestLinkPasswordTextfield,
             passwordRequirementsLabel,
             securedGuestLinkPasswordValidatedTextField,
-            createSecuredLinkButton
+            createSecuredLinkButton,
         ]
 
         // Keyboard notifications
@@ -238,7 +238,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             passwordRequirementsLabel,
             confirmPasswordLabel,
             securedGuestLinkPasswordValidatedTextField,
-            createSecuredLinkButton
+            createSecuredLinkButton,
         ]
 
         contentSubviews.forEach { contentView.addSubview($0) }
@@ -316,7 +316,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             createSecuredLinkButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
             createSecuredLinkButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 18),
             createSecuredLinkButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -18),
-            createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56)
+            createSecuredLinkButton.heightAnchor.constraint(equalToConstant: 56),
         ])
     }
 

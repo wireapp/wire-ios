@@ -53,7 +53,7 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
 
         var payload: [String: Any] = [
             "access": ConversationAccessMode.value(forAllowGuests: action.allowGuests).stringValue,
-            "access_role": accessRoles.map(\.rawValue)
+            "access_role": accessRoles.map(\.rawValue),
         ]
 
         let path: String

@@ -205,7 +205,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             recordingDotView,
             audioPreviewView,
             cancelButton,
-            rightSeparator
+            rightSeparator,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = []
@@ -240,12 +240,12 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             timeLabel.leftAnchor.constraint(equalTo: recordingDotView.rightAnchor, constant: 24),
 
             recordingDotView.leftAnchor.constraint(equalTo: bottomContainerView.leftAnchor, constant: margin + 8),
-            recordingDotView.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor)
+            recordingDotView.centerYAnchor.constraint(equalTo: bottomContainerView.centerYAnchor),
         ]
 
         recordingDotViewVisible.append(contentsOf: [
             recordingDotView.widthAnchor.constraint(equalToConstant: 8),
-            recordingDotView.heightAnchor.constraint(equalToConstant: 8)
+            recordingDotView.heightAnchor.constraint(equalToConstant: 8),
         ])
 
         NSLayoutConstraint.activate(recordingDotViewVisible)
@@ -264,7 +264,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                                         cancelButton.rightAnchor.constraint(equalTo: bottomContainerView.rightAnchor),
                                         buttonOverlay.rightAnchor.constraint(equalTo: cancelButton.leftAnchor, constant: -12),
                                         cancelButton.widthAnchor.constraint(equalToConstant: 56),
-                                        cancelButton.heightAnchor.constraint(equalToConstant: 56)
+                                        cancelButton.heightAnchor.constraint(equalToConstant: 56),
             ])
 
         NSLayoutConstraint.activate(constraints)

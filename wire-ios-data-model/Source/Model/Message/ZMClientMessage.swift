@@ -172,7 +172,7 @@ public class ZMClientMessage: ZMOTRMessage {
         [
             .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 

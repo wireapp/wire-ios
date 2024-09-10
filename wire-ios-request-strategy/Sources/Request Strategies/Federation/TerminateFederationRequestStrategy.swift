@@ -43,7 +43,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringQuickSync,
             .allowsRequestsWhileWaitingForWebsocket,
-            .allowsRequestsWhileInBackground
+            .allowsRequestsWhileInBackground,
         ]
     }
 

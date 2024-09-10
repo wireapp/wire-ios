@@ -48,7 +48,7 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         [
             #keyPath(TeamChangeInfo.membersChanged),
             #keyPath(TeamChangeInfo.nameChanged),
-            #keyPath(TeamChangeInfo.imageDataChanged)
+            #keyPath(TeamChangeInfo.imageDataChanged),
         ]
     }
 

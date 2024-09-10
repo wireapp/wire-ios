@@ -138,7 +138,7 @@ final class UnlockViewController: UIViewController {
             UILabel.createHintLabel(),
             validatedTextField,
             errorLabel,
-            wipeButton
+            wipeButton,
         ].forEach(upperStackView.addArrangedSubview)
 
         [upperStackView, unlockButton].forEach(stackView.addArrangedSubview)
@@ -163,7 +163,7 @@ final class UnlockViewController: UIViewController {
             nameLabel,
             contentView,
             upperStackView,
-            stackView
+            stackView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
@@ -193,7 +193,7 @@ final class UnlockViewController: UIViewController {
             userImageView.centerXAnchor.constraint(equalTo: accountIndicator.centerXAnchor),
             nameLabel.topAnchor.constraint(equalTo: userImageView.bottomAnchor, constant: 11),
             nameLabel.centerXAnchor.constraint(equalTo: accountIndicator.centerXAnchor),
-            nameLabel.bottomAnchor.constraint(equalTo: accountIndicator.bottomAnchor)
+            nameLabel.bottomAnchor.constraint(equalTo: accountIndicator.bottomAnchor),
         ])
     }
 

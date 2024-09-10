@@ -99,7 +99,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             id: UUID(),
             events: [
                 .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
+                .user(.pushRemove),
             ],
             isTransient: false
         )
@@ -115,7 +115,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             events,
             [
                 .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
+                .user(.pushRemove),
             ]
         )
     }
@@ -126,7 +126,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             id: UUID(),
             events: [
                 .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
+                .user(.pushRemove),
             ],
             isTransient: false
         )
@@ -181,7 +181,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             id: UUID(),
             events: [
                 .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
+                .user(.pushRemove),
             ],
             isTransient: false
         )
@@ -217,7 +217,7 @@ final class UpdateEventDecryptorTests: XCTestCase {
             id: UUID(),
             events: [
                 .conversation(.proteusMessageAdd(Scaffolding.proteusMessage)),
-                .user(.pushRemove)
+                .user(.pushRemove),
             ],
             isTransient: false
         )

@@ -155,7 +155,7 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
     ) {
         let assetKeys: Set<String> = [
             ZMUser.previewProfileAssetIdentifierKey,
-            ZMUser.completeProfileAssetIdentifierKey
+            ZMUser.completeProfileAssetIdentifierKey,
         ]
         guard !user.hasLocalModifications(forKeys: assetKeys) else {
             return

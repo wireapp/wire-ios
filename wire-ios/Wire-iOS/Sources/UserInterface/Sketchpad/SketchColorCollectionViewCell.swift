@@ -228,7 +228,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
             contentStackView.topAnchor.constraint(equalTo: topAnchor, constant: 5),
             contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 5),
             knobView.widthAnchor.constraint(equalToConstant: 10),
-            knobView.heightAnchor.constraint(equalToConstant: 10)
+            knobView.heightAnchor.constraint(equalToConstant: 10),
         ])
 
         initialContraintsCreated = true

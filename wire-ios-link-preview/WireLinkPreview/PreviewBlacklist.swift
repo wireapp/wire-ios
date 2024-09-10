@@ -25,7 +25,7 @@ enum PreviewBlacklist {
         "youtu.be",
         "y2u.be",
         "spotify",
-        "giphy"
+        "giphy",
     ]
 
     static func isBlacklisted(_ url: URL) -> Bool {

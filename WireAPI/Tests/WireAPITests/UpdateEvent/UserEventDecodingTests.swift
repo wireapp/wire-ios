@@ -297,7 +297,7 @@ final class UserEventDecodingTests: XCTestCase {
                 ),
                 cookie: "cookieData",
                 capabilities: [
-                    .legalholdConsent
+                    .legalholdConsent,
                 ]
             )
         )
@@ -362,7 +362,7 @@ final class UserEventDecodingTests: XCTestCase {
                         type: 0,
                         conversationIDs: [
                             UUID(uuidString: "ffd0a9af-c0d0-4748-be9b-ab309c640dde")!,
-                            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
+                            UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!,
                         ]
                     ),
                     ConversationLabel(
@@ -371,9 +371,9 @@ final class UserEventDecodingTests: XCTestCase {
                         type: 1,
                         conversationIDs: [
                             UUID(uuidString: "ceb3f577-3b22-4fe9-8ffd-757f29c47ffc")!,
-                            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!
+                            UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf8")!,
                         ]
-                    )
+                    ),
                 ]
             )
         )
@@ -396,11 +396,11 @@ final class UserEventDecodingTests: XCTestCase {
                     key: "abcdefg",
                     size: .complete,
                     type: .image
-                )
+                ),
             ],
             supportedProtocols: [
                 .proteus,
-                .mls
+                .mls,
             ]
         )
     }

@@ -128,7 +128,7 @@ final class NotificationsTrackerTests: XCTestCase {
             NotificationsTracker.Attributes.startedFetchingStream.identifier: 1 as NSObject,
             NotificationsTracker.Attributes.finishedFetchingStream.identifier: 1 as NSObject,
             NotificationsTracker.Attributes.finishedProcessing.identifier: 1 as NSObject,
-            NotificationsTracker.Attributes.abortedProcessing.identifier: 1 as NSObject
+            NotificationsTracker.Attributes.abortedProcessing.identifier: 1 as NSObject,
         ]
         guard let attributes = mockAnalytics.taggedEventsWithAttributes.first?.attributes else {
             XCTFail(); return

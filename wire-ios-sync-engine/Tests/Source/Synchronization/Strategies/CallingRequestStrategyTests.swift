@@ -385,7 +385,7 @@ class CallingRequestStrategyTests: MessagingTest {
                     userID: avsClient4.avsIdentifier.identifier,
                     domain: "bar.com",
                     clientID: avsClient4.clientId
-                )
+                ),
             ])
 
             // When
@@ -633,7 +633,7 @@ class CallingRequestStrategyTests: MessagingTest {
             "src_userid": UUID.create().uuidString,
             "src_clientid": "clientID",
             "resp": false,
-            "type": type
+            "type": type,
         ] as [String: Any]
 
         return try! JSONSerialization.data(withJSONObject: json, options: [])
@@ -655,11 +655,11 @@ class CallingRequestStrategyTests: MessagingTest {
             "conversation": UUID().transportString(),
             "data": [
                 "sender": UUID().transportString(),
-                "text": text
+                "text": text,
             ],
             "from": UUID().transportString(),
             "time": Date().transportString(),
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ] as [String: Any]
 
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!

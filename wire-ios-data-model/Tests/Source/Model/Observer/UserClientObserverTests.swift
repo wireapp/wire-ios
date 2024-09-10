@@ -42,7 +42,7 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
 
     let userInfoKeys: Set<String> = [
         UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
-        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue
+        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
     ]
 
     func checkThatItNotifiesTheObserverOfAChange(_ userClient: UserClient, modifier: (UserClient) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
@@ -100,7 +100,7 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
             modifier: { otherClient.ignoreClient($0) },
             expectedChangedFields: [
                 UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
-                UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
+                UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
             ]
         )
 

@@ -186,7 +186,7 @@ final class TokenField: UIView {
         let views = [
             "textView": textView,
             "toLabel": toLabel,
-            "button": accessoryButton
+            "button": accessoryButton,
         ]
         let metrics = [
             "left": textView.textContainerInset.left,
@@ -194,7 +194,7 @@ final class TokenField: UIView {
             "right": textView.textContainerInset.right,
             "bSize": accessoryButtonSize,
             "bTop": accessoryButtonTop,
-            "bRight": accessoryButtonRight
+            "bRight": accessoryButtonRight,
         ]
 
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[textView]|", options: [], metrics: nil, views: views))

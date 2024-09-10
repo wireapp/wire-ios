@@ -167,7 +167,7 @@ extension ConversationListViewController {
 
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalToConstant: 24),
-            button.heightAnchor.constraint(equalToConstant: 24)
+            button.heightAnchor.constraint(equalToConstant: 24),
         ])
 
         return button
@@ -233,7 +233,7 @@ extension UIView {
             container.heightAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
 
             container.centerYAnchor.constraint(equalTo: centerYAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor)
+            container.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
         return container
     }

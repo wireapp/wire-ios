@@ -121,7 +121,7 @@ extension AccessoryTextField {
             accessoryStack.topAnchor.constraint(equalTo: accessoryContainer.topAnchor),
             accessoryStack.bottomAnchor.constraint(equalTo: accessoryContainer.bottomAnchor),
             accessoryStack.leadingAnchor.constraint(equalTo: accessoryContainer.leadingAnchor, constant: 0),
-            accessoryStack.trailingAnchor.constraint(equalTo: accessoryContainer.trailingAnchor, constant: -accessoryTrailingInset)
+            accessoryStack.trailingAnchor.constraint(equalTo: accessoryContainer.trailingAnchor, constant: -accessoryTrailingInset),
         ])
     }
 

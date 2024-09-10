@@ -147,7 +147,7 @@ extension UIViewController {
             container.heightAnchor.constraint(equalToConstant: 130),
             view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+            view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
         ])
 
         return container

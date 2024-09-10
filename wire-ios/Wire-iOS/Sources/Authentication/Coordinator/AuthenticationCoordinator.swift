@@ -236,7 +236,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     func updateLoginObservers() {
         loginObservers = [
-            sessionManager.addSessionManagerCreatedSessionObserver(self)
+            sessionManager.addSessionManagerCreatedSessionObserver(self),
         ]
         sessionManager.loginDelegate = self
         registrationStatus.delegate = self
@@ -269,7 +269,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
         postLoginObservers = [
             userProfile.add(observer: self),
-            UserChangeInfo.add(observer: self, for: selfUser, in: sharedSession)!
+            UserChangeInfo.add(observer: self, for: selfUser, in: sharedSession)!,
         ]
     }
 
@@ -468,7 +468,7 @@ extension AuthenticationCoordinator {
                     .showLoadingView,
                     .signOut(
                         warn: false
-                    )
+                    ),
                 ],
                 style: .destructive
             )
@@ -818,11 +818,11 @@ extension AuthenticationCoordinator {
                 let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
                 executeActions([
                     .hideLoadingView,
-                    .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
+                    .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset),
                 ])
             } catch OAuthError.userCancelled {
                 executeActions([
-                    .hideLoadingView
+                    .hideLoadingView,
                 ])
             } catch {
                 executeActions([
@@ -830,7 +830,7 @@ extension AuthenticationCoordinator {
                     .presentAlert(
                         .init(title: E2ei.Error.Alert.title,
                               message: E2ei.Error.Alert.message,
-                              actions: [.ok]))
+                              actions: [.ok])),
                 ])
             }
         }

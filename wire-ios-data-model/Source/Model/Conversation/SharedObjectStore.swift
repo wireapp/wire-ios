@@ -75,7 +75,7 @@ extension Notification {
     public func dictionaryRepresentation() -> [String: Any] {
         [
             StorableTrackingEvent.eventNameKey: name,
-            StorableTrackingEvent.eventAttributesKey: attributes
+            StorableTrackingEvent.eventAttributesKey: attributes,
         ]
     }
 }

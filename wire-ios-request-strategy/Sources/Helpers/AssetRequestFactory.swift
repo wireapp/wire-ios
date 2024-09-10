@@ -104,14 +104,14 @@ public final class AssetRequestFactory: NSObject {
         let fileDataHeader = [Constant.md5: data.zmMD5Digest().base64String()]
         let jsonObject: [String: Any] = [
             Constant.accessLevel: shareable,
-            Constant.retention: retention.rawValue
+            Constant.retention: retention.rawValue,
         ]
 
         let metaData = try JSONSerialization.data(withJSONObject: jsonObject, options: [])
 
         return NSData.multipartData(withItems: [
             ZMMultipartBodyItem(data: metaData, contentType: Constant.ContentType.json, headers: nil),
-            ZMMultipartBodyItem(data: data, contentType: Constant.ContentType.octetStream, headers: fileDataHeader)
+            ZMMultipartBodyItem(data: data, contentType: Constant.ContentType.octetStream, headers: fileDataHeader),
         ], boundary: Constant.boundary)
     }
 

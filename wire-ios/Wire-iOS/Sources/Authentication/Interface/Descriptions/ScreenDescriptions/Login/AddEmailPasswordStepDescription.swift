@@ -104,7 +104,7 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
             ctaButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 31),
             ctaButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -31),
             ctaButton.heightAnchor.constraint(equalToConstant: 48),
-            ctaButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0)
+            ctaButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0),
         ])
 
         return containerView

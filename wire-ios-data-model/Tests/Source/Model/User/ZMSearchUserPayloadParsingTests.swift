@@ -45,8 +45,8 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
             "id": uuid.transportString(),
             "qualified_id": [
                 "id": uuid.transportString(),
-                "domain": domain
-            ]
+                "domain": domain,
+            ],
         ]
 
         // when
@@ -76,7 +76,7 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
             "accent_id": 5,
             "id": uuid.transportString(),
             "summary": "Short summary",
-            "provider": provider.transportString()
+            "provider": provider.transportString(),
         ]
 
         // when
@@ -108,8 +108,8 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
             "assets": [[
                 "type": "image",
                 "size": "preview",
-                "key": assetKey
-            ]]
+                "key": assetKey,
+            ]],
         ]
 
         // when
@@ -137,8 +137,8 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
             "assets": [[
                 "type": "image",
                 "size": "full",
-                "key": assetKey
-            ]]
+                "key": assetKey,
+            ]],
         ]
 
         // when
@@ -166,8 +166,8 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
             "assets": [[
                 "type": "image",
                 "size": "preview",
-                "key": assetKey
-            ]]
+                "key": assetKey,
+            ]],
         ]
 
         let searchUser1 = ZMSearchUser.searchUser(
@@ -202,8 +202,8 @@ final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
             "assets": [[
                 "type": "image",
                 "size": "preview",
-                "key": assetKey
-            ]]
+                "key": assetKey,
+            ]],
         ]
 
         let searchUser1 = ZMSearchUser.searchUser(

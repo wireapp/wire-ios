@@ -44,7 +44,7 @@ extension UITableView {
                 NSLayoutConstraint.activate([
                     newHeader.centerXAnchor.constraint(equalTo: self.centerXAnchor),
                     newHeader.widthAnchor.constraint(equalTo: self.widthAnchor),
-                    newHeader.topAnchor.constraint(equalTo: self.topAnchor)
+                    newHeader.topAnchor.constraint(equalTo: self.topAnchor),
                 ])
 
                 self.tableHeaderView?.layoutIfNeeded()

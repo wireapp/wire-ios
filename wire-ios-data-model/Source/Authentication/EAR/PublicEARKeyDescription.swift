@@ -46,7 +46,7 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
 
         baseQuery = [
             kSecClass: kSecClassKey,
-            kSecAttrApplicationTag: tag
+            kSecAttrApplicationTag: tag,
         ]
     }
 

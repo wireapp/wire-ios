@@ -80,7 +80,7 @@ extension BasicReactionPicker {
             horizontalStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8.0),
             horizontalStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             horizontalStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
-            horizontalStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            horizontalStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
         addButtons()
     }

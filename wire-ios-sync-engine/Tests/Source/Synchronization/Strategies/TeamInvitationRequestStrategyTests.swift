@@ -122,7 +122,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
             let (httpStatus, label) = value
             let payload: [String: Any] = [
                 "label": label,
-                "code": httpStatus
+                "code": httpStatus,
             ]
 
             return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: httpStatus, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)

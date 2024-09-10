@@ -45,7 +45,7 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
 
     var userInfoKeys: Set<String> {
         [
-            #keyPath(LabelChangeInfo.nameChanged)
+            #keyPath(LabelChangeInfo.nameChanged),
         ]
     }
 

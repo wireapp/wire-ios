@@ -580,7 +580,7 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             defaultCipherSuite: .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448,
             supportedProtocols: [
                 .mls,
-                .proteus
+                .proteus,
             ]
         )
 

@@ -81,7 +81,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
         let payload = ["value": dict,
                        "key": "labels",
-                       "type": ZMUpdateEvent.eventTypeString(for: .userPropertiesSet)!
+                       "type": ZMUpdateEvent.eventTypeString(for: .userPropertiesSet)!,
         ] as [String: Any]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!

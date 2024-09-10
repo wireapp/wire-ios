@@ -100,7 +100,7 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
         NSLayoutConstraint.activate([
             videoPlaceholderStatusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             videoPlaceholderStatusLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            videoPlaceholderStatusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            videoPlaceholderStatusLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
 

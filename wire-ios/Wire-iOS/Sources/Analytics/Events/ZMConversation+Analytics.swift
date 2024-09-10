@@ -72,7 +72,7 @@ extension ZMConversation {
             }.count.logRound(),
             "conversation_guests_pro": participants.filter {
                 $0.isGuest(in: self) && $0.hasTeam
-            }.count.logRound()
+            }.count.logRound(),
         ]
 
         return attributes.merging(guestAttributes) { _, new in new }
@@ -84,7 +84,7 @@ extension ZMConversation {
         }.count
 
         var attributes: [String: Any] = [
-            "conversation_guests": numGuests.logRound()
+            "conversation_guests": numGuests.logRound(),
         ]
 
         if let selfUser = SelfUser.provider?.providedSelfUser {

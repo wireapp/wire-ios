@@ -95,7 +95,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
             timestampView.leadingAnchor.constraint(equalTo: leadingAnchor),
             timestampView.topAnchor.constraint(equalTo: topAnchor),
             timestampView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            timestampView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            timestampView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

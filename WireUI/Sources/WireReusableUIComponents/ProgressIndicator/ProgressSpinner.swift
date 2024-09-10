@@ -92,7 +92,7 @@ public final class ProgressSpinner: UIView {
 
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
 
         hidesWhenStopped = true
@@ -188,7 +188,7 @@ extension ProgressSpinner: CAAnimationDelegate {
         container.addSubview(spinnerView)
         NSLayoutConstraint.activate([
             spinnerView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            spinnerView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+            spinnerView.centerYAnchor.constraint(equalTo: container.centerYAnchor),
         ])
 
         return container

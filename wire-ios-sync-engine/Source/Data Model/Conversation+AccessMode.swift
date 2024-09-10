@@ -202,7 +202,7 @@ enum WirelessRequestFactory {
         }
 
         var payload: [String: Any] = [
-            "access": ConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
+            "access": ConversationAccessMode.value(forAllowGuests: allowGuests).stringValue,
         ]
         let path: String
 

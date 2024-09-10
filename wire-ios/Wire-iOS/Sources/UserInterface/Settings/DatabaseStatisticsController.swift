@@ -42,7 +42,7 @@ final class DatabaseStatisticsController: UIViewController {
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
 

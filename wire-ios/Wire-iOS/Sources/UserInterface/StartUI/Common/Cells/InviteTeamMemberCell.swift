@@ -84,7 +84,7 @@ class StartUIIconCell: UICollectionViewCell {
             separator.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             separator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            separator.heightAnchor.constraint(equalToConstant: .hairline)
+            separator.heightAnchor.constraint(equalToConstant: .hairline),
         ])
     }
 }

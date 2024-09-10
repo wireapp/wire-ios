@@ -99,7 +99,7 @@ extension URL {
             "https://twitter.com/",
             "http://twitter.com/",
             "http://mobile.twitter.com/",
-            "https://mobile.twitter.com/"
+            "https://mobile.twitter.com/",
         ]
 
         let tweetbot = components.reduce(absoluteString) { result, current in

@@ -65,7 +65,7 @@ final class MarkdownTextView: NextResponderTextView {
         if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard {
             let validActions = [
                 #selector(UIResponderStandardEditActions.select(_:)),
-                #selector(UIResponderStandardEditActions.selectAll(_:))
+                #selector(UIResponderStandardEditActions.selectAll(_:)),
             ]
             return text.isEmpty ? false : validActions.contains(action)
         } else {
@@ -347,7 +347,7 @@ final class MarkdownTextView: NextResponderTextView {
             .markdownID: markdown,
             .font: font,
             .foregroundColor: color,
-            .paragraphStyle: paragraphyStyle
+            .paragraphStyle: paragraphyStyle,
         ]
     }
 

@@ -39,7 +39,7 @@ enum TransferStateMigration {
         static var migrationMappings: [(from: [LegacyTransferState], to: AssetTransferState)] = [
             (from: [.downloading, .downloaded, .failedDownloaded, .unavailable], to: .uploaded),
             (from: [.failedUpload], to: .uploadingFailed),
-            (from: [.cancelledUpload], to: .uploadingCancelled)
+            (from: [.cancelledUpload], to: .uploadingCancelled),
         ]
     }
 

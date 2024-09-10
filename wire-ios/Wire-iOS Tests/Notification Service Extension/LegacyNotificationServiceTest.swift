@@ -163,9 +163,9 @@ final class LegacyNotificationServiceTests: XCTestCase {
             "time": Date().transportString(),
             "data": [
                 "text": try? genericMessage.serializedData().base64String(),
-                "sender": otherUser.clients.first?.remoteIdentifier
+                "sender": otherUser.clients.first?.remoteIdentifier,
             ],
-            "type": "conversation.otr-message-add"
+            "type": "conversation.otr-message-add",
         ]
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())

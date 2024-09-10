@@ -158,7 +158,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         let settings = [
             AVFormatIDKey: audioFormatID,
             AVSampleRateKey: 32000,
-            AVNumberOfChannelsKey: 1
+            AVNumberOfChannelsKey: 1,
         ]
 
         do {

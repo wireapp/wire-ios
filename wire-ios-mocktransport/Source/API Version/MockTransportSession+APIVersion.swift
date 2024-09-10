@@ -41,14 +41,14 @@ extension MockTransportSession {
             [
                 "supported": supportedAPIVersions,
                 "domain": domain,
-                "federation": federation
+                "federation": federation,
             ]
         } else {
             [
                 "supported": supportedAPIVersions,
                 "development": developmentAPIVersions,
                 "domain": domain,
-                "federation": federation
+                "federation": federation,
             ]
         }
 

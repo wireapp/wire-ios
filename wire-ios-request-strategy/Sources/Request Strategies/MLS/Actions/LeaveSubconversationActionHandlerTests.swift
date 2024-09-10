@@ -113,7 +113,7 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
                 "access-denied"),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
             .failure(status: 409, error: .mlsStaleMessage, label: "mls-stale-message"),
-            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
+            .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo"),
         ])
     }
 }

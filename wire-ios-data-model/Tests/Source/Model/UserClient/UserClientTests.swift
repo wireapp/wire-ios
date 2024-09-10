@@ -119,7 +119,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             ZMUserClientMissingKey,
             ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey
+            UserClient.needsToUploadMLSPublicKeysKey,
         ])
 
         let client = UserClient.insertNewObject(in: self.uiMOC)
@@ -599,7 +599,7 @@ extension UserClientTests {
             "id": UUID().transportString() as AnyObject,
             "type": "permanent" as AnyObject,
             "time": Date().transportString() as AnyObject,
-            "mls_public_keys": ["ed25519": "some key"] as AnyObject
+            "mls_public_keys": ["ed25519": "some key"] as AnyObject,
         ]
 
         // when

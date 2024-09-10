@@ -280,7 +280,7 @@ extension ZMConversation {
     ) throws -> ZMAssetClientMessage {
         let logAttributes: LogAttributes = [
             LogAttributesKey.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
-            LogAttributesKey.messageType: "asset"
+            LogAttributesKey.messageType: "asset",
         ]
 
         WireLogger.messaging.debug(
@@ -376,7 +376,7 @@ extension ZMConversation {
         let logAttributes: LogAttributes = [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: self.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+            .conversationId: self.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ]
 
         WireLogger.messaging.debug("appending message to conversation",

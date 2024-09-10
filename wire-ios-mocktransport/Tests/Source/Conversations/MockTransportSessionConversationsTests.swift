@@ -210,7 +210,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "modify_conversation_receipt_mode",
             "modify_conversation_access",
             "modify_other_conversation_member",
-            "leave_conversation", "delete_conversation"
+            "leave_conversation", "delete_conversation",
         ]))
 
         let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
@@ -255,7 +255,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "modify_conversation_receipt_mode",
             "modify_conversation_access",
             "modify_other_conversation_member",
-            "leave_conversation", "delete_conversation"
+            "leave_conversation", "delete_conversation",
         ]))
 
         let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
@@ -362,11 +362,11 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         let expectedResponsePayload = [
             "missing": [
                 selfUser.identifier: [secondSelfClient.identifier],
-                otherUser.identifier: [secondOtherUserClient.identifier]
+                otherUser.identifier: [secondOtherUserClient.identifier],
             ],
             "deleted": [
-                otherUser.identifier: [redundantClient.identifier]
-            ]
+                otherUser.identifier: [redundantClient.identifier],
+            ],
         ]
 
         if let response {
@@ -418,7 +418,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         let expectedResponsePayload = [
             "missing": [:],
-            "redundant": [:]
+            "redundant": [:],
         ]
 
         if let response {

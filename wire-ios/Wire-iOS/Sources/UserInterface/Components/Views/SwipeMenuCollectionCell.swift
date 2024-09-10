@@ -325,7 +325,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
 
             menuView.topAnchor.constraint(equalTo: swipeView.topAnchor),
             menuView.bottomAnchor.constraint(equalTo: swipeView.bottomAnchor),
-            menuViewToSwipeViewLeftConstraint!
+            menuViewToSwipeViewLeftConstraint!,
         ]
 
         NSLayoutConstraint.activate(constraints)

@@ -124,7 +124,7 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
             }
 
             let deletedObjects: [AnyHashable: Any] = [
-                NSDeletedObjectsKey: deleteResult
+                NSDeletedObjectsKey: deleteResult,
             ]
 
             /// Since `NSBatchDeleteRequest` only operates at the SQL level (in the persistent store itself),

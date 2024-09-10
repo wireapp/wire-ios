@@ -57,7 +57,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     var keysToSync: [String] = [
         ZMConversationUserDefinedNameKey,
         ZMConversationArchivedChangedTimeStampKey,
-        ZMConversationSilencedChangedTimeStampKey
+        ZMConversationSilencedChangedTimeStampKey,
     ]
 
     let conversationEventProcessor: ConversationEventProcessor
@@ -146,7 +146,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             ),
             UpdateConversationProtocolActionHandler(context: managedObjectContext),
             CreateConversationGuestLinkActionHandler(context: managedObjectContext),
-            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext)
+            SetAllowGuestsAndServicesActionHandler(context: managedObjectContext),
         ])
 
         super.init(
@@ -230,14 +230,14 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 conversationIDsSync,
                 conversationQualifiedIDsSync,
                 conversationByIDListSync,
-                conversationByQualifiedIDListSync
+                conversationByQualifiedIDListSync,
             ]
         } else {
             [
                 conversationByIDSync,
                 conversationByQualifiedIDSync,
                 modifiedSync,
-                actionSync
+                actionSync,
             ]
         }
     }
@@ -471,7 +471,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
             let changedKeys = keys.intersection([
                 ZMConversationArchivedChangedTimeStampKey,
-                ZMConversationSilencedChangedTimeStampKey
+                ZMConversationSilencedChangedTimeStampKey,
             ])
 
             return ZMUpstreamRequest(

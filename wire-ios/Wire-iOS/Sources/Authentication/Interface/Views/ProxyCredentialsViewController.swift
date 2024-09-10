@@ -102,7 +102,7 @@ final class ProxyCredentialsViewController: UIViewController {
             titleLabel,
             captionLabel,
             usernameInput,
-            passwordInput
+            passwordInput,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview($0)
@@ -124,7 +124,7 @@ final class ProxyCredentialsViewController: UIViewController {
             bottomSeparator.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
 
             usernameInput.heightAnchor.constraint(equalToConstant: 48),
-            passwordInput.heightAnchor.constraint(equalToConstant: 48)
+            passwordInput.heightAnchor.constraint(equalToConstant: 48),
         ])
     }
 

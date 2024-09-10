@@ -69,7 +69,7 @@ final class StartUIInviteActionBar: UIView {
             inviteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding * 2),
             inviteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -(padding * 2)),
             inviteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -(padding + UIScreen.safeArea.bottom)),
-            inviteButton.topAnchor.constraint(equalTo: topAnchor, constant: padding)
+            inviteButton.topAnchor.constraint(equalTo: topAnchor, constant: padding),
         ])
         bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -(padding + UIScreen.safeArea.bottom))
         bottomEdgeConstraint.isActive = true

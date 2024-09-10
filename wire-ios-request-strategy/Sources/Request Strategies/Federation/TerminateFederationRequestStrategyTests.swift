@@ -55,7 +55,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
             // GIVEN
             let payload: NSDictionary = [
                 "type": "federation.delete",
-                "domain": "example.com"
+                "domain": "example.com",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -75,7 +75,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
             // GIVEN
             let payload: NSDictionary = [
                 "type": "federation.connectionRemoved",
-                "domains": ["anta.wire.link", "foma.wire.link"]
+                "domains": ["anta.wire.link", "foma.wire.link"],
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!

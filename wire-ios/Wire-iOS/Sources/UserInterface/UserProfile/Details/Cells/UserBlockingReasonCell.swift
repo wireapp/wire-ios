@@ -47,7 +47,7 @@ final class UserBlockingReasonCell: UITableViewCell {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.linkTextAttributes = [
             NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber,
-            NSAttributedString.Key.foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent()
+            NSAttributedString.Key.foregroundColor: SelfUser.provider?.providedSelfUser.accentColor ?? UIColor.accent(),
         ]
         contentView.addSubview(titleLabel)
     }
@@ -57,7 +57,7 @@ final class UserBlockingReasonCell: UITableViewCell {
             titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
         ])
     }
 

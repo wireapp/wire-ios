@@ -82,8 +82,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             return [
                 userIDs[0]: [
                     .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .expired)
-                ]
+                    .with(clientID: clientIDs![1].rawValue, status: .expired),
+                ],
             ]
         }
 
@@ -103,8 +103,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .revoked)
-                ]
+                    .with(clientID: clientIDs![1].rawValue, status: .revoked),
+                ],
             ]
         }
 
@@ -124,8 +124,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
-                ]
+                    .with(clientID: clientIDs![1].rawValue, status: .valid),
+                ],
             ]
         }
 
@@ -181,8 +181,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![2].rawValue, status: .valid),
-                    .with(clientID: clientIDs![3].rawValue, status: .revoked)
-                ]
+                    .with(clientID: clientIDs![3].rawValue, status: .revoked),
+                ],
             ]
         }
 
@@ -202,8 +202,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![2].rawValue, status: .valid),
-                    .with(clientID: clientIDs![3].rawValue, status: .valid)
-                ]
+                    .with(clientID: clientIDs![3].rawValue, status: .valid),
+                ],
             ]
         }
 
@@ -226,8 +226,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
-                ]
+                    .with(clientID: clientIDs![1].rawValue, status: .valid),
+                ],
             ]
         }
 
@@ -250,8 +250,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
-                ]
+                    .with(clientID: clientIDs![1].rawValue, status: .valid),
+                ],
             ]
         }
 
@@ -272,8 +272,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .valid)
-                ]
+                    .with(clientID: clientIDs![1].rawValue, status: .valid),
+                ],
             ]
         }
 
@@ -296,8 +296,8 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             [
                 userIDs[0]: [
                     .with(clientID: clientIDs![2].rawValue, status: .valid),
-                    .with(clientID: clientIDs![3].rawValue, status: .valid)
-                ]
+                    .with(clientID: clientIDs![3].rawValue, status: .valid),
+                ],
             ]
         }
 

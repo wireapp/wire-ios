@@ -32,13 +32,13 @@ extension XCTestCase {
         "iPhone-4_7_Inch": DeviceSizeIPhone6,
         "iPhone-5_5_Inch": DeviceSizeIPhone6Plus,
         "iPhone-5_8_Inch": DeviceSizeIPhoneX,
-        "iPhone-6_5_Inch": DeviceSizeIPhoneXR
+        "iPhone-6_5_Inch": DeviceSizeIPhoneXR,
     ]
 
     /// we should add iPad Pro sizes
     static let tabletScreenSizes: [String: CGSize] = [
         "iPad-Portrait": DeviceSizeIPadPortrait,
-        "iPad-Landscape": DeviceSizeIPadLandscape
+        "iPad-Landscape": DeviceSizeIPadLandscape,
     ]
 
     static var deviceScreenSizes: [String: CGSize] = phoneScreenSizes.merging(tabletScreenSizes) { $1 }

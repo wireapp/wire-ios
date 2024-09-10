@@ -68,7 +68,7 @@ public struct SnapshotHelper {
         var helper = self
         helper.traits = UITraitCollection(traitsFrom: [
             helper.traits,
-            UITraitCollection(userInterfaceStyle: style)
+            UITraitCollection(userInterfaceStyle: style),
         ])
         return helper
     }
@@ -82,7 +82,7 @@ public struct SnapshotHelper {
         var helper = self
         helper.traits = UITraitCollection(traitsFrom: [
             helper.traits,
-            UITraitCollection(preferredContentSizeCategory: category)
+            UITraitCollection(preferredContentSizeCategory: category),
         ])
         return helper
     }
@@ -242,13 +242,13 @@ public struct SnapshotHelper {
         (.iPhone8(.portrait), "iPhone-4_7_Inch"),
         (.iPhone8Plus(.portrait), "iPhone-5_5_Inch"),
         (.iPhoneX(.portrait), "iPhone-5_8_Inch"),
-        (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch")
+        (.iPhoneXsMax(.portrait), "iPhone-6_5_Inch"),
     ]
 
     /// Shared configuration for iPad sizes
     private static let iPadConfigs: [(ViewImageConfig, String)] = [
         (.iPadMini(.landscape), "iPad-landscape"),
-        (.iPadMini(.portrait), "iPad-portrait")
+        (.iPadMini(.portrait), "iPad-portrait"),
     ]
 
     /// Verify a `UIViewController`, in all device sizes
@@ -372,7 +372,7 @@ public struct SnapshotHelper {
             "accessibility-large": .accessibilityLarge,
             "accessibility-extra-large": .accessibilityExtraLarge,
             "accessibility-extra-extra-large": .accessibilityExtraExtraLarge,
-            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge
+            "accessibility-extra-extra-extra-large": .accessibilityExtraExtraExtraLarge,
         ].forEach { name, contentSize in
             let failure = verifySnapshot(
                 of: value,

@@ -77,11 +77,11 @@ extension ConversationObserverTests {
                                                 },
                                                 expectedChangedFields: ["nameChanged",
                                                                         "participantsChanged",
-                                                                        "activeParticipantsChanged"
+                                                                        "activeParticipantsChanged",
                                                 ],
                                                 expectedChangedKeys: ["localParticipantRoles",
                                                                       "displayName",
-                                                                      "activeParticipants"
+                                                                      "activeParticipants",
                                                 ]
         )
 

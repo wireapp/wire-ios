@@ -169,7 +169,7 @@ final class ServiceDetailViewController: UIViewController {
             actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(16 + UIScreen.safeArea.bottom)),
             detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
-            actionButton.heightAnchor.constraint(equalToConstant: 48)
+            actionButton.heightAnchor.constraint(equalToConstant: 48),
         ])
     }
 

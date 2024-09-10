@@ -55,7 +55,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             "hasReadReceiptsEnabledChanged",
             "externalParticipantsStateChanged",
             "legalHoldStatusChanged",
-            "oneOnOneUserChanged"
+            "oneOnOneUserChanged",
         ]
     }
 
@@ -431,7 +431,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             expectedChangedKeys: [
                 "localParticipantRoles",
                 "displayName",
-                "localParticipants"
+                "localParticipants",
             ]
         )
     }
@@ -455,7 +455,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             expectedChangedFields: [
                 "participantsChanged",
                 "activeParticipantsChanged",
-                "nameChanged"
+                "nameChanged",
             ],
             expectedChangedKeys: [
                 "localParticipantRoles",

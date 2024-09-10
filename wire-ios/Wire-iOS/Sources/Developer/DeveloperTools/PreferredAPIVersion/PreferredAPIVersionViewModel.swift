@@ -69,7 +69,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             }),
             Section(header: "Development versions", items: APIVersion.developmentVersions.map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
-            })
+            }),
         ]
 
         // Initial selection

@@ -65,7 +65,7 @@ final class CallingActionsView: UIView {
             cameraButton,
             speakerButton,
             flipCameraButton,
-            endCallButton
+            endCallButton,
         ]
     }
 
@@ -82,7 +82,7 @@ final class CallingActionsView: UIView {
                 [
                     microphoneButton,
                     cameraButton,
-                    speakerButton
+                    speakerButton,
                 ].forEach(topStackView.addArrangedSubview)
 
                 addIncomingCallControllButtons()
@@ -125,7 +125,7 @@ final class CallingActionsView: UIView {
 
         [
             handleContainerView,
-            topStackView
+            topStackView,
         ].forEach(verticalStackView.addArrangedSubview)
 
         [
@@ -135,7 +135,7 @@ final class CallingActionsView: UIView {
             speakerButton,
             endCallButton,
             largeHangUpButton,
-            largePickUpButton
+            largePickUpButton,
         ].forEach { $0.addTarget(self, action: #selector(performButtonAction), for: .touchUpInside) }
 
         setupContentViewer()
@@ -156,7 +156,7 @@ final class CallingActionsView: UIView {
             handleView.widthAnchor.constraint(equalToConstant: 130),
             topStackView.leadingAnchor.constraint(equalTo: verticalStackView.leadingAnchor, constant: 14),
             topStackView.trailingAnchor.constraint(equalTo: verticalStackView.trailingAnchor, constant: -14),
-            topStackView.heightAnchor.constraint(equalToConstant: 85).withPriority(.required)
+            topStackView.heightAnchor.constraint(equalToConstant: 85).withPriority(.required),
         ])
     }
 
@@ -174,14 +174,14 @@ final class CallingActionsView: UIView {
 
         [
             largePickUpButton,
-            largeHangUpButton
+            largeHangUpButton,
         ].forEach { $0.updateState() }
     }
 
     private func addIncomingCallControllButtons() {
         [
             largeHangUpButton,
-            largePickUpButton
+            largePickUpButton,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.updateButtonWidth(width: 72.0)
@@ -194,14 +194,14 @@ final class CallingActionsView: UIView {
             largePickUpButton.centerXAnchor.constraint(equalTo: speakerButton.centerXAnchor).withPriority(.required),
 
             largeHangUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34),
-            largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34)
+            largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34),
         ]
 
         largeButtonsLandscapeConstraints = [
             largeHangUpButton.centerYAnchor.constraint(equalTo: microphoneButton.centerYAnchor).withPriority(.required),
             largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor).withPriority(.required),
             largeHangUpButton.leadingAnchor.constraint(equalTo: safeLeadingAnchor, constant: 20.0),
-            largePickUpButton.trailingAnchor.constraint(equalTo: safeTrailingAnchor, constant: -20.0)
+            largePickUpButton.trailingAnchor.constraint(equalTo: safeTrailingAnchor, constant: -20.0),
         ]
         let isPortrait = UIDevice.current.twoDimensionOrientation.isPortrait
         NSLayoutConstraint.activate(
@@ -212,7 +212,7 @@ final class CallingActionsView: UIView {
     private func removeIncomingCallControllButtons() {
         [
             largeHangUpButton,
-            largePickUpButton
+            largePickUpButton,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.removeFromSuperview()

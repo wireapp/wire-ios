@@ -33,7 +33,7 @@ struct ModifiedObjects {
             updated,
             refreshed,
             inserted,
-            deleted
+            deleted,
         ].reduce(into: .init()) { partialResult, set in
             partialResult.formUnion(set)
         }

@@ -26,7 +26,7 @@ public class UserClientRequestFactory {
         password: String,
         apiVersion: APIVersion) -> ZMTransportRequest {
         let payload: [AnyHashable: Any] = [
-            "password": password
+            "password": password,
         ]
 
         let request = ZMTransportRequest(

@@ -183,7 +183,7 @@ final class ConversationContentViewController: UIViewController {
                     constant: -scrollToBottomButtonBottomMargin
                 ),
                 scrollToBottomButton.widthAnchor.constraint(equalToConstant: scrollToBottomButtonWidth),
-                scrollToBottomButton.heightAnchor.constraint(equalToConstant: scrollToBottomButtonHeight)
+                scrollToBottomButton.heightAnchor.constraint(equalToConstant: scrollToBottomButtonHeight),
             ]
         )
         let heightCollapsingConstraint = bottomContainer.heightAnchor.constraint(equalToConstant: 0)

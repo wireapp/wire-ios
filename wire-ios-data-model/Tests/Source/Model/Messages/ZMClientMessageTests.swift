@@ -43,7 +43,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         let data = [
             "content": name,
-            "nonce": nonce.transportString()
+            "nonce": nonce.transportString(),
         ]
 
         let payload = payloadForMessage(in: conversation, type: EventConversationAdd, data: data)
@@ -106,7 +106,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         let data: NSDictionary = [
             "sender": senderClientID,
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -174,7 +174,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": XCTUnwrap(modifiedMessageData)
+            "text": XCTUnwrap(modifiedMessageData),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -234,7 +234,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": modifiedMessageData
+            "text": modifiedMessageData,
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -345,7 +345,7 @@ extension ClientMessageTests {
         let contentData = try prototype.serializedData()
         let data: NSDictionary = try [
             "sender": XCTUnwrap(senderClientID),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -375,7 +375,7 @@ extension ClientMessageTests {
 
         let data: NSDictionary = try [
             "sender": XCTUnwrap(senderClientID),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -404,7 +404,7 @@ extension ClientMessageTests {
         existingMessage.visibleInConversation = conversation
 
         let data: NSDictionary = [
-            "nonce": nonce.transportString()
+            "nonce": nonce.transportString(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationKnock, data: data)
 
@@ -431,7 +431,7 @@ extension ClientMessageTests {
         let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
         let data: NSDictionary = try [
             "sender": XCTUnwrap(senderClientID),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -471,7 +471,7 @@ extension ClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -514,7 +514,7 @@ extension ClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(unknownSender),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -556,7 +556,7 @@ extension ClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -610,7 +610,7 @@ extension ClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -662,7 +662,7 @@ extension ClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -715,7 +715,7 @@ extension ClientMessageTests {
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
-            "text": XCTUnwrap(contentData?.base64String())
+            "text": XCTUnwrap(contentData?.base64String()),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 

@@ -103,7 +103,7 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
             cellLinkLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             cellLinkLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
 
-            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 112)
+            contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 112),
         ])
     }
 

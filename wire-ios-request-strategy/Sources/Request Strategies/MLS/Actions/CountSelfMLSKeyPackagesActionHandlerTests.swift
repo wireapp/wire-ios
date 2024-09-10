@@ -77,7 +77,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
         test_itHandlesFailures([
             .failure(status: 200, error: .malformedResponse),
             .failure(status: 404, error: .clientNotFound),
-            .failure(status: 999, error: .unknown(status: 999))
+            .failure(status: 999, error: .unknown(status: 999)),
         ])
     }
 }

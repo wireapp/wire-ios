@@ -107,7 +107,7 @@ class SettingsBaseTableViewController: UIViewController {
 
             footerSeparator.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
             footerSeparator.rightAnchor.constraint(equalTo: footerContainer.rightAnchor),
-            footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
+            footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor),
         ])
     }
 }
@@ -187,7 +187,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
             SettingsLinkTableCell.self,
             IconActionCell.self,
             SettingsProfileLinkCell.self,
-            SettingsAppearanceCell.self
+            SettingsAppearanceCell.self,
         ]
 
         for aClass in allCellTypes {

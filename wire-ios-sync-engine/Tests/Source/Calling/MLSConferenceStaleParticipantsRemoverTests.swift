@@ -61,7 +61,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         let participants = [
             createMLSParticipant(state: .connecting),
             createMLSParticipant(state: connectedState),
-            createMLSParticipant(state: connectedState)
+            createMLSParticipant(state: connectedState),
         ]
 
         // mock subconversation members
@@ -97,7 +97,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         let participants = [
             createMLSParticipant(state: .connecting),
             createMLSParticipant(state: .connecting),
-            createMLSParticipant(state: .connecting)
+            createMLSParticipant(state: .connecting),
         ]
 
         // mock subconversation members
@@ -142,7 +142,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
         // create call participants
         let participants = [
             createMLSParticipant(state: .connecting),
-            createMLSParticipant(state: .connecting)
+            createMLSParticipant(state: .connecting),
         ]
 
         // mock subconversation members
@@ -176,7 +176,7 @@ class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
 
         // create call participants
         let participants = [
-            createMLSParticipant(state: .connecting)
+            createMLSParticipant(state: .connecting),
         ]
 
         // mock subconversation members

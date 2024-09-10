@@ -67,7 +67,7 @@ final class SettingsPropertyFactory {
         SettingsPropertyName.tweetOpeningOption: .twitterOpeningRawValue,
         SettingsPropertyName.callingProtocolStrategy: .callingProtocolStrategy,
         SettingsPropertyName.enableBatchCollections: .enableBatchCollections,
-        SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate
+        SettingsPropertyName.callingConstantBitRate: .callingConstantBitRate,
     ]
 
     convenience init(userSession: UserSession?, selfUser: SettingsSelfUser?) {

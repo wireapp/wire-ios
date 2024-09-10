@@ -266,7 +266,7 @@ final class AcmeAPITests: ZMTBaseTest {
         let mockCertificates = [
             "certificate_1",
             "certificate_2",
-            "certificate_3"
+            "certificate_3",
         ]
         let mockPayload = FederationCertificates(certificates: mockCertificates)
         let mockData = try encoder.encode(mockPayload)

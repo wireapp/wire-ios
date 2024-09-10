@@ -41,7 +41,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         super.setUp()
         action = FetchUserClientsAction(userIDs: Set([
             QualifiedID(uuid: userID1, domain: domain1),
-            QualifiedID(uuid: userID2, domain: domain2)
+            QualifiedID(uuid: userID2, domain: domain2),
         ]))
         handler = FetchUserClientsActionHandler(context: syncMOC)
     }
@@ -112,14 +112,14 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
             domain1: [
                 userID1.uuidString: [
                     Payload.UserClient(id: clientID1),
-                    Payload.UserClient(id: clientID2)
-                ]
+                    Payload.UserClient(id: clientID2),
+                ],
             ],
             domain2: [
                 userID2.uuidString: [
-                    Payload.UserClient(id: clientID3)
-                ]
-            ]
+                    Payload.UserClient(id: clientID3),
+                ],
+            ],
         ])
 
         let payloadString = try XCTUnwrap(payload.payloadString())
@@ -146,7 +146,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
                 userID: userID2,
                 domain: domain2,
                 clientID: clientID3
-            )
+            ),
         ]))
     }
 

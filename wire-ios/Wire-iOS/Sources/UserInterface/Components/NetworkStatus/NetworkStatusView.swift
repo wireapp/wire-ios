@@ -123,7 +123,7 @@ final class NetworkStatusView: UIView {
             connectingView.leftAnchor.constraint(equalTo: offlineView.leftAnchor),
             connectingView.rightAnchor.constraint(equalTo: offlineView.rightAnchor),
             connectingView.topAnchor.constraint(equalTo: offlineView.topAnchor),
-            connectingViewBottomMargin
+            connectingViewBottomMargin,
         ])
     }
 

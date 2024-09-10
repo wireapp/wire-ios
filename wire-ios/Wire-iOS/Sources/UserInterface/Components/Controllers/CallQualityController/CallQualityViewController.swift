@@ -151,7 +151,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
             closeButton.heightAnchor.constraint(equalToConstant: 44),
 
             // Content view
-            contentView.topAnchor.constraint(equalTo: callQualityStackView.topAnchor, constant: -44)
+            contentView.topAnchor.constraint(equalTo: callQualityStackView.topAnchor, constant: -44),
         ]
 
         NSLayoutConstraint.activate(coreConstraints)
@@ -263,7 +263,7 @@ final class CallQualityView: UIStackView {
         scoreButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             scoreButton.widthAnchor.constraint(lessThanOrEqualToConstant: 48),
-            scoreButton.heightAnchor.constraint(equalTo: scoreButton.widthAnchor)
+            scoreButton.heightAnchor.constraint(equalTo: scoreButton.widthAnchor),
         ])
     }
 
@@ -305,7 +305,7 @@ final class QualityScoreSelectorView: UIView {
             scoreStackView.topAnchor.constraint(equalTo: topAnchor),
             scoreStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             scoreStackView.leftAnchor.constraint(equalTo: leftAnchor),
-            scoreStackView.rightAnchor.constraint(equalTo: rightAnchor)
+            scoreStackView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
     }
 

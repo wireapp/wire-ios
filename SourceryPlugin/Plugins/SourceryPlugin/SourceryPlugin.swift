@@ -51,7 +51,7 @@ extension SourceryPlugin: BuildToolPlugin {
         let configuration = [
             context.package.directory,
             target.directory,
-            target.directory.appending(subpath: "/Sourcery")
+            target.directory.appending(subpath: "/Sourcery"),
         ]
         .map { $0.appending(Constant.configFileName) }
         .filter { FileManager.default.fileExists(atPath: $0.string) }
@@ -74,7 +74,7 @@ extension SourceryPlugin: BuildToolPlugin {
                 context: context,
                 configuration: configuration,
                 targetDirectory: target.directory
-            )
+            ),
         ]
     }
 
@@ -90,12 +90,12 @@ extension SourceryPlugin: BuildToolPlugin {
                 "--config",
                 configuration.string,
                 "--cacheBasePath",
-                context.pluginWorkDirectory
+                context.pluginWorkDirectory,
             ],
             environment: [
                 Constant.Environment.derivedSourcesDirectory: context.pluginWorkDirectory,
                 Constant.Environment.packageRootDirectory: context.package.directory,
-                Constant.Environment.targetDirectory: targetDirectory.string
+                Constant.Environment.targetDirectory: targetDirectory.string,
             ],
             outputFilesDirectory: context.pluginWorkDirectory
         )

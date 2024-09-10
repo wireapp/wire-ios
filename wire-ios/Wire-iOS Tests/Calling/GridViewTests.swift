@@ -62,7 +62,7 @@ final class GridViewTests: XCTestCase {
         .purple,
         .systemPink,
         .systemTeal,
-        .gray
+        .gray,
     ]
 
     // MARK: - setUp

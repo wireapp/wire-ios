@@ -71,7 +71,7 @@ final class MapViewController: UIViewController {
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
 
@@ -83,7 +83,7 @@ final class MapViewController: UIViewController {
             annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
             annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
             annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
-            annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth)
+            annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
         ])
     }
 

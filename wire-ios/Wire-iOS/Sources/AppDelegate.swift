@@ -59,7 +59,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         FileBackupExcluderOperation(),
         BackendInfoOperation(),
         FontSchemeOperation(),
-        CleanUpDebugStateOperation()
+        CleanUpDebugStateOperation(),
     ]
     private var appStateCalculator = AppStateCalculator()
 

@@ -54,7 +54,7 @@ final class CollectionCellHeader: UIView {
             dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
             nameLabel.topAnchor.constraint(equalTo: topAnchor),
             nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor)
+            dateLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
         ])
     }
 

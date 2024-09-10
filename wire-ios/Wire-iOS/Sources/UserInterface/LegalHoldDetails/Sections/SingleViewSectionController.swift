@@ -38,7 +38,7 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
                 wrappedView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
                 wrappedView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
                 wrappedView.topAnchor.constraint(equalTo: contentView.topAnchor),
-                wrappedView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+                wrappedView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             ])
         }
     }

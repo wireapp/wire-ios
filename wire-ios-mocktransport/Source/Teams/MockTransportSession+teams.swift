@@ -97,7 +97,7 @@ extension MockTransportSession {
         let teams = selfUser.memberships?.map(\.team) ?? []
         let payload: [String: Any] = [
             "teams": teams.map(\.payload),
-            "has_more": false
+            "has_more": false,
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
@@ -171,7 +171,7 @@ extension MockTransportSession {
 
         let payload: [String: Any] = [
             "members": team.members.map(\.payload),
-            "hasMore": false
+            "hasMore": false,
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -188,7 +188,7 @@ extension MockTransportSession {
 
         let payload: [String: Any] = [
             "members": members.map(\.payload),
-            "hasMore": false
+            "hasMore": false,
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -200,7 +200,7 @@ extension MockTransportSession {
         guard let team = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
 
         let payload: [String: Any] = [
-            "conversation_roles": team.roles.map(\.payload)
+            "conversation_roles": team.roles.map(\.payload),
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -288,8 +288,8 @@ extension MockTransportSession {
             "client": ["id": device.identifier!],
             "last_prekey": [
                 "id": device.lastPrekey.identifier,
-                "key": device.lastPrekey.value
-            ]
+                "key": device.lastPrekey.value,
+            ],
         ]
 
         return MockPushEvent(with: payload, uuid: UUID(), isTransient: false, isSilent: false)

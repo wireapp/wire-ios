@@ -25,7 +25,7 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
 
     public let managedObjectContext: NSManagedObjectContext
     public var configuration: ZMStrategyConfigurationOption = [
-        .allowsRequestsWhileOnline
+        .allowsRequestsWhileOnline,
     ]
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {

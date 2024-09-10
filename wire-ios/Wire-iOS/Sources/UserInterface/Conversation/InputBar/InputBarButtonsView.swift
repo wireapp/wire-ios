@@ -145,7 +145,7 @@ final class InputBarButtonsView: UIView {
             buttonOuterContainer.topAnchor.constraint(equalTo: topAnchor),
 
             heightAnchor.constraint(equalTo: buttonOuterContainer.heightAnchor, constant: UIScreen.safeArea.bottom),
-            widthConstraint
+            widthConstraint,
         ])
     }
 
@@ -361,13 +361,13 @@ final class InputBarButtonsView: UIView {
         if button == expandRowButton {
             constraints.append(contentsOf: [
                 button.topAnchor.constraint(equalTo: topAnchor, constant: buttonPadding),
-                button.heightAnchor.constraint(equalToConstant: buttonHeight)
+                button.heightAnchor.constraint(equalToConstant: buttonHeight),
             ])
         } else {
             buttonInnerContainer.translatesAutoresizingMaskIntoConstraints = false
             constraints.append(contentsOf: [
                 button.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor, constant: inset + buttonPadding),
-                button.heightAnchor.constraint(equalToConstant: buttonHeight)
+                button.heightAnchor.constraint(equalToConstant: buttonHeight),
             ])
         }
 

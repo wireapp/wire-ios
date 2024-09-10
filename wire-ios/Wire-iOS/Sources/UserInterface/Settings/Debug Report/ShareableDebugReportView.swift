@@ -93,7 +93,7 @@ class ShareableDebugReportView: UIView {
             labelsView,
             topLabel,
             bottomLabel,
-            documentIconView
+            documentIconView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -116,7 +116,7 @@ class ShareableDebugReportView: UIView {
             documentIconView.widthAnchor.constraint(equalToConstant: LayoutConstants.iconSize),
             documentIconView.heightAnchor.constraint(equalToConstant: LayoutConstants.iconSize),
             documentIconView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            documentIconView.leftAnchor.constraint(equalTo: leftAnchor, constant: LayoutConstants.padding)
+            documentIconView.leftAnchor.constraint(equalTo: leftAnchor, constant: LayoutConstants.padding),
         ])
     }
 

@@ -81,7 +81,7 @@ final class StrategyFactory {
 
             // Assets V3
             createAssetClientMessageRequestStrategy(),
-            createAssetV3UploadRequestStrategy()
+            createAssetV3UploadRequestStrategy(),
         ]
     }
 

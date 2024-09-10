@@ -49,7 +49,7 @@ func TrimStringCatalogs(paths: some Collection<String>) throws {
         "tr",
         "uk",
         "zh-Hans",
-        "zh-Hant"
+        "zh-Hant",
     ]
 
     for path in paths {

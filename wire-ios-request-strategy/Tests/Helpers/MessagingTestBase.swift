@@ -136,7 +136,7 @@ extension MessagingTestBase {
         let innerPayload = await syncMOC.perform { [self] in
             ["recipient": selfClient.remoteIdentifier!,
              "sender": otherClient.remoteIdentifier!,
-             "text": cyphertext.base64String()
+             "text": cyphertext.base64String(),
             ]
         }
 
@@ -164,7 +164,7 @@ extension MessagingTestBase {
                 "sender": otherClient.remoteIdentifier!,
                 "id": UUID.create().transportString(),
                 "key": cyphertext.base64String(),
-                "info": cyphertext.base64String()
+                "info": cyphertext.base64String(),
             ]
         }
         return try await decryptedUpdateEventFromOtherClient(
@@ -189,7 +189,7 @@ extension MessagingTestBase {
         let innerPayload = [
             "recipient": selfClient.remoteIdentifier!,
             "sender": otherClient.remoteIdentifier!,
-            "text": cyphertext.base64String()
+            "text": cyphertext.base64String(),
         ]
 
         return encryptedUpdateEventFromOtherClient(
@@ -252,11 +252,11 @@ extension MessagingTestBase {
             "from": otherUser.remoteIdentifier!.transportString(),
             "data": innerPayload,
             "conversation": (conversation ?? groupConversation).remoteIdentifier!.transportString(),
-            "time": Date().transportString()
+            "time": Date().transportString(),
         ] as [String: Any]
         let wrapper = [
             "id": UUID.create().transportString(),
-            "payload": [payload]
+            "payload": [payload],
         ] as [String: Any]
 
         return ZMUpdateEvent.eventsArray(from: wrapper as NSDictionary, source: source)!.first!
@@ -556,7 +556,7 @@ extension MessagingTestBase {
          "data": data,
          "from": from.remoteIdentifier.transportString(),
          "time": time?.transportString() ?? "",
-         "type": type
+         "type": type,
         ]
     }
 
@@ -569,12 +569,12 @@ extension MessagingTestBase {
         ["conversation": conversationID.transportString(),
          "qualified_conversation": [
              "id": conversationID.transportString(),
-             "domain": domain
+             "domain": domain,
          ],
          "data": data,
          "from": fromID.transportString(),
          "time": time?.transportString() ?? "",
-         "type": type
+         "type": type,
         ]
     }
 }

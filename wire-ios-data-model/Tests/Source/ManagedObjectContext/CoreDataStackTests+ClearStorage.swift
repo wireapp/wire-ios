@@ -163,7 +163,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             applicationContainer,
             applicationContainer.appendingPathComponent(bundleID),
             applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID),
-            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID).appendingPathComponent("store")
+            applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID).appendingPathComponent("store"),
         ]
     }
 }

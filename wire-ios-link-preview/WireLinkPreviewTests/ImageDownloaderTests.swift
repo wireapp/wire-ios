@@ -71,7 +71,7 @@ class ImageDownloaderTests: XCTestCase {
             URL(string: "www.example.com/1")!,
             URL(string: "www.example.com/2")!,
             URL(string: "www.example.com/3")!,
-            URL(string: "www.example.com/4")!
+            URL(string: "www.example.com/4")!,
         ]
 
         let mockTask = MockURLSessionDataTask()

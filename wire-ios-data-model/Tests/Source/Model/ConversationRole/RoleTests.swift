@@ -30,9 +30,9 @@ final class RoleTests: ZMBaseManagedObjectTest {
             "modify_conversation_access",
             "modify_other_conversation_member",
             "leave_conversation",
-            "delete_conversation"
+            "delete_conversation",
         ],
-        "conversation_role": "wire_admin"
+        "conversation_role": "wire_admin",
     ]
 
     var mockConversation: ZMConversation!
@@ -54,7 +54,7 @@ final class RoleTests: ZMBaseManagedObjectTest {
             Role.teamKey,
             Role.conversationKey,
             Role.actionsKey,
-            Role.participantRolesKey
+            Role.participantRolesKey,
         ]
 
         let role = Role.insertNewObject(in: uiMOC)

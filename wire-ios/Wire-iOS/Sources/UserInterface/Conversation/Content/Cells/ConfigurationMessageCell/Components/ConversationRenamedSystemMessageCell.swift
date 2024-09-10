@@ -46,7 +46,7 @@ final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Con
             nameLabel.topAnchor.constraint(equalTo: bottomContentView.topAnchor),
             nameLabel.bottomAnchor.constraint(equalTo: bottomContentView.bottomAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: bottomContentView.leadingAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: bottomContentView.trailingAnchor)
+            nameLabel.trailingAnchor.constraint(equalTo: bottomContentView.trailingAnchor),
         ])
     }
 

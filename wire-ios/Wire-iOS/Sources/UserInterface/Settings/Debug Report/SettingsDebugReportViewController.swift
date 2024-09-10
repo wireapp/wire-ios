@@ -113,7 +113,7 @@ class SettingsDebugReportViewController: UIViewController {
             sendReportButton.bottomAnchor.constraint(equalTo: shareReportButton.topAnchor, constant: -LayoutConstants.spacing),
             sendReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
             sendReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
-            sendReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight)
+            sendReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight),
         ])
     }
 

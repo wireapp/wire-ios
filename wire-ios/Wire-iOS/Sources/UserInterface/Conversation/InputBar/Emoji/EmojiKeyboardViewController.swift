@@ -86,7 +86,7 @@ final class EmojiKeyboardViewController: UIViewController {
             sectionViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.safeArea.bottom),
             sectionViewControllerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sectionViewControllerViewTrailing,
-            sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400)
+            sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
         ])
     }
 
@@ -210,7 +210,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
             titleLabel.leftAnchor.constraint(equalTo: leftAnchor),
-            titleLabel.rightAnchor.constraint(equalTo: rightAnchor)
+            titleLabel.rightAnchor.constraint(equalTo: rightAnchor),
         ])
     }
 }

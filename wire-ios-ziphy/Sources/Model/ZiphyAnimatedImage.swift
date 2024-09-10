@@ -33,7 +33,7 @@ public struct ZiphyAnimatedImage: Codable {
             "url = \(url.absoluteString)",
             "width = \(width)",
             "height = \(height)",
-            "fileSize = \(fileSize)"
+            "fileSize = \(fileSize)",
         ]
 
         return "<< " + values.joined(separator: ", ") + ">>"

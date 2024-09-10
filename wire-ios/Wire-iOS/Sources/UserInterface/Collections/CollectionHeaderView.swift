@@ -118,7 +118,7 @@ final class CollectionHeaderView: UICollectionReusableView {
             actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
             actionButton.topAnchor.constraint(equalTo: topAnchor),
             actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: bottomAnchor)
+            actionButton.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

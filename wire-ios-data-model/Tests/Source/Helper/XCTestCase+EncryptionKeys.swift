@@ -25,7 +25,7 @@ extension XCTestCase {
         var error: Unmanaged<CFError>?
         let keyattributes = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecAttrKeySizeInBits as String: 256
+            kSecAttrKeySizeInBits as String: 256,
         ] as CFDictionary
         privateKeySec = SecKeyCreateRandomKey(keyattributes, &error)
         if let privateKeySec {

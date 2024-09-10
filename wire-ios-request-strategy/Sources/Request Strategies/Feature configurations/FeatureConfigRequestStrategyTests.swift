@@ -66,13 +66,13 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
                 "status": "enabled",
                 "config": [
                     "enforceAppLock": true,
-                    "inactivityTimeoutSecs": 60
-                ]
+                    "inactivityTimeoutSecs": 60,
+                ],
             ]
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": data,
-                "name": "appLock"
+                "name": "appLock",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -100,12 +100,12 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.featureRepository.storeFileSharing(.init(status: .disabled))
 
             let data: NSDictionary = [
-                "status": "enabled"
+                "status": "enabled",
             ]
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": data,
-                "name": "fileSharing"
+                "name": "fileSharing",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -138,14 +138,14 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             let data: NSDictionary = [
                 "status": "enabled",
                 "config": [
-                    "enforcedTimeoutSeconds": 60
-                ]
+                    "enforcedTimeoutSeconds": 60,
+                ],
             ]
 
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": data,
-                "name": "selfDeletingMessages"
+                "name": "selfDeletingMessages",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -172,13 +172,13 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.featureRepository.storeConferenceCalling(.init(status: .disabled))
 
             let dict: NSDictionary = [
-                "status": "enabled"
+                "status": "enabled",
             ]
 
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": dict,
-                "name": "conferenceCalling"
+                "name": "conferenceCalling",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -203,13 +203,13 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.featureRepository.storeConversationGuestLinks(.init(status: .disabled))
 
             let dict: NSDictionary = [
-                "status": "enabled"
+                "status": "enabled",
             ]
 
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": dict,
-                "name": "conversationGuestLinks"
+                "name": "conversationGuestLinks",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -234,13 +234,13 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.featureRepository.storeDigitalSignature(.init(status: .disabled))
 
             let dict: NSDictionary = [
-                "status": "enabled"
+                "status": "enabled",
             ]
 
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": dict,
-                "name": "digitalSignature"
+                "name": "digitalSignature",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -268,14 +268,14 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             let data: NSDictionary = [
                 "status": "enabled",
                 "config": [
-                    "domains": ["a", "b", "c"]
-                ]
+                    "domains": ["a", "b", "c"],
+                ],
             ]
 
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": data,
-                "name": "classifiedDomains"
+                "name": "classifiedDomains",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -373,18 +373,18 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
             let config: NSDictionary = [
                 "startTime": startTime,
-                "finaliseRegardlessAfter": finaliseTime
+                "finaliseRegardlessAfter": finaliseTime,
             ]
 
             let data: NSDictionary = [
                 "status": "enabled",
-                "config": config
+                "config": config,
             ]
 
             let payload: NSDictionary = [
                 "type": "feature-config.update",
                 "data": data,
-                "name": "mlsMigration"
+                "name": "mlsMigration",
             ]
 
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!

@@ -229,7 +229,7 @@ final class ConversationInputBarViewController: UIViewController,
                 pingButton,
                 uploadFileButton,
                 locationButton,
-                videoButton
+                videoButton,
             ]
         case .securityFlag:
             buttonsArray = [
@@ -239,13 +239,13 @@ final class ConversationInputBarViewController: UIViewController,
                 audioButton,
                 pingButton,
                 locationButton,
-                videoButton
+                videoButton,
             ]
         case .APIFlag:
             buttonsArray = [
                 mentionButton,
                 pingButton,
-                locationButton
+                locationButton,
             ]
         }
         if !conversation.isSelfDeletingMessageSendingDisabled {
@@ -1077,7 +1077,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
             typingIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             typingIndicatorView.centerYAnchor.constraint(equalTo: view.topAnchor),
             typingIndicatorView.leftAnchor.constraint(greaterThanOrEqualTo: view.leftAnchor, constant: 48),
-            typingIndicatorView.rightAnchor.constraint(lessThanOrEqualTo: view.rightAnchor, constant: 48)
+            typingIndicatorView.rightAnchor.constraint(lessThanOrEqualTo: view.rightAnchor, constant: 48),
         ])
     }
 }

@@ -72,7 +72,7 @@ final class TeamAccountView: BaseAccountView {
             imageView.leadingAnchor.constraint(equalTo: imageViewContainer.leadingAnchor, constant: insets.left),
             imageView.topAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: insets.top),
             imageViewContainer.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: insets.right),
-            imageViewContainer.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: insets.bottom)
+            imageViewContainer.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: insets.bottom),
         ])
     }
 
@@ -99,7 +99,7 @@ final class TeamAccountView: BaseAccountView {
             dotView.centerXAnchor.constraint(equalTo: imageViewContainer.trailingAnchor, constant: -dotInset),
             dotView.centerYAnchor.constraint(equalTo: imageViewContainer.topAnchor, constant: dotInset),
             dotView.widthAnchor.constraint(equalTo: dotView.heightAnchor),
-            dotView.widthAnchor.constraint(equalToConstant: dotSize)
+            dotView.widthAnchor.constraint(equalToConstant: dotSize),
         ]
     }
 }

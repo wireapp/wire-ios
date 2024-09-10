@@ -48,7 +48,7 @@ enum DebugActions {
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
-                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
+                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>",
             ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
@@ -79,7 +79,7 @@ enum DebugActions {
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
-                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
+                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>",
             ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)

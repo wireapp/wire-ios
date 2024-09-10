@@ -77,7 +77,7 @@ final class PasscodeTextField: AccessoryTextField {
 
         NSLayoutConstraint.activate([
             revealButton.widthAnchor.constraint(equalToConstant: revealButtonWidth),
-            revealButton.heightAnchor.constraint(equalToConstant: revealButtonWidth)
+            revealButton.heightAnchor.constraint(equalToConstant: revealButtonWidth),
         ])
     }
 

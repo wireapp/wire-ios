@@ -200,7 +200,7 @@ class CameraKeyboardViewController: UIViewController {
         [
             collectionView,
             goBackButton,
-            cameraRollButton
+            cameraRollButton,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([

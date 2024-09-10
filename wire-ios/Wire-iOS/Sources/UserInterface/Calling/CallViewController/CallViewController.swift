@@ -255,7 +255,7 @@ final class CallViewController: UIViewController {
             callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
             callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
             callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
+            callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
         ])
     }
 
@@ -265,7 +265,7 @@ final class CallViewController: UIViewController {
             voiceChannel.addParticipantObserver(self),
             voiceChannel.addConstantBitRateObserver(self),
             voiceChannel.addMuteStateObserver(self),
-            voiceChannel.addActiveSpeakersObserver(self)
+            voiceChannel.addActiveSpeakersObserver(self),
         ]
 
         guard

@@ -78,7 +78,7 @@ final class CollectionAudioCell: CollectionCell {
             containerView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 4),
             containerView.leadingAnchor.constraint(equalTo: secureContentsView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: secureContentsView.trailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: secureContentsView.bottomAnchor)
+            containerView.bottomAnchor.constraint(equalTo: secureContentsView.bottomAnchor),
         ])
     }
 
@@ -95,7 +95,7 @@ final class CollectionAudioCell: CollectionCell {
             view.topAnchor.constraint(equalTo: containerView.topAnchor),
             view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 4),
             view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -4),
-            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4)
+            view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -4),
         ])
 
         secureContentsView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor

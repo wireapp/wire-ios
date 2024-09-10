@@ -45,7 +45,7 @@ class PermissionsTests: BaseZMClientMessageTests {
         .setBilling,
         .setTeamData,
         .deleteTeam,
-        .setMemberPermissions
+        .setMemberPermissions,
     ]
 
     func testThatDefaultValueDoesNotHaveAnyPermissions() {
@@ -76,7 +76,7 @@ class PermissionsTests: BaseZMClientMessageTests {
         // given
         let permissions: Permissions = [
             .createConversation,
-            .getTeamConversations
+            .getTeamConversations,
         ]
 
         // then
@@ -95,7 +95,7 @@ class PermissionsTests: BaseZMClientMessageTests {
             .addTeamMember,
             .removeTeamMember,
             .setTeamData,
-            .setMemberPermissions
+            .setMemberPermissions,
         ]
 
         // then

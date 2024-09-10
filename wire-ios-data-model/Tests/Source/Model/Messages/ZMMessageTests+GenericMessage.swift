@@ -38,7 +38,7 @@ final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 
             let data: NSDictionary = try [
                 "content": self.name,
-                "nonce": XCTUnwrap(msg.nonce?.transportString())
+                "nonce": XCTUnwrap(msg.nonce?.transportString()),
             ]
             let payload = self.payloadForMessage(in: conversation, type: EventConversationAdd, data: data, time: Date(timeIntervalSinceReferenceDate: 450_000_000))
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -69,7 +69,7 @@ extension ZMMessageTests_GenericMessage {
         let contentData = try XCTUnwrap(knockMessage.serializedData())
         let data: NSDictionary = [
             "sender": senderClientID,
-            "text": contentData.base64String()
+            "text": contentData.base64String(),
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(timeIntervalSinceReferenceDate: 450_000_000))
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)

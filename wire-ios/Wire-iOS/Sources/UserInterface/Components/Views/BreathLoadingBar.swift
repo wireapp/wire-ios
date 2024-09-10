@@ -103,7 +103,7 @@ final class BreathLoadingBar: UIView {
     private func createConstraints() {
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            heightConstraint
+            heightConstraint,
         ])
     }
 

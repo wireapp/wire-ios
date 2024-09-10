@@ -80,7 +80,7 @@ final class TeamImageView: UIImageView {
 
         NSLayoutConstraint.activate([
             initialLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+            initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
         self.updateImage()

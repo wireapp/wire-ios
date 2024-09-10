@@ -77,7 +77,7 @@ final class RemoveClientTableViewCell: UITableViewCell {
         [
             deviceNameLabel,
             proteusIdLabel,
-            activationDateLabel
+            activationDateLabel,
         ].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(view)
@@ -95,7 +95,7 @@ final class RemoveClientTableViewCell: UITableViewCell {
             activationDateLabel.topAnchor.constraint(equalTo: proteusIdLabel.bottomAnchor, constant: 10),
             activationDateLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             activationDateLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
-            activationDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            activationDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
         ])
     }
 }

@@ -44,7 +44,7 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
             .clientDeletedRemotely,
             .accessTokenExpired,
             .needsAuthenticationAfterReboot,
-            .needsPasswordToRegisterClient
+            .needsPasswordToRegisterClient,
         ]
 
         guard supportedErrors.contains(error.userSessionErrorCode) else {

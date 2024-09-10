@@ -57,7 +57,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
             "app": pushToken.appIdentifier,
             "token": pushToken.deviceTokenString,
             "transport": pushToken.transportType,
-            "client": "clientID"
+            "client": "clientID",
         ]
 
         XCTAssertEqual(actualPayload, expectedPayload)

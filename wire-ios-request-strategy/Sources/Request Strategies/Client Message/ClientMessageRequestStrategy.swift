@@ -77,7 +77,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         [
             insertedObjectSync,
             messageExpirationTimer,
-            linkAttachmentsPreprocessor
+            linkAttachmentsPreprocessor,
         ]
     }
 }

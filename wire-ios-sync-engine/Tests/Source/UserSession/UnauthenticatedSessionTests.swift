@@ -245,7 +245,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
             "Access-Control-Allow-Origin": "file://",
             "Connection": "keep-alive",
             "Content-Length": "214",
-            "Set-Cookie": cookie
+            "Set-Cookie": cookie,
         ]
 
         return try ZMTransportResponse(headers: headers, payload: [userIdKey: userId.transportString()])

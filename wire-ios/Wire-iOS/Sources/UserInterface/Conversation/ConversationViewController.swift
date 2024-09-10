@@ -39,7 +39,7 @@ final class ConversationViewController: UIViewController {
                          discoverabilityTitle: keyboardShortcut.searchInConversation),
             UIKeyCommand(action: #selector(titleViewTapped),
                          input: "i", modifierFlags: [.command],
-                         discoverabilityTitle: keyboardShortcut.conversationDetail)
+                         discoverabilityTitle: keyboardShortcut.conversationDetail),
         ]
     }
 

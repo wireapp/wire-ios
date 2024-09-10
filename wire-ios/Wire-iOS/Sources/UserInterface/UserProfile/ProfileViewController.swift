@@ -275,7 +275,7 @@ final class ProfileViewController: UIViewController {
             incomingRequestFooterBottomConstraint,
 
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
         self.incomingRequestFooterBottomConstraint = incomingRequestFooterBottomConstraint
     }

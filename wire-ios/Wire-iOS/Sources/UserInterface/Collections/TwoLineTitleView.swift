@@ -53,7 +53,7 @@ final class TwoLineTitleView: UIView {
             subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             subtitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            subtitleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 

@@ -37,7 +37,7 @@ extension ConversationViewController {
                 NSLayoutConstraint.activate([
                     outgoingConnectionViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                     outgoingConnectionViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                    outgoingConnectionViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                    outgoingConnectionViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 ])
             }
         } else {
@@ -59,14 +59,14 @@ extension ConversationViewController {
             conversationBarController.view.topAnchor.constraint(equalTo: view.topAnchor),
             contentViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            contentViewController.view.topAnchor.constraint(equalTo: view.topAnchor)
+            contentViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
         ])
 
         contentViewController.view.bottomAnchor.constraint(equalTo: inputBarController.view.topAnchor).isActive = true
         NSLayoutConstraint.activate([
             inputBarController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             inputBarController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            inputBarController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            inputBarController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         inputBarBottomMargin = inputBarController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         inputBarBottomMargin?.isActive = true

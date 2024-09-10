@@ -131,7 +131,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             .failure(status: 200, error: .malformedResponse),
             .failure(status: 400, error: .invalidSelfClientId),
             .failure(status: 404, error: .userOrDomainNotFound),
-            .failure(status: 999, error: .unknown(status: 999))
+            .failure(status: 999, error: .unknown(status: 999)),
         ])
     }
 }

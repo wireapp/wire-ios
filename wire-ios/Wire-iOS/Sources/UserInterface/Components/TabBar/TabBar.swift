@@ -144,7 +144,7 @@ final class TabBar: UIView {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 48),
 
-            bottomAnchor.constraint(equalTo: stackView.bottomAnchor)
+            bottomAnchor.constraint(equalTo: stackView.bottomAnchor),
         ])
     }
 

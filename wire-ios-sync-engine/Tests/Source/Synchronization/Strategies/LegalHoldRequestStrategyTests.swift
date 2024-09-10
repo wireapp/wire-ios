@@ -64,8 +64,8 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             "client": ["id": request.clientIdentifier],
             "last_prekey": [
                 "id": request.lastPrekey.id,
-                "key": request.lastPrekey.key.base64EncodedString()
-            ]
+                "key": request.lastPrekey.key.base64EncodedString(),
+            ],
         ]
 
         if let target = request.target {
@@ -85,8 +85,8 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             "client": ["id": request.clientIdentifier],
             "last_prekey": [
                 "id": request.lastPrekey.id,
-                "key": request.lastPrekey.key.base64EncodedString()
-            ]
+                "key": request.lastPrekey.key.base64EncodedString(),
+            ],
         ]
 
         if let target = request.target {
@@ -190,7 +190,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
 
             let payload: [AnyHashable: Any] = [
-                "status": "disabled"
+                "status": "disabled",
             ]
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
             request.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
@@ -247,7 +247,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         // WHEN
         let payload: [String: Any] = [
-            "type": "user.legalhold-disable"
+            "type": "user.legalhold-disable",
         ]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
         syncMOC.performAndWait {

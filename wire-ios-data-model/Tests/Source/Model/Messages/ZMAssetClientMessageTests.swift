@@ -975,7 +975,7 @@ extension ZMAssetClientMessageTests {
         let genericMessageData = try? genericMessage.serializedData()
         let dataPayload = [
             "info": genericMessageData!.base64String(),
-            "id": thumbnailId
+            "id": thumbnailId,
         ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
@@ -1012,7 +1012,7 @@ extension ZMAssetClientMessageTests {
         let genericMessageData = try? genericMessage.serializedData()
         let dataPayload = [
             "info": genericMessageData!.base64String(),
-            "id": thumbnailId
+            "id": thumbnailId,
         ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
@@ -1052,7 +1052,7 @@ extension ZMAssetClientMessageTests {
             let genericMessageData = try? genericMessage.serializedData()
             let dataPayload = [
                 "info": genericMessageData!.base64String(),
-                "id": thumbnailId.transportString()
+                "id": thumbnailId.transportString(),
             ]
 
             let payload1 = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: firstDate)

@@ -164,7 +164,7 @@ public class CompanyLoginRequester {
 
         components.queryItems = [
             URLQueryItem(name: URLQueryItem.Key.successRedirect, value: makeSuccessCallbackString(using: validationToken)),
-            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: makeFailureCallbackString(using: validationToken))
+            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: makeFailureCallbackString(using: validationToken)),
         ]
 
         guard let url = components.url else {
@@ -194,7 +194,7 @@ public class CompanyLoginRequester {
         components.queryItems = [
             URLQueryItem(name: URLQueryItem.Key.cookie, value: URLQueryItem.Template.cookie),
             URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString())
+            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString()),
         ]
 
         return components.url!.absoluteString
@@ -208,7 +208,7 @@ public class CompanyLoginRequester {
 
         components.queryItems = [
             URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString())
+            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString()),
         ]
 
         return components.url!.absoluteString

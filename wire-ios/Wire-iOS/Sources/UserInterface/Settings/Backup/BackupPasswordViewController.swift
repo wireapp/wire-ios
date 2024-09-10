@@ -103,7 +103,7 @@ final class BackupPasswordViewController: UIViewController {
             subtitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             passwordRulesLabel.topAnchor.constraint(equalTo: passwordView.bottomAnchor, constant: 16),
             passwordRulesLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            passwordRulesLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            passwordRulesLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
         ])
     }
 

@@ -37,7 +37,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
 
         defaultRichProfile = [
             UserRichProfileField(type: "Title", value: "Chief Design Officer"),
-            UserRichProfileField(type: "Entity", value: "ACME/OBS/EQUANT/CSO/IBO/OEC/SERVICE OP/CS MGT/CSM EEMEA")
+            UserRichProfileField(type: "Entity", value: "ACME/OBS/EQUANT/CSO/IBO/OEC/SERVICE OP/CS MGT/CSM EEMEA"),
         ]
 
         userSession = UserSessionMock()
@@ -72,7 +72,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             richProfileItemWithEmailAndDefaultData(for: otherUser),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -91,7 +91,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)]),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -110,7 +110,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -130,7 +130,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             richProfileItemWithEmailAndDefaultData(for: otherUser),
-            .readReceiptsStatus(enabled: false)
+            .readReceiptsStatus(enabled: false),
         ])
     }
 
@@ -150,7 +150,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)]),
-            .readReceiptsStatus(enabled: false)
+            .readReceiptsStatus(enabled: false),
         ])
     }
 
@@ -170,7 +170,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: false)
+            .readReceiptsStatus(enabled: false),
         ])
     }
 
@@ -187,7 +187,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: selfUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: selfUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile(defaultRichProfile),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -203,7 +203,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: selfUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: selfUser, viewer: selfUser, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: false)
+            .readReceiptsStatus(enabled: false),
         ])
     }
 
@@ -222,7 +222,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: guest, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: guest, viewer: selfUser, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -244,7 +244,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             richProfileItemWithEmailAndDefaultData(for: otherUser),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -265,7 +265,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile(defaultRichProfile),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -286,7 +286,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             richProfileItemWithEmailAndDefaultData(for: otherUser),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -308,7 +308,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
             .richProfile(defaultRichProfile),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -328,7 +328,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -352,7 +352,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)]),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -374,7 +374,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -397,7 +397,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)]),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -420,7 +420,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -443,7 +443,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
             .richProfile([richProfileFieldWithEmail(for: otherUser)]),
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -466,7 +466,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: guest, conversation: conversation, context: .oneToOneConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: conversation, expectedContents: [
-            .readReceiptsStatus(enabled: true)
+            .readReceiptsStatus(enabled: true),
         ])
     }
 
@@ -507,7 +507,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            .richProfile([richProfileFieldWithEmail(for: otherUser)])
+            .richProfile([richProfileFieldWithEmail(for: otherUser)]),
         ])
     }
 
@@ -543,7 +543,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            richProfileItemWithEmailAndDefaultData(for: otherUser)
+            richProfileItemWithEmailAndDefaultData(for: otherUser),
         ])
     }
 
@@ -562,7 +562,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            .richProfile([richProfileFieldWithEmail(for: otherUser)])
+            .richProfile([richProfileFieldWithEmail(for: otherUser)]),
         ])
     }
 
@@ -598,7 +598,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: selfUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: selfUser, viewer: selfUser, conversation: group, expectedContents: [
-            .richProfile(defaultRichProfile)
+            .richProfile(defaultRichProfile),
         ])
     }
 
@@ -662,7 +662,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            richProfileItemWithEmailAndDefaultData(for: otherUser)
+            richProfileItemWithEmailAndDefaultData(for: otherUser),
         ])
     }
 
@@ -681,7 +681,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            .richProfile(defaultRichProfile)
+            .richProfile(defaultRichProfile),
         ])
     }
 
@@ -700,7 +700,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            richProfileItemWithEmailAndDefaultData(for: otherUser)
+            richProfileItemWithEmailAndDefaultData(for: otherUser),
         ])
     }
 
@@ -720,7 +720,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            .richProfile(defaultRichProfile)
+            .richProfile(defaultRichProfile),
         ])
     }
 
@@ -760,7 +760,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: otherUser, viewer: guest, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: group, expectedContents: [
-            .richProfile([richProfileFieldWithEmail(for: otherUser)])
+            .richProfile([richProfileFieldWithEmail(for: otherUser)]),
         ])
     }
 
@@ -906,7 +906,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: guest, viewer: otherUser, conversation: group, context: .groupConversation)
         verifyContents(user: guest, viewer: otherUser, conversation: group, expectedContents: [
-            richProfileItemWithEmailAndDefaultData(for: otherUser)
+            richProfileItemWithEmailAndDefaultData(for: otherUser),
         ])
     }
 
@@ -929,7 +929,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         // THEN
         verifyProfile(user: guest, viewer: otherUser, conversation: group, context: .groupConversation)
         verifyContents(user: guest, viewer: otherUser, conversation: group, expectedContents: [
-            .richProfile(defaultRichProfile)
+            .richProfile(defaultRichProfile),
         ])
     }
 

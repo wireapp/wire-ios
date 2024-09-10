@@ -147,7 +147,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
             // imageView
             imageView.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor)
+            imageView.centerYAnchor.constraint(equalTo: imageContainer.centerYAnchor),
         ])
     }
 

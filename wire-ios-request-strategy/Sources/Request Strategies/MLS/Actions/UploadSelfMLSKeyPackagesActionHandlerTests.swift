@@ -75,7 +75,7 @@ class UploadSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<UploadSe
             .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
             .failure(status: 403, error: .identityMismatch, label: "mls-identity-mismatch"),
             .failure(status: 404, error: .clientNotFound),
-            .failure(status: 999, error: .unknown(status: 999))
+            .failure(status: 999, error: .unknown(status: 999)),
         ])
     }
 }

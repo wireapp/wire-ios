@@ -31,7 +31,7 @@ class ConversationMessageTimerTests: IntegrationTest {
             "from": user1.identifier,
             "conversation": conversation.remoteIdentifier!.transportString(),
             "time": Date().transportString(),
-            "type": "conversation.message-timer-update"
+            "type": "conversation.message-timer-update",
         ]
 
         switch timeout {

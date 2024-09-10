@@ -81,7 +81,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
                     Payload.ConversationMember(
                         id: user2ID.uuid,
                         qualifiedID: user2ID
-                    )
+                    ),
                 ]
             ),
             lastEvent: nil,
@@ -351,7 +351,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             .failure(status: 403, error: .notConnected, label: "not-connected"),
             .failure(status: 403, error: .mlsMissingSenderClient, label: "mls-missing-sender-client"),
             .failure(status: 403, error: .accessDenied, label: "access-denied"),
-            .failure(status: 999, error: .unknown(code: 999, label: "foo", message: "?"), label: "foo")
+            .failure(status: 999, error: .unknown(code: 999, label: "foo", message: "?"), label: "foo"),
         ])
     }
 

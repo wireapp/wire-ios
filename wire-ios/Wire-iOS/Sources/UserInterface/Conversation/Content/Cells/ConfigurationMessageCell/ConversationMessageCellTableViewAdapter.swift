@@ -118,7 +118,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             leading,
             trailing,
             top,
-            bottom
+            bottom,
         ])
 
         longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))

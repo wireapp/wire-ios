@@ -237,7 +237,7 @@ extension FeatureConfigsAPITests {
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
             )
-            )
+            ),
         ]
 
         static let featureConfigsV1: [FeatureConfig] = [
@@ -278,12 +278,12 @@ extension FeatureConfigsAPITests {
                 allowedCipherSuites: [
                     .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                     .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519,
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
             )
-            )
+            ),
         ]
 
         static let featureConfigsV4: [FeatureConfig] = [
@@ -318,7 +318,7 @@ extension FeatureConfigsAPITests {
                 allowedCipherSuites: [
                     .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                     .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519,
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
@@ -337,7 +337,7 @@ extension FeatureConfigsAPITests {
                 crlProxy: nil,
                 useProxyOnMobile: false
             )
-            )
+            ),
         ]
 
         static let featureConfigsV6: [FeatureConfig] = [
@@ -372,7 +372,7 @@ extension FeatureConfigsAPITests {
                 allowedCipherSuites: [
                     .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                     .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
-                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
+                    .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519,
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
@@ -391,7 +391,7 @@ extension FeatureConfigsAPITests {
                 crlProxy: "https://example.com",
                 useProxyOnMobile: true
             )
-            )
+            ),
         ]
     }
 }

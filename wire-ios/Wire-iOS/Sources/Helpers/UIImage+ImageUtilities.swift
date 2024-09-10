@@ -79,13 +79,13 @@ extension UIImage {
             kCGImageSourceCreateThumbnailWithTransform: kCFBooleanTrue,
             kCGImageSourceCreateThumbnailFromImageIfAbsent: kCFBooleanTrue,
             kCGImageSourceCreateThumbnailFromImageAlways: kCFBooleanTrue,
-            kCGImageSourceThumbnailMaxPixelSize: NSNumber(value: Float(maxSize))
+            kCGImageSourceThumbnailMaxPixelSize: NSNumber(value: Float(maxSize)),
         ] as CFDictionary
     }
 
     private class func size(for source: CGImageSource) -> CGSize {
         let options = [
-            kCGImageSourceShouldCache: kCFBooleanTrue
+            kCGImageSourceShouldCache: kCFBooleanTrue,
         ] as CFDictionary
 
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, options) as? [CFString: Any] else {

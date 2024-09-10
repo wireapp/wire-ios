@@ -159,7 +159,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
             avatar.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor),
-            dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor)
+            dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
         ])
     }
 
@@ -169,7 +169,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             string: object.user.name ?? L10n.Localizable.Profile.Details.Title.unavailable,
             attributes: [
                 .foregroundColor: textColor,
-                .font: UIFont.mediumSemiboldFont
+                .font: UIFont.mediumSemiboldFont,
             ]
         )
 

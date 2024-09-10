@@ -133,7 +133,7 @@ final class IncomingConnectionView: UIView {
             securityLevelView,
             federatedIndicator,
             userImageView,
-            verticalStackView
+            verticalStackView,
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
@@ -172,7 +172,7 @@ final class IncomingConnectionView: UIView {
             incomingConnectionFooter.topAnchor.constraint(greaterThanOrEqualTo: warningView.bottomAnchor),
             incomingConnectionFooter.leftAnchor.constraint(equalTo: leftAnchor),
             incomingConnectionFooter.bottomAnchor.constraint(equalTo: bottomAnchor),
-            incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor)
+            incomingConnectionFooter.rightAnchor.constraint(equalTo: rightAnchor),
         ])
     }
 

@@ -53,10 +53,10 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
                 "user": UUID().transportString(),
                 "permissions": [
                     "copy": 1587,
-                    "self": 1587
-                ]
-            ]
-        ]
+                    "self": 1587,
+                ],
+            ],
+        ],
     ]
 
     let sampleResponseForLargeTeam: [String: Any] = [
@@ -66,10 +66,10 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
                 "user": UUID().transportString(),
                 "permissions": [
                     "copy": 1587,
-                    "self": 1587
-                ]
-            ]
-        ]
+                    "self": 1587,
+                ],
+            ],
+        ],
     ]
 
     func createTeam() -> Team {

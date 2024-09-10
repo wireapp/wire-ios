@@ -498,7 +498,7 @@ extension SearchTask {
     static func fetchTeamMembershipRequest(teamID: UUID, teamMemberIDs: [UUID], apiVersion: APIVersion) -> ZMTransportRequest {
         let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
         let payload = [
-            "user_ids": teamMemberIDs.map { $0.transportString() }
+            "user_ids": teamMemberIDs.map { $0.transportString() },
         ]
 
         let request = ZMTransportRequest(

@@ -35,7 +35,7 @@ extension CharacterSet {
         diacriticsCombiningCodesExtended,
         diacriticsCombiningCodesSupplementary,
         diacriticsCombiningCodesForSymbols,
-        diacriticsCombiningCodesHalfMarks
+        diacriticsCombiningCodesHalfMarks,
     ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
         current.union(new)
     }

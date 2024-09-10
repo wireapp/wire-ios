@@ -29,7 +29,7 @@ class RegisterPushTokenActionHandler: ActionHandler<RegisterPushTokenAction> {
             "app": action.appID,
             "token": action.token,
             "transport": action.tokenType,
-            "client": action.clientID
+            "client": action.clientID,
         ]
 
         return ZMTransportRequest(

@@ -162,7 +162,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                 let options: [NSString: Any] = [
                     kCGImageSourceThumbnailMaxPixelSize: longestDimension,
                     kCGImageSourceCreateThumbnailFromImageAlways: true,
-                    kCGImageSourceCreateThumbnailWithTransform: true
+                    kCGImageSourceCreateThumbnailWithTransform: true,
                 ]
 
                 if let scaledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) {

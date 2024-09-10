@@ -109,7 +109,7 @@ final class ArticleView: UIView {
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: topAnchor)
+            imageView.topAnchor.constraint(equalTo: topAnchor),
         ])
         imageHeightConstraint = imageView.heightAnchor.constraint(equalToConstant: imageHeight)
         imageHeightConstraint.priority = UILayoutPriority(rawValue: 999)
@@ -126,7 +126,7 @@ final class ArticleView: UIView {
             obfuscationView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
             imageHeightConstraint,
             messageLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 12),
-            authorLabel.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 8)
+            authorLabel.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 8),
         ])
     }
 

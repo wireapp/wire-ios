@@ -365,7 +365,7 @@ extension UserClientRequestStrategyTests {
                 ZMEmailCredentialKey: emailAddress,
                 ZMUserHasPasswordKey: true,
                 ZMUserUsesCompanyLoginCredentialKey: false,
-                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, hasPassword: true, usesCompanyLogin: false)
+                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, hasPassword: true, usesCompanyLogin: false),
             ])
 
             XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
@@ -569,14 +569,14 @@ extension UserClientRequestStrategyTests {
                 "id": UUID.create().transportString(),
                 "type": "permanent",
                 "label": "client",
-                "time": Date().transportString()
+                "time": Date().transportString(),
             ],
             [
                 "id": UUID.create().transportString(),
                 "type": "permanent",
                 "label": "client",
-                "time": Date().transportString()
-            ]
+                "time": Date().transportString(),
+            ],
         ]
 
         return payload as ZMTransportData
@@ -642,7 +642,7 @@ extension UserClientRequestStrategyTests {
             self.clientUpdateStatus.mockPhase = .deletingClients
             let clients = [
                 UserClient.insertNewObject(in: self.syncMOC),
-                UserClient.insertNewObject(in: self.syncMOC)
+                UserClient.insertNewObject(in: self.syncMOC),
             ]
             for client in clients {
                 client.remoteIdentifier = "\(client.objectID)"
@@ -661,7 +661,7 @@ extension UserClientRequestStrategyTests {
                 XCTAssertEqual($0.path, "/clients/\(clients[0].remoteIdentifier!)")
                 XCTAssertEqual($0.payload as! [String: String], [
                     "email": self.clientUpdateStatus.mockCredentials.email!,
-                    "password": self.clientUpdateStatus.mockCredentials.password!
+                    "password": self.clientUpdateStatus.mockCredentials.password!,
                 ])
                 XCTAssertEqual($0.method, ZMTransportRequestMethod.delete)
             }

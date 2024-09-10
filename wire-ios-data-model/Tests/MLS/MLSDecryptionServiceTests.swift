@@ -239,7 +239,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                         senderClientId: sender.rawValue.data(using: .utf8)!,
                         hasEpochChanged: false,
                         identity: .withBasicCredentials(),
-                        crlNewDistributionPoints: nil)
+                        crlNewDistributionPoints: nil),
                 ], crlNewDistributionPoints: nil
             )
         }

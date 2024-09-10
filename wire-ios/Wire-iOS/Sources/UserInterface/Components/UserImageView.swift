@@ -97,7 +97,7 @@ class UserImageView: AvatarImageView, UserObserving {
             badgeIndicator.topAnchor.constraint(equalTo: topAnchor),
             badgeIndicator.trailingAnchor.constraint(equalTo: trailingAnchor),
             badgeIndicator.heightAnchor.constraint(equalTo: badgeIndicator.widthAnchor),
-            badgeIndicator.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1 / 3)
+            badgeIndicator.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1 / 3),
         ])
     }
 

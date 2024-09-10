@@ -54,7 +54,7 @@ class RoundedBadge: UIButton {
             widthGreaterThanHeightConstraint,
 
             containedView.topAnchor.constraint(equalTo: topAnchor, constant: contentInset.top),
-            containedView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -contentInset.bottom)
+            containedView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -contentInset.bottom),
 
         ])
     }

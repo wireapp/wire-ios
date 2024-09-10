@@ -224,7 +224,7 @@ extension ZMConversation {
         )
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            matchingGroupStatus, .isMLSConversation
+            matchingGroupStatus, .isMLSConversation,
         ])
 
         return try context.fetch(request)
@@ -236,7 +236,7 @@ extension ZMConversation {
         let request = Self.fetchRequest()
         request.fetchLimit = 2
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            .hasConversationType(.`self`), .isMLSConversation
+            .hasConversationType(.`self`), .isMLSConversation,
         ])
 
         let result = try! context.fetch(request)
@@ -295,7 +295,7 @@ extension ZMConversation {
             andPredicateWithSubpredicates: [
                 .hasConversationType(.group),
                 .hasMessageProtocol(messageProtocol),
-                .teamRemoteIdentifier(matches: selfUserTeamIdentifier)
+                .teamRemoteIdentifier(matches: selfUserTeamIdentifier),
             ]
         )
 
@@ -312,7 +312,7 @@ extension NSPredicate {
             argumentArray: [
                 ZMConversation.messageProtocolKey,
                 MessageProtocol.mls.int16Value,
-                ZMConversation.mlsGroupIdKey
+                ZMConversation.mlsGroupIdKey,
             ]
         )
     }
@@ -322,7 +322,7 @@ extension NSPredicate {
             format: "%K == %i",
             argumentArray: [
                 ZMConversationConversationTypeKey,
-                conversationType.rawValue
+                conversationType.rawValue,
             ]
         )
     }
@@ -332,7 +332,7 @@ extension NSPredicate {
             format: "%K == %i",
             argumentArray: [
                 ZMConversation.messageProtocolKey,
-                messageProtocol.int16Value
+                messageProtocol.int16Value,
             ]
         )
     }
@@ -342,7 +342,7 @@ extension NSPredicate {
             format: "%K == %@",
             argumentArray: [
                 TeamRemoteIdentifierDataKey,
-                (teamRemoteIdentifier as NSUUID).data() as Data
+                (teamRemoteIdentifier as NSUUID).data() as Data,
             ]
         )
     }

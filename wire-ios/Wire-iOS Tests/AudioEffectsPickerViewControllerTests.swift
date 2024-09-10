@@ -58,7 +58,7 @@ final class AudioEffectsPickerViewControllerTests: XCTestCase {
             sut.view.topAnchor.constraint(equalTo: container.topAnchor),
             sut.view.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             sut.view.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            sut.view.trailingAnchor.constraint(equalTo: container.trailingAnchor)
+            sut.view.trailingAnchor.constraint(equalTo: container.trailingAnchor),
         ])
 
         container.setNeedsLayout()

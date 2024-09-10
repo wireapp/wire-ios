@@ -193,7 +193,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
             "team_team_id": teamId,
             "team_user_type": user.teamRole,
             "team_team_size": team.members.count,
-            "user_contacts": team.members.count.logRound()
+            "user_contacts": team.members.count.logRound(),
         ]
     }
 
@@ -212,7 +212,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
             "team_team_id",
             "team_user_type",
             "team_team_size",
-            "user_contacts"
+            "user_contacts",
         ]
 
         keys.forEach(Countly.user().unSet)

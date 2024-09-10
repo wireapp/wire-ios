@@ -68,9 +68,9 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
                     "otr_archived": NSNumber(value: 0),
                     "otr_archived_ref": NSNull(),
                     "otr_muted": NSNumber(value: 0),
-                    "otr_muted_ref": NSNull()
-                ]
-            ]
+                    "otr_muted_ref": NSNull(),
+                ],
+            ],
         ]
 
         if let teamId {

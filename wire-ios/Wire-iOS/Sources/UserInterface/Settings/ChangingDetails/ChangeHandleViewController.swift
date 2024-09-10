@@ -108,7 +108,7 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
             handleTextField.trailingAnchor.constraint(equalTo: domainLabel.leadingAnchor, constant: -4),
             domainLabel.topAnchor.constraint(equalTo: topAnchor),
             domainLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
-            domainLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16)
+            domainLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -16),
         ])
     }
 

@@ -108,7 +108,7 @@ public final class Role: ZMManagedObject {
         }
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             namePredicate,
-            teamOrConvoPredicate
+            teamOrConvoPredicate,
         ])
         fetchRequest.fetchLimit = 1
 

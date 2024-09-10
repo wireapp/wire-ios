@@ -57,7 +57,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent] {
         let logAttributes: LogAttributes = [
             .eventId: eventEnvelope.id.safeForLoggingDescription,
-            .public: true
+            .public: true,
         ]
 
         var decryptedEvents = [UpdateEvent]()

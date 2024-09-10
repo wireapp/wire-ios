@@ -51,7 +51,7 @@ final class AccountSelectorView: UIView {
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.heightAnchor.constraint(equalTo: heightAnchor)
+            stackView.heightAnchor.constraint(equalTo: heightAnchor),
         ])
     }
 

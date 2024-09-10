@@ -28,7 +28,7 @@ extension LocationData {
         [
             latitudeKey: latitude,
             longitudeKey: longitude,
-            zoomLevelKey: Int(zoomLevel)
+            zoomLevelKey: Int(zoomLevel),
         ]
     }
 

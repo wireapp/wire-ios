@@ -73,7 +73,7 @@ final class UserStatusView: TitleView {
                 for: availability,
                 with: AvailabilityStringBuilder.color(for: availability),
                 and: fontStyle
-            )
+            ),
         ]
         var trailingIcons = [NSTextAttachment?]()
         let isInteractive = options.contains(.allowSettingStatus)

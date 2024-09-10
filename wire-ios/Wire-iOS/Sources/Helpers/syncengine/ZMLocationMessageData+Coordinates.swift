@@ -31,7 +31,7 @@ extension LocationMessageData {
     func openInMaps(with span: MKCoordinateSpan) {
         let launchOptions = [
             MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: coordinate),
-            MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: span)
+            MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: span),
         ]
 
         if let url = googleMapsURL, url.openAsLocation() {

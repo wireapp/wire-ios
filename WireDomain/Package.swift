@@ -8,12 +8,12 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "WireDomainPackage", targets: ["WireDomainPkg"]),
-        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"])
+        .library(name: "WireDomainPackageSupport", targets: ["WireDomainPkgSupport"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(path: "../SourceryPlugin"),
-        .package(name: "WireAPI", path: "../WireAPI")
+        .package(name: "WireAPI", path: "../WireAPI"),
     ],
     targets: [
         .target(name: "WireDomainPkg", dependencies: ["WireAPI"], path: "./Sources/Package"),
@@ -24,9 +24,9 @@ let package = Package(
             dependencies: ["WireDomainPkg"],
             path: "./Sources/PackageSupport",
             plugins: [
-                .plugin(name: "SourceryPlugin", package: "SourceryPlugin")
+                .plugin(name: "SourceryPlugin", package: "SourceryPlugin"),
             ]
-        )
+        ),
     ]
 )
 
@@ -34,6 +34,6 @@ for target in package.targets {
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
-        .enableExperimentalFeature("StrictConcurrency")
+        .enableExperimentalFeature("StrictConcurrency"),
     ]
 }

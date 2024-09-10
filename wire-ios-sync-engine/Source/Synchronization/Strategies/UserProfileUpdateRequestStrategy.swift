@@ -47,7 +47,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringSlowSync,
             .allowsRequestsDuringQuickSync,
-            .allowsRequestsWhileWaitingForWebsocket
+            .allowsRequestsWhileWaitingForWebsocket,
         ]
 
         self.passwordUpdateSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
@@ -93,13 +93,13 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
         switch sync {
         case self.passwordUpdateSync:
             let payload: NSDictionary = [
-                "new_password": self.userProfileUpdateStatus.passwordToSet!
+                "new_password": self.userProfileUpdateStatus.passwordToSet!,
             ]
             return ZMTransportRequest(path: "/self/password", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
 
         case self.emailUpdateSync:
             let payload: NSDictionary = [
-                "email": self.userProfileUpdateStatus.emailToSet!
+                "email": self.userProfileUpdateStatus.emailToSet!,
             ]
             return ZMTransportRequest(path: "/access/self/email", method: .put, payload: payload, authentication: .needsCookieAndAccessToken, apiVersion: apiVersion.rawValue)
 
@@ -117,7 +117,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             }
             let payload = [
                 "handles": handlesToCheck,
-                "return": 1
+                "return": 1,
             ] as NSDictionary
             return ZMTransportRequest(path: "/users/handles", method: .post, payload: payload, apiVersion: apiVersion.rawValue)
 

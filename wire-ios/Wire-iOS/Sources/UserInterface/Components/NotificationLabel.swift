@@ -64,7 +64,7 @@ class NotificationLabel: RoundedBlurView {
             messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
             messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
             messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4),
-            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4)
+            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -4),
         ])
     }
 

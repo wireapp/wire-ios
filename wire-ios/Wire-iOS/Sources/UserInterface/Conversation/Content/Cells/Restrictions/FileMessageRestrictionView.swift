@@ -86,7 +86,7 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
 
             // fileBlock view
             fileBlockView.centerXAnchor.constraint(equalTo: iconView.centerXAnchor),
-            fileBlockView.centerYAnchor.constraint(equalTo: iconView.centerYAnchor, constant: 3)
+            fileBlockView.centerYAnchor.constraint(equalTo: iconView.centerYAnchor, constant: 3),
         ])
     }
 }

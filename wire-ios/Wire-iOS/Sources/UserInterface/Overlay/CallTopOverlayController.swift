@@ -141,7 +141,7 @@ final class CallTopOverlayController: UIViewController {
             interactiveView.heightAnchor.constraint(equalToConstant: 32),
             muteIcon.leadingAnchor.constraint(equalTo: interactiveView.leadingAnchor, constant: 8),
             muteIcon.centerYAnchor.constraint(equalTo: interactiveView.centerYAnchor),
-            muteIconWidth!
+            muteIconWidth!,
         ])
 
         interactiveView.addGestureRecognizer(tapGestureRecognizer)

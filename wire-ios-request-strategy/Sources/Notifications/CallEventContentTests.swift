@@ -36,7 +36,7 @@ class CallEventContentTests: XCTestCase {
             "type": type,
             "src_clientid": "clientid",
             "resp": resp,
-            "props": ["videosend": "\(isVideo)"]
+            "props": ["videosend": "\(isVideo)"],
         ]
 
         if let callerID = callerID?.uuidString {
