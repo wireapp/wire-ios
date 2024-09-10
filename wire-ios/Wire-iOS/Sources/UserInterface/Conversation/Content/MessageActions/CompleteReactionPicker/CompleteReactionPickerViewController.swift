@@ -110,7 +110,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         }
 
         NSLayoutConstraint.activate([
-            topBar.topAnchor.constraint(equalTo: safeTopAnchor),
+            topBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topBar.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             topBar.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
 
