@@ -24,7 +24,8 @@
     hoistPatternLet, \
     hoistTry, \
     indent, \
-    initCoderUnavailable
+    initCoderUnavailable, \
+    leadingDelimiters
 
 # Options
 
