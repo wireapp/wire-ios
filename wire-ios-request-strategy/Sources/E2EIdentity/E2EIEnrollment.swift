@@ -162,46 +162,46 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
     public func createAuthorization(
         prevNonce: String,
         authzEndpoint: String) async throws -> AcmeAuthorization {
-            logger.info("create authz at \(authzEndpoint)")
+        logger.info("create authz at \(authzEndpoint)")
 
-            do {
-                let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
-                let apiResponse = try await acmeApi.sendAuthorizationRequest(path: authzEndpoint, requestBody: authzRequest)
-                let challenge = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
+        do {
+            let authzRequest = try await e2eiService.getNewAuthzRequest(url: authzEndpoint, previousNonce: prevNonce)
+            let apiResponse = try await acmeApi.sendAuthorizationRequest(path: authzEndpoint, requestBody: authzRequest)
+            let challenge = try await e2eiService.setAuthzResponse(authz: apiResponse.response)
 
-                return AcmeAuthorization(
-                    nonce: apiResponse.nonce,
-                    location: apiResponse.location,
-                    response: apiResponse.response,
-                    challengeType: apiResponse.challengeType,
-                    newAcmeAuthz: challenge)
-            } catch {
-                logger.error("failed to create authz: \(error.localizedDescription)")
+            return AcmeAuthorization(
+                nonce: apiResponse.nonce,
+                location: apiResponse.location,
+                response: apiResponse.response,
+                challengeType: apiResponse.challengeType,
+                newAcmeAuthz: challenge)
+        } catch {
+            logger.error("failed to create authz: \(error.localizedDescription)")
 
-                throw E2EIRepositoryFailure.failedToCreateAuthz(error)
-            }
+            throw E2EIRepositoryFailure.failedToCreateAuthz(error)
         }
+    }
 
     public func getAuthorizations(
         prevNonce: String,
         authorizationsEndpoints: [String]) async throws -> AuthorizationResult {
-            logger.info("get authorizations")
+        logger.info("get authorizations")
 
-            var challenges: [AuthorizationChallengeType: NewAcmeAuthz] = [:]
-            var nonce = prevNonce
-            for endpoint in authorizationsEndpoints {
-                let auth = try await createAuthorization(prevNonce: nonce, authzEndpoint: endpoint)
-                challenges[auth.challengeType] = auth.newAcmeAuthz
-                nonce = auth.nonce
-            }
-
-            guard let oidcChallenge = challenges[.OIDC],
-                  let dpopChallenge = challenges[.DPoP] else {
-                throw E2EIRepositoryFailure.failedToGetChallenges
-            }
-
-            return AuthorizationResult(oidcAuthorization: oidcChallenge, dpopAuthorization: dpopChallenge, nonce: nonce)
+        var challenges: [AuthorizationChallengeType: NewAcmeAuthz] = [:]
+        var nonce = prevNonce
+        for endpoint in authorizationsEndpoints {
+            let auth = try await createAuthorization(prevNonce: nonce, authzEndpoint: endpoint)
+            challenges[auth.challengeType] = auth.newAcmeAuthz
+            nonce = auth.nonce
         }
+
+        guard let oidcChallenge = challenges[.OIDC],
+              let dpopChallenge = challenges[.DPoP] else {
+            throw E2EIRepositoryFailure.failedToGetChallenges
+        }
+
+        return AuthorizationResult(oidcAuthorization: oidcChallenge, dpopAuthorization: dpopChallenge, nonce: nonce)
+    }
 
     public func getWireNonce(clientId: String) async throws -> String {
         logger.info("get wire nonce")
@@ -257,46 +257,46 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
         accessToken: String,
         prevNonce: String,
         acmeChallenge: AcmeChallenge) async throws -> ChallengeResponse {
-            logger.info("validate DPoP challenge")
+        logger.info("validate DPoP challenge")
 
-            do {
-                let challengeRequest = try await e2eiService.getNewDpopChallengeRequest(accessToken: accessToken, nonce: prevNonce)
-                let apiResponse = try await acmeApi.sendChallengeRequest(path: acmeChallenge.url, requestBody: challengeRequest)
-                try await setDPoPChallengeResponse(challengeResponse: apiResponse)
-                return apiResponse
+        do {
+            let challengeRequest = try await e2eiService.getNewDpopChallengeRequest(accessToken: accessToken, nonce: prevNonce)
+            let apiResponse = try await acmeApi.sendChallengeRequest(path: acmeChallenge.url, requestBody: challengeRequest)
+            try await setDPoPChallengeResponse(challengeResponse: apiResponse)
+            return apiResponse
 
-            } catch {
-                logger.error("failed to get Wire access token: \(error.localizedDescription)")
+        } catch {
+            logger.error("failed to get Wire access token: \(error.localizedDescription)")
 
-                throw E2EIRepositoryFailure.failedToValidateDPoPChallenge(error)
-            }
+            throw E2EIRepositoryFailure.failedToValidateDPoPChallenge(error)
         }
+    }
 
     public func validateOIDCChallenge(
         idToken: String,
         refreshToken: String,
         prevNonce: String,
         acmeChallenge: AcmeChallenge) async throws -> ChallengeResponse {
-            logger.info("validate OIDC challenge")
+        logger.info("validate OIDC challenge")
 
-            do {
-                let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(
-                    idToken: idToken,
-                    refreshToken: refreshToken,
-                    nonce: prevNonce)
-                let apiResponse = try await acmeApi.sendChallengeRequest(
-                    path: acmeChallenge.url,
-                    requestBody: challengeRequest)
+        do {
+            let challengeRequest = try await e2eiService.getNewOidcChallengeRequest(
+                idToken: idToken,
+                refreshToken: refreshToken,
+                nonce: prevNonce)
+            let apiResponse = try await acmeApi.sendChallengeRequest(
+                path: acmeChallenge.url,
+                requestBody: challengeRequest)
 
-                try await setOIDCChallengeResponse(challengeResponse: apiResponse)
+            try await setOIDCChallengeResponse(challengeResponse: apiResponse)
 
-                return apiResponse
-            } catch {
-                logger.error("failed to validate OIDC challenge: \(error.localizedDescription)")
+            return apiResponse
+        } catch {
+            logger.error("failed to validate OIDC challenge: \(error.localizedDescription)")
 
-                throw E2EIRepositoryFailure.failedToValidateOIDCChallenge(error)
-            }
+            throw E2EIRepositoryFailure.failedToValidateOIDCChallenge(error)
         }
+    }
 
     public func setDPoPChallengeResponse(challengeResponse: ChallengeResponse) async throws {
         logger.info("set DPoP challenge response")

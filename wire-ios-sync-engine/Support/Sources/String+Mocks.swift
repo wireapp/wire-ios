@@ -25,7 +25,7 @@ extension String {
 
     public static var mockCertificate: String {
         "BEGIN CERTIFICATE\n-----------\n"
-        + String(repeating: "abcdefghijklmno", count: 100)
-        + "\n-----------\nEND CERTIFICATE"
+            + String(repeating: "abcdefghijklmno", count: 100)
+            + "\n-----------\nEND CERTIFICATE"
     }
 }

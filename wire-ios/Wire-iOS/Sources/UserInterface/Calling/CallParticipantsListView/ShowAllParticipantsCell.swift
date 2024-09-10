@@ -53,8 +53,8 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? ViewColors.backgroundUserCellHightLighted
-            : ViewColors.backgroundUserCell
+                ? ViewColors.backgroundUserCellHightLighted
+                : ViewColors.backgroundUserCell
         }
     }
 

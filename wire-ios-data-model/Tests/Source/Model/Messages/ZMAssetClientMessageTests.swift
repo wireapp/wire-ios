@@ -497,7 +497,7 @@ extension ZMAssetClientMessageTests {
                 context: self.uiMOC.notificationContext,
                 object: sut.objectID) { _ in
                     expectation.fulfill()
-            }
+                }
 
             // when
             sut.fileMessageData?.cancelTransfer()

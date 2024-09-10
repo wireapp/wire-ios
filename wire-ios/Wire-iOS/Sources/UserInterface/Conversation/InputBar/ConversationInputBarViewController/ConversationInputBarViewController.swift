@@ -33,7 +33,7 @@ enum ConversationInputBarViewControllerMode {
 }
 
 final class ConversationInputBarViewController: UIViewController,
-                                                UIPopoverPresentationControllerDelegate {
+    UIPopoverPresentationControllerDelegate {
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     let conversation: InputBarConversationType
@@ -918,12 +918,12 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
                                                          onConfirm: {[weak self] editedImage in
-                                                            self?.dismiss(animated: false)
-                                                            self?.postImage(editedImage ?? image)
-            },
+                                                             self?.dismiss(animated: false)
+                                                             self?.postImage(editedImage ?? image)
+                                                         },
                                                          onCancel: { [weak self] in
-                                                            self?.dismiss(animated: false)
-            }
+                                                             self?.dismiss(animated: false)
+                                                         }
         )
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
@@ -1050,8 +1050,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 
         NSLayoutConstraint.activate(
             securityLevelView.isHidden
-            ? [securityLevelView.topAnchor.constraint(equalTo: view.topAnchor)]
-            : [securityLevelView.topAnchor.constraint(equalTo: typingIndicatorView.bottomAnchor, constant: 5)]
+                ? [securityLevelView.topAnchor.constraint(equalTo: view.topAnchor)]
+                : [securityLevelView.topAnchor.constraint(equalTo: typingIndicatorView.bottomAnchor, constant: 5)]
         )
 
         NSLayoutConstraint.activate([

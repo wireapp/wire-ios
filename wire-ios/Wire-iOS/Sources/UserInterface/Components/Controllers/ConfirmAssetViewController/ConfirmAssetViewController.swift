@@ -174,7 +174,7 @@ final class ConfirmAssetViewController: UIViewController {
     /// open canvas screen if the image is sketchable(e.g. not an animated GIF)
     private func openSketch(in editMode: CanvasViewControllerEditMode) {
         guard case let .image(mediaAsset) = asset,
-            let image = mediaAsset as? UIImage else {
+              let image = mediaAsset as? UIImage else {
             return
         }
 
@@ -350,30 +350,30 @@ final class ConfirmAssetViewController: UIViewController {
             let imageSize: CGSize = mediaAsset.size
 
             if let imagePreviewView {
-            constraints += [
-                // dimension
-                imagePreviewView.heightAnchor.constraint(equalTo: imagePreviewView.widthAnchor, multiplier: imageSize.height / imageSize.width),
-
-                // centering
-                imagePreviewView.centerXAnchor.constraint(equalTo: contentLayoutGuide.centerXAnchor),
-                imagePreviewView.centerYAnchor.constraint(equalTo: contentLayoutGuide.centerYAnchor),
-
-                // limits
-                imagePreviewView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
-                imagePreviewView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor, constant: margin),
-                imagePreviewView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
-                imagePreviewView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor, constant: -margin)
-            ]
-
-            // Image Toolbar Inside Image
-            if let imageToolbarViewInsideImage {
                 constraints += [
-                    imageToolbarViewInsideImage.leadingAnchor.constraint(equalTo: imagePreviewView.leadingAnchor),
-                    imageToolbarViewInsideImage.trailingAnchor.constraint(equalTo: imagePreviewView.trailingAnchor),
-                    imageToolbarViewInsideImage.bottomAnchor.constraint(equalTo: imagePreviewView.bottomAnchor),
-                    imageToolbarViewInsideImage.heightAnchor.constraint(equalToConstant: 48)
+                    // dimension
+                    imagePreviewView.heightAnchor.constraint(equalTo: imagePreviewView.widthAnchor, multiplier: imageSize.height / imageSize.width),
+
+                    // centering
+                    imagePreviewView.centerXAnchor.constraint(equalTo: contentLayoutGuide.centerXAnchor),
+                    imagePreviewView.centerYAnchor.constraint(equalTo: contentLayoutGuide.centerYAnchor),
+
+                    // limits
+                    imagePreviewView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
+                    imagePreviewView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor, constant: margin),
+                    imagePreviewView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
+                    imagePreviewView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor, constant: -margin)
                 ]
-            }
+
+                // Image Toolbar Inside Image
+                if let imageToolbarViewInsideImage {
+                    constraints += [
+                        imageToolbarViewInsideImage.leadingAnchor.constraint(equalTo: imagePreviewView.leadingAnchor),
+                        imageToolbarViewInsideImage.trailingAnchor.constraint(equalTo: imagePreviewView.trailingAnchor),
+                        imageToolbarViewInsideImage.bottomAnchor.constraint(equalTo: imagePreviewView.bottomAnchor),
+                        imageToolbarViewInsideImage.heightAnchor.constraint(equalToConstant: 48)
+                    ]
+                }
             }
         // Player View
         case .video:

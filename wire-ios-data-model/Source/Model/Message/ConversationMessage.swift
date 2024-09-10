@@ -251,8 +251,8 @@ extension ZMMessage: ZMConversationMessage {
               self.conversation != nil,
               let sender = self.sender,
               !sender.isSelfUser else {
-                  return false
-              }
+            return false
+        }
 
         return true
     }
@@ -263,9 +263,9 @@ extension ZMMessage: ZMConversationMessage {
               let conversation = self.conversation,
               let managedObjectContext = self.managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
-                  zmLog.error("Cannot mark as unread message outside of the conversation.")
-                  return
-              }
+            zmLog.error("Cannot mark as unread message outside of the conversation.")
+            return
+        }
         let conversationID = conversation.objectID
 
         conversation.lastReadServerTimeStamp = Date(timeInterval: -0.01, since: serverTimestamp)

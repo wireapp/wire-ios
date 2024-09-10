@@ -25,7 +25,7 @@ import WireSyncEngine
 extension ZMUser {
     var hasValidEmail: Bool {
         guard let email = self.emailAddress,
-                !email.isEmpty else {
+              !email.isEmpty else {
             return false
         }
         return true
@@ -48,7 +48,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         #if !DATA_COLLECTION_DISABLED
-        sections.append(personalInformationSection(isTeamMember: isTeamMember))
+            sections.append(personalInformationSection(isTeamMember: isTeamMember))
         #endif
 
         if SecurityFlags.backup.isEnabled {
@@ -74,8 +74,8 @@ extension SettingsCellDescriptorFactory {
         var cellDescriptors: [SettingsCellDescriptorType] = []
         cellDescriptors = [nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
                            handleElement(
-                            enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
-                            federationEnabled: federationEnabled
+                               enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
+                               federationEnabled: federationEnabled
                            )]
 
         if let user = SelfUser.provider?.providedSelfUser {
@@ -307,8 +307,8 @@ extension SettingsCellDescriptorFactory {
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
         return SettingsPropertyToggleCellDescriptor(settingsProperty:
             self.settingsPropertyFactory.property(.readReceiptsEnabled),
-                                                    inverse: false,
-                                                    identifier: "ReadReceiptsSwitch")
+            inverse: false,
+            identifier: "ReadReceiptsSwitch")
     }
 
     func encryptMessagesAtRestElement() -> SettingsCellDescriptorType {
@@ -341,7 +341,7 @@ extension SettingsCellDescriptorFactory {
                     controller.present(alert, animated: true)
                     return nil
                 }
-        })
+            })
     }
 
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {

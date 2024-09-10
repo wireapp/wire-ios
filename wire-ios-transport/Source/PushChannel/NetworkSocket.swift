@@ -130,10 +130,10 @@ public final class DataBuffer: NSObject {
         inputStream.setProperty(sslSettings, forKey: Stream.PropertyKey(kCFStreamPropertySSLSettings as String))
 
         inputStream.setProperty(StreamSocketSecurityLevel.tlSv1,
-                                 forKey: Stream.PropertyKey.socketSecurityLevelKey)
+                                forKey: Stream.PropertyKey.socketSecurityLevelKey)
 
         inputStream.setProperty(StreamNetworkServiceTypeValue.background,
-                                 forKey: Stream.PropertyKey.networkServiceType)
+                                forKey: Stream.PropertyKey.networkServiceType)
 
         inputStream.open()
         outputStream.open()

@@ -104,28 +104,28 @@ final class CollectionsView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          searchBar.topAnchor.constraint(equalTo: topAnchor),
-          searchBar.leadingAnchor.constraint(equalTo: leadingAnchor),
-          searchBar.trailingAnchor.constraint(equalTo: trailingAnchor),
-          searchBar.heightAnchor.constraint(equalToConstant: 56),
+            searchBar.topAnchor.constraint(equalTo: topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: trailingAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 56),
 
-          collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
 
-          collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
-          collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
-          collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-          noResultsView.topAnchor.constraint(greaterThanOrEqualTo: searchBar.bottomAnchor, constant: 12),
-          noResultsView.centerXAnchor.constraint(equalTo: centerXAnchor),
-          centerYConstraint,
-          noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
-          noResultsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 24),
-          noResultsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -24),
+            noResultsView.topAnchor.constraint(greaterThanOrEqualTo: searchBar.bottomAnchor, constant: 12),
+            noResultsView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            centerYConstraint,
+            noResultsView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -12),
+            noResultsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor, constant: 24),
+            noResultsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -24),
 
-          resultsView.topAnchor.constraint(equalTo: collectionView.topAnchor),
-          resultsView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor),
-          resultsView.leftAnchor.constraint(equalTo: collectionView.leftAnchor),
-          resultsView.rightAnchor.constraint(equalTo: collectionView.rightAnchor)
+            resultsView.topAnchor.constraint(equalTo: collectionView.topAnchor),
+            resultsView.bottomAnchor.constraint(equalTo: collectionView.bottomAnchor),
+            resultsView.leftAnchor.constraint(equalTo: collectionView.leftAnchor),
+            resultsView.rightAnchor.constraint(equalTo: collectionView.rightAnchor)
         ])
     }
 }

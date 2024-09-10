@@ -21,10 +21,10 @@ import UIKit
 extension UIWindow {
     static var interfaceOrientation: UIInterfaceOrientation? {
         return UIApplication
-          .shared
-          .windows
-          .first?
-          .windowScene?
-          .interfaceOrientation
+            .shared
+            .windows
+            .first?
+            .windowScene?
+            .interfaceOrientation
     }
 }

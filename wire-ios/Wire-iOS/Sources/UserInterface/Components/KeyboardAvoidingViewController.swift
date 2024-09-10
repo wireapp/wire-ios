@@ -121,8 +121,8 @@ class KeyboardAvoidingViewController: UIViewController {
         // When the keyboard is visible &
         // this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the bottomOffset should be reduced.
         if !keyboardFrameInView.origin.y.isInfinite,
-            modalPresentationStyle == .formSheet,
-            let frame = presentationController?.frameOfPresentedViewInContainerView {
+           modalPresentationStyle == .formSheet,
+           let frame = presentationController?.frameOfPresentedViewInContainerView {
             // swiftlint:disable:next todo_requires_jira_link
             // TODO: no need to add when no keyboard
             bottomOffset += frame.minY

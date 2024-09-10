@@ -60,10 +60,10 @@ class CallQualityController: NSObject {
 
     var canPresentCallQualitySurvey: Bool {
         #if DISABLE_CALL_QUALITY_SURVEY
-        return false
+            return false
         #else
-        return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && AppDelegate.shared.launchType != .unknown
+            return !AutomationHelper.sharedHelper.disableCallQualitySurvey
+                && AppDelegate.shared.launchType != .unknown
         #endif
     }
 
@@ -122,7 +122,7 @@ class CallQualityController: NSObject {
         }
 
         #if !DISABLE_CALL_QUALITY_SURVEY
-        router?.presentCallQualitySurvey(with: callDuration)
+            router?.presentCallQualitySurvey(with: callDuration)
         #endif
     }
 }

@@ -77,8 +77,8 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         context.performAndWait {
             result = Set(
                 MLSGroup.fetchAllObjects(in: context).lazy
-                .filter(isKeyingMaterialStale)
-                .map(\.id)
+                    .filter(isKeyingMaterialStale)
+                    .map(\.id)
             )
         }
 

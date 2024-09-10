@@ -46,10 +46,10 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
         let dispatchGroup = ZMSDispatchGroup(label: "scheduler")
         let scheduler = ZMTransportRequestScheduler(session: mockSchedulerSession,
-                                    operationQueue: .main,
-                                    group: dispatchGroup,
-                                    reachability: FakeReachability(),
-                                    backoff: ZMExponentialBackoff(group: dispatchGroup, work: .main))
+                                                    operationQueue: .main,
+                                                    group: dispatchGroup,
+                                                    reachability: FakeReachability(),
+                                                    backoff: ZMExponentialBackoff(group: dispatchGroup, work: .main))
 
         sut = NativePushChannel(scheduler: scheduler,
                                 userAgentString: "user-agent",

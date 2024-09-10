@@ -44,9 +44,9 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let teamID = selfUser.team?.remoteIdentifier else {
-                // Skip sync phase if the user doesn't belong to a team
-                syncStatus.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
-                return nil
+            // Skip sync phase if the user doesn't belong to a team
+            syncStatus.finishCurrentSyncPhase(phase: .fetchingLegalHoldStatus)
+            return nil
         }
 
         guard let userID = selfUser.remoteIdentifier else { return nil }

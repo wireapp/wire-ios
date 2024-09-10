@@ -55,8 +55,8 @@ extension ConversationInputBarViewController {
 
         markdownButton.isEnabled = !inputBar.isEditing
         markdownButton.accessibilityLabel = inputBar.isMarkingDown
-                                            ? Conversation.HideFormattingButton.description
-                                            : Conversation.OpenFormattingButton.description
+            ? Conversation.HideFormattingButton.description
+            : Conversation.OpenFormattingButton.description
     }
 
     @objc

@@ -234,8 +234,8 @@ final class TypingIndicatorView: UIView {
                                duration: 0.15,
                                delayTime: 0.15,
                                animations: showContainer, completion: { _ in
-                                self.animatedPen.isAnimating = true
-                                completion?()
+                                   self.animatedPen.isAnimating = true
+                                   completion?()
                                })
             }
 

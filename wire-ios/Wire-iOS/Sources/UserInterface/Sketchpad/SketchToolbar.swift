@@ -60,8 +60,8 @@ final class SketchToolbar: UIView {
         for button in buttons {
             button.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-              button.widthAnchor.constraint(equalToConstant: 32),
-              button.heightAnchor.constraint(equalToConstant: 32)
+                button.widthAnchor.constraint(equalToConstant: 32),
+                button.heightAnchor.constraint(equalToConstant: 32)
             ])
         }
     }
@@ -80,20 +80,20 @@ final class SketchToolbar: UIView {
 
             containerView.heightAnchor.constraint(equalToConstant: 56),
 
-          leftButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: buttonSpacing),
-          leftButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            leftButton.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: buttonSpacing),
+            leftButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
 
-          rightButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -buttonSpacing),
-          rightButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            rightButton.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -buttonSpacing),
+            rightButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
 
-          centerButtonContainer.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-          centerButtonContainer.topAnchor.constraint(equalTo: containerView.topAnchor),
-          centerButtonContainer.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            centerButtonContainer.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            centerButtonContainer.topAnchor.constraint(equalTo: containerView.topAnchor),
+            centerButtonContainer.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
 
-          separatorLine.topAnchor.constraint(equalTo: containerView.topAnchor),
-          separatorLine.leftAnchor.constraint(equalTo: containerView.leftAnchor),
-          separatorLine.rightAnchor.constraint(equalTo: containerView.rightAnchor),
-          separatorLine.heightAnchor.constraint(equalToConstant: .hairline)
+            separatorLine.topAnchor.constraint(equalTo: containerView.topAnchor),
+            separatorLine.leftAnchor.constraint(equalTo: containerView.leftAnchor),
+            separatorLine.rightAnchor.constraint(equalTo: containerView.rightAnchor),
+            separatorLine.heightAnchor.constraint(equalToConstant: .hairline)
         ])
 
         createCenterButtonConstraints()
@@ -101,19 +101,19 @@ final class SketchToolbar: UIView {
 
     private func createCenterButtonConstraints() {
         guard !centerButtons.isEmpty,
-        let leftButton = centerButtons.first,
-        let rightButton = centerButtons.last else { return }
+              let leftButton = centerButtons.first,
+              let rightButton = centerButtons.last else { return }
 
         let buttonSpacing: CGFloat = 32
 
         [centerButtonContainer, leftButton, rightButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints = [
-          leftButton.leftAnchor.constraint(equalTo: centerButtonContainer.leftAnchor, constant: buttonSpacing),
-          leftButton.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor),
+            leftButton.leftAnchor.constraint(equalTo: centerButtonContainer.leftAnchor, constant: buttonSpacing),
+            leftButton.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor),
 
-          rightButton.rightAnchor.constraint(equalTo: centerButtonContainer.rightAnchor, constant: -buttonSpacing),
-          rightButton.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor)
+            rightButton.rightAnchor.constraint(equalTo: centerButtonContainer.rightAnchor, constant: -buttonSpacing),
+            rightButton.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor)
         ]
 
         for i in 1..<centerButtons.count {
@@ -122,8 +122,8 @@ final class SketchToolbar: UIView {
 
             [button, previousButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             constraints.append(contentsOf: [
-              button.leftAnchor.constraint(equalTo: previousButton.rightAnchor, constant: buttonSpacing),
-              button.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor)
+                button.leftAnchor.constraint(equalTo: previousButton.rightAnchor, constant: buttonSpacing),
+                button.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor)
             ])
         }
 

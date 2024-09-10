@@ -241,7 +241,7 @@ extension FileTransferTests_Swift {
 
         // then
         let lastRequest = self.mockTransportSession.receivedRequests().last! as ZMTransportRequest
-         let expectedPath = String(format: "/conversations/%@/otr/assets/%@", conversation!.remoteIdentifier!.transportString(), message!.assetId!.transportString())
+        let expectedPath = String(format: "/conversations/%@/otr/assets/%@", conversation!.remoteIdentifier!.transportString(), message!.assetId!.transportString())
         XCTAssertEqual(lastRequest.path, expectedPath)
         XCTAssertEqual(message!.downloadState, AssetDownloadState.remote)
         XCTAssertTrue(message!.isEphemeral)
@@ -265,8 +265,8 @@ extension FileTransferTests_Swift {
         self.mockTransportSession.performRemoteChanges { _ in
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                               to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                          data: try! original.serializedData())
-               }
+                                                              data: try! original.serializedData())
+        }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -297,7 +297,7 @@ extension FileTransferTests_Swift {
         // when
         let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: cancelled, insertBlock: { data, conversation, from, to in
             conversation.insertOTRMessage(from: from, to: to, data: data)
-               }, nonce: nonce)
+        }, nonce: nonce)
 
         // then
         XCTAssertTrue(message!.isZombieObject)
@@ -312,8 +312,8 @@ extension FileTransferTests_Swift {
 
         // when
         let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: failed, insertBlock: { data, conversation, from, to in
-                   conversation.insertOTRMessage(from: from, to: to, data: data)
-                      }, nonce: nonce)
+            conversation.insertOTRMessage(from: from, to: to, data: data)
+        }, nonce: nonce)
         XCTAssertTrue(message!.isEphemeral)
 
         // then
@@ -475,8 +475,8 @@ extension FileTransferTests_Swift {
 
         // when
         let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
-                   conversation.insertOTRMessage(from: from, to: to, data: data)
-                      }, nonce: nonce)
+            conversation.insertOTRMessage(from: from, to: to, data: data)
+        }, nonce: nonce)
 
         // then
         XCTAssertNil(message!.assetId) // We do not store the asset ID in the DB for v3 assets
@@ -507,8 +507,8 @@ extension FileTransferTests_Swift {
 
         // when
         let message = remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
-        conversation.insertOTRMessage(from: from, to: to, data: data)
-           }, nonce: nonce)
+            conversation.insertOTRMessage(from: from, to: to, data: data)
+        }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         _ = conversation(for: selfToUser1Conversation)
 
@@ -561,8 +561,8 @@ extension FileTransferTests_Swift {
 
         // when
         let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
-               conversation.insertOTRMessage(from: from, to: to, data: data)
-                  }, nonce: nonce)
+            conversation.insertOTRMessage(from: from, to: to, data: data)
+        }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         _ = conversation(for: selfToUser1Conversation)
 

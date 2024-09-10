@@ -30,7 +30,7 @@ extension ZMAssetClientMessage {
         managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
 
         if let url = temporaryDirectoryURL,
-            FileManager.default.fileExists(atPath: url.path) {
+           FileManager.default.fileExists(atPath: url.path) {
             try? FileManager.default.removeItem(at: url)
         }
 

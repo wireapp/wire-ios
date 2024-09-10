@@ -45,10 +45,10 @@ public class UserCredentials: NSObject {
             return false
         }
         return self.email == other.email &&
-        self.password == other.password &&
-        self.phoneNumber == other.phoneNumber &&
-        self.phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
-        self.emailVerificationCode == other.emailVerificationCode
+            self.password == other.password &&
+            self.phoneNumber == other.phoneNumber &&
+            self.phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
+            self.emailVerificationCode == other.emailVerificationCode
     }
 
     public override var hash: Int {

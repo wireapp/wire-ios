@@ -73,8 +73,8 @@ extension UserTypeIconStyle {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
             self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser
-            ? .member
-            : .guest
+                ? .member
+                : .guest
         }
     }
 }

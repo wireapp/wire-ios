@@ -31,10 +31,10 @@ enum ClientSection: Int {
 typealias SettingsClientViewModel = ProfileClientViewModel
 
 final class SettingsClientViewController: UIViewController,
-                                          UITableViewDelegate,
-                                          UITableViewDataSource,
-                                          UserClientObserver,
-                                          ClientColorVariantProtocol {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    UserClientObserver,
+    ClientColorVariantProtocol {
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
     private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
@@ -115,7 +115,7 @@ final class SettingsClientViewController: UIViewController,
         // presented modally from conversation
         if let navController = self.navigationController,
            navController.viewControllers.count > 0,
-            navController.viewControllers[0] == self,
+           navController.viewControllers[0] == self,
            self.navigationItem.rightBarButtonItem == nil {
             let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
@@ -151,14 +151,14 @@ final class SettingsClientViewController: UIViewController,
     private func createConstraints() {
         [tableView, topSeparator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          tableView.topAnchor.constraint(equalTo: view.topAnchor),
-          tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
 
-          topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-          topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-          topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor)
+            topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
+            topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
+            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor)
         ])
     }
 

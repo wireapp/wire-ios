@@ -65,7 +65,7 @@ struct SystemLogger: LoggerProtocol {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-       // do nothing, as it's only available on datadog
+        // do nothing, as it's only available on datadog
     }
 
     private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {

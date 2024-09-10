@@ -25,7 +25,7 @@ final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
     private var presenter: ___VARIABLE_productName:identifier___Module.MockPresenter!
 
     override func setUp() {
-      super.setUp()
+        super.setUp()
         sut = ___VARIABLE_productName:identifier___Module.View()
         presenter = ___VARIABLE_productName:identifier___Module.MockPresenter()
 

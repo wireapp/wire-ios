@@ -21,7 +21,7 @@ import Foundation
 extension Team {
     /**
      Invite someone to your team via email
-     
+
      - parameters:
          - email: Email address to which invitation will be sent
          - userSession: Session which the invitation should be sent from

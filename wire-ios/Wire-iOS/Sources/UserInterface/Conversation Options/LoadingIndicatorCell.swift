@@ -31,11 +31,11 @@ final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable
         spinner.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          spinner.topAnchor.constraint(equalTo: contentView.topAnchor),
-          spinner.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          spinner.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          spinner.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-          spinner.heightAnchor.constraint(equalToConstant: 120)
+            spinner.topAnchor.constraint(equalTo: contentView.topAnchor),
+            spinner.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            spinner.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            spinner.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            spinner.heightAnchor.constraint(equalToConstant: 120)
         ])
     }
 

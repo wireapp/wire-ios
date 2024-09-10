@@ -172,7 +172,7 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
         let time = CMTimeMakeWithSeconds(asset.duration.seconds * 0.1, preferredTimescale: 60)
         var actualTime = CMTime.zero
         guard let cgImage = try? generator.copyCGImage(at: time, actualTime: &actualTime),
-            let colorSpace = cgImage.colorSpace else {
+              let colorSpace = cgImage.colorSpace else {
             return
         }
         let bitsPerComponent = cgImage.bitsPerComponent
@@ -218,9 +218,9 @@ public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
         }
         UIGraphicsBeginImageContext(thumbnailSize)
         guard let dataProvider = CGDataProvider(url: fileURL as CFURL),
-                let pdfRef = CGPDFDocument(dataProvider),
-                let pageRef = pdfRef.page(at: 1),
-                let contextRef = UIGraphicsGetCurrentContext() else {
+              let pdfRef = CGPDFDocument(dataProvider),
+              let pageRef = pdfRef.page(at: 1),
+              let contextRef = UIGraphicsGetCurrentContext() else {
             return
         }
         contextRef.setAllowsAntialiasing(true)

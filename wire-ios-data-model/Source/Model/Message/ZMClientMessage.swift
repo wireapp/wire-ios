@@ -75,7 +75,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     public override var isUpdatingExistingMessage: Bool {
         guard let content = underlyingMessage?.content else {
-                return false
+            return false
         }
         switch content {
         case .edited, .reaction:
@@ -96,8 +96,8 @@ public class ZMClientMessage: ZMOTRMessage {
         guard
             let genericMessage = self.underlyingMessage,
             let content = genericMessage.content else {
-                super.expire()
-                return
+            super.expire()
+            return
         }
 
         switch content {
@@ -110,7 +110,7 @@ public class ZMClientMessage: ZMOTRMessage {
             guard
                 let managedObjectContext,
                 let conversation else {
-                    return
+                return
             }
             ZMClientMessage.expireButtonState(forButtonAction: genericMessage.buttonAction,
                                               forConversation: conversation,
@@ -123,7 +123,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     public override func resend() {
         if let genericMessage = underlyingMessage,
-            case .edited? = genericMessage.content {
+           case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
             editText(self.textMessageData?.messageText ?? "",
                      mentions: self.textMessageData?.mentions ?? [],
@@ -137,7 +137,7 @@ public class ZMClientMessage: ZMOTRMessage {
         guard
             let genericMessage = underlyingMessage,
             let content = genericMessage.content else {
-                return
+            return
         }
         switch content {
         case .confirmation, .reaction:
@@ -147,7 +147,7 @@ public class ZMClientMessage: ZMOTRMessage {
             guard
                 let managedObjectContext,
                 let conversation else {
-                    return
+                return
             }
 
             let original = ZMMessage.fetch(withNonce: originalID, for: conversation, in: managedObjectContext)
@@ -155,7 +155,7 @@ public class ZMClientMessage: ZMOTRMessage {
             original?.senderClientID = nil
         case .edited:
             if let nonce = self.nonce(fromPostPayload: payload),
-                self.nonce != nonce {
+               self.nonce != nonce {
                 WireLogger.messaging.error("sent message response nonce does not match \(nonce)", attributes: logInformation)
                 return
             }
@@ -196,9 +196,9 @@ public class ZMClientMessage: ZMOTRMessage {
             return
         }
         if let genericMessage = self.underlyingMessage,
-            genericMessage.textData != nil,
-            !genericMessage.linkPreviews.isEmpty,
-            linkPreviewState != ZMLinkPreviewState.done {
+           genericMessage.textData != nil,
+           !genericMessage.linkPreviews.isEmpty,
+           linkPreviewState != ZMLinkPreviewState.done {
             // If we have link previews and they are not sent yet, we wait until they are sent
             return
         }

@@ -94,7 +94,7 @@ extension UserClient {
             WireLogger.proteus.info("migrating all session ids to v3: using existing keystore")
             return existingKeyStore
         } else if let accountDirectory = context.accountDirectoryURL,
-            let applicationContainer = context.applicationContainerURL {
+                  let applicationContainer = context.applicationContainerURL {
             WireLogger.proteus.info("migrating all session ids to v3: creating temp keystore")
 
             return UserClientKeysStore(

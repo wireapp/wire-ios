@@ -153,9 +153,9 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // the other  user inserts an ephemeral message
         remotelyInsertEphemeralMessage(conversation: selfToUser1Conversation!)
         guard let ephemeral = conversation.lastMessage as? ZMClientMessage,
-            let genMessage = ephemeral.underlyingMessage,
-            case .ephemeral? = genMessage.content else {
-                return XCTFail()
+              let genMessage = ephemeral.underlyingMessage,
+              case .ephemeral? = genMessage.content else {
+            return XCTFail()
         }
         XCTAssertEqual(genMessage.ephemeral.expireAfterMillis, 100)
         XCTAssertEqual(conversation.allMessages.count, messageCount + 1)
@@ -181,8 +181,8 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
 
         guard (conversation.hiddenMessages.first(where: {
             if let message = $0 as? ZMClientMessage,
-                    let deleteMessage = message.underlyingMessage, deleteMessage.hasDeleted,
-                deleteMessage.deleted.messageID == ephemeral.nonce!.transportString() {
+               let deleteMessage = message.underlyingMessage, deleteMessage.hasDeleted,
+               deleteMessage.deleted.messageID == ephemeral.nonce!.transportString() {
                 return true
             } else {
                 return false

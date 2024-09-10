@@ -30,7 +30,7 @@ protocol InputBarEditViewDelegate: AnyObject {
 }
 
 final class InputBarEditView: UIView {
-typealias IconColors = SemanticColors.Icon
+    typealias IconColors = SemanticColors.Icon
 
     private static var iconButtonTemplate: IconButton {
         let iconButton = IconButton()

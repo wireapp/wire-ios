@@ -165,11 +165,11 @@ class BottomSheetContainerViewController: UIViewController {
                            initialSpringVelocity: 0.5,
                            options: [.curveEaseOut],
                            animations: {
-                self.view.layoutIfNeeded()
-                self.bottomSheetChangedOffset(fullHeightPercentage: 0.0)
-            }, completion: { _ in
-                self.state = .initial
-            })
+                               self.view.layoutIfNeeded()
+                               self.bottomSheetChangedOffset(fullHeightPercentage: 0.0)
+                           }, completion: { _ in
+                               self.state = .initial
+                           })
         } else {
             self.view.layoutIfNeeded()
             self.state = .initial

@@ -274,7 +274,7 @@ class BaseCallParticipantView: OrientableView {
             options: [.curveEaseInOut, .beginFromCurrentState],
             animations: {
                 self.userDetailsView.alpha = self.userDetailsAlpha
-        })
+            })
     }
 
     // MARK: - Accessibility for automation

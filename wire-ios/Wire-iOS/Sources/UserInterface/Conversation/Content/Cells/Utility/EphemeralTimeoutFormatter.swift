@@ -43,8 +43,8 @@ final class EphemeralTimeoutFormatter {
         /// - Returns: formatted string
         func string(from interval: TimeInterval) -> String? {
             guard let dayString = dayFormatter.string(from: interval),
-                let hourString = hourFormatter.string(from: interval) else {
-                    return nil
+                  let hourString = hourFormatter.string(from: interval) else {
+                return nil
             }
 
             guard !hourString.hasSuffix("0:00") else { return dayString }

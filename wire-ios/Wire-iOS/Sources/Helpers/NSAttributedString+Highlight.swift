@@ -29,11 +29,11 @@ extension String {
 
     func range(of strings: [String], options: CompareOptions = [], range: Range<String.Index>? = .none) -> Range<String.Index>? {
         return strings.compactMap {
-                self.range(of: $0,
-                           options: options,
-                           range: range,
-                           locale: nil)
-            }.sorted { $0.lowerBound < $1.lowerBound }.first
+            self.range(of: $0,
+                       options: options,
+                       range: range,
+                       locale: nil)
+        }.sorted { $0.lowerBound < $1.lowerBound }.first
     }
 
     static let ellipsis: String = "…"

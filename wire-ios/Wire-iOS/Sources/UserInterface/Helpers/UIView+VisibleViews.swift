@@ -23,7 +23,7 @@ extension UIView {
         if animated {
             UIView.transition(with: self, duration: 0.35, options: .transitionCrossDissolve, animations: {
                 self.updateVisibleViews(views, visibleViews: visibleViews)
-                }, completion: nil)
+            }, completion: nil)
         } else {
             self.updateVisibleViews(views, visibleViews: visibleViews)
         }

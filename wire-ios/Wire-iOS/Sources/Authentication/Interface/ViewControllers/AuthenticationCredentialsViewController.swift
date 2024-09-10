@@ -28,9 +28,9 @@ import WireTransport
  */
 
 final class AuthenticationCredentialsViewController: AuthenticationStepController,
-                                                     EmailPasswordTextFieldDelegate,
-                                                     TextFieldValidationDelegate,
-                                                     UITextFieldDelegate {
+    EmailPasswordTextFieldDelegate,
+    TextFieldValidationDelegate,
+    UITextFieldDelegate {
     typealias Registration = L10n.Localizable.Registration
     typealias TabBarStrings = L10n.Accessibility.TabBar
     weak var actioner: AuthenticationActioner?
@@ -126,11 +126,11 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     lazy var proxyCredentialsViewController = {
         ProxyCredentialsViewController(backendURL: backendEnvironment.backendURL,
                                        textFieldDidUpdateText: { [weak self] _ in
-            self?.updateLoginButtonState()
-        },
+                                           self?.updateLoginButtonState()
+                                       },
                                        activeFieldChange: { [weak self] textField in
-            self?.loginActiveField = textField
-        })
+                                           self?.loginActiveField = textField
+                                       })
     }()
 
     lazy var forgotPasswordButton = {
@@ -443,7 +443,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         let validEmailPassword = emailPasswordInputField.emailValidationError == nil && emailPasswordInputField.passwordValidationError == nil
         let validProxyCredentials = proxyCredentialsViewController.usernameInput.isInputValid && proxyCredentialsViewController.passwordInput.isInputValid
         loginButton.isEnabled = validEmailPassword &&
-        ((isProxyCredentialsRequired && validProxyCredentials) || !isProxyCredentialsRequired)
+            ((isProxyCredentialsRequired && validProxyCredentials) || !isProxyCredentialsRequired)
     }
 
     // MARK: - Proxy Credentials

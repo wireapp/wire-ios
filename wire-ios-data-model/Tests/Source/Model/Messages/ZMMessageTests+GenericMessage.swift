@@ -21,13 +21,13 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
-   func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() throws {
+    func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() throws {
         try syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-                    let nonce = UUID.create()
+            let nonce = UUID.create()
 
             let textMessage = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
             let msg = ZMClientMessage.init(nonce: nonce, managedObjectContext: syncMOC)

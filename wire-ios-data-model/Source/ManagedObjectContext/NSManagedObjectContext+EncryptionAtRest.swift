@@ -159,7 +159,7 @@ extension NSManagedObjectContext {
     }
 
     private func fetchRequest<T>(forType type: T.Type, batchSize: Int) -> NSFetchRequest<T>
-    where T: MigratableEntity {
+        where T: MigratableEntity {
         let fetchRequest = NSFetchRequest<T>(entityName: T.entityName())
         fetchRequest.predicate = type.predicateForObjectsNeedingMigration
         fetchRequest.returnsObjectsAsFaults = false

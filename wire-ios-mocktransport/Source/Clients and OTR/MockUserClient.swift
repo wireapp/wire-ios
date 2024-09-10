@@ -98,13 +98,13 @@ extension MockUserClient {
         let model = payload["model"] as? String
 
         guard let type = payload["type"] as? String, validClientTypes.contains(type),
-            let sigkeysPayload = payload["sigkeys"] as? [String: Any],
-            let lastKeyPayload = payload["lastkey"] as? [String: Any],
-            let prekeysPayload = payload["prekeys"] as? [[String: Any]],
-            let mackey = sigkeysPayload["mackey"] as? String,
-            let enckey = sigkeysPayload["enckey"] as? String,
-            let prekeyNumber = lastKeyPayload["id"] as? Int, prekeyNumber == 0xFFFF
-            else {
+              let sigkeysPayload = payload["sigkeys"] as? [String: Any],
+              let lastKeyPayload = payload["lastkey"] as? [String: Any],
+              let prekeysPayload = payload["prekeys"] as? [[String: Any]],
+              let mackey = sigkeysPayload["mackey"] as? String,
+              let enckey = sigkeysPayload["enckey"] as? String,
+              let prekeyNumber = lastKeyPayload["id"] as? Int, prekeyNumber == 0xFFFF
+        else {
             return nil
         }
 
@@ -155,7 +155,7 @@ extension MockUserClient {
         }
 
         guard let prekeys = generatedPrekeys, !prekeys.isEmpty,
-            let lastPrekey = generatedLastPrekey
+              let lastPrekey = generatedLastPrekey
         else {
             return nil
         }

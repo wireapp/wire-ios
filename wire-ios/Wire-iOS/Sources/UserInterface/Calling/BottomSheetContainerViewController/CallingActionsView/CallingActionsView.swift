@@ -284,8 +284,8 @@ final class CallingActionsView: UIView {
 
         guard let bottomSheetScrollingDelegate else { return }
         handleView.accessibilityHint = bottomSheetScrollingDelegate.isBottomSheetExpanded
-                                     ? Calling.SwipeDownParticipants.hint
-                                     : Calling.SwipeUpParticipants.hint
+            ? Calling.SwipeDownParticipants.hint
+            : Calling.SwipeUpParticipants.hint
     }
 
     @objc private func handleViewAccessibilityAction() {

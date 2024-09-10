@@ -464,9 +464,9 @@ extension WireCallCenterV3 {
     ) -> Bool {
         guard let context = uiMOC,
               let conversation = ZMConversation.fetch(
-                with: conversationId.identifier,
-                domain: conversationId.domain,
-                in: context),
+                  with: conversationId.identifier,
+                  domain: conversationId.domain,
+                  in: context),
               conversation.conversationType == .oneOnOne,
               callSnapshots[conversationId]?.callState == .established
         else {
@@ -812,9 +812,9 @@ extension WireCallCenterV3 {
 
             guard let viewContext = uiMOC,
                   let conversation = ZMConversation.fetch(
-                    with: mlsParentIDs.qualifiedID.uuid,
-                    domain: mlsParentIDs.qualifiedID.domain,
-                    in: viewContext),
+                      with: mlsParentIDs.qualifiedID.uuid,
+                      domain: mlsParentIDs.qualifiedID.domain,
+                      in: viewContext),
                   conversation.conversationType == .group
             else {
                 deleteSubconversation(conversationID: conversationId)

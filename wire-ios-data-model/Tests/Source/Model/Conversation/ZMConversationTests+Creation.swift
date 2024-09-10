@@ -58,7 +58,7 @@ final class ZMConversationTests_Creation: ZMConversationTestsBase {
             name: "Foo",
             team: team,
             participantsRole: role1
-            )!
+        )!
 
         // then
         let selfUser = ZMUser.selfUser(in: self.uiMOC)

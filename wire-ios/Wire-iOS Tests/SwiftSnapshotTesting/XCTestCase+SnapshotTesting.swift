@@ -316,8 +316,8 @@ extension XCTestCase {
                        testName: String = #function,
                        line: UInt = #line) {
         verifyInWidth(createSut: {
-            createSut().view
-        },
+                          createSut().view
+                      },
                       width: width,
                       snapshotBackgroundColor: snapshotBackgroundColor,
                       named: name,

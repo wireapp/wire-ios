@@ -280,7 +280,7 @@ final class SessionManagerBackupTests: IntegrationTest {
         from url: URL,
         file: StaticString = #file,
         line: UInt = #line
-        ) -> Result<Void, Error> {
+    ) -> Result<Void, Error> {
         var result: Result<Void, Error> = .failure(TestError.uninitialized)
         sessionManager?.restoreFromBackup(at: url, password: password) { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

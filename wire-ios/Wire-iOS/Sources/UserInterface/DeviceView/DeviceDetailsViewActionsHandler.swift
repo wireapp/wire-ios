@@ -148,12 +148,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     @MainActor
     private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
         guard let mlsClientID = MLSClientID(userClient: userClient),
-        let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
+              let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
             logger.error("MLSGroupID for self was not found")
             return nil
         }
         return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
-                                                                clientIds: [mlsClientID]).first
+                                                                       clientIds: [mlsClientID]).first
     }
 
     @MainActor
@@ -173,7 +173,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         viewControllerToPresent: UIViewController
     ) {
         if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
-                    UIViewController.presentTopMost(viewController: viewControllerToPresent)
+            UIViewController.presentTopMost(viewController: viewControllerToPresent)
         }
     }
 

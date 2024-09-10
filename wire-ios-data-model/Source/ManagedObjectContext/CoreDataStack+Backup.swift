@@ -43,10 +43,10 @@ extension CoreDataStack {
     }
 
     public enum BackupImportError: Error {
-           case incompatibleBackup(Error)
-           case failedToCopy(Error)
-           case missingModelVersion(String)
-       }
+        case incompatibleBackup(Error)
+        case failedToCopy(Error)
+        case missingModelVersion(String)
+    }
 
     public enum BackupError: Error {
         case failedToRead

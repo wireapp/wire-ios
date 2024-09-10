@@ -84,7 +84,7 @@ extension String {
     /// Returns a string composed of random digits
     fileprivate static func random(numberOfDigits: Int) -> String {
         return (0..<numberOfDigits).map { _ in "\(Int.random(in: 0..<10))" }
-        .joined(separator: "")
+            .joined(separator: "")
     }
 }
 

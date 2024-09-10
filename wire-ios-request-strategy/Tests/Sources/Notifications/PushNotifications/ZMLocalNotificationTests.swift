@@ -111,22 +111,22 @@ class ZMLocalNotificationTests: MessagingTestBase {
         type: ZMConversationType,
         mutedMessages: MutedMessageTypes,
         otherParticipants: [ZMUser]) -> ZMConversation {
-            var conversation: ZMConversation!
-            self.syncMOC.performGroupedAndWait {
-                conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-                conversation.remoteIdentifier = remoteID
-                conversation.userDefinedName = name
-                conversation.conversationType = type
-                conversation.mutedMessageTypes = mutedMessages
-                conversation.lastServerTimeStamp = Date()
-                conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
-                conversation?.addParticipantsAndUpdateConversationState(
-                    users: Set(otherParticipants + [self.selfUser]),
-                    role: nil)
-               // self.uiMOC.saveOrRollback()
-            }
-            return conversation
+        var conversation: ZMConversation!
+        self.syncMOC.performGroupedAndWait {
+            conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = remoteID
+            conversation.userDefinedName = name
+            conversation.conversationType = type
+            conversation.mutedMessageTypes = mutedMessages
+            conversation.lastServerTimeStamp = Date()
+            conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
+            conversation?.addParticipantsAndUpdateConversationState(
+                users: Set(otherParticipants + [self.selfUser]),
+                role: nil)
+            // self.uiMOC.saveOrRollback()
         }
+        return conversation
+    }
 
     func noteWithPayload(_ data: NSDictionary?, fromUserID: UUID?, in conversation: ZMConversation?, type: String) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
@@ -209,13 +209,13 @@ class ZMLocalNotificationTests: MessagingTestBase {
                                        senderID: UUID = UUID.create(),
                                        timer: Int64 = 31536000000,
                                        timestamp: Date = Date()) -> ZMUpdateEvent {
-       let payload: [String: Any] = [
-        "from": senderID.transportString(),
-        "conversation": conversationID.transportString(),
-        "time": timestamp.transportString(),
-        "data": ["message_timer": timer],
-        "type": "conversation.message-timer-update"
-       ]
+        let payload: [String: Any] = [
+            "from": senderID.transportString(),
+            "conversation": conversationID.transportString(),
+            "time": timestamp.transportString(),
+            "data": ["message_timer": timer],
+            "type": "conversation.message-timer-update"
+        ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 }

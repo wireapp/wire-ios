@@ -23,8 +23,8 @@ import WireSyncEngine
 extension ConversationLike where Self: SwiftConversationLike {
     var botCanBeAdded: Bool {
         return conversationType != .oneOnOne &&
-               teamType != nil &&
-               allowServices
+            teamType != nil &&
+            allowServices
     }
 }
 

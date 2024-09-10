@@ -970,10 +970,10 @@ extension UserClientTests {
             BackendInfo.domain = localDomain
 
             v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
-                                                                  clientId: clientID)
+                                                              clientId: clientID)
             v3SessionIdentifier = EncryptionSessionIdentifier(domain: localDomain,
-                                                                  userId: userID,
-                                                                  clientId: clientID)
+                                                              userId: userID,
+                                                              clientId: clientID)
         }
 
         guard let preKey = preKeys.first else {

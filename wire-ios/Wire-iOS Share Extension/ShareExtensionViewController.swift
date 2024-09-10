@@ -417,10 +417,10 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         sharingSession?.downloadLinkPreviews(inText: url.absoluteString, excluding: []) { previews in
             let previewImage: UIImage?
 
-            // Size the image to fill the image view
-            = if let imageData = previews.first?.imageData.first,
-               let image = UIImage(data: imageData),
-               let requiredSize = self.preview?.frame.size.shortestLength {
+                // Size the image to fill the image view
+                = if let imageData = previews.first?.imageData.first,
+                let image = UIImage(data: imageData),
+                let requiredSize = self.preview?.frame.size.shortestLength {
                 image.downsized(shorterSizeLength: requiredSize)
             } else {
                 nil

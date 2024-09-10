@@ -31,9 +31,9 @@ struct CallingConfiguration {
     private static let `default` = Self.largeConferenceCalls
 
     #if DEBUG
-    static func testHelper_resetDefaultConfig() {
-        config = Self.default
-    }
+        static func testHelper_resetDefaultConfig() {
+            config = Self.default
+        }
     #endif
 
     enum StreamLimit {

@@ -43,8 +43,8 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
               let conversationID = conversation.remoteIdentifier?.transportString(),
               let payloadData = payload.payloadData(encoder: .defaultEncoder),
               let payloadAsString = String(bytes: payloadData, encoding: .utf8) else {
-                  return nil
-              }
+            return nil
+        }
 
         switch apiVersion {
         case .v0:

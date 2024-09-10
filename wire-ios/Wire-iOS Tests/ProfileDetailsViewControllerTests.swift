@@ -1145,9 +1145,9 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
                                                    context: context, userSession: userSession)
 
         snapshotHelper.verify(matching: details,
-               file: file,
-               testName: testName,
-               line: line)
+                              file: file,
+                              testName: testName,
+                              line: line)
     }
 
     private func richProfileFieldWithEmail(for user: UserType) -> UserRichProfileField {

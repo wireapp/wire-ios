@@ -201,8 +201,8 @@ extension UserClientRequestFactory {
     /// Password needs to be set
     public func deleteClientRequest(_ client: UserClient, credentials: UserEmailCredentials?, apiVersion: APIVersion) -> ZMUpstreamRequest {
         let payload: [AnyHashable: Any] = if let credentials,
-            let email = credentials.email,
-            let password = credentials.password {
+                                             let email = credentials.email,
+                                             let password = credentials.password {
             [
                 "email": email,
                 "password": password

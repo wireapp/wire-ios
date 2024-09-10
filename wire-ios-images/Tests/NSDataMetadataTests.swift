@@ -56,8 +56,8 @@ class NSDataMetadataTests: XCTestCase {
     func testThatItReadsMetadataForImageTypes() {
         // GIVEN
         [self.data(forResource: "ceiling_rotated_1", extension: "jpg")!,
-        self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!,
-        self.data(forResource: "ceiling_rotated_3", extension: "tiff")!].forEach { data in
+         self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!,
+         self.data(forResource: "ceiling_rotated_3", extension: "tiff")!].forEach { data in
             // WHEN
             let metadata = try! data.wr_metadata()
 
@@ -101,9 +101,9 @@ class NSDataMetadataTests: XCTestCase {
     func testThatItRemovesLocationMetadataForImageTypes() {
         // GIVEN
         [self.data(forResource: "ceiling_rotated_1", extension: "jpg")!,
-        self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!,
-        self.data(forResource: "ceiling_rotated_2", extension: "png")!,
-        self.data(forResource: "ceiling_rotated_3", extension: "tiff")!].forEach { data in
+         self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!,
+         self.data(forResource: "ceiling_rotated_2", extension: "png")!,
+         self.data(forResource: "ceiling_rotated_3", extension: "tiff")!].forEach { data in
             // WHEN
             let metadata = try! data.wr_removingImageMetadata().wr_metadata()
 
@@ -147,7 +147,7 @@ class NSDataMetadataTests: XCTestCase {
     func testThatItKeepsOrientationMetadataForImageTypes() {
         // GIVEN
         [// self.data(forResource:"ceiling_rotated_1", extension:"jpg")!,
-         self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!].forEach { data in
+            self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!].forEach { data in
             // WHEN
             let originalMetadata = try! data.wr_metadata()
             XCTAssertNotNil(originalMetadata[String(kCGImagePropertyOrientation)])

@@ -120,8 +120,8 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage,
-            let asset = assetClientMessage.underlyingMessage?.assetData,
-            assetClientMessage.version >= 3 {
+           let asset = assetClientMessage.underlyingMessage?.assetData,
+           assetClientMessage.version >= 3 {
             let remote = asset.preview.remote
             let token = remote.hasAssetToken ? remote.assetToken : nil
             if let request = requestFactory.requestToGetAsset(withKey: remote.assetID, token: token, domain: remote.assetDomain, apiVersion: apiVersion) {

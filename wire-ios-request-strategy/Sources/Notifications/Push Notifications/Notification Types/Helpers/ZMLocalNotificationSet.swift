@@ -116,7 +116,7 @@ import WireUtilities
             guard
                 userInfo.conversationID == conversation.remoteIdentifier,
                 let requestID = userInfo.requestID?.uuidString
-                else { return true }
+            else { return true }
 
             notificationCenter.removePendingNotificationRequests(withIdentifiers: [requestID])
             notificationCenter.removeDeliveredNotifications(withIdentifiers: [requestID])

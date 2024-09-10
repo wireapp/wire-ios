@@ -44,7 +44,7 @@ import Foundation
         }
 
         guard let fileURL = self.fileUploadURL,
-            let multipartData = try? Data(contentsOf: fileURL)
+              let multipartData = try? Data(contentsOf: fileURL)
         else {
             return []
         }

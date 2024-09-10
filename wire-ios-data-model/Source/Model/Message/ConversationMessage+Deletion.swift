@@ -92,7 +92,7 @@ extension ZMClientMessage {
             let genericMessage = underlyingMessage,
             let sender, sender.isSelfUser,
             let content = genericMessage.content else {
-                return false
+            return false
         }
         switch content {
         case .edited:

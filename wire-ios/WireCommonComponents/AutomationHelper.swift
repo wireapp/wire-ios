@@ -38,9 +38,9 @@ public final class AutomationHelper: NSObject {
     public static let sharedHelper = AutomationHelper()
     /// Whether analytics should be used
     public var useAnalytics: Bool {
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: get it from xcconfig?
-    // return UserDefaults.standard.bool(forKey: "UseAnalytics")
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: get it from xcconfig?
+        // return UserDefaults.standard.bool(forKey: "UseAnalytics")
         return true
     }
 
@@ -100,7 +100,7 @@ public final class AutomationHelper: NSObject {
         }
         AutomationHelper.enableLogTags(arguments)
         if let debugDataPath = arguments.flagValueIfPresent(AutomationKey.debugDataToInstall.rawValue),
-            FileManager.default.fileExists(atPath: debugDataPath) {
+           FileManager.default.fileExists(atPath: debugDataPath) {
             self.debugDataToInstall = URL(fileURLWithPath: debugDataPath)
         } else {
             self.debugDataToInstall = nil
@@ -108,7 +108,7 @@ public final class AutomationHelper: NSObject {
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
 
         if let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
-            let apiVersion = Int32(value) {
+           let apiVersion = Int32(value) {
             preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
@@ -142,7 +142,7 @@ public final class AutomationHelper: NSObject {
     /// Returns the login email and password credentials if set in the given arguments
     private static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {
         guard let email = arguments.flagValueIfPresent(AutomationKey.email.rawValue),
-            let password = arguments.flagValueIfPresent(AutomationKey.password.rawValue) else {
+              let password = arguments.flagValueIfPresent(AutomationKey.password.rawValue) else {
             return nil
         }
         return AutomationEmailCredentials(email: email, password: password)
@@ -158,8 +158,8 @@ public final class AutomationHelper: NSObject {
     /// Returns the custom time interval for address book search delay if it set in the given arguments
     private static func addressBookSearchDelay(_ arguments: ArgumentsType) -> TimeInterval? {
         guard let delayString = arguments.flagValueIfPresent(AutomationKey.addressBookRemoteSearchDelay.rawValue),
-            let delay = Int(delayString) else {
-                return nil
+              let delay = Int(delayString) else {
+            return nil
         }
         return TimeInterval(delay)
     }
@@ -228,9 +228,9 @@ private struct FileArguments: ArgumentsType {
 extension AutomationHelper {
     /// Takes all files in the folder pointed at by `debugDataToInstall` and installs them
     /// in the shared folder, erasing any other file in that folder.
-   public func installDebugDataIfNeeded() {
+    public func installDebugDataIfNeeded() {
         guard let packageURL = self.debugDataToInstall,
-            let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return }
+              let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
         // DELETE
         let filesToDelete = try! FileManager.default.contentsOfDirectory(atPath: sharedContainerURL.path)

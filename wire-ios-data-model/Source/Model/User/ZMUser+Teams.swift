@@ -22,7 +22,7 @@ extension ZMUser {
     }
 
     @objc public static func keyPathsForValuesAffectingTeam() -> Set<String> {
-         return [#keyPath(ZMUser.membership)]
+        return [#keyPath(ZMUser.membership)]
     }
 
     @objc public var isWirelessUser: Bool {

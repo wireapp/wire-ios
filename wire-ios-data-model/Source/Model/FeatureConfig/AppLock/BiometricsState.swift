@@ -20,8 +20,8 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol BiometricsStateProtocol {
-   func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
-   func persistState()
+    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
+    func persistState()
 }
 
 final class BiometricsState: BiometricsStateProtocol {
@@ -50,7 +50,7 @@ final class BiometricsState: BiometricsStateProtocol {
 
     /// Persists the last seen biometrics state for future comparisons.
 
-     func persistState() {
+    func persistState() {
         lastPolicyDomainState = currentPolicyDomainState
     }
 }

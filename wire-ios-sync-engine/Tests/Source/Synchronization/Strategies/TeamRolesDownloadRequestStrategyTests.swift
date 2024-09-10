@@ -47,21 +47,21 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     let sampleResponse: [String: Any] = [
-            "conversation_roles": [
-                [
-                    "actions": [
-                        "leave_conversation",
-                        "delete_conversation"
-                    ],
-                    "conversation_role": "superuser"
+        "conversation_roles": [
+            [
+                "actions": [
+                    "leave_conversation",
+                    "delete_conversation"
                 ],
-                [
-                    "actions": [
-                        "leave_conversation"
-                    ],
-                    "conversation_role": "weakling"
-                ]
+                "conversation_role": "superuser"
+            ],
+            [
+                "actions": [
+                    "leave_conversation"
+                ],
+                "conversation_role": "weakling"
             ]
+        ]
     ]
 
     // MARK: - Helper
@@ -150,8 +150,8 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             // then
             XCTAssertEqual(team.roles.count, 2)
             guard let adminRole = team.roles.first(where: { $0.name == "superuser" }),
-                let memberRole = team.roles.first(where: { $0.name == "weakling" }) else {
-                    return XCTFail()
+                  let memberRole = team.roles.first(where: { $0.name == "weakling" }) else {
+                return XCTFail()
             }
             XCTAssertEqual(
                 Set(adminRole.actions.compactMap { $0.name }),

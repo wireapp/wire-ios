@@ -72,7 +72,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
     }
 
     private var shouldShowProxyWarning: Bool {
-       BackendEnvironment.shared.proxy != nil
+        BackendEnvironment.shared.proxy != nil
     }
 }
 

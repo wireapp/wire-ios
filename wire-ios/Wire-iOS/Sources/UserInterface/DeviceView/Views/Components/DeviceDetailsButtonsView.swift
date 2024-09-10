@@ -31,8 +31,8 @@ struct DeviceDetailsButtonsView: View {
             }
         } label: {
             Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
-            .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
-            .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+                .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
+                .font(FontSpec.normalRegularFont.swiftUIFont.bold())
         }
     }
 
@@ -53,7 +53,7 @@ struct DeviceDetailsButtonsView: View {
     var showCertificateButton: some View {
         Button(
             action: {
-                    isCertificateViewPresented = true
+                isCertificateViewPresented = true
             },
             label: {
                 HStack {

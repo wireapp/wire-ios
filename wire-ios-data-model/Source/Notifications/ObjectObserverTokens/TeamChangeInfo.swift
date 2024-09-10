@@ -81,8 +81,8 @@ extension TeamChangeInfo {
     public static func add(observer: TeamObserver, for team: Team?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .TeamChange, managedObjectContext: managedObjectContext, object: team) { [weak observer] note in
             guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? TeamChangeInfo
-                else { return }
+                  let changeInfo = note.changeInfo as? TeamChangeInfo
+            else { return }
 
             observer.teamDidChange(changeInfo)
         }

@@ -121,9 +121,9 @@ extension ZMAssetClientMessage {
             switch dataType {
             case .fullAsset:
                 guard let genericMessage = self.underlyingMessage,
-                    let assetData = genericMessage.assetData,
-                    case .uploaded? = assetData.status
-                    else { return nil }
+                      let assetData = genericMessage.assetData,
+                      case .uploaded? = assetData.status
+                else { return nil }
                 return genericMessage
             case .placeholder:
                 return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in

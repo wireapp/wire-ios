@@ -98,4 +98,4 @@ final class RemoveClientTableViewCell: UITableViewCell {
             activationDateLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
- }
+}

@@ -88,9 +88,9 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         }
 
         return ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                            entityName: ZMUser.entityName(),
-                                            predicateForObjectsToDownload: predicate,
-                                            managedObjectContext: moc)
+                                                   entityName: ZMUser.entityName(),
+                                                   predicateForObjectsToDownload: predicate,
+                                                   managedObjectContext: moc)
     }
 
     internal func size(for requestSync: ZMDownstreamObjectSyncWithWhitelist) -> ProfileImageSize? {
@@ -110,8 +110,8 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     func requestAssetForNotification(note: NotificationInContext) {
         moc.performGroupedBlock {
             guard let objectID = note.object as? NSManagedObjectID,
-                let object = self.moc.object(with: objectID) as? ZMManagedObject
-                else { return }
+                  let object = self.moc.object(with: objectID) as? ZMManagedObject
+            else { return }
 
             switch note.name {
             case .userDidRequestPreviewAsset:

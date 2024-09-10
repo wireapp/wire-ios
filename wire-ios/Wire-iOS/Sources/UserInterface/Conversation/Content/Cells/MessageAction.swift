@@ -44,25 +44,25 @@ enum MessageAction: CaseIterable, Equatable {
     ]
 
     case
-    digitallySign,
-    copy,
-    reply,
-    openDetails,
-    edit,
-    delete,
-    save,
-    cancel,
-    download,
-    resend,
-    showInConversation,
-    sketchDraw,
-    sketchEmoji,
-    // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
-    present,
-    openQuote,
-    resetSession,
-    react(Emoji.ID),
-    visitLink
+        digitallySign,
+        copy,
+        reply,
+        openDetails,
+        edit,
+        delete,
+        save,
+        cancel,
+        download,
+        resend,
+        showInConversation,
+        sketchDraw,
+        sketchEmoji,
+        // Not included in ConversationMessageActionController.allMessageActions, for image viewer/open quote
+        present,
+        openQuote,
+        resetSession,
+        react(Emoji.ID),
+        visitLink
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -96,9 +96,9 @@ enum MessageAction: CaseIterable, Equatable {
         case .visitLink:
             return MessageActionLocale.OpenLinkAlert.title
         case .present,
-                .openQuote,
-                .resetSession,
-                .react:
+             .openQuote,
+             .resetSession,
+             .react:
             return nil
         }
     }
@@ -132,10 +132,10 @@ enum MessageAction: CaseIterable, Equatable {
         case .visitLink:
             return .externalLink
         case .present,
-                .openQuote,
-                .digitallySign,
-                .resetSession,
-                .react:
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react:
             return nil
         }
     }
@@ -171,11 +171,11 @@ enum MessageAction: CaseIterable, Equatable {
         case .sketchEmoji:
             "smiley.fill"
         case .present,
-                .openQuote,
-                .digitallySign,
-                .resetSession,
-                .react,
-                .visitLink:
+             .openQuote,
+             .digitallySign,
+             .resetSession,
+             .react,
+             .visitLink:
             nil
         }
 
@@ -211,10 +211,10 @@ enum MessageAction: CaseIterable, Equatable {
         case .visitLink:
             return #selector(ConversationMessageActionController.visitLink)
         case .present,
-                .sketchDraw,
-                .sketchEmoji,
-                .openQuote,
-                .resetSession:
+             .sketchDraw,
+             .sketchEmoji,
+             .openQuote,
+             .resetSession:
             // no message related actions are not handled in ConversationMessageActionController
             return nil
         }

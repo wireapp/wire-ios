@@ -315,11 +315,11 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
                            delay: 0,
                            options: UIView.AnimationOptions(rawValue: UInt(7)),
                            animations: {
-                self.emojiKeyboardViewController.view.transform = CGAffineTransform.identity
-            },
+                               self.emojiKeyboardViewController.view.transform = CGAffineTransform.identity
+                           },
                            completion: { _ in
-                self.isEmojiKeyboardInTransition = false
-            })
+                               self.isEmojiKeyboardInTransition = false
+                           })
         }
     }
 
@@ -340,13 +340,13 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
                            delay: 0,
                            options: UIView.AnimationOptions(rawValue: UInt(7)),
                            animations: {
-                let offscreen = CGAffineTransform(translationX: 0, y: self.emojiKeyboardViewController.view.bounds.size.height)
-                self.emojiKeyboardViewController.view.transform = offscreen
-            },
+                               let offscreen = CGAffineTransform(translationX: 0, y: self.emojiKeyboardViewController.view.bounds.size.height)
+                               self.emojiKeyboardViewController.view.transform = offscreen
+                           },
                            completion: { _ in
-                self.isEmojiKeyboardInTransition = false
-                removeEmojiKeyboardViewController()
-            })
+                               self.isEmojiKeyboardInTransition = false
+                               removeEmojiKeyboardViewController()
+                           })
         } else {
             removeEmojiKeyboardViewController()
         }

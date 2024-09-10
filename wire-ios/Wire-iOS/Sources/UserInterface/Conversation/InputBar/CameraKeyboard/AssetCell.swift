@@ -46,14 +46,14 @@ final class AssetCell: UICollectionViewCell {
 
         [imageView, durationView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-          durationView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          durationView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          durationView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-          durationView.heightAnchor.constraint(equalToConstant: 20)
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            durationView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            durationView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            durationView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            durationView.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
 
@@ -94,11 +94,11 @@ final class AssetCell: UICollectionViewCell {
                                                    contentMode: .aspectFill,
                                                    options: type(of: self).imageFetchOptions,
                                                    resultHandler: { [weak self] result, _ in
-                                                    guard let self,
-                                                        self.representedAssetIdentifier == asset.localIdentifier
-                                                        else { return }
-                                                    self.imageView.image = result
-            })
+                                                       guard let self,
+                                                             self.representedAssetIdentifier == asset.localIdentifier
+                                                       else { return }
+                                                       self.imageView.image = result
+                                                   })
 
             if asset.mediaType == .video {
                 let duration = Int(ceil(asset.duration))

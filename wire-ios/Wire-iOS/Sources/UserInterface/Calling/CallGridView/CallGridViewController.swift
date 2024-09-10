@@ -164,16 +164,16 @@ final class CallGridViewController: UIViewController {
         [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
         }
-            [ thumbnailViewController.view].forEach {
-                $0.fitIn(view: view)
-            }
+        [ thumbnailViewController.view].forEach {
+            $0.fitIn(view: view)
+        }
 
-            NSLayoutConstraint.activate([
-                gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-                gridView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-                gridView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-                gridView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
-            ])
+        NSLayoutConstraint.activate([
+            gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            gridView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+            gridView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            gridView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
+        ])
 
         let topStackTopDistance = 6.0
         NSLayoutConstraint.activate([
@@ -455,7 +455,7 @@ final class CallGridViewController: UIViewController {
     // MARK: - Helpers
 
     private var shouldShowBorderWhenVideoIsStopped: Bool {
-       !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
+        !gridHasOnlyOneTile && !gridIsOneToOneWithFloatingTile
     }
 
     private var gridHasOnlyOneTile: Bool {

@@ -131,16 +131,16 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatMissedCallMessageIsNotAppendedForCallsOtherCallStates() {
         // given
         let ignoredCallStates: [CallState] = [.terminating(reason: .answeredElsewhere),
-                                               .terminating(reason: .lostMedia),
-                                               .terminating(reason: .internalError),
-                                               .terminating(reason: .unknown),
-                                               .incoming(video: true, shouldRing: false, degraded: false),
-                                               .incoming(video: false, shouldRing: false, degraded: false),
-                                               .incoming(video: true, shouldRing: true, degraded: false),
-                                               .incoming(video: false, shouldRing: true, degraded: false),
-                                               .answered(degraded: false),
-                                               .established,
-                                               .outgoing(degraded: false)]
+                                              .terminating(reason: .lostMedia),
+                                              .terminating(reason: .internalError),
+                                              .terminating(reason: .unknown),
+                                              .incoming(video: true, shouldRing: false, degraded: false),
+                                              .incoming(video: false, shouldRing: false, degraded: false),
+                                              .incoming(video: true, shouldRing: true, degraded: false),
+                                              .incoming(video: false, shouldRing: true, degraded: false),
+                                              .answered(degraded: false),
+                                              .established,
+                                              .outgoing(degraded: false)]
 
         // when
         for callState in ignoredCallStates {

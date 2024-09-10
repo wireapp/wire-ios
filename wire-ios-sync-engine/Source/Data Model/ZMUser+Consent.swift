@@ -39,17 +39,17 @@ extension ZMUser {
 
     static func parse(consentPayload: ZMTransportData) -> [ConsentType: Bool] {
         guard let payloadDict = consentPayload.asDictionary(),
-            let resultArray = payloadDict["results"] as? [[String: Any]] else {
-                return [:]
+              let resultArray = payloadDict["results"] as? [[String: Any]] else {
+            return [:]
         }
 
         var result: [ConsentType: Bool] = [:]
 
         resultArray.forEach {
             guard let type = $0["type"] as? Int,
-                let value = $0["value"] as? Int,
-                let consentType = ConsentType(rawValue: type) else {
-                    return
+                  let value = $0["value"] as? Int,
+                  let consentType = ConsentType(rawValue: type) else {
+                return
             }
 
             let valueBool = (value == 1)
@@ -114,11 +114,11 @@ extension ZMUser {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
 
             guard 200 ... 299 ~= response.httpStatus
-                else {
-                    let error = response.transportSessionError ?? ConsentRequestError.unknown
-                    zmLog.debug("Error setting consent status: \(error)")
-                    completion(.failure(error))
-                    return
+            else {
+                let error = response.transportSessionError ?? ConsentRequestError.unknown
+                zmLog.debug("Error setting consent status: \(error)")
+                completion(.failure(error))
+                return
             }
 
             completion(.success(()))

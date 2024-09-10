@@ -193,7 +193,7 @@ final class StartUIViewController: UIViewController {
             ])
         } else {
             NSLayoutConstraint.activate([
-            searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
+                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor)
             ])
         }
 

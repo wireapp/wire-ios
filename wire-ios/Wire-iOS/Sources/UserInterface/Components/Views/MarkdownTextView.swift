@@ -247,7 +247,7 @@ final class MarkdownTextView: NextResponderTextView {
                 let prevlineRange = previousLineRange,
                 let prevLineTextRange = previousLineTextRange,
                 let selection = selectedTextRange
-                else { return }
+            else { return }
 
             if isEmptyListItem(at: prevlineRange) {
                 // the delete last line
@@ -482,7 +482,7 @@ final class MarkdownTextView: NextResponderTextView {
             let lineRange = currentLineRange,
             let selection = selectedTextRange,
             let lineStart = NSRange(location: lineRange.location, length: 0).textRange(in: self)
-            else { return }
+        else { return }
 
         let prefix = nextListPrefix(type: type)
 
@@ -502,7 +502,7 @@ final class MarkdownTextView: NextResponderTextView {
             let lineRange = currentLineRange,
             let prefixRange = rangeOfListPrefix(at: lineRange)?.textRange(in: self),
             var selection = selectedTextRange
-            else { return }
+        else { return }
 
         // if the selection is within the prefix range, change selection
         // to be at start of list content
@@ -531,7 +531,7 @@ final class MarkdownTextView: NextResponderTextView {
             let start = position(from: selection.start, offset: delta),
             let end = position(from: selection.end, offset: delta),
             let restoredSelection = textRange(from: start, to: end)
-            else { return }
+        else { return }
 
         selectedTextRange = restoredSelection
     }
@@ -704,7 +704,7 @@ extension NSRange {
             let start = textInput.position(from: textInput.beginningOfDocument, offset: location),
             let end = textInput.position(from: start, offset: length),
             let range = textInput.textRange(from: start, to: end)
-            else { return nil }
+        else { return nil }
 
         return range
     }

@@ -76,7 +76,7 @@ final class ColorKnobView: UIView {
         borderCircleLayer.bounds = CGRect(
             origin: .zero,
             size: CGSize(width: knobBorderDiameter,
-            height: knobBorderDiameter)
+                         height: knobBorderDiameter)
         )
         borderCircleLayer.position = centerPos
         borderCircleLayer.cornerRadius = knobBorderDiameter / 2

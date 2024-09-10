@@ -48,7 +48,7 @@ class DigitalSignatureVerificationViewControllerTest: XCTestCase {
 
     func testThatParseDigitalSignatureVerificationURLReturnsError() {
         // given
-         let failedURL = URL(string: "https://ais-sas.swisscom.com/sas/web/error?lang=en&errorCode=authenticationFailed.numberOfRetryAttemptsExceeded&postCode=sas-error-authentication-failed")!
+        let failedURL = URL(string: "https://ais-sas.swisscom.com/sas/web/error?lang=en&errorCode=authenticationFailed.numberOfRetryAttemptsExceeded&postCode=sas-error-authentication-failed")!
 
         // when
         let response = sut.parseVerificationURL(failedURL)

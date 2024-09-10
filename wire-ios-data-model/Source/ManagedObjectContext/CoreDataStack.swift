@@ -410,10 +410,10 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.applicationContainerURL = applicationContainer
 
             if !DeveloperFlag.proteusViaCoreCrypto.isOn {
-              context.setupUserKeyStore(
-                accountDirectory: accountContainer,
-                applicationContainer: applicationContainer
-              )
+                context.setupUserKeyStore(
+                    accountDirectory: accountContainer,
+                    applicationContainer: applicationContainer
+                )
             }
 
             context.undoManager = nil

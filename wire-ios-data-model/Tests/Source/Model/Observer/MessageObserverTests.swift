@@ -37,7 +37,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         modifier: (T) -> Void,
         expectedChangedField: String?,
         customAffectedKeys: AffectedKeys? = nil
-        ) {
+    ) {
         let fields: Set<String> = expectedChangedField == nil ? [] : [expectedChangedField!]
         checkThatItNotifiesTheObserverOfAChange(message, modifier: modifier, expectedChangedFields: fields, customAffectedKeys: customAffectedKeys)
     }
@@ -47,7 +47,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         modifier: (T) -> Void,
         expectedChangedFields: Set<String>,
         customAffectedKeys: AffectedKeys? = nil
-        ) {
+    ) {
         // given
         withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
             self.uiMOC.saveOrRollback()
@@ -117,7 +117,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
                                                               processedProperties: properties,
                                                               encryptionKeys: keys,
                                                               format: .preview),
-                                                    nonce: UUID.create())
+                                          nonce: UUID.create())
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
@@ -312,7 +312,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
             message,
             modifier: { _ in
                 _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
-        },
+            },
             expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
         )
     }

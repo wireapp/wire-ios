@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
- @testable import WireDataModel
- import XCTest
+@testable import WireDataModel
+import XCTest
 
- final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
+final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
     override func setUp() {
         DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .temporary())
         BackendInfo.domain = nil
@@ -30,9 +30,9 @@
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
- }
+}
 
- // MARK: - Payload creation
+// MARK: - Payload creation
 
 extension ClientMessageTests_OTR_Legacy {
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
@@ -503,11 +503,11 @@ extension ClientMessageTests_OTR_Legacy {
         // THEN
         XCTAssertEqual(identifier, EncryptionSessionIdentifier(userId: user.remoteIdentifier.uuidString, clientId: client.remoteIdentifier!))
     }
- }
+}
 
 // MARK: - Helper
 
- extension ClientMessageTests_OTR_Legacy {
+extension ClientMessageTests_OTR_Legacy {
     /// Returns a string large enough to have to be encoded in an external message
     fileprivate var stringLargeEnoughToRequireExternal: String {
         var text = "Hello"
@@ -535,4 +535,4 @@ extension ClientMessageTests_OTR_Legacy {
         }
         return string
     }
- }
+}

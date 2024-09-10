@@ -66,9 +66,9 @@ import UIKit
 
         do {
             try StringLengthValidator.validateStringValue(&ioValue,
-                                                    minimumStringLength: 0,
-                                                    maximumStringLength: 120,
-                                                    maximumByteLength: 120)
+                                                          minimumStringLength: 0,
+                                                          maximumStringLength: 120,
+                                                          maximumByteLength: 120)
         } catch {
             try setInvalid()
             return false

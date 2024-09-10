@@ -147,7 +147,7 @@ public class SearchTask {
 extension SearchTask {
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-         guard case let .lookup(userId) = task else { return }
+        guard case let .lookup(userId) = task else { return }
 
         tasksRemaining += 1
 
@@ -537,16 +537,16 @@ extension SearchTask {
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asArray(),
                     let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
-                    else {
-                        return
+                else {
+                    return
                 }
 
                 guard
                     let handle = userPayload["handle"] as? String,
                     let name = userPayload["name"] as? String,
                     let id = userPayload["id"] as? String
-                    else {
-                        return
+                else {
+                    return
                 }
 
                 let document = ["handle": handle, "name": name, "id": id]
@@ -636,8 +636,8 @@ extension SearchTask {
                         contextProvider: contextProvider,
                         searchUsersCache: self?.searchUsersCache
                     )
-                    else {
-                        return
+                else {
+                    return
                 }
 
                 if let updatedResult = self?.result.union(withServiceResult: result) {

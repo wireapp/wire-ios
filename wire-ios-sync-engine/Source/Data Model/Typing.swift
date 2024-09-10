@@ -20,9 +20,9 @@ import Foundation
 
 class Typing {
     #if DEBUG
-    public static var defaultTimeout: TimeInterval = 60
+        public static var defaultTimeout: TimeInterval = 60
     #else
-    public static let defaultTimeout: TimeInterval = 60
+        public static let defaultTimeout: TimeInterval = 60
     #endif
 
     // MARK: - Properties

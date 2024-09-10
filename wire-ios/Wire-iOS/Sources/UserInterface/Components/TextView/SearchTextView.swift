@@ -30,8 +30,8 @@ final class SearchTextView: TokenizedTextView {
                 return
             }
             layer.borderColor = isEditing
-            ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
-            : style.borderColorNotSelected.cgColor
+                ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
+                : style.borderColorNotSelected.cgColor
         }
     }
 

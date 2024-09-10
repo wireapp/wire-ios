@@ -156,7 +156,7 @@ extension ChaCha20Poly1305 {
                                             UInt64(crypto_pwhash_argon2i_OPSLIMIT_INTERACTIVE),
                                             Int(crypto_pwhash_argon2i_MEMLIMIT_INTERACTIVE),
                                             crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
-                                                throw EncryptionError.keyGenerationFailed
+                    throw EncryptionError.keyGenerationFailed
                 }
 
                 return hash
@@ -192,7 +192,7 @@ extension ChaCha20Poly1305 {
                                             UInt64(crypto_pwhash_argon2i_OPSLIMIT_MODERATE),
                                             Int(crypto_pwhash_argon2i_MEMLIMIT_MODERATE),
                                             crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
-                                                throw EncryptionError.keyGenerationFailed
+                    throw EncryptionError.keyGenerationFailed
                 }
 
                 self.buffer = buffer

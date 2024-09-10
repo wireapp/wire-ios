@@ -91,7 +91,7 @@ class BackendEnvironmentTests: XCTestCase {
     func testThatWeCanLoadCustomBackendEndpointsWithProxy() {
         guard
             let path: String = backendBundle
-                .path(forResource: "custom", ofType: "json")
+            .path(forResource: "custom", ofType: "json")
         else {
             XCTFail("Could not find configuration for custom")
             return

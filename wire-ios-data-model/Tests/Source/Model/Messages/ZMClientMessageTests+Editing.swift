@@ -372,10 +372,10 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         let quotedMessage = try! conversation.appendText(content: "Quote") as! ZMMessage
         let message = try! conversation.appendText(content: oldText,
-                                          mentions: [],
-                                          replyingTo: quotedMessage,
-                                          fetchLinkPreview: false,
-                                          nonce: UUID.create()) as! ZMMessage
+                                                   mentions: [],
+                                                   replyingTo: quotedMessage,
+                                                   fetchLinkPreview: false,
+                                                   nonce: UUID.create()) as! ZMMessage
         self.uiMOC.saveOrRollback()
 
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)

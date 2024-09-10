@@ -91,7 +91,7 @@ final class SlowSyncTests_Swift: IntegrationTest {
                 let client = self.user1.clients.anyObject() as? MockUserClient,
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             self.groupConversation.encryptAndInsertData(from: client, to: selfClient, data: data)
         }
@@ -126,7 +126,7 @@ final class SlowSyncTests_Swift: IntegrationTest {
                 let client = self.user1.clients.anyObject() as? MockUserClient,
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             self.groupConversation.encryptAndInsertData(from: client, to: selfClient, data: data)
         }

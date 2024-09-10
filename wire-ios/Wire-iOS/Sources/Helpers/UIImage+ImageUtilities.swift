@@ -69,7 +69,7 @@ extension UIImage {
 
     convenience init?(from imageData: Data, withMaxSize maxSize: CGFloat) {
         guard let source: CGImageSource = CGImageSourceCreateWithData(imageData as CFData, nil),
-            let scaledImage = CGImageSourceCreateThumbnailAtIndex(source, 0, UIImage.thumbnailOptions(withMaxSize: maxSize)) else { return nil }
+              let scaledImage = CGImageSourceCreateThumbnailAtIndex(source, 0, UIImage.thumbnailOptions(withMaxSize: maxSize)) else { return nil }
 
         self.init(cgImage: scaledImage, scale: 2.0, orientation: .up)
     }
@@ -93,7 +93,7 @@ extension UIImage {
         }
 
         if let height = properties[kCGImagePropertyPixelHeight] as? CGFloat,
-            let width = properties[kCGImagePropertyPixelWidth] as? CGFloat {
+           let width = properties[kCGImagePropertyPixelWidth] as? CGFloat {
             return CGSize(width: width, height: height)
         }
 

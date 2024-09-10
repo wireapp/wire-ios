@@ -45,10 +45,10 @@ final class InputBarSecondaryButtonsView: UIView {
 
         newView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          newView.topAnchor.constraint(equalTo: topAnchor),
-          newView.bottomAnchor.constraint(equalTo: bottomAnchor),
-          newView.leftAnchor.constraint(equalTo: leftAnchor),
-          newView.rightAnchor.constraint(equalTo: rightAnchor)
+            newView.topAnchor.constraint(equalTo: topAnchor),
+            newView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            newView.leftAnchor.constraint(equalTo: leftAnchor),
+            newView.rightAnchor.constraint(equalTo: rightAnchor)
         ])
     }
 

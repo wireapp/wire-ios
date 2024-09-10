@@ -25,7 +25,7 @@ extension MockTransportSession {
         guard
             let otrMetaData = try? Proteus_NewOtrMessage(serializedData: data),
             let senderClient = otrMessageSender(fromClientId: otrMetaData.sender) else {
-                return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
 
         let onlyForUser = query["report_missing"] as? String

@@ -49,7 +49,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
 
         // THEN
         guard let validationURL = url else {
-           return XCTFail("The requester did not call the delegate.")
+            return XCTFail("The requester did not call the delegate.")
         }
 
         guard let components = URLComponents(url: validationURL, resolvingAgainstBaseURL: false) else {

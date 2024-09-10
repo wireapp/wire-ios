@@ -42,7 +42,7 @@ extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_pro
     func processEvent(_ event: ___VARIABLE_productName:identifier___Module.Event) {
         switch event {
         case .viewDidLoad:
-          break
+            break
         }
     }
 }

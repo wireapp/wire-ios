@@ -87,7 +87,7 @@ public final class TeamRolesDownloadRequestStrategy:
         }
     }
 
-// MARK: - ZMDownstreamTranscoder
+    // MARK: - ZMDownstreamTranscoder
 
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync, let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
@@ -96,8 +96,8 @@ public final class TeamRolesDownloadRequestStrategy:
 
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
-            let team = object as? Team,
-            let payload = response.payload?.asDictionary() as? [String: Any] else { return }
+              let team = object as? Team,
+              let payload = response.payload?.asDictionary() as? [String: Any] else { return }
 
         team.needsToDownloadRoles = false
         team.updateRoles(with: payload)

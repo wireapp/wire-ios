@@ -53,22 +53,22 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
-            matching: sut,
-            named: "LightTheme",
-            file: #file,
-            testName: #function,
-            line: #line
-        )
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
-            matching: sut,
-            named: "DarkTheme",
-            file: #file,
-            testName: #function,
-            line: #line
-        )
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 
     func testWarningThatAppLockIsNotActive() {
@@ -84,21 +84,21 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
         snapshotHelper
             .withUserInterfaceStyle(.light)
             .verify(
-            matching: sut,
-            named: "LightTheme",
-            file: #file,
-            testName: #function,
-            line: #line
-        )
+                matching: sut,
+                named: "LightTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(
-            matching: sut,
-            named: "DarkTheme",
-            file: #file,
-            testName: #function,
-            line: #line
-        )
+                matching: sut,
+                named: "DarkTheme",
+                file: #file,
+                testName: #function,
+                line: #line
+            )
     }
 }

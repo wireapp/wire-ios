@@ -1676,11 +1676,11 @@ public final class MLSService: MLSServiceInterface {
         for conversation in conversations {
             let (groupID, timestamp) = await context.perform {
                 (conversation.mlsGroupID,
-                conversation.commitPendingProposalDate)
+                 conversation.commitPendingProposalDate)
             }
 
             guard let groupID, let timestamp else {
-                    continue
+                continue
             }
 
             result.append((groupID, timestamp))
@@ -1963,9 +1963,9 @@ public final class MLSService: MLSServiceInterface {
         }
 
         if let subConversationGroupID = await subconversationGroupIDRepository.fetchSubconversationGroupID(
-                forType: subconversationType,
-                parentGroupID: parentGroupID
-            ),
+            forType: subconversationType,
+            parentGroupID: parentGroupID
+        ),
             try await conversationExists(groupID: subConversationGroupID) {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {

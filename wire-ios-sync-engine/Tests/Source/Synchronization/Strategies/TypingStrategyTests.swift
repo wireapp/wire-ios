@@ -120,7 +120,7 @@ final class TypingStrategyTests: MessagingTest {
                        "from": userA.remoteIdentifier!.transportString(),
                        "time": Date().transportString(),
                        "type": "conversation.typing"
-                       ] as [String: Any]
+        ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
@@ -130,7 +130,7 @@ final class TypingStrategyTests: MessagingTest {
                        "from": userA.remoteIdentifier!.transportString(),
                        "time": Date().transportString(),
                        "type": "conversation.member-leave"
-                       ] as [String: Any]
+        ] as [String: Any]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
 
@@ -307,11 +307,11 @@ final class TypingStrategyTests: MessagingTest {
     func payloadForOTRMessageAdd(with message: GenericMessage) -> [String: Any] {
         let data = try? message.serializedData().base64String()
         return ["conversation": conversationA.remoteIdentifier!.transportString(),
-                       "data": ["text": data],
-                       "from": userA.remoteIdentifier!.transportString(),
-                       "time": Date().transportString(),
-                       "type": "conversation.otr-message-add"
-                       ] as [String: Any]
+                "data": ["text": data],
+                "from": userA.remoteIdentifier!.transportString(),
+                "time": Date().transportString(),
+                "type": "conversation.otr-message-add"
+        ] as [String: Any]
     }
 
     func testThatItDoesNotForwardOtherEventTypes() {
@@ -504,7 +504,7 @@ final class TypingStrategyTests: MessagingTest {
         let request2IsforConv2 = isExpected(request: request2, for: conversation2, isTyping: true)
 
         XCTAssertTrue((request1IsforConv1 && request2IsforConv2) ||
-                      (request2IsforConv1 && request1IsforConv2))
+            (request2IsforConv1 && request1IsforConv2))
     }
 
     func testThatItReturns_Two_RequestsWhenReceiving_Two_TypingNotification_ForDifferentsConversation_End() {
@@ -579,9 +579,9 @@ final class TypingStrategyTests: MessagingTest {
         let token = NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { note in
-                                                        XCTAssertEqual(note.object as? ZMConversation, conversation)
-                                                        expectation.fulfill()
-        })
+                                                          XCTAssertEqual(note.object as? ZMConversation, conversation)
+                                                          expectation.fulfill()
+                                                      })
 
         // when
         try conversation.appendText(content: "foo")
@@ -695,13 +695,13 @@ extension TypingStrategyTests {
         let token = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { _ in
-                                                        expectation.fulfill()
-        })
+                                                          expectation.fulfill()
+                                                      })
         _ = NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                               context: self.uiMOC.notificationContext,
                                               using: { _ in
-                                                assertionFailure()
-        })
+                                                  assertionFailure()
+                                              })
 
         // when
         TypingStrategy.notifyTranscoderThatUser(isTyping: true, in: conversation)
@@ -721,13 +721,13 @@ extension TypingStrategyTests {
         let token = NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { _ in
-                                                        expectation.fulfill()
-        })
+                                                          expectation.fulfill()
+                                                      })
         _ = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
                                               context: self.uiMOC.notificationContext,
                                               using: { _ in
-                                                assertionFailure()
-        })
+                                                  assertionFailure()
+                                              })
 
         // when
         simulateTyping()
@@ -748,8 +748,8 @@ extension TypingStrategyTests {
         let token = NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       using: { _ in
-                                                        expectation.fulfill()
-        })
+                                                          expectation.fulfill()
+                                                      })
 
         // when
         TypingStrategy.clearTranscoderStateForTyping(in: conversation)

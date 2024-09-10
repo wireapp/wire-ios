@@ -37,7 +37,7 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         if let toView = transitionContext.view(forKey: UITransitionContextViewKey.to),
-            let toViewController = transitionContext.viewController(forKey: .to) {
+           let toViewController = transitionContext.viewController(forKey: .to) {
             toView.frame = transitionContext.finalFrame(for: toViewController)
             transitionContext.containerView.addSubview(toView)
         }

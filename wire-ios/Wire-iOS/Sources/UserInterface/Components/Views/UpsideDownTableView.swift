@@ -43,9 +43,9 @@ final class UpsideDownTableView: UITableView {
 
         set {
             super.contentInset = UIEdgeInsets(top: newValue.bottom,
-                                                  left: newValue.left,
-                                                  bottom: newValue.top,
-                                                  right: newValue.right)
+                                              left: newValue.left,
+                                              bottom: newValue.top,
+                                              right: newValue.right)
         }
     }
 

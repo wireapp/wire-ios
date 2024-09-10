@@ -96,7 +96,7 @@ extension UserProperty {
             if let numberValue = value as? Int {
                 intValue = numberValue
             } else if let stringValue = value as? String,
-                 let numberValue = Int(stringValue) {
+                      let numberValue = Int(stringValue) {
                 intValue = numberValue
             } else {
                 return

@@ -44,7 +44,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             latestMigrationVersion?.dataModelVersion,
             dataModelVersion,
             "Current model version '\(dataModelVersion)' does not exist as core data migration version! " +
-            "Please add a new case for the version, so that the migration to that version is ensured!"
+                "Please add a new case for the version, so that the migration to that version is ensured!"
         )
     }
 
@@ -83,7 +83,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             latestMigrationVersion?.dataModelVersion,
             dataModelVersion,
             "Current model version '\(dataModelVersion)' does not exist as core data migration version! " +
-            "Please add a new case for the version, so that the migration to that version is ensured!"
+                "Please add a new case for the version, so that the migration to that version is ensured!"
         )
     }
 
@@ -108,13 +108,13 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             let currentDatabaseURL = try XCTUnwrap(directory.syncContext.persistentStoreCoordinator?.persistentStores.last?.url)
 
             XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
-                    "**HOW TO FIX THIS** \n" +
-                    "- Run the test, until you hit the assertion\n" +
-                    "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
-                    "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
-                    "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
-                    "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
-                    "- Add it to WireDataModel project with the other stores\n\n")
+                "**HOW TO FIX THIS** \n" +
+                "- Run the test, until you hit the assertion\n" +
+                "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
+                "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
+                "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
+                "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
+                "- Add it to WireDataModel project with the other stores\n\n")
             assertionFailure()
         }
 

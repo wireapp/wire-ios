@@ -116,22 +116,22 @@ class OAuthUseCase: OAuthUseCaseInterface {
             self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
                                                                     externalUserAgent: userAgent,
                                                                     callback: { authState, error in
-                if let error = error as NSError? {
-                    if error.domain == OIDGeneralErrorDomain, error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
-                        return continuation.resume(throwing: OAuthError.userCancelled)
-                    } else {
-                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
-                    }
-                }
+                                                                        if let error = error as NSError? {
+                                                                            if error.domain == OIDGeneralErrorDomain, error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
+                                                                                return continuation.resume(throwing: OAuthError.userCancelled)
+                                                                            } else {
+                                                                                return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                                                                            }
+                                                                        }
 
-                guard let idToken = authState?.lastTokenResponse?.idToken else {
-                    return continuation.resume(throwing: OAuthError.missingIdToken)
-                }
+                                                                        guard let idToken = authState?.lastTokenResponse?.idToken else {
+                                                                            return continuation.resume(throwing: OAuthError.missingIdToken)
+                                                                        }
 
-                let refreshToken = authState?.lastTokenResponse?.refreshToken
+                                                                        let refreshToken = authState?.lastTokenResponse?.refreshToken
 
-                return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
-            })
+                                                                        return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
+                                                                    })
         }
     }
 }

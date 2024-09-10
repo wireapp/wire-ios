@@ -73,7 +73,7 @@ extension OpenGraphData {
 
     init?(propertyMapping mapping: PropertyMapping, resolvedURL: URL, images: [String]) {
         guard let title = mapping[.title],
-            let url = mapping[.url] else { return nil }
+              let url = mapping[.url] else { return nil }
 
         self.init(
             title: title,

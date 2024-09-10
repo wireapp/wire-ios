@@ -68,7 +68,7 @@ public class ProteusProvider: ProteusProviding {
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T {
         if let proteusService, proteusViaCoreCrypto {
-          return try proteusServiceBlock(proteusService)
+            return try proteusServiceBlock(proteusService)
 
         } else if let keyStore, !proteusViaCoreCrypto {
             // remove comment once implementation of proteus via core crypto is done

@@ -102,7 +102,7 @@ func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws 
 
 /**
  Set value to property
- 
+
  - parameter property: Property to set the value on
  - parameter expr:     Property value
  */
@@ -114,7 +114,7 @@ func << (property: inout SettingsProperty, expr: @autoclosure () -> SettingsProp
 
 /**
  Read value from property
- 
+
  - parameter value:    Value to assign
  - parameter property: Property to read the value from
  */

@@ -188,9 +188,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     @objc func handleInterruption(_ notification: Notification) {
         guard let info = notification.userInfo,
-            let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
-                return
+              let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+            return
         }
         if type == .began {
             stopRecording()
@@ -280,9 +280,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     fileprivate var audioSizeIsCritical: Bool {
         guard let fileURL,
-            let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
-            let size = attribs[.size] as? UInt32,
-            size > maxAllowedSize else { return false }
+              let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
+              let size = attribs[.size] as? UInt32,
+              size > maxAllowedSize else { return false }
         WireLogger.ui.debug("Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)")
         return true
     }

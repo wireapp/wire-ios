@@ -37,7 +37,7 @@ extension ZMImageMessage {
                 context: moc.notificationContext,
                 object: objectID,
                 userInfo: nil)
-            .post()
+                .post()
         }
     }
 }

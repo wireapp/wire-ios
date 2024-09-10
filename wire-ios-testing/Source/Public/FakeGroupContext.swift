@@ -29,7 +29,7 @@ public class FakeGroupContext: NSObject, GroupQueue {
     }
 
     public static var sync: FakeGroupContext {
-         return FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+        return FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
     }
 
     public init(queue: DispatchQueue, group: ZMSDispatchGroup) {

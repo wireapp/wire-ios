@@ -48,45 +48,45 @@ class NotificationByIDEndpointTests: XCTestCase {
     let recipientClientID = "b7d8296a54c49151"
 
     lazy var validPayload = Data("""
-        {
-            "id": "\(eventID.uuidString.lowercased())",
-            "payload": [
-                {
-                    "type": "conversation.otr-message-add",
-                    "time": "2022-09-02T07:12:21.023Z",
-                    "from": "\(senderID.uuidString.lowercased())",
-                    "qualified_from": {
-                        "id": "\(senderID.uuidString.lowercased())",
-                        "domain": "\(senderDomain)"
-                    },
-                    "conversation": "\(conversationID.uuidString.lowercased())",
-                    "qualified_conversation": {
-                        "id": "\(conversationID.uuidString.lowercased())",
-                        "domain": "\(conversationDomain)"
-                    },
-                    "data": {
-                        "data": "",
-                        "recipient": "\(recipientClientID)",
-                        "sender": "\(senderClientID)",
-                        "text": "some encrypted data"
-                    }
+    {
+        "id": "\(eventID.uuidString.lowercased())",
+        "payload": [
+            {
+                "type": "conversation.otr-message-add",
+                "time": "2022-09-02T07:12:21.023Z",
+                "from": "\(senderID.uuidString.lowercased())",
+                "qualified_from": {
+                    "id": "\(senderID.uuidString.lowercased())",
+                    "domain": "\(senderDomain)"
+                },
+                "conversation": "\(conversationID.uuidString.lowercased())",
+                "qualified_conversation": {
+                    "id": "\(conversationID.uuidString.lowercased())",
+                    "domain": "\(conversationDomain)"
+                },
+                "data": {
+                    "data": "",
+                    "recipient": "\(recipientClientID)",
+                    "sender": "\(senderClientID)",
+                    "text": "some encrypted data"
                 }
-            ]
-        }
-        """.utf8)
+            }
+        ]
+    }
+    """.utf8)
 
     lazy var validPayloadNoEvents = Data("""
-        {
-            "id": "\(eventID.uuidString.lowercased())",
-            "payload": []
-        }
-        """.utf8)
+    {
+        "id": "\(eventID.uuidString.lowercased())",
+        "payload": []
+    }
+    """.utf8)
 
     let invalidPayload = Data("""
-        {
-            "foo": "bar"
-        }
-        """.utf8)
+    {
+        "foo": "bar"
+    }
+    """.utf8)
 
     func test_ParseSuccessResponse() {
         // Given

@@ -25,12 +25,12 @@ extension UIApplication {
     /// - Returns: the top most view controller 
     func topmostViewController(onlyFullScreen: Bool = true) -> UIViewController? {
         guard let window = AppDelegate.shared.mainWindow,
-            var topController = window.rootViewController else {
-                return .none
+              var topController = window.rootViewController else {
+            return .none
         }
 
         while let presentedController = topController.presentedViewController,
-            !onlyFullScreen || presentedController.modalPresentationStyle == .fullScreen {
+              !onlyFullScreen || presentedController.modalPresentationStyle == .fullScreen {
             topController = presentedController
         }
 

@@ -203,48 +203,48 @@ public final class ConversationService: ConversationServiceInterface {
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-            func createGroup(
-                withUsers users: Set<ZMUser>,
-                completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
-            ) {
-                internalCreateGroupConversation(
-                    teamID: teamID,
-                    name: name,
-                    users: users,
-                    accessMode: accessMode,
-                    accessRoles: accessRoles,
-                    enableReceipts: enableReceipts,
-                    messageProtocol: messageProtocol,
-                    completion: completion
-                )
-            }
+        func createGroup(
+            withUsers users: Set<ZMUser>,
+            completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
+        ) {
+            internalCreateGroupConversation(
+                teamID: teamID,
+                name: name,
+                users: users,
+                accessMode: accessMode,
+                accessRoles: accessRoles,
+                enableReceipts: enableReceipts,
+                messageProtocol: messageProtocol,
+                completion: completion
+            )
+        }
 
-            createGroupFlow.checkpoint(description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
-            createGroup(withUsers: users) { result in
-                switch result {
-                case let .failure(.networkError(.unreachableDomains(domains))):
-                    let unreachableUsers = users.belongingTo(domains: domains)
-                    let reachableUsers = Set(users).subtracting(unreachableUsers)
+        createGroupFlow.checkpoint(description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
+        createGroup(withUsers: users) { result in
+            switch result {
+            case let .failure(.networkError(.unreachableDomains(domains))):
+                let unreachableUsers = users.belongingTo(domains: domains)
+                let reachableUsers = Set(users).subtracting(unreachableUsers)
 
-                    self.createGroupFlow.checkpoint(description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
-                    createGroup(withUsers: reachableUsers) { retryResult in
+                self.createGroupFlow.checkpoint(description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
+                createGroup(withUsers: reachableUsers) { retryResult in
 
-                        if case let .success(conversation) = retryResult {
-                            conversation.appendFailedToAddUsersSystemMessage(
-                                users: unreachableUsers,
-                                sender: .selfUser(in: self.context),
-                                at: Date()
-                            )
-                        }
-
-                        completion(retryResult)
+                    if case let .success(conversation) = retryResult {
+                        conversation.appendFailedToAddUsersSystemMessage(
+                            users: unreachableUsers,
+                            sender: .selfUser(in: self.context),
+                            at: Date()
+                        )
                     }
 
-                default:
-                    completion(result)
+                    completion(retryResult)
                 }
+
+            default:
+                completion(result)
             }
         }
+    }
 
     private func internalCreateGroupConversation(
         teamID: UUID?,

@@ -236,7 +236,7 @@ final class CollectionsViewController: UIViewController {
         UIView.performWithoutAnimation {
             contentView.collectionView.performBatchUpdates({
                 for section in [CollectionsSectionSet.images, CollectionsSectionSet.videos]
-                where numberOfElements(for: section) != 0 {
+                    where numberOfElements(for: section) != 0 {
                     contentView.collectionView.reloadSections(IndexSet(integer: (CollectionsSectionSet.visible.firstIndex(of: section))!))
                 }
             }, completion: { _ in
@@ -658,8 +658,8 @@ extension CollectionsViewController: CollectionCellMessageChangeDelegate {
               fileMessageData.downloadState == .downloaded,
               messagePresenter.waitingForFileDownload,
               message.isFile || message.isVideo || message.isAudio else {
-                  return
-              }
+            return
+        }
 
         messagePresenter.openFileMessage(message, targetView: cell)
     }

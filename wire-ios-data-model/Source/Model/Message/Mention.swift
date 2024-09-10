@@ -55,8 +55,8 @@ public class Mention: NSObject {
 extension Mention {
     static func mentions(from protos: [WireProtos.Mention]?, messageText: String?, moc: NSManagedObjectContext?) -> [Mention] {
         guard let protos,
-            let messageText,
-            let managedObjectContext = moc else { return [] }
+              let messageText,
+              let managedObjectContext = moc else { return [] }
 
         let mentions = Array(protos.compactMap({ Mention($0, context: managedObjectContext) }).prefix(500))
         var mentionRanges = IndexSet()

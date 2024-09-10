@@ -142,8 +142,8 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         get {
             guard let text,
                   !text.isEmpty else {
-                      return super.accessibilityValue ?? placeholder
-                  }
+                return super.accessibilityValue ?? placeholder
+            }
             return text
         }
 

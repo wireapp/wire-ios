@@ -182,7 +182,7 @@ class Settings {
 
     func restoreLastUsedAVSSettings() {
         if let savedIntensity = defaults.object(forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue) as? NSNumber,
-            let intensityLevel = AVSIntensityLevel(rawValue: UInt(savedIntensity.intValue)) {
+           let intensityLevel = AVSIntensityLevel(rawValue: UInt(savedIntensity.intValue)) {
             AVSMediaManager.sharedInstance().intensityLevel = intensityLevel
         } else {
             AVSMediaManager.sharedInstance().intensityLevel = .full
@@ -200,11 +200,11 @@ class Settings {
 
     private func startLogging() {
         #if !targetEnvironment(simulator)
-        loadEnabledLogs()
+            loadEnabledLogs()
         #endif
 
         #if !DISABLE_LOGGING
-        ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
+            ZMSLog.startRecording(isInternal: Bundle.developerModeEnabled)
         #endif
     }
 }

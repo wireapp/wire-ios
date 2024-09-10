@@ -737,7 +737,7 @@ extension FullscreenImageViewController: MessageActionResponder {
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         switch action {
         case .showInConversation,
-                .reply:
+             .reply:
             dismiss(animated: true) {
                 self.perform(action: action)
             }
@@ -756,9 +756,9 @@ extension FullscreenImageViewController: MessageActionResponder {
     fileprivate func perform(action: MessageAction) {
         let sourceView: UIView
 
-        // iPad popover points to delete button of container is availible. The scrollView occupies most of the screen area and the popover is compressed.
-        = if action == .delete,
-           let conversationImagesViewController = delegate as? ConversationImagesViewController {
+            // iPad popover points to delete button of container is availible. The scrollView occupies most of the screen area and the popover is compressed.
+            = if action == .delete,
+            let conversationImagesViewController = delegate as? ConversationImagesViewController {
             conversationImagesViewController.deleteButton
         } else {
             scrollView

@@ -370,9 +370,9 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         self.sut.collectionView.scrollRectToVisible(CGRect(x: 300, y: 0, width: 160, height: 10), animated: false)
         // THEN
         snapshotHelper.verify(matching: prepareForSnapshot(),
-               file: file,
-               testName: testName,
-               line: line)
+                              file: file,
+                              testName: testName,
+                              line: line)
     }
 
     func testCameraScrolledHorizontallySomePercent() {
@@ -421,9 +421,9 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         sut.collectionView.scrollRectToVisible(CGRect(x: 320, y: 0, width: 160, height: 10), animated: false)
         // THEN
         snapshotHelper.verify(matching: prepareForSnapshot(),
-               file: file,
-               testName: testName,
-               line: line)
+                              file: file,
+                              testName: testName,
+                              line: line)
     }
 
     func testCameraScrolledHorizontallyAwayPercent() {

@@ -20,8 +20,8 @@
 import XCTest
 
 class SignatureRequestStrategyTests: MessagingTest {
-     var sut: SignatureRequestStrategy!
-     var mockApplicationStatus: MockApplicationStatus!
+    var sut: SignatureRequestStrategy!
+    var mockApplicationStatus: MockApplicationStatus!
     var asset: WireProtos.Asset?
 
     override func setUp() {
@@ -52,7 +52,7 @@ class SignatureRequestStrategyTests: MessagingTest {
         syncMOC.performAndWait {
             syncMOC.signatureStatus?.state = .waitingForConsentURL
 
-        // when
+            // when
             request = sut.nextRequestIfAllowed(for: .v0)
         }
         // then
@@ -72,7 +72,7 @@ class SignatureRequestStrategyTests: MessagingTest {
         // given
         let responseId = "123123"
         let payload: [String: String] = ["consentURL": "http://test.com",
-                                          "responseId": responseId]
+                                         "responseId": responseId]
         let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when user inserted correct OTP code
@@ -92,7 +92,7 @@ class SignatureRequestStrategyTests: MessagingTest {
         // given
         let responseId = "123123"
         let payload: [String: String] = ["consentURL": "http://test.com",
-                                          "responseId": responseId]
+                                         "responseId": responseId]
         let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
@@ -109,7 +109,7 @@ class SignatureRequestStrategyTests: MessagingTest {
         // given
         let documentId = "123123"
         let payload: [String: String] = ["documentId": documentId,
-                                          "cms": "Test"]
+                                         "cms": "Test"]
         let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when

@@ -118,9 +118,9 @@ class MockURLSession: DataTaskSession {
 
     private func startCaching(data: Data, for response: URLResponse, task: DataTask, in cache: URLCache, completionHandler: @escaping () -> Void) {
         guard let httpResponse = response as? HTTPURLResponse,
-            (200 ..< 300).contains(httpResponse.statusCode) else {
-                completionHandler()
-                return
+              (200 ..< 300).contains(httpResponse.statusCode) else {
+            completionHandler()
+            return
         }
 
         guard httpResponse.allHeaderFields.keys.contains("Cache-Control") else {

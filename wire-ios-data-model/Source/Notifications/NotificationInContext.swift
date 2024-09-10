@@ -94,10 +94,10 @@ import WireUtilities
         return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: name,
                                                                                                object: context,
                                                                                                queue: queue) { note in
-            let notificationInContext = NotificationInContext(notification: note)
-            guard object == nil || object! === notificationInContext.object else { return }
-            using(notificationInContext)
-        })
+                let notificationInContext = NotificationInContext(notification: note)
+                guard object == nil || object! === notificationInContext.object else { return }
+                using(notificationInContext)
+            })
     }
 }
 

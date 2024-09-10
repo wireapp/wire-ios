@@ -24,7 +24,7 @@ class BaseCompositeMessageTests: BaseZMMessageTests {
         return Composite.Item.with { $0.button = Button.with {
             $0.text = "Button text"
             $0.id = buttonID
-            }}
+        }}
     }
 
     func compositeItemText() -> Composite.Item {

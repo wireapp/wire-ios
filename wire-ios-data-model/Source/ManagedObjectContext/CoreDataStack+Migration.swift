@@ -68,7 +68,7 @@ extension CoreDataStack {
         dispatchGroup: ZMSDispatchGroup,
         migration: @escaping (NSManagedObjectContext) throws -> Void,
         completion: @escaping (Result<Void, Error>) -> Void
-        ) {
+    ) {
         func fail(_ error: MigrationError) {
             Logging.localStorage.error("Migrating local store failed: \(error)")
 

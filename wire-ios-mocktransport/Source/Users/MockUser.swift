@@ -230,7 +230,7 @@ extension MockUser {
             ]
 
             if let providerIdentifier = self.providerIdentifier,
-                let serviceIdentifier = self.serviceIdentifier {
+               let serviceIdentifier = self.serviceIdentifier {
                 payload["service"] = ["provider": providerIdentifier,
                                       "id": serviceIdentifier]
             }

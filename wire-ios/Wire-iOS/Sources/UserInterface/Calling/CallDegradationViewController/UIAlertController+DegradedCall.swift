@@ -79,84 +79,84 @@ extension UIAlertController {
     static func makeOutgoingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
         cancelBlock: (() -> Void)? = nil) -> UIAlertController {
-            typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
+        typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
 
-            let title = DegradedCall.title
-            let message = DegradedCall.message
-            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let title = DegradedCall.title
+        let message = DegradedCall.message
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-            // Add actions
-            if let confirmationBlock {
-                controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
-                    confirmationBlock(true)
-                })
+        // Add actions
+        if let confirmationBlock {
+            controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
+                confirmationBlock(true)
+            })
 
-                controller.addAction(.cancel(cancelBlock))
-            } else {
-                controller.addAction(UIAlertAction(
-                    title: L10n.Localizable.General.ok,
-                    style: .default,
-                    handler: { _ in
-                        cancelBlock?()
-                    }
-                ))
-            }
-
-            return controller
+            controller.addAction(.cancel(cancelBlock))
+        } else {
+            controller.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .default,
+                handler: { _ in
+                    cancelBlock?()
+                }
+            ))
         }
+
+        return controller
+    }
 
     static func makeEndingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
         cancelBlock: (() -> Void)? = nil) -> UIAlertController {
-            typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
-            typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
+        typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
+        typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
 
-            let title = DegradedCall.title
-            let message = EndedCall.message
-            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let title = DegradedCall.title
+        let message = EndedCall.message
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-            // Add actions
-            if let confirmationBlock {
-                controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
-                    confirmationBlock(true)
-                })
+        // Add actions
+        if let confirmationBlock {
+            controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
+                confirmationBlock(true)
+            })
 
-                controller.addAction(.cancel(cancelBlock))
-            } else {
-                controller.addAction(UIAlertAction(
-                    title: L10n.Localizable.General.ok,
-                    style: .default,
-                    handler: { _ in
-                        cancelBlock?()
-                    }
-                ))
-            }
-
-            return controller
+            controller.addAction(.cancel(cancelBlock))
+        } else {
+            controller.addAction(UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .default,
+                handler: { _ in
+                    cancelBlock?()
+                }
+            ))
         }
+
+        return controller
+    }
 
     static func makeIncomingDegradedMLSCall(
         confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)
     ) -> UIAlertController {
-            typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
-            typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
+        typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
+        typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
 
-            let controller = UIAlertController(title: DegradedCall.title,
-                                             message: IncomingCall.message,
-                                             preferredStyle: .alert)
+        let controller = UIAlertController(title: DegradedCall.title,
+                                           message: IncomingCall.message,
+                                           preferredStyle: .alert)
 
-            // Add actions
+        // Add actions
 
-            controller.addAction(UIAlertAction(title: IncomingCall.Action.continue, style: .default) { _ in
-                confirmationBlock(true)
-            })
+        controller.addAction(UIAlertAction(title: IncomingCall.Action.continue, style: .default) { _ in
+            confirmationBlock(true)
+        })
 
-            controller.addAction(.cancel({
-                confirmationBlock(false)
-            }))
+        controller.addAction(.cancel({
+            confirmationBlock(false)
+        }))
 
-            return controller
-        }
+        return controller
+    }
 
     // MARK: - Private
 
@@ -168,17 +168,17 @@ extension UIAlertController {
         if let user = degradedUser {
             if callEnded {
                 return user.isSelfUser ?
-                DegradedCallLocale.Ended.Alert.Message.`self` :
-                DegradedCallLocale.Ended.Alert.Message.user(user.name ?? "")
+                    DegradedCallLocale.Ended.Alert.Message.`self` :
+                    DegradedCallLocale.Ended.Alert.Message.user(user.name ?? "")
             } else {
                 return user.isSelfUser ?
-                DegradedCallLocale.Alert.Message.`self` :
-                DegradedCallLocale.Alert.Message.user(user.name ?? "")
+                    DegradedCallLocale.Alert.Message.`self` :
+                    DegradedCallLocale.Alert.Message.user(user.name ?? "")
             }
         } else {
             return callEnded ?
-            DegradedCallLocale.Ended.Alert.Message.unknown :
-            DegradedCallLocale.Alert.Message.unknown
+                DegradedCallLocale.Ended.Alert.Message.unknown :
+                DegradedCallLocale.Alert.Message.unknown
         }
     }
 }

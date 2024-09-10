@@ -214,7 +214,7 @@ extension AddressBookTests {
                 XCTAssertEqual(chunk.includedContacts, UInt(0)..<UInt(3))
                 let expected = [
                     self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
-                     "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
+                                                                   "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
                     self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
                     self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
                 ]
@@ -270,7 +270,7 @@ extension AddressBookTests {
                 XCTAssertEqual(chunk.includedContacts, UInt(0)..<UInt(2))
                 let expected = [
                     self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
-                        "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
+                                                                   "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
                     self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="]
                 ]
                 checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)

@@ -245,9 +245,9 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: {
-                                                        $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-                                                        $0.connection!.status = ZMConnectionStatus.pending
-            },
+                                                         $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                                                         $0.connection!.status = ZMConnectionStatus.pending
+                                                     },
                                                      expectedChangedField: .connectionState)
     }
 
@@ -259,9 +259,9 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: {
-                                                        $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
-                                                        $0.connection!.status = ZMConnectionStatus.sent
-            },
+                                                         $0.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+                                                         $0.connection!.status = ZMConnectionStatus.sent
+                                                     },
                                                      expectedChangedField: .connectionState)
     }
 
@@ -479,10 +479,10 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: {
-                                                        let team = Team.insertNewObject(in: self.uiMOC)
-                                                        let member = Member.insertNewObject(in: self.uiMOC)
-                                                        member.user = $0
-                                                        member.team = team
+                                                         let team = Team.insertNewObject(in: self.uiMOC)
+                                                         let member = Member.insertNewObject(in: self.uiMOC)
+                                                         member.user = $0
+                                                         member.team = team
                                                      },
                                                      expectedChangedField: .teams)
     }

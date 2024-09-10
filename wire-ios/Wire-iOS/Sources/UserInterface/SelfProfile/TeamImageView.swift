@@ -79,8 +79,8 @@ final class TeamImageView: UIImageView {
         initialLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          initialLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-          initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+            initialLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
 
         self.updateImage()

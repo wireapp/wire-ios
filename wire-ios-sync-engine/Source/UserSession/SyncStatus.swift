@@ -119,13 +119,13 @@ extension Notification.Name {
 
     /// Sync the resources: Teams, Users, Conversations...
     func resyncResources() {
-       // Refetch user settings.
-       ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-       // Set the status.
-       currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
-       self.log("resyncResources")
-       syncStateDelegate?.didStartSlowSync()
-   }
+        // Refetch user settings.
+        ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+        // Set the status.
+        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        self.log("resyncResources")
+        syncStateDelegate?.didStartSlowSync()
+    }
 
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in

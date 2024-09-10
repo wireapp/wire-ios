@@ -26,8 +26,8 @@ extension ZMUser {
     ///                NOTE that this **must** be the sync context.
 
     @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
-                                    domain: String?,
-                                    in context: NSManagedObjectContext) -> ZMUser {
+                                           domain: String?,
+                                           in context: NSManagedObjectContext) -> ZMUser {
         var created: Bool = false
         return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created)
     }
@@ -42,9 +42,9 @@ extension ZMUser {
     ///     - created: Will be set `true` if a new user was created.
 
     @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
-                                    domain: String?,
-                                    in context: NSManagedObjectContext,
-                                    created: UnsafeMutablePointer<Bool>) -> ZMUser {
+                                           domain: String?,
+                                           in context: NSManagedObjectContext,
+                                           created: UnsafeMutablePointer<Bool>) -> ZMUser {
         // We must only ever call this on the sync context. Otherwise, there's a race condition
         // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
         // having two duplicates of that user, and we'd have a really hard time recovering from that.

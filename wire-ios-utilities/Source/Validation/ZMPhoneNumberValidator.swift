@@ -29,8 +29,8 @@ public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
 
     @discardableResult public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
         guard let phoneNumber = ioValue as? NSString,
-            phoneNumber.length >= 1 else {
-                return true
+              phoneNumber.length >= 1 else {
+            return true
         }
 
         var validSet = CharacterSet.decimalDigits
@@ -50,9 +50,9 @@ public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
 
         do {
             _ = try StringLengthValidator.validateStringValue(&finalPhoneNumber,
-                                                minimumStringLength: 9,
-                                                maximumStringLength: 24,
-                                                maximumByteLength: 24)
+                                                              minimumStringLength: 9,
+                                                              maximumStringLength: 24,
+                                                              maximumByteLength: 24)
         } catch {
             throw error
         }
@@ -88,9 +88,9 @@ extension NSString {
         for i in 0..<characters.length {
             let toRemove = characters.substring(with: NSRange(location: i, length: 1))
             finalString = finalString.replacingOccurrences(of: toRemove,
-                                             with: "",
-                                             options: [],
-                                             range: NSRange(location: 0, length: finalString.length)) as NSString
+                                                           with: "",
+                                                           options: [],
+                                                           range: NSRange(location: 0, length: finalString.length)) as NSString
         }
         return finalString
     }

@@ -348,10 +348,10 @@ extension Proteus_UserEntry {
 
 extension Proteus_QualifiedNewOtrMessage {
     public init(withSender sender: UserClient,
-         nativePush: Bool,
-         recipients: [Proteus_QualifiedUserEntry],
-         missingClientsStrategy: MissingClientsStrategy,
-         blob: Data? = nil ) {
+                nativePush: Bool,
+                recipients: [Proteus_QualifiedUserEntry],
+                missingClientsStrategy: MissingClientsStrategy,
+                blob: Data? = nil ) {
         self = Proteus_QualifiedNewOtrMessage.with {
             $0.nativePush = nativePush
             $0.sender = sender.clientId
@@ -698,13 +698,13 @@ extension LinkPreview {
     }
 
     public init(withOriginalURL originalURL: String,
-         permanentURL: String,
-         offset: Int32,
-         title: String?,
-         summary: String?,
-         imageAsset: WireProtos.Asset?,
-         article: Article? = nil,
-         tweet: Tweet? = nil) {
+                permanentURL: String,
+                offset: Int32,
+                title: String?,
+                summary: String?,
+                imageAsset: WireProtos.Asset?,
+                article: Article? = nil,
+                tweet: Tweet? = nil) {
         self = LinkPreview.with {
             $0.url = originalURL
             $0.permanentURL = permanentURL

@@ -265,7 +265,7 @@ import Foundation
                 let conversation = candidate.conversation,
                 let underlyingMessage = candidate.underlyingMessage,
                 underlyingMessage.hasConfirmation else {
-                    return false
+                return false
             }
 
             let originalMessageUUID = UUID(uuidString: underlyingMessage.confirmation.firstMessageID)
@@ -273,7 +273,7 @@ import Foundation
             guard
                 let message = originalConfirmedMessage,
                 message.hasBeenDeleted || message.sender == nil else {
-                    return false
+                return false
             }
             return true
         })

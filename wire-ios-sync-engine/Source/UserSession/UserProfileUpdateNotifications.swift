@@ -86,7 +86,7 @@ extension UserProfileUpdateStatus {
         NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[UserProfileUpdateNotification.userInfoKey] as? UserProfileUpdateNotification,
                   let observer else {
-                    return
+                return
             }
             switch note.type {
             case let .emailUpdateDidFail(error):

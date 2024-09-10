@@ -104,7 +104,7 @@ import Foundation
         guard
             !message.isEmpty,
             let conversation = userInfo.conversation(in: managedObjectContext)
-            else { return completionHandler() }
+        else { return completionHandler() }
 
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "DirectReply Action Handler") else {
             return
@@ -172,7 +172,7 @@ import Foundation
             guard
                 let self,
                 let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
-                else { return }
+            else { return }
 
             self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationInSyncContext, action: type)
         }
@@ -182,7 +182,7 @@ import Foundation
         guard
             let conversation = userInfo.conversation(in: managedObjectContext),
             let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext)
-            else { return completionHandler() }
+        else { return completionHandler() }
 
         guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity") else {
             return

@@ -108,11 +108,11 @@ final class AuthenticatedRouter {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-                ? UIAlertController.fromFeatureChangeWithActions(change,
-                                                                 acknowledger: featureRepositoryProvider.featureRepository,
-                                                                 actionsHandler: featureChangeActionsHandler)
-                : UIAlertController.fromFeatureChange(change,
-                                                      acknowledger: featureRepositoryProvider.featureRepository)
+            ? UIAlertController.fromFeatureChangeWithActions(change,
+                                                             acknowledger: featureRepositoryProvider.featureRepository,
+                                                             actionsHandler: featureChangeActionsHandler)
+            : UIAlertController.fromFeatureChange(change,
+                                                  acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
         }

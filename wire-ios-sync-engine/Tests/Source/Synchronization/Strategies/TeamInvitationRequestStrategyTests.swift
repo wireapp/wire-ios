@@ -130,13 +130,13 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
         let inviteResults = responses.map({ InviteResult.init(response: $0, email: "") })
         let expectedResults: [InviteResult] = [.success(email: ""),
-                                                .failure(email: "", error: .tooManyTeamInvitations),
-                                                .failure(email: "", error: .blacklistedEmail),
-                                                .failure(email: "", error: .invalidEmail),
-                                                .failure(email: "", error: .noIdentity),
-                                                .failure(email: "", error: .noEmail),
-                                                .failure(email: "", error: .alreadyRegistered),
-                                                .failure(email: "", error: .unknown)]
+                                               .failure(email: "", error: .tooManyTeamInvitations),
+                                               .failure(email: "", error: .blacklistedEmail),
+                                               .failure(email: "", error: .invalidEmail),
+                                               .failure(email: "", error: .noIdentity),
+                                               .failure(email: "", error: .noEmail),
+                                               .failure(email: "", error: .alreadyRegistered),
+                                               .failure(email: "", error: .unknown)]
 
         zip(inviteResults, expectedResults).forEach { tuple in
             let (result, expectedResult) = tuple
@@ -145,7 +145,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
     }
 
     private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-       syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
+        syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
 }
 

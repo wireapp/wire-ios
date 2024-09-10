@@ -34,7 +34,7 @@ extension SettingsCellDescriptorFactory {
             callKitSection,
             muteCallSection,
             SecurityFlags.forceConstantBitRateCalls.isEnabled ? nil : VBRSection,
-// temporary hiding this section because currently we have only one sound. We plan to add more in the future. https://wearezeta.atlassian.net/browse/WPB-455
+            // temporary hiding this section because currently we have only one sound. We plan to add more in the future. https://wearezeta.atlassian.net/browse/WPB-455
 //            soundsSection,
             externalAppsSection,
             popularDemandSendButtonSection,
@@ -59,7 +59,7 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             selectAction: { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-        })
+            })
 
         return SettingsSectionDescriptor(
             cellDescriptors: [settingsButton],
@@ -67,7 +67,7 @@ extension SettingsCellDescriptorFactory {
             footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
             visibilityAction: { _ in
                 return AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
-        })
+            })
     }
 
     private var clearHistorySection: SettingsSectionDescriptorType {
@@ -76,7 +76,7 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             selectAction: { _ in
                 // erase history is not supported yet
-        })
+            })
 
         return SettingsSectionDescriptor(
             cellDescriptors: [clearHistoryButton],

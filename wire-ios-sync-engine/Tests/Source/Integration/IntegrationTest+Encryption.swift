@@ -98,7 +98,7 @@ extension IntegrationTest {
     /// If no such client exists locally, it creates it (and the user associated with it).
     public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) async {
         let mockContext = self.mockTransportSession.managedObjectContext
-            // .syncManagedObjectContext
+        // .syncManagedObjectContext
         guard let remoteUserIdentifierString = await mockContext.perform({ remoteClient.user?.identifier }),
               let remoteUserIdentifier = UUID(uuidString: remoteUserIdentifierString),
               let remoteClientIdentifier = await mockContext.perform({ remoteClient.identifier }) else {

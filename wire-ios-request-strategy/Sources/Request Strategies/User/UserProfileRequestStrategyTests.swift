@@ -441,19 +441,19 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             // given
             let updatedName = "123"
             let event = self.userUpdateEvent(userProfile: Payload.UserProfile(
-                                                id: self.otherUser.remoteIdentifier,
-                                                qualifiedID: nil,
-                                                teamID: nil,
-                                                serviceID: nil,
-                                                SSOID: nil,
-                                                name: updatedName,
-                                                handle: nil,
-                                                phone: nil, email: nil,
-                                                assets: [],
-                                                managedBy: nil, accentColor: nil,
-                                                isDeleted: nil,
-                                                expiresAt: nil,
-                                                legalholdStatus: nil))
+                id: self.otherUser.remoteIdentifier,
+                qualifiedID: nil,
+                teamID: nil,
+                serviceID: nil,
+                SSOID: nil,
+                name: updatedName,
+                handle: nil,
+                phone: nil, email: nil,
+                assets: [],
+                managedBy: nil, accentColor: nil,
+                isDeleted: nil,
+                expiresAt: nil,
+                legalholdStatus: nil))
 
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)

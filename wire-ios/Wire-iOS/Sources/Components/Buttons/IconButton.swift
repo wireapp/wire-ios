@@ -216,7 +216,7 @@ class IconButton: ButtonWithLargerHitArea {
         iconDefinitionsByState[state.rawValue] = newIcon
 
         let color: UIColor = if renderingMode == .alwaysOriginal,
-           let iconColor = iconColor(for: .normal) {
+                                let iconColor = iconColor(for: .normal) {
             iconColor
         } else {
             .black
@@ -311,7 +311,7 @@ class IconButton: ButtonWithLargerHitArea {
                 borderColorByState[expandedState.rawValue] = color
 
                 if adjustsBorderColorWhenHighlighted,
-                    expandedState == .normal {
+                   expandedState == .normal {
                     borderColorByState[UIControl.State.highlighted.rawValue] = color?.mix(.black, amount: 0.4)
                 }
             }

@@ -48,7 +48,7 @@ extension ContactsViewController {
         guard
             user.isConnected,
             let conversation = user.oneToOneConversation
-            else { return }
+        else { return }
 
         let showConversation: Completion = {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)

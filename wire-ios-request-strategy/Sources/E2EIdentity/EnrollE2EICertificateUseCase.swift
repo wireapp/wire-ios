@@ -32,9 +32,9 @@ public struct OAuthResponse {
     public init(
         idToken: String,
         refreshToken: String?) {
-            self.idToken = idToken
-            self.refreshToken = refreshToken
-        }
+        self.idToken = idToken
+        self.refreshToken = refreshToken
+    }
 }
 
 public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
@@ -190,12 +190,12 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         isUpgradingMLSClient: Bool,
         enrollment: E2EIEnrollmentInterface,
         certificateChain: String) async throws {
-            if isUpgradingMLSClient {
-                try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
-            } else {
-                try await enrollment.createMLSClient(certificateChain: certificateChain)
-            }
+        if isUpgradingMLSClient {
+            try await enrollment.rotateKeysAndMigrateConversations(certificateChain: certificateChain)
+        } else {
+            try await enrollment.createMLSClient(certificateChain: certificateChain)
         }
+    }
 
     private func extractClientId(from path: String) -> String? {
         guard let urlComponents = URLComponents(string: path),

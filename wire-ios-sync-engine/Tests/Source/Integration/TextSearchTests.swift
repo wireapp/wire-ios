@@ -67,10 +67,10 @@ class TextSearchTests: ConversationTestsBase {
         mockTransportSession.performRemoteChanges { _ in
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"), nonce: nonce)
             do {
-                 try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
-             } catch {
-                 XCTFail()
-             }
+                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+            } catch {
+                XCTFail()
+            }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

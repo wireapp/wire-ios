@@ -78,16 +78,16 @@ extension ZMConversation: ConversationLike {
 
     public var connectedUserType: UserType? {
         return connectedUser
-	}
+    }
 
-	public var sortedOtherParticipants: [UserType] {
+    public var sortedOtherParticipants: [UserType] {
         localParticipants
             .filter { !$0.isServiceUser }
             .sortedAscendingPrependingNil(by: \.name)
-	}
+    }
 
-	public var sortedServiceUsers: [UserType] {
-		localParticipants
+    public var sortedServiceUsers: [UserType] {
+        localParticipants
             .filter { $0.isServiceUser }
             .sortedAscendingPrependingNil(by: \.name)
     }

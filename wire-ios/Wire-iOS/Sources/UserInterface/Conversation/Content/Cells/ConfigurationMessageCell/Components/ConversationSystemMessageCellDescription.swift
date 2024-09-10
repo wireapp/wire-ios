@@ -151,8 +151,8 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(participantsChangedCell)]
 
         case .readReceiptsEnabled,
-                .readReceiptsDisabled,
-                .readReceiptsOn:
+             .readReceiptsDisabled,
+             .readReceiptsOn:
             let cell = ConversationReadReceiptSettingChangedCellDescription(
                 sender: sender,
                 systemMessageType: systemMessageData.systemMessageType

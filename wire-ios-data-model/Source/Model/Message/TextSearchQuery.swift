@@ -158,7 +158,7 @@ public class TextSearchQuery: NSObject {
         query: String,
         delegate: TextSearchQueryDelegate,
         configuration: TextSearchQueryFetchConfiguration = .init(notIndexedBatchSize: 200, indexedBatchSize: 200)
-        ) {
+    ) {
         guard TextSearchQuery.isValid(query: query) else { return nil }
         guard let uiMOC = (conversation as? ZMConversation)?.managedObjectContext,
               let syncMOC = uiMOC.zm_sync else {
@@ -293,7 +293,7 @@ public class TextSearchQuery: NSObject {
             }
 
             let queryResult = self.result?.updated(appending: uiMessages, hasMore: hasMore)
-                           ?? TextQueryResult(query: self, matches: uiMessages, hasMore: hasMore)
+                ?? TextQueryResult(query: self, matches: uiMessages, hasMore: hasMore)
 
             zmLog.debug("Notifying delegate with \(uiMessages.count) new and \(queryResult.matches.count) total matches")
             self.result = queryResult

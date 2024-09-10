@@ -29,9 +29,9 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.modifiedSync = ZMDownstreamObjectSync(transcoder: self,
-                                                         entityName: ZMUser.entityName(),
-                                                         predicateForObjectsToDownload: ZMUser.predicateForUsersToUpdateRichProfile(),
-                                                         managedObjectContext: managedObjectContext)
+                                                   entityName: ZMUser.entityName(),
+                                                   predicateForObjectsToDownload: ZMUser.predicateForUsersToUpdateRichProfile(),
+                                                   managedObjectContext: managedObjectContext)
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {

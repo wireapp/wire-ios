@@ -172,8 +172,8 @@ final class InputBarButtonsView: UIView {
 
             buttons.forEach {
                 $0.isAccessibilityElement = currentRow == 0
-                ? firstRowButtons.contains($0)
-                : secondRowButtons.contains($0)
+                    ? firstRowButtons.contains($0)
+                    : secondRowButtons.contains($0)
             }
         }
     }

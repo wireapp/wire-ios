@@ -41,8 +41,8 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         get {
             guard let title = titleLabel.text,
                   let subtitle = subtitleLabel.text else {
-                      return nil
-                  }
+                return nil
+            }
             return "\(title), \(subtitle)"
         }
 

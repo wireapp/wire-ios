@@ -133,8 +133,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { _, _ in
-                                                        self.notifyNameChange(otherUser, name: "Phil")
-            },
+                                                         self.notifyNameChange(otherUser, name: "Phil")
+                                                     },
                                                      expectedChangedField: "nameChanged",
                                                      expectedChangedKeys: ["displayName"]
         )
@@ -151,10 +151,10 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { _, _ in
 
-                                                        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-                                                        otherUser.name = "Foo"
-                                                        conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-        },
+                                                         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+                                                         otherUser.name = "Foo"
+                                                         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
+                                                     },
                                                      expectedChangedFields: ["nameChanged",
                                                                              "participantsChanged",
                                                                              "activeParticipantsChanged"],
@@ -253,11 +253,11 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, observer in
-                                                        conversation.addParticipantAndUpdateConversationState(user: user1, role: nil)
-                                                        self.uiMOC.saveOrRollback()
-                                                        observer.clearNotifications()
-                                                        self.notifyNameChange(user1, name: "Bar")
-        },
+                                                         conversation.addParticipantAndUpdateConversationState(user: user1, role: nil)
+                                                         self.uiMOC.saveOrRollback()
+                                                         observer.clearNotifications()
+                                                         self.notifyNameChange(user1, name: "Bar")
+                                                     },
                                                      expectedChangedField: "nameChanged",
                                                      expectedChangedKeys: ["displayName"]
         )
@@ -423,7 +423,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 conversation.addParticipantAndUpdateConversationState(
                     user: ZMUser.selfUser(in: self.uiMOC),
                     role: nil)
-        },
+            },
             expectedChangedFields: [
                 "participantsChanged",
                 "activeParticipantsChanged",
@@ -451,7 +451,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             modifier: {conversation, _ in
                 conversation.removeParticipantAndUpdateConversationState(
                     user: ZMUser.selfUser(in: self.uiMOC))
-        },
+            },
             expectedChangedFields: [
                 "participantsChanged",
                 "activeParticipantsChanged",
@@ -520,7 +520,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         guard let changes = observer.notifications.first else { return XCTFail() }
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
-                                     expectedChangedFields: ["unreadCountChanged", "conversationListIndicatorChanged"])
+                                             expectedChangedFields: ["unreadCountChanged", "conversationListIndicatorChanged"])
         XCTAssertEqual(changes.changedKeys, Set(["estimatedUnreadCount", "conversationListIndicator"]))
     }
 
@@ -752,7 +752,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         guard let changes = observer.notifications.first else { return XCTFail() }
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
-                                     expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged", "unreadCountChanged"])
+                                             expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged", "unreadCountChanged"])
         XCTAssertEqual(changes.changedKeys, Set(["allMessages", "conversationListIndicator", "estimatedUnreadCount"]))
     }
 
@@ -764,8 +764,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in
-                                                        conversation.clearedTimeStamp = Date()
-            },
+                                                         conversation.clearedTimeStamp = Date()
+                                                     },
                                                      expectedChangedField: "clearedChanged",
                                                      expectedChangedKeys: ["clearedTimeStamp"])
     }
@@ -778,8 +778,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in
-                                                        conversation.securityLevel = .secure
-            },
+                                                         conversation.securityLevel = .secure
+                                                     },
                                                      expectedChangedField: "securityLevelChanged",
                                                      expectedChangedKeys: ["securityLevel"])
     }
@@ -794,9 +794,9 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in
-                                                        let user = ZMUser.insertNewObject(in: self.uiMOC)
-                                                        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        },
+                                                         let user = ZMUser.insertNewObject(in: self.uiMOC)
+                                                         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+                                                     },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged", "nameChanged", "participantsChanged", "activeParticipantsChanged"],
                                                      expectedChangedKeys: ["displayName", "allMessages", "localParticipantRoles", "securityLevel"])
     }
@@ -813,13 +813,13 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in
-                                                        let client = UserClient.insertNewObject(in: self.uiMOC)
-                                                        client.remoteIdentifier = "aabbccdd"
-                                                        client.user = user
+                                                         let client = UserClient.insertNewObject(in: self.uiMOC)
+                                                         client.remoteIdentifier = "aabbccdd"
+                                                         client.user = user
 
-                                                        conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [client], causedBy: nil)
+                                                         conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [client], causedBy: nil)
 
-        },
+                                                     },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged"],
                                                      expectedChangedKeys: ["securityLevel", "allMessages"])
     }
@@ -911,8 +911,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in
-                                                        conversation.hasReadReceiptsEnabled = true
-        },
+                                                         conversation.hasReadReceiptsEnabled = true
+                                                     },
                                                      expectedChangedFields: ["hasReadReceiptsEnabledChanged"],
                                                      expectedChangedKeys: ["hasReadReceiptsEnabled"])
     }
@@ -928,12 +928,12 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         // when
         checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                 modifier: { _, _ in
+                                                modifier: { _, _ in
                                                     user.serviceIdentifier = UUID().uuidString
                                                     user.providerIdentifier = UUID().uuidString
-                                                           },
-                                                 expectedChangedFields: ["externalParticipantsStateChanged"],
-                                                 expectedChangedKeys: ["externalParticipantsState"])
+                                                },
+                                                expectedChangedFields: ["externalParticipantsStateChanged"],
+                                                expectedChangedKeys: ["externalParticipantsState"])
     }
 
     func testThatItNotifiesOfLegalHoldChanges_Enabled() {
@@ -1058,7 +1058,7 @@ extension ConversationObserverTests {
     }
 
     func testPerformanceOfCalculatingChangeNotificationsWhenANewMessageArrives() {
-       // average: 0.059, relative standard deviation: 13.343%, values: [0.082006, 0.056299, 0.056005, 0.056230, 0.059868, 0.055533, 0.055511, 0.055503, 0.055434, 0.055458]
+        // average: 0.059, relative standard deviation: 13.343%, values: [0.082006, 0.056299, 0.056005, 0.056230, 0.059868, 0.055533, 0.055511, 0.055503, 0.055434, 0.055458]
         // 13/02/17: average: 0.062, relative standard deviation: 10.863%, values: [0.082063, 0.059699, 0.059220, 0.059861, 0.060348, 0.059494, 0.064300, 0.060022, 0.058819, 0.058870]
         let count = 50
 
@@ -1104,7 +1104,7 @@ extension ConversationObserverTests {
     }
 
     func testPerformanceOfCalculatingChangeNotificationsWhenANewMessageArrives_RegisteringNewObservers() {
-       // 50: average: 0.093, relative standard deviation: 9.576%, values: [0.119425, 0.091509, 0.088228, 0.090549, 0.090424, 0.086471, 0.091216, 0.091060, 0.094097, 0.089602],
+        // 50: average: 0.093, relative standard deviation: 9.576%, values: [0.119425, 0.091509, 0.088228, 0.090549, 0.090424, 0.086471, 0.091216, 0.091060, 0.094097, 0.089602],
         // 500: average: 0.886, relative standard deviation: 1.875%, values: [0.922453, 0.878736, 0.880529, 0.899234, 0.875889, 0.904563, 0.890234, 0.872045, 0.868912, 0.871016]
         // 500: after adding convList observer average: 1.167, relative standard deviation: 9.521%, values: [1.041614, 1.020351, 1.055602, 1.098007, 1.129816, 1.166439, 1.221696, 1.293128, 1.314360, 1.331703], --> growing due to additional conversation observers
         // 500: after forwarding conversation changes: average: 0.941, relative standard deviation: 2.144%, values: [0.991118, 0.956727, 0.947056, 0.928683, 0.937171, 0.947680, 0.928902, 0.925021, 0.923206, 0.922440] --> constant! yay!

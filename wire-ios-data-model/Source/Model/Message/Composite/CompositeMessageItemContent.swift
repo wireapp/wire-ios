@@ -110,9 +110,9 @@ extension CompositeMessageItemContent: ButtonMessageData {
 
     func touchAction() {
         guard let moc = parentMessage.managedObjectContext,
-            let buttonId = button?.id,
-            let messageId = parentMessage.nonce,
-            !hasSelectedButton else { return }
+              let buttonId = button?.id,
+              let messageId = parentMessage.nonce,
+              !hasSelectedButton else { return }
 
         moc.performGroupedBlock { [weak self] in
             guard let self else { return }

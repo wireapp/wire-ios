@@ -26,7 +26,7 @@ typealias MatcherConversation = Conversation & ConversationStatusProvider & Typi
 typealias ConversationListCellConversation = MatcherConversation & StableRandomParticipantsProvider
 
 final class ConversationListCell: SwipeMenuCollectionCell,
-                                  SectionListCellType {
+    SectionListCellType {
     static let IgnoreOverscrollTimeInterval: TimeInterval = 0.005
     static let OverscrollRatio: CGFloat = 2.5
 
@@ -231,7 +231,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
 
         if activeMediaPlayer != nil,
-            activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+           activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
             toggleMediaPlayer()
         } else if conversation.canJoinCall {
             delegate?.conversationListCellJoinCallButtonTapped(self)

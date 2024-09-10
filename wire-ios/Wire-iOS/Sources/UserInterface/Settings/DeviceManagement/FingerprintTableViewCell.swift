@@ -65,18 +65,18 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
 
         [titleLabel, fingerprintLabel, spinner].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-          titleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-          titleLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            titleLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            titleLabel.rightAnchor.constraint(lessThanOrEqualTo: contentView.rightAnchor, constant: -16),
 
-          fingerprintLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-          fingerprintLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
-          fingerprintLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
-          fingerprintLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            fingerprintLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+            fingerprintLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            fingerprintLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            fingerprintLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
 
-          spinner.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-          spinner.topAnchor.constraint(greaterThanOrEqualTo: titleLabel.bottomAnchor, constant: 4),
-          spinner.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
+            spinner.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            spinner.topAnchor.constraint(greaterThanOrEqualTo: titleLabel.bottomAnchor, constant: 4),
+            spinner.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16)
         ])
 
         contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 56).isActive = true
@@ -104,12 +104,12 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
     private func updateFingerprint() {
         if let fingerprintLabelBoldMonoFont = fingerprintLabelBoldFont?.font?.monospaced(),
            let fingerprintLabelMonoFont = fingerprintLabelFont?.font?.monospaced(),
-            let attributedFingerprint = fingerprint?.attributedFingerprint(
-                attributes: [.font: fingerprintLabelMonoFont, .foregroundColor: fingerprintLabel.textColor],
-                boldAttributes: [.font: fingerprintLabelBoldMonoFont, .foregroundColor: fingerprintLabel.textColor],
-                uppercase: false) {
-                    fingerprintLabel.attributedText = attributedFingerprint
-                    spinner.stopAnimating()
+           let attributedFingerprint = fingerprint?.attributedFingerprint(
+               attributes: [.font: fingerprintLabelMonoFont, .foregroundColor: fingerprintLabel.textColor],
+               boldAttributes: [.font: fingerprintLabelBoldMonoFont, .foregroundColor: fingerprintLabel.textColor],
+               uppercase: false) {
+            fingerprintLabel.attributedText = attributedFingerprint
+            spinner.stopAnimating()
         } else {
             fingerprintLabel.attributedText = .none
             spinner.startAnimating()
@@ -121,9 +121,9 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
     private func setupAccessibility() {
         guard let titleText = titleLabel.text,
               let fingerprintText = fingerprintLabel.text else {
-                  isAccessibilityElement = false
-                  return
-              }
+            isAccessibilityElement = false
+            return
+        }
 
         accessibilityElements = [titleLabel, fingerprintLabel]
         isAccessibilityElement = true

@@ -78,15 +78,15 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         } else {
             let context = ConfirmAssetViewController.Context(asset: .video(url: videoURL),
                                                              onConfirm: { [unowned self] _ in
-                                                                            self.dismiss(animated: true)
-                                                                            self.uploadFile(at: videoURL)
-                                                                            },
+                                                                 self.dismiss(animated: true)
+                                                                 self.uploadFile(at: videoURL)
+                                                             },
                                                              onCancel: { [unowned self] in
-                                                                            self.dismiss(animated: true) {
-                                                                                self.mode = .camera
-                                                                                self.inputBar.textView.becomeFirstResponder()
-                                                                            }
-                                                            })
+                                                                 self.dismiss(animated: true) {
+                                                                     self.mode = .camera
+                                                                     self.inputBar.textView.becomeFirstResponder()
+                                                                 }
+                                                             })
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
             confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
@@ -146,8 +146,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                                   isFromCamera: Bool,
                                   uti: String?) {
         let mediaAsset: MediaAsset = if uti == UTType.gif.identifier,
-           let gifImage = FLAnimatedImage(animatedGIFData: imageData),
-           gifImage.frameCount > 1 {
+                                        let gifImage = FLAnimatedImage(animatedGIFData: imageData),
+                                        gifImage.frameCount > 1 {
             gifImage
         } else {
             UIImage(data: imageData) ?? UIImage()
@@ -155,19 +155,19 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: mediaAsset),
                                                          onConfirm: { [weak self] (editedImage: UIImage?) in
-                                                                guard let self else { return }
-                                                                    self.dismiss(animated: true) {
-                                                                    self.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
-                                                                                                      isFromCamera: isFromCamera)
-                        self.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData, userSession: self.userSession)
-                                                                }
-                                                            },
+                                                             guard let self else { return }
+                                                             self.dismiss(animated: true) {
+                                                                 self.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
+                                                                                                        isFromCamera: isFromCamera)
+                                                                 self.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData, userSession: self.userSession)
+                                                             }
+                                                         },
                                                          onCancel: { [weak self] in
-                                                                        self?.dismiss(animated: true) {
-                                                                            self?.mode = .camera
-                                                                            self?.inputBar.textView.becomeFirstResponder()
-                                                                        }
-                                                                    })
+                                                             self?.dismiss(animated: true) {
+                                                                 self?.mode = .camera
+                                                                 self?.inputBar.textView.becomeFirstResponder()
+                                                             }
+                                                         })
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback

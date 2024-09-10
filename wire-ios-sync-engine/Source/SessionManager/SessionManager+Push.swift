@@ -71,7 +71,7 @@ extension PKPushRegistry: PushRegistry {}
         guard
             let selfID = userInfo.selfUserID,
             let account = accountManager.account(with: selfID)
-            else { return }
+        else { return }
 
         self.withSession(for: account, perform: block)
     }

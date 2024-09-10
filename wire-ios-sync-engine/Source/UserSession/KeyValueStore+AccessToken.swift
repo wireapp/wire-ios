@@ -25,8 +25,8 @@ private let lastAccessTokenTypeKey = "ZMLastAccessTokenType"
     public var accessToken: AccessToken? {
         get {
             guard let token = self.persistentStoreMetadata(forKey: lastAccessTokenKey) as? String,
-                let type = self.persistentStoreMetadata(forKey: lastAccessTokenTypeKey) as? String else {
-                    return nil
+                  let type = self.persistentStoreMetadata(forKey: lastAccessTokenTypeKey) as? String else {
+                return nil
             }
             return AccessToken(token: token, type: type, expiresInSeconds: 0)
         }

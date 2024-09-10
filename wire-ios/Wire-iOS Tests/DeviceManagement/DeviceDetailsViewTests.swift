@@ -297,9 +297,9 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
         let viewModel = prepareViewModel(
             isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false
+            isE2eIdentityEnabled: false,
+            proteusKeyFingerPrint: mockFingerPrint,
+            isSelfClient: false
         )
 
         let viewController = setupWrappedInNavigationController(viewModel: viewModel)

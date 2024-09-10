@@ -188,10 +188,10 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
             navigationController.viewControllers = [viewController]
 
             snapshotHelper.verify(matching: navigationController,
-                   size: customSize,
-                   file: file,
-                   testName: testName,
-                   line: line)
+                                  size: customSize,
+                                  file: file,
+                                  testName: testName,
+                                  line: line)
         } else {
             XCTAssertFalse(step.needsInterface, "Missing interface.", file: file, line: line)
         }

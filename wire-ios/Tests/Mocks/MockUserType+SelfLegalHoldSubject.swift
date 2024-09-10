@@ -37,8 +37,8 @@ extension MockUserType: SelfLegalHoldSubject {
     var fingerprint: String? {
         guard let preKey = legalHoldDataSource.legalHoldRequest?.lastPrekey,
               let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) else {
-                  return nil
-              }
+            return nil
+        }
         return String(decoding: fingerprintData, as: UTF8.self)
     }
 

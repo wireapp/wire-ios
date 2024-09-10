@@ -83,10 +83,10 @@ final class SoundEventListener: NSObject {
 
     func provideHapticFeedback(for message: ZMConversationMessage) {
         if message.isNormal,
-            message.isRecentMessage,
-            message.isSentBySelfUser,
-            let localMessage = message as? ZMMessage,
-            localMessage.deliveryState == .pending {
+           message.isRecentMessage,
+           message.isSentBySelfUser,
+           let localMessage = message as? ZMMessage,
+           localMessage.deliveryState == .pending {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
     }

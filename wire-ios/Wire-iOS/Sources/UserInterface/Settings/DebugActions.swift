@@ -48,8 +48,8 @@ enum DebugActions {
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
-                        "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
-                ].joined(separator: "\n")
+                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
+            ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
         } else {
@@ -60,7 +60,7 @@ enum DebugActions {
     /// Shows the user ID of the self user
     static func showUserId(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
-            let selfUser = (userSession.providedSelfUser as? ZMUser)
+              let selfUser = (userSession.providedSelfUser as? ZMUser)
         else { return }
 
         alert(
@@ -79,8 +79,8 @@ enum DebugActions {
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
-                "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
-                ].joined(separator: "\n")
+                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
+            ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
 
@@ -102,8 +102,8 @@ enum DebugActions {
         guard
             let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
-            else {
-                return
+        else {
+            return
         }
 
         var external = External()
@@ -121,8 +121,8 @@ enum DebugActions {
             amount > 0,
             let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
-            else {
-                return
+        else {
+            return
         }
         let nonce = UUID()
 

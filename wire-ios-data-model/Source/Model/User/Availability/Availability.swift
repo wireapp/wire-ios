@@ -23,15 +23,15 @@ public enum Availability: Int, CaseIterable {
 
 extension Availability: CustomStringConvertible {
     public var description: String {
-          switch self {
-          case .none:
-              "none"
-          case .available:
-              "available"
-          case .busy:
-              "busy"
-          case .away:
-              "away"
-          }
-      }
+        switch self {
+        case .none:
+            "none"
+        case .available:
+            "available"
+        case .busy:
+            "busy"
+        case .away:
+            "away"
+        }
+    }
 }

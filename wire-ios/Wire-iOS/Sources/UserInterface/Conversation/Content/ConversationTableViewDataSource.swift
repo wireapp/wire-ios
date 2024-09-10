@@ -273,7 +273,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func loadNewerMessages() {
         guard let currentOffset = fetchController?.fetchRequest.fetchOffset,
-            let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
+              let currentLimit = fetchController?.fetchRequest.fetchLimit else { return }
 
         let newOffset = max(0, currentOffset - ConversationTableViewDataSource.defaultBatchSize)
 
@@ -467,12 +467,12 @@ extension ConversationTableViewDataSource {
 
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
         guard let message,
-            Message.isNormal(message),
-            !Message.isKnock(message) else { return false }
+              Message.isNormal(message),
+              !Message.isKnock(message) else { return false }
 
         guard let previousMessage = messagePrevious(to: message, at: index),
-            previousMessage.senderUser === message.senderUser,
-            Message.isNormal(previousMessage) else { return false }
+              previousMessage.senderUser === message.senderUser,
+              Message.isNormal(previousMessage) else { return false }
 
         return true
     }
@@ -530,10 +530,10 @@ extension ConversationTableViewDataSource {
 }
 
 extension Date {
-  func isInSameMinute(asDate date: Date) -> Bool {
-    let calendar = Calendar.current
-    let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
-    let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
-    return components == otherComponents
-  }
+    func isInSameMinute(asDate date: Date) -> Bool {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+        let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        return components == otherComponents
+    }
 }

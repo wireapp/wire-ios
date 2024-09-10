@@ -28,8 +28,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
             guard let self,
-                let path = (request.path as NSString?),
-                path.pathComponents.contains("prekeys") else { return nil }
+                  let path = (request.path as NSString?),
+                  path.pathComponents.contains("prekeys") else { return nil }
 
             let payload: NSDictionary = [
                 self.user1.identifier: [
@@ -39,7 +39,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                     ]
                 ]
             ]
-           return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
         // WHEN
@@ -82,8 +82,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
             guard let self,
-                let path = request.path as NSString?,
-                path.pathComponents.contains("prekeys") else { return nil }
+                  let path = request.path as NSString?,
+                  path.pathComponents.contains("prekeys") else { return nil }
             let payload: NSDictionary = [
                 self.user1.identifier: [
                     (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
@@ -149,8 +149,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                     let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                     let data1 = try? genericMessage1.serializedData(),
                     let data2 = try? genericMessage2.serializedData() else {
-                        XCTFail()
-                        return []
+                    XCTFail()
+                    return []
                 }
 
                 self.groupConversation.encryptAndInsertData(from: user2Client, to: selfClient, data: data1)
@@ -277,7 +277,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let fromClient = self.user1.clients.anyObject() as? MockUserClient,
                 let toClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? genericMessage.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
 
             self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: data)
@@ -316,7 +316,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let senderClient = self.user1.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             self.groupConversation.encryptAndInsertData(from: senderClient, to: selfClient, data: data)
         }
@@ -380,7 +380,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let senderClient = self.user1.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             self.groupConversation.encryptAndInsertData(from: senderClient, to: selfClient, data: data)
         }
@@ -437,7 +437,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let senderClient = self.user1.clients.anyObject() as? MockUserClient,
                 let data = try? genericMessage.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             let messageData = MockUserClient.encrypted(data: data, from: senderClient, to: selfClient)
             self.groupConversation.insertOTRAsset(from: senderClient, to: selfClient, metaData: messageData, imageData: encryptedImageData, assetId: assetId, isInline: false)
@@ -505,7 +505,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let mockSelfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let mockUser5Client = self.user5.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             let messageData = MockUserClient.encrypted(data: data, from: mockUser5Client, to: mockSelfClient)
             self.groupConversationWithOnlyConnected.insertOTRMessage(from: mockUser5Client, to: mockSelfClient, data: messageData)
@@ -517,7 +517,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         var containsNewClientMessage = true
         for message in conversation!.lastMessages(limit: 50) {
             guard let systemMessageType = (message as? ZMSystemMessage)?.systemMessageData?.systemMessageType else {
-                    continue
+                continue
             }
             switch systemMessageType {
             case .participantsAdded:
@@ -548,7 +548,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             guard
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             let newClient = session.registerClient(for: self.user1)
             self.selfToUser1Conversation.encryptAndInsertData(from: newClient, to: selfClient, data: data)
@@ -587,7 +587,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             guard
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             let newUser1Client = session.registerClient(for: self.user1)
             self.selfToUser1Conversation.encryptAndInsertData(from: newUser1Client, to: selfClient, data: data)
@@ -658,7 +658,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             let mockSelfClient = selfUser.clients.anyObject() as? MockUserClient,
             let mockUser1Client = user1.clients.anyObject() as? MockUserClient,
             let data = try? firstMessage.serializedData() else {
-                return XCTFail()
+            return XCTFail()
         }
 
         mockTransportSession.performRemoteChanges { _ in
@@ -756,7 +756,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 let selfClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let senderClient = self.user1.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             let messageData = MockUserClient.encrypted(data: data, from: senderClient, to: selfClient)
             let assetId = UUID.create()

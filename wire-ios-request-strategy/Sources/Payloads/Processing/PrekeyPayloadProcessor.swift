@@ -119,7 +119,7 @@ extension UserClient {
             clearMessagesMissingRecipient()
             selfClient.removeMissingClient(self)
         }
-   }
+    }
 
     fileprivate func markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: UserClient) {
         failedToEstablishSession = true

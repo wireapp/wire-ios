@@ -60,8 +60,8 @@ final class CheckmarkCell: RightIconDetailsCell {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? BackgroundColors.backgroundUserCellHightLighted
-            : BackgroundColors.backgroundUserCell
+                ? BackgroundColors.backgroundUserCellHightLighted
+                : BackgroundColors.backgroundUserCell
         }
     }
 

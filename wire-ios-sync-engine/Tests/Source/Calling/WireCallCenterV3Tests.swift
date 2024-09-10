@@ -1993,7 +1993,7 @@ extension WireCallCenterV3Tests {
         XCTAssertEqual(mockAVSWrapper.requestVideoStreamsArguments?.videoStreams, expectedResult)
     }
 
-// MARK: - Request new epoch
+    // MARK: - Request new epoch
 
     func testHandleNewEpochRequest() throws {
         // Given

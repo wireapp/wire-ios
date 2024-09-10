@@ -26,11 +26,11 @@ extension UILabel {
         size: FontSize = .normal,
         weight: FontWeight = .regular,
         color: UIColor) {
-            self.init(frame: .zero)
-            text = key.map { $0.localized }
-            font = FontSpec(size, weight).font
-            textColor = color
-        }
+        self.init(frame: .zero)
+        text = key.map { $0.localized }
+        font = FontSpec(size, weight).font
+        textColor = color
+    }
 
     func configMultipleLineLabel() {
         numberOfLines = 0

@@ -194,11 +194,11 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 extension FeatureTests {
     func configData(enforced: Bool) -> Data {
         let json = """
-          {
-            "enforceAppLock": \(enforced),
-            "inactivityTimeoutSecs": 30
-          }
-          """
+        {
+          "enforceAppLock": \(enforced),
+          "inactivityTimeoutSecs": 30
+        }
+        """
 
         return json.data(using: .utf8)!
     }

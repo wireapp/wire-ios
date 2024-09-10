@@ -90,7 +90,7 @@ private class EventNotificationBuilder: NotificationBuilder {
             }
 
             if let timeStamp = event.timestamp,
-                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
+               let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
                 // don't show notifications that have already been read
                 return false
             }
@@ -163,7 +163,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
         // fetch message that was reacted to and make sure the sender of the original message is the selfUser
         guard let conversation,
               let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
-            reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
+              reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
 
         return true
     }
@@ -307,8 +307,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         }
 
         if let timeStamp = event.timestamp,
-            let lastRead = conversation.lastReadServerTimeStamp,
-            lastRead.compare(timeStamp) != .orderedAscending {
+           let lastRead = conversation.lastReadServerTimeStamp,
+           lastRead.compare(timeStamp) != .orderedAscending {
             return false
         }
         return true
@@ -351,6 +351,6 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
         default:
             break
         }
-         return super.shouldCreateNotification()
+        return super.shouldCreateNotification()
     }
 }

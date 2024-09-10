@@ -81,19 +81,19 @@ extension ZMConversation: ObjectInSnapshot {
 
     public var participantsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.localParticipantRoles),
-                                        #keyPath(ZMConversation.isSelfAnActiveMember),
-                                        #keyPath(ZMConversation.participantRoles)
+                                  #keyPath(ZMConversation.isSelfAnActiveMember),
+                                  #keyPath(ZMConversation.participantRoles)
         )
     }
 
     public var activeParticipantsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.isSelfAnActiveMember),
-                                        #keyPath(ZMConversation.localParticipants))
+                                  #keyPath(ZMConversation.localParticipants))
     }
 
     public var nameChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.displayName),
-                                        #keyPath(ZMConversation.userDefinedName)) || activeParticipantsChanged
+                                  #keyPath(ZMConversation.userDefinedName)) || activeParticipantsChanged
     }
 
     public var lastModifiedDateChanged: Bool {
@@ -138,8 +138,8 @@ extension ZMConversation: ObjectInSnapshot {
 
     public var allowGuestsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.accessModeStrings)) ||
-               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
-               changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
+            changedKeysContain(keys: #keyPath(ZMConversation.accessRoleString)) ||
+            changedKeysContain(keys: #keyPath(ZMConversation.accessRoleStringsV2))
     }
 
     public var allowServicesChanged: Bool {
@@ -148,7 +148,7 @@ extension ZMConversation: ObjectInSnapshot {
 
     public var destructionTimeoutChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.localMessageDestructionTimeout)) ||
-                changedKeysContain(keys: #keyPath(ZMConversation.syncedMessageDestructionTimeout))
+            changedKeysContain(keys: #keyPath(ZMConversation.syncedMessageDestructionTimeout))
     }
 
     public var hasReadReceiptsEnabledChanged: Bool {
@@ -236,8 +236,8 @@ extension ConversationChangeInfo {
                                           managedObjectContext: conversation.managedObjectContext!,
                                           object: conversation) { [weak observer] note in
             guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? ConversationChangeInfo
-                else { return }
+                  let changeInfo = note.changeInfo as? ConversationChangeInfo
+            else { return }
 
             observer.conversationDidChange(changeInfo)
         }

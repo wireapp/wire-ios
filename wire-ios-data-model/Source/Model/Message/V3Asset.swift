@@ -78,13 +78,13 @@ private let zmLog = ZMSLog(tag: "AssetV3")
             }
 
             if let mediumKey,
-                let key,
-                let digest,
-                let data = cache.decryptData(
-                    key: mediumKey,
-                    encryptionKey: key,
-                    sha256Digest: digest
-                ) {
+               let key,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumKey,
+                   encryptionKey: key,
+                   sha256Digest: digest
+               ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))
@@ -126,11 +126,11 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         }
 
         if let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
-            let data = cache.decryptedMediumImageData(
-                for: assetClientMessage,
-                encryptionKey: asset.otrKey,
-                sha256Digest: asset.sha256
-            ) {
+           let data = cache.decryptedMediumImageData(
+               for: assetClientMessage,
+               encryptionKey: asset.otrKey,
+               sha256Digest: asset.sha256
+           ) {
             return data
         } else if let data = cache.mediumImageData(for: assetClientMessage) {
             return data
@@ -219,7 +219,7 @@ extension V3Asset: AssetProxyType {
             NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                   context: self.moc.notificationContext,
                                   object: assetClientMessage.objectID
-                                ).post()
+            ).post()
         } else {
             return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")
         }

@@ -762,10 +762,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     #if DEBUG
-    /// This method is only used in tests and should be deleted. See [WPB-10404].
-    func logoutCurrentSessionWithoutDeletingCookie() {
-        logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
-    }
+        /// This method is only used in tests and should be deleted. See [WPB-10404].
+        func logoutCurrentSessionWithoutDeletingCookie() {
+            logoutCurrentSession(deleteCookie: false, deleteAccount: false, error: nil)
+        }
     #endif
 
     fileprivate func deleteTemporaryData() {
@@ -1222,8 +1222,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func passwordVerificationDidFail(with failCount: Int) {
         guard let count = configuration.failedPasswordThresholdBeforeWipe,
               failCount >= count, let account = accountManager.selectedAccount else {
-                  return
-              }
+            return
+        }
         delete(account: account, reason: .failedPasswordLimitReached)
     }
 }
@@ -1272,8 +1272,8 @@ extension SessionManager: UserObserving {
         if changeInfo.teamsChanged || changeInfo.nameChanged || changeInfo.imageSmallProfileDataChanged {
             guard let user = changeInfo.user as? ZMUser,
                   let managedObjectContext = user.managedObjectContext else {
-                      return
-                  }
+                return
+            }
             updateCurrentAccount(in: managedObjectContext)
         }
     }

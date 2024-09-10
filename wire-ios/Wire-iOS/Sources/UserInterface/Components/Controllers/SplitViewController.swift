@@ -270,7 +270,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     var isConversationViewVisible: Bool {
         return layoutSize == .regularLandscape ||
-               !isLeftViewControllerRevealed
+            !isLeftViewControllerRevealed
     }
 
     /// update left view UI depends on isLeftViewControllerRevealed
@@ -294,8 +294,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             completion?()
 
             if self.openPercentage == 0,
-                self.layoutSize != .regularLandscape,
-                self.leftView.layer.presentation()?.frame == self.leftView.frame || (self.leftView.layer.presentation()?.frame == nil && !animated) {
+               self.layoutSize != .regularLandscape,
+               self.leftView.layer.presentation()?.frame == self.leftView.frame || (self.leftView.layer.presentation()?.frame == nil && !animated) {
                 self.leftView.isHidden = true
             }
         }
@@ -499,10 +499,10 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     @objc
     func onHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer?) {
         guard layoutSize != .regularLandscape,
-            delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
-            isConversationViewVisible,
-            let gestureRecognizer else {
-                return
+              delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
+              isConversationViewVisible,
+              let gestureRecognizer else {
+            return
         }
 
         var offset = gestureRecognizer.translation(in: view)

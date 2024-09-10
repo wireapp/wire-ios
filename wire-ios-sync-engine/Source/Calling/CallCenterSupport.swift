@@ -39,7 +39,7 @@ public enum AVSConversationType: Int32 {
     case mlsConference = 3
 }
 
- /// An object that represents a calling event.
+/// An object that represents a calling event.
 
 public struct CallEvent {
     let data: Data

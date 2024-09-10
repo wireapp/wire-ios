@@ -25,11 +25,11 @@ import Foundation
  E.g.
  ```
  class CStruct : PointerWrapper {}
- 
+
  func foo(struct: CStruct) -> Int {
     return some_c_function(struct.ptr)
  }
- 
+
  ```
  */
 class PointerWrapper {

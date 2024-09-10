@@ -63,9 +63,9 @@ extension MessagingTestBase {
         var hasSessionWithSelfClient: Bool = false
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
             if let id = client.sessionIdentifier {
-              hasSessionWithSelfClient = sessionsDirectory.hasSession(for: id)
+                hasSessionWithSelfClient = sessionsDirectory.hasSession(for: id)
             } else {
-              hasSessionWithSelfClient = false
+                hasSessionWithSelfClient = false
             }
         }
 

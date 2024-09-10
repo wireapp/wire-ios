@@ -54,7 +54,7 @@ class OTRTests: IntegrationTest {
         var message: ZMConversationMessage?
         userSession?.perform {
             let imageData = self.verySmallJPEGData()
-             message = try! conversation.appendImage(from: imageData)
+            message = try! conversation.appendImage(from: imageData)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

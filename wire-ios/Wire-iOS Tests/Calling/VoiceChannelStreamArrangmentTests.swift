@@ -98,7 +98,7 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
     }
 
     func testThatActiveStreams_ReturnsVideoStreams_ForParticipantsWithVideo() {
-       testThatActiveStreams_ReturnsSteams_ForParticipantsWithVideo(enabled: true)
+        testThatActiveStreams_ReturnsSteams_ForParticipantsWithVideo(enabled: true)
     }
 
     func testThatActiveStreams_ReturnsVideoStreams_ForParticipantsWithoutVideo() {

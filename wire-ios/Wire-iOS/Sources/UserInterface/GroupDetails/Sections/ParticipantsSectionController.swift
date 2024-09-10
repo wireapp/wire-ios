@@ -119,15 +119,15 @@ private struct ParticipantsSectionViewModel {
         self.showSectionCount = showSectionCount
         self.userSession = userSession
         rows = clipSection
-        ? ParticipantsSectionViewModel.computeRows(
-            participants,
-            totalParticipantsCount: totalParticipantsCount,
-            maxParticipants: maxParticipants,
-            maxDisplayedParticipants: maxDisplayedParticipants
-        )
-        : participants.map { participant in
-            .user(participant)
-        }
+            ? ParticipantsSectionViewModel.computeRows(
+                participants,
+                totalParticipantsCount: totalParticipantsCount,
+                maxParticipants: maxParticipants,
+                maxDisplayedParticipants: maxDisplayedParticipants
+            )
+            : participants.map { participant in
+                .user(participant)
+            }
     }
 
     static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {

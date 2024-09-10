@@ -45,9 +45,9 @@ final class RandomHandleGeneratorTests: XCTestCase {
 
         // WHEN
         var handles: [String] = WireSyncEngine.RandomHandleGenerator.generatePossibleHandles(
-                displayName: "Maria La Rochelle Von Schwerigstein",
-                alternativeNames: variations
-            ).reversed() // there is no popFirst, so I will revert to be able to use popLast
+            displayName: "Maria La Rochelle Von Schwerigstein",
+            alternativeNames: variations
+        ).reversed() // there is no popFirst, so I will revert to be able to use popLast
 
         // THEN
         XCTAssertGreaterThan(handles.count, 5 * (variations + 1))

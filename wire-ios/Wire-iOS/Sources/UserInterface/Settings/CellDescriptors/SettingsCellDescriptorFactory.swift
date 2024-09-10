@@ -36,7 +36,7 @@ struct SettingsCellDescriptorFactory {
 
         rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
         #if MULTIPLE_ACCOUNTS_DISABLED
-            // We skip "add account" cell
+        // We skip "add account" cell
         #else
             rootElements.append(addAccountOrTeamCell())
         #endif
@@ -130,18 +130,18 @@ struct SettingsCellDescriptorFactory {
 
     func devicesCell() -> SettingsCellDescriptorType {
         return SettingsExternalScreenCellDescriptor(title: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Devices.title,
-            isDestructive: false,
-            presentationStyle: PresentationStyle.navigation,
-            identifier: type(of: self).settingsDevicesCellIdentifier,
-            presentationAction: { () -> (UIViewController?) in
-                return ClientListViewController(clientsList: .none,
-                                                credentials: .none,
-                                                detailedView: true)
-            },
-            previewGenerator: { _ -> SettingsCellPreview in
-                return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
-            },
-           icon: .devices, copiableText: nil)
+                                                    isDestructive: false,
+                                                    presentationStyle: PresentationStyle.navigation,
+                                                    identifier: type(of: self).settingsDevicesCellIdentifier,
+                                                    presentationAction: { () -> (UIViewController?) in
+                                                        return ClientListViewController(clientsList: .none,
+                                                                                        credentials: .none,
+                                                                                        detailedView: true)
+                                                    },
+                                                    previewGenerator: { _ -> SettingsCellPreview in
+                                                        return SettingsCellPreview.badge(ZMUser.selfUser()?.clients.count ?? 0)
+                                                    },
+                                                    icon: .devices, copiableText: nil)
     }
 
     func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {
@@ -173,7 +173,7 @@ struct SettingsCellDescriptorFactory {
             let value = settingsProperty.value()
 
             if let stringValue = value.value() as? String,
-                let enumValue = ZMSound(rawValue: stringValue) {
+               let enumValue = ZMSound(rawValue: stringValue) {
                 return .text(enumValue.descriptionLocalizationKey.localized)
             } else {
                 return .text(defaultSound.descriptionLocalizationKey.localized)

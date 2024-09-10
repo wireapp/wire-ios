@@ -240,7 +240,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-         // then
+        // then
         XCTAssertEqual(conversation?.legalHoldStatus, .disabled)
     }
 

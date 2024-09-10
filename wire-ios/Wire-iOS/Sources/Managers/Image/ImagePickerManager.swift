@@ -80,8 +80,8 @@ class ImagePickerManager: NSObject {
     private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
         guard UIImagePickerController.isSourceTypeAvailable(sourceType),
               let viewController else {
-                  return
-              }
+            return
+        }
 
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -111,8 +111,8 @@ class ImagePickerManager: NSObject {
     }
 }
 
- extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)
             return

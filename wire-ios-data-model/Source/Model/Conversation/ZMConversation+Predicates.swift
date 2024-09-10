@@ -55,7 +55,7 @@ extension ZMConversation {
 
         let roleNameMatchingConditions = roleNameMatchingRegexes.map { _ in
             "$role.user.normalizedName MATCHES %@"
-            }.joined(separator: " OR ")
+        }.joined(separator: " OR ")
 
         return NSPredicate(
             format: "SUBQUERY(%K, $role, $role.user != %@ AND (\(roleNameMatchingConditions))).@count > 0",
@@ -90,7 +90,7 @@ extension ZMConversation {
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
-         return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
+        return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
     }
 
     public static func predicateForConversationsArePendingToRefreshMetadata() -> NSPredicate {

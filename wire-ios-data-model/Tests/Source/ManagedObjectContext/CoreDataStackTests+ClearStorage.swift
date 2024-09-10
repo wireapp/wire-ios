@@ -76,7 +76,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         // then
         let accountsDirectory = applicationContainer.appendingPathComponent("Accounts")
         XCTAssertTrue(FileManager.default.fileExists(atPath: accountsDirectory.path),
-                       "\(accountsDirectory.path) should not have been deleted")
+                      "\(accountsDirectory.path) should not have been deleted")
     }
 
     func testThatStorageIsNotCleared_WhenUpgradingFromSupportedInstallation() throws {
@@ -93,7 +93,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         // then
         for file in existingFiles {
             XCTAssertTrue(FileManager.default.fileExists(atPath: file.path),
-                           "\(file.path) should not have been deleted")
+                          "\(file.path) should not have been deleted")
         }
     }
 
@@ -117,8 +117,8 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
         return previousStorageLocations.flatMap { location -> [URL] in
             let fileManager = FileManager.default
             try? fileManager.createDirectory(at: location,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil)
+                                             withIntermediateDirectories: true,
+                                             attributes: nil)
 
             let messageStoreFiles = CoreDataStack.storeFileExtensions.map { location.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: $0)
             }
@@ -146,8 +146,8 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             let fileManager = FileManager.default
             let sessionDirectory = location.appendingPathComponent("otr")
             try! fileManager.createDirectory(at: sessionDirectory,
-                                            withIntermediateDirectories: true,
-                                            attributes: nil)
+                                             withIntermediateDirectories: true,
+                                             attributes: nil)
             return sessionDirectory
         }
     }

@@ -135,8 +135,8 @@ public struct PasswordRuleSet: Decodable, Equatable {
             }
 
             for (requiredClass, requiredCharacters) in requiredCharacterSets
-            where !matchedRequiredClasses.contains(requiredClass) && requiredCharacters.contains(scalar) {
-                    matchedRequiredClasses.insert(requiredClass)
+                where !matchedRequiredClasses.contains(requiredClass) && requiredCharacters.contains(scalar) {
+                matchedRequiredClasses.insert(requiredClass)
             }
         }
 

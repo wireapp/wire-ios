@@ -191,11 +191,11 @@ final class ConversationListContentController: UICollectionViewController {
 
     func scrollToCurrentSelection(animated: Bool) {
         guard let selectedItem = listViewModel.selectedItem,
-            let selectedIndexPath = listViewModel.indexPath(for: selectedItem),
-            // Check if indexPath is valid for the collection view
-            collectionView.numberOfSections > selectedIndexPath.section,
-            collectionView.numberOfItems(inSection: selectedIndexPath.section) > selectedIndexPath.item else {
-                return
+              let selectedIndexPath = listViewModel.indexPath(for: selectedItem),
+              // Check if indexPath is valid for the collection view
+              collectionView.numberOfSections > selectedIndexPath.section,
+              collectionView.numberOfItems(inSection: selectedIndexPath.section) > selectedIndexPath.item else {
+            return
         }
 
         if !collectionView.indexPathsForVisibleItems.contains(selectedIndexPath) {
@@ -270,7 +270,7 @@ final class ConversationListContentController: UICollectionViewController {
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
-                return nil
+            return nil
         }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
@@ -321,10 +321,10 @@ final class ConversationListContentController: UICollectionViewController {
         let cell: UICollectionViewCell
 
         if item is ConversationListConnectRequestsItem,
-            let labelCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConnectionRequests, for: indexPath) as? ConnectRequestsCell {
+           let labelCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConnectionRequests, for: indexPath) as? ConnectRequestsCell {
             cell = labelCell
         } else if item is ZMConversation,
-            let listCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConversation, for: indexPath) as? ConversationListCell {
+                  let listCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConversation, for: indexPath) as? ConversationListCell {
             listCell.delegate = self
             listCell.mutuallyExclusiveSwipeIdentifier = "ConversationList"
             listCell.conversation = item as? ZMConversation
@@ -448,9 +448,9 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         guard let indexPath = collectionView.indexPathForItem(at: location),
-            let layoutAttributes = collectionView.layoutAttributesForItem(at: indexPath)
-            else {
-                return nil
+              let layoutAttributes = collectionView.layoutAttributesForItem(at: indexPath)
+        else {
+            return nil
         }
 
         guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {

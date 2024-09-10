@@ -28,13 +28,13 @@ struct PushTokenMetadata {
      @brief There are 4 different application identifiers which map to each of the bundle id's used
      @discussion
      com.wearezeta.zclient.ios-development (dev) - <b>com.wire.dev.ent</b>
-     
+
      com.wearezeta.zclient.ios-internal (internal) - <b>com.wire.int.ent</b>
-     
+
      com.wearezeta.zclient-alpha - <b>com.wire.ent</b>
-     
+
      com.wearezeta.zclient.ios (app store) - <b>com.wire</b>
-     
+
      @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
      */
     let appIdentifier: String
@@ -42,15 +42,15 @@ struct PushTokenMetadata {
     /*!
      @brief There are 4 transport types which depend on the token type and the environment
      @discussion <b>APNS</b> -> ZMAPNSTypeNormal (deprecated)
-     
+
      <b>APNS_VOIP</b> -> ZMAPNSTypeVoIP
-     
+
      <b>APNS_SANDBOX</b> -> ZMAPNSTypeNormal + Sandbox environment (deprecated)
-     
+
      <b>APNS_VOIP_SANDBOX</b> -> ZMAPNSTypeVoIP + Sandbox environment
-     
+
      The non-VoIP types are deprecated at the moment.
-     
+
      @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
      */
 

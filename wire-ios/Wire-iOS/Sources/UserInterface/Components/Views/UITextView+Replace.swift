@@ -23,7 +23,7 @@ extension UITextView {
         guard
             range.lowerBound >= attributedText.wholeRange.lowerBound,
             range.upperBound <= attributedText.wholeRange.upperBound
-            else { return }
+        else { return }
         let updatedString = NSMutableAttributedString(attributedString: attributedText)
         updatedString.replaceCharacters(in: range, with: replacement)
 

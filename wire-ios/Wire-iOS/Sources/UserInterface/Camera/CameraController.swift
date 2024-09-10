@@ -154,7 +154,7 @@ final class CameraController {
         guard
             let input = input(for: camera),
             session.canAddInput(input)
-            else { return }
+        else { return }
 
         sessionQueue.async {
             self.session.beginConfiguration()
@@ -176,7 +176,7 @@ final class CameraController {
             !isSwitching, canSwitchInputs,
             let toRemove = input(for: currentCamera),
             let toAdd = input(for: newCamera)
-            else { return completion(currentCamera) }
+        else { return completion(currentCamera) }
 
         isSwitching = true
 
@@ -201,7 +201,7 @@ final class CameraController {
         guard
             let connection = previewLayer.connection,
             connection.isVideoOrientationSupported
-            else { return }
+        else { return }
 
         connection.videoOrientation = AVCaptureVideoOrientation.current
     }

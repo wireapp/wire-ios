@@ -208,7 +208,7 @@ final class SettingsPropertyFactory {
                 switch value {
                 case let .number(intValue):
                     if let intensivityLevel = AVSIntensityLevel(rawValue: UInt(truncating: intValue)),
-                        var mediaManager = self.mediaManager {
+                       var mediaManager = self.mediaManager {
                         mediaManager.intensityLevel = intensivityLevel
                     } else {
                         throw SettingsPropertyError.WrongValue("Cannot use value \(intValue) for AVSIntensivityLevel at \(propertyName)")
@@ -305,29 +305,29 @@ final class SettingsPropertyFactory {
                     default:
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
-            })
+                })
 
         case .lockApp:
             return SettingsBlockProperty(
                 propertyName: propertyName,
                 getAction: { _ in
                     return SettingsPropertyValue(self.isAppLockActive)
-            },
+                },
                 setAction: { _, value in
                     switch value {
                     case let .number(value: lockApp):
                         self.delegate?.appLockOptionDidChange(self,
                                                               newValue: lockApp.boolValue,
                                                               callback: { result in
-                           self.userSession?.perform {
-                               self.isAppLockActive = result
-                           }
-                        })
+                                                                  self.userSession?.perform {
+                                                                      self.isAppLockActive = result
+                                                                  }
+                                                              })
 
                     default:
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
-            })
+                })
 
         case .callingConstantBitRate:
             return SettingsBlockProperty(
@@ -340,7 +340,7 @@ final class SettingsPropertyFactory {
                     if case let .number(enabled) = value {
                         Settings.shared[.callingConstantBitRate] = enabled.boolValue
                     }
-            })
+                })
 
         case .disableLinkPreviews:
             return SettingsBlockProperty(
@@ -353,7 +353,7 @@ final class SettingsPropertyFactory {
                     default:
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
-            })
+                })
 
         case .disableCallKit:
             return SettingsBlockProperty(
@@ -366,7 +366,7 @@ final class SettingsPropertyFactory {
                     if case let .number(disabled) = value {
                         Settings.shared[.disableCallKit] = disabled.boolValue
                     }
-            })
+                })
 
         case .muteIncomingCallsWhileInACall:
             return SettingsBlockProperty(
@@ -379,7 +379,7 @@ final class SettingsPropertyFactory {
                     if case let .number(shouldMute) = value {
                         Settings.shared[.muteIncomingCallsWhileInACall] = shouldMute.boolValue
                     }
-            })
+                })
 
         case .readReceiptsEnabled:
             return SettingsBlockProperty(
@@ -387,15 +387,15 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     let value = self.selfUser?.readReceiptsEnabled ?? false
                     return SettingsPropertyValue(value)
-            },
+                },
                 setAction: { _, value in
                     if case let .number(enabled) = value,
-                        let userSession = self.userSession {
-                            userSession.perform {
-                                self.selfUser?.readReceiptsEnabled = enabled.boolValue
-                            }
+                       let userSession = self.userSession {
+                        userSession.perform {
+                            self.selfUser?.readReceiptsEnabled = enabled.boolValue
                         }
-            })
+                    }
+                })
 
         case .encryptMessagesAtRest:
             return SettingsBlockProperty(
@@ -403,11 +403,11 @@ final class SettingsPropertyFactory {
                 getAction: { [weak self] _ in
                     let value = self?.userSession?.encryptMessagesAtRest ?? false
                     return SettingsPropertyValue(value)
-            },
+                },
                 setAction: { [weak self] _, value in
                     guard case let .number(enabled) = value else { return }
                     try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
-            })
+                })
 
         default:
             if let userDefaultsKey = type(of: self).userDefaultsPropertiesToKeys[propertyName] {

@@ -20,10 +20,10 @@ import Foundation
 
 /**
  Preprocess the assets before they are uploaded.
- 
+
  - images are downscaled and converted to jpeg if they are too big
  - all assets are encrypted
- 
+
  */
 @objcMembers public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
     /// Group to track preprocessing operations

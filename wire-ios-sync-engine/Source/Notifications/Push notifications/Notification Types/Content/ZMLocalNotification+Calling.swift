@@ -79,7 +79,7 @@ extension ZMLocalNotification {
             guard let selfUserID = selfUser.remoteIdentifier,
                   let senderID = caller.remoteIdentifier,
                   let conversationID = conversation.remoteIdentifier
-                  else { return nil }
+            else { return nil }
 
             let userInfo = NotificationUserInfo()
             userInfo.selfUserID = selfUserID

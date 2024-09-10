@@ -267,7 +267,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             }
 
             if conversation.teamRemoteIdentifier != nil,
-                user.canModifyReadReceiptSettings(in: conversation) {
+               user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
@@ -298,12 +298,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard let conversation = conversation as? ZMConversation,
               changeInfo.participantsChanged ||
-                changeInfo.nameChanged ||
-                changeInfo.allowGuestsChanged ||
-                changeInfo.allowServicesChanged ||
-                changeInfo.destructionTimeoutChanged ||
-                changeInfo.mutedMessageTypesChanged ||
-                changeInfo.legalHoldStatusChanged
+              changeInfo.nameChanged ||
+              changeInfo.allowGuestsChanged ||
+              changeInfo.allowServicesChanged ||
+              changeInfo.destructionTimeoutChanged ||
+              changeInfo.mutedMessageTypesChanged ||
+              changeInfo.legalHoldStatusChanged
         else { return }
 
         updateLegalHoldIndicator()

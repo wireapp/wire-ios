@@ -112,7 +112,7 @@ public class CompanyLoginRequester {
         callbackScheme: String,
         defaults: UserDefaults = .shared(),
         session: URLSessionProtocol? = nil
-        ) {
+    ) {
         self.callbackScheme = callbackScheme
         self.defaults = defaults
         self.session = session ?? URLSession(configuration: .ephemeral)

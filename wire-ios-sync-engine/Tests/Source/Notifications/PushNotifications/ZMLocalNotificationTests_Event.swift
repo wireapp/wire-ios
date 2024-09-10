@@ -369,7 +369,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName() {
         // given
-         let event = createMessageTimerUpdateEvent(otherUser1.remoteIdentifier, conversationID: groupConversationWithoutName.remoteIdentifier!, senderID: otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
+        let event = createMessageTimerUpdateEvent(otherUser1.remoteIdentifier, conversationID: groupConversationWithoutName.remoteIdentifier!, senderID: otherUser1.remoteIdentifier!, timer: 86400, timestamp: Date())
 
         // when
         let note = ZMLocalNotification(event: event, conversation: groupConversationWithoutName, managedObjectContext: self.uiMOC)

@@ -113,8 +113,8 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         switch self.presentationStyle {
         case .modal:
             if controllerToShow.modalPresentationStyle == .popover,
-                let sourceView = self.viewController?.view,
-                let popoverPresentation = controllerToShow.popoverPresentationController {
+               let sourceView = self.viewController?.view,
+               let popoverPresentation = controllerToShow.popoverPresentationController {
                 popoverPresentation.sourceView = sourceView
                 popoverPresentation.sourceRect = sourceView.bounds
             }

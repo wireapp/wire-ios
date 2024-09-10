@@ -60,8 +60,8 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
     private func setupConstraints() {
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          label.centerYAnchor.constraint(equalTo: centerYAnchor),
-          label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24)
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24)
         ])
     }
 

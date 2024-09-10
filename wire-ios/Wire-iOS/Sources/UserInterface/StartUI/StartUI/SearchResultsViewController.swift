@@ -38,14 +38,14 @@ extension SearchGroup {
         }
     }
 
-#if ADD_SERVICE_DISABLED
-    // remove service from the tab
-    static let all: [SearchGroup] = [.people]
-#else
-    static var all: [SearchGroup] {
-        return [.people, .services].filter { $0.accessible }
-    }
-#endif
+    #if ADD_SERVICE_DISABLED
+        // remove service from the tab
+        static let all: [SearchGroup] = [.people]
+    #else
+        static var all: [SearchGroup] {
+            return [.people, .services].filter { $0.accessible }
+        }
+    #endif
 
     var name: String {
         switch self {
@@ -116,7 +116,7 @@ extension UIViewController {
 
         return hierarchy.any {
             if let arrowDirection = $0.popoverPresentationController?.arrowDirection,
-                arrowDirection != .unknown {
+               arrowDirection != .unknown {
                 return true
             } else {
                 return false

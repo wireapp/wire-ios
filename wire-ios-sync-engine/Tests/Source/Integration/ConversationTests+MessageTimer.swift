@@ -118,7 +118,7 @@ class ConversationMessageTimerTests: IntegrationTest {
         timeout: MessageDestructionTimeoutValue,
         file: StaticString = #file,
         line: UInt = #line
-        ) {
+    ) {
         mockTransportSession.resetReceivedRequests()
         let identifier = conversation.remoteIdentifier!.transportString()
         mockTransportSession.responseGeneratorBlock = { request in

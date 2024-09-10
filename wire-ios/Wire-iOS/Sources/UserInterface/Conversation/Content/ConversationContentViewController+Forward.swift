@@ -47,9 +47,9 @@ extension Array<ZMConversation> {
         forEach {
             guard let timeout = $0.activeMessageDestructionTimeoutValue,
                   let type = $0.activeMessageDestructionTimeoutType else {
-                      block($0)
-                      return
-                  }
+                block($0)
+                return
+            }
             $0.setMessageDestructionTimeoutValue(.init(rawValue: 0), for: type)
             block($0)
             $0.setMessageDestructionTimeoutValue(timeout, for: type)

@@ -432,7 +432,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         guard let originalMatches = search(for: "hakon", in: conversation).first?.matches,
               let editedMatches = search(for: "coracao", in: conversation).first?.matches else {
-                return XCTFail("Unable to get matches")
+            return XCTFail("Unable to get matches")
         }
 
         XCTAssert(originalMatches.isEmpty)
@@ -463,8 +463,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         // When
         guard let ephemeralMatches = search(for: "timed", in: conversation).first?.matches,
-            let firstMessageMatches = search(for: "regular message", in: conversation).first?.matches else {
-                return XCTFail("Unable to get matches")
+              let firstMessageMatches = search(for: "regular message", in: conversation).first?.matches else {
+            return XCTFail("Unable to get matches")
         }
 
         // Then
@@ -585,7 +585,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         file: StaticString = #file,
         line: UInt = #line,
         messageModifier: ((ZMMessage) -> Void)? = nil
-        ) {
+    ) {
         // Given
         let conversation = conversation ?? ZMConversation.insertNewObject(in: uiMOC)
         if conversation.remoteIdentifier == nil {

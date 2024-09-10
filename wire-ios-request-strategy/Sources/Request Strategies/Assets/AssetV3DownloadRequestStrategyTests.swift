@@ -580,8 +580,8 @@ extension AssetV3DownloadRequestStrategyTests {
 
     func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() throws {
         guard let plainTextData = ("<svg width=\"100\" height=\"100\">"
-                                   + "<rect width=\"100\" height=\"100\"/>"
-                                   + "</svg>").data(using: .utf8) else {
+            + "<rect width=\"100\" height=\"100\"/>"
+            + "</svg>").data(using: .utf8) else {
             XCTFail("Unable to convert SVG to Data")
             return
         }

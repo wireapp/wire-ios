@@ -238,8 +238,8 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
             let identifier = identifiers.first,
             let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId,
                                                     forUser: ZMUser.fetchOrCreate(with: identifier.userId,
-                                                                                 domain: nil,
-                                                                                 in: managedObjectContext),
+                                                                                  domain: nil,
+                                                                                  in: managedObjectContext),
                                                     createIfNeeded: true)
         else {
             Logging.network.warn("Can't process response, aborting.")

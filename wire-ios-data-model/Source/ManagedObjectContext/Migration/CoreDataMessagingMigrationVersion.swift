@@ -75,46 +75,46 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
         case .v116, .v117:
             return .v118
         case .v115,
-                .v114:
+             .v114:
             return .v116 // destination version runs custom migration actions
         case .v111,
-                .v112,
-                .v113:
+             .v112,
+             .v113:
             return .v114 // destination version runs custom migration actions
         case .v110:
             return .v111 // destination version runs custom migration actions
         case .v107,
-                .v108,
-                .v109:
+             .v108,
+             .v109:
             return .v110
         case .v106:
             return .v107 // destination version runs custom migration actions
         case .v80,
-                .v81,
-                .v82,
-                .v83,
-                .v84,
-                .v85,
-                .v86,
-                .v87,
-                .v88,
-                .v89,
-                .v90,
-                .v91,
-                .v92,
-                .v93,
-                .v94,
-                .v95,
-                .v96,
-                .v97,
-                .v98,
-                .v99,
-                .v100,
-                .v101,
-                .v102,
-                .v103,
-                .v104,
-                .v105:
+             .v81,
+             .v82,
+             .v83,
+             .v84,
+             .v85,
+             .v86,
+             .v87,
+             .v88,
+             .v89,
+             .v90,
+             .v91,
+             .v92,
+             .v93,
+             .v94,
+             .v95,
+             .v96,
+             .v97,
+             .v98,
+             .v99,
+             .v100,
+             .v101,
+             .v102,
+             .v103,
+             .v104,
+             .v105:
             return .v106
         }
     }

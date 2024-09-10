@@ -47,8 +47,8 @@ final class CollectionFileCell: CollectionCell {
             restrictionView.configure(for: message)
         }
         accessibilityLabel = ConversationSearch.SentBy.description(message.senderName)
-                            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
-                            + (fileTransferView.accessibilityLabel ?? "")
+            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
+            + (fileTransferView.accessibilityLabel ?? "")
         accessibilityHint = ConversationSearch.Item.hint
     }
 

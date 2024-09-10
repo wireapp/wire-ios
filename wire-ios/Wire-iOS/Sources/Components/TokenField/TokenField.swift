@@ -425,8 +425,8 @@ final class TokenField: UIView {
         guard let text = textView.text else { return }
 
         guard let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
-            let firstCharacterIndex = text.unicodeScalars.firstIndex(where: { $0 != attachmentCharacter && !CharacterSet.whitespaces.contains($0) }) else {
-                return
+              let firstCharacterIndex = text.unicodeScalars.firstIndex(where: { $0 != attachmentCharacter && !CharacterSet.whitespaces.contains($0) }) else {
+            return
         }
 
         filterText = ""
@@ -582,12 +582,12 @@ final class TokenField: UIView {
         textView.attributedText.enumerateAttachment { textAttachment, _, _ in
 
             if let token = (textAttachment as? TokenTextAttachment)?.token,
-                !updatedCurrentTokens.contains(token) {
+               !updatedCurrentTokens.contains(token) {
                 updatedCurrentTokens.insert(token)
             }
 
             if let token = (textAttachment as? TokenSeparatorAttachment)?.token,
-                !updatedCurrentSeparatorTokens.contains(token) {
+               !updatedCurrentSeparatorTokens.contains(token) {
                 updatedCurrentSeparatorTokens.insert(token)
             }
         }
@@ -620,7 +620,7 @@ final class TokenField: UIView {
 
         textView.attributedText.enumerateAttachment { textAttachment, range, _ in
             if let token = (textAttachment as? TokenContainer)?.token,
-                tokensToRemove.contains(token) {
+               tokensToRemove.contains(token) {
                 rangesToRemove.append(range)
             }
         }

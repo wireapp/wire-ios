@@ -24,7 +24,7 @@ import Foundation
 
     public init?(json: [AnyHashable: Any]) {
         guard let minVersion = json["min_version"] as? String,
-            let excludedVersions = json["exclude"] as? [String] else {
+              let excludedVersions = json["exclude"] as? [String] else {
             return nil
         }
         self.minVersion = minVersion

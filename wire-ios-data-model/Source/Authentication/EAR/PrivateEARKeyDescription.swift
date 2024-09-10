@@ -58,10 +58,10 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         ]
 
         #if !targetEnvironment(simulator)
-        if let laContext = context?.laContext {
-            query[kSecUseAuthenticationContext] = laContext
-            query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
-        }
+            if let laContext = context?.laContext {
+                query[kSecUseAuthenticationContext] = laContext
+                query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
+            }
         #endif
 
         return query

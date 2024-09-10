@@ -127,11 +127,11 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         from sourceView: UIView
     ) {
         if let groupDetailsViewController = (participantsController as? UINavigationController)?.topViewController as? GroupDetailsViewController {
-                groupDetailsViewController.presentParticipantsDetails(
-                    with: conversation.sortedOtherParticipants,
-                    selectedUsers: selectedUsers,
-                    animated: false
-                )
+            groupDetailsViewController.presentParticipantsDetails(
+                with: conversation.sortedOtherParticipants,
+                selectedUsers: selectedUsers,
+                animated: false
+            )
         }
 
         if let participantsController {

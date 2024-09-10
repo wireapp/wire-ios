@@ -141,29 +141,29 @@ final class AudioEffectsPickerViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-          collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.rightAnchor.constraint(equalTo: view.rightAnchor),
 
-          statusBoxView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 8),
-          statusBoxView.heightAnchor.constraint(equalToConstant: 24),
-          statusBoxView.leftAnchor.constraint(equalTo: collectionView.leftAnchor, constant: 48),
-          statusBoxView.rightAnchor.constraint(equalTo: collectionView.rightAnchor, constant: -48),
-          statusBoxView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            statusBoxView.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 8),
+            statusBoxView.heightAnchor.constraint(equalToConstant: 24),
+            statusBoxView.leftAnchor.constraint(equalTo: collectionView.leftAnchor, constant: 48),
+            statusBoxView.rightAnchor.constraint(equalTo: collectionView.rightAnchor, constant: -48),
+            statusBoxView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-          progressView.topAnchor.constraint(equalTo: statusBoxView.topAnchor),
-          progressView.bottomAnchor.constraint(equalTo: statusBoxView.bottomAnchor),
-          progressView.leftAnchor.constraint(equalTo: statusBoxView.leftAnchor),
-          progressView.rightAnchor.constraint(equalTo: statusBoxView.rightAnchor),
-          subtitleLabel.topAnchor.constraint(equalTo: statusBoxView.topAnchor),
-          subtitleLabel.bottomAnchor.constraint(equalTo: statusBoxView.bottomAnchor),
-          subtitleLabel.leftAnchor.constraint(equalTo: statusBoxView.leftAnchor),
-          subtitleLabel.rightAnchor.constraint(equalTo: statusBoxView.rightAnchor)
+            progressView.topAnchor.constraint(equalTo: statusBoxView.topAnchor),
+            progressView.bottomAnchor.constraint(equalTo: statusBoxView.bottomAnchor),
+            progressView.leftAnchor.constraint(equalTo: statusBoxView.leftAnchor),
+            progressView.rightAnchor.constraint(equalTo: statusBoxView.rightAnchor),
+            subtitleLabel.topAnchor.constraint(equalTo: statusBoxView.topAnchor),
+            subtitleLabel.bottomAnchor.constraint(equalTo: statusBoxView.bottomAnchor),
+            subtitleLabel.leftAnchor.constraint(equalTo: statusBoxView.leftAnchor),
+            subtitleLabel.rightAnchor.constraint(equalTo: statusBoxView.rightAnchor)
         ])
 
         // Do not load in tests, which may cause exception break point to break when loading audio assets
         if !ProcessInfo.processInfo.isRunningTests {
-             loadLevels()
+            loadLevels()
         }
 
         setState(.time, animated: false)
@@ -318,7 +318,7 @@ extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollecti
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: CGFloat(Int(collectionView.bounds.width) / type(of: self).effectColumns),
-                          height: CGFloat(Int(collectionView.bounds.height) / type(of: self).effectRows))
+                      height: CGFloat(Int(collectionView.bounds.height) / type(of: self).effectRows))
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

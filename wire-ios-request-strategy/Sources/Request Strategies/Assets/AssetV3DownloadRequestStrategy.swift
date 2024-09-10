@@ -54,18 +54,18 @@ private let zmLog = ZMSLog(tag: "Asset V3")
         notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
                                                                     context: self.managedObjectContext.notificationContext,
                                                                     object: nil) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
-            self?.cancelOngoingRequestForAssetClientMessage(objectID)
-        })
+                guard let objectID = note.object as? NSManagedObjectID else { return }
+                self?.cancelOngoingRequestForAssetClientMessage(objectID)
+            })
     }
 
     func registerForWhitelistingNotification() {
         notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
                                                                     context: self.managedObjectContext.notificationContext,
                                                                     object: nil) { [weak self] note in
-            guard let objectID = note.object as? NSManagedObjectID else { return }
-            self?.didRequestToDownloadAsset(objectID)
-        })
+                guard let objectID = note.object as? NSManagedObjectID else { return }
+                self?.didRequestToDownloadAsset(objectID)
+            })
     }
 
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {

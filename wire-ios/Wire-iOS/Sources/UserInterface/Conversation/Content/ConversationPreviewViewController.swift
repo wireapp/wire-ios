@@ -72,10 +72,10 @@ final class ConversationPreviewViewController: UIViewController {
         conversationView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-          conversationView.topAnchor.constraint(equalTo: view.topAnchor),
-          conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
+            conversationView.topAnchor.constraint(equalTo: view.topAnchor),
+            conversationView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            conversationView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            conversationView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
 

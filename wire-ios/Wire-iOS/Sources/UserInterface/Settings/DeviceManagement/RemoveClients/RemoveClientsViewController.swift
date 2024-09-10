@@ -28,9 +28,9 @@ protocol RemoveClientsViewControllerDelegate: AnyObject {
 }
 
 final class RemoveClientsViewController: UIViewController,
-                                UITableViewDelegate,
-                                UITableViewDataSource,
-                                ClientColorVariantProtocol {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ClientColorVariantProtocol {
     // MARK: - Properties
 
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)

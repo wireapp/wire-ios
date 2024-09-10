@@ -184,14 +184,14 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         if arguments.first == "list" {
             return onComplete(.success(info:
                 "Enabled:\n" +
-                self.currentlyEnabledLogs
+                    self.currentlyEnabledLogs
                     .map { $0.rawValue }
                     .joined(separator: "\n")
-                ))
+            ))
         }
 
         guard arguments.count == 2,
-        arguments[0] == "add" || arguments[0] == "remove"
+              arguments[0] == "add" || arguments[0] == "remove"
         else {
             return onComplete(.failure(error: "usage: \(self.usage)"))
         }
@@ -277,8 +277,8 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
 
         onComplete(.success(info:
             "User: \(user.remoteIdentifier.uuidString)\n" +
-            "Client: \(client.remoteIdentifier ?? "-")\n" +
-            "Session: \(client.sessionIdentifier?.rawValue ?? "-")"
+                "Client: \(client.remoteIdentifier ?? "-")\n" +
+                "Session: \(client.sessionIdentifier?.rawValue ?? "-")"
         ))
     }
 }
@@ -315,7 +315,7 @@ private class DebugCommandVariables: DebugCommandMixin {
         case "list":
             return onComplete(.success(info: state.map { v in
                 "\(v.key) => \(v.value)"
-                }.joined(separator: "\n")
+            }.joined(separator: "\n")
             ))
         case "set":
             guard arguments.count == 2 || arguments.count == 3 else {

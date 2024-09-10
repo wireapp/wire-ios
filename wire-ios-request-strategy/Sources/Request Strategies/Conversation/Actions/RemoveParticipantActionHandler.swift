@@ -20,13 +20,13 @@ import Foundation
 
 extension ConversationRemoveParticipantError {
     public init?(response: ZMTransportResponse) {
-       switch (response.httpStatus, response.payloadLabel()) {
-       case (403, "invalid-op"?): self = .invalidOperation
-       case (404, "no-conversation"?): self = .conversationNotFound
-       case (400..<499, _): self = .unknown
-       default: return nil
-       }
-   }
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (403, "invalid-op"?): self = .invalidOperation
+        case (404, "no-conversation"?): self = .conversationNotFound
+        case (400..<499, _): self = .unknown
+        default: return nil
+        }
+    }
 }
 
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {

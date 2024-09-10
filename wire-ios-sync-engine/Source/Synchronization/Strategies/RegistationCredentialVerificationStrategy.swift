@@ -63,9 +63,9 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
             case .sendActivationCode:
                 let decodedError: NSError?
                 decodedError = NSError.domainBlocked(with: response) ??
-                NSError.blacklistedEmail(with: response) ??
-                NSError.emailAddressInUse(with: response) ??
-                NSError.invalidEmail(with: response)
+                    NSError.blacklistedEmail(with: response) ??
+                    NSError.emailAddressInUse(with: response) ??
+                    NSError.invalidEmail(with: response)
                 error = decodedError ?? NSError(userSessionErrorCode: .unknownError, userInfo: [:])
             case .checkActivationCode:
                 error = NSError.invalidActivationCode(with: response) ??

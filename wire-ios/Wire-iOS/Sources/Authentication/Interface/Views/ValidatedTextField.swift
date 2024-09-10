@@ -69,8 +69,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
                 return
             }
             layer.borderColor = isEditingTextField
-            ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
-            : style.borderColorNotSelected.cgColor
+                ? style.borderColorSelected.resolvedColor(with: traitCollection).cgColor
+                : style.borderColorNotSelected.cgColor
         }
     }
 
@@ -136,18 +136,18 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
 
         var textFieldAttributes: Attributes = if setNewColors == false {
             AccessoryTextField.Attributes(textFont: ValidatedTextField.enteredTextFont,
-                                                                textColor: UIColor.Team.textColor,
-                                                                placeholderFont: ValidatedTextField.placeholderFont,
-                                                                placeholderColor: UIColor.Team.placeholderColor,
-                                                                backgroundColor: UIColor.Team.textfieldColor,
-                                                                cornerRadius: cornerRadius ?? 0)
+                                          textColor: UIColor.Team.textColor,
+                                          placeholderFont: ValidatedTextField.placeholderFont,
+                                          placeholderColor: UIColor.Team.placeholderColor,
+                                          backgroundColor: UIColor.Team.textfieldColor,
+                                          cornerRadius: cornerRadius ?? 0)
         } else {
             AccessoryTextField.Attributes(textFont: ValidatedTextField.enteredTextFont,
-                                                                textColor: TextFieldColors.textInputView,
-                                                                placeholderFont: ValidatedTextField.placeholderFont,
-                                                                placeholderColor: TextFieldColors.textInputViewPlaceholder,
-                                                                backgroundColor: TextFieldColors.backgroundInputView,
-                                                                cornerRadius: cornerRadius ?? 0)
+                                          textColor: TextFieldColors.textInputView,
+                                          placeholderFont: ValidatedTextField.placeholderFont,
+                                          placeholderColor: TextFieldColors.textInputViewPlaceholder,
+                                          backgroundColor: TextFieldColors.backgroundInputView,
+                                          cornerRadius: cornerRadius ?? 0)
         }
 
         super.init(leftInset: leftInset,
@@ -230,8 +230,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
 
     private var buttonIcon: StyleKitIcon {
         return isLoading
-        ? .spinner
-        : overrideButtonIcon ?? (UIApplication.isLeftToRightLayout ? .forwardArrow : .backArrow)
+            ? .spinner
+            : overrideButtonIcon ?? (UIApplication.isLeftToRightLayout ? .forwardArrow : .backArrow)
     }
 
     private var iconSize: StyleKitIcon.Size {

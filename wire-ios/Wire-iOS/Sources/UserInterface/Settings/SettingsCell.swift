@@ -325,7 +325,7 @@ final class SettingsValueCell: SettingsTableCell {
 }
 
 final class SettingsTextCell: SettingsTableCell,
-                              UITextFieldDelegate {
+    UITextFieldDelegate {
     var textInput: UITextField = TailEditingTextField(frame: CGRect.zero)
 
     override func setup() {

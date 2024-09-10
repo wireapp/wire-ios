@@ -35,7 +35,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         return CoreDataStack.accountDataFolder(
             accountIdentifier: accountId,
             applicationContainer: sharedContainerURL
-            ).appendingPersistentStoreLocation()
+        ).appendingPersistentStoreLocation()
     }
 
     public override func setUp() {

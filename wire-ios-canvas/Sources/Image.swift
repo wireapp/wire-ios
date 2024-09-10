@@ -77,14 +77,14 @@ final class Image: Editable {
     }
 
     var transform: CGAffineTransform {
-            let center = CGPoint(x: size.width / 2, y: size.height / 2)
-            let toCenter = CGAffineTransform(translationX: -center.x, y: -center.y)
-            let restoreCenter = CGAffineTransform(translationX: center.x, y: center.y)
-            let scaleTransform = CGAffineTransform(scaleX: scale, y: scale)
-            let rotationTransform = CGAffineTransform(rotationAngle: rotation)
-            let translate = CGAffineTransform(translationX: position.x, y: position.y)
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let toCenter = CGAffineTransform(translationX: -center.x, y: -center.y)
+        let restoreCenter = CGAffineTransform(translationX: center.x, y: center.y)
+        let scaleTransform = CGAffineTransform(scaleX: scale, y: scale)
+        let rotationTransform = CGAffineTransform(rotationAngle: rotation)
+        let translate = CGAffineTransform(translationX: position.x, y: position.y)
 
-            return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter).concatenating(translate)
+        return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter).concatenating(translate)
     }
 
     func sizeToFit(inRect rect: CGRect) {

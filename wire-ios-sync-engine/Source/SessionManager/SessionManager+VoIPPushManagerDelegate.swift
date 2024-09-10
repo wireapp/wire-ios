@@ -38,8 +38,8 @@ extension SessionManager: VoIPPushManagerDelegate {
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
                 expirationHandler: { [weak self] in
-                  WireLogger.notifications.warn("Processing push payload expired: \(payload)")
-                  self?.notificationsTracker?.registerProcessingExpired()
+                    WireLogger.notifications.warn("Processing push payload expired: \(payload)")
+                    self?.notificationsTracker?.registerProcessingExpired()
                 }
             )
         else {

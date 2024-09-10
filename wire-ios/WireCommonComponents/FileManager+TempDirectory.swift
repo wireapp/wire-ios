@@ -31,7 +31,7 @@ extension FileManager {
 
     public func removeTmpIfNeededAndCopy(fileURL: URL, tmpURL: URL) throws {
         if fileExists(atPath: tmpURL.path) {
-                try FileManager.default.removeItem(at: tmpURL)
+            try FileManager.default.removeItem(at: tmpURL)
         }
 
         try copyItem(at: fileURL, to: tmpURL)

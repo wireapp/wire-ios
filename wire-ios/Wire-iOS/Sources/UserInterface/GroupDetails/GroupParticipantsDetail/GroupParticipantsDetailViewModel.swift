@@ -84,8 +84,8 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
 
     private func computeVisibleParticipants() {
         guard let query = filterQuery,
-            query.isValidQuery else {
-                return participants = internalParticipants
+              query.isValidQuery else {
+            return participants = internalParticipants
         }
         participants = (internalParticipants as NSArray).filtered(using: filterPredicate(for: query)) as! [UserType]
     }

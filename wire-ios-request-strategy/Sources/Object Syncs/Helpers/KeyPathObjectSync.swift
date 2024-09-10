@@ -37,9 +37,9 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
 
 /**
  KeyPathObjectSync synchronizes objects filtered by a boolean KeyPath which should evaluate to `true` if the object needs to synced.
- 
+
  Note this is only supported for managed objects and for properties which are stored in Core Data.
- 
+
  */
 class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
     // MARK: - Life Cycle
@@ -83,9 +83,9 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
         let keypathExpression = NSExpression(forKeyPath: keyPath)
         let valueExpression = NSExpression(forConstantValue: true)
         let predicate = NSComparisonPredicate(leftExpression: keypathExpression,
-                              rightExpression: valueExpression,
-                              modifier: .direct,
-                              type: .equalTo)
+                                              rightExpression: valueExpression,
+                                              modifier: .direct,
+                                              type: .equalTo)
 
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         fetchRequest.predicate = predicate

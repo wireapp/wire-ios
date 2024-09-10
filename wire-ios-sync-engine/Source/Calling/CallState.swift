@@ -84,8 +84,8 @@ public struct CallParticipant: Hashable {
 
     public static func == (lhs: CallParticipant, rhs: CallParticipant) -> Bool {
         return lhs.userId == rhs.userId &&
-               lhs.clientId == rhs.clientId &&
-               lhs.state == rhs.state
+            lhs.clientId == rhs.clientId &&
+            lhs.state == rhs.state
     }
 
     public func hash(into hasher: inout Hasher) {

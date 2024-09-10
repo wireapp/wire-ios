@@ -73,7 +73,7 @@ open class SetChangeInfo<T: Hashable>: NSObject {
     open override var description: String { return self.debugDescription }
     open override var debugDescription: String {
         return "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
-        "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
+            "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
     }
 }
 

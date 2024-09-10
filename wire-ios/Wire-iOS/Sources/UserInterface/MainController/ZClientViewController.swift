@@ -572,11 +572,11 @@ final class ZClientViewController: UIViewController {
                            options: .transitionCrossDissolve,
                            animations: { viewController.view.fitIn(view: self.view) },
                            completion: { _ in
-                    viewController.didMove(toParent: self)
-                    previousViewController.removeFromParent()
-                    self.topOverlayViewController = viewController
-                    self.updateSplitViewTopConstraint()
-                })
+                               viewController.didMove(toParent: self)
+                               previousViewController.removeFromParent()
+                               self.topOverlayViewController = viewController
+                               self.updateSplitViewTopConstraint()
+                           })
             } else {
                 topOverlayContainer.addSubview(viewController.view)
                 viewController.view.fitIn(view: topOverlayContainer)
@@ -754,7 +754,7 @@ final class ZClientViewController: UIViewController {
 
     var isConversationListVisible: Bool {
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+            (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(animated: Bool,
@@ -772,8 +772,8 @@ final class ZClientViewController: UIViewController {
 extension ZClientViewController: SplitViewControllerDelegate {
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
         return splitViewController.rightViewController != nil &&
-        splitViewController.leftViewController == conversationListViewController.tabBarController &&
-        conversationListViewController.state == .conversationList &&
-        (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
+            splitViewController.leftViewController == conversationListViewController.tabBarController &&
+            conversationListViewController.state == .conversationList &&
+            (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }
 }

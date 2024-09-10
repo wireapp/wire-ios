@@ -61,10 +61,10 @@ extension ZMConversation {
 
             if response.httpStatus == 200 {
                 let conversation = ZMConversation.fetch(
-                        with: conversationId,
-                        domain: nil,
-                        in: contextProvider.syncContext
-                    )
+                    with: conversationId,
+                    domain: nil,
+                    in: contextProvider.syncContext
+                )
 
                 guard let conversation else {
                     DispatchQueue.main.async {

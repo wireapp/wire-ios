@@ -488,7 +488,7 @@ class EncryptionSession {
          requiresSave: Bool,
          cryptoboxPath: URL,
          extensiveLogging: Bool
-        ) {
+    ) {
         self.id = id
         self.implementation = session
         self.remoteFingerprint = session.remoteFingerprint
@@ -547,8 +547,8 @@ extension EncryptionSession {
             .map { HexDumpUnsafeLoggingData(data: $0) }
         zmLog.safePublic(
             SanitizedString("Extensive logging (session \(sessionId)): ") +
-            SanitizedString("\(reason): cyphertext: \(encodedData); ") +
-            SanitizedString("session content: \(sessionContent)"),
+                SanitizedString("\(reason): cyphertext: \(encodedData); ") +
+                SanitizedString("session content: \(sessionContent)"),
             level: .public)
     }
 }

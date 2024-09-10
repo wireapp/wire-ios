@@ -24,8 +24,8 @@ extension ZMLocalNotification {
     public convenience init?(callState: LocalNotificationType.CallState, conversation: ZMConversation?, caller: ZMUser, moc: NSManagedObjectContext) {
         guard let conversation,
               let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation) else {
-                  return nil
-              }
+            return nil
+        }
         self.init(builder: builder, moc: moc)
     }
 
@@ -78,7 +78,7 @@ extension ZMLocalNotification {
             guard let selfUserID = selfUser.remoteIdentifier,
                   let senderID = caller.remoteIdentifier,
                   let conversationID = conversation.remoteIdentifier
-                  else { return nil }
+            else { return nil }
 
             let userInfo = NotificationUserInfo()
             userInfo.selfUserID = selfUserID

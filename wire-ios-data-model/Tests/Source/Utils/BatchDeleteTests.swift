@@ -63,9 +63,9 @@ class BatchDeleteTests: ZMTBaseTest {
         let model = self.model
         let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         _ = try persistentStoreCoordinator.addPersistentStore(type: .sqlite,
-                                                          configuration: nil,
-                                                          at: URL(fileURLWithPath: storagePath),
-                                                          options: [:])
+                                                              configuration: nil,
+                                                              at: URL(fileURLWithPath: storagePath),
+                                                              options: [:])
 
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator

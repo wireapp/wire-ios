@@ -61,7 +61,7 @@ class BaseAccountView: UIView {
     var onTap: (Account) -> Void = { _ in }
 
     var accessibilityState: String {
-       typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
+        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
         var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
 
         if hasUnreadMessages {
@@ -106,21 +106,21 @@ class BaseAccountView: UIView {
 
         NSLayoutConstraint.activate(
             dotConstraints +
-            selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
-            [
-          imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
-          imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-          widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
-          trailingAnchor.constraint(greaterThanOrEqualTo: dotView.trailingAnchor),
+                selectionView.fitInConstraints(view: imageViewContainer, inset: -1) +
+                [
+                    imageViewContainer.topAnchor.constraint(equalTo: topAnchor, constant: containerInset),
+                    imageViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+                    widthAnchor.constraint(greaterThanOrEqualTo: imageViewContainer.widthAnchor),
+                    trailingAnchor.constraint(greaterThanOrEqualTo: dotView.trailingAnchor),
 
-          imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
-          imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
+                    imageViewContainer.widthAnchor.constraint(equalToConstant: iconWidth),
+                    imageViewContainer.heightAnchor.constraint(equalTo: imageViewContainer.widthAnchor),
 
-          imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
-          imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
-          imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
-          widthAnchor.constraint(lessThanOrEqualToConstant: 128)
-            ])
+                    imageViewContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -containerInset),
+                    imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
+                    imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
+                    widthAnchor.constraint(lessThanOrEqualToConstant: 128)
+                ])
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
         self.addGestureRecognizer(tapGesture)

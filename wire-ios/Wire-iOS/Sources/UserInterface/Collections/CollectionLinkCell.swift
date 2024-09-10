@@ -58,7 +58,7 @@ final class CollectionLinkCell: CollectionCell {
             headerView.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor, constant: 12),
             headerView.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor, constant: -12),
 
-          articleView.topAnchor.constraint(greaterThanOrEqualTo: headerView.bottomAnchor, constant: -4),
+            articleView.topAnchor.constraint(greaterThanOrEqualTo: headerView.bottomAnchor, constant: -4),
             articleView.leftAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leftAnchor),
             articleView.rightAnchor.constraint(equalTo: contentView.layoutMarginsGuide.rightAnchor),
             articleView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor)
@@ -99,8 +99,8 @@ final class CollectionLinkCell: CollectionCell {
             createArticleView(with: textMessageData)
         }
         accessibilityLabel = ConversationSearch.SentBy.description(message.senderName)
-                            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
-                            + ConversationSearch.LinkMessage.description
+            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
+            + ConversationSearch.LinkMessage.description
         accessibilityHint = ConversationSearch.Item.hint
     }
 

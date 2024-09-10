@@ -221,7 +221,7 @@ final class ConversationListViewModel: NSObject {
 
         static func == (lhs: SectionItem, rhs: SectionItem) -> Bool {
             return lhs.isFavorite == rhs.isFavorite &&
-                   lhs.item == rhs.item
+                lhs.item == rhs.item
         }
     }
 
@@ -230,7 +230,7 @@ final class ConversationListViewModel: NSObject {
         guard isFolderStatePersistenceEnabled else { return .init() }
 
         guard let persistentPath = ConversationListViewModel.persistentURL,
-            let jsonData = try? Data(contentsOf: persistentPath) else { return State()
+              let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
 
         do {
@@ -419,7 +419,7 @@ final class ConversationListViewModel: NSObject {
 
         var newValue: [Section]
         if let kind,
-            let sectionNumber = self.sectionNumber(for: kind) {
+           let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
 
@@ -492,9 +492,9 @@ final class ConversationListViewModel: NSObject {
 
     func folderBadge(at sectionIndex: Int) -> Int {
         return sections[sectionIndex].items.filter({
-             let status = ($0.item as? ZMConversation)?.status
-             return status?.messagesRequiringAttention.isEmpty == false &&
-                    status?.showingAllMessages == true
+            let status = ($0.item as? ZMConversation)?.status
+            return status?.messagesRequiringAttention.isEmpty == false &&
+                status?.showingAllMessages == true
         }).count
     }
 

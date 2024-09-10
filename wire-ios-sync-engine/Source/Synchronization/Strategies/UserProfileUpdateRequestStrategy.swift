@@ -116,8 +116,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
                 fatal("Tried to check handles availability, but no handle was available")
             }
             let payload = [
-                    "handles": handlesToCheck,
-                    "return": 1
+                "handles": handlesToCheck,
+                "return": 1
             ] as NSDictionary
             return ZMTransportRequest(path: "/users/handles", method: .post, payload: payload, apiVersion: apiVersion.rawValue)
 

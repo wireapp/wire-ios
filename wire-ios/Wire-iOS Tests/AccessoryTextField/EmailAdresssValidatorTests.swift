@@ -23,24 +23,24 @@ final class EmailAdresssValidatorTests: XCTestCase {
     func testThatValidEmailsPassValidation() {
         // GIVEN
         let validEmailAddresses =
-        [
-            "niceandsimple@example.com",
-            "very.common@example.com",
-            "a.little.lengthy.but.fine@dept.example.com",
-             "disposable.style.email.with+symbol@example.com",
-            "other.email-with-dash@example.com",
-            "a@b.c.example.com",
-            "a@3b.c.example.com",
-            "a@b-c.d.example.com",
-            "a@b-c.d-c.example.com",
-            "a@b3-c.d4.example.com",
-            "a@b-4c.d-c4.example.com",
-            "meep.moop@example.com",
-            "  some@email.com  ",
-            // edge case: detector removes leading "=" but say this is a valid email address
-            // "=?iso-8859-1?q?keld_j=f8rn_simonsen?=@example.com",
-            "x@something_odd.example.com"
-        ]
+            [
+                "niceandsimple@example.com",
+                "very.common@example.com",
+                "a.little.lengthy.but.fine@dept.example.com",
+                "disposable.style.email.with+symbol@example.com",
+                "other.email-with-dash@example.com",
+                "a@b.c.example.com",
+                "a@3b.c.example.com",
+                "a@b-c.d.example.com",
+                "a@b-c.d-c.example.com",
+                "a@b3-c.d4.example.com",
+                "a@b-4c.d-c4.example.com",
+                "meep.moop@example.com",
+                "  some@email.com  ",
+                // edge case: detector removes leading "=" but say this is a valid email address
+                // "=?iso-8859-1?q?keld_j=f8rn_simonsen?=@example.com",
+                "x@something_odd.example.com"
+            ]
 
         // WHEN & THEN
 
@@ -52,37 +52,37 @@ final class EmailAdresssValidatorTests: XCTestCase {
     func testThatInvalidEmailsDoNotPassValidation() {
         // GIVEN
         let invalidEmailAddresses =
-        ["Abc.example.com", // (an @ character must separate the local and domain parts)
-        "A@b@c@example.com", // (only one @ is allowed outside quotation marks)
-        "a\"b(c)d,e:f;g<h>i[j\\k]l@example.com", // (none of the special characters in this local part is allowed outside quotation marks)
-        "just\"not\"right@example.com", // (quoted strings must be dot separated or the only element making up the local-part)
-        "this is\"not\\allowed@example.com", // (spaces, quotes, and backslashes may only exist when within quoted strings and preceded by a backslash)
-        "this\\ still\\\"not\\\\allowed@example.com", // (even if escaped (preceded by a backslash), spaces, quotes, and backslashes must still be contained by quotes)
-        "tester@example..com", // double dot before @
-        "foo..tester@example.com", // double dot after @
-        "",
-        "a@b",
-        "a@b3",
-        "a@b.c-",
-        //      "a@3b.c", //unclear why this should be not valid
-        "two words@something.org",
-        "\"Meep Moop\" <\"The =^.^= Meeper\"@x.y",
-        "mailbox@[11.22.33.44]",
-        "some prefix with <two words@example.com>",
-        "x@host.with?query=23&parameters=42",
-        "some.mail@host.with.port:12345",
-        "comments(inside the address)@are(actually).not(supported, but nobody uses them anyway)",
-        "\"you need to close quotes@proper.ly",
-        "\"you need\" <to.close@angle-brackets.too",
-        "\"you need\" >to.open@angle-brackets.first",
-        "\"you need\" <to.close@angle-brackets>.right",
-        "some<stran>ge@example.com",
-        "Mr. Stranger <some<stran>ge@example.com>",
-        "<Meep.Moop@EXample.com>",
-        "abc.\"defghi\".xyz@example.com",
-        "\"abcdefghixyz\"@example.com",
-        "user@localserver"
-        ]
+            ["Abc.example.com", // (an @ character must separate the local and domain parts)
+             "A@b@c@example.com", // (only one @ is allowed outside quotation marks)
+             "a\"b(c)d,e:f;g<h>i[j\\k]l@example.com", // (none of the special characters in this local part is allowed outside quotation marks)
+             "just\"not\"right@example.com", // (quoted strings must be dot separated or the only element making up the local-part)
+             "this is\"not\\allowed@example.com", // (spaces, quotes, and backslashes may only exist when within quoted strings and preceded by a backslash)
+             "this\\ still\\\"not\\\\allowed@example.com", // (even if escaped (preceded by a backslash), spaces, quotes, and backslashes must still be contained by quotes)
+             "tester@example..com", // double dot before @
+             "foo..tester@example.com", // double dot after @
+             "",
+             "a@b",
+             "a@b3",
+             "a@b.c-",
+             //      "a@3b.c", //unclear why this should be not valid
+             "two words@something.org",
+             "\"Meep Moop\" <\"The =^.^= Meeper\"@x.y",
+             "mailbox@[11.22.33.44]",
+             "some prefix with <two words@example.com>",
+             "x@host.with?query=23&parameters=42",
+             "some.mail@host.with.port:12345",
+             "comments(inside the address)@are(actually).not(supported, but nobody uses them anyway)",
+             "\"you need to close quotes@proper.ly",
+             "\"you need\" <to.close@angle-brackets.too",
+             "\"you need\" >to.open@angle-brackets.first",
+             "\"you need\" <to.close@angle-brackets>.right",
+             "some<stran>ge@example.com",
+             "Mr. Stranger <some<stran>ge@example.com>",
+             "<Meep.Moop@EXample.com>",
+             "abc.\"defghi\".xyz@example.com",
+             "\"abcdefghixyz\"@example.com",
+             "user@localserver"
+            ]
 
         // WHEN & THEN
 

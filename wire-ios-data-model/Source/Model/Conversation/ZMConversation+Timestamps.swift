@@ -216,7 +216,7 @@ extension ZMConversation {
         guard let messageTimestamp = message.serverTimestampIncludingChildMessages else { return }
 
         if let currentTimestamp = lastReadServerTimeStamp,
-            currentTimestamp.compare(messageTimestamp) == .orderedDescending {
+           currentTimestamp.compare(messageTimestamp) == .orderedDescending {
             // Current last read timestamp is newer than message we are marking as read
             return
         }

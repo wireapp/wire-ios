@@ -518,7 +518,7 @@ extension EventDecoderTest {
         let messageData = Data.random()
         let senderClientID = "clientID"
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.message(messageData, senderClientID)]
+            [.message(messageData, senderClientID)]
         }
         let event: ZMUpdateEvent = await syncMOC.perform { [self] in
             self.mlsMessageAddEvent(
@@ -554,7 +554,7 @@ extension EventDecoderTest {
         var expectedCommitDate = try XCTUnwrap(event.timestamp)
         expectedCommitDate += TimeInterval(commitDelay)
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.proposal(commitDelay)]
+            [.proposal(commitDelay)]
         }
 
         // When
@@ -584,7 +584,7 @@ extension EventDecoderTest {
         }
         event.source = .webSocket
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.proposal(commitDelay)]
+            [.proposal(commitDelay)]
         }
 
         // When
@@ -608,7 +608,7 @@ extension EventDecoderTest {
         }
         event.source = .download
         mockMLSService.decryptMessageForSubconversationType_MockMethod = { _, _, _ in
-                [.proposal(commitDelay)]
+            [.proposal(commitDelay)]
         }
 
         // When
@@ -636,8 +636,8 @@ extension EventDecoderTest {
         // Given
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
-            data: Data.random().base64EncodedString(),
-            groupID: nil)
+                data: Data.random().base64EncodedString(),
+                groupID: nil)
         }
 
         // When

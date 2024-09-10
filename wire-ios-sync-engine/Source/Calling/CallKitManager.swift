@@ -228,8 +228,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: handle INStartVideoCallIntent for when CallKit video is toggled.
         if let startCallIntent = intent as? INStartCallIntent {
-          contacts = startCallIntent.contacts
-          video = startCallIntent.callCapability == .videoCall
+            contacts = startCallIntent.contacts
+            video = startCallIntent.callCapability == .videoCall
         }
 
         if let contacts {

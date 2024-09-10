@@ -37,9 +37,9 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
  */
 
 final class ProfileDetailsContentController: NSObject,
-                                             UITableViewDataSource,
-                                             UITableViewDelegate,
-                                             UserObserving {
+    UITableViewDataSource,
+    UITableViewDelegate,
+    UserObserving {
     /**
      * The type of content that can be displayed in the profile details.
      */
@@ -308,7 +308,7 @@ final class ProfileDetailsContentController: NSObject,
             footer.accessibilityIdentifier = "GroupAdminStatusFooter"
             return footer
         case .blockingReason:
-           return nil
+            return nil
         case .messageProtocol:
             return nil
         }

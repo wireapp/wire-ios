@@ -248,8 +248,8 @@ final class AudioMessageView: UIView, TransferView {
         } else {
             guard let message = fileMessage,
                   let fileMessageData = message.fileMessageData else {
-                      return
-                  }
+                return
+            }
             if fileMessageData.durationMilliseconds != 0 {
                 duration = Int(roundf(Float(fileMessageData.durationMilliseconds) / 1000.0))
             }
@@ -315,8 +315,8 @@ final class AudioMessageView: UIView, TransferView {
               let fileMessageData = fileMessage.fileMessageData,
               let audioTrackPlayer,
               userSession == nil || userSession!.isCallOngoing == false else {
-                  return
-              }
+            return
+        }
 
         proximityMonitorManager?.stateChanged = proximityStateDidChange
 

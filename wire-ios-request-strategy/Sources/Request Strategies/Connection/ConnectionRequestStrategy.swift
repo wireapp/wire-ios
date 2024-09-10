@@ -47,15 +47,15 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     ) {
         self.syncProgress = syncProgress
         self.localConnectionListSync =
-        PaginatedSync<Payload.PaginatedLocalConnectionList>(basePath: "/connections",
-                                                            pageSize: 200,
-                                                            context: managedObjectContext)
+            PaginatedSync<Payload.PaginatedLocalConnectionList>(basePath: "/connections",
+                                                                pageSize: 200,
+                                                                context: managedObjectContext)
 
         self.connectionListSync =
-        PaginatedSync<Payload.PaginatedConnectionList>(basePath: "/list-connections",
-                                                       pageSize: 200,
-                                                       method: .post,
-                                                       context: managedObjectContext)
+            PaginatedSync<Payload.PaginatedConnectionList>(basePath: "/list-connections",
+                                                           pageSize: 200,
+                                                           method: .post,
+                                                           context: managedObjectContext)
 
         connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
         connectionByIDSync = IdentifierObjectSync(managedObjectContext: managedObjectContext,

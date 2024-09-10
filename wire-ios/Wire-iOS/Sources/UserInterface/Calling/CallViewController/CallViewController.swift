@@ -341,9 +341,9 @@ final class CallViewController: UIViewController {
                                sizeLimit: UserImageView.Size.normal.rawValue,
                                isDesaturated: false,
                                completion: { [weak self] image, _ in
-            guard let image else { return }
-            self?.establishingCallStatusView.setProfileImage(image: image)
-        })
+                                   guard let image else { return }
+                                   self?.establishingCallStatusView.setProfileImage(image: image)
+                               })
     }
 
     private func updateIdleTimer() {

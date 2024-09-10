@@ -48,9 +48,9 @@ final class PostContent {
               stateCallback: @escaping SendingStateCallback) {
         guard sharingSession.fileSharingFeature.status == .enabled,
               SecurityFlags.fileSharing.isEnabled else {
-                  stateCallback(.fileSharingRestriction)
-                  return
-              }
+            stateCallback(.fileSharingRestriction)
+            return
+        }
         guard let conversation = target else {
             stateCallback(.error(UnsentSendableError.conversationDoesNotExist))
             return

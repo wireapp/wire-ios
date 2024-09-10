@@ -34,18 +34,18 @@ extension LocationData {
 
     static func locationData(fromDictionary dict: [String: Any]) -> LocationData? {
         guard let latitude = dict[latitudeKey],
-            let longitude = dict[longitudeKey],
-            let zoomLevel = dict[zoomLevelKey] as? Int else { return nil }
+              let longitude = dict[longitudeKey],
+              let zoomLevel = dict[zoomLevelKey] as? Int else { return nil }
 
         let latitudeFloat: Float
         let longitudeFloat: Float
 
         if let latitudeFloatUnwrap = latitude as? Float,
-            let longitudeFloatUnwrap = longitude as? Float {
+           let longitudeFloatUnwrap = longitude as? Float {
             latitudeFloat = latitudeFloatUnwrap
             longitudeFloat = longitudeFloatUnwrap
         } else if let latitudeDoubleUnwrap = latitude as? Double,
-                let longitudeDoubleUnwrap = longitude as? Double {
+                  let longitudeDoubleUnwrap = longitude as? Double {
             latitudeFloat = Float(latitudeDoubleUnwrap)
             longitudeFloat = Float(longitudeDoubleUnwrap)
         } else {

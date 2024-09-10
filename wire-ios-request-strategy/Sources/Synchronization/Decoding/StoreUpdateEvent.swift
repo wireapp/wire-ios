@@ -376,8 +376,8 @@ public final class StoredUpdateEvent: NSManagedObject {
         }
 
         guard let decryptedPayload = try? JSONSerialization.jsonObject(
-          with: decryptedData as Data,
-          options: []
+            with: decryptedData as Data,
+            options: []
         ) as? NSDictionary else {
             throw DecryptionFailure.serializationError
         }

@@ -133,7 +133,7 @@ open class ZMCallState: NSObject, Sequence {
             let newState = ZMConversationCallState()
             self.conversationStates[conversationID] = newState
             return newState
-            }()
+        }()
     }
 
     public typealias Iterator = DictionaryIterator<NSManagedObjectID, ZMConversationCallState>
@@ -142,12 +142,12 @@ open class ZMCallState: NSObject, Sequence {
     }
 
     open var isEmpty: Bool {
-    	return conversationStates.isEmpty
+        return conversationStates.isEmpty
     }
 
     open override var description: String {
         return "CallState \(SwiftDebugging.address(self)) \n" +
-        " --> states : \(conversationStates) \n"
+            " --> states : \(conversationStates) \n"
     }
 
     open override var debugDescription: String {
@@ -168,7 +168,7 @@ open class ZMConversationCallState: NSObject {
 
     open override var description: String {
         return "CallState \(SwiftDebugging.address(self)) \n" +
-        " --> isCallDeviceActive: \(isCallDeviceActive) \n"
+            " --> isCallDeviceActive: \(isCallDeviceActive) \n"
     }
 
     open override var debugDescription: String {

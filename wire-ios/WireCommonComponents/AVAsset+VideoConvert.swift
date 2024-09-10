@@ -29,31 +29,31 @@ extension AVAsset {
         _ inPath: String,
         outPath: String,
         completion: ((_ success: Bool) -> Void )? = .none) {
-            let fileURL = URL(fileURLWithPath: inPath)
-            let alteredAsset = AVAsset(url: fileURL)
-            let session = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)
-            guard let exportSession = session else {
-                zmLog.error("Failed to create export session with asset \(alteredAsset)")
-                completion?(false)
-                return
-            }
-            let encodedEffectAudioURL = URL(fileURLWithPath: outPath)
-            exportSession.outputURL = encodedEffectAudioURL as URL
-            exportSession.outputFileType = AVFileType.m4a
-            exportSession.exportAsynchronously { [unowned exportSession] in
-                switch exportSession.status {
-                case .failed:
-                    zmLog.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
-                    DispatchQueue.main.async {
-                        completion?(false)
-                    }
-                default:
-                    DispatchQueue.main.async {
-                        completion?(true)
-                    }
+        let fileURL = URL(fileURLWithPath: inPath)
+        let alteredAsset = AVAsset(url: fileURL)
+        let session = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)
+        guard let exportSession = session else {
+            zmLog.error("Failed to create export session with asset \(alteredAsset)")
+            completion?(false)
+            return
+        }
+        let encodedEffectAudioURL = URL(fileURLWithPath: outPath)
+        exportSession.outputURL = encodedEffectAudioURL as URL
+        exportSession.outputFileType = AVFileType.m4a
+        exportSession.exportAsynchronously { [unowned exportSession] in
+            switch exportSession.status {
+            case .failed:
+                zmLog.error("Cannot transcode \(inPath) to \(outPath): \(String(describing: exportSession.error))")
+                DispatchQueue.main.async {
+                    completion?(false)
+                }
+            default:
+                DispatchQueue.main.async {
+                    completion?(true)
                 }
             }
         }
+    }
 }
 
 // MARK: - video convert

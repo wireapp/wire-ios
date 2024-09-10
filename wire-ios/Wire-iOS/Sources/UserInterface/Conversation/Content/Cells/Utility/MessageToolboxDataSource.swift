@@ -116,7 +116,7 @@ final class MessageToolboxDataSource {
                 FailedToSendMessage.generalReason
             case .federationRemoteError:
                 FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                                WireURLs.shared.unreachableBackendInfo.absoluteString)
+                                                                WireURLs.shared.unreachableBackendInfo.absoluteString)
             }
 
             content = .sendFailure(detailsString && attributes)
@@ -175,9 +175,9 @@ final class MessageToolboxDataSource {
 
     private func makeEphemeralCountdown() -> NSAttributedString? {
         let showDestructionTimer = message.isEphemeral &&
-        !message.isObfuscated &&
-        message.destructionDate != nil &&
-        message.deliveryState != .pending
+            !message.isObfuscated &&
+            message.destructionDate != nil &&
+            message.deliveryState != .pending
 
         if let destructionDate = message.destructionDate, showDestructionTimer {
             let remaining = destructionDate.timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
@@ -265,8 +265,8 @@ final class MessageToolboxDataSource {
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
         } else if let dateTimeString = message.formattedReceivedDate(),
-            let systemMessage = message as? ZMSystemMessage,
-            systemMessage.systemMessageType == .messageDeletedForEveryone {
+                  let systemMessage = message as? ZMSystemMessage,
+                  systemMessage.systemMessageType == .messageDeletedForEveryone {
             timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 

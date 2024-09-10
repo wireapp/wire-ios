@@ -46,7 +46,7 @@ final class BreathLoadingBar: UIView {
             if oldValue != state {
                 updateView()
             }
-      }
+        }
     }
 
     private let BreathLoadingAnimationKey: String = "breathLoadingAnimation"

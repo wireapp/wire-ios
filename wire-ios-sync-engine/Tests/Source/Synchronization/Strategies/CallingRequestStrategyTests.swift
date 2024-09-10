@@ -588,7 +588,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         await syncMOC.perform {
             guard let data,
-                let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
+                  let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
             else {
                 return XCTFail("Expected OTR message")
             }

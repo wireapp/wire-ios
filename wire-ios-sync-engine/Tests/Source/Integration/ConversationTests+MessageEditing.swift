@@ -34,7 +34,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
             let fromClient = user1.clients.anyObject() as? MockUserClient,
             let toClient = selfUser.clients.anyObject() as? MockUserClient,
             let data = try? textMessage.serializedData() else {
-                return XCTFail()
+            return XCTFail()
         }
 
         mockTransportSession.performRemoteChanges { _ in
@@ -78,7 +78,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
             let fromClient = user1.clients.anyObject() as? MockUserClient,
             let toClient = selfUser.clients.anyObject() as? MockUserClient,
             let data = try? textMessage.serializedData() else {
-                return XCTFail()
+            return XCTFail()
         }
 
         mockTransportSession.performRemoteChanges { _ in

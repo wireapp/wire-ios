@@ -50,13 +50,13 @@ extension UIAlertController {
                                                 style: .default,
                                                 handler: { _ in
                                                     completionHandler(false)
-        }))
+                                                }))
 
         alertController.addAction(UIAlertAction(title: L10n.Localizable.General.accept,
                                                 style: .cancel,
                                                 handler: { _ in
                                                     completionHandler(true)
-        }))
+                                                }))
 
         UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
         viewController.present(alertController, animated: true) {
@@ -66,9 +66,9 @@ extension UIAlertController {
 
     private static  var dataCollectionDisabled: Bool {
         #if DATA_COLLECTION_DISABLED
-        return true
+            return true
         #else
-        return false
+            return false
         #endif
     }
 

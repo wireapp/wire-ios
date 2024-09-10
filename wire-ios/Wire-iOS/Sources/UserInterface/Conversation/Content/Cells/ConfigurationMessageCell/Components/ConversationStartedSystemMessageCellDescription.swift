@@ -54,9 +54,9 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         actionController = nil
         configuration = View.Configuration(title: model.attributedHeading(),
-                                            message: model.attributedTitle() ?? NSAttributedString(string: ""),
-                                            selectedUsers: model.selectedUsers,
-                                            icon: model.image())
+                                           message: model.attributedTitle() ?? NSAttributedString(string: ""),
+                                           selectedUsers: model.selectedUsers,
+                                           icon: model.image())
         super.init()
 
         accessibilityLabel = configuration.message.string

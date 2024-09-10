@@ -361,7 +361,7 @@ final class ConversationContentViewController: UIViewController {
 
     var isScrolledToBottom: Bool {
         return !dataSource.hasNewerMessagesToLoad &&
-        tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
+            tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
     // MARK: - Actions
@@ -488,7 +488,7 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
 
 extension UIAlertController {
     fileprivate static func showErrorAlertWithLink(title: String,
-                                       message: String) {
+                                                   message: String) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in

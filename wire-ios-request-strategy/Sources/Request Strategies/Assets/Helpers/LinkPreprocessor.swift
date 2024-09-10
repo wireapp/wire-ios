@@ -65,7 +65,7 @@ import Foundation
         objectsBeingProcessed.insert(message)
 
         if let textMessageData = (message as ZMConversationMessage).textMessageData,
-            let messageText = textMessageData.messageText {
+           let messageText = textMessageData.messageText {
             zmLog.debug("fetching previews for: \(message.nonce?.uuidString ?? "nil")")
 
             // We DONT want to generate link previews inside a mentions

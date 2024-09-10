@@ -156,8 +156,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
         if let mime = mimeType,
            let fileExtension = UTIHelper.convertToFileExtension(mime: mime),
-            richAssetType == .audio,
-            temporaryFileURL.pathExtension != fileExtension {
+           richAssetType == .audio,
+           temporaryFileURL.pathExtension != fileExtension {
             temporaryFileURL.appendPathExtension(fileExtension)
         }
 
@@ -197,9 +197,9 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         get {
             guard fileMessageData != nil else { return nil }
             guard let assetData = genericMessage(dataType: .thumbnail)?.assetData,
-                assetData.preview.remote.hasAssetID,
-                !assetData.preview.remote.assetID.isEmpty
-                else { return nil }
+                  assetData.preview.remote.hasAssetID,
+                  !assetData.preview.remote.assetID.isEmpty
+            else { return nil }
             return assetData.preview.remote.assetID
         }
 
@@ -292,8 +292,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     public var normalizedLoudness: [Float]? {
         guard isAudio,
-            let assetData = underlyingMessage?.assetData,
-            assetData.original.audio.hasNormalizedLoudness else {
+              let assetData = underlyingMessage?.assetData,
+              assetData.original.audio.hasNormalizedLoudness else {
             return nil
         }
         return assetData.original.normalizedLoudnessLevels
@@ -362,7 +362,7 @@ extension ZMAssetClientMessage {
                 context: self.managedObjectContext!.notificationContext,
                 object: self.objectID,
                 userInfo: [:]
-                ).post()
+            ).post()
         default:
             break
         }

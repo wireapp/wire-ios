@@ -116,8 +116,8 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
 
     private func updateRows() {
         collectionView?.rows = showParticipants
-        ? participants
-        : [.showAll(totalCount: participants.count)]
+            ? participants
+            : [.showAll(totalCount: participants.count)]
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

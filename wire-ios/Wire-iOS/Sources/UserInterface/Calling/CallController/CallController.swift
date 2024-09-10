@@ -196,7 +196,7 @@ extension CallController: WireCallCenterCallStateObserver {
         case (.incoming(reason: let degradationReason),
               .incoming(video: _, shouldRing: true, degraded: true)):
             router?.presentIncomingSecurityDegradedAlert(for: degradationReason,
-                                                 completion: alertCompletion)
+                                                         completion: alertCompletion)
 
         case (_, .terminating(reason: .securityDegraded)):
             if let reason = voiceChannel.degradationReason {
@@ -239,13 +239,13 @@ extension CallController: WireCallCenterCallErrorObserver {
     }
 
     private func shouldDisplayErrorAlert(for conversation: AVSIdentifier) -> Bool {
-           guard let dateOfLastErrorAlert = dateOfLastErrorAlertByConversationId[conversation] else {
-               return true
-           }
+        guard let dateOfLastErrorAlert = dateOfLastErrorAlertByConversationId[conversation] else {
+            return true
+        }
 
-           let elapsedTimeIntervalSinceLastAlert = -dateOfLastErrorAlert.timeIntervalSinceNow
-           return elapsedTimeIntervalSinceLastAlert > alertDebounceInterval
-       }
+        let elapsedTimeIntervalSinceLastAlert = -dateOfLastErrorAlert.timeIntervalSinceNow
+        return elapsedTimeIntervalSinceLastAlert > alertDebounceInterval
+    }
 }
 
 extension CallController {

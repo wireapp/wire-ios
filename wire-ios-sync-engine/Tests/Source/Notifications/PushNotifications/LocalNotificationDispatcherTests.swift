@@ -286,13 +286,13 @@ extension LocalNotificationDispatcherTests {
             // WHEN
             self.sut.processEventsWhileInBackground([event])
         }
-            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // THEN
-            XCTAssertEqual(self.sut.eventNotifications.notifications.count, 1)
-            XCTAssertEqual(self.scheduledRequests.count, 1)
+        // THEN
+        XCTAssertEqual(self.sut.eventNotifications.notifications.count, 1)
+        XCTAssertEqual(self.scheduledRequests.count, 1)
 
-            // WHEN
+        // WHEN
         self.syncMOC.performGroupedAndWait { [self] in
             self.sut.processEventsWhileInBackground([event])
         }
@@ -431,9 +431,9 @@ extension LocalNotificationDispatcherTests {
             // WHEN
             self.sut.processEventsWhileInBackground([event])
         }
-            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // THEN
+        // THEN
         syncMOC.performAndWait {
             XCTAssertEqual(self.conversation1.estimatedUnreadCount, 1)
             XCTAssertEqual(self.conversation1.estimatedUnreadSelfMentionCount, 0)
@@ -453,7 +453,7 @@ extension LocalNotificationDispatcherTests {
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // THEN
+        // THEN
         syncMOC.performAndWait {
             XCTAssertEqual(self.conversation1.estimatedUnreadCount, 1)
             XCTAssertEqual(self.conversation1.estimatedUnreadSelfMentionCount, 1)
@@ -471,9 +471,9 @@ extension LocalNotificationDispatcherTests {
             // WHEN
             self.sut.processEventsWhileInBackground([event])
         }
-            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-            // THEN
+        // THEN
         syncMOC.performAndWait {
             XCTAssertEqual(self.conversation1.estimatedUnreadCount, 1)
             XCTAssertEqual(self.conversation1.estimatedUnreadSelfMentionCount, 0)

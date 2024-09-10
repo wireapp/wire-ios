@@ -380,84 +380,84 @@ private enum JSONPayload {
     static let empty = "{}"
 
     static let valuesHTTPStatus200 =
-"""
-{
-    "conversationGuestLinks": {
-        "status": "enabled"
-    },
-    "mls": {
-        "status": "enabled",
-        "config": {
-            "supportedProtocols": [],
-            "defaultCipherSuite": 1,
-            "protocolToggleUsers": [],
-            "allowedCipherSuites": [
-                1
-            ],
-            "defaultProtocol": "mls"
-        }
-    },
-    "appLock": {
-        "config": {
-            "enforceAppLock": true,
-            "inactivityTimeoutSecs": 11
-        },
-        "status": "enabled"
-    },
-    "mlsMigration": {
-        "status": "enabled",
-        "config": {
-            "startTime": "2024-02-19T11:59:27.542Z",
-            "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
-        }
-    },
-    "mlsE2EId": {
-        "status": "enabled",
-        "config": {
-            "acmeDiscoveryUrl": "https://example.com",
-            "verificationExpiration": 70,
-            "crlProxy": "https://example.com",
-            "useProxyOnMobile": true
-        }
-    },
-    "conferenceCalling": {
-        "status": "enabled"
-    },
-    "fileSharing": {
-        "status": "enabled"
-    },
-    "digitalSignatures": {
-        "status": "enabled"
-    },
-    "classifiedDomains": {
-        "config": {
-            "domains": [
-                "foo"
-            ]
-        },
-        "status": "enabled"
-    },
-    "selfDeletingMessages": {
-        "status": "enabled",
-        "config": {
-            "enforcedTimeoutSeconds": 22
-        }
-    }
-}
-"""
-
-    static let mlsConfigV3 =
-    """
-    {
-        "mls": {
-            "status": "enabled",
-            "config": {
-                "defaultCipherSuite": 1,
-                "protocolToggleUsers": ["881b1824-a6e1-4a60-8cc3-14feabf6dec0"],
-                "allowedCipherSuites": [1],
-                "defaultProtocol": "proteus"
+        """
+        {
+            "conversationGuestLinks": {
+                "status": "enabled"
+            },
+            "mls": {
+                "status": "enabled",
+                "config": {
+                    "supportedProtocols": [],
+                    "defaultCipherSuite": 1,
+                    "protocolToggleUsers": [],
+                    "allowedCipherSuites": [
+                        1
+                    ],
+                    "defaultProtocol": "mls"
+                }
+            },
+            "appLock": {
+                "config": {
+                    "enforceAppLock": true,
+                    "inactivityTimeoutSecs": 11
+                },
+                "status": "enabled"
+            },
+            "mlsMigration": {
+                "status": "enabled",
+                "config": {
+                    "startTime": "2024-02-19T11:59:27.542Z",
+                    "finaliseRegardlessAfter": "2024-02-19T11:59:28.542Z"
+                }
+            },
+            "mlsE2EId": {
+                "status": "enabled",
+                "config": {
+                    "acmeDiscoveryUrl": "https://example.com",
+                    "verificationExpiration": 70,
+                    "crlProxy": "https://example.com",
+                    "useProxyOnMobile": true
+                }
+            },
+            "conferenceCalling": {
+                "status": "enabled"
+            },
+            "fileSharing": {
+                "status": "enabled"
+            },
+            "digitalSignatures": {
+                "status": "enabled"
+            },
+            "classifiedDomains": {
+                "config": {
+                    "domains": [
+                        "foo"
+                    ]
+                },
+                "status": "enabled"
+            },
+            "selfDeletingMessages": {
+                "status": "enabled",
+                "config": {
+                    "enforcedTimeoutSeconds": 22
+                }
             }
         }
-    }
-    """
+        """
+
+    static let mlsConfigV3 =
+        """
+        {
+            "mls": {
+                "status": "enabled",
+                "config": {
+                    "defaultCipherSuite": 1,
+                    "protocolToggleUsers": ["881b1824-a6e1-4a60-8cc3-14feabf6dec0"],
+                    "allowedCipherSuites": [1],
+                    "defaultProtocol": "proteus"
+                }
+            }
+        }
+        """
 }

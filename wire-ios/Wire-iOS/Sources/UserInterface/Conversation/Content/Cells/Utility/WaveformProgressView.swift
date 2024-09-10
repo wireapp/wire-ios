@@ -163,14 +163,14 @@ final class WaveformProgressView: UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          backgroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
-          backgroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
-          backgroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
-          backgroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor),
-          foregroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
-          foregroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
-          foregroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
-          foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor)
+            backgroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
+            backgroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            backgroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
+            backgroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor),
+            foregroundWaveform.topAnchor.constraint(equalTo: superview.topAnchor),
+            foregroundWaveform.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+            foregroundWaveform.leftAnchor.constraint(equalTo: superview.leftAnchor),
+            foregroundWaveform.rightAnchor.constraint(equalTo: superview.rightAnchor)
         ])
     }
 

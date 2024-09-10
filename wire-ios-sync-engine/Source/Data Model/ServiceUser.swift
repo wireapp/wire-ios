@@ -148,10 +148,10 @@ extension ServiceUser {
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let provider = ServiceProvider(payload: responseDictionary) else {
-                      zmLog.error("Wrong response for fetching a provider: \(response)")
-                      completion(nil)
-                      return
-                  }
+                zmLog.error("Wrong response for fetching a provider: \(response)")
+                completion(nil)
+                return
+            }
 
             completion(provider)
         }))
@@ -175,10 +175,10 @@ extension ServiceUser {
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
                   let serviceDetails = ServiceDetails(payload: responseDictionary) else {
-                      zmLog.error("Wrong response for fetching a service: \(response)")
-                      completion(nil)
-                      return
-                  }
+                zmLog.error("Wrong response for fetching a service: \(response)")
+                completion(nil)
+                return
+            }
 
             completion(serviceDetails)
         }))
@@ -315,9 +315,9 @@ extension ZMConversation {
                   let responseDictionary = response.payload?.asDictionary(),
                   let userAddEventPayload = responseDictionary["event"] as? ZMTransportData,
                   let event = ZMUpdateEvent(fromEventStreamPayload: userAddEventPayload, uuid: UUID()) else {
-                      completionHandler(.failure(AddBotError(response: response)))
-                      return
-                  }
+                completionHandler(.failure(AddBotError(response: response)))
+                return
+            }
 
             WaitingGroupTask(context: contextProvider.viewContext) {
                 await eventProcessor.processConversationEvents([event])

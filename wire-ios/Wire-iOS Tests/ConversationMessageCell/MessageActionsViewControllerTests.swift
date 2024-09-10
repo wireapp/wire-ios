@@ -147,7 +147,7 @@ extension UIView {
         }
 
         for subview in self.subviews
-        where subview.containsBasicReactionPicker() {
+            where subview.containsBasicReactionPicker() {
             return true
         }
 

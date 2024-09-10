@@ -142,15 +142,15 @@ extension MockTransportSession {
             conversation.link = link
 
             let payload = [
-                    "conversation": conversationId,
-                    "data": [
-                        "uri": link,
-                        "key": "test-key",
-                        "code": "test-code"
-                    ],
-                    "type": "conversation.code-update",
-                    "time": Date().transportString(),
-                    "from": selfUser.identifier
+                "conversation": conversationId,
+                "data": [
+                    "uri": link,
+                    "key": "test-key",
+                    "code": "test-code"
+                ],
+                "type": "conversation.code-update",
+                "time": Date().transportString(),
+                "from": selfUser.identifier
             ] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
@@ -277,7 +277,7 @@ extension MockTransportSession {
             let conversation = fetchConversation(with: conversationID),
             let otrMetaData = try? Proteus_NewOtrMessage(serializedData: data),
             let senderClient = otrMessageSender(fromClientId: otrMetaData.sender) else {
-                return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
 
         var onlyForUser = query["report_missing"] as? String

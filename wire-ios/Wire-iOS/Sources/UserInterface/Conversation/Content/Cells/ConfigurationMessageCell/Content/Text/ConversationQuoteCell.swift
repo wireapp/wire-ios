@@ -38,11 +38,11 @@ final class ConversationReplyContentView: UIView {
         var showDetails: Bool {
             guard let message = quotedMessage,
                   message.isText
-                    || message.isLocation
-                    || message.isAudio
-                    || message.isImage
-                    || message.isVideo
-                    || message.isFile else {
+                  || message.isLocation
+                  || message.isAudio
+                  || message.isImage
+                  || message.isVideo
+                  || message.isFile else {
                 return false
             }
             return true
@@ -319,7 +319,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let accessibilityIdentifier: String? = "ReplyCell"
 
     init(quotedMessage: ZMConversationMessage?) {
-       configuration = View.Configuration(quotedMessage: quotedMessage)
+        configuration = View.Configuration(quotedMessage: quotedMessage)
     }
 }
 

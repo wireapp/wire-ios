@@ -263,7 +263,7 @@ extension TopConversationsDirectoryTests {
         XCTAssertEqual(topConversationsObserver.topConversationsDidChangeCallCount, 0)
 
         // WHEN
-                sut.refreshTopConversations()
+        sut.refreshTopConversations()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN

@@ -46,8 +46,8 @@ class ConversationTests_Reactions: ConversationTestsBase {
         // when
         self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
-                                                        to: toClient,
-                                                        data: try! reactionMessage.serializedData())
+                                                   to: toClient,
+                                                   data: try! reactionMessage.serializedData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -89,8 +89,8 @@ class ConversationTests_Reactions: ConversationTestsBase {
         // when
         self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
-                                                        to: toClient,
-                                                        data: try! reactionMessage.serializedData())
+                                                   to: toClient,
+                                                   data: try! reactionMessage.serializedData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -217,7 +217,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
     func testThatMessageDeletedForMyselfDoesNotAppearWhenLikedBySomeoneElse() {
         // given
-       XCTAssertTrue(self.login())
+        XCTAssertTrue(self.login())
 
         self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -325,10 +325,10 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
-                   mockConversation!.encryptAndInsertData(from: fromClient,
-                                                          to: toClient,
-                                                          data: try! reactionMessage.serializedData())
-               }
+            mockConversation!.encryptAndInsertData(from: fromClient,
+                                                   to: toClient,
+                                                   data: try! reactionMessage.serializedData())
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

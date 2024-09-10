@@ -53,7 +53,7 @@ typealias PostCallAction = ((@escaping Completion) -> Void)
 // MARK: - ActiveCallRouter
 
 final class ActiveCallRouter<TopOverlayPresenter>
-where TopOverlayPresenter: TopOverlayPresenting {
+    where TopOverlayPresenter: TopOverlayPresenting {
     // MARK: - Public Property
 
     var isActiveCallShown = false {
@@ -194,7 +194,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                     confirmationBlock: { continueDegradedCall in
                         completion(continueDegradedCall ? .confirm : .cancel)
                         postCallActionCompletion()
-                })
+                    })
             case .invalidCertificate:
                 UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
                     completion(.ok)

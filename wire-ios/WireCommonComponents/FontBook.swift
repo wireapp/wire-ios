@@ -143,7 +143,7 @@ extension UIFont {
             return .system(size: 14, weight: .semibold)
 
         case .buttonBigSemibold:
-                return .title3.bold()
+            return .title3.bold()
 
         case .bigHeadline:
             return .system(size: 36)

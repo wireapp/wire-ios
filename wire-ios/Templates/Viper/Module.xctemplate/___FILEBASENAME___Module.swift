@@ -32,15 +32,15 @@ enum ___FILEBASENAMEASIDENTIFIER___: ModuleInterface {
 }
 
 extension ___FILEBASENAMEASIDENTIFIER___ {
-  enum Event: Equatable {
-      case viewDidLoad
-  }
+    enum Event: Equatable {
+        case viewDidLoad
+    }
 
-  enum Request: Equatable {}
+    enum Request: Equatable {}
 
-  enum Result: Equatable {}
+    enum Result: Equatable {}
 
-  enum Action: Equatable {}
+    enum Action: Equatable {}
 }
 
 // MARK: - Interactor

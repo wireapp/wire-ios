@@ -106,19 +106,19 @@ final class CollectionHeaderView: UICollectionReusableView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-          iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-          iconImageView.widthAnchor.constraint(equalToConstant: 16),
-          iconImageView.heightAnchor.constraint(equalToConstant: 16),
+            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: 16),
+            iconImageView.heightAnchor.constraint(equalToConstant: 16),
 
-          titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
-          titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-          titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 8),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
 
-          actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
-          actionButton.topAnchor.constraint(equalTo: topAnchor),
-          actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
-          actionButton.bottomAnchor.constraint(equalTo: bottomAnchor)
+            actionButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            actionButton.topAnchor.constraint(equalTo: topAnchor),
+            actionButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            actionButton.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 

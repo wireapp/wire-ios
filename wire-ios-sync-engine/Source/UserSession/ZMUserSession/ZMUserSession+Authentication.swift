@@ -117,16 +117,16 @@ extension ZMUserSession {
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
         var errorCode: UserSessionErrorCode = switch response.result {
         case .permanentError:
-                switch response.payload?.asDictionary()?["label"] as? String {
-                case "client-not-found":
-                    .clientDeletedRemotely
-                case "invalid-credentials",
-                     "missing-auth",
-                     "bad-request": // in case the password not matching password format requirement
-                    .invalidCredentials
-                default:
-                    .unknownError
-                }
+            switch response.payload?.asDictionary()?["label"] as? String {
+            case "client-not-found":
+                .clientDeletedRemotely
+            case "invalid-credentials",
+                 "missing-auth",
+                 "bad-request": // in case the password not matching password format requirement
+                .invalidCredentials
+            default:
+                .unknownError
+            }
         case .temporaryError, .tryAgainLater, .expired:
             .networkError
         default:

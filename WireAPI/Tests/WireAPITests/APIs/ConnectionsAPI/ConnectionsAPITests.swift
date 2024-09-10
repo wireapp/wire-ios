@@ -56,14 +56,14 @@ class ConnectionsAPITests: XCTestCase {
 
         // Then
         let expectedConnection = try Connection(senderID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ac")!,
-                                            receiverID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
-                                            receiverQualifiedID: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
-                                                                             domain: "example.com"),
-                                            conversationID: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
-                                            qualifiedConversationID: QualifiedID(uuid: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                                receiverID: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                                                receiverQualifiedID: QualifiedID(uuid: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
                                                                                  domain: "example.com"),
-                                            lastUpdate: XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")),
-                                            status: .accepted)
+                                                conversationID: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                                qualifiedConversationID: QualifiedID(uuid: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
+                                                                                     domain: "example.com"),
+                                                lastUpdate: XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2021-05-12T10:52:02.671Z")),
+                                                status: .accepted)
         let connection = try XCTUnwrap(result?.first)
         XCTAssertEqual(connection, expectedConnection)
     }

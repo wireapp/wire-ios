@@ -444,8 +444,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      conversationID: self.groupConversation.remoteIdentifier!,
                                      timestamp: Date(),
                                      dataPayload: [
-                                        "access": newAccessMode.stringValue,
-                                        "access_role_v2": newAccessRole.map(\.rawValue)
+                                         "access": newAccessMode.stringValue,
+                                         "access_role_v2": newAccessRole.map(\.rawValue)
                                      ])
         }
         // WHEN
@@ -650,10 +650,10 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             selfUser.remoteIdentifier = UUID.create()
 
             valuedEvent = self.updateEvent(type: "conversation.message-timer-update",
-                                               senderID: selfUser.remoteIdentifier!,
-                                               conversationID: self.groupConversation.remoteIdentifier!,
-                                               timestamp: Date(),
-                                               dataPayload: ["message_timer": valuedMessageTimerMillis])
+                                           senderID: selfUser.remoteIdentifier!,
+                                           conversationID: self.groupConversation.remoteIdentifier!,
+                                           timestamp: Date(),
+                                           dataPayload: ["message_timer": valuedMessageTimerMillis])
 
             event = self.updateEvent(type: "conversation.message-timer-update",
                                      senderID: selfUser.remoteIdentifier!,
@@ -727,8 +727,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      conversationID: self.groupConversation.remoteIdentifier!,
                                      timestamp: Date(timeIntervalSinceNow: 100),
                                      dataPayload: [
-                                        "target": userId.transportString(),
-                                        "conversation_role": "new"
+                                         "target": userId.transportString(),
+                                         "conversation_role": "new"
                                      ])
         }
         // WHEN
@@ -770,8 +770,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      conversationID: self.groupConversation.remoteIdentifier!,
                                      timestamp: Date(timeIntervalSinceNow: 100),
                                      dataPayload: [
-                                        "target": selfUser.remoteIdentifier.transportString(),
-                                        "conversation_role": "new"
+                                         "target": selfUser.remoteIdentifier.transportString(),
+                                         "conversation_role": "new"
                                      ])
         }
         // WHEN

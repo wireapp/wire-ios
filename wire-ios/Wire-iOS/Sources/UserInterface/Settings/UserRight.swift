@@ -42,11 +42,11 @@ final class UserRight: UserRightInterface {
 
         switch permission {
         case .editEmail:
-        #if EMAIL_EDITING_DISABLED
-            return false
-        #else
-            return isProfileEditable && !usesCompanyLogin
-        #endif
+            #if EMAIL_EDITING_DISABLED
+                return false
+            #else
+                return isProfileEditable && !usesCompanyLogin
+            #endif
 
         case .resetPassword:
             return isProfileEditable || !usesCompanyLogin
@@ -58,7 +58,7 @@ final class UserRight: UserRightInterface {
         case .editName,
              .editHandle,
              .editPhone:
-			return isProfileEditable
+            return isProfileEditable
 
         case .editAccentColor:
             return true

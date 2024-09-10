@@ -63,7 +63,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-       // We only reset the paginator if it is neither in progress nor has more pages to fetch.
+        // We only reset the paginator if it is neither in progress nor has more pages to fetch.
         if listPaginator.status != ZMSingleRequestProgress.inProgress, !listPaginator.hasMoreToFetch {
             listPaginator.resetFetching()
         }
@@ -155,7 +155,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             let offset = 0.1
 
             if let eventsDictionaries = eventDictionariesFrom(payload: response.payload),
-                let firstEvent = eventsDictionaries.first {
+               let firstEvent = eventsDictionaries.first {
                 let event = ZMUpdateEvent.eventsArray(fromPushChannelData: firstEvent as ZMTransportData)?.first
                 // In case we receive a payload together with the 404 we set the timestamp of the system message
                 // to be 1/10th of a second older than the oldest received notification for it to appear above it.

@@ -89,19 +89,19 @@ final class ConversationActionController {
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
             }
         case let .archive(isArchived: isArchived): self.transitionToListAndEnqueue {
-            conversation.isArchived = !isArchived
+                conversation.isArchived = !isArchived
             }
         case .markRead: self.enqueue {
-            conversation.markAsRead()
+                conversation.markAsRead()
             }
         case .markUnread: self.enqueue {
-            conversation.markAsUnread()
+                conversation.markAsUnread()
             }
         case .configureNotifications: self.requestNotificationResult(for: conversation) { result in
-            self.handleNotificationResult(result, for: conversation)
-        }
+                self.handleNotificationResult(result, for: conversation)
+            }
         case let .silence(isSilenced: isSilenced): self.enqueue {
-            conversation.mutedMessageTypes = isSilenced ? .none : .all
+                conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
         case .leave:
             request(LeaveResult.self) { result in
@@ -117,7 +117,7 @@ final class ConversationActionController {
                 self.handleConnectionRequestResult(result, for: conversation)
             }
         case .block: self.requestBlockResult(for: conversation) { result in
-            self.handleBlockResult(result, for: conversation)
+                self.handleBlockResult(result, for: conversation)
             }
         case .moveToFolder:
             self.openMoveToFolder(for: conversation)
@@ -158,7 +158,7 @@ final class ConversationActionController {
         guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
 
         guard let context = (userSession as? ZMUserSession)?.syncContext,
-            let conversation = conversation as? ZMConversation else {
+              let conversation = conversation as? ZMConversation else {
             return
         }
         context.performAndWait {

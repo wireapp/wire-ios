@@ -139,13 +139,13 @@ extension AVSAudioEffectType: CustomStringConvertible {
     }
 
     static let displayedEffects: [AVSAudioEffectType] = [.none,
-                                                                .pitchupInsane,
-                                                                .pitchdownInsane,
-                                                                .paceupMed,
-                                                                .reverbMax,
-                                                                .chorusMax,
-                                                                .vocoderMed,
-                                                                .pitchUpDownMax]
+                                                         .pitchupInsane,
+                                                         .pitchdownInsane,
+                                                         .paceupMed,
+                                                         .reverbMax,
+                                                         .chorusMax,
+                                                         .vocoderMed,
+                                                         .pitchUpDownMax]
 
     static let wr_convertQueue = DispatchQueue(label: "audioEffectQueue")
 

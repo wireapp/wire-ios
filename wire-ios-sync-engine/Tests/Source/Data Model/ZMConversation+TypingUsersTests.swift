@@ -34,10 +34,10 @@ class ZMConversation_TypingUsersTests: MessagingTest {
         }
 
         token = NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
-                                                      context: uiMOC.notificationContext,
-                                                      object: nil,
-                                                      queue: nil,
-                                                      using: assertion)
+                                                  context: uiMOC.notificationContext,
+                                                  object: nil,
+                                                  queue: nil,
+                                                  using: assertion)
         // When
         conversation.setIsTyping(true)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

@@ -306,8 +306,8 @@ final class ArticleViewTests: XCTestCase {
 
             return self.sut
         } as () -> UIView,
-                               file: file,
-                               testName: testName,
-                               line: line)
+        file: file,
+        testName: testName,
+        line: line)
     }
 }

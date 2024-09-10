@@ -21,51 +21,51 @@ import Foundation
 import WireDataModelSupport
 
 final class ConversationParticipantsTests: ZMConversationTestsBase {
-	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
-		// GIVEN
-		let sut = createConversation(in: uiMOC)
+    func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
+        // GIVEN
+        let sut = createConversation(in: uiMOC)
 
-		let user1 = createUser()
-		user1.name = "Zeta"
+        let user1 = createUser()
+        user1.name = "Zeta"
 
-		let user2 = createUser()
-		user2.name = "Alpha"
+        let user2 = createUser()
+        user2.name = "Alpha"
 
-		let user3 = createUser()
-		user3.name = "Beta"
-		user3.providerIdentifier = "dummy ID"
-		user3.serviceIdentifier = "dummy ID"
+        let user3 = createUser()
+        user3.name = "Beta"
+        user3.providerIdentifier = "dummy ID"
+        user3.serviceIdentifier = "dummy ID"
 
-		sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
+        sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
 
-		// WHEN & THEN
-		XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
-	}
+        // WHEN & THEN
+        XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
+    }
 
-	func testThatSortedServiceUsersReutrnsUsersSortedByName() {
-		// GIVEN
-		let sut = createConversation(in: uiMOC)
+    func testThatSortedServiceUsersReutrnsUsersSortedByName() {
+        // GIVEN
+        let sut = createConversation(in: uiMOC)
 
-		let user1 = createUser()
-		user1.name = "Zeta"
-		user1.providerIdentifier = "dummy ID"
-		user1.serviceIdentifier = "dummy ID"
+        let user1 = createUser()
+        user1.name = "Zeta"
+        user1.providerIdentifier = "dummy ID"
+        user1.serviceIdentifier = "dummy ID"
 
-		let user2 = createUser()
-		user2.name = "Alpha"
-		user2.providerIdentifier = "dummy ID"
-		user2.serviceIdentifier = "dummy ID"
+        let user2 = createUser()
+        user2.name = "Alpha"
+        user2.providerIdentifier = "dummy ID"
+        user2.serviceIdentifier = "dummy ID"
 
-		let user3 = createUser()
-		user3.name = "Beta"
+        let user3 = createUser()
+        user3.name = "Beta"
 
-		sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
+        sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
 
-		// WHEN & THEN
-		XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
-	}
+        // WHEN & THEN
+        XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
+    }
 
-	func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
+    func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let user1 = createUser()
@@ -533,8 +533,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
-                (user1, role1),
-                (user2, role2)
+            (user1, role1),
+            (user2, role2)
         ])
 
         // then

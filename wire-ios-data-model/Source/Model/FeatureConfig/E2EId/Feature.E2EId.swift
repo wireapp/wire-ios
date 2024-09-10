@@ -53,11 +53,11 @@ extension Feature {
                 verificationExpiration: UInt = 86400,
                 crlProxy: String? = nil,
                 useProxyOnMobile: Bool? = nil) {
-                    self.acmeDiscoveryUrl = acmeDiscoveryUrl
-                    self.verificationExpiration = verificationExpiration
-                    self.crlProxy = crlProxy
-                    self.useProxyOnMobile = useProxyOnMobile
-                }
+                self.acmeDiscoveryUrl = acmeDiscoveryUrl
+                self.verificationExpiration = verificationExpiration
+                self.crlProxy = crlProxy
+                self.useProxyOnMobile = useProxyOnMobile
+            }
         }
     }
 }

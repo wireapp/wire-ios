@@ -197,7 +197,7 @@ final class FileTransferView: UIView, TransferView {
         bottomLabel.accessibilityValue = bottomLabel.attributedText?.string ?? ""
 
         guard let fileName = topLabel.text,
-                let details = bottomLabel.text else {
+              let details = bottomLabel.text else {
             return
         }
         accessibilityLabel = "\(L10n.Accessibility.ConversationSearch.FileName.description): \(fileName), \(details)"

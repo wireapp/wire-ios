@@ -83,12 +83,12 @@ final class ZMUserConsentTests: DatabaseTest {
              (["results": []], false),
              ([:], false)]
 
-            pairs.forEach {
-                let payload = ZMUser.parse(consentPayload: $0.0 as ZMTransportData)
+        pairs.forEach {
+            let payload = ZMUser.parse(consentPayload: $0.0 as ZMTransportData)
 
-                let value = payload[.marketing] ?? false
-                XCTAssertEqual(value, $0.1)
-            }
+            let value = payload[.marketing] ?? false
+            XCTAssertEqual(value, $0.1)
+        }
     }
 
     func testThatItCanFetchState() {

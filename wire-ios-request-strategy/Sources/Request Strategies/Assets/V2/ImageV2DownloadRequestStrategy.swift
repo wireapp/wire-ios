@@ -46,8 +46,8 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
     func registerForWhitelistingNotification() {
         self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
-                                          context: self.managedObjectContext.notificationContext,
-                                          object: nil) { [weak self] note in
+                                                       context: self.managedObjectContext.notificationContext,
+                                                       object: nil) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadImage(objectID)
         }

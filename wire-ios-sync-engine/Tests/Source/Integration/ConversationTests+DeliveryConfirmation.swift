@@ -36,9 +36,9 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
                 guard
                     let data = request.binaryData,
                     let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
-                    else {
-                        XCTFail("Expected OTR message")
-                        return nil
+                else {
+                    XCTFail("Expected OTR message")
+                    return nil
                 }
 
                 XCTAssertEqual(otrMessage.recipients.count, 1)

@@ -95,7 +95,7 @@ extension ZMMessage {
 
         for previousMessage in conversation.lastMessages() {
             if let currentTimestamp = self.serverTimestamp,
-                let previousTimestamp = previousMessage.serverTimestamp {
+               let previousTimestamp = previousMessage.serverTimestamp {
                 // to old?
                 let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
                 if tooOld {

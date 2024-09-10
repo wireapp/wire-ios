@@ -78,8 +78,8 @@ extension LabelChangeInfo {
     public static func add(observer: LabelObserver, for label: LabelType?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .LabelChange, managedObjectContext: managedObjectContext, object: label) { [weak observer] note in
             guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? LabelChangeInfo
-                else { return }
+                  let changeInfo = note.changeInfo as? LabelChangeInfo
+            else { return }
 
             observer.labelDidChange(changeInfo)
         }

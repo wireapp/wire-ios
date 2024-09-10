@@ -75,7 +75,7 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
 
         return confirmedMesssageIds.compactMap { confirmedMessageId in
             guard let message = ZMMessage.fetch(withNonce: confirmedMessageId, for: conversation, in: managedObjectContext),
-                !message.confirmations.contains(where: { $0.user == sender && $0.type == type }) else { return nil }
+                  !message.confirmations.contains(where: { $0.user == sender && $0.type == type }) else { return nil }
 
             return ZMMessageConfirmation(type: type, message: message, sender: sender, serverTimestamp: serverTimestamp, managedObjectContext: managedObjectContext)
         }

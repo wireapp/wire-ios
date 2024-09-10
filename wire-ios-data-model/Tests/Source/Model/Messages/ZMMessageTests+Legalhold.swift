@@ -44,7 +44,7 @@ class ZMMessageTests_Legalhold: BaseZMClientMessageTests {
         }
 
         // when
-         _ = await message.encryptForTransport()
+        _ = await message.encryptForTransport()
 
         // then
         await syncMOC.perform {

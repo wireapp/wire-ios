@@ -18,93 +18,93 @@
 
 #if canImport(WireDatadog)
 
-import DatadogLogs
-import WireAnalytics
-import WireDatadog
-import WireSystem
+    import DatadogLogs
+    import WireAnalytics
+    import WireDatadog
+    import WireSystem
 
-extension WireDatadog: WireSystem.LoggerProtocol {
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(
-            level: .debug,
-            message: message,
-            attributes: attributes
-        )
-    }
-
-    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(
-            level: .info,
-            message: message,
-            attributes: attributes
-        )
-    }
-
-    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(
-            level: .notice,
-            message: message,
-            attributes: attributes
-        )
-    }
-
-    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(
-            level: .warn,
-            message: message,
-            attributes: attributes
-        )
-    }
-
-    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(
-            level: .error,
-            message: message,
-            attributes: attributes
-        )
-    }
-
-    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
-        log(
-            level: .critical,
-            message: message,
-            attributes: attributes
-        )
-    }
-
-    public func addTag(_ key: LogAttributesKey, value: String?) {
-        if let value {
-            logger?.addAttribute(forKey: key.rawValue, value: value)
-        } else {
-            logger?.removeAttribute(forKey: key.rawValue)
+    extension WireDatadog: WireSystem.LoggerProtocol {
+        public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+            log(
+                level: .debug,
+                message: message,
+                attributes: attributes
+            )
         }
-    }
 
-    // MARK: Helpers
+        public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+            log(
+                level: .info,
+                message: message,
+                attributes: attributes
+            )
+        }
 
-    private func log(
-        level: LogLevel,
-        message: any LogConvertible,
-        error: Error? = nil,
-        attributes: [LogAttributes] = []
-    ) {
-        let plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, logAttribute in
-            logAttribute.forEach { item in
-                partialResult[item.key.rawValue] = item.value
+        public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+            log(
+                level: .notice,
+                message: message,
+                attributes: attributes
+            )
+        }
+
+        public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+            log(
+                level: .warn,
+                message: message,
+                attributes: attributes
+            )
+        }
+
+        public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+            log(
+                level: .error,
+                message: message,
+                attributes: attributes
+            )
+        }
+
+        public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+            log(
+                level: .critical,
+                message: message,
+                attributes: attributes
+            )
+        }
+
+        public func addTag(_ key: LogAttributesKey, value: String?) {
+            if let value {
+                logger?.addAttribute(forKey: key.rawValue, value: value)
+            } else {
+                logger?.removeAttribute(forKey: key.rawValue)
             }
         }
 
-        log(
-            level: level,
-            message: message.logDescription,
-            error: error,
-            attributes: plainAttributes
-        )
-    }
+        // MARK: Helpers
 
-    public var logFiles: [URL] {
-        []
+        private func log(
+            level: LogLevel,
+            message: any LogConvertible,
+            error: Error? = nil,
+            attributes: [LogAttributes] = []
+        ) {
+            let plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, logAttribute in
+                logAttribute.forEach { item in
+                    partialResult[item.key.rawValue] = item.value
+                }
+            }
+
+            log(
+                level: level,
+                message: message.logDescription,
+                error: error,
+                attributes: plainAttributes
+            )
+        }
+
+        public var logFiles: [URL] {
+            []
+        }
     }
-}
 
 #endif

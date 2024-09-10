@@ -41,13 +41,13 @@ final class CallStatusViewTests: XCTestCase {
         snapshotHelper = SnapshotHelper()
         sut = CallStatusView(
             configuration: MockStatusViewConfiguration(
-            state: .connecting,
-            isVideoCall: false,
-            isConstantBitRate: false,
-            title: "Italy Trip",
-            userEnabledCBR: false,
-            isForcedCBR: false,
-            classification: .none
+                state: .connecting,
+                isVideoCall: false,
+                isConstantBitRate: false,
+                title: "Italy Trip",
+                userEnabledCBR: false,
+                isForcedCBR: false,
+                classification: .none
             )
         )
         sut.backgroundColor = .white

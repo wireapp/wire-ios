@@ -168,16 +168,16 @@ final class UserClientCell: SeparatorCollectionViewCell {
 
         guard let deviceName = nameLabel.text,
               let deviceId = proteusIdLabel.text else {
-                  isAccessibilityElement = false
-                  return
-              }
+            isAccessibilityElement = false
+            return
+        }
 
         isAccessibilityElement = true
         accessibilityTraits = .button
 
         let proteusVerificationStatus = viewModel?.isProteusVerified ?? false
-                                    ? ClientListStrings.DeviceVerified.description
-                                    : ClientListStrings.DeviceNotVerified.description
+            ? ClientListStrings.DeviceVerified.description
+            : ClientListStrings.DeviceNotVerified.description
         let mlsThumbprintLabelText = viewModel?.mlsThumbprintLabelText ?? ""
         let e2eIdentityStatus = viewModel?.e2eIdentityStatus?.title ?? ""
         var accessbilityContent = deviceName

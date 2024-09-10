@@ -49,8 +49,8 @@ public struct TypingEvent {
 
     func isEqual(other: TypingEvent) -> Bool {
         return isTyping == other.isTyping &&
-               objectID.isEqual(other.objectID) &&
-               fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
+            objectID.isEqual(other.objectID) &&
+            fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
     }
 }
 
@@ -129,7 +129,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                               context: self.managedObjectContext.notificationContext,
                                               using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
-            )
+        )
 
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
@@ -234,8 +234,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
 
         if event.type == .conversationTyping {
             guard let payloadData = event.payload["data"] as? [String: String],
-                let status = payloadData[StatusKey]
-                else { return }
+                  let status = payloadData[StatusKey]
+            else { return }
             processIsTypingUpdateEvent(for: user, in: conversation, with: status)
         } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
             if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
@@ -266,7 +266,7 @@ extension TypingStrategy {
             context: conversation.managedObjectContext!.notificationContext,
             object: conversation,
             userInfo: userInfo)
-        .post()
+            .post()
     }
 
     public static func clearTranscoderStateForTyping(in conversation: ZMConversation) {

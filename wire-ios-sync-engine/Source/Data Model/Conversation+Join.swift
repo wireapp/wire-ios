@@ -94,7 +94,7 @@ extension ZMConversation {
                     }
                 }
 
-                /// The user is already a participant in the conversation
+            /// The user is already a participant in the conversation
             case 204:
                 // If we get to this case, then we need to re-sync local conversations
                 // swiftlint:disable:next todo_requires_jira_link
@@ -103,7 +103,7 @@ extension ZMConversation {
                 return completion(.failure(ConversationJoinError.unknown))
 
             case 403:
-                 if response.payloadLabel() == "invalid-conversation-password" {
+                if response.payloadLabel() == "invalid-conversation-password" {
                     completion(.failure(ConversationJoinError.invalidConversationPassword))
                 }
 

@@ -421,7 +421,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "redundant": [:]
         ]
 
-       if let response {
+        if let response {
             assertExpectedPayload(expectedResponsePayload, in: response)
         }
 

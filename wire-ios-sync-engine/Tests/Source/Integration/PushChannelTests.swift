@@ -44,7 +44,7 @@ class PushChannelTests: IntegrationTest {
                 let fromClient = self.user1.clients.anyObject() as? MockUserClient,
                 let toClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data1 = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             self.groupConversation.encryptAndInsertData(from: fromClient, to: toClient, data: data1)
             self.spinMainQueue(withTimeout: 0.2)
@@ -86,7 +86,7 @@ class PushChannelTests: IntegrationTest {
                 let fromClient = self.user1.clients.anyObject() as? MockUserClient,
                 let toClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? message.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
 
             self.groupConversation.encryptAndInsertData(from: fromClient, to: toClient, data: data)

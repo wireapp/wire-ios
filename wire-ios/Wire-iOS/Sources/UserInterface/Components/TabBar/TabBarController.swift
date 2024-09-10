@@ -186,7 +186,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         didFinishAnimating finished: Bool,
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
-        ) {
+    ) {
         guard let selected = pageViewController.viewControllers?.first else { return }
         guard let index = viewControllers.firstIndex(of: selected) else { return }
 

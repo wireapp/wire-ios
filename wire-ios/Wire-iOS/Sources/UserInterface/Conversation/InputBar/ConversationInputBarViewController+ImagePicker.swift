@@ -37,7 +37,7 @@ extension ConversationInputBarViewController {
                 }
             }
             return
-            // Don't crash on Simulator
+                // Don't crash on Simulator
         }
 
         let presentController = { [self] in
@@ -85,7 +85,7 @@ extension ConversationInputBarViewController {
         }
 
         let videoTempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
-            isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)
+                               isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)
 
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)

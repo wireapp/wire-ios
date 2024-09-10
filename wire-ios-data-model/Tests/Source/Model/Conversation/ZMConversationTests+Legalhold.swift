@@ -37,22 +37,22 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
     }
 
     func testThatLegalholdIsDeactivatedForUser_WhenLegalholdClientIsDeleted() async {
-         // GIVEN
-         let (user, legalHoldClient) = await syncMOC.perform {
-             let user = ZMUser.insertNewObject(in: self.syncMOC)
-             let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: user)
-             XCTAssertTrue(user.isUnderLegalHold)
-             return (user, legalHoldClient)
-         }
+        // GIVEN
+        let (user, legalHoldClient) = await syncMOC.perform {
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: user)
+            XCTAssertTrue(user.isUnderLegalHold)
+            return (user, legalHoldClient)
+        }
 
-         // WHEN
-         await legalHoldClient.deleteClientAndEndSession()
+        // WHEN
+        await legalHoldClient.deleteClientAndEndSession()
 
-         // THEN
-         await syncMOC.perform {
-             XCTAssertFalse(user.isUnderLegalHold)
-         }
-     }
+        // THEN
+        await syncMOC.perform {
+            XCTAssertFalse(user.isUnderLegalHold)
+        }
+    }
 
     func testThatLegalholdIsActivatedForConversation_WhenLegalholdClientIsDiscovered() {
         syncMOC.performGroupedBlock {
@@ -99,7 +99,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         // WHEN
         await legalHoldClient.deleteClientAndEndSession()
 
-            // THEN
+        // THEN
         await syncMOC.perform {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
         }

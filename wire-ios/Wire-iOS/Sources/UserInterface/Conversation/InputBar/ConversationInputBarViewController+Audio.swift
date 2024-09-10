@@ -187,7 +187,7 @@ extension ConversationInputBarViewController {
 
         UIView.transition(with: inputBar, duration: 0.2, options: .transitionCrossDissolve, animations: {
             audioRecordViewContainer.isHidden = true
-            }, completion: nil)
+        }, completion: nil)
     }
 
     func hideCameraKeyboardViewController(_ completion: @escaping () -> Void) {
@@ -247,7 +247,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
               splitViewController.isRightViewControllerRevealed,
               rightViewController.isVisible,
               AppDelegate.shared.mainWindow.isKeyWindow
-            else { return }
+        else { return }
 
         self.wasRecordingBeforeCall = false
         self.mode = .audioRecord

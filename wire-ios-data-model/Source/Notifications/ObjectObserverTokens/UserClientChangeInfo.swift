@@ -63,7 +63,7 @@ public enum UserClientChangeInfoKey: String {
 
     open var sessionHasBeenReset: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)) &&
-               userClient.needsToNotifyOtherUserAboutSessionReset == false
+            userClient.needsToNotifyOtherUserAboutSessionReset == false
     }
 
     public let userClient: UserClient

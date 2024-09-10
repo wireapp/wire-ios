@@ -39,11 +39,11 @@ extension NSManagedObjectContext {
 public class SearchUserSnapshot {
     /// Keys that we want to be notified for
     static let observableKeys: [String] = [#keyPath(ZMSearchUser.name),
-                                            #keyPath(ZMSearchUser.completeImageData),
-                                            #keyPath(ZMSearchUser.previewImageData),
-                                            #keyPath(ZMSearchUser.isConnected),
-                                            #keyPath(ZMSearchUser.user),
-                                            #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)]
+                                           #keyPath(ZMSearchUser.completeImageData),
+                                           #keyPath(ZMSearchUser.previewImageData),
+                                           #keyPath(ZMSearchUser.isConnected),
+                                           #keyPath(ZMSearchUser.user),
+                                           #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)]
 
     weak var searchUser: ZMSearchUser?
     public private (set) var snapshotValues: [String: NSObject?]
@@ -85,9 +85,9 @@ public class SearchUserSnapshot {
     /// Post a UserChangeInfo for the specified SearchUser
     func postNotification(changedKeys: [String]) {
         guard changedKeys.count > 0,
-            let searchUser,
-            let moc = self.managedObjectContext
-            else { return }
+              let searchUser,
+              let moc = self.managedObjectContext
+        else { return }
 
         let userChange = UserChangeInfo(object: searchUser)
         userChange.changedKeys = Set(changedKeys)
@@ -111,7 +111,7 @@ public class SearchUserSnapshot {
     /// Adds a snapshots for the specified searchUser if not already present
     public func addSearchUser(_ searchUser: ZMSearchUser) {
         guard let remoteID = searchUser.remoteIdentifier,
-            let moc = self.managedObjectContext else {
+              let moc = self.managedObjectContext else {
             zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
             return
         }
@@ -152,11 +152,11 @@ public class SearchUserSnapshot {
         guard snapshots.count > 0 else { return }
 
         guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info.connectionStateChanged,
-            let user = info.user as? ZMUser,
-            let remoteID = user.remoteIdentifier,
-            let snapshot = snapshots[remoteID]
+              let user = info.user as? ZMUser,
+              let remoteID = user.remoteIdentifier,
+              let snapshot = snapshots[remoteID]
         else {
-                return
+            return
         }
 
         guard let searchUser = snapshot.searchUser else {

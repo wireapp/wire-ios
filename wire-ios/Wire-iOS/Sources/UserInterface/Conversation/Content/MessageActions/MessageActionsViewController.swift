@@ -28,8 +28,8 @@ final class MessageActionsViewController: UIAlertController {
                            actionController: ConversationMessageActionController) -> MessageActionsViewController {
         let title = actionController.canPerformAction(action: .react("❤️")) ? MessageLabelMarker : nil
         let controller = MessageActionsViewController(title: title,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+                                                      message: nil,
+                                                      preferredStyle: .actionSheet)
         controller.addMessageActions(actions, withActionController: actionController)
         return controller
     }

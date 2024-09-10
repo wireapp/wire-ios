@@ -723,8 +723,8 @@ extension CallingV3Tests {
         // we receive a performed call systemMessage
         XCTAssertEqual(conversationUnderTest.recentMessages.count, messageCount + 1)
         guard let systemMessage = conversationUnderTest.recentMessages.last as? ZMSystemMessage
-            else {
-                return XCTFail("Did not insert a system message")
+        else {
+            return XCTFail("Did not insert a system message")
         }
 
         XCTAssertNotNil(systemMessage.systemMessageData)

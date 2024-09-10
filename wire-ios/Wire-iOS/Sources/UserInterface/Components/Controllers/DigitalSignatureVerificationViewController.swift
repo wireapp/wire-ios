@@ -125,7 +125,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         case "sas-success":
             return .success(())
         case "sas-error-authentication-failed":
-             return .failure(DigitalSignatureVerificationError.authenticationFailed)
+            return .failure(DigitalSignatureVerificationError.authenticationFailed)
         default:
             return .failure(DigitalSignatureVerificationError.otherError)
         }

@@ -34,7 +34,7 @@ class APNSTests_Swift: APNSTestsBase {
                 let fromClient = self.user1.clients.anyObject() as? MockUserClient,
                 let toClient = self.selfUser.clients.anyObject() as? MockUserClient,
                 let data = try? textMessage.serializedData() else {
-                    return XCTFail()
+                return XCTFail()
             }
             // insert message on backend
             self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: data)

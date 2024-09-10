@@ -45,6 +45,6 @@ extension SessionManager: ZMAuthenticationStatusDelegate {
 
     public func companyLoginCodeDidBecomeAvailable(_ uuid: UUID!) {
         addAccount(userInfo: [SessionManager.companyLoginCodeKey: uuid ?? UUID(),
-        SessionManager.companyLoginRequestTimestampKey: Date()])
+                              SessionManager.companyLoginRequestTimestampKey: Date()])
     }
 }

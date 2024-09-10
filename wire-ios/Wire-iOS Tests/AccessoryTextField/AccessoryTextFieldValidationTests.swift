@@ -279,8 +279,8 @@ final class AccessoryTextFieldValidationTests: XCTestCase {
 
         // WHEN & THEN
         checkError(textFieldType: type, text: text, expectedError:
-                .invalidPassword([.tooShort,
-                                  .missingRequiredClasses(missingRequiredClassesSet)]))
+            .invalidPassword([.tooShort,
+                              .missingRequiredClasses(missingRequiredClassesSet)]))
     }
 
     func testThat129CharacterPasswordIsInvalid_New() {

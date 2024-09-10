@@ -82,7 +82,7 @@ extension MockTransportSession {
                 guard
                     let uuid = UUID(data: recipient.user.uuid),
                     let userId = UUID(uuidString: user.identifier) else {
-                        return false
+                    return false
                 }
                 return uuid == userId && (onlyForUserId == nil || UUID(uuidString: onlyForUserId!) == userId)
             }
@@ -131,7 +131,7 @@ extension MockTransportSession {
                 guard
                     let uuid = UUID(data: recipient.user.uuid),
                     let userId = UUID(uuidString: user.identifier) else {
-                        return false
+                    return false
                 }
                 return uuid == userId
             }) else {

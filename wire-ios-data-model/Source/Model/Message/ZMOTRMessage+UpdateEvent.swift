@@ -29,9 +29,9 @@ extension ZMOTRMessage {
             let senderID = updateEvent.senderUUID,
             let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
             !isSelf(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier)
-            else {
-                WireLogger.eventProcessing.debug("Illegal sender or conversation, abort processing.", attributes: updateEvent.logAttributes)
-                return nil
+        else {
+            WireLogger.eventProcessing.debug("Illegal sender or conversation, abort processing.", attributes: updateEvent.logAttributes)
+            return nil
         }
 
         guard !conversation.isForcedReadOnly else {
@@ -42,10 +42,10 @@ extension ZMOTRMessage {
         guard
             let message = GenericMessage(from: updateEvent),
             let content = message.content
-            else {
-                WireLogger.eventProcessing.warn("Can't read protobuf, abort processing:\n\(updateEvent.payload)", attributes: updateEvent.logAttributes)
-                appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
-                return nil
+        else {
+            WireLogger.eventProcessing.warn("Can't read protobuf, abort processing:\n\(updateEvent.payload)", attributes: updateEvent.logAttributes)
+            appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
+            return nil
         }
         WireLogger.eventProcessing.debug("Processing:\n\(message)")
         let logAttributes: LogAttributes = [

@@ -87,9 +87,9 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
                         (otherBlock as! AnimationBlock)(self.animationBlock as Any, reps - 1)
                     } else {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: {
-                             if !self.canAnimationContinue(for: self.configuration?.message) {
+                            if !self.canAnimationContinue(for: self.configuration?.message) {
                                 return
-                             }
+                            }
 
                             UIView.animate(easing: .easeOutQuart, duration: 0.55, animations: {
                                 self.imageView.alpha = 1.0

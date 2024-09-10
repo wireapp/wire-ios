@@ -220,9 +220,9 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 timestamp: memberLeaveTimestamp)
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                           httpStatus: 200,
-                                           transportSessionError: nil,
-                                           apiVersion: APIVersion.v0.rawValue)
+                                               httpStatus: 200,
+                                               transportSessionError: nil,
+                                               apiVersion: APIVersion.v0.rawValue)
 
             // when
             self.sut.handleResponse(response, action: action)

@@ -87,29 +87,29 @@ final class SearchHeaderViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
-          searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),
+            searchIcon.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
+            searchIcon.leadingAnchor.constraint(equalTo: tokenField.leadingAnchor, constant: 16),
 
-          clearButton.widthAnchor.constraint(equalToConstant: 16),
-          clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor),
-          clearButton.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
-          clearButton.trailingAnchor.constraint(equalTo: tokenField.trailingAnchor, constant: -16),
+            clearButton.widthAnchor.constraint(equalToConstant: 16),
+            clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor),
+            clearButton.centerYAnchor.constraint(equalTo: tokenField.centerYAnchor),
+            clearButton.trailingAnchor.constraint(equalTo: tokenField.trailingAnchor, constant: -16),
 
-          tokenField.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
-          tokenField.topAnchor.constraint(greaterThanOrEqualTo: tokenFieldContainer.topAnchor, constant: 8),
-          tokenField.bottomAnchor.constraint(lessThanOrEqualTo: tokenFieldContainer.bottomAnchor, constant: -8),
-          tokenField.leadingAnchor.constraint(equalTo: tokenFieldContainer.leadingAnchor, constant: 8),
-          tokenField.trailingAnchor.constraint(equalTo: tokenFieldContainer.trailingAnchor, constant: -8),
-          tokenField.centerYAnchor.constraint(equalTo: tokenFieldContainer.centerYAnchor),
+            tokenField.heightAnchor.constraint(greaterThanOrEqualToConstant: 40),
+            tokenField.topAnchor.constraint(greaterThanOrEqualTo: tokenFieldContainer.topAnchor, constant: 8),
+            tokenField.bottomAnchor.constraint(lessThanOrEqualTo: tokenFieldContainer.bottomAnchor, constant: -8),
+            tokenField.leadingAnchor.constraint(equalTo: tokenFieldContainer.leadingAnchor, constant: 8),
+            tokenField.trailingAnchor.constraint(equalTo: tokenFieldContainer.trailingAnchor, constant: -8),
+            tokenField.centerYAnchor.constraint(equalTo: tokenFieldContainer.centerYAnchor),
 
-        // pin to the bottom of the navigation bar
+            // pin to the bottom of the navigation bar
 
-        tokenFieldContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tokenFieldContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
 
-          tokenFieldContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          tokenFieldContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          tokenFieldContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          tokenFieldContainer.heightAnchor.constraint(equalToConstant: 56)
+            tokenFieldContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tokenFieldContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tokenFieldContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tokenFieldContainer.heightAnchor.constraint(equalToConstant: 56)
         ])
     }
 

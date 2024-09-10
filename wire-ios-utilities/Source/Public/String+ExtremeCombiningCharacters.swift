@@ -90,7 +90,7 @@ extension String {
             // verify current diacritics to characters ratio
             // if ratio is not satisfying (higher than @c diacriticsPerCharMaxRatio) the character has to be removed
             if regularCharactersCount != 0,
-                Float(diacriticsCount) / Float(regularCharactersCount) < diacriticsPerCharMaxRatio {
+               Float(diacriticsCount) / Float(regularCharactersCount) < diacriticsPerCharMaxRatio {
                 newUnicodeScalars.append(scalar)
             }
         }

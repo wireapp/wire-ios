@@ -128,8 +128,8 @@ extension ZMUser {
     @objc(canModifyAccessControlSettingsInConversation:)
     public func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group,
-            conversation.teamRemoteIdentifier != nil
-            else { return false }
+              conversation.teamRemoteIdentifier != nil
+        else { return false }
 
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationAccess.name, conversation: conversation)
     }
@@ -218,7 +218,7 @@ extension ZMUser {
 
     private func hasRoleWithAction(actionName: String, conversation: ConversationLike) -> Bool {
         guard conversation.isSelfAnActiveMember,
-            let role = self.role(in: conversation)
+              let role = self.role(in: conversation)
         else { return false }
         return role.actions.contains(where: { $0.name == actionName })
     }

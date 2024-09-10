@@ -61,7 +61,7 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         upstreamSync.readyForNextRequestIfNotBusy()
     }
 
-// MARK: - ZMSingleRequestTranscoder
+    // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())

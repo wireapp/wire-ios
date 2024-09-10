@@ -41,7 +41,7 @@ extension UIViewController {
         var message = ""
 
         if nsError.domain == ZMObjectValidationErrorDomain,
-            let code: ZMManagedObjectValidationErrorCode = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
+           let code: ZMManagedObjectValidationErrorCode = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
             switch code {
             case .tooLong:
                 message = L10n.Localizable.Error.Input.tooLong
@@ -53,7 +53,7 @@ extension UIViewController {
                 break
             }
         } else if nsError.domain == NSError.userSessionErrorDomain,
-            let code = UserSessionErrorCode(rawValue: nsError.code) {
+                  let code = UserSessionErrorCode(rawValue: nsError.code) {
             switch code {
             case .noError:
                 message = ""
@@ -76,7 +76,7 @@ extension UIViewController {
             case .invalidEmail:
                 message = L10n.Localizable.Error.Email.invalid
             case .requestIsAlreadyPending:
-                 message = L10n.Localizable.Error.User.verificationCodeTooMany
+                message = L10n.Localizable.Error.User.verificationCodeTooMany
             case .clientDeletedRemotely:
                 message = L10n.Localizable.Error.User.deviceDeletedRemotely
             case .lastUserIdentityCantBeDeleted:

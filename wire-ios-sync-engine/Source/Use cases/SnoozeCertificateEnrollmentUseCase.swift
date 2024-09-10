@@ -39,11 +39,11 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
         accountId: UUID) {
-            self.featureRepository = featureRepository
-            self.featureRepositoryContext = featureRepositoryContext
-            self.recurringActionService = recurringActionService
-            self.actionId = "\(accountId).enrollCertificate"
-        }
+        self.featureRepository = featureRepository
+        self.featureRepositoryContext = featureRepositoryContext
+        self.recurringActionService = recurringActionService
+        self.actionId = "\(accountId).enrollCertificate"
+    }
 
     // MARK: - Methods
 

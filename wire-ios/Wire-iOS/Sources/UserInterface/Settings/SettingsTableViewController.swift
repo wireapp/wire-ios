@@ -90,23 +90,23 @@ class SettingsBaseTableViewController: UIViewController {
         footerContainerHeightConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
-          tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-          tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
-          tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
 
-          topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-          topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-          topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
+            topSeparator.leftAnchor.constraint(equalTo: tableView.leftAnchor),
+            topSeparator.rightAnchor.constraint(equalTo: tableView.rightAnchor),
+            topSeparator.topAnchor.constraint(equalTo: tableView.topAnchor),
 
-          footerContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
-          footerContainer.leftAnchor.constraint(equalTo: tableView.leftAnchor),
-          footerContainer.rightAnchor.constraint(equalTo: tableView.rightAnchor),
-          footerContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          footerContainerHeightConstraint,
+            footerContainer.topAnchor.constraint(equalTo: tableView.bottomAnchor),
+            footerContainer.leftAnchor.constraint(equalTo: tableView.leftAnchor),
+            footerContainer.rightAnchor.constraint(equalTo: tableView.rightAnchor),
+            footerContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            footerContainerHeightConstraint,
 
-          footerSeparator.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
-          footerSeparator.rightAnchor.constraint(equalTo: footerContainer.rightAnchor),
-          footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
+            footerSeparator.leftAnchor.constraint(equalTo: footerContainer.leftAnchor),
+            footerSeparator.rightAnchor.constraint(equalTo: footerContainer.rightAnchor),
+            footerSeparator.topAnchor.constraint(equalTo: footerContainer.topAnchor)
         ])
     }
 }
@@ -250,10 +250,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let copy = UIAction(title: L10n.Localizable.Content.Message.copy, image: UIImage(systemName: "doc.on.doc")) { _ in
-            let pasteboard = UIPasteboard.general
-            pasteboard.string = copiableText
-          }
-          return UIMenu(children: [copy])
+                let pasteboard = UIPasteboard.general
+                pasteboard.string = copiableText
+            }
+            return UIMenu(children: [copy])
         }
     }
 

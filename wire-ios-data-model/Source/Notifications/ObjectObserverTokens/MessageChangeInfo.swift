@@ -120,7 +120,7 @@ extension ZMSystemMessage {
                 "underlyingMessageChanged: \(underlyingMessageChanged)",
                 "linkAttachmentsChanged: \(linkAttachmentsChanged)",
                 "buttonStatesChanged: \(buttonStatesChanged)"
-                ].joined(separator: ", ")
+        ].joined(separator: ", ")
     }
 
     public var deliveryStateChanged: Bool {
@@ -129,7 +129,7 @@ extension ZMSystemMessage {
 
     public var reactionsChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.reactions)) ||
-               changeInfos[MessageChangeInfo.ReactionChangeInfoKey] != nil
+            changeInfos[MessageChangeInfo.ReactionChangeInfoKey] != nil
     }
 
     public var confirmationsChanged: Bool {
@@ -218,8 +218,8 @@ extension MessageChangeInfo {
                                           managedObjectContext: managedObjectContext,
                                           object: message) { [weak observer] note in
             guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? MessageChangeInfo
-                else { return }
+                  let changeInfo = note.changeInfo as? MessageChangeInfo
+            else { return }
 
             observer.messageDidChange(changeInfo)
         }

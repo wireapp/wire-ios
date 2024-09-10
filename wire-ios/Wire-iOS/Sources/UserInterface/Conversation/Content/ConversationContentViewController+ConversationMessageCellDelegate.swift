@@ -33,7 +33,7 @@ extension UIView {
         for cell in tableView.visibleCells {
             let indexPath = tableView.indexPath(for: cell)
             if indexPath?.section == section,
-                cell is SelectableView {
+               cell is SelectableView {
                 actionView = cell
                 break
             }
@@ -58,7 +58,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         let actionView = view.targetView(for: message, dataSource: dataSource)
         let shouldDismissModal = action != .delete && action != .copy
         if messagePresenter.modalTargetController?.presentedViewController != nil,
-            shouldDismissModal {
+           shouldDismissModal {
             messagePresenter.modalTargetController?.dismiss(animated: true) {
                 self.messageAction(actionId: action,
                                    for: message,

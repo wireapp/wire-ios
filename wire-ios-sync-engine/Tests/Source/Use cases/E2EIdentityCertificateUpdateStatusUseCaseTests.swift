@@ -226,4 +226,4 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         )
         return certificate
     }
- }
+}

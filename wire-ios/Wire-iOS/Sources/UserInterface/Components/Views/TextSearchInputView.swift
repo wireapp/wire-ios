@@ -97,27 +97,27 @@ final class TextSearchInputView: UIView {
 
         NSLayoutConstraint.activate(
             searchInput.fitInConstraints(view: self, inset: 8) + [
-            iconView.leadingAnchor.constraint(equalTo: searchInput.leadingAnchor, constant: 16),
-            iconView.centerYAnchor.constraint(equalTo: searchInput.centerYAnchor),
+                iconView.leadingAnchor.constraint(equalTo: searchInput.leadingAnchor, constant: 16),
+                iconView.centerYAnchor.constraint(equalTo: searchInput.centerYAnchor),
 
-            iconView.topAnchor.constraint(equalTo: topAnchor),
-            iconView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                iconView.topAnchor.constraint(equalTo: topAnchor),
+                iconView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            heightAnchor.constraint(lessThanOrEqualToConstant: 100),
+                heightAnchor.constraint(lessThanOrEqualToConstant: 100),
 
-            placeholderLabel.leadingAnchor.constraint(equalTo: searchInput.leadingAnchor, constant: 48),
-            placeholderLabel.topAnchor.constraint(equalTo: searchInput.topAnchor),
-            placeholderLabel.bottomAnchor.constraint(equalTo: searchInput.bottomAnchor),
-            placeholderLabel.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor),
+                placeholderLabel.leadingAnchor.constraint(equalTo: searchInput.leadingAnchor, constant: 48),
+                placeholderLabel.topAnchor.constraint(equalTo: searchInput.topAnchor),
+                placeholderLabel.bottomAnchor.constraint(equalTo: searchInput.bottomAnchor),
+                placeholderLabel.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor),
 
-            clearButton.centerYAnchor.constraint(equalTo: centerYAnchor),
-            clearButton.trailingAnchor.constraint(equalTo: searchInput.trailingAnchor, constant: -16),
-            clearButton.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue),
-            clearButton.heightAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue),
+                clearButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+                clearButton.trailingAnchor.constraint(equalTo: searchInput.trailingAnchor, constant: -16),
+                clearButton.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue),
+                clearButton.heightAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue),
 
-            spinner.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -6),
-            spinner.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
-            spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue)
+                spinner.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -6),
+                spinner.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
+                spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue)
             ])
     }
 

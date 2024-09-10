@@ -212,9 +212,9 @@ extension StoreUpdateEventTests {
 
             XCTAssertNotNil(storedEvent.payload)
             #if targetEnvironment(simulator) && swift(>=5.4)
-            if #available(iOS 15, *) {
-                XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-            }
+                if #available(iOS 15, *) {
+                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
+                }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)
             let privateKey = try XCTUnwrap( encryptionKeys?.privateKey)
@@ -271,9 +271,9 @@ extension StoreUpdateEventTests {
             XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
             XCTAssertNotNil(storedEvent.payload)
             #if targetEnvironment(simulator) && swift(>=5.4)
-            if #available(iOS 15, *) {
-                XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-            }
+                if #available(iOS 15, *) {
+                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
+                }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)
 
@@ -341,9 +341,9 @@ extension StoreUpdateEventTests {
             XCTAssertEqual(storedEvent.uuidString, event.uuid?.transportString())
             XCTAssertNotNil(storedEvent.payload)
             #if targetEnvironment(simulator) && swift(>=5.4)
-            if #available(iOS 15, *) {
-                XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
-            }
+                if #available(iOS 15, *) {
+                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
+                }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)
 

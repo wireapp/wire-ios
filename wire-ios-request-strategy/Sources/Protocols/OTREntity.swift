@@ -94,7 +94,7 @@ extension OTREntity {
         }
 
         if conversation.conversationType == .oneOnOne || conversation.conversationType == .connection,
-            conversation.oneOnOneUser?.connection?.needsToBeUpdatedFromBackend == true {
+           conversation.oneOnOneUser?.connection?.needsToBeUpdatedFromBackend == true {
             zmLog.debug("connection needs to be update from backend")
             return conversation.oneOnOneUser?.connection
         }
@@ -228,9 +228,9 @@ extension OTREntity {
         // If we for some reason miss the push the BE will repond with a 403 and 'unknown-client' label to our
         // next sending attempt and we will logout and delete the current selfClient then
         if response.httpStatus == ClientNotAuthorizedResponseStatus,
-            let payload = response.payload as? [String: AnyObject],
-            let label = payload[ErrorLabel] as? String,
-            label == UnknownClientLabel {
+           let payload = response.payload as? [String: AnyObject],
+           let label = payload[ErrorLabel] as? String,
+           label == UnknownClientLabel {
             return true
         } else {
             return false

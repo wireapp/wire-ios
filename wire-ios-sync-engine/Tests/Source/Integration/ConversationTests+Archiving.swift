@@ -61,8 +61,8 @@ class ConversationTests_Archiving: ConversationTestsBase {
             let message = GenericMessage(content: Text(content: "Some text", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
-                                                              to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                              data: try! message.serializedData())
+                                                        to: self.selfUser.clients.anyObject() as! MockUserClient,
+                                                        data: try! message.serializedData())
         }
     }
 

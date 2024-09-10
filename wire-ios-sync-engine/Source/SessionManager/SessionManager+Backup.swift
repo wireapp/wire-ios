@@ -75,7 +75,7 @@ extension SessionManager {
         dispatchGroup: ZMSDispatchGroup,
         completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
-        ) {
+    ) {
         workerQueue.async(group: dispatchGroup) {
             let encrypted = result.flatMap { info in
                 do {
@@ -210,7 +210,7 @@ extension BackupMetadata {
     fileprivate static let fileExtension = BackupFileExtensions.fileExtensionWithUnderscore.rawValue
 
     private static let formatter: DateFormatter = {
-       let formatter = DateFormatter()
+        let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd"
         return formatter
     }()

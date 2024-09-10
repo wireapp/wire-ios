@@ -327,7 +327,7 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
     }
 }
 
- // MARK: Conversation roles
+// MARK: Conversation roles
 
 extension ZMUserTests_Permissions {
     func testThatConversationTitleCanBeModified_ByGroupParticipant() {

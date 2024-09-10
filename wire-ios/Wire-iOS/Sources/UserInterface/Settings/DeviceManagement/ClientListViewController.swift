@@ -25,10 +25,10 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "UI")
 
 final class ClientListViewController: UIViewController,
-                                UITableViewDelegate,
-                                UITableViewDataSource,
-                                ClientUpdateObserver,
-                                ClientColorVariantProtocol {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ClientUpdateObserver,
+    ClientColorVariantProtocol {
     // MARK: SpinnerCapable
 
     var removalObserver: ClientRemovalObserver?
@@ -505,7 +505,7 @@ final class ClientListViewController: UIViewController,
 
         let mlsClients: [UserClient: MLSClientID] = Dictionary(
             uniqueKeysWithValues:
-                userClients
+            userClients
                 .filter { !$0.mlsPublicKeys.allKeys.isEmpty }
                 .compactMap {
                     if let mlsClientId = MLSClientID(userClient: $0) {

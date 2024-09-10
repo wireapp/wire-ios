@@ -90,7 +90,7 @@ extension MockTransportSession {
               let serviceId = payload["service"] as? String,
               let providerId = payload["provider"] as? String,
               let conversationId = request.RESTComponents(index: 1) else {
-                  return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: request.apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: request.apiVersion)
         }
 
         // Fetch conversation
@@ -140,7 +140,7 @@ extension MockTransportSession {
     public func processDeleteBotRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         guard let conversationId = request.RESTComponents(index: 1),
               let botId = request.RESTComponents(index: 3) else {
-                return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: request.apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: request.apiVersion)
         }
 
         // Fetch conversation

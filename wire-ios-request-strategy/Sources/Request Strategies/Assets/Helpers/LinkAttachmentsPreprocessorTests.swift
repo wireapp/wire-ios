@@ -70,9 +70,9 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
 
     func createAttachment(withCachedImage: Bool = true) -> LinkAttachment {
         let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
-                                       permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
-                                       thumbnails: [thumbnailURL],
-                                       originalRange: NSRange(location: 20, length: 43))
+                                        permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+                                        thumbnails: [thumbnailURL],
+                                        originalRange: NSRange(location: 20, length: 43))
 
         return attachment
     }

@@ -66,10 +66,10 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
         // TODO: [WPB-6432] enable when ZMSLog is cleaned up
         /* let isSafe = mergedAttributes[.public] as? Bool == true
-        guard isDebug || isSafe else {
-            // skips logs in production builds with non redacted info
-            return
-        }*/
+         guard isDebug || isSafe else {
+             // skips logs in production builds with non redacted info
+             return
+         }*/
 
         var entry = "[\(formattedLevel(level))] \(message.logDescription)\(attributesDescription(from: mergedAttributes))"
 

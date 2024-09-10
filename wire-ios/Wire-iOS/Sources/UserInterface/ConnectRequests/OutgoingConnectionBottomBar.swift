@@ -73,11 +73,11 @@ final class OutgoingConnectionViewController: UIViewController {
     private func createConstraints() {
         [cancelButton, archiveButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
-          cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-          cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
-          cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
-          archiveButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
-          archiveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),
+            cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
+            archiveButton.centerYAnchor.constraint(equalTo: cancelButton.centerYAnchor),
+            archiveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
         ])
     }
 

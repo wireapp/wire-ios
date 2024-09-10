@@ -60,7 +60,7 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
                         transportType: token.transport,
                         tokenType: token.isStandardAPNSToken ? .standard : .voip
                     )
-            }
+                }
 
             action.notifyResult(.success(tokens))
 

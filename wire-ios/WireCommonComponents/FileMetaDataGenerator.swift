@@ -96,7 +96,7 @@ extension AVAsset {
                                              AVLinearPCMIsNonInterleaved: false]
 
         let output: AVAssetReaderTrackOutput = AVAssetReaderTrackOutput(track: assetTrack,
-                                              outputSettings: outputSettings)
+                                                                        outputSettings: outputSettings)
         output.alwaysCopiesSampleData = false
         reader.add(output)
         var sampleCount: UInt64 = 0

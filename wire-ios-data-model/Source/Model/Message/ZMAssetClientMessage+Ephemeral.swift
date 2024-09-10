@@ -92,7 +92,7 @@ extension ZMAssetClientMessage {
             let destructionDate = self.destructionDate,
             date > destructionDate,
             timeout > 0 else {
-                return
+            return
         }
 
         let msg = self as ZMMessage

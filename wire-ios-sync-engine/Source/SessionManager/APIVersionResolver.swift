@@ -94,8 +94,8 @@ final class APIVersionResolver {
             reportBlacklist(payload: payload)
             BackendInfo.apiVersion = nil
         } else if isDeveloperModeEnabled,
-            let preferredAPIVersion = BackendInfo.preferredAPIVersion,
-            allBackendVersions.contains(preferredAPIVersion) {
+                  let preferredAPIVersion = BackendInfo.preferredAPIVersion,
+                  allBackendVersions.contains(preferredAPIVersion) {
             WireLogger.environment.info("resolving to preferred api version \(preferredAPIVersion.rawValue)")
             BackendInfo.apiVersion = preferredAPIVersion
         } else if let apiVersion = commonProductionVersions.max() {

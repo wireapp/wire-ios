@@ -86,13 +86,13 @@ public enum ConversationAccessRole: String {
 
     public static func fromAccessRoleV2(_ accessRoles: Set<ConversationAccessRoleV2>) -> ConversationAccessRole {
         if accessRoles.contains(.guest) {
-          return .nonActivated
+            return .nonActivated
         } else if accessRoles.contains(.nonTeamMember) || accessRoles.contains(.service) {
-          return .activated
+            return .activated
         } else if accessRoles.contains(.teamMember) {
-          return .team
+            return .team
         } else {
-          return .private
+            return .private
         }
     }
 }

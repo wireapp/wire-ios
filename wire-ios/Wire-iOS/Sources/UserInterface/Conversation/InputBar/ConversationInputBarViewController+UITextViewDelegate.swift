@@ -91,7 +91,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         if text == "", range.length == 1 {
             if let cursor = textView.selectedTextRange, let deletionStart = textView.position(from: cursor.start, offset: -1) {
                 if cursor.start == cursor.end, // We have only caret, no selected text
-                    textView.attributedText.containsAttachments(in: range) { // Text to be deleted has text attachment
+                   textView.attributedText.containsAttachments(in: range) { // Text to be deleted has text attachment
                     textView.selectedTextRange = textView.textRange(from: deletionStart, to: cursor.start) // Select the text to be deleted and ignore the backspace
                     return false
                 }

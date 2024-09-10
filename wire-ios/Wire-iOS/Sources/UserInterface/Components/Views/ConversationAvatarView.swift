@@ -168,7 +168,7 @@ final class ConversationAvatarView: UIView {
             let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
 
             if stableRandomParticipants.isEmpty,
-                let connectedUser = conversation.connectedUserType {
+               let connectedUser = conversation.connectedUserType {
                 usersOnAvatar = [connectedUser]
             } else {
                 usersOnAvatar = stableRandomParticipants

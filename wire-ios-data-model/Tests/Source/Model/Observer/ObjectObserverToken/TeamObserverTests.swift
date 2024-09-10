@@ -111,9 +111,9 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(team,
                                                      modifier: {
-                                                        let member = Member.insertNewObject(in: uiMOC)
-                                                        member.team = $0
-        },
+                                                         let member = Member.insertNewObject(in: uiMOC)
+                                                         member.team = $0
+                                                     },
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
         )
     }
@@ -128,11 +128,11 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(team,
                                                      modifier: {
-                                                        guard let member = $0.members.first else {
-                                                            return XCTFail("No member? :(")
-                                                        }
-                                                        self.uiMOC.delete(member)
-                                                        },
+                                                         guard let member = $0.members.first else {
+                                                             return XCTFail("No member? :(")
+                                                         }
+                                                         self.uiMOC.delete(member)
+                                                     },
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
         )
     }

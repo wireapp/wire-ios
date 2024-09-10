@@ -23,7 +23,7 @@ public protocol SessionProtocol {
     func task(
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
-        ) -> DataTaskProtocol
+    ) -> DataTaskProtocol
 }
 
 public protocol DataTaskProtocol {

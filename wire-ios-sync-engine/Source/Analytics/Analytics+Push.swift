@@ -50,7 +50,7 @@ extension ZMConversation {
 }
 
 extension ZMConversationType {
-     var analyticsType: String {
+    var analyticsType: String {
         switch self {
         case .oneOnOne:
             return "one_to_one"

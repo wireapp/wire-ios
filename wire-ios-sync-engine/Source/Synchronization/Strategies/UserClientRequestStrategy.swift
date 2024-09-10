@@ -145,8 +145,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         guard let clientRegistrationStatus = self.clientRegistrationStatus,
-            let clientUpdateStatus = self.clientUpdateStatus else {
-                return nil
+              let clientUpdateStatus = self.clientUpdateStatus else {
+            return nil
         }
 
         if clientRegistrationStatus.currentPhase == .waitingForLogin {
@@ -301,13 +301,13 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         return try? requestsFactory.registerClientRequest(
-                client,
-                credentials: clientRegistrationStatus?.emailCredentials,
-                cookieLabel: CookieLabel.current.value,
-                prekeys: prekeys,
-                lastRestortPrekey: lastResortPrekey,
-                apiVersion: apiVersion
-            )
+            client,
+            credentials: clientRegistrationStatus?.emailCredentials,
+            cookieLabel: CookieLabel.current.value,
+            prekeys: prekeys,
+            lastRestortPrekey: lastResortPrekey,
+            apiVersion: apiVersion
+        )
     }
 
     public func shouldCreateRequest(
@@ -451,8 +451,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 case "too-many-clients":
                     errorCode = .canNotRegisterMoreClients
                 case "invalid-credentials",
-                    "code-authentication-failed",
-                    "code-authentication-required":
+                     "code-authentication-failed",
+                     "code-authentication-required":
                     errorCode = .invalidCredentials
                 default:
                     break

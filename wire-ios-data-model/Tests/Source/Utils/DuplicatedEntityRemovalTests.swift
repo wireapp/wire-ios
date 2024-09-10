@@ -30,7 +30,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
                              clients: Set<UserClient>?,
                              timestamp: Date?,
                              duration: TimeInterval? = nil
-        ) -> ZMSystemMessage {
+    ) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -49,7 +49,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
 
     func addedOrRemovedSystemMessages(conversation: ZMConversation,
                                       client: UserClient
-                                      ) -> [ZMSystemMessage] {
+    ) -> [ZMSystemMessage] {
         let addedMessage = self.appendSystemMessage(conversation: conversation,
                                                     type: .newClient,
                                                     sender: ZMUser.selfUser(in: self.moc),

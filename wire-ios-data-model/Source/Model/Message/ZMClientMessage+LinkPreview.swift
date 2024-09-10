@@ -107,13 +107,13 @@ extension ZMClientMessage {
             }
 
             if let mediumKey,
-                let encryptionKey,
-                let digest,
-                let data = cache.decryptData(
-                    key: mediumKey,
-                    encryptionKey: encryptionKey,
-                    sha256Digest: digest
-                ) {
+               let encryptionKey,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumKey,
+                   encryptionKey: encryptionKey,
+                   sha256Digest: digest
+               ) {
                 completionHandler(data)
             } else if let fallbackKey {
                 completionHandler(cache.assetData(fallbackKey))

@@ -36,10 +36,10 @@ final class GiphyCollectionViewCell: UICollectionViewCell {
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-          imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-          imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
+            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            imageView.rightAnchor.constraint(equalTo: contentView.rightAnchor)
         ])
     }
 

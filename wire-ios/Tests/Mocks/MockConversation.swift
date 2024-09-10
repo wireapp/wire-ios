@@ -26,16 +26,16 @@ class SwiftMockConversation: NSObject, Conversation {
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false
 
-	var relatedConnectionState: ZMConnectionStatus = .invalid
+    var relatedConnectionState: ZMConnectionStatus = .invalid
 
-	var sortedOtherParticipants: [UserType] = []
-	var sortedServiceUsers: [UserType] = []
+    var sortedOtherParticipants: [UserType] = []
+    var sortedServiceUsers: [UserType] = []
 
-	func verifyLegalHoldSubjects() {
-		// no-op
-	}
+    func verifyLegalHoldSubjects() {
+        // no-op
+    }
 
-	var sortedActiveParticipantsUserTypes: [UserType] = []
+    var sortedActiveParticipantsUserTypes: [UserType] = []
 
     var isSelfAnActiveMember: Bool = true
 

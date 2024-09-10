@@ -97,7 +97,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         containerByTaskID[identifier] = container
 
         guard let url = task.originalRequest?.url,
-            let completion = completionByURL[url] else { return }
+              let completion = completionByURL[url] else { return }
 
         switch task.state {
         case .running:
@@ -144,8 +144,8 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 }
 
 extension PreviewDownloader {
-     /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
-     /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
+    /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
+    /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
     func urlSession(_ session: URLSessionType, dataTask: URLSessionDataTaskType, didReceiveHTTPResponse response: HTTPURLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)

@@ -63,16 +63,16 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheTextMessage() {
-           // given
-           let message = GenericMessage(content: Text(content: "Text Message"))
-           let event = createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
+        // given
+        let message = GenericMessage(content: Text(content: "Text Message"))
+        let event = createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
-           // when
-           let contentType = Sut(event: event, conversation: groupConversation, in: syncMOC)
+        // when
+        let contentType = Sut(event: event, conversation: groupConversation, in: syncMOC)
 
-           // then
-           XCTAssertEqual(contentType, .text("Text Message", isMention: false, isReply: false))
-       }
+        // then
+        XCTAssertEqual(contentType, .text("Text Message", isMention: false, isReply: false))
+    }
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheAudioMessage() {
         // given

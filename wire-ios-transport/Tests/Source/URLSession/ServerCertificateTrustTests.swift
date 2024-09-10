@@ -18,9 +18,9 @@
 
 /* 
  To export a certificate in ascii PEM format, run:
- 
+
  openssl s_client -connect wire.com:443 -showcerts
- 
+
  */
 
 import Foundation

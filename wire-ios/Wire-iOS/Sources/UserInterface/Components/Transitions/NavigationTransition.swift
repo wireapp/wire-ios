@@ -34,10 +34,10 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard let fromView = transitionContext.fromView,
-            let toView = transitionContext.toView,
-            let fromViewController = transitionContext.fromViewController,
-            let toViewController = transitionContext.toViewController else {
-                return
+              let toView = transitionContext.toView,
+              let fromViewController = transitionContext.fromViewController,
+              let toViewController = transitionContext.toViewController else {
+            return
         }
 
         let containerView = transitionContext.containerView
@@ -72,14 +72,14 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
         containerView.layoutIfNeeded()
 
         UIView.animate(easing: .easeOutExpo,
-                          duration: transitionDuration(using: transitionContext),
-                          animations: {
-            fromView.transform = fromViewEndTransform
-            toView.transform = .identity
-        }, completion: { _ in
-            fromView.transform = .identity
-            transitionContext.completeTransition(true)
-        })
+                       duration: transitionDuration(using: transitionContext),
+                       animations: {
+                           fromView.transform = fromViewEndTransform
+                           toView.transform = .identity
+                       }, completion: { _ in
+                           fromView.transform = .identity
+                           transitionContext.completeTransition(true)
+                       })
     }
 
     private var rightToLeft: Bool {

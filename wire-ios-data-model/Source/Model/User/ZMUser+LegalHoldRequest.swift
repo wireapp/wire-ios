@@ -101,7 +101,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     /// The ID of the legal hold client.
     public var clientIdentifier: String {
-            return client.id
+        return client.id
     }
 
     /// The last prekey for the legal hold client.

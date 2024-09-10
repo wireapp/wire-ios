@@ -41,8 +41,8 @@ class StylableButton: UIButton, Stylable {
 
     private func setBorder(for style: ButtonStyle) {
         guard style.highlightedStateColors.border != nil ||
-                style.normalStateColors.border != nil ||
-                style.selectedStateColors?.border != nil else { return }
+            style.normalStateColors.border != nil ||
+            style.selectedStateColors?.border != nil else { return }
         let normalStateColor = style.normalStateColors.border?.cgColor ?? UIColor.clear.cgColor
         let highlightedStateColor = style.highlightedStateColors.border?.cgColor ?? UIColor.clear.cgColor
         let selectedStateColor = style.selectedStateColors?.border.cgColor ?? UIColor.clear.cgColor

@@ -25,7 +25,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
-       return traitEnvironment.traitCollection.horizontalSizeClass
+        return traitEnvironment.traitCollection.horizontalSizeClass
     }
 
     private var contentViewWidthRegular: NSLayoutConstraint!
@@ -102,7 +102,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     func toggleConstraints() {
         userInterfaceSizeClass(self).toggle(compactConstraints: [contentViewWidthCompact],
-               regularConstraints: [contentViewWidthRegular])
+                                            regularConstraints: [contentViewWidthRegular])
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

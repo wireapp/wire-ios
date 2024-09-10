@@ -57,18 +57,18 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
         try helper.migrateStoreToCurrentVersion(sourceVersion: sourceVersion,
                                                 preMigrationAction: { context in
 
-            for _ in 1...count {
-                // object with no remoteIdentifier
-                _ = T.insertNewObject(in: context)
-            }
-            try context.save()
+                                                    for _ in 1...count {
+                                                        // object with no remoteIdentifier
+                                                        _ = T.insertNewObject(in: context)
+                                                    }
+                                                    try context.save()
 
-        }, postMigrationAction: { context in
-            try context.performAndWait {
-                let request = NSFetchRequest<NSManagedObject>(entityName: T.entityName())
-                let result = try context.fetch(request)
-                XCTAssertNotEqual(result.count, count)
-            }
-        }, for: self)
+                                                }, postMigrationAction: { context in
+                                                    try context.performAndWait {
+                                                        let request = NSFetchRequest<NSManagedObject>(entityName: T.entityName())
+                                                        let result = try context.fetch(request)
+                                                        XCTAssertNotEqual(result.count, count)
+                                                    }
+                                                }, for: self)
     }
 }

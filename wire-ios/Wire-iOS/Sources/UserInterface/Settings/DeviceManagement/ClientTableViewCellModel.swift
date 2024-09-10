@@ -47,8 +47,8 @@ struct ClientTableViewCellModel {
          shouldSetType: Bool = true) {
         if shouldSetType {
             title = userClient.deviceClass == .legalHold ?
-            L10n.Localizable.Device.Class.legalhold :
-            (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
+                L10n.Localizable.Device.Class.legalhold :
+                (userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription.capitalized)
         } else {
             title = userClient.model ?? ""
         }

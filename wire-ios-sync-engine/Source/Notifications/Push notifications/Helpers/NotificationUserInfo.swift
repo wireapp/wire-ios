@@ -141,13 +141,13 @@ extension NotificationUserInfo {
 
     static func == (lhs: NotificationUserInfo, rhs: NotificationUserInfo) -> Bool {
         return  lhs.requestID == rhs.requestID &&
-                lhs.conversationID == rhs.conversationID &&
-                lhs.conversationName == rhs.conversationName &&
-                lhs.teamName == rhs.teamName &&
-                lhs.messageNonce == rhs.messageNonce &&
-                lhs.senderID == rhs.senderID &&
-                lhs.eventTime == rhs.eventTime &&
-                lhs.selfUserID == rhs.selfUserID
+            lhs.conversationID == rhs.conversationID &&
+            lhs.conversationName == rhs.conversationName &&
+            lhs.teamName == rhs.teamName &&
+            lhs.messageNonce == rhs.messageNonce &&
+            lhs.senderID == rhs.senderID &&
+            lhs.eventTime == rhs.eventTime &&
+            lhs.selfUserID == rhs.selfUserID
     }
 }
 

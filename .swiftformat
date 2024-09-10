@@ -22,7 +22,8 @@
     genericExtensions, \
     hoistAwait, \
     hoistPatternLet, \
-    hoistTry
+    hoistTry, \
+    indent
 
 # Options
 
@@ -36,3 +37,4 @@
 --enumnamespaces always # enumNamespaces
 --extensionacl on-declarations # extensionAccessControl
 --patternlet hoist # hoistPatternLet
+--indent 4 # indent

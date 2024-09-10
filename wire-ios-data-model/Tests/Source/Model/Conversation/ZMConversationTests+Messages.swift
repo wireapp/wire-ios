@@ -333,7 +333,7 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
             // then
             XCTAssertEqual(error as! ZMConversation.AppendMessageError, .fileSharingIsRestricted)
         }
-     }
+    }
 
     func testThatWeCanInsertATextMessageWithImageQuote() {
         // given

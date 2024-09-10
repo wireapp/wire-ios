@@ -39,7 +39,7 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         // new store is located in documents directory
         let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
                                            newStoreURL: FileManager.currentStoreURLForAccount(
-                                            with: UUID(), in: self.sharedContainerDirectoryURL))
+                                               with: UUID(), in: self.sharedContainerDirectoryURL))
 
         // then
         XCTAssertEqual(sut.previousStoreLocation, FileManager.storeURL(in: .applicationSupportDirectory))
@@ -55,7 +55,7 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         // new store is located in documents directory
         let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
                                            newStoreURL: FileManager.currentStoreURLForAccount(
-                                            with: UUID(), in: self.sharedContainerDirectoryURL))
+                                               with: UUID(), in: self.sharedContainerDirectoryURL))
 
         // then
         XCTAssertNotNil(sut.previousStoreLocation)
@@ -65,7 +65,7 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         // given new store is located in documents directory
         let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
                                            newStoreURL: FileManager.currentStoreURLForAccount(
-                                            with: UUID(), in: self.sharedContainerDirectoryURL))
+                                               with: UUID(), in: self.sharedContainerDirectoryURL))
 
         // then
         XCTAssertNil(sut.previousStoreLocation)
@@ -79,8 +79,8 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         // new store is also located in caches directory
         let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
                                            newStoreURL: FileManager.currentStoreURLForAccount(
-                                            with: accountId,
-                                            in: self.sharedContainerDirectoryURL))
+                                               with: accountId,
+                                               in: self.sharedContainerDirectoryURL))
 
         // then
         XCTAssertNil(sut.previousStoreLocation)

@@ -81,8 +81,8 @@ final class SearchResultLabel: UILabel, Copyable {
     func configure(with text: String, queries: [String]) {
         guard let font = self.font,
               let color = self.textColor else {
-                self.attributedText = .none
-                return
+            self.attributedText = .none
+            return
         }
 
         self.resultText = text
@@ -119,8 +119,8 @@ final class SearchResultLabel: UILabel, Copyable {
 
     private func updateText() {
         guard let text = self.resultText else {
-                self.attributedText = .none
-                return
+            self.attributedText = .none
+            return
         }
         self.configure(with: text, queries: self.queries)
     }

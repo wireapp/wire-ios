@@ -37,14 +37,14 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 }
 
 extension GroupDetailsReceiptOptionsCell: ConversationOptionsConfigurable {
     func configure(with conversation: GroupDetailsConversationType) {
-         isOn = conversation.hasReadReceiptsEnabled
+        isOn = conversation.hasReadReceiptsEnabled
     }
 }

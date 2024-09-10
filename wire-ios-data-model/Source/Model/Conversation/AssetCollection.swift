@@ -93,7 +93,7 @@ public class AssetCollection: NSObject, ZMCollection {
         syncMOC.performGroupedBlock { [weak self] in
             guard let self, !self.tornDown else { return }
             guard let conversation = self.conversation,
-                let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
+                  let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
             }
 

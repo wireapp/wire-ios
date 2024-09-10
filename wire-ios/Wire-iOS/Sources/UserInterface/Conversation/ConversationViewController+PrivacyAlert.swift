@@ -91,8 +91,8 @@ extension ConversationViewController {
 
         let names = degradedUsers.compactMap(\.name).joined(separator: ", ")
         let title = degradedUsers.count <= 1
-                    ? DegradationReasonMessage.singular(names)
-                    : DegradationReasonMessage.plural(names)
+            ? DegradationReasonMessage.singular(names)
+            : DegradationReasonMessage.plural(names)
         let message = L10n.Localizable.Meta.Degraded.dialogMessage
 
         let actions: [PrivacyAlertAction] = [.verifyDevices, .sendAnyway, .cancel]

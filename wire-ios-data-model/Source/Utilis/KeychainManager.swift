@@ -143,9 +143,9 @@ public enum KeychainManager {
 
     private static var isRunningOnSimulator: Bool {
         #if targetEnvironment(simulator)
-        return true
+            return true
         #else
-        return false
+            return false
         #endif
     }
 }

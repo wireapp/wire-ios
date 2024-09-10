@@ -42,8 +42,8 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         clientMessage.visibleInConversation = conversation
 
         let data = [
-                "content": name,
-                "nonce": nonce.transportString()
+            "content": name,
+            "nonce": nonce.transportString()
         ]
 
         let payload = payloadForMessage(in: conversation, type: EventConversationAdd, data: data)

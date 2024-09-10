@@ -104,8 +104,8 @@ class MockServicesTests: MockTransportSessionTests {
         let serviceId = UUID().transportString()
         let providerId = UUID().transportString()
         _ = sut.insertService(name: "Normal Service",
-                                  identifier: serviceId,
-                                  provider: providerId)
+                              identifier: serviceId,
+                              provider: providerId)
         // when
         let request = ZMTransportRequest(getFromPath: "/providers/\(providerId)/services/\(serviceId)", apiVersion: APIVersion.v0.rawValue)
         let response = sut.processServicesProvidersRequest(request)
@@ -124,8 +124,8 @@ class MockServicesTests: MockTransportSessionTests {
         let serviceId = UUID().transportString()
         let providerId = UUID().transportString()
         let service = sut.insertService(name: "Normal Service",
-                                  identifier: serviceId,
-                                  provider: providerId)
+                                        identifier: serviceId,
+                                        provider: providerId)
 
         service.providerName = "Provider"
         service.providerEmail = "provider@provider.org"

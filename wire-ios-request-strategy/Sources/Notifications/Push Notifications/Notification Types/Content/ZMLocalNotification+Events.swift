@@ -97,7 +97,7 @@ private class EventNotificationBuilder: NotificationBuilder {
             }
 
             if let timeStamp = event.timestamp,
-                let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
+               let lastRead = conversation.lastReadServerTimeStamp, lastRead.compare(timeStamp) != .orderedAscending {
                 // don't show notifications that have already been read
                 return false
             }
@@ -291,8 +291,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
 
     override func shouldCreateNotification() -> Bool {
         if let conversation,
-            let senderUUID = event.senderUUID,
-            conversation.isMessageSilenced(message, senderID: senderUUID) {
+           let senderUUID = event.senderUUID,
+           conversation.isMessageSilenced(message, senderID: senderUUID) {
             Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")
             return false
         }
@@ -301,8 +301,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         }
 
         if let timeStamp = event.timestamp,
-            let lastRead = conversation?.lastReadServerTimeStamp,
-            lastRead.compare(timeStamp) != .orderedAscending {
+           let lastRead = conversation?.lastReadServerTimeStamp,
+           lastRead.compare(timeStamp) != .orderedAscending {
             return false
         }
         return true
@@ -345,6 +345,6 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
         default:
             break
         }
-         return super.shouldCreateNotification()
+        return super.shouldCreateNotification()
     }
 }

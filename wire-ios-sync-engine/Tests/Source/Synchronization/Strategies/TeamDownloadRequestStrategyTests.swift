@@ -548,6 +548,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-       syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
+        syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
 }

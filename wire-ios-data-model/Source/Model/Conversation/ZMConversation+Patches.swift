@@ -128,7 +128,7 @@ extension ZMConversation {
                               ZMConversationType.group.rawValue))
 
         guard let conversations = moc.fetchOrAssert(request: groupConversationsFetch) as? [ZMConversation] else {
-                fatal("fetchOrAssert failed")
+            fatal("fetchOrAssert failed")
         }
 
         conversations.forEach {
@@ -149,7 +149,7 @@ extension ZMConversation {
         let request = ZMConversation.sortedFetchRequest()
 
         guard let conversations = moc.fetchOrAssert(request: request) as? [ZMConversation] else {
-                fatal("fetchOrAssert failed")
+            fatal("fetchOrAssert failed")
         }
 
         conversations.forEach { convo in
@@ -167,7 +167,7 @@ extension ZMConversation {
         let conversationsToFetch = ZMConversation.fetchRequest()
 
         guard let conversations = moc.fetchOrAssert(request: conversationsToFetch) as? [ZMConversation] else {
-                fatal("fetchOrAssert failed")
+            fatal("fetchOrAssert failed")
         }
 
         conversations.forEach {

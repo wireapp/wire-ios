@@ -147,7 +147,7 @@ class TextView: UITextView {
         zmLog.debug("types available: \(pasteboard.types)")
 
         if pasteboard.hasImages,
-            let image = UIPasteboard.general.mediaAsset() {
+           let image = UIPasteboard.general.mediaAsset() {
             informalTextViewDelegate?.textView(self, hasImageToPaste: image)
         } else if pasteboard.hasStrings {
             super.paste(sender)

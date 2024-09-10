@@ -79,8 +79,8 @@ final class ZMProgressView: UIView {
 
     fileprivate func updateProgress(_ animated: Bool) {
         guard self.progress.isNormal,
-                self.bounds.width != 0,
-                self.bounds.height != 0 else {
+              self.bounds.width != 0,
+              self.bounds.height != 0 else {
             return
         }
 

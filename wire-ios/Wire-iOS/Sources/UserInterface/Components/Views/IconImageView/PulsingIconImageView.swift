@@ -58,7 +58,7 @@ class PulsingIconImageView: IconImageView {
             options: [.repeat, .autoreverse, .curveEaseInOut],
             animations: {
                 self.alpha = 0.2
-        })
+            })
     }
 
     func stopPulsing() {

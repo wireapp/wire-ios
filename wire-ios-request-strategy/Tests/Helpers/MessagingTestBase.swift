@@ -278,7 +278,7 @@ extension MessagingTestBase {
                                   for client: UserClient,
                                   line: UInt = #line,
                                   file: StaticString = #file
-        ) -> GenericMessage? {
+    ) -> GenericMessage? {
         guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
             return nil

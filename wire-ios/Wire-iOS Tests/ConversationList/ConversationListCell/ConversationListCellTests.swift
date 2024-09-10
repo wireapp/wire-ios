@@ -25,9 +25,9 @@ import XCTest
 // MARK: - MockConversation
 
 private final class MockConversation: MockStableRandomParticipantsConversation,
-                                      ConversationStatusProvider,
-                                      TypingStatusProvider,
-                                      VoiceChannelProvider {
+    ConversationStatusProvider,
+    TypingStatusProvider,
+    VoiceChannelProvider {
     var voiceChannel: VoiceChannel?
 
     var typingUsers: [UserType] = []

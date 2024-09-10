@@ -25,74 +25,74 @@ import Foundation
 /// It reports the flow events via a `WireLogger` instance using a specified tag.
 
 open class Flow {
-  // MARK: - Properties
+    // MARK: - Properties
 
-  /// The name used to identify the flow in logs.
+    /// The name used to identify the flow in logs.
 
-  public let name: String
+    public let name: String
 
-  private let logger: WireLogger
+    private let logger: WireLogger
 
-  // MARK: - Life cycle
+    // MARK: - Life cycle
 
-  /// Create a new flow.
-  ///
-  /// - Parameters:
-  ///   - tag: The log tag, can be used to group several different flows.
-  ///   - name: The name of the flow, used to group several events of a single flow.
+    /// Create a new flow.
+    ///
+    /// - Parameters:
+    ///   - tag: The log tag, can be used to group several different flows.
+    ///   - name: The name of the flow, used to group several events of a single flow.
 
-  public init(
-    tag: String,
-    name: String
-  ) {
-    self.name = name
-    logger = WireLogger(tag: tag)
-  }
+    public init(
+        tag: String,
+        name: String
+    ) {
+        self.name = name
+        logger = WireLogger(tag: tag)
+    }
 
-  // MARK: - Methods
+    // MARK: - Methods
 
-  /// Report the start of the flow.
+    /// Report the start of the flow.
 
-  public func start() {
-    logger.info(FlowLog(name: name, event: .init(type: .start, description: nil, outcome: .success)))
-  }
+    public func start() {
+        logger.info(FlowLog(name: name, event: .init(type: .start, description: nil, outcome: .success)))
+    }
 
-  /// Report a checkpoint in the flow.
-  ///
-  /// - Parameters:
-  ///   - description: A short single line string describing a point of interest.
+    /// Report a checkpoint in the flow.
+    ///
+    /// - Parameters:
+    ///   - description: A short single line string describing a point of interest.
 
-  public func checkpoint(description: LogConvertible) {
-      logger.info(FlowLog(name: name, event: .init(type: .checkpoint, description: description.logDescription, outcome: .success)))
-  }
+    public func checkpoint(description: LogConvertible) {
+        logger.info(FlowLog(name: name, event: .init(type: .checkpoint, description: description.logDescription, outcome: .success)))
+    }
 
-  /// Report a successful end to the flow.
+    /// Report a successful end to the flow.
 
-  public func succeed() {
-      logger.info(FlowLog(name: name, event: .init(type: .end, description: nil, outcome: .success)))
-  }
+    public func succeed() {
+        logger.info(FlowLog(name: name, event: .init(type: .end, description: nil, outcome: .success)))
+    }
 
-  /// Report a failed end to the flow.
-  ///
-  /// - Parameters:
-  ///   - error: The failure reason.
+    /// Report a failed end to the flow.
+    ///
+    /// - Parameters:
+    ///   - error: The failure reason.
 
-  public func fail(_ error: Error) {
-      logger.error(FlowLog(name: name, event: .init(type: .end, description: String(describing: error), outcome: .failure)))
-  }
+    public func fail(_ error: Error) {
+        logger.error(FlowLog(name: name, event: .init(type: .end, description: String(describing: error), outcome: .failure)))
+    }
 
-  /// Report a failed end to the flow.
-  ///
-  /// - Parameters:
-  ///   - reason: The failure reason.
+    /// Report a failed end to the flow.
+    ///
+    /// - Parameters:
+    ///   - reason: The failure reason.
 
-  public func fail(_ reason: LogConvertible) {
-      logger.error(FlowLog(name: name, event: .init(type: .end, description: reason.logDescription, outcome: .failure)))
-  }
+    public func fail(_ reason: LogConvertible) {
+        logger.error(FlowLog(name: name, event: .init(type: .end, description: reason.logDescription, outcome: .failure)))
+    }
 
-  struct GenericError: Error {
-    let reason: String
-  }
+    struct GenericError: Error {
+        let reason: String
+    }
 }
 
 struct FlowLog: LogConvertible, Encodable {
@@ -112,22 +112,22 @@ struct FlowLog: LogConvertible, Encodable {
 }
 
 extension FlowLog {
-  struct Event: Encodable {
-      enum StepType: String, Encodable {
-          case start
-          case checkpoint
-          case end
-      }
+    struct Event: Encodable {
+        enum StepType: String, Encodable {
+            case start
+            case checkpoint
+            case end
+        }
 
-      enum StepOutcome: String, Encodable {
-          case failure
-          case success
-      }
+        enum StepOutcome: String, Encodable {
+            case failure
+            case success
+        }
 
-      var type: StepType
-      var description: String?
-      var outcome: StepOutcome
-  }
+        var type: StepType
+        var description: String?
+        var outcome: StepOutcome
+    }
 }
 
 extension Flow {

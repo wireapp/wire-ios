@@ -142,7 +142,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
     }
 
-// MARK: - mock conversation
+    // MARK: - mock conversation
 
     func createGroupConversation() -> ZMConversation {
         return ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
@@ -156,7 +156,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 
-// MARK: - mock service user
+    // MARK: - mock service user
 
     func createServiceUser() -> ZMUser {
         let serviceUser = ZMUser.insertNewObject(in: uiMOC)

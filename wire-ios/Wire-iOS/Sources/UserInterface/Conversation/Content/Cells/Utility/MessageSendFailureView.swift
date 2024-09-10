@@ -36,7 +36,7 @@ final class MessageSendFailureView: UIView {
     private let stackView = UIStackView(axis: .vertical)
     private let titleLabel = WebLinkTextView()
     private let retryButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                           insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+                                                  insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     // MARK: - initialization
 
@@ -95,7 +95,7 @@ final class MessageSendFailureView: UIView {
 
 // MARK: - DownStyle extension
 
-    extension DownStyle {
+extension DownStyle {
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()
         style.baseFont = FontSpec.mediumRegularFont.font!

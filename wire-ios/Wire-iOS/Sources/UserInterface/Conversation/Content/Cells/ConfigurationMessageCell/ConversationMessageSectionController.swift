@@ -148,8 +148,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
             ConversationSystemMessageCellDescription.cells(for: message,
-                                                                                     isCollapsed: isCollapsed,
-                                                                                     buttonAction: buttonAction)
+                                                           isCollapsed: isCollapsed,
+                                                           buttonAction: buttonAction)
         } else {
             [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
@@ -206,8 +206,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                                                                                                             state: data.state,
                                                                                                             hasError: data.isExpired,
                                                                                                             buttonAction: {
-                    data.touchAction()
-                }))
+                                                                                                                data.touchAction()
+                                                                                                            }))
                 cells.append(button)
             }
         }

@@ -155,15 +155,15 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         ]
 
         // THEN
-#if targetEnvironment(simulator) && swift(>=5.4)
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("This test is flaky, may be related to sound cloud preview text view?", options: options) {
+        #if targetEnvironment(simulator) && swift(>=5.4)
+            let options = XCTExpectedFailure.Options()
+            options.isStrict = false
+            XCTExpectFailure("This test is flaky, may be related to sound cloud preview text view?", options: options) {
+                verify(message: message, waitForTextViewToLoad: true)
+            }
+        #else
             verify(message: message, waitForTextViewToLoad: true)
-        }
-#else
-        verify(message: message, waitForTextViewToLoad: true)
-#endif
+        #endif
     }
 
     func testSoundCloudSetMediaPreviewAttachment() {

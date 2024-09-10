@@ -28,7 +28,7 @@ final class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
 
-           let knock = GenericMessage(content: Knock.with { $0.hotKnock = false })
+            let knock = GenericMessage(content: Knock.with { $0.hotKnock = false })
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             do {
                 try message.setUnderlyingMessage(knock)

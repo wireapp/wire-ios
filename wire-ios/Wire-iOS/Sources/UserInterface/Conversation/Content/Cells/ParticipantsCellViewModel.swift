@@ -156,7 +156,7 @@ final class ParticipantsCellViewModel {
         textColor: UIColor,
         iconColor: UIColor,
         message: ZMConversationMessage
-        ) {
+    ) {
         self.font = font
         self.largeFont = largeFont
         self.textColor = textColor
@@ -214,7 +214,7 @@ final class ParticipantsCellViewModel {
             case let .started(withName: conversationName?) = action,
             let sender = message.senderUser,
             let formatter = formatter(for: message)
-            else { return nil }
+        else { return nil }
 
         let senderName = name(for: sender).capitalized
         return formatter.heading(senderName: senderName, senderIsSelf: sender.isSelfUser, convName: conversationName)
@@ -224,7 +224,7 @@ final class ParticipantsCellViewModel {
         guard
             let sender = message.senderUser,
             let formatter = formatter(for: message)
-            else { return nil }
+        else { return nil }
 
         let senderName = name(for: sender).capitalized
 

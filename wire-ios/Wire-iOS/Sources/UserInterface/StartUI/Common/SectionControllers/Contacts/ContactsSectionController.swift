@@ -78,8 +78,8 @@ class ContactsSectionController: SearchSectionController {
         if allowsSelection {
             typealias CreateConversation = L10n.Accessibility.CreateConversation
             cell.accessibilityHint = cell.isSelected
-                                    ? CreateConversation.SelectedUser.hint
-                                    : CreateConversation.UnselectedUser.hint
+                ? CreateConversation.SelectedUser.hint
+                : CreateConversation.UnselectedUser.hint
         }
 
         let selected = selection?.users.contains(user) ?? false

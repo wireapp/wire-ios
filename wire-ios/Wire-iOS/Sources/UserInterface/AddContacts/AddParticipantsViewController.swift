@@ -114,7 +114,7 @@ final class AddParticipantsViewController: UIViewController {
     private let confirmButton: IconButton
     private let emptyResultView: EmptySearchResultsView
     private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                                                                      constant: -bottomMargin)
+                                                                                                  constant: -bottomMargin)
     private let backButtonDescriptor = BackButtonDescription()
     private let bottomMargin: CGFloat = 24
 
@@ -284,8 +284,8 @@ final class AddParticipantsViewController: UIViewController {
         guard let searchHeaderView = searchHeaderViewController.view,
               let searchResultsView = searchResultsViewController.view,
               let margin = (searchResultsView as? SearchResultsView)?.accessoryViewMargin else {
-                  return
-              }
+            return
+        }
 
         [
             searchHeaderView,

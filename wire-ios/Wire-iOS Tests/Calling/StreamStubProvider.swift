@@ -28,7 +28,7 @@ final class StreamStubProvider {
         activeSpeakerState: ActiveSpeakerState = .inactive,
         paused: Bool = false) -> Wire.Stream {
         var callParticipantState: CallParticipantState = .connected(videoState: videoState,
-                                                             microphoneState: muted ? .muted : .unmuted)
+                                                                    microphoneState: muted ? .muted : .unmuted)
 
         return Wire.Stream(
             streamId: client,

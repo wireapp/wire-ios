@@ -48,8 +48,8 @@ class ConversationTests_List: ConversationTestsBase {
             let message = GenericMessage(content: Text(content: "Bla bla bla", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
-                                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                                         data: try! message.serializedData())
+                                                        to: self.selfUser.clients.anyObject() as! MockUserClient,
+                                                        data: try! message.serializedData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -120,8 +120,8 @@ class ConversationTests_List: ConversationTestsBase {
         self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText2, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce2)
             self.selfToUser2Conversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
-                                                                         to: toClient,
-                                                                         data: try! message.serializedData())
+                                                              to: toClient,
+                                                              data: try! message.serializedData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -140,8 +140,8 @@ class ConversationTests_List: ConversationTestsBase {
         self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText3, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce3)
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
-                                                                         to: toClient,
-                                                                         data: try! message.serializedData())
+                                                              to: toClient,
+                                                              data: try! message.serializedData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -168,8 +168,8 @@ class ConversationTests_List: ConversationTestsBase {
         self.mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser2Conversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
-                                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                                         data: try! knock.serializedData())
+                                                              to: self.selfUser.clients.anyObject() as! MockUserClient,
+                                                              data: try! knock.serializedData())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -182,8 +182,8 @@ class ConversationTests_List: ConversationTestsBase {
         self.mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
-                                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                                         data: try! knock.serializedData())
+                                                              to: self.selfUser.clients.anyObject() as! MockUserClient,
+                                                              data: try! knock.serializedData())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -217,8 +217,8 @@ class ConversationTests_List: ConversationTestsBase {
         self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
-                                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                                         data: try! message.serializedData())
+                                                              to: self.selfUser.clients.anyObject() as! MockUserClient,
+                                                              data: try! message.serializedData())
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

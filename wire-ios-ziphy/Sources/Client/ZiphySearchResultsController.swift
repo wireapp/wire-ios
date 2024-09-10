@@ -39,7 +39,7 @@ public final class ZiphySearchResultsController {
      * - parameter maxImageSize: The maximum size of result images, in megabytes. Defaults to 3 MB.
      */
 
-     public init(client: ZiphyClient, pageSize: Int, maxImageSize: Int = 3) {
+    public init(client: ZiphyClient, pageSize: Int, maxImageSize: Int = 3) {
         self.client = client
         self.pageSize = pageSize
         self.maxImageSize = maxImageSize * 1024 * 1024

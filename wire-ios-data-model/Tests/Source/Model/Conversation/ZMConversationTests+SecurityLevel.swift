@@ -361,7 +361,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             // then
             XCTAssertEqual(conversation.securityLevel, .secure)
             guard let message = conversation.lastMessage as? ZMSystemMessage,
-                let systemMessageData = message.systemMessageData else {
+                  let systemMessageData = message.systemMessageData else {
                 return XCTFail()
             }
             XCTAssertEqual(systemMessageData.systemMessageType, .conversationIsSecure)

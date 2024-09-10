@@ -105,7 +105,7 @@ extension FederationTerminationManager {
 
     fileprivate func conversationsHosted(on domain: String, withParticipantsOn userDomain: String) -> [ZMConversation] {
         return ZMConversation.groupConversations(hostedOnDomain: domain, in: context)
-                             .filter { $0.hasLocalParticipantsFrom(Set([userDomain])) }
+            .filter { $0.hasLocalParticipantsFrom(Set([userDomain])) }
     }
 
     fileprivate func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
@@ -117,7 +117,7 @@ extension FederationTerminationManager {
 
     fileprivate func conversationsNotHosted(on domains: [String], withParticipantsOn userDomains: [String]) -> [ZMConversation] {
         return ZMConversation.groupConversations(notHostedOnDomains: domains, in: context)
-                             .filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
+            .filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
     }
 }
 

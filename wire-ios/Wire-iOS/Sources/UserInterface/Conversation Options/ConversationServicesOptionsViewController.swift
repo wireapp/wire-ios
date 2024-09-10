@@ -23,9 +23,9 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class ConversationServicesOptionsViewController: UIViewController,
-                                                       UITableViewDelegate,
-                                                       UITableViewDataSource,
-                                                       ConversationServicesOptionsViewModelDelegate {
+    UITableViewDelegate,
+    UITableViewDataSource,
+    ConversationServicesOptionsViewModelDelegate {
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
 

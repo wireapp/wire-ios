@@ -34,9 +34,9 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
     init(
         userClientAPI: UserClientAPI,
         syncContext: NSManagedObjectContext) {
-            self.userClientAPI = userClientAPI
-            self.syncContext = syncContext
-        }
+        self.userClientAPI = userClientAPI
+        self.syncContext = syncContext
+    }
 
     // MARK: - Public interface
 

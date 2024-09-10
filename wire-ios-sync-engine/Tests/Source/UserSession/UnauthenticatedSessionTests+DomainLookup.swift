@@ -111,7 +111,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
     func testThat404ResponseWithNoMatchingLabelIsError() {
         checkThat(statusCode: 404,
                   isProcessedAs:
-            .failure(DomainLookupError.unknown), payload: nil)
+                  .failure(DomainLookupError.unknown), payload: nil)
     }
 
     func testThat404ResponseWithMatchingLabelIsNotFound() {
@@ -166,7 +166,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
                     resultExpectation.fulfill()
                 }
             default:
-                    break
+                break
             }
         }
 

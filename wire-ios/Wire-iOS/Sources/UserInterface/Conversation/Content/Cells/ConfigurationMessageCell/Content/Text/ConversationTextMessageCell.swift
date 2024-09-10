@@ -20,8 +20,8 @@ import UIKit
 import WireSyncEngine
 
 final class ConversationTextMessageCell: UIView,
-                                         ConversationMessageCell,
-                                         TextViewInteractionDelegate {
+    ConversationMessageCell,
+    TextViewInteractionDelegate {
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool

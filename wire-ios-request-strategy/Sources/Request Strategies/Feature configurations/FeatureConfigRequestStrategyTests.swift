@@ -411,52 +411,52 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 
 private enum MockJSON {
     static let mlsWithDefaultProtocolProteus = Data("""
-        {
-            "type": "feature-config.update",
-            "name": "mls",
-            "data": {
-                "status": "enabled",
-                "config": {
-                    "allowedCipherSuites": [
-                        1
-                    ],
-                    "defaultCipherSuite": 1,
-                    "defaultProtocol": "proteus",
-                    "protocolToggleUsers": [
-                        "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
-                    ],
-                    "supportedProtocols": [
-                        "proteus",
-                        "mls",
-                        "mixed"
-                    ]
-                }
+    {
+        "type": "feature-config.update",
+        "name": "mls",
+        "data": {
+            "status": "enabled",
+            "config": {
+                "allowedCipherSuites": [
+                    1
+                ],
+                "defaultCipherSuite": 1,
+                "defaultProtocol": "proteus",
+                "protocolToggleUsers": [
+                    "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
+                ],
+                "supportedProtocols": [
+                    "proteus",
+                    "mls",
+                    "mixed"
+                ]
             }
         }
-        """.utf8)
+    }
+    """.utf8)
 
     static let mlsWithDefaultProtocolMLS = Data("""
-        {
-            "type": "feature-config.update",
-            "name": "mls",
-            "data": {
-                "status": "enabled",
-                "config": {
-                    "allowedCipherSuites": [
-                        1
-                    ],
-                    "defaultCipherSuite": 1,
-                    "defaultProtocol": "mls",
-                    "protocolToggleUsers": [
-                        "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
-                    ],
-                    "supportedProtocols": [
-                        "proteus",
-                        "mls",
-                        "mixed"
-                    ]
-                }
+    {
+        "type": "feature-config.update",
+        "name": "mls",
+        "data": {
+            "status": "enabled",
+            "config": {
+                "allowedCipherSuites": [
+                    1
+                ],
+                "defaultCipherSuite": 1,
+                "defaultProtocol": "mls",
+                "protocolToggleUsers": [
+                    "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07"
+                ],
+                "supportedProtocols": [
+                    "proteus",
+                    "mls",
+                    "mixed"
+                ]
             }
         }
-        """.utf8)
+    }
+    """.utf8)
 }

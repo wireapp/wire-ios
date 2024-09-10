@@ -46,7 +46,7 @@ struct CreateMLSGroupUseCase {
     }
 
     func invoke(groupID: MLSGroupID) async throws -> MLSCipherSuite {
-       logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
+        logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
         guard let ciphersuite = MLSCipherSuite(rawValue: defaultCipherSuite.rawValue) else {
             throw MLSService.MLSGroupCreationError.invalidCiphersuite

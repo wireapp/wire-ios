@@ -37,9 +37,9 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
     func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-               expectedPath: "/v5/mls/public-keys",
-               expectedMethod: .get,
-               apiVersion: .v5
+            expectedPath: "/v5/mls/public-keys",
+            expectedMethod: .get,
+            apiVersion: .v5
         )
     }
 

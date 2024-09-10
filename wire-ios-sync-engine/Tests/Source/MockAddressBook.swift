@@ -41,7 +41,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
     /// If the block returns false, it will stop enumerating them.
     func enumerateRawContacts(block: @escaping (WireSyncEngine.ContactRecord) -> (Bool)) {
         for contact in self.contacts where !block(contact) {
-                return
+            return
         }
         let infiniteContact = MockAddressBookContact(firstName: "johnny infinite",
                                                      emailAddresses: ["johnny.infinite@example.com"],
@@ -95,7 +95,7 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
         self.localIdentifier = identifier ?? {
             MockAddressBookContact.incrementalLocalIdentifier.increment()
             return "\(MockAddressBookContact.incrementalLocalIdentifier.rawValue)"
-            }()
+        }()
     }
 
     var expectedHashes: [String] {

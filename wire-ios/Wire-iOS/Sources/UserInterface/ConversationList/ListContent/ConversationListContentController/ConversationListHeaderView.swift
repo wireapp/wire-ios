@@ -117,8 +117,8 @@ final class ConversationListHeaderView: UICollectionReusableView {
             typealias ConversationList = L10n.Accessibility.ConversationsList
 
             let state = collapsed
-                        ? ConversationListHeader.CollapsedButton.description
-                        : ConversationListHeader.ExpandedButton.description
+                ? ConversationListHeader.CollapsedButton.description
+                : ConversationListHeader.ExpandedButton.description
             guard folderBadge != 0 else {
                 return state
             }
@@ -158,7 +158,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
         UIView.animate(withDuration: 0.2, animations: {
             self.collapsed = newCollaped
-             })
+        })
         tapHandler?(newCollaped)
     }
 

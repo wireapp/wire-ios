@@ -37,7 +37,7 @@ public class MockProteusProvider: ProteusProviding {
     public func perform<T>(
         withProteusService proteusServiceBlock: (ProteusServiceInterface) throws -> T,
         withKeyStore keyStoreBlock: (UserClientKeysStore) throws -> T)
-    rethrows -> T {
+        rethrows -> T {
         if useProteusService {
             return try proteusServiceBlock(mockProteusService)
         } else {
@@ -48,7 +48,7 @@ public class MockProteusProvider: ProteusProviding {
     public func performAsync<T>(
         withProteusService proteusServiceBlock: (ProteusServiceInterface) async throws -> T,
         withKeyStore keyStoreBlock: (UserClientKeysStore) async throws -> T)
-    async rethrows -> T {
+        async rethrows -> T {
         if useProteusService {
             return try await proteusServiceBlock(mockProteusService)
         } else {

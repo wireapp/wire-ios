@@ -37,7 +37,7 @@ import Foundation
         let previousMembers = oldMembers[membersKey] as? Set<MockMember> ?? Set()
 
         guard    currentMembers.contains(where: { $0.user == selfUser })
-              || previousMembers.contains(where: { $0.user == selfUser }) else { return [] }
+            || previousMembers.contains(where: { $0.user == selfUser }) else { return [] }
 
         let removedMembersEvents = previousMembers
             .subtracting(currentMembers)

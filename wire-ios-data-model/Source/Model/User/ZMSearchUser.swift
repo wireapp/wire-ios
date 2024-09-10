@@ -552,8 +552,8 @@ public class ZMSearchUser: NSObject, UserType {
             let uuidString = payload["id"] as? String,
             let remoteIdentifier = UUID(uuidString: uuidString),
             let name = payload["name"] as? String else {
-                return nil
-            }
+            return nil
+        }
 
         let teamIdentifier = (payload["team"] as? String).flatMap { UUID(uuidString: $0) }
         let handle = payload["handle"] as? String

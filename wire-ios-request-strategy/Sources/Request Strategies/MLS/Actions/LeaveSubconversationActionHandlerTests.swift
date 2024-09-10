@@ -110,7 +110,7 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
             .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
             .failure(status: 400, error: .invalidParameters),
             .failure(status: 403, error: .accessDenied, label:
-                    "access-denied"),
+                "access-denied"),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
             .failure(status: 409, error: .mlsStaleMessage, label: "mls-stale-message"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")

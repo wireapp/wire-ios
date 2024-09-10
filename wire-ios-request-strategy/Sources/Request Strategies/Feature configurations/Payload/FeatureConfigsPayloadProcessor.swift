@@ -211,7 +211,7 @@ struct FeatureConfigsPayloadProcessor {
         switch featureName {
         case .conferenceCalling:
             if let apiVersion = BackendInfo.apiVersion,
-                apiVersion >= .v6 {
+               apiVersion >= .v6 {
                 let response = try decoder.decode(FeatureStatusWithConfig<Feature.ConferenceCalling.Config>.self, from: data)
                 repository.storeConferenceCalling(.init(status: response.status, config: response.config))
             } else {

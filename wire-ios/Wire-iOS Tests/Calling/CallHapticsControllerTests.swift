@@ -246,8 +246,8 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         // when
         generator.reset()
         sut.updateParticipants([
-           first,
-           second
+            first,
+            second
         ])
 
         // then

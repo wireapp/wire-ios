@@ -58,19 +58,19 @@ public class V2Asset: NSObject, ZMImageMessageData {
             }
 
             if let mediumEncryptedKey,
-                let key,
-                let digest,
-                let data = cache.decryptData(
-                    key: mediumEncryptedKey,
-                    encryptionKey: key,
-                    sha256Digest: digest
-                ) {
+               let key,
+               let digest,
+               let data = cache.decryptData(
+                   key: mediumEncryptedKey,
+                   encryptionKey: key,
+                   sha256Digest: digest
+               ) {
                 completionHandler(data)
             } else if let mediumKey,
-                let data = cache.assetData(mediumKey) {
+                      let data = cache.assetData(mediumKey) {
                 completionHandler(data)
             } else if let originalKey,
-                let data = cache.assetData(originalKey) {
+                      let data = cache.assetData(originalKey) {
                 completionHandler(data)
             } else {
                 completionHandler(nil)
@@ -179,8 +179,8 @@ extension V2Asset: AssetProxyType {
         }
 
         return cache.hasEncryptedMediumImageData(for: assetClientMessage)
-        || cache.hasMediumImageData(for: assetClientMessage)
-        || cache.hasOriginalImageData(for: assetClientMessage)
+            || cache.hasMediumImageData(for: assetClientMessage)
+            || cache.hasOriginalImageData(for: assetClientMessage)
     }
 
     public var hasDownloadedPreview: Bool {

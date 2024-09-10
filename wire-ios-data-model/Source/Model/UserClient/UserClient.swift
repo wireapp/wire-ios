@@ -609,8 +609,8 @@ extension UserClient {
     ) async -> Bool {
         return await proteusProviding.performAsync { proteusService in
             await establishSession(through: proteusService,
-                             sessionId: sessionId,
-                             preKey: preKey
+                                   sessionId: sessionId,
+                                   preKey: preKey
             )
         } withKeyStore: { keystore in
             establishSession(through: keystore,

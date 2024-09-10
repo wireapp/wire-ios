@@ -58,7 +58,7 @@ extension ZMConversation {
         // TODO: [WPB-5730] move this method to a useCase
 
         guard let apiVersion = BackendInfo.apiVersion,
-                let managedObjectContext else {
+              let managedObjectContext else {
             return completion(.failure(WirelessLinkError.unknown))
         }
 

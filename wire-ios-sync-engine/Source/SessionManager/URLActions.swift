@@ -56,7 +56,7 @@ public enum URLAction: Equatable {
              .openConversation,
              .openUserProfile,
              .connectBot:
-             return true
+            return true
         default: return false
         }
     }
@@ -81,16 +81,16 @@ extension URLComponents {
 extension URLAction {
     public init?(url: URL, validatingIn defaults: UserDefaults = .shared()) throws {
         guard let components = URLComponents(string: url.absoluteString),
-            let host = components.host,
-            let scheme = components.scheme,
+              let host = components.host,
+              let scheme = components.scheme,
               scheme.starts(with: "wire") == true || scheme == Bundle.main.bundleIdentifier else {
-                return nil
+            return nil
         }
 
         switch host {
         case URL.DeepLink.user:
             if let lastComponent = url.pathComponents.last,
-                let uuid = UUID(uuidString: lastComponent) {
+               let uuid = UUID(uuidString: lastComponent) {
                 self = .openUserProfile(id: uuid)
             } else {
                 throw DeepLinkRequestError.invalidUserLink
@@ -108,7 +108,7 @@ extension URLAction {
 
         case URL.DeepLink.conversation:
             if let lastComponent = url.pathComponents.last,
-                let uuid = UUID(uuidString: lastComponent) {
+               let uuid = UUID(uuidString: lastComponent) {
                 self = .openConversation(id: uuid)
             } else {
                 throw DeepLinkRequestError.invalidConversationLink
@@ -123,10 +123,10 @@ extension URLAction {
 
         case URL.Host.connect:
             guard let service = components.query(for: URLQueryItem.Key.Connect.service),
-                let provider = components.query(for: URLQueryItem.Key.Connect.provider),
-                let serviceUUID = UUID(uuidString: service),
-                let providerUUID = UUID(uuidString: provider) else {
-                    throw DeepLinkRequestError.malformedLink
+                  let provider = components.query(for: URLQueryItem.Key.Connect.provider),
+                  let serviceUUID = UUID(uuidString: service),
+                  let providerUUID = UUID(uuidString: provider) else {
+                throw DeepLinkRequestError.malformedLink
             }
             self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
 

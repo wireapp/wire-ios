@@ -20,19 +20,19 @@ import WireAnalytics
 import WireSystem
 
 #if canImport(WireDatadog)
-import WireDatadog
+    import WireDatadog
 #endif
 
 extension WireAnalytics {
     /// Namespace for Datadog analytics.
     public enum Datadog {
         private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
-#if canImport(WireDatadog)
-            let builder = WireDatadogBuilder()
-            return builder.build()
-#else
-            return nil
-#endif
+            #if canImport(WireDatadog)
+                let builder = WireDatadogBuilder()
+                return builder.build()
+            #else
+                return nil
+            #endif
         }()
 
         /// SHA256 string to identify current device across app and extensions.

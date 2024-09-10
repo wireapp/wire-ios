@@ -34,10 +34,10 @@ extension MockTransportSession {
 
         let payload: NSDictionary
 
-        // development versions was added to the endpoint payload
-        // at a later date, so we need to be able to mock both
-        // the old and new response payloads.
-        = if developmentAPIVersions.isEmpty {
+            // development versions was added to the endpoint payload
+            // at a later date, so we need to be able to mock both
+            // the old and new response payloads.
+            = if developmentAPIVersions.isEmpty {
             [
                 "supported": supportedAPIVersions,
                 "domain": domain,

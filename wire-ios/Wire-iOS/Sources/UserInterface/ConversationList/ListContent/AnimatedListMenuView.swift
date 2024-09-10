@@ -107,7 +107,7 @@ final class AnimatedListMenuView: UIView {
         let leftDotLeftConstraint = leftDotView.leftAnchor.constraint(equalTo: self.leftAnchor)
 
         dotViews.forEach {$0.widthAnchor.constraint(equalToConstant: dotWidth).isActive = true
-                          $0.heightAnchor.constraint(equalToConstant: dotWidth).isActive = true
+            $0.heightAnchor.constraint(equalToConstant: dotWidth).isActive = true
         }
 
         let subviewConstraints: [NSLayoutConstraint] = [

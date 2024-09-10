@@ -91,7 +91,7 @@ struct WireCallCenterActiveSpeakersNotification: SelfPostingNotification {
 public protocol WireCallCenterCallStateObserver: AnyObject {
     /**
      Called when the callState changes in a conversation
- 
+
      - parameter callState: updated state
      - parameter conversation: where the call is ongoing
      - parameter caller: user which initiated the call
@@ -147,7 +147,7 @@ public struct WireCallCenterCallErrorNotification: SelfPostingNotification {
 public protocol WireCallCenterCallParticipantObserver: AnyObject {
     /**
      Called when a participant of the call joins / leaves or when their call state changes
- 
+
      - parameter conversation: where the call is ongoing
      - parameter particpants: updated list of call participants
      */
@@ -381,8 +381,8 @@ extension WireCallCenterV3 {
     internal class func addMuteStateObserver(observer: MuteStateObserver, context: NSManagedObjectContext) -> Any {
         return NotificationInContext.addObserver(name: WireCallCenterMutedNotification.notificationName, context: context.notificationContext, object: nil, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[WireCallCenterMutedNotification.userInfoKey] as? WireCallCenterMutedNotification,
-                let observer
-                else { return }
+                  let observer
+            else { return }
             observer.callCenterDidChange(muted: note.muted)
         }
     }
@@ -392,7 +392,7 @@ extension WireCallCenterV3 {
             name: WireCallCenterActiveSpeakersNotification.notificationName,
             context: context.notificationContext) { [weak observer] _ in
                 observer?.callCenterDidChangeActiveSpeakers()
-        }
+            }
     }
 
     /// Add an observer for conference calling unavailable events.

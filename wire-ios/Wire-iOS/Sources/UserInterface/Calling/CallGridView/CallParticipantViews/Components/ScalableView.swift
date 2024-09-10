@@ -75,8 +75,8 @@ final class ScalableView: UIView, UIGestureRecognizerDelegate {
     func handlePinchGesture(_ gestureRecognizer: UIPinchGestureRecognizer) {
         guard
             gestureRecognizer.state == .began
-                || gestureRecognizer.state == .changed
-                || gestureRecognizer.state == .ended
+            || gestureRecognizer.state == .changed
+            || gestureRecognizer.state == .ended
         else { return }
 
         guard let view = gestureRecognizer.view else { return }

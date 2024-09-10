@@ -32,7 +32,7 @@ final class KeyboardBlockObserver: NSObject {
         init?(_ note: Notification, kind: Kind) {
             guard let info = note.userInfo else { return nil }
             guard let endFrameValue = (info[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-                let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return nil }
+                  let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return nil }
             frame = endFrameValue
             animationDuration = duration
             self.kind = kind
@@ -42,8 +42,8 @@ final class KeyboardBlockObserver: NSObject {
                 if endFrameValue.height == 0 ||
                     endFrameValue.minY >= UIScreen.main.bounds.maxY ||
                     (endFrameValue == beginFrameValue &&
-                     beginFrameValue.maxY > UIScreen.main.bounds.maxY &&
-                     beginFrameValue.origin.y == UIScreen.main.bounds.maxY) {
+                        beginFrameValue.maxY > UIScreen.main.bounds.maxY &&
+                        beginFrameValue.origin.y == UIScreen.main.bounds.maxY) {
                     isKeyboardCollapsed = true
                 } else {
                     isKeyboardCollapsed = beginFrameValue.height > endFrameValue.height && kind == .hide

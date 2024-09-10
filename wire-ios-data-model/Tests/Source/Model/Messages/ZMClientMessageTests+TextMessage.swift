@@ -193,8 +193,8 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         // when
         let expectation = self.customExpectation(description: "Notified")
         let token: Any? = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
-                                          context: self.uiMOC.notificationContext,
-                                          object: clientMessage.objectID) { _ in
+                                                            context: self.uiMOC.notificationContext,
+                                                            object: clientMessage.objectID) { _ in
             expectation.fulfill()
         }
 

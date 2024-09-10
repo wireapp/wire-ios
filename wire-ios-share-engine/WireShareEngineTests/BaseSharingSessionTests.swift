@@ -70,9 +70,9 @@ class BaseTest: ZMTBaseTest {
         authenticationStatus = FakeAuthenticationStatus()
         cachesDirectory = try! FileManager.default.url(
             for: .cachesDirectory,
-               in: .userDomainMask,
-               appropriateFor: nil,
-               create: true
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
         )
 
         let account = Account(

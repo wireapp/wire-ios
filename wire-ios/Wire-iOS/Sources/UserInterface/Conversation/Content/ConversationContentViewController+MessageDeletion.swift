@@ -103,7 +103,7 @@ final class DeletionDialogPresenter: NSObject {
      Presents a `UIAlertController` of type action sheet with the options to delete a message everywhere, locally
      or to cancel. An optional completion block can be provided to get notified when an action has been selected.
      The delete everywhere option is only shown if this action is allowed for the input message.
-     
+
      - parameter message: The message for which the alert controller should be shown.
      - parameter source: The source view used for a potential popover presentation of the dialog.
      - parameter completion: A completion closure which will be invoked with `true` if a deletion occured and `false` otherwise.

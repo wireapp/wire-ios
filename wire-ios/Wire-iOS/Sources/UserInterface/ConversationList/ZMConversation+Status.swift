@@ -214,7 +214,7 @@ final class ContentSizeCategoryUpdater {
         self.observer = NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification,
                                                                object: nil,
                                                                queue: nil) { [weak self] _ in
-                                                                self?.callback()
+            self?.callback()
         }
     }
 }
@@ -344,8 +344,8 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
         })
 
         let text: String = if let textItem,
-           case let .text(data) = textItem,
-           let messageText = data.messageText {
+                              case let .text(data) = textItem,
+                              let messageText = data.messageText {
             messageText
         } else {
             ""
@@ -510,17 +510,17 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
             return resultString && type(of: self).regularStyle
         } else {
             guard let message = status.messagesRequiringAttention.reversed().first(where: {
-                    if $0.senderUser != nil,
-                       let type = StatusMessageType(message: $0),
-                       matchedTypesDescriptions[type] != nil {
-                        return true
-                    } else {
-                        return false
-                    }
-                }),
-                    let sender = message.senderUser,
-                    let type = StatusMessageType(message: message),
-                    let localizationKey = matchedTypesDescriptions[type] else {
+                if $0.senderUser != nil,
+                   let type = StatusMessageType(message: $0),
+                   matchedTypesDescriptions[type] != nil {
+                    return true
+                } else {
+                    return false
+                }
+            }),
+                let sender = message.senderUser,
+                let type = StatusMessageType(message: message),
+                let localizationKey = matchedTypesDescriptions[type] else {
                 return "" && Swift.type(of: self).regularStyle
             }
 
@@ -551,7 +551,7 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
 
             if status.isGroup, !message.isEphemeral {
                 return (((sender.name ?? "") + ": ") && Swift.type(of: self).emphasisStyle) +
-                        (messageDescription && Swift.type(of: self).regularStyle)
+                    (messageDescription && Swift.type(of: self).regularStyle)
             } else {
                 return messageDescription && Swift.type(of: self).regularStyle
             }
@@ -566,14 +566,14 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
         }
 
         guard let message = status.messagesRequiringAttention.reversed().first(where: {
-                if $0.senderUser != nil,
-                   let type = StatusMessageType(message: $0),
-                   matchedTypesDescriptions[type] != nil {
-                    return true
-                } else {
-                    return false
-                }
-            }),
+            if $0.senderUser != nil,
+               let type = StatusMessageType(message: $0),
+               matchedTypesDescriptions[type] != nil {
+                return true
+            } else {
+                return false
+            }
+        }),
             let type = StatusMessageType(message: message) else {
             return nil
         }
@@ -667,7 +667,7 @@ final class StartConversationMatcher: TypedConversationStatusMatcher {
         guard let message = status.messagesRequiringAttention.first(where: { StatusMessageType(message: $0) == .newConversation }),
               let sender = message.senderUser,
               !sender.isSelfUser
-            else {
+        else {
             return .none
         }
 
@@ -704,7 +704,7 @@ final class UsernameMatcher: ConversationStatusMatcher {
 
 /*
  Matchers priorities (highest first):
- 
+
  (SecurityAlert)
  (SelfUserLeftMatcher)
  (Blocked)

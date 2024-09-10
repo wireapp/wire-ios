@@ -186,19 +186,19 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         session = nil
     }
 
-   private func createSession(accountID: UUID) throws -> NotificationSession {
-      let session = try NotificationSession(
-          applicationGroupIdentifier: appGroupID,
-          accountIdentifier: accountID,
-          environment: BackendEnvironment.shared,
-          analytics: nil,
-          sharedUserDefaults: .applicationGroup,
-          minTLSVersion: SecurityFlags.minTLSVersion.stringValue
-      )
+    private func createSession(accountID: UUID) throws -> NotificationSession {
+        let session = try NotificationSession(
+            applicationGroupIdentifier: appGroupID,
+            accountIdentifier: accountID,
+            environment: BackendEnvironment.shared,
+            analytics: nil,
+            sharedUserDefaults: .applicationGroup,
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+        )
 
-      session.delegate = self
-      return session
-  }
+        session.delegate = self
+        return session
+    }
 
     private func totalUnreadCount(_ unreadConversationCount: Int) -> NSNumber? {
         guard let session else {

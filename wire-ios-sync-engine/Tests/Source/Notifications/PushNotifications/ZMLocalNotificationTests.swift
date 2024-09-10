@@ -116,17 +116,17 @@ class ZMLocalNotificationTests: MessagingTest {
         mutedMessages: MutedMessageTypes,
         otherParticipants: [ZMUser]) -> ZMConversation {
         var conversation: ZMConversation!
-            conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-            conversation.remoteIdentifier = remoteID
-            conversation.userDefinedName = name
-            conversation.conversationType = type
-            conversation.mutedMessageTypes = mutedMessages
-            conversation.lastServerTimeStamp = Date()
-            conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
-            conversation?.addParticipantsAndUpdateConversationState(
-                users: Set(otherParticipants + [selfUser]),
-                role: nil)
-            self.uiMOC.saveOrRollback()
+        conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = remoteID
+        conversation.userDefinedName = name
+        conversation.conversationType = type
+        conversation.mutedMessageTypes = mutedMessages
+        conversation.lastServerTimeStamp = Date()
+        conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
+        conversation?.addParticipantsAndUpdateConversationState(
+            users: Set(otherParticipants + [selfUser]),
+            role: nil)
+        self.uiMOC.saveOrRollback()
         return conversation
     }
 
@@ -207,13 +207,13 @@ class ZMLocalNotificationTests: MessagingTest {
     }
 
     func createMessageTimerUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = UUID.create(), timer: Int64 = 31536000, timestamp: Date = Date()) -> ZMUpdateEvent {
-       let payload: [String: Any] = [
-        "from": senderID.transportString(),
-        "conversation": conversationID.transportString(),
-        "time": timestamp.transportString(),
-        "data": ["message_timer": timer],
-        "type": "conversation.message-timer-update"
-       ]
+        let payload: [String: Any] = [
+            "from": senderID.transportString(),
+            "conversation": conversationID.transportString(),
+            "time": timestamp.transportString(),
+            "data": ["message_timer": timer],
+            "type": "conversation.message-timer-update"
+        ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 }

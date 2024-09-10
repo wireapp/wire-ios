@@ -187,18 +187,18 @@ final class ConversationListItemView: UIView {
             return
         }
 
-            var fraction: CGFloat = if bounds.size.width != 0 {
-                1 - otherItem.visualDrawerOffset / bounds.size.width
-            } else {
-                1
-            }
+        var fraction: CGFloat = if bounds.size.width != 0 {
+            1 - otherItem.visualDrawerOffset / bounds.size.width
+        } else {
+            1
+        }
 
-            if fraction > 1.0 {
-                fraction = 1.0
-            } else if fraction < 0.0 {
-                fraction = 0.0
-            }
-            alpha = 0.35 + fraction * 0.65
+        if fraction > 1.0 {
+            fraction = 1.0
+        } else if fraction < 0.0 {
+            fraction = 0.0
+        }
+        alpha = 0.35 + fraction * 0.65
     }
 
     private func addMediaPlaybackManagerPlayerStateObserver() {
@@ -212,7 +212,7 @@ final class ConversationListItemView: UIView {
     private func mediaPlayerStateChanged(_ notification: Notification?) {
         DispatchQueue.main.async(execute: {
             if let conversation = self.conversation as? ZMConversation,
-                AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+               AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
                 self.update(for: conversation)
             }
         })
@@ -257,8 +257,8 @@ final class ConversationListItemView: UIView {
         let title: NSAttributedString?
 
         if let selfUser = SelfUser.provider?.providedSelfUser,
-            selfUser.isTeamMember,
-            let connectedUser = conversation.connectedUserType {
+           selfUser.isTeamMember,
+           let connectedUser = conversation.connectedUserType {
             title = AvailabilityStringBuilder.titleForUser(
                 name: connectedUser.name ?? "",
                 availability: connectedUser.availability,
@@ -285,8 +285,8 @@ final class ConversationListItemView: UIView {
 
         // Configure the accessory
         let statusIcon: ConversationStatusIcon? = if let player = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer,
-            let message = player.sourceMessage,
-            message.conversationLike === conversation {
+                                                     let message = player.sourceMessage,
+                                                     message.conversationLike === conversation {
             .playingMedia
         } else {
             status.icon(for: conversation)

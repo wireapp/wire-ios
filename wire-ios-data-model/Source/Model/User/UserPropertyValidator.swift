@@ -48,9 +48,9 @@ public struct UserPropertyValidator: UserPropertyValidating {
     public func validate(password: inout String?) throws -> Bool {
         var mutablePassword: Any? = password
         let result = try StringLengthValidator.validateStringValue(&mutablePassword,
-                                                                 minimumStringLength: 8,
-                                                                 maximumStringLength: 120,
-                                                                 maximumByteLength: UInt32.max)
+                                                                   minimumStringLength: 8,
+                                                                   maximumStringLength: 120,
+                                                                   maximumByteLength: UInt32.max)
         password = mutablePassword as? String
         return result
     }
@@ -59,8 +59,8 @@ public struct UserPropertyValidator: UserPropertyValidating {
 
     public func validate(phoneNumber: inout String?) throws -> Bool {
         guard var mutableNumber: Any? = phoneNumber,
-            phoneNumber?.count ?? 0 >= 1 else {
-                return false
+              phoneNumber?.count ?? 0 >= 1 else {
+            return false
         }
 
         let result = try ZMPhoneNumberValidator.validateValue(&mutableNumber)

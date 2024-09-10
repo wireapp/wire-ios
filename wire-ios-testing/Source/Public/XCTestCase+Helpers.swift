@@ -162,24 +162,24 @@ extension XCTestCase {
         message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) " },
         file: StaticString = #filePath,
         line: UInt = #line) {
-            switch result {
-            case .success:
-                break
-            case let .failure(error):
-                XCTFail(message(error), file: file, line: line)
-            }
+        switch result {
+        case .success:
+            break
+        case let .failure(error):
+            XCTFail(message(error), file: file, line: line)
         }
+    }
 
     public func assertFailure<Value, Failure: Equatable>(
         result: Result<Value, Failure>,
         expectedFailure: Failure,
         file: StaticString = #filePath,
         line: UInt = #line) {
-            switch result {
-            case .success:
-                XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)
-            case let .failure(failure):
-                XCTAssertEqual(expectedFailure, failure, file: file, line: line)
-            }
+        switch result {
+        case .success:
+            XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)
+        case let .failure(failure):
+            XCTAssertEqual(expectedFailure, failure, file: file, line: line)
         }
+    }
 }

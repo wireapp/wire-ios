@@ -159,9 +159,9 @@ extension ParticipantRole: SideEffectSource {
         }
 
         let changes = byUpdateAffectedKeys(for: conversation,
-                                               knownKeys: knownKeys,
-                                               keyStore: keyStore,
-                                               keyMapping: keyMapping)
+                                           knownKeys: knownKeys,
+                                           keyStore: keyStore,
+                                           keyMapping: keyMapping)
 
         return changes
     }

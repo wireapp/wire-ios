@@ -63,7 +63,7 @@ final class MockMessageFactory {
             message.senderUser = user
         }
 
-            mockZMConversation?.activeParticipants = [message.senderUser as! MockUserType]
+        mockZMConversation?.activeParticipants = [message.senderUser as! MockUserType]
 
         return message
     }

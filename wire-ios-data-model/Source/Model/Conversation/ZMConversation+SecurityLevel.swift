@@ -119,7 +119,7 @@ extension ZMConversation {
     /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
     @objc(increaseSecurityLevelIfNeededAfterTrustingClients:)
     public func increaseSecurityLevelIfNeededAfterTrusting(clients: Set<UserClient>) {
-         applySecurityChanges(cause: .verifiedClients(clients))
+        applySecurityChanges(cause: .verifiedClients(clients))
     }
 
     /// Should be called when client is deleted.
@@ -281,10 +281,10 @@ extension ZMConversation {
         let clients = client.flatMap { [$0] } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
         let systemMessage = appendSystemMessage(type: type,
-                                               sender: sender,
-                                               users: nil,
-                                               clients: clients,
-                                               timestamp: serverTimestamp)
+                                                sender: sender,
+                                                users: nil,
+                                                clients: clients,
+                                                timestamp: serverTimestamp)
 
         systemMessage.senderClientID = client?.remoteIdentifier
         systemMessage.decryptionErrorCode = NSNumber(value: errorCode)
@@ -454,8 +454,8 @@ extension ZMConversation {
     fileprivate func expireAllPendingMessagesBecauseOfSecurityLevelDegradation() {
         for message in undeliveredMessages {
             if let clientMessage = message as? ZMClientMessage,
-                let genericMessage = clientMessage.underlyingMessage,
-                genericMessage.hasConfirmation {
+               let genericMessage = clientMessage.underlyingMessage,
+               genericMessage.hasConfirmation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
@@ -514,9 +514,9 @@ extension ZMConversation {
             }
 
             guard let systemMessage = msg as? ZMSystemMessage,
-                systemMessage.systemMessageType == .newClient,
-                systemMessage.sender == selfUser else {
-                    return
+                  systemMessage.systemMessageType == .newClient,
+                  systemMessage.sender == selfUser else {
+                return
             }
 
             if systemMessage.clients.contains(selfClient) {

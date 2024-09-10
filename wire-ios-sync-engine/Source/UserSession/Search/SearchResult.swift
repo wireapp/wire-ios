@@ -145,8 +145,8 @@ extension SearchResult {
 
         teamMembers = teamMembers.filter({
             $0.teamRole != .partner ||
-            $0.teamCreatedBy == selfUser.remoteIdentifier ||
-            isHandleQuery && $0.handle == queryWithoutAtSymbol
+                $0.teamCreatedBy == selfUser.remoteIdentifier ||
+                isHandleQuery && $0.handle == queryWithoutAtSymbol
         })
     }
 

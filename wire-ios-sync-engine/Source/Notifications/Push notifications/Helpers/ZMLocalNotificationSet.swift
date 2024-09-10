@@ -50,8 +50,8 @@ import WireTransport
     /// Unarchives all previously created notifications that haven't been cancelled yet
     func unarchiveOldNotifications() {
         guard let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
-        let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
-            else { return }
+              let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
+        else { return }
         self.oldNotifications = unarchivedNotes
     }
 
@@ -105,7 +105,7 @@ import WireTransport
             guard
                 userInfo.conversationID == conversation.remoteIdentifier,
                 let requestID = userInfo.requestID?.uuidString
-                else { return true }
+            else { return true }
 
             notificationCenter.removeAllNotifications(withIdentifiers: [requestID])
             return false

@@ -86,9 +86,9 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
         self.conversation = conversation
         super.init()
         self.observer = NotificationCenter.default.addObserver(forName: contextWasMergedNotification, object: nil, queue: nil) { [weak self] _ in
-                                                DispatchQueue.main.async {
-                                                    self?.processSaveNotification()
-                                                }
+            DispatchQueue.main.async {
+                self?.processSaveNotification()
+            }
         }
     }
 

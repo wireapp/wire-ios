@@ -32,34 +32,34 @@ extension ConversationInputBarViewController {
 
         // Alert actions  for debugging
         #if targetEnvironment(simulator)
-        let plistHandler: ((UIAlertAction) -> Void) = { _ in
-            self.userSession.enqueue({
-                let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-                guard let basePath = paths.first,
-                    let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist") else { return }
+            let plistHandler: ((UIAlertAction) -> Void) = { _ in
+                self.userSession.enqueue({
+                    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+                    guard let basePath = paths.first,
+                          let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist") else { return }
 
-                let destLocation = URL(fileURLWithPath: basePath).appendingPathComponent(sourceLocation.lastPathComponent)
+                    let destLocation = URL(fileURLWithPath: basePath).appendingPathComponent(sourceLocation.lastPathComponent)
 
-                try? FileManager.default.copyItem(at: sourceLocation, to: destLocation)
-                self.uploadFile(at: destLocation)
-            })
-        }
+                    try? FileManager.default.copyItem(at: sourceLocation, to: destLocation)
+                    self.uploadFile(at: destLocation)
+                })
+            }
 
-        alertController.addAction(UIAlertAction(title: "CountryCodes.plist",
-                                           style: .default,
-                                           handler: plistHandler))
+            alertController.addAction(UIAlertAction(title: "CountryCodes.plist",
+                                                    style: .default,
+                                                    handler: plistHandler))
 
-        let size = UInt(ZMUserSession.shared()?.maxUploadFileSize ?? 0) + 1
-        let humanReadableSize = size / 1024 / 1024
-        alertController.addAction(uploadTestAlertAction(size: size, title: "Big file (size = \(humanReadableSize) MB)", fileName: "BigFile.bin"))
+            let size = UInt(ZMUserSession.shared()?.maxUploadFileSize ?? 0) + 1
+            let humanReadableSize = size / 1024 / 1024
+            alertController.addAction(uploadTestAlertAction(size: size, title: "Big file (size = \(humanReadableSize) MB)", fileName: "BigFile.bin"))
 
-        alertController.addAction(uploadTestAlertAction(size: 20971520, title: "20 MB file", fileName: "20MBFile.bin"))
-        alertController.addAction(uploadTestAlertAction(size: 41943040, title: "40 MB file", fileName: "40MBFile.bin"))
+            alertController.addAction(uploadTestAlertAction(size: 20971520, title: "20 MB file", fileName: "20MBFile.bin"))
+            alertController.addAction(uploadTestAlertAction(size: 41943040, title: "40 MB file", fileName: "40MBFile.bin"))
 
-        if ZMUser.selfUser()?.hasTeam == true {
-            alertController.addAction(uploadTestAlertAction(size: 83886080, title: "80 MB file", fileName: "80MBFile.bin"))
-            alertController.addAction(uploadTestAlertAction(size: 125829120, title: "120 MB file", fileName: "120MBFile.bin"))
-        }
+            if ZMUser.selfUser()?.hasTeam == true {
+                alertController.addAction(uploadTestAlertAction(size: 83886080, title: "80 MB file", fileName: "80MBFile.bin"))
+                alertController.addAction(uploadTestAlertAction(size: 125829120, title: "120 MB file", fileName: "120MBFile.bin"))
+            }
         #endif
 
         let uploadVideoHandler: ((UIAlertAction) -> Void) = { [self] _ in
@@ -71,18 +71,18 @@ extension ConversationInputBarViewController {
         }
 
         alertController.addAction(UIAlertAction(icon: .movie,
-                                           title: L10n.Localizable.Content.File.uploadVideo,
-                                           tintColor: view.tintColor,
-                                           handler: uploadVideoHandler))
+                                                title: L10n.Localizable.Content.File.uploadVideo,
+                                                tintColor: view.tintColor,
+                                                handler: uploadVideoHandler))
 
         let takeVideoHandler: ((UIAlertAction) -> Void) = { _ in
             self.recordVideo()
         }
 
         alertController.addAction(UIAlertAction(icon: .cameraShutter,
-                                           title: L10n.Localizable.Content.File.takeVideo,
-                                           tintColor: view.tintColor,
-                                           handler: takeVideoHandler))
+                                                title: L10n.Localizable.Content.File.takeVideo,
+                                                tintColor: view.tintColor,
+                                                handler: takeVideoHandler))
 
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
 
@@ -144,19 +144,19 @@ extension ConversationInputBarViewController {
     }
 
     #if targetEnvironment(simulator)
-    private func uploadTestAlertAction(size: UInt, title: String, fileName: String) -> UIAlertAction {
-        return UIAlertAction(title: title, style: .default, handler: {_ in
-            self.userSession.enqueue({
-                let randomData = Data.secureRandomData(length: UInt(size))
+        private func uploadTestAlertAction(size: UInt, title: String, fileName: String) -> UIAlertAction {
+            return UIAlertAction(title: title, style: .default, handler: {_ in
+                self.userSession.enqueue({
+                    let randomData = Data.secureRandomData(length: UInt(size))
 
-                if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-                    let fileURL = dir.appendingPathComponent(fileName)
-                    try? randomData.write(to: fileURL)
+                    if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                        let fileURL = dir.appendingPathComponent(fileName)
+                        try? randomData.write(to: fileURL)
 
-                    self.uploadFile(at: fileURL)
-                }
+                        self.uploadFile(at: fileURL)
+                    }
+                })
             })
-        })
-    }
+        }
     #endif
 }

@@ -19,7 +19,7 @@ import Foundation
 
 /**
  Available settings
- 
+
  - ChatHeadsDisabled:      Disable chat heads in conversation and self profile
  - DisableMarkdown:        Disable markdown formatter for messages
  - DarkMode:               Dark mode for conversation

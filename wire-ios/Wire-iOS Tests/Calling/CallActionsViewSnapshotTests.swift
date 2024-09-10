@@ -97,7 +97,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
 
     func testCallActionsView_Compact() {
         // GIVEN
-       createSut(for: .compact)
+        createSut(for: .compact)
 
         let input = CallActionsViewInput(
             allowPresentationModeUpdates: true,

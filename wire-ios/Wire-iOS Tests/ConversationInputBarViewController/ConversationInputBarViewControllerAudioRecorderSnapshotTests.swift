@@ -104,34 +104,34 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         // GIVEN & THEN
         verifyInAllPhoneWidths(matching: sut.view,
                                configuration: { _ in
-            // WHEN
-            self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
-            self.sut.audioRecordViewController?.updateTimeLabel(1234)
-            self.sut.showAudioRecordViewController(animated: false)
-        })
+                                   // WHEN
+                                   self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
+                                   self.sut.audioRecordViewController?.updateTimeLabel(1234)
+                                   self.sut.showAudioRecordViewController(animated: false)
+                               })
     }
 
     func testAudioRecorderTouchChanged() {
         // GIVEN & THEN
         verifyInAllPhoneWidths(matching: sut.view,
                                configuration: { _ in
-            // WHEN
-            self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
-            self.sut.showAudioRecordViewController(animated: false)
-            self.longPressChanged()
-        })
+                                   // WHEN
+                                   self.sut.createAudioViewController(audioRecorder: MockAudioRecorder(), userSession: self.userSession)
+                                   self.sut.showAudioRecordViewController(animated: false)
+                                   self.longPressChanged()
+                               })
     }
 
     func testAudioRecorderTouchEnded() {
         // GIVEN & THEN
         verifyInAllPhoneWidths(matching: sut.view,
                                configuration: { _ in
-            // WHEN
-            let audioRecorder = MockAudioRecorder()
-            self.sut.createAudioViewController(audioRecorder: audioRecorder, userSession: self.userSession)
-            self.sut.showAudioRecordViewController(animated: false)
-            audioRecorder.state = .recording(start: 0)
-            self.longPressEnded()
-        })
+                                   // WHEN
+                                   let audioRecorder = MockAudioRecorder()
+                                   self.sut.createAudioViewController(audioRecorder: audioRecorder, userSession: self.userSession)
+                                   self.sut.showAudioRecordViewController(animated: false)
+                                   audioRecorder.state = .recording(start: 0)
+                                   self.longPressEnded()
+                               })
     }
 }

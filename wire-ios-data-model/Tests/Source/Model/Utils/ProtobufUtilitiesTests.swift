@@ -193,10 +193,10 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token, domain) = ("id", "token", "domain")
         let previewAsset = WireProtos.Asset.Preview(
-        size: 128,
-        mimeType: "image/jpg",
-        remoteData: WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
-        imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420))
+            size: 128,
+            mimeType: "image/jpg",
+            remoteData: WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
+            imageMetadata: WireProtos.Asset.ImageMetaData(width: 123, height: 420))
 
         var sut = GenericMessage(
             content: WireProtos.Asset(original: nil, preview: previewAsset),
@@ -333,5 +333,5 @@ extension ProtobufUtilitiesTests {
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.assetDomain, domain)
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.otrKey, otr)
         XCTAssertEqual(sut.ephemeral.asset.preview.remote.sha256, sha)
-     }
+    }
 }

@@ -68,8 +68,8 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] note in
             guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
-                else { return }
+                  let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
+            else { return }
 
             observer.participantRoleDidChange(changeInfo)
         }

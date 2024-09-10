@@ -56,8 +56,8 @@ extension SettingsCellDescriptorType {
 
 func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) -> Bool {
     if let leftID = left.identifier,
-        let rightID = right.identifier {
-            return leftID == rightID
+       let rightID = right.identifier {
+        return leftID == rightID
     } else {
         return left == right
     }
@@ -273,7 +273,7 @@ extension SettingsPropertyName {
             return Settings.Vbr.title
         case .disableLinkPreviews:
             return Settings.PrivacySecurity.DisableLinkPreviews.title
-            // personal information - Analytics
+        // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title
         case .receiveNewsAndOffers:

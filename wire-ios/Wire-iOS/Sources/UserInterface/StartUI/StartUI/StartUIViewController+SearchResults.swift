@@ -27,15 +27,15 @@ extension StartUIViewController {
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
 
         guard let indexPath,
-            let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
+              let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
 
         profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), userSession: userSession, onDismiss: {
             if self.isIPadRegular() {
                 let indexPaths = self.searchResultsViewController.searchResultsView.collectionView.indexPathsForVisibleItems
                 self.searchResultsViewController.searchResultsView.collectionView.reloadItems(at: indexPaths)
             } else if self.profilePresenter.keyboardPersistedAfterOpeningProfile {
-                    _ = self.searchHeaderViewController.tokenField.becomeFirstResponder()
-                    self.profilePresenter.keyboardPersistedAfterOpeningProfile = false
+                _ = self.searchHeaderViewController.tokenField.becomeFirstResponder()
+                self.profilePresenter.keyboardPersistedAfterOpeningProfile = false
             }
         })
     }

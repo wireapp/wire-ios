@@ -21,8 +21,8 @@ import WireDesign
 import WireSyncEngine
 
 final class OtherUserClientsListViewController: UIViewController,
-                                                UICollectionViewDelegateFlowLayout,
-                                                UICollectionViewDataSource {
+    UICollectionViewDelegateFlowLayout,
+    UICollectionViewDataSource {
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
     private var clients: [UserClientType]

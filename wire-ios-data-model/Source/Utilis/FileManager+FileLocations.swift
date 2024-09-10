@@ -51,7 +51,7 @@ extension FileManager {
     /// Returns the URL for caches appending the accountIdentifier if specified
     @objc public func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
-                                    .appendingPathComponent("Caches", isDirectory: true)
+            .appendingPathComponent("Caches", isDirectory: true)
         if let accountIdentifier {
             return url.appendingPathComponent("\(type(of: self).cachesFolderPrefix)-\(accountIdentifier.uuidString)", isDirectory: true)
         }

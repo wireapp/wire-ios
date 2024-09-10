@@ -214,13 +214,13 @@ public class Feature: ZMManagedObject {
             needsToNotifyUser = oldConfig.enforcedTimeoutSeconds != newConfig.enforcedTimeoutSeconds
 
         case .conferenceCalling,
-                .fileSharing,
-                .conversationGuestLinks,
-                .classifiedDomains,
-                .digitalSignature,
-                .mls,
-                .mlsMigration,
-                .e2ei:
+             .fileSharing,
+             .conversationGuestLinks,
+             .classifiedDomains,
+             .digitalSignature,
+             .mls,
+             .mlsMigration,
+             .e2ei:
             break
         }
     }

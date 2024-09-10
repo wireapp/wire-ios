@@ -25,15 +25,15 @@ import XCTest
 final class MockShareViewControllerConversation: SwiftMockConversation {}
 
 extension MockShareViewControllerConversation: ShareDestination {
-	var showsGuestIcon: Bool {
-		return false
-	}
+    var showsGuestIcon: Bool {
+        return false
+    }
 }
 
 extension MockShareViewControllerConversation: StableRandomParticipantsProvider {
-	var stableRandomParticipants: [UserType] {
-		return sortedOtherParticipants
-	}
+    var stableRandomParticipants: [UserType] {
+        return sortedOtherParticipants
+    }
 }
 
 // TODO: [WPB-10223] Fix the snapshots

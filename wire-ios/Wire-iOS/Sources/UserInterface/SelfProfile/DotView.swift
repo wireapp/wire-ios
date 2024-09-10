@@ -61,7 +61,7 @@ final class DotView: UIView {
         createConstraints()
 
         if let userSession = ZMUserSession.shared(),
-            let user {
+           let user {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
@@ -106,10 +106,10 @@ final class DotView: UIView {
 extension DotView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.trustLevelChanged ||
-              changeInfo.clientsChanged ||
-              changeInfo.accentColorValueChanged ||
-              changeInfo.readReceiptsEnabledChanged ||
-              changeInfo.readReceiptsEnabledChangedRemotelyChanged else { return }
+            changeInfo.clientsChanged ||
+            changeInfo.accentColorValueChanged ||
+            changeInfo.readReceiptsEnabledChanged ||
+            changeInfo.readReceiptsEnabledChangedRemotelyChanged else { return }
 
         centerView.hostedLayer.fillColor = UIColor.accent().cgColor
 

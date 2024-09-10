@@ -207,8 +207,8 @@ extension ZMConversation {
 
     private func checkIfArchivedStatusChanged(addedSelfUser: Bool) {
         if addedSelfUser,
-            self.mutedStatus == MutedMessageOptionValue.none.rawValue,
-            self.isArchived {
+           self.mutedStatus == MutedMessageOptionValue.none.rawValue,
+           self.isArchived {
             self.isArchived = false
         }
     }

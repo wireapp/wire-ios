@@ -43,8 +43,8 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
     override var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-            ? SemanticColors.View.backgroundUserCellHightLighted
-            : SemanticColors.View.backgroundUserCell
+                ? SemanticColors.View.backgroundUserCellHightLighted
+                : SemanticColors.View.backgroundUserCell
         }
     }
 }

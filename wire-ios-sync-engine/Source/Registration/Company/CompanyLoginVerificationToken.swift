@@ -18,8 +18,8 @@
 
 import Foundation
 
- /// A struct containing a token to validate login requests
- /// received via url schemes.
+/// A struct containing a token to validate login requests
+/// received via url schemes.
 public struct CompanyLoginVerificationToken: Codable, Equatable {
     /// The unique identifier of the token.
     let uuid: UUID

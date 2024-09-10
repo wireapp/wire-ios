@@ -20,8 +20,8 @@
 import XCTest
 
 final class MockUserRight: UserRightInterface {
-	static var isPermitted = true
-	static func selfUserIsPermitted(to permission: UserRight.Permission) -> Bool {
-		return isPermitted
-	}
+    static var isPermitted = true
+    static func selfUserIsPermitted(to permission: UserRight.Permission) -> Bool {
+        return isPermitted
+    }
 }

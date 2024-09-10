@@ -58,9 +58,9 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         }
 
         let title = ConversationCannotDecryptSystemMessageCellDescription.makeAttributedString(
-                systemMessage: data,
-                sender: sender
-            )
+            systemMessage: data,
+            sender: sender
+        )
 
         configuration = View.Configuration(
             icon: icon,

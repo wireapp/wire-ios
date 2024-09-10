@@ -90,9 +90,9 @@ public final class SignatureStatus: NSObject {
     }
 
     public func retrieveSignature() {
-         guard case .waitingForCodeVerification = state else { return }
-         state = .waitingForSignature
-         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        guard case .waitingForCodeVerification = state else { return }
+        state = .waitingForSignature
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
     public func didReceiveConsentURL(_ url: URL?) {
@@ -163,7 +163,7 @@ public final class SignatureStatus: NSObject {
 
 extension SignatureStatus {
     public static func addObserver(_ observer: SignatureObserver,
-                            context: NSManagedObjectContext) -> Any {
+                                   context: NSManagedObjectContext) -> Any {
         return NotificationInContext.addObserver(name: DigitalSignatureNotification.notificationName,
                                                  context: context.notificationContext,
                                                  queue: .main) { [weak observer] note in

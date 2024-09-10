@@ -21,10 +21,10 @@ import Foundation
 extension ZMImagePreprocessingTrackerTests {
     @objc
     func setUpLinkPreviewMessage() {
-    linkPreviewMessage1 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
-    linkPreviewMessage2 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
-    linkPreviewMessage3 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
-    linkPreviewMessageExcludedByPredicate = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
+        linkPreviewMessage1 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
+        linkPreviewMessage2 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
+        linkPreviewMessage3 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
+        linkPreviewMessageExcludedByPredicate = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)
     }
 
     @objc

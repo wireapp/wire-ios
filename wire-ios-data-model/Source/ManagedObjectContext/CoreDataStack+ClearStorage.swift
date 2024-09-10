@@ -26,21 +26,21 @@ extension CoreDataStack {
         var locations = [.cachesDirectory,
                          .applicationSupportDirectory,
                          .libraryDirectory].compactMap {
-                            FileManager.default.urls(for: $0, in: .userDomainMask).first
-                         }
+            FileManager.default.urls(for: $0, in: .userDomainMask).first
+        }
 
         locations.append(applicationContainer)
 
         if let bundleIdentifier = Bundle.main.bundleIdentifier {
             locations.append(applicationContainer
-                                .appendingPathComponent(bundleIdentifier))
+                .appendingPathComponent(bundleIdentifier))
             locations.append(applicationContainer
-                                .appendingPathComponent(bundleIdentifier)
-                                .appendingPathComponent(account.userIdentifier.uuidString))
+                .appendingPathComponent(bundleIdentifier)
+                .appendingPathComponent(account.userIdentifier.uuidString))
             locations.append(applicationContainer
-                                .appendingPathComponent(bundleIdentifier)
-                                .appendingPathComponent(account.userIdentifier.uuidString)
-                                .appendingPathComponent("store"))
+                .appendingPathComponent(bundleIdentifier)
+                .appendingPathComponent(account.userIdentifier.uuidString)
+                .appendingPathComponent("store"))
         }
 
         return locations

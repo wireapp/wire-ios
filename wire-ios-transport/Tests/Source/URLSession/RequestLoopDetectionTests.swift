@@ -134,7 +134,7 @@ final class RequestLoopDetectionTests: XCTestCase {
         (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
             let path = paths[$0 % paths.count] // this will insert them in interleaved order
             sut.recordRequest(path: path, contentHint: hash, date: nil)
-         }
+        }
 
         // then
         XCTAssertEqual(triggeredURLs, paths)

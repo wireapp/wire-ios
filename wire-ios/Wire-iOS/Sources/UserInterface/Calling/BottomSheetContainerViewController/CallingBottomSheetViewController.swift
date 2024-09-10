@@ -168,12 +168,12 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
                    options: .transitionCrossDissolve,
                    animations: nil,
                    completion: { _ in
-            self.addContentViewController(contentViewController: toViewController)
-            NSLayoutConstraint.activate(
-                [self.headerBar.bottomAnchor.constraint(equalTo: toViewController.view.topAnchor).withPriority(.required)])
-            fromViewController.removeFromParent()
-            self.view.bringSubviewToFront(self.bottomSheetViewController.view)
-        })
+                       self.addContentViewController(contentViewController: toViewController)
+                       NSLayoutConstraint.activate(
+                           [self.headerBar.bottomAnchor.constraint(equalTo: toViewController.view.topAnchor).withPriority(.required)])
+                       fromViewController.removeFromParent()
+                       self.view.bringSubviewToFront(self.bottomSheetViewController.view)
+                   })
     }
 
     func updateVisibleVoiceChannelViewController() {
@@ -292,6 +292,6 @@ extension VoiceChannel {
 
 private final class PassThroughOpaqueView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-            return false
+        return false
     }
 }

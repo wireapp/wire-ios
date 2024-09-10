@@ -265,10 +265,10 @@ final class StoreUpdateEventTests: MessagingTestBase {
             let event1 = self.createNewConversationEvent(for: conversation)
 
             _ = try StoredUpdateEvent.create(from: event1,
-                                                                  eventId: XCTUnwrap(event1.uuid?.uuidString.lowercased()),
-                                                                  eventHash: 0,
-                                                                  index: 1,
-                                                                  context: eventMOC)
+                                             eventId: XCTUnwrap(event1.uuid?.uuidString.lowercased()),
+                                             eventHash: 0,
+                                             index: 1,
+                                             context: eventMOC)
             // WHEN
             let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
                 event1,

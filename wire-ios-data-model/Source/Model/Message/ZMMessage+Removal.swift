@@ -35,8 +35,8 @@ extension ZMMessage {
                 return false
             }
             if genericMessage.hasConfirmation,
-                genericMessage.confirmation.hasFirstMessageID,
-                genericMessage.confirmation.firstMessageID == self.nonce?.transportString() {
+               genericMessage.confirmation.hasFirstMessageID,
+               genericMessage.confirmation.firstMessageID == self.nonce?.transportString() {
                 return true
             }
             return false

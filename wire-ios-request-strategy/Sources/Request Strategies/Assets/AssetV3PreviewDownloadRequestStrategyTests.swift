@@ -85,10 +85,10 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         let (assetId, token, domain) = (UUID.create().transportString(), UUID.create().transportString(), UUID.create().transportString())
 
         let remote = WireProtos.Asset.RemoteData(withOTRKey: otr,
-                                                sha256: sha,
-                                                assetId: assetId,
-                                                assetToken: token,
-                                                assetDomain: domain)
+                                                 sha256: sha,
+                                                 assetId: assetId,
+                                                 assetToken: token,
+                                                 assetDomain: domain)
         let preview = WireProtos.Asset.Preview.with {
             $0.size = 512
             $0.mimeType = "image/jpg"

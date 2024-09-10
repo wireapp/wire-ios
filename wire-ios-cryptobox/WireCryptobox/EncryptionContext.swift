@@ -25,23 +25,23 @@ class _CBox: PointerWrapper {}
  A cryptobox context that manages access to sessions, allowing the
  same sessions to be accessed by multuple processes in a safe way.
  Inside a process, only a single session context should be used.
- 
+
  - note:
  In order to be used by multiple processes (see iOS extensions), cryptobox needs to lock the 
  directory with the key material as it works on it, so that no other process will touch it.
- 
+
  This class introduces the concept of *encryption context*, similar to the concept of context in Core Data.
  A context must be used only from a single thread. Multiple contexts can refer to the same 
  directory on disk, locking the directory when needed so that they don't interfere with 
  each other.
- 
+
  Conflicts and race conditions are avoided by loading from disk and saving to disk 
  every time a context it used, and locking around these operations. 
  This is slow, but extensions are not supposed to need to access 
  cryptobox very frequently.
- 
+
  The intended use of this class is:
- 
+
  1. Create context once, reuse the same context to avoid having to create/load identity 
     (which never changes once created, so no race condition other than during creation)
  2. use `perform:` with a block to create sessions, prekeys, encrypt and decrypt. 
@@ -130,7 +130,7 @@ extension EncryptionContext {
                     generatingContext: self,
                     encryptionPayloadCache: cache,
                     extensiveLoggingSessions: extensiveLoggingSessions
-            )
+                )
         }
         performCount += 1
         block(self.currentSessionsDirectory!)
@@ -151,7 +151,7 @@ extension EncryptionContext {
                     generatingContext: self,
                     encryptionPayloadCache: cache,
                     extensiveLoggingSessions: extensiveLoggingSessions
-            )
+                )
         }
         performCount += 1
         await block(self.currentSessionsDirectory!)

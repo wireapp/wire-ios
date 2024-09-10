@@ -75,34 +75,34 @@ final class TextSearchResultCell: UITableViewCell {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
-          userImageView.heightAnchor.constraint(equalToConstant: 24),
-          userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
-          userImageView.centerXAnchor.constraint(equalTo: userImageViewContainer.centerXAnchor),
-          userImageView.centerYAnchor.constraint(equalTo: userImageViewContainer.centerYAnchor),
+            userImageView.heightAnchor.constraint(equalToConstant: 24),
+            userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
+            userImageView.centerXAnchor.constraint(equalTo: userImageViewContainer.centerXAnchor),
+            userImageView.centerYAnchor.constraint(equalTo: userImageViewContainer.centerYAnchor),
 
-          userImageViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-          userImageViewContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
-          userImageViewContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          userImageViewContainer.widthAnchor.constraint(equalToConstant: 48),
+            userImageViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            userImageViewContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
+            userImageViewContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            userImageViewContainer.widthAnchor.constraint(equalToConstant: 48),
 
-          messageTextLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-          messageTextLabel.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
-          messageTextLabel.trailingAnchor.constraint(equalTo: resultCountView.leadingAnchor, constant: -16),
-          messageTextLabel.bottomAnchor.constraint(equalTo: footerView.topAnchor, constant: -4),
+            messageTextLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            messageTextLabel.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
+            messageTextLabel.trailingAnchor.constraint(equalTo: resultCountView.leadingAnchor, constant: -16),
+            messageTextLabel.bottomAnchor.constraint(equalTo: footerView.topAnchor, constant: -4),
 
-          footerView.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
-          footerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-          footerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            footerView.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
+            footerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            footerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
 
-          resultCountView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-          resultCountView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-          resultCountView.heightAnchor.constraint(equalToConstant: 20),
-          resultCountView.widthAnchor.constraint(greaterThanOrEqualToConstant: 24),
+            resultCountView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            resultCountView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            resultCountView.heightAnchor.constraint(equalToConstant: 20),
+            resultCountView.widthAnchor.constraint(greaterThanOrEqualToConstant: 24),
 
-          separatorView.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
-          separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-          separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-          separatorView.heightAnchor.constraint(equalToConstant: .hairline)
+            separatorView.leadingAnchor.constraint(equalTo: userImageViewContainer.trailingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            separatorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            separatorView.heightAnchor.constraint(equalToConstant: .hairline)
         ])
     }
 

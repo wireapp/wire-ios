@@ -85,13 +85,13 @@ extension ZMUser {
 
     public static func predicateForConnectedUsers(hostedOnDomain domain: String) -> NSPredicate {
         return NSPredicate.isHostedOnDomain(domain)
-                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
+            .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue]))
     }
 
     public static func predicateForSentAndPendingConnections(hostedOnDomain domain: String) -> NSPredicate {
         return NSPredicate.isHostedOnDomain(domain)
-                          .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
-                                                                          ZMConnectionStatus.sent.rawValue]))
+            .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
+                                                            ZMConnectionStatus.sent.rawValue]))
     }
 }
 

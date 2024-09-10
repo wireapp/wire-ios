@@ -107,8 +107,8 @@ final class ConversationTitleView: TitleView {
 
         accessibilityTraits = .button
         accessibilityHint = conversation.conversationType == .oneOnOne
-        ? Conversation.TitleViewForOneToOne.hint
-        : Conversation.TitleViewForGroup.hint
+            ? Conversation.TitleViewForOneToOne.hint
+            : Conversation.TitleViewForGroup.hint
     }
 }
 

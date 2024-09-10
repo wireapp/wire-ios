@@ -84,8 +84,8 @@ extension ConversationViewController {
             })
         } else {
             if let screenRect: CGRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-                let currentFirstResponder = UIResponder.currentFirst,
-            let height = currentFirstResponder.inputAccessoryView?.bounds.size.height {
+               let currentFirstResponder = UIResponder.currentFirst,
+               let height = currentFirstResponder.inputAccessoryView?.bounds.size.height {
                 let keyboardSize = CGSize(width: screenRect.size.width, height: height)
                 UIView.setLastKeyboardSize(keyboardSize)
             }

@@ -132,7 +132,7 @@ final class ConversationMessageActionController {
             .filter { self.canPerformAction($0.action) }
             .map { menuItem in
                 UIAccessibilityCustomAction(name: menuItem.title, target: self, selector: menuItem.action)
-        }
+            }
     }
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
@@ -142,7 +142,7 @@ final class ConversationMessageActionController {
 
             return UIPreviewAction(title: title,
                                    style: .default) { [weak self] _, _ in
-                                    self?.perform(action: messageAction)
+                self?.perform(action: messageAction)
             }
         }
     }

@@ -19,18 +19,18 @@
 import Foundation
 
 extension ConversationAddParticipantsError {
-   public init?(response: ZMTransportResponse) {
-       switch (response.httpStatus, response.payloadLabel()) {
-       case (403, "invalid-op"?): self = .invalidOperation
-       case (403, "access-denied"?): self = .accessDenied
-       case (403, "not-connected"?): self = .notConnectedToUser
-       case (404, "no-conversation"?): self = .conversationNotFound
-       case (403, "too-many-members"?): self = .tooManyMembers
-       case (412, "missing-legalhold-consent"?): self = .missingLegalHoldConsent
-       case (400..<499, _): self = .unknown
-       default: return nil
-       }
-   }
+    public init?(response: ZMTransportResponse) {
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (403, "invalid-op"?): self = .invalidOperation
+        case (403, "access-denied"?): self = .accessDenied
+        case (403, "not-connected"?): self = .notConnectedToUser
+        case (404, "no-conversation"?): self = .conversationNotFound
+        case (403, "too-many-members"?): self = .tooManyMembers
+        case (412, "missing-legalhold-consent"?): self = .missingLegalHoldConsent
+        case (400..<499, _): self = .unknown
+        default: return nil
+        }
+    }
 }
 
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {

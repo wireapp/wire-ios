@@ -64,14 +64,14 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
         let nonce = UUID()
         let senderClientID = "sender123"
         let event1 = createUpdateEvent(UUID(),
-                                      conversationID: UUID(),
-                                      genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
-                                      senderClientID: senderClientID)
+                                       conversationID: UUID(),
+                                       genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
+                                       senderClientID: senderClientID)
 
         let event2 = createUpdateEvent(UUID(),
-        conversationID: UUID(),
-        genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
-        senderClientID: senderClientID)
+                                       conversationID: UUID(),
+                                       genericMessage: .init(content: Text(content: "Hello World"), nonce: nonce),
+                                       senderClientID: senderClientID)
 
         // when
         var message1: ZMOTRMessage?

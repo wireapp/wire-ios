@@ -58,7 +58,7 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
         return UIContextMenuConfiguration(identifier: nil,
                                           previewProvider: previewProvider,
                                           actionProvider: { _ in
-                                            return self.makeContextMenu(title: url.absoluteString, view: view)
-        })
+                                              return self.makeContextMenu(title: url.absoluteString, view: view)
+                                          })
     }
 }

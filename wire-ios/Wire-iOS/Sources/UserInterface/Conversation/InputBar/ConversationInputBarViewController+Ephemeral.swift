@@ -79,7 +79,7 @@ extension ConversationInputBarViewController {
         let pointToView = ephemeralIndicatorButton.isHidden ? hourglassButton : ephemeralIndicatorButton
 
         if let popover = ephemeralKeyboardViewController?.popoverPresentationController,
-            let backgroundColor = ephemeralKeyboardViewController?.view.backgroundColor {
+           let backgroundColor = ephemeralKeyboardViewController?.view.backgroundColor {
             popover.sourceView = pointToView.superview!
             popover.sourceRect = pointToView.frame.insetBy(dx: -4, dy: -4)
             popover.backgroundColor = backgroundColor
@@ -109,10 +109,10 @@ extension MessageDestructionTimeoutValue {
         typealias Conversation = L10n.Accessibility.Conversation
 
         guard
-           self != .none,
-           let timeoutValue = shortDisplayString
+            self != .none,
+            let timeoutValue = shortDisplayString
         else {
-           return nil
+            return nil
         }
         switch self {
         case .tenSeconds:

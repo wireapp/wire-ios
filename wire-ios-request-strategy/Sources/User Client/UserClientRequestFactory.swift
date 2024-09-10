@@ -25,16 +25,16 @@ public class UserClientRequestFactory {
         clientId: String,
         password: String,
         apiVersion: APIVersion) -> ZMTransportRequest {
-            let payload: [AnyHashable: Any] = [
-                "password": password
-            ]
+        let payload: [AnyHashable: Any] = [
+            "password": password
+        ]
 
-            let request = ZMTransportRequest(
-                path: "/clients/\(clientId)",
-                method: ZMTransportRequestMethod.delete,
-                payload: payload as ZMTransportData,
-                apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/clients/\(clientId)",
+            method: ZMTransportRequestMethod.delete,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue)
 
-            return request
-        }
+        return request
+    }
 }

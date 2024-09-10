@@ -264,67 +264,67 @@ public final class Canvas: UIView {
     }
 
     private var drawBounds: CGRect {
-            var bounds = scene.first?.bounds ?? CGRect.zero
+        var bounds = scene.first?.bounds ?? CGRect.zero
 
-            for renderable in scene.suffix(from: 1) {
-                bounds = bounds.union(renderable.bounds)
-            }
+        for renderable in scene.suffix(from: 1) {
+            bounds = bounds.union(renderable.bounds)
+        }
 
-            return bounds
+        return bounds
     }
 
     /// Return an image of the canvas content.
     public var trimmedImage: UIImage? {
-            let scaleFactor: CGFloat = 2.0 // We want to render with 2x scale factor also on non-retina devices
-            var image: UIImage?
-            selection?.selected = false
-            defer {
-                selection?.selected = true
+        let scaleFactor: CGFloat = 2.0 // We want to render with 2x scale factor also on non-retina devices
+        var image: UIImage?
+        selection?.selected = false
+        defer {
+            selection?.selected = true
+        }
+
+        if let referenceObject {
+            let drawBounds = self.bounds.intersection(self.drawBounds)
+            let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
+            let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale * scaleFactor, y: renderScale * scaleFactor))
+            let renderBounds = CGRect(origin: CGPoint.zero, size: renderSize).integral.applying(CGAffineTransform(scaleX: 1 / scaleFactor, y: 1 / scaleFactor))
+
+            UIGraphicsBeginImageContextWithOptions(renderBounds.size, true, scaleFactor)
+
+            if let context = UIGraphicsGetCurrentContext() {
+                context.scaleBy(x: renderScale, y: renderScale)
+                context.translateBy(x: -drawBounds.origin.x, y: -drawBounds.origin.y)
+
+                UIColor.white.setFill()
+                context.fill(CGRect(origin: drawBounds.origin, size: renderBounds.size))
+
+                for renderable in scene {
+                    renderable.draw(context: context)
+                }
             }
 
-            if let referenceObject {
-                let drawBounds = self.bounds.intersection(self.drawBounds)
-                let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
-                let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale * scaleFactor, y: renderScale * scaleFactor))
-                let renderBounds = CGRect(origin: CGPoint.zero, size: renderSize).integral.applying(CGAffineTransform(scaleX: 1 / scaleFactor, y: 1 / scaleFactor))
+            image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        } else {
+            let drawBounds = self.bounds.intersection(self.drawBounds).integral
 
-                UIGraphicsBeginImageContextWithOptions(renderBounds.size, true, scaleFactor)
+            UIGraphicsBeginImageContextWithOptions(drawBounds.size, true, scaleFactor)
 
-                if let context = UIGraphicsGetCurrentContext() {
-                    context.scaleBy(x: renderScale, y: renderScale)
-                    context.translateBy(x: -drawBounds.origin.x, y: -drawBounds.origin.y)
+            if let context = UIGraphicsGetCurrentContext() {
+                context.translateBy(x: -drawBounds.origin.x, y: -drawBounds.origin.y)
 
-                    UIColor.white.setFill()
-                    context.fill(CGRect(origin: drawBounds.origin, size: renderBounds.size))
+                UIColor.white.setFill()
+                context.fill(drawBounds)
 
-                    for renderable in scene {
-                        renderable.draw(context: context)
-                    }
+                for renderable in scene {
+                    renderable.draw(context: context)
                 }
-
-                image = UIGraphicsGetImageFromCurrentImageContext()
-                UIGraphicsEndImageContext()
-            } else {
-                let drawBounds = self.bounds.intersection(self.drawBounds).integral
-
-                UIGraphicsBeginImageContextWithOptions(drawBounds.size, true, scaleFactor)
-
-                if let context = UIGraphicsGetCurrentContext() {
-                    context.translateBy(x: -drawBounds.origin.x, y: -drawBounds.origin.y)
-
-                    UIColor.white.setFill()
-                    context.fill(drawBounds)
-
-                    for renderable in scene {
-                        renderable.draw(context: context)
-                    }
-                }
-
-                image = UIGraphicsGetImageFromCurrentImageContext()
-                UIGraphicsEndImageContext()
             }
 
-            return image
+            image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        }
+
+        return image
     }
 
     public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {

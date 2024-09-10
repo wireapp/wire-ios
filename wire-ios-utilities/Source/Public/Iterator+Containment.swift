@@ -34,7 +34,7 @@ extension Sequence {
         return try iterator.any(predicate)
     }
 
-     public func all(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
+    public func all(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
         var iterator = makeIterator()
         return try iterator.all(predicate)
     }

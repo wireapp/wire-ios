@@ -38,9 +38,9 @@ class StringLengthValidatorTests: XCTestCase {
         var value: AnyObject? = "short" as AnyObject
         do {
             try StringLengthValidator.validateValue(&value,
-                                                             minimumStringLength: 15,
-                                                             maximumStringLength: 100,
-                                                             maximumByteLength: 100)
+                                                    minimumStringLength: 15,
+                                                    maximumStringLength: 100,
+                                                    maximumByteLength: 100)
         } catch {
             XCTAssertNotNil(error)
         }

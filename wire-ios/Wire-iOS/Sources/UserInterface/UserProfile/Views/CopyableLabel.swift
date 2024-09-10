@@ -48,10 +48,10 @@ final class CopyableLabel: UILabel {
 
     @objc private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
         guard recognizer.state == .began,
-            let view = recognizer.view,
-            let superview = view.superview,
-            view == self,
-            becomeFirstResponder() else { return }
+              let view = recognizer.view,
+              let superview = view.superview,
+              view == self,
+              becomeFirstResponder() else { return }
 
         NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide), name: UIMenuController.didHideMenuNotification, object: nil)
         UIMenuController.shared.showMenu(from: superview, rect: view.frame)

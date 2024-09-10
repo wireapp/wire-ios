@@ -44,8 +44,8 @@ extension ZMUserSession: SecurityClassificationProviding {
         }
 
         return classifiedDomainsFeature.config.domains.contains(otherDomain)
-        ? .classified
-        : .notClassified
+            ? .classified
+            : .notClassified
     }
 
     var isSelfClassified: Bool {

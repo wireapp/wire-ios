@@ -56,8 +56,8 @@ final class CollectionAudioCell: CollectionCell {
         }
 
         accessibilityLabel = ConversationSearch.SentBy.description(message.senderName)
-                            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
-                            + ConversationSearch.AudioMessage.description
+            + ", \(message.serverTimestamp?.formattedDate ?? ""), "
+            + ConversationSearch.AudioMessage.description
         accessibilityHint = ConversationSearch.ItemPlay.hint
     }
 

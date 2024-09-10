@@ -114,8 +114,8 @@ extension ShareViewController {
 
     func createConstraints() {
         guard let shareablePreviewWrapper,
-            let shareablePreviewView else {
-                return
+              let shareablePreviewView else {
+            return
         }
 
         [

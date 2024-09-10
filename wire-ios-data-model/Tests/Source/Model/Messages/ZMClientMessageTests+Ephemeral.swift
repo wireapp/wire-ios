@@ -403,14 +403,14 @@ extension ZMClientMessageTests_Ephemeral {
         // then
         guard let clientMessage = conversation.hiddenMessages.first(where: {
             if let clientMessage = $0 as? ZMClientMessage,
-                let genericMessage = clientMessage.underlyingMessage,
-                case .deleted? = genericMessage.content {
+               let genericMessage = clientMessage.underlyingMessage,
+               case .deleted? = genericMessage.content {
                 return true
             } else {
                 return false
             }
         }) as? ZMClientMessage
-            else { return XCTFail()}
+        else { return XCTFail()}
 
         let deleteMessage = clientMessage.underlyingMessage
 
@@ -423,12 +423,12 @@ extension ZMClientMessageTests_Ephemeral {
 
 extension ZMClientMessageTests_Ephemeral {
     func hasDeleteMessage(for message: ZMMessage) -> Bool {
-         for enumeratedMessage in conversation.hiddenMessages {
+        for enumeratedMessage in conversation.hiddenMessages {
             if let clientMessage = enumeratedMessage as? ZMClientMessage,
-                let genericMessage = clientMessage.underlyingMessage,
-                case .deleted? = genericMessage.content,
-                genericMessage.deleted.messageID == message.nonce!.transportString() {
-                    return true
+               let genericMessage = clientMessage.underlyingMessage,
+               case .deleted? = genericMessage.content,
+               genericMessage.deleted.messageID == message.nonce!.transportString() {
+                return true
             }
         }
         return false
@@ -541,7 +541,7 @@ extension ZMClientMessageTests_Ephemeral {
         // wait for destruction date to be passed
         spinMainQueue(withTimeout: 1.0)
 
-            // restart app
+        // restart app
         ZMMessage.deleteOldEphemeralMessages(uiMOC)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

@@ -68,11 +68,11 @@ public final class StoredUpdateEvent: NSManagedObject {
             return eventPayload
         }
         guard let data = try? JSONSerialization.data(withJSONObject: eventPayload, options: []),
-            let encryptedData = SecKeyCreateEncryptedData(key,
-                                                          .eciesEncryptionCofactorX963SHA256AESGCM,
-                                                          data as CFData,
-                                                          nil) else {
-                                                            return nil
+              let encryptedData = SecKeyCreateEncryptedData(key,
+                                                            .eciesEncryptionCofactorX963SHA256AESGCM,
+                                                            data as CFData,
+                                                            nil) else {
+            return nil
         }
         return NSDictionary(dictionary: [encryptedPayloadKey: encryptedData])
     }
@@ -128,14 +128,14 @@ public final class StoredUpdateEvent: NSManagedObject {
         }
 
         guard let keys = encryptionKeys,
-            let encryptedPayload = storedEvent.payload?[encryptedPayloadKey] as? Data,
-            let decryptedData = SecKeyCreateDecryptedData(keys.privateKey,
-                                                          .eciesEncryptionCofactorX963SHA256AESGCM,
-                                                          encryptedPayload as CFData,
-                                                          nil) else {
-                                                            return nil
+              let encryptedPayload = storedEvent.payload?[encryptedPayloadKey] as? Data,
+              let decryptedData = SecKeyCreateDecryptedData(keys.privateKey,
+                                                            .eciesEncryptionCofactorX963SHA256AESGCM,
+                                                            encryptedPayload as CFData,
+                                                            nil) else {
+            return nil
         }
 
-      return try? JSONSerialization.jsonObject(with: decryptedData as Data, options: []) as? NSDictionary
+        return try? JSONSerialization.jsonObject(with: decryptedData as Data, options: []) as? NSDictionary
     }
 }

@@ -140,10 +140,10 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private func setupConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-          collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-          collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-          collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-          collectionViewHeight
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionViewHeight
         ])
     }
 

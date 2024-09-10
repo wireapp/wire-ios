@@ -44,8 +44,8 @@ extension ZMConversationMessage {
             return false
         }
         return mediaShareRestrictionManager.canUseClipboard &&
-               !isEphemeral &&
-               (isText || isImage || isLocation)
+            !isEphemeral &&
+            (isText || isImage || isLocation)
     }
 
     /// Whether the message can be edited.
@@ -55,10 +55,10 @@ extension ZMConversationMessage {
             return false
         }
         return !isEphemeral &&
-               isText &&
-               conversation.isSelfAnActiveMember &&
-               sender.isSelfUser &&
-               deliveryState.isOne(of: .delivered, .sent, .read)
+            isText &&
+            conversation.isSelfAnActiveMember &&
+            sender.isSelfUser &&
+            deliveryState.isOne(of: .delivered, .sent, .read)
     }
 
     /// Whether the message can be quoted.
@@ -132,8 +132,8 @@ extension ZMConversationMessage {
         guard canBeShared,
               !isEphemeral,
               mediaShareRestrictionManager.canDownloadMedia else {
-                  return false
-              }
+            return false
+        }
 
         if isImage {
             return true
@@ -156,9 +156,9 @@ extension ZMConversationMessage {
         }
 
         return conversation.isSelfAnActiveMember &&
-               sender.isSelfUser &&
-               (isText || isImage || isLocation || isFile) &&
-               deliveryState == .failedToSend
+            sender.isSelfUser &&
+            (isText || isImage || isLocation || isFile) &&
+            deliveryState == .failedToSend
     }
 
     /// Whether the message can be sent or received.
