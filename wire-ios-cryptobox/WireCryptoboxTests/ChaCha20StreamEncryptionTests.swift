@@ -40,7 +40,7 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 
         // then
         XCTAssertEqual(header.salt, [15, 2, 129, 15, 226, 145, 190, 233, 34, 69, 131, 134, 16, 228, 99, 187])
-        XCTAssertEqual(header.uuidHash, [140, 197, 233, 139, 140, 105, 207, 52, 157, 168, 132, 132, 196, 122, 76, 216, 3, 48, 49, 202, 3, 197, 223, 163, 233, 43, 15, 71, 94, 177, 153, 90 ])
+        XCTAssertEqual(header.uuidHash, [140, 197, 233, 139, 140, 105, 207, 52, 157, 168, 132, 132, 196, 122, 76, 216, 3, 48, 49, 202, 3, 197, 223, 163, 233, 43, 15, 71, 94, 177, 153, 90])
     }
 
     func testThatParsingHeaderWithWrongSizeThrowsAnError() {

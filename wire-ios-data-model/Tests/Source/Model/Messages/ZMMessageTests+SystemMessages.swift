@@ -123,11 +123,11 @@ extension ZMMessageTests_SystemMessages {
                     ["qualified_id":
                         ["id": $0.transportString(), "domain": domain]
                     ]
-                } ] as [String: Any]
+                }] as [String: Any]
             } else {
                 ["qualified_user_ids": usersIDs.map {
                     ["id": $0.transportString(), "domain": domain]
-                } ] as [String: Any]
+                }] as [String: Any]
             }
         } else {
             ["user_ids": usersIDs.map { $0.transportString() }] as [String: Any]

@@ -37,7 +37,7 @@ extension MockTransportSession {
         }
 
         let fields = user.richProfile ?? []
-        return ZMTransportResponse(payload: ["fields": fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(payload: ["fields": fields] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     @objc(insertUserWithName:includeClient:)

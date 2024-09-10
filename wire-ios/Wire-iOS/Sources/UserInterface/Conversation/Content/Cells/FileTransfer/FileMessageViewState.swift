@@ -109,7 +109,7 @@ enum FileMessageViewState {
          .downloaded: (.none, .play, normalColor),
          .failedUpload: (.none, .redo, failureColor),
          .cancelledUpload: (.none, .redo, normalColor),
-         .failedDownload: (.none, .redo, failureColor) ]
+         .failedDownload: (.none, .redo, failureColor)]
 
     /// Mapping of cell state to it's views state for media message:
     ///  # Cell state ======>      #progressViewType
@@ -122,7 +122,7 @@ enum FileMessageViewState {
          .downloaded: (.none, .play, normalColor),
          .failedUpload: (.none, .redo, failureColor),
          .cancelledUpload: (.none, .redo, normalColor),
-         .failedDownload: (.none, .redo, failureColor) ]
+         .failedDownload: (.none, .redo, failureColor)]
 
     /// Mapping of cell state to it's views state for normal file message:
     ///  # Cell state ======>      #progressViewType
@@ -135,7 +135,7 @@ enum FileMessageViewState {
          .uploaded: (.none, .none, clearColor),
          .failedUpload: (.none, .redo, failureColor),
          .cancelledUpload: (.none, .redo, normalColor),
-         .failedDownload: (.none, .save, failureColor) ]
+         .failedDownload: (.none, .save, failureColor)]
 
     func viewsStateForVideo() -> FileMessageViewViewsState? {
         type(of: self).viewsStateForCellStateForVideoMessage[self]

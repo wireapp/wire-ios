@@ -33,7 +33,7 @@ final class LinkInteractionTextView: UITextView {
     }
 
     // URLs with these schemes should be handled by the os.
-    fileprivate let dataDetectedURLSchemes = [ "x-apple-data-detectors", "tel", "mailto"]
+    fileprivate let dataDetectedURLSchemes = ["x-apple-data-detectors", "tel", "mailto"]
 
     override init(frame: CGRect,
                   textContainer: NSTextContainer?) {

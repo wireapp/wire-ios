@@ -329,7 +329,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
             modifier: { try! $0.setUnderlyingMessage(update) },
-            expectedChangedFields: [ #keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
+            expectedChangedFields: [#keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
         )
     }
 

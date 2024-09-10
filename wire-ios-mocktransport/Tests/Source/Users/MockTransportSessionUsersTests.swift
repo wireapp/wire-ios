@@ -100,7 +100,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
-        XCTAssertEqual(response.payload as? NSDictionary, ["fields": [] ])
+        XCTAssertEqual(response.payload as? NSDictionary, ["fields": []])
     }
 
     func testThatItReturnsRichInfo_WhenUserHasIt() {

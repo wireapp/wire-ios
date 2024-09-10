@@ -62,7 +62,7 @@ extension UIAlertController {
             }))
         }
 
-        alert.popoverPresentationController?.permittedArrowDirections = [ .up, .down ]
+        alert.popoverPresentationController?.permittedArrowDirections = [.up, .down]
         alert.addAction(UIAlertAction(title: AvailabilityMessageLocale.cancel, style: .cancel, handler: nil))
 
         return alert

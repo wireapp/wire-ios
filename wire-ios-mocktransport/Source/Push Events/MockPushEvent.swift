@@ -40,7 +40,7 @@ import Foundation
     public var transportData: ZMTransportData {
         [
             "id": uuid.transportString(),
-            "payload": [ payload ],
+            "payload": [payload],
             "transient": isTransient
         ] as ZMTransportData
     }

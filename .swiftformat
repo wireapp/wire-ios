@@ -64,7 +64,8 @@
     spaceAroundGenerics, \
     spaceAroundOperators, \
     spaceAroundParens, \
-    spaceInsideBraces
+    spaceInsideBraces, \
+    spaceInsideBrackets
 
 
 # Options

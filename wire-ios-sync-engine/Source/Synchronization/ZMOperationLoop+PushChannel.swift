@@ -73,7 +73,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         NotificationInContext(name: ZMOperationLoop.pushChannelStateChangeNotificationName,
                               context: syncMOC.notificationContext,
                               object: self,
-                              userInfo: [ ZMPushChannelIsOpenKey: false]).post()
+                              userInfo: [ZMPushChannelIsOpenKey: false]).post()
 
         syncStatus.pushChannelDidClose()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
@@ -83,7 +83,7 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         NotificationInContext(name: ZMOperationLoop.pushChannelStateChangeNotificationName,
                               context: syncMOC.notificationContext,
                               object: self,
-                              userInfo: [ ZMPushChannelIsOpenKey: true]).post()
+                              userInfo: [ZMPushChannelIsOpenKey: true]).post()
 
         syncStatus.pushChannelDidOpen()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)

@@ -119,11 +119,11 @@ class DatabaseTest: ZMTBaseTest {
                               in conversation: ZMConversation,
                               from user: ZMUser,
                               timestamp: Date = Date()) -> [AnyHashable: Any] {
-        [ "conversation": conversation.remoteIdentifier!.transportString(),
-          "data": conversation,
-          "from": user.remoteIdentifier!.transportString(),
-          "time": timestamp.transportString(),
-          "type": ZMUpdateEvent.eventTypeString(for: type)!
+        ["conversation": conversation.remoteIdentifier!.transportString(),
+         "data": conversation,
+         "from": user.remoteIdentifier!.transportString(),
+         "time": timestamp.transportString(),
+         "type": ZMUpdateEvent.eventTypeString(for: type)!
         ]
     }
 }

@@ -53,7 +53,7 @@ public final class CallStateObserver: NSObject {
                 syncContext.performGroupedBlock {
                     NotificationInContext(name: CallStateObserver.CallInProgressNotification,
                                           context: self.syncContext.notificationContext,
-                                          userInfo: [ CallStateObserver.CallInProgressKey: self.callInProgress ]).post()
+                                          userInfo: [CallStateObserver.CallInProgressKey: self.callInProgress]).post()
                 }
             }
         }

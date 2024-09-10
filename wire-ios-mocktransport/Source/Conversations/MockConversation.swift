@@ -94,7 +94,7 @@ extension MockConversation {
         let accessRoleV2KeyPath = #keyPath(MockConversation.accessRoleV2)
 
         if changedValues()[accessModeKeyPath] != nil || changedValues()[accessRoleKeyPath] != nil, changedValues()[accessRoleV2KeyPath] != nil {
-            return [ "access_role": self.accessRole, "access_role_v2": self.accessRoleV2, "access": self.accessMode ]
+            return ["access_role": self.accessRole, "access_role_v2": self.accessRoleV2, "access": self.accessMode]
         } else {
             return nil
         }

@@ -127,9 +127,9 @@ extension NSAttributedString {
         var plainText = message.messageText ?? ""
 
         guard !isObfuscated else {
-            let attributes: [NSAttributedString.Key: Any] = [ .font: UIFont(name: "RedactedScript-Regular", size: 18)!,
-                                                              .foregroundColor: UIColor.accent(),
-                                                              .paragraphStyle: paragraphStyle]
+            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "RedactedScript-Regular", size: 18)!,
+                                                             .foregroundColor: UIColor.accent(),
+                                                             .paragraphStyle: paragraphStyle]
             return NSAttributedString(string: plainText, attributes: attributes)
         }
 

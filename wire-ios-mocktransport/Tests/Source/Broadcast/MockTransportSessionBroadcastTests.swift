@@ -77,8 +77,8 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
-                    "missing": [ selfUser.identifier: [secondSelfClient.identifier!], otherUser.identifier: [secondOtherUserClient.identifier!] ],
-                    "deleted": [ otherUser.identifier: [otherUserRedundantClient.identifier!]]
+                    "missing": [selfUser.identifier: [secondSelfClient.identifier!], otherUser.identifier: [secondOtherUserClient.identifier!]],
+                    "deleted": [otherUser.identifier: [otherUserRedundantClient.identifier!]]
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -126,7 +126,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
-                    "missing": [ otherUser.identifier: [otherUserClient.identifier!] ],
+                    "missing": [otherUser.identifier: [otherUserClient.identifier!]],
                     "deleted": [:]
                 ]
 
@@ -159,7 +159,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [ otherUser.identifier: [ otherUserClient.identifier!: base64Content] ]
+            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]]
         ]
 
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
@@ -210,7 +210,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         let payload: [String: Any] = [
             "sender": selfClient.identifier!,
-            "recipients": [ otherUser.identifier: [ otherUserClient.identifier!: base64Content] ]
+            "recipients": [otherUser.identifier: [otherUserClient.identifier!: base64Content]]
         ]
         let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
 

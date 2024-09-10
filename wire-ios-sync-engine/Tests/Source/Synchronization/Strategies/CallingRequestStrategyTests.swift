@@ -92,7 +92,7 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request?.path, "/calls/config/v2")
 
         // when
-        let payload = [ "config": true ]
+        let payload = ["config": true]
         request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
 
         // then
@@ -143,11 +143,11 @@ class CallingRequestStrategyTests: MessagingTest {
         XCTAssertEqual(request?.path, "/calls/config/v2")
 
         // when
-        let badPayload = [ "error": "not found" ]
+        let badPayload = ["error": "not found"]
         request?.complete(with: ZMTransportResponse(payload: badPayload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
 
         // when
-        let payload = [ "config": true ]
+        let payload = ["config": true]
         request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
 
         // then
