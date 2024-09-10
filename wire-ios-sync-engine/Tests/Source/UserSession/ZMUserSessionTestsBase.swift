@@ -66,7 +66,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = { }
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
         mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
             .eraseToAnyPublisher()
         mockMLSService.epochChanges_MockValue = .init { continuation in
@@ -76,7 +76,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
-        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
 
         sut = createSut()
         sut.sessionManager = mockSessionManager
@@ -119,7 +119,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         let mockContextStorable = MockLAContextStorable()
-        mockContextStorable.clear_MockMethod = { }
+        mockContextStorable.clear_MockMethod = {}
 
         let configuration = ZMUserSession.Configuration()
 

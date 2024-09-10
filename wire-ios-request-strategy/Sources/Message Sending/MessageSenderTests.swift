@@ -598,7 +598,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withQuickSyncObserverCompleting() -> Arrangement {
-            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = { }
+            quickSyncObserver.waitForQuickSyncToFinish_MockMethod = {}
             return self
         }
 

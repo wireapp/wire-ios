@@ -139,8 +139,8 @@ class BaseTest: ZMTBaseTest {
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabase_MockMethod = { }
-        mockEARService.lockDatabase_MockMethod = { }
+        mockEARService.unlockDatabase_MockMethod = {}
+        mockEARService.lockDatabase_MockMethod = {}
 
         mockProteusService = MockProteusServiceInterface()
         mockMLSDecryptionService = MockMLSDecryptionServiceInterface()

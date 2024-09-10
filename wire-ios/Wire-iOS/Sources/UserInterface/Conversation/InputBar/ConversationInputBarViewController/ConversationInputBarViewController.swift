@@ -836,8 +836,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         // Workaround http://stackoverflow.com/questions/26651355/
         do {
             try AVAudioSession.sharedInstance().setActive(false)
-        } catch {
-        }
+        } catch {}
     }
 
     func imagePickerController(_ picker: UIImagePickerController,

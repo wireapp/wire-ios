@@ -167,11 +167,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         isBlocked = true
     }
 
-    func ignore(completion: @escaping (Error?) -> Void) {
-    }
+    func ignore(completion: @escaping (Error?) -> Void) {}
 
-    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
-    }
+    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
 
     // MARK: - Wireless
 

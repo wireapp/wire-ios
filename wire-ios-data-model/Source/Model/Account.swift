@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension Account: NotificationContext { }
+extension Account: NotificationContext {}
 
 extension Notification.Name {
     public static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")

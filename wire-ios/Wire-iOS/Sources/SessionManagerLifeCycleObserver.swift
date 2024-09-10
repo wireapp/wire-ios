@@ -56,7 +56,7 @@ extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver,
         setSoundEventListener(for: userSession)
     }
 
-    func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) { }
+    func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {}
 
     // MARK: - SessionManagerDestroyedSessionObserver
 

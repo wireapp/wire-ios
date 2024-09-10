@@ -28,11 +28,9 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
     var mockCallConfigResponse: (String, Int)?
     var mockClientsRequestResponse: [AVSClient]?
 
-    func send(data: Data, conversationId: AVSIdentifier, targets: [AVSClient]?, overMLSSelfConversation: Bool, completionHandler: @escaping ((Int) -> Void)) {
-    }
+    func send(data: Data, conversationId: AVSIdentifier, targets: [AVSClient]?, overMLSSelfConversation: Bool, completionHandler: @escaping ((Int) -> Void)) {}
 
-    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void)) {
-    }
+    func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void)) {}
 
     func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
         if let mockCallConfigResponse {
@@ -1045,7 +1043,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         let callEvent = CallEvent(data: data, currentTimestamp: Date(), serverTimestamp: Date(), conversationId: oneOnOneConversationID, userId: userId, clientId: clientId)
 
         // when
-        sut.processCallEvent(callEvent, completionHandler: { })
+        sut.processCallEvent(callEvent, completionHandler: {})
         XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 0)
 
         // and when

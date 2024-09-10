@@ -32,8 +32,7 @@ extension ___VARIABLE_productName:identifier___Module {
 
 extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_productName:identifier___PresenterInteractorInterface {
     func handleResult(_ result: ___VARIABLE_productName:identifier___Module.Result) {
-        switch result {
-        }
+        switch result {}
     }
 }
 

@@ -111,8 +111,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         if self.traitCollection.horizontalSizeClass == .compact {
             let avoiding = KeyboardAvoidingViewController(viewController: controller)
             navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateConversation.BackButton.description
-            self.navigationController?.pushViewController(avoiding, animated: true) {
-            }
+            self.navigationController?.pushViewController(avoiding, animated: true) {}
         } else {
             let embeddedNavigationController = controller.wrapInNavigationController()
             embeddedNavigationController.modalPresentationStyle = .formSheet

@@ -23,7 +23,7 @@ import XCTest
 @testable import WireSyncEngine
 
 final class EventProcessorTests: MessagingTest {
-    struct MockError: Error { }
+    struct MockError: Error {}
 
     var sut: EventProcessor!
     var eventProcessingTracker: EventProcessingTracker!

@@ -20,8 +20,8 @@ import DifferenceKit
 import WireDataModel
 import WireSyncEngine
 
-extension Int: Differentiable { }
-extension String: Differentiable { }
+extension Int: Differentiable {}
+extension String: Differentiable {}
 extension AnyConversationMessageCellDescription: Differentiable {
     typealias DifferenceIdentifier = String
 

@@ -37,8 +37,7 @@ class MulticastDelegate<T: Any>: NSObject {
     }
 }
 
-final class AssetCollectionMulticastDelegate: MulticastDelegate<AssetCollectionDelegate> {
-}
+final class AssetCollectionMulticastDelegate: MulticastDelegate<AssetCollectionDelegate> {}
 
 extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
     func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {

@@ -288,7 +288,7 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatJailbrokenDeviceCallsDelegateMethod() {
         // GIVEN
-        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
+        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = {}
 
         guard let application else { return XCTFail() }
         let jailbreakDetector = MockJailbreakDetector(jailbroken: true)
@@ -321,7 +321,7 @@ final class SessionManagerTests: IntegrationTest {
         mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { _, userSessionCanBeTornDown in
             userSessionCanBeTornDown?()
         }
-        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
+        mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = {}
 
         let jailbreakDetector = MockJailbreakDetector()
         jailbreakDetector.jailbroken = true

@@ -42,7 +42,7 @@ final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
 
     var intensityLevel: AVSIntensityLevel = .none
 
-    func playMediaByName(_ name: String!) { }
+    func playMediaByName(_ name: String!) {}
 }
 
 final class ZMMockTracking: TrackingInterface {

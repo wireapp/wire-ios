@@ -19,7 +19,7 @@
 import Foundation
 
 class MockPresentationDelegate: PresentationDelegate {
-    var completedURLActionCallsCompletion: () -> Void = { }
+    var completedURLActionCallsCompletion: () -> Void = {}
     var showConversationCalls: [ZMConversation] = []
     var showConversationListCalls: Int = 0
     var showUserProfileCalls: [UserType] = []

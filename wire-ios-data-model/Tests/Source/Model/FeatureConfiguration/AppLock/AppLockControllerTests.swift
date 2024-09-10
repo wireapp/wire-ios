@@ -319,7 +319,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         try sut.updatePasscode("boo!")
 
         let mockBiometricsState = MockBiometricsStateProtocol()
-        mockBiometricsState.persistState_MockMethod = { }
+        mockBiometricsState.persistState_MockMethod = {}
         sut.biometricsState = mockBiometricsState
 
         // When

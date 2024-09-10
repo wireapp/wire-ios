@@ -80,8 +80,8 @@ protocol DecryptedMessageBundle {
     var identity: WireCoreCrypto.WireIdentity { get }
 }
 
-extension DecryptedMessage: DecryptedMessageBundle { }
-extension BufferedDecryptedMessage: DecryptedMessageBundle { }
+extension DecryptedMessage: DecryptedMessageBundle {}
+extension BufferedDecryptedMessage: DecryptedMessageBundle {}
 
 /// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events 

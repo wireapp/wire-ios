@@ -24,7 +24,7 @@ protocol CallConversationProvider {
     var ringingCallConversation: ZMConversation? { get }
 }
 
-extension ZMUserSession: CallConversationProvider { }
+extension ZMUserSession: CallConversationProvider {}
 
 extension ZMUserSession {
     var priorityCallConversation: ZMConversation? {

@@ -19,8 +19,7 @@
 import WireSyncEngine
 import XCTest
 
-class HistorySynchronizationStatusTests: MessagingTest {
-}
+class HistorySynchronizationStatusTests: MessagingTest {}
 
 extension HistorySynchronizationStatusTests {
     func testThatItShouldNotDownloadHistoryWhenItStarts() {

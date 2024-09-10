@@ -82,5 +82,4 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
     }
 }
 
-extension ImagePickerConfirmationController: UINavigationControllerDelegate {
-}
+extension ImagePickerConfirmationController: UINavigationControllerDelegate {}

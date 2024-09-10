@@ -23,7 +23,7 @@ import XCTest
 import WireTransport
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
-    enum CodingKeys: CodingKey { }
+    enum CodingKeys: CodingKey {}
 
     typealias InitCall = (Decoder, APIVersion)
 
@@ -41,11 +41,11 @@ private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
         mockEncode?(encoder, apiVersion)
     }
 
-    init() { }
+    init() {}
 }
 
 private struct CodableObject: Codable {
-    enum CodingKeys: CodingKey { }
+    enum CodingKeys: CodingKey {}
 
     var initCalls = [Decoder]()
 
@@ -61,7 +61,7 @@ private struct CodableObject: Codable {
         mockEncode?(encoder)
     }
 
-    init() { }
+    init() {}
 }
 
 class Payload_CodingTests: XCTestCase {

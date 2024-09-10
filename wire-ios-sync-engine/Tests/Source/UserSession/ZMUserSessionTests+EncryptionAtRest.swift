@@ -30,21 +30,20 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
         prepareForMigration_Invocations.append(account)
     }
 
-    func userSessionDidUnlock(_ session: ZMUserSession) {
-    }
+    func userSessionDidUnlock(_ session: ZMUserSession) {}
 
-    func clientRegistrationDidSucceed(accountId: UUID) { }
+    func clientRegistrationDidSucceed(accountId: UUID) {}
 
-    func clientRegistrationDidFail(_ error: NSError, accountId: UUID) { }
+    func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {}
 
-    func clientCompletedInitialSync(accountId: UUID) { }
+    func clientCompletedInitialSync(accountId: UUID) {}
 
     var calleduserDidLogout: (Bool, UUID)?
     func userDidLogout(accountId: UUID) {
         calleduserDidLogout = (true, accountId)
     }
 
-    func authenticationInvalidated(_ error: NSError, accountId: UUID) { }
+    func authenticationInvalidated(_ error: NSError, accountId: UUID) {}
 }
 
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {

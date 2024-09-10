@@ -31,7 +31,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     override func setUp() {
         super.setUp()
 
-        mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+        mockMLSService.repairOutOfSyncConversations_MockMethod = {}
 
         mockPushSupportedProtocolsActionHandler = .init(
             result: .success(()),

@@ -19,7 +19,7 @@
 import Foundation
 
 @objc
-public protocol NotificationContext: NSObjectProtocol { }
+public protocol NotificationContext: NSObjectProtocol {}
 
 extension NSPersistentStoreCoordinator: NotificationContext {}
 

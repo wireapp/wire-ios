@@ -31,7 +31,6 @@ extension ___VARIABLE_productName:identifier___Module {
 
 extension ___VARIABLE_productName:identifier___Module.Router: ___VARIABLE_productName:identifier___RouterPresenterInterface {
     func performAction(_ action: ___VARIABLE_productName:identifier___Module.Action) {
-        switch action {
-        }
+        switch action {}
     }
 }

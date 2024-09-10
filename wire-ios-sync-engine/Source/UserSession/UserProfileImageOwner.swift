@@ -64,6 +64,5 @@ public final class UserProfileImageOwner: NSObject, ZMImageOwner {
         return false
     }
 
-    public func processingDidFinish() {
-    }
+    public func processingDidFinish() {}
 }

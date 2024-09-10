@@ -42,5 +42,4 @@ final class WipeDatabasePresenter {
 
 // MARK: - InteractorOutput
 
-extension WipeDatabasePresenter: WipeDatabaseInteractorOutput {
-}
+extension WipeDatabasePresenter: WipeDatabaseInteractorOutput {}

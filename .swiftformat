@@ -15,7 +15,8 @@
     conditionalAssignment, \
     consistentSwitchCaseSpacing, \
     duplicateImports, \
-    elseOnSameLine
+    elseOnSameLine, \
+    emptyBraces
 
 # Options
 
@@ -25,3 +26,4 @@
 --condassignment after-property # conditionalAssignment
 --elseposition same-line # elseOnSameLine
 --guardelse auto # elseOnSameLine
+--emptybraces no-space # emptyBraces

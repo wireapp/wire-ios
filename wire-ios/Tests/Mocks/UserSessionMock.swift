@@ -244,21 +244,18 @@ final class UserSessionMock: UserSession {
         return NSObject()
     }
 
-    func acknowledgeFeatureChange(for feature: Feature.Name) {
-    }
+    func acknowledgeFeatureChange(for feature: Feature.Name) {}
 
     func fetchMarketingConsent(
         completion: @escaping (
             Result<Bool, Error>
         ) -> Void
-    ) {
-    }
+    ) {}
 
     func setMarketingConsent(
         granted: Bool,
         completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-    }
+    ) {}
 
     func classification(
         users: [UserType],
@@ -276,8 +273,7 @@ final class UserSessionMock: UserSession {
         return ProxyRequest(type: type, path: path, method: method, callback: callback)
     }
 
-    func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {
-    }
+    func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {}
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol

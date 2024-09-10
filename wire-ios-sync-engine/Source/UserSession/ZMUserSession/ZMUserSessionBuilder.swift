@@ -49,7 +49,7 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Initialize
 
-    init() { }
+    init() {}
 
     // MARK: - Build
 

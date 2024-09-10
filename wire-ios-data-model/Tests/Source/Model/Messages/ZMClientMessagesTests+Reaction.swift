@@ -18,8 +18,7 @@
 
 import WireTesting
 
-class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {
-}
+class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {}
 
 extension ZMClientMessageTests_Reaction {
     // MARK: Helper Methods

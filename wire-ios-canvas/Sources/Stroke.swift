@@ -58,8 +58,7 @@ final class Stroke: Renderable {
         return bounds(from: max(points.count - 3, 0)) // Need to update last two segments
     }
 
-    func end() {
-    }
+    func end() {}
 
     func draw(context: CGContext) {
         if points.count == 1, let point = points.first {

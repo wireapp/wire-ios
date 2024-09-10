@@ -43,8 +43,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
         return false
     }
 
-    func updateBottomBarSeparatorVisibility(with controller: ConversationListContentController) {
-    }
+    func updateBottomBarSeparatorVisibility(with controller: ConversationListContentController) {}
 
     func scrollViewDidScroll(scrollView: UIScrollView!) {
         // no-op

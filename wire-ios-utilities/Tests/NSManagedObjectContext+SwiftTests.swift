@@ -41,7 +41,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         // given
         let moc = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
         // when & then
-        moc.performGroupedAndWait { }
+        moc.performGroupedAndWait {}
     }
 
     func testThatItReturnsNonOptionalValue() {

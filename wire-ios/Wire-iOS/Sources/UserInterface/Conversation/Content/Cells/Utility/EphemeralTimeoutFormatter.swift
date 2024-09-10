@@ -63,8 +63,7 @@ final class EphemeralTimeoutFormatter {
                 } else {
                     hourStringWithoutDay = hourString
                 }
-            } catch {
-            }
+            } catch {}
 
             if hourStringWithoutDay.count > 0 {
                 return dayString + " ".localized + hourStringWithoutDay

@@ -37,7 +37,7 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
     public var oldMayBeReachable: Bool = true
     public var oldIsMobileConnection: Bool = true
 
-    public func tearDown() { }
+    public func tearDown() {}
 }
 
 @objcMembers

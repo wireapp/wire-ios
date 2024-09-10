@@ -27,4 +27,4 @@ public protocol MediaManagerType: AnyObject {
     func resetAudioDevice()
 }
 
-extension AVSMediaManager: MediaManagerType { }
+extension AVSMediaManager: MediaManagerType {}

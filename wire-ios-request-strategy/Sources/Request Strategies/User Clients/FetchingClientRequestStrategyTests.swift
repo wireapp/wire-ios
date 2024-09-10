@@ -53,8 +53,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
 
-    func didReceiveAuthenticationNotification(_ notification: NSNotification) {
-    }
+    func didReceiveAuthenticationNotification(_ notification: NSNotification) {}
 
     // MARK: - Fetching client based on needsToBeUpdatedFromBackend flag
 

@@ -193,8 +193,7 @@ extension GenericMessage {
     public func encryptForProteus(for recipients: [ZMUser: Set<UserClient>],
                                   with missingClientsStrategy: MissingClientsStrategy,
                                   externalData: Data? = nil,
-                                  in context: NSManagedObjectContext) {
-    }
+                                  in context: NSManagedObjectContext) {}
 }
 
 extension GenericMessage {

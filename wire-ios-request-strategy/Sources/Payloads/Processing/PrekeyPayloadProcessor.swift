@@ -28,8 +28,7 @@ public protocol PrekeyPayloadProcessorInterface {
 }
 
 public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
-    public init() {
-    }
+    public init() {}
 
     /// Establish new sessions using the prekeys retreived for each client.
     ///

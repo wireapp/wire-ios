@@ -58,7 +58,7 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 final class GuestsAllowedCell: UIView, ConversationMessageCell {
     // MARK: Properties
 
-    struct GuestsAllowedCellConfiguration { }
+    struct GuestsAllowedCellConfiguration {}
 
     typealias Configuration = GuestsAllowedCellConfiguration
 
@@ -112,8 +112,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     // MARK: Configuration and actions
 
-    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {
-    }
+    func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
 
     @objc private func inviteButtonTapped(_ sender: UIButton) {
         delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: self)

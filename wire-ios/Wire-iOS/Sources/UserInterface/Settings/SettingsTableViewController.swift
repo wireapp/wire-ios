@@ -129,7 +129,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
         fatalError("Subclasses need to implement this method")
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {

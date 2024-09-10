@@ -249,7 +249,7 @@ final class APIMigrationManagerTests: MessagingTest {
         )
 
         let mockContextStorable = MockLAContextStorable()
-        mockContextStorable.clear_MockMethod = { }
+        mockContextStorable.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
 
         let mockRecurringActionService = MockRecurringActionServiceInterface()

@@ -73,8 +73,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
                 }
             default:
-                self.present(videoEditor, animated: true) {
-                    }
+                self.present(videoEditor, animated: true) {}
             }
         } else {
             let context = ConfirmAssetViewController.Context(asset: .video(url: videoURL),

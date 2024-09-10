@@ -24,8 +24,7 @@ import XCTest
 // MARK: - MockConversationMessageCellDelegate
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
-    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: Wire.MessageActionsViewController) {
-    }
+    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: Wire.MessageActionsViewController) {}
 
     func conversationMessageWantsToOpenUserDetails(
         _ cell: UIView,

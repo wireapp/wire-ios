@@ -58,8 +58,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)
                         confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
-                        self.present(confirmImageViewController, animated: true) {
-                        }
+                        self.present(confirmImageViewController, animated: true) {}
                     }
                 })
                 // swiftlint:disable:next todo_requires_jira_link

@@ -42,6 +42,6 @@ final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
 
     override var state: UIGestureRecognizer.State {
         get { mockState }
-        set { }
+        set {}
     }
 }

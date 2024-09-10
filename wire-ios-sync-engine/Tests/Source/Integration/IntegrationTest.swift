@@ -61,11 +61,11 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         isDeveloperModeEnabled: Bool
     ) -> ZMUserSession? {
         let mockContextStorage = MockLAContextStorable()
-        mockContextStorage.clear_MockMethod = { }
+        mockContextStorage.clear_MockMethod = {}
 
         let mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
-        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(

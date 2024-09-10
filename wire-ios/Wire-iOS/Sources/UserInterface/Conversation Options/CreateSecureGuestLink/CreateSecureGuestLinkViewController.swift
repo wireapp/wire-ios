@@ -400,8 +400,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         )
     }
 
-    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
-    }
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {}
 
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String) {
         print("Link created successfully: \(link)")

@@ -220,7 +220,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 }
 
-extension ContactsCell: UserCellSubtitleProtocol { }
+extension ContactsCell: UserCellSubtitleProtocol {}
 
 extension ContactsCell {
     typealias ContactsUIActionButton = L10n.Localizable.ContactsUi.ActionButton

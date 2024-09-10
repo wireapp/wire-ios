@@ -32,8 +32,7 @@ public class FlowManagerMock: NSObject, FlowManagerType {
         super.init()
     }
 
-    public func appendLog(for conversationId: UUID, message: String) {
-    }
+    public func appendLog(for conversationId: UUID, message: String) {}
 
     public func report(callConfig: Data?, httpStatus: Int, context: UnsafeRawPointer) {
         self.callConfig = callConfig

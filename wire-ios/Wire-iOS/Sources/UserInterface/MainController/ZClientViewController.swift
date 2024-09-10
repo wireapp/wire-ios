@@ -331,7 +331,7 @@ final class ZClientViewController: UIViewController {
     }
 
     func loadPlaceholderConversationController(animated: Bool) {
-        loadPlaceholderConversationController(animated: animated) { }
+        loadPlaceholderConversationController(animated: animated) {}
     }
 
     func loadPlaceholderConversationController(animated: Bool, completion: @escaping Completion) {

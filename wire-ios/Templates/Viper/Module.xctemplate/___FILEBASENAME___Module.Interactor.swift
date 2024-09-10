@@ -31,7 +31,6 @@ extension ___VARIABLE_productName:identifier___Module {
 
 extension ___VARIABLE_productName:identifier___Module.Interactor: ___VARIABLE_productName:identifier___InteractorPresenterInterface {
     func executeRequest(_ request: ___VARIABLE_productName:identifier___Module.Request) {
-        switch request {
-        }
+        switch request {}
     }
 }

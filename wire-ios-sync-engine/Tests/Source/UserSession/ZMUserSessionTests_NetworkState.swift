@@ -36,7 +36,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
         // when
         let mockContextStore = MockLAContextStorable()
-        mockContextStore.clear_MockMethod = { }
+        mockContextStore.clear_MockMethod = {}
         let configuration = ZMUserSession.Configuration()
 
         var builder = ZMUserSessionBuilder()

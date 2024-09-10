@@ -581,7 +581,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         }
 
         // Mock
-        keyRepository.clearCache_MockMethod = { }
+        keyRepository.clearCache_MockMethod = {}
 
         // When
         sut.lockDatabase()

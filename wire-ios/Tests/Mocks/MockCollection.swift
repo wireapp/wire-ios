@@ -46,7 +46,7 @@ final class MockCollection: NSObject, ZMCollection {
         return MockCollection(messages: [:])
     }
 
-    func tearDown() { }
+    func tearDown() {}
 
     func assets(for category: WireDataModel.CategoryMatch) -> [ZMConversationMessage] {
         return messages[category] ?? []

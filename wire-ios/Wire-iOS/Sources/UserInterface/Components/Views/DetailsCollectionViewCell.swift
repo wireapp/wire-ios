@@ -72,7 +72,7 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
     }
 
     var disabled: Bool = false {
-        didSet { }
+        didSet {}
     }
 
     override var accessibilityLabel: String? {

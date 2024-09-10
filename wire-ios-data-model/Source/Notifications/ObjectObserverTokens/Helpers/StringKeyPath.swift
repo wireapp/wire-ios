@@ -68,8 +68,7 @@ public final class StringKeyPath: Hashable {
     }()
 }
 
-extension StringKeyPath: Equatable {
-}
+extension StringKeyPath: Equatable {}
 
 public func == (lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.

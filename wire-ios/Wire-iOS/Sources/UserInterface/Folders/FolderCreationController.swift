@@ -168,9 +168,7 @@ extension FolderCreationController: SimpleTextFieldDelegate {
         tryToProceed()
     }
 
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {
-    }
+    func textFieldDidBeginEditing(_ textField: SimpleTextField) {}
 
-    func textFieldDidEndEditing(_ textField: SimpleTextField) {
-    }
+    func textFieldDidEndEditing(_ textField: SimpleTextField) {}
 }

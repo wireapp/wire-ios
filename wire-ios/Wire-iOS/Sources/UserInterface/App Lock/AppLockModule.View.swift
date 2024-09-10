@@ -137,8 +137,7 @@ extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
         presenter.processEvent(.passcodeSetupCompleted)
     }
 
-    func passcodeSetupControllerWasDismissed() {
-    }
+    func passcodeSetupControllerWasDismissed() {}
 }
 
 extension AppLockModule.View: UnlockViewControllerDelegate {

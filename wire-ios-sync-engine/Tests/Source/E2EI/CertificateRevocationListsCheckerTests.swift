@@ -266,7 +266,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { _, _ in }
 
         // Mock updating the conversation verification status
-        mockMLSGroupVerification.updateAllConversations_MockMethod = { }
+        mockMLSGroupVerification.updateAllConversations_MockMethod = {}
 
         // Mock getting a certificate for a self client
         mockSelfClientCertificateProvider.getCertificate_MockMethod = { return nil }

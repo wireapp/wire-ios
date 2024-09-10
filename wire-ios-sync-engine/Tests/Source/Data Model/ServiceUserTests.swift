@@ -23,20 +23,15 @@ import XCTest
 @testable import WireSyncEngine
 
 final class DummyServiceUser: NSObject, ServiceUser {
-    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
-    }
+    func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {}
 
-    func connect(completion: @escaping (Error?) -> Void) {
-    }
+    func connect(completion: @escaping (Error?) -> Void) {}
 
-    func block(completion: @escaping (Error?) -> Void) {
-    }
+    func block(completion: @escaping (Error?) -> Void) {}
 
-    func accept(completion: @escaping (Error?) -> Void) {
-    }
+    func accept(completion: @escaping (Error?) -> Void) {}
 
-    func ignore(completion: @escaping (Error?) -> Void) {
-    }
+    func ignore(completion: @escaping (Error?) -> Void) {}
 
     var remoteIdentifier: UUID?
 
@@ -212,11 +207,9 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var activeConversations: Set<ZMConversation> = Set()
 
-    func requestPreviewProfileImage() {
-    }
+    func requestPreviewProfileImage() {}
 
-    func requestCompleteProfileImage() {
-    }
+    func requestCompleteProfileImage() {}
 
     func imageData(for size: ProfileImageSize) -> Data? {
         nil
@@ -226,17 +219,13 @@ final class DummyServiceUser: NSObject, ServiceUser {
         completion(nil)
     }
 
-    func refreshData() {
-    }
+    func refreshData() {}
 
-    func refreshRichProfile() {
-    }
+    func refreshRichProfile() {}
 
-    func refreshMembership() {
-    }
+    func refreshMembership() {}
 
-    func refreshTeamData() {
-    }
+    func refreshTeamData() {}
 
     func isGuest(in conversation: ConversationLike) -> Bool {
         return false

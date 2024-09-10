@@ -70,10 +70,8 @@ extension MockConversation {
     }
 
     @objc (willAccessValueForKey:)
-    func willAccessValue(forKey: String) {
-    }
+    func willAccessValue(forKey: String) {}
 
     @objc (didAccessValueForKey:)
-    func didAccessValue(forKey: String) {
-    }
+    func didAccessValue(forKey: String) {}
 }

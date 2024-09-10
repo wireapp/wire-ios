@@ -93,8 +93,7 @@ extension ConversationMessageCell {
         // to be overriden
     }
 
-    func prepareForReuse() {
-    }
+    func prepareForReuse() {}
 }
 
 /**
@@ -159,8 +158,7 @@ extension ConversationMessageCellDescription {
         _ = message?.startSelfDestructionIfNeeded()
     }
 
-    func didEndDisplayingCell() {
-    }
+    func didEndDisplayingCell() {}
 
     func register(in tableView: UITableView) {
         tableView.register(cell: type(of: self))

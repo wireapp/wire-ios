@@ -138,8 +138,8 @@ protocol MockFileMessageDataType: ZMFileMessageData {
     var downloadState: AssetDownloadState { get set }
 }
 
-extension MockPassFileMessageData: MockFileMessageDataType { }
-extension MockFileMessageData: MockFileMessageDataType { }
+extension MockPassFileMessageData: MockFileMessageDataType {}
+extension MockFileMessageData: MockFileMessageDataType {}
 
 final class MockPassFileMessageData: NSObject, ZMFileMessageData {
     var mimeType: String? = "application/vnd.apple.pkpass"
@@ -154,8 +154,7 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
             return URL(fileURLWithPath: path)
         }
 
-        set {
-        }
+        set {}
     }
 
     var thumbnailAssetID: String? = ""
@@ -286,8 +285,7 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     }
 }
 
-final class MockKnockMessageData: NSObject, ZMKnockMessageData {
-}
+final class MockKnockMessageData: NSObject, ZMKnockMessageData {}
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
     var mockOriginalSize: CGSize = .zero
@@ -455,6 +453,5 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var systemMessageType: ZMSystemMessageType = ZMSystemMessageType.invalid
 
-    required override init() {
-    }
+    required override init() {}
 }

@@ -338,7 +338,7 @@ enum DebugActions {
 
         controller.addTextField()
 
-        controller.addAction(.cancel { })
+        controller.addAction(.cancel {})
         controller.addAction(okAction)
         controllerToPresentOver.present(controller, animated: true, completion: nil)
     }

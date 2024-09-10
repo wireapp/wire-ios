@@ -36,30 +36,30 @@ import Foundation
 ///
 /// Typically contains methods fetch data and perform business logic.
 
-protocol InteractorPresenterInterface: AnyObject { }
+protocol InteractorPresenterInterface: AnyObject {}
 
 /// Interface of the presenter from the perspective of the interactor.
 ///
 /// Typically contains methods to report the results of data fetches
 /// and business logic.
 
-protocol PresenterInteractorInterface: AnyObject { }
+protocol PresenterInteractorInterface: AnyObject {}
 
 /// Interface of the presenter from the perspective of the view.
 ///
 /// Typically contains methods to react to view life cycle and
 /// use interaction events.
 
-protocol PresenterViewInterface: AnyObject { }
+protocol PresenterViewInterface: AnyObject {}
 
 /// Interface of the view from the perspective of the presenter.
 ///
 /// Typically contains methods to set and update view data.
 
-protocol ViewPresenterInterface: AnyObject { }
+protocol ViewPresenterInterface: AnyObject {}
 
 /// Interface of the router from the perspective of the presenter.
 ///
 /// Typically contains methods to react to navigation requests.
 
-protocol RouterPresenterInterface: AnyObject { }
+protocol RouterPresenterInterface: AnyObject {}

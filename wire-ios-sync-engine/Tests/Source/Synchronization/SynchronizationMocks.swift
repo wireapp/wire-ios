@@ -173,8 +173,7 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     }
 }
 
-class FakeCookieStorage: ZMPersistentCookieStorage {
-}
+class FakeCookieStorage: ZMPersistentCookieStorage {}
 
 public class MockSyncStatus: SyncStatus {
     var didCallFailCurrentSyncPhase = false

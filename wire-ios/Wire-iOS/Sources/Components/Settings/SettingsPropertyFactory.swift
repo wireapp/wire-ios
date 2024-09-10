@@ -30,8 +30,7 @@ protocol AVSMediaManagerInterface {
     var isMicrophoneMuted: Bool { get set }
 }
 
-extension AVSMediaManager: AVSMediaManagerInterface {
-}
+extension AVSMediaManager: AVSMediaManagerInterface {}
 
 typealias SettingsSelfUser = EditableUserType & UserType
 

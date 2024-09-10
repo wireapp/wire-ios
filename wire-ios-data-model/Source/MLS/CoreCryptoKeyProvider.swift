@@ -20,8 +20,7 @@ import Foundation
 import WireSystem
 
 public class CoreCryptoKeyProvider {
-    public init() {
-    }
+    public init() {}
 
     public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
         removeLegacyKeyIfNeeded()

@@ -43,6 +43,5 @@ extension ___VARIABLE_productName:identifier___Module {
 // MARK: - Refresh
 
 extension ___VARIABLE_productName:identifier___Module.View: ___VARIABLE_productName:identifier___ViewPresenterInterface {
-    func refresh(withModel model: ___VARIABLE_productName:identifier___Module.ViewModel) {
-    }
+    func refresh(withModel model: ___VARIABLE_productName:identifier___Module.ViewModel) {}
 }

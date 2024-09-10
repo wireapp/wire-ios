@@ -186,7 +186,7 @@ public extension ZMConversationMessage {
     }
 }
 
-public extension Equatable where Self: ZMConversationMessage { }
+public extension Equatable where Self: ZMConversationMessage {}
 
 public func == (lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
     return lhs.isEqual(rhs)

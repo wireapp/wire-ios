@@ -134,9 +134,9 @@ final class URLActionRouterTests: XCTestCase {
 }
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
-    func updateActiveCallPresentationState() { }
+    func updateActiveCallPresentationState() {}
 
-    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?) { }
+    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?) {}
 
     var didNavigateToDestination: NavigationDestination?
     func navigate(to destination: NavigationDestination) {
