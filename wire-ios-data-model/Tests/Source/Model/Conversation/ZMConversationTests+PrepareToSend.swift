@@ -46,7 +46,7 @@ final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
 
         // WHEN
         let message = try XCTUnwrap(
-            try conversation.appendText(content: "Foo") as? ZMMessage
+            conversation.appendText(content: "Foo") as? ZMMessage
         )
         self.uiMOC.saveOrRollback()
 

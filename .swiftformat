@@ -21,7 +21,8 @@
     extensionAccessControl, \
     genericExtensions, \
     hoistAwait, \
-    hoistPatternLet
+    hoistPatternLet, \
+    hoistTry
 
 # Options
 

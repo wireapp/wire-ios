@@ -174,7 +174,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.enabled)
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -209,7 +209,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.disabled)
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -233,7 +233,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.enabled)
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -267,7 +267,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.disabled)
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }

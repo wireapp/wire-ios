@@ -162,7 +162,7 @@ class LinkPreviewTests: ConversationTestsBase {
         // when - receiving initial message without the link preview
         mockTransportSession.performRemoteChanges { _ in
             do {
-                mockConversation.encryptAndInsertData(from: senderClient, to: selfClient, data: try messageWithoutLinkPreview.serializedData())
+                try mockConversation.encryptAndInsertData(from: senderClient, to: selfClient, data: messageWithoutLinkPreview.serializedData())
             } catch {
                 XCTFail()
             }
@@ -175,7 +175,7 @@ class LinkPreviewTests: ConversationTestsBase {
         // when - receiving update message with the link preview
         mockTransportSession.performRemoteChanges { _ in
             do {
-                mockConversation.encryptAndInsertData(from: senderClient, to: selfClient, data: try messageWithLinkPreview.serializedData())
+                try mockConversation.encryptAndInsertData(from: senderClient, to: selfClient, data: messageWithLinkPreview.serializedData())
             } catch {
                 XCTFail()
             }

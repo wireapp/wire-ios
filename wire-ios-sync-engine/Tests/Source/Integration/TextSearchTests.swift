@@ -39,7 +39,7 @@ class TextSearchTests: ConversationTestsBase {
         mockTransportSession.performRemoteChanges { _ in
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"))
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -67,7 +67,7 @@ class TextSearchTests: ConversationTestsBase {
         mockTransportSession.performRemoteChanges { _ in
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"), nonce: nonce)
             do {
-                 self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try genericMessage.serializedData())
+                 try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
              } catch {
                  XCTFail()
              }
@@ -84,7 +84,7 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: nonce, text: Text(content: "This is an edit!!")))
 
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
 
             } catch {
                 XCTFail()
@@ -113,7 +113,7 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: Text(content: text), expiresAfterTimeInterval: 300)
 
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -142,7 +142,7 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"), nonce: nonce)
 
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -162,7 +162,7 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: MessageDelete(messageId: nonce))
 
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }

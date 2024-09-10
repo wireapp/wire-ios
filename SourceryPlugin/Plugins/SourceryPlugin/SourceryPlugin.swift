@@ -69,8 +69,8 @@ extension SourceryPlugin: BuildToolPlugin {
             return []
         }
 
-        return [
-            try makePrebuildCommand(
+        return try [
+            makePrebuildCommand(
                 context: context,
                 configuration: configuration,
                 targetDirectory: target.directory
@@ -83,9 +83,9 @@ extension SourceryPlugin: BuildToolPlugin {
         configuration: Path,
         targetDirectory: Path
     ) throws -> PackagePlugin.Command {
-        .prebuildCommand(
+        try .prebuildCommand(
             displayName: Constant.displayName,
-            executable: try context.tool(named: Constant.toolName).path,
+            executable: context.tool(named: Constant.toolName).path,
             arguments: [
                 "--config",
                 configuration.string,

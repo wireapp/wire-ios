@@ -106,10 +106,10 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
             let message = GenericMessage(content: content, nonce: .create())
 
             do {
-                self.groupConversation.encryptAndInsertData(
+                try self.groupConversation.encryptAndInsertData(
                     from: self.user1.clients.anyObject() as! MockUserClient,
                     to: self.selfUser.clients.anyObject() as! MockUserClient,
-                    data: try message.serializedData())
+                    data: message.serializedData())
             } catch {
                 XCTFail()
             }
@@ -145,10 +145,10 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
             let message = GenericMessage(content: content, nonce: .create())
 
             do {
-                self.groupConversation.encryptAndInsertData(
+                try self.groupConversation.encryptAndInsertData(
                     from: self.user1.clients.anyObject() as! MockUserClient,
                     to: self.selfUser.clients.anyObject() as! MockUserClient,
-                    data: try message.serializedData())
+                    data: message.serializedData())
             } catch {
                 XCTFail()
             }

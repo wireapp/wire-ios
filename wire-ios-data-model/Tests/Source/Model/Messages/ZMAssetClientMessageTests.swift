@@ -625,8 +625,8 @@ extension ZMAssetClientMessageTests {
 
             var asset = WireProtos.Asset()
             do {
-                try asset.merge(serializedData: try assetWithUploaded.serializedData())
-                try asset.preview.merge(serializedData: try assetWithPreview.preview.serializedData())
+                try asset.merge(serializedData: assetWithUploaded.serializedData())
+                try asset.preview.merge(serializedData: assetWithPreview.preview.serializedData())
             } catch {
                 XCTFail()
                 return

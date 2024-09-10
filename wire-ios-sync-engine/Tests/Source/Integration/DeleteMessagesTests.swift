@@ -60,7 +60,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: try textMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: textMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -78,7 +78,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -106,7 +106,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         self.mockTransportSession.performRemoteChanges { _ in
             do {
-                self.groupConversation.encryptAndInsertData(from: firstClient, to: selfClient, data: try textMessage.serializedData())
+                try self.groupConversation.encryptAndInsertData(from: firstClient, to: selfClient, data: textMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -123,7 +123,7 @@ class DeleteMessagesTests: ConversationTestsBase {
 
         self.mockTransportSession.performRemoteChanges { _ in
             do {
-                self.groupConversation.encryptAndInsertData(from: secondClient, to: selfClient, data: try genericMessage.serializedData())
+                try self.groupConversation.encryptAndInsertData(from: secondClient, to: selfClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -190,7 +190,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: try textMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: textMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -208,7 +208,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: try genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }

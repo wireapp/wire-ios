@@ -30,7 +30,7 @@ extension IntegrationTest {
     func remotelyInsert(genericMessage: GenericMessage, from senderClient: MockUserClient, into conversation: MockConversation) {
         mockTransportSession.performRemoteChanges { _ in
             do {
-                conversation.encryptAndInsertData(from: senderClient, to: self.selfUser.clients.anyObject() as! MockUserClient, data: try genericMessage.serializedData())
+                try conversation.encryptAndInsertData(from: senderClient, to: self.selfUser.clients.anyObject() as! MockUserClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }

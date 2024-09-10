@@ -93,7 +93,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
             resp: false
         )
 
-        let calling = Calling(content: try callEventContent.encodeToJSONString(), conversationId: .random())
+        let calling = try Calling(content: callEventContent.encodeToJSONString(), conversationId: .random())
         let genericMessage = GenericMessage(content: calling)
         let serializedData = try genericMessage.serializedData()
 
@@ -264,8 +264,8 @@ final class StoreUpdateEventTests: MessagingTestBase {
             let conversation = self.createConversation(in: self.uiMOC)
             let event1 = self.createNewConversationEvent(for: conversation)
 
-            _ = StoredUpdateEvent.create(from: event1,
-                                                                  eventId: try XCTUnwrap(event1.uuid?.uuidString.lowercased()),
+            _ = try StoredUpdateEvent.create(from: event1,
+                                                                  eventId: XCTUnwrap(event1.uuid?.uuidString.lowercased()),
                                                                   eventHash: 0,
                                                                   index: 1,
                                                                   context: eventMOC)
@@ -286,7 +286,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
             // Given some events.
             let conversation = self.createConversation(in: self.uiMOC)
             let event1 = self.createNewConversationEvent(for: conversation)
-            let event2 = try self.createNewCallEvent(for: conversation, uuid: try XCTUnwrap(event1.uuid))
+            let event2 = try self.createNewCallEvent(for: conversation, uuid: XCTUnwrap(event1.uuid))
 
             guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
                 event1,

@@ -438,9 +438,9 @@ public class EARService: EARServiceInterface {
 
         do {
             WireLogger.ear.debug("fetch public keys")
-            return EARPublicKeys(
-                primary: try fetchPrimaryPublicKey(),
-                secondary: try fetchSecondaryPublicKey()
+            return try EARPublicKeys(
+                primary: fetchPrimaryPublicKey(),
+                secondary: fetchSecondaryPublicKey()
             )
         } catch {
             WireLogger.ear.error("unable to fetch public keys: \(String(describing: error))")
@@ -473,9 +473,9 @@ public class EARService: EARServiceInterface {
         }
 
         do {
-            return EARPrivateKeys(
+            return try EARPrivateKeys(
                 primary: includingPrimary ? try? fetchPrimaryPrivateKey() : nil,
-                secondary: try fetchSecondaryPrivateKey()
+                secondary: fetchSecondaryPrivateKey()
             )
         } catch {
             WireLogger.ear.error("unable to fetch private keys: \(String(describing: error))")

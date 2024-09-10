@@ -703,9 +703,9 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         let expectation = XCTestExpectation(description: "It should call the observer")
 
-        let token = NotificationInContext.addObserver(
+        let token = try NotificationInContext.addObserver(
             name: ZMConversation.failedToDecryptMessageNotificationName,
-            context: try XCTUnwrap(userSession?.managedObjectContext.notificationContext),
+            context: XCTUnwrap(userSession?.managedObjectContext.notificationContext),
             object: nil,
             queue: nil,
             using: { note in

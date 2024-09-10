@@ -40,6 +40,6 @@ extension URLRequest {
 
         let jsonPayload = HTTPClientMock.PredefinedResponse(resourceName: jsonResourceName)
 
-        return (try jsonPayload.data(), response)
+        return try (jsonPayload.data(), response)
     }
 }

@@ -739,7 +739,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         let message = try await syncMOC.perform {
             return try XCTUnwrap(
-                try conversation.appendText(content: "foo") as? ZMOTRMessage
+                conversation.appendText(content: "foo") as? ZMOTRMessage
             )
         }
 
@@ -751,7 +751,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // WHEN
         try await uiMOC.perform {
-            let uiConversation = try XCTUnwrap(try self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
+            let uiConversation = try XCTUnwrap(self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
             uiConversation.acknowledgePrivacyWarningAndResendMessages()
         }
 

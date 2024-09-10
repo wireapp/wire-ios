@@ -61,7 +61,7 @@ struct CreateMLSGroupUseCase {
                 // won't be able to decrypt external remove proposals from the
                 // owning domain.
                 externalSenders = try await coreCrypto.perform {
-                    await [try $0.getExternalSender(conversationId: parentGroupID.data)]
+                    try await [$0.getExternalSender(conversationId: parentGroupID.data)]
                 }
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
                 externalSenders = backendPublicKeys.externalSenderKey(for: ciphersuite)

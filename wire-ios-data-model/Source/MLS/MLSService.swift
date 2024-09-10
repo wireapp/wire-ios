@@ -811,10 +811,10 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
     ) async throws -> MLSCipherSuite {
-        let useCase = await CreateMLSGroupUseCase(
+        let useCase = try await CreateMLSGroupUseCase(
             parentGroupID: parentGroupID,
             defaultCipherSuite: featureRepository.fetchMLS().config.defaultCipherSuite,
-            coreCrypto: try coreCrypto,
+            coreCrypto: coreCrypto,
             staleKeyMaterialDetector: staleKeyMaterialDetector,
             actionsProvider: actionsProvider,
             notificationContext: notificationContext

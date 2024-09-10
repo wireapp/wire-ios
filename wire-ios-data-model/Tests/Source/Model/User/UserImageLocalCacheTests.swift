@@ -148,14 +148,14 @@ final class UserImageLocalCacheTests: XCTestCase {
 
     func testThatItRemovesAllImagesFromCache() throws {
         // given
-        sut.setUserImage(
+        try sut.setUserImage(
             testUser,
-            imageData: try XCTUnwrap(Data("baz".utf8)),
+            imageData: XCTUnwrap(Data("baz".utf8)),
             size: .complete
         )
-        sut.setUserImage(
+        try sut.setUserImage(
             testUser,
-            imageData: try XCTUnwrap(Data("moo".utf8)),
+            imageData: XCTUnwrap(Data("moo".utf8)),
             size: .preview
         )
 

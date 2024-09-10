@@ -216,7 +216,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let message = try XCTUnwrap(
-                try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+                self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             )
 
             XCTAssertTrue(message.isEphemeral)

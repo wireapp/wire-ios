@@ -172,7 +172,7 @@ extension ClientMessageTests_OTR_Legacy {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let message = try XCTUnwrap(
-                try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+                self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             )
 
             XCTAssertTrue(message.isEphemeral)

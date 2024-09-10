@@ -222,9 +222,9 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 throw MLSMessageDecryptionError.failedToDecodeSenderClientID
             }
 
-            return MLSDecryptResult.message(
+            return try MLSDecryptResult.message(
                 message,
-                try senderClientId(from: clientId).clientID
+                senderClientId(from: clientId).clientID
             )
         }
 

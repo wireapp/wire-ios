@@ -108,8 +108,8 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
 
             // Backend may return an empty payload if the domain is offline.
             let emptyPayload = ResponsePayload(qualifiedUsers: ["offline-domain.com": [:]])
-            let response = ZMTransportResponse(
-                payload: try emptyPayload.encodeToJSONString() as ZMTransportData,
+            let response = try ZMTransportResponse(
+                payload: emptyPayload.encodeToJSONString() as ZMTransportData,
                 httpStatus: 200,
                 transportSessionError: nil,
                 apiVersion: apiVersion.rawValue

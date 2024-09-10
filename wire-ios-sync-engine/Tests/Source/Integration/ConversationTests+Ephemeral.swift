@@ -110,7 +110,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
 
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: try deleteMessage.serializedData())
+                try self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: deleteMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -135,7 +135,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
 
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                conversation.encryptAndInsertData(from: fromClient, to: toClient, data: try genericMessage.serializedData())
+                try conversation.encryptAndInsertData(from: fromClient, to: toClient, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }

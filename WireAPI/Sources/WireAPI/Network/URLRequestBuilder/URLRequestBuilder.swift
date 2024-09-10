@@ -77,8 +77,8 @@ extension URLRequestBuilder {
         _ payload: some Encodable,
         encoder: JSONEncoder = .defaultEncoder
     ) throws -> Self {
-        withMethod(.post).withBody(
-            try encoder.encode(payload),
+        try withMethod(.post).withBody(
+            encoder.encode(payload),
             contentType: .json
         )
     }

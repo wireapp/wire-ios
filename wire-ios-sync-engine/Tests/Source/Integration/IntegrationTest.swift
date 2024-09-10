@@ -684,7 +684,7 @@ extension IntegrationTest {
         let genericMessage = GenericMessage(content: Cleared(timestamp: time, conversationID: UUID(uuidString: mockConversation.identifier)!))
         mockTransportSession.performRemoteChanges { _ in
             do {
-                self.selfConversation.insertClientMessage(from: self.selfUser, data: try genericMessage.serializedData())
+                try self.selfConversation.insertClientMessage(from: self.selfUser, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }
@@ -701,7 +701,7 @@ extension IntegrationTest {
         let genericMessage = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: time))
         mockTransportSession.performRemoteChanges { _ in
             do {
-                self.selfConversation.insertClientMessage(from: self.selfUser, data: try genericMessage.serializedData())
+                try self.selfConversation.insertClientMessage(from: self.selfUser, data: genericMessage.serializedData())
             } catch {
                 XCTFail()
             }

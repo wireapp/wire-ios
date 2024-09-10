@@ -45,7 +45,7 @@ extension IntegrationTest {
             }
 
             do {
-                cypherText = try session.encrypt(try message.serializedData(), for: selfClient.sessionIdentifier!)
+                cypherText = try session.encrypt(message.serializedData(), for: selfClient.sessionIdentifier!)
             } catch {
                 fatalError("Error in encrypting: \(error)")
             }

@@ -1491,13 +1491,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
-        let subgroup = MLSSubgroup(
+        let subgroup = try MLSSubgroup(
             cipherSuite: 0,
             epoch: 1,
             epochTimestamp: Date(),
             groupID: subgroupID,
             members: [],
-            parentQualifiedID: try XCTUnwrap(qualifiedID)
+            parentQualifiedID: XCTUnwrap(qualifiedID)
         )
 
         let expectation = XCTestExpectation(description: "rejoined subgroup")
@@ -1531,13 +1531,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let subgroupID = MLSGroupID.random()
         let qualifiedID = await uiMOC.perform { conversation.qualifiedID }
 
-        let subgroup = MLSSubgroup(
+        let subgroup = try MLSSubgroup(
             cipherSuite: 0,
             epoch: 1,
             epochTimestamp: Date(),
             groupID: subgroupID,
             members: [],
-            parentQualifiedID: try XCTUnwrap(qualifiedID)
+            parentQualifiedID: XCTUnwrap(qualifiedID)
         )
 
         let expectation = XCTestExpectation(description: "didn't rejoin subgroup")
