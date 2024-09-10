@@ -58,7 +58,7 @@ platform :ios do
     desc "Test frameworks given folders"
     lane :test_frameworks do |options|
         if options[:all] == "true"
-            schemas = Framework.all.map { |f| f.to_scheme }
+            schemas = Framework.all.values.map { |f| f.scheme }
         else
             if options[:folders] == nil || options[:folders].empty?
                 schemas = select_frameworks()
@@ -79,11 +79,18 @@ platform :ios do
     end
 
     lane :select_frameworks do |options|
-        framework_schemes = Framework.all.map { |f| f.to_scheme }
+        frameworks = Framework.all.values
         select_all = "All"  
-        framework_options = framework_schemes + [select_all]
+        framework_options = frameworks.map { |f| f.scheme } + [select_all]
     
-        UI.select("Select a framework for testing:", framework_options)
+        selected_choice = UI.select("Select a framework for testing:", framework_options)
+        if selected_choice == select_all 
+            test_frameworks(all: true)
+        else 
+            framework = frameworks.find { |framework| framework.scheme == selected_choice }
+
+            test_frameworks(folders: framework.name)
+        end
     end
 
     desc "Generate list of frameworks' schemes to test from folders"
