@@ -524,9 +524,9 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func successfulResponse(for request: Payload.QualifiedUserIDList, failed: [QualifiedID]? = nil, apiVersion: APIVersion) -> ZMTransportResponse? {
-        let userProfiles = request.qualifiedIDs.map({
+        let userProfiles = request.qualifiedIDs.map {
             userProfile(for: $0.uuid, domain: $0.domain)
-        })
+        }
 
         var payloadData: Data?
         switch apiVersion {

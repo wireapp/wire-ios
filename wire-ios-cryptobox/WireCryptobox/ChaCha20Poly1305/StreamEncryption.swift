@@ -58,9 +58,9 @@ extension ChaCha20Poly1305 {
                 }
 
                 static var sizeOfAllFields: Int {
-                    layout.reduce(0, { result, part in
+                    layout.reduce(0) { result, part in
                         result + part.rawValue
-                    })
+                    }
                 }
 
                 static func partition(buffer: [UInt8], _ into: (_ partition: ArraySlice<UInt8>, _ field: Field) throws -> Void) throws {

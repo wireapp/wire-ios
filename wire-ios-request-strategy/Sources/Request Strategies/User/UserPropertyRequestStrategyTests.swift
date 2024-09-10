@@ -46,7 +46,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsToBeUpdatedFromBackend = false
             selfUser.readReceiptsEnabled = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) }
 
             // when
             let request = self.sut.nextRequest(for: .v0)

@@ -200,9 +200,9 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         await syncMOC.performGrouped {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            })
+            }
 
             otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
@@ -273,9 +273,9 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         await syncMOC.performGrouped {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
-            })
+            }
 
             otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()

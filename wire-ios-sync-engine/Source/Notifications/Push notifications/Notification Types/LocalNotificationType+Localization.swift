@@ -205,15 +205,15 @@ extension LocalNotificationType {
         let teamName = team?.name
         let teamKey = teamName != nil ? TeamKey : nil
         let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap({ $0 }).joined(separator: ".")
-        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap({ $0 }))
+        let localizationKey = [baseKey, availabilityKey, "title", teamKey].compactMap { $0 }.joined(separator: ".")
+        return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: [teamName].compactMap { $0 })
     }
 
     func alertMessageBodyText() -> String {
         guard case let .availabilityBehaviourChangeAlert(availability) = self, availability.isOne(of: .away, .busy) else { return "" }
 
         let availabilityKey = availability == .away ? "away" : "busy"
-        let localizationKey = [baseKey, availabilityKey, "message"].compactMap({ $0 }).joined(separator: ".")
+        let localizationKey = [baseKey, availabilityKey, "message"].compactMap { $0 }.joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString)
     }
 
@@ -292,7 +292,7 @@ extension LocalNotificationType {
             arguments.append(conversationName)
         }
 
-        let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey].compactMap({ $0 }).joined(separator: ".")
+        let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey].compactMap { $0 }.joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: arguments)
     }
 }

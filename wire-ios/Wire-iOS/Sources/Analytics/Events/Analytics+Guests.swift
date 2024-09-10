@@ -21,9 +21,9 @@ import WireDataModel
 
 extension Analytics {
     func guestAttributes(in conversation: ZMConversation) -> [String: Any] {
-        let numGuests = conversation.sortedActiveParticipants.filter({
+        let numGuests = conversation.sortedActiveParticipants.filter {
             $0.isGuest(in: conversation)
-        }).count
+        }.count
 
         let userType = if let user = SelfUser.provider?.providedSelfUser, !user.isGuest(in: conversation) {
             "user"

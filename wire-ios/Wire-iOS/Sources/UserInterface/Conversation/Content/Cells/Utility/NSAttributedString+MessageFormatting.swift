@@ -210,7 +210,7 @@ extension String {
     fileprivate mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
         mentions.sorted(by: {
             $0.range.location > $1.range.location
-        }).compactMap({ mention in
+        }).compactMap { mention in
             guard let range = Range(mention.range, in: self) else { return nil }
 
             let name = String(self[range].dropFirst()) // drop @
@@ -219,7 +219,7 @@ extension String {
             replaceSubrange(range, with: textObject.token)
 
             return textObject
-        })
+        }
     }
 }
 
@@ -228,7 +228,7 @@ extension IndexSet {
         var excludedIndexSet = IndexSet()
         var includedIndexSet = IndexSet()
 
-        excluding.forEach({ excludedIndexSet.insert(integersIn: $0) })
+        excluding.forEach { excludedIndexSet.insert(integersIn: $0) }
         includedIndexSet.insert(integersIn: range)
 
         self = includedIndexSet.subtracting(excludedIndexSet)

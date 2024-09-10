@@ -79,12 +79,12 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
+        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform {
             (
                 self.user(for: self.user1),
                 self.conversation(for: self.groupConversation)
             )
-        })
+        }
 
         guard let legalHoldUser, let groupConversation else {
             XCTFail("expect legalHoldUser and groupConversation")
@@ -117,12 +117,12 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
+        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform {
             (
                 self.user(for: self.user1),
                 self.conversation(for: self.groupConversation)
             )
-        })
+        }
 
         guard let legalHoldUser, let groupConversation else {
             XCTFail("expect legalHoldUser and groupConversation")

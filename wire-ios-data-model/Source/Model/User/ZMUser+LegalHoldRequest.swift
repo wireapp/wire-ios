@@ -295,7 +295,7 @@ extension ZMUser: SelfLegalHoldSubject {
                 (self.managedObjectContext?.zm_sync, self.legalHoldRequest?.lastPrekey)
             }), let syncContext, let prekey else { return nil }
 
-            let proteusProvider = await syncContext.perform({ syncContext.proteusProvider })
+            let proteusProvider = await syncContext.perform { syncContext.proteusProvider }
             return await proteusProvider.performAsync { proteusService in
                 await fetchFingerprint(for: prekey, through: proteusService)
             } withKeyStore: { keyStore in

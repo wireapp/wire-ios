@@ -1421,7 +1421,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_FetchAndRepairConversation_RejoinsOutOfSyncConversation() async throws {
         // GIVEN
-        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
         guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
@@ -1451,7 +1451,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_FetchAndRepairConversation_DoesNothingIfConversationIsNotOutOfSync() async throws {
         // GIVEN
-        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
         guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
@@ -1479,7 +1479,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_FetchAndRepairConversation_RejoinsOutOfSyncSubgroup() async throws {
         // GIVEN
-        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
         guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
@@ -1519,7 +1519,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() async throws {
         // GIVEN
-        let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
+        let conversation = await uiMOC.perform { self.createConversation(outOfSync: true).conversation }
         guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return

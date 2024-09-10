@@ -85,8 +85,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         self.insertedLabels = []
         self.deletedLabels = []
 
-        managedObjectContext.conversationListDirectory().insertFolders(insertedLabels.filter({ $0.kind == .folder }))
-        managedObjectContext.conversationListDirectory().deleteFolders(deletedLabels.filter({ $0.kind == .folder }))
+        managedObjectContext.conversationListDirectory().insertFolders(insertedLabels.filter { $0.kind == .folder })
+        managedObjectContext.conversationListDirectory().deleteFolders(deletedLabels.filter { $0.kind == .folder })
 
         if !insertedLabels.isEmpty || !deletedLabels.isEmpty {
             NotificationInContext(name: .conversationListDidChangeFolders, context: managedObjectContext.notificationContext).post()

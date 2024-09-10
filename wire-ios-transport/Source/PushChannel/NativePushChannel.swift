@@ -165,9 +165,9 @@ final class NativePushChannel: NSObject, PushChannelType {
                     break
                 }
 
-                self?.consumerQueue?.performGroupedBlock({
+                self?.consumerQueue?.performGroupedBlock {
                     self?.consumer?.pushChannelDidReceive(data)
-                })
+                }
             }
 
             self?.listen()
@@ -196,9 +196,9 @@ final class NativePushChannel: NSObject, PushChannelType {
         listen()
         startPingTimer()
 
-        consumerQueue?.performGroupedBlock({
+        consumerQueue?.performGroupedBlock {
             self.consumer?.pushChannelDidOpen()
-        })
+        }
     }
 
     private func stopPingTimer() {
@@ -246,7 +246,7 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 
 extension NativePushChannel: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        WireLogger.pushChannel.error("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a")")
+        WireLogger.pushChannel.error("Websocket open connection task did fail: \(error.map { String(describing: $0) } ?? "n/a")")
 
         websocketTask = nil
     }

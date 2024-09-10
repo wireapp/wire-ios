@@ -369,18 +369,18 @@ final class SearchResultsViewController: UIViewController {
         var teamContacts = searchResult.teamMembers
 
         if let filteredParticpants = filterConversation?.localParticipants {
-            contacts = contacts.filter({
+            contacts = contacts.filter {
                 guard let user = $0.user else {
                     return true
                 }
                 return !filteredParticpants.contains(user)
-            })
-            teamContacts = teamContacts.filter({
+            }
+            teamContacts = teamContacts.filter {
                 guard let user = $0.user else {
                     return true
                 }
                 return !filteredParticpants.contains(user)
-            })
+            }
         }
 
         contactsSection.contacts = contacts

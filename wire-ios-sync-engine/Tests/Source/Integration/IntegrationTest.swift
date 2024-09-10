@@ -330,7 +330,7 @@ extension IntegrationTest {
 
     @objc
     func createSelfUserAndConversation() {
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             let selfUser = session.insertSelfUser(withName: "The Self User")
             selfUser.email = IntegrationTest.SelfUserEmail
             selfUser.password = IntegrationTest.SelfUserPassword
@@ -346,14 +346,14 @@ extension IntegrationTest {
 
             self.selfUser = selfUser
             self.selfConversation = selfConversation
-        })
+        }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     @objc
     func createExtraUsersAndConversations() {
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             let user1 = session.insertUser(withName: "Extra User1")
             user1.email = "user1@example.com"
             user1.phone = "6543"
@@ -422,12 +422,12 @@ extension IntegrationTest {
             connectionSelfToUser2.lastUpdate = Date(timeIntervalSinceNow: -5)
             connectionSelfToUser2.conversation = selfToUser2Conversation
             self.connectionSelfToUser2 = connectionSelfToUser2
-        })
+        }
     }
 
     @objc
     func createTeamAndConversations() {
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
 
             let user1 = session.insertUser(withName: "Team user1")
             user1.accentID = 7
@@ -461,7 +461,7 @@ extension IntegrationTest {
             MockRole.createConversationRoles(context: self.mockTransportSession.managedObjectContext)
             let pc = MockParticipantRole.insert(in: self.mockTransportSession.managedObjectContext, conversation: groupConversation, user: self.selfUser)
             pc.role = MockRole.adminRole
-        })
+        }
     }
 
     @objc
@@ -573,7 +573,7 @@ extension IntegrationTest {
     func createConnection(fromUserWithName name: String, uuid: UUID, status: String) -> MockUser {
         let mockUser = createUser(withName: name, uuid: uuid)
 
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             let connection = session.insertConnection(withSelfUser: self.selfUser, to: mockUser)
             connection.message = "Hello, my friend."
             connection.status = status
@@ -581,7 +581,7 @@ extension IntegrationTest {
 
             let conversation = session.insertConversation(withSelfUser: self.selfUser, creator: mockUser, otherUsers: [], type: .invalid)
             connection.conversation = conversation
-        })
+        }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -592,10 +592,10 @@ extension IntegrationTest {
     @objc(createUserWithName:uuid:)
     func createUser(withName name: String, uuid: UUID) -> MockUser {
         var user: MockUser?
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             user = session.insertUser(withName: name)
             user?.identifier = uuid.transportString()
-        })
+        }
 
         return user!
     }

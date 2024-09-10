@@ -32,7 +32,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let message3 = try! conversation.appendText(content: "text3") as! ZMClientMessage
         let message4 = try! conversation.appendText(content: "text4") as! ZMClientMessage
 
-        [message1, message2, message3, message4].forEach({ $0.expectsReadConfirmation = true })
+        [message1, message2, message3, message4].forEach { $0.expectsReadConfirmation = true }
 
         message1.sender = user2
         message2.sender = user1
@@ -72,7 +72,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let message2 = try! conversation.appendText(content: "text2") as! ZMClientMessage
         let message3 = try! conversation.appendText(content: "text3") as! ZMClientMessage
 
-        [message1, message2, message3].forEach({ $0.expectsReadConfirmation = true })
+        [message1, message2, message3].forEach { $0.expectsReadConfirmation = true }
 
         message1.sender = user1
         message2.sender = user1

@@ -30,7 +30,7 @@ final class AggregatedLogger: LoggerProtocol {
     // MARK: - LoggerProtocol
 
     var logFiles: [URL] {
-        loggers.reduce(into: [], { $0 += $1.logFiles })
+        loggers.reduce(into: []) { $0 += $1.logFiles }
     }
 
     func debug(_ message: any LogConvertible, attributes: LogAttributes...) {

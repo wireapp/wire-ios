@@ -494,8 +494,8 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
         mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { parentID, parentGroupID, subconversationType in
-            XCTAssertEqual(parentID, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
-            XCTAssertEqual(parentGroupID, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
+            XCTAssertEqual(parentID, self.uiMOC.performAndWait { self.groupConversation.qualifiedID })
+            XCTAssertEqual(parentGroupID, self.uiMOC.performAndWait { self.groupConversation.mlsGroupID })
             XCTAssertEqual(subconversationType, .conference)
             didLeaveSubconversation.fulfill()
         }
@@ -524,8 +524,8 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
-            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
-            XCTAssertEqual($1, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
+            XCTAssertEqual($0, self.uiMOC.performAndWait { self.groupConversation.qualifiedID })
+            XCTAssertEqual($1, self.uiMOC.performAndWait { self.groupConversation.mlsGroupID })
             XCTAssertEqual($2, .conference)
             XCTAssertEqual($3, selfClientID)
             didLeaveSubconversationIfNeeded.fulfill()
@@ -565,8 +565,8 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
-            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
-            XCTAssertEqual($1, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
+            XCTAssertEqual($0, self.uiMOC.performAndWait { self.groupConversation.qualifiedID })
+            XCTAssertEqual($1, self.uiMOC.performAndWait { self.groupConversation.mlsGroupID })
             XCTAssertEqual($2, .conference)
             XCTAssertEqual($3, selfClientID)
             didLeaveSubconversationIfNeeded.fulfill()
@@ -601,8 +601,8 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         let didLeaveSubconversationIfNeeded = customExpectation(description: "didLeaveSubconversationIfNeeded")
         mlsService.leaveSubconversationIfNeededParentQualifiedIDParentGroupIDSubconversationTypeSelfClientID_MockMethod = {
-            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }))
-            XCTAssertEqual($1, self.uiMOC.performAndWait({ self.groupConversation.mlsGroupID }))
+            XCTAssertEqual($0, self.uiMOC.performAndWait { self.groupConversation.qualifiedID })
+            XCTAssertEqual($1, self.uiMOC.performAndWait { self.groupConversation.mlsGroupID })
             XCTAssertEqual($2, .conference)
             XCTAssertEqual($3, selfClientID)
             didLeaveSubconversationIfNeeded.fulfill()
@@ -905,7 +905,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         let didJoinSubgroup = customExpectation(description: "didJoinSubgroup")
         mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = {
             defer { didJoinSubgroup.fulfill() }
-            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.qualifiedID }), "[0] groupConversation.qualifiedID doesn't match", file: file, line: line)
+            XCTAssertEqual($0, self.uiMOC.performAndWait { self.groupConversation.qualifiedID }, "[0] groupConversation.qualifiedID doesn't match", file: file, line: line)
             XCTAssertEqual($1, parentGroupID, "[1] parentGroupID doesn't match", file: file, line: line)
             return subconversationGroupID
         }
@@ -920,7 +920,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         let didSetConferenceInfo1 = customExpectation(description: "didSetConferenceInfo1")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
-            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.avsIdentifier }), "[4] avsIdentifier doesn't match", file: file, line: line)
+            XCTAssertEqual($0, self.uiMOC.performAndWait { self.groupConversation.avsIdentifier }, "[4] avsIdentifier doesn't match", file: file, line: line)
             XCTAssertEqual($1, conferenceInfo1, "[5] converenceInfo1 doesn't match", file: file, line: line)
             didSetConferenceInfo1.fulfill()
         }
@@ -952,7 +952,7 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         let didSetConferenceInfo2 = customExpectation(description: "didSetConferenceInfo2")
         mockAVSWrapper.mockSetMLSConferenceInfo = {
-            XCTAssertEqual($0, self.uiMOC.performAndWait({ self.groupConversation.avsIdentifier }), "[8] avsIdentifier doesn't match", file: file, line: line)
+            XCTAssertEqual($0, self.uiMOC.performAndWait { self.groupConversation.avsIdentifier }, "[8] avsIdentifier doesn't match", file: file, line: line)
             XCTAssertEqual($1, conferenceInfo2, "[9] conferenceInfo2 doesn't match", file: file, line: line)
             didSetConferenceInfo2.fulfill()
         }

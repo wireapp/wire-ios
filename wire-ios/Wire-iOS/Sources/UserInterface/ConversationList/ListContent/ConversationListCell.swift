@@ -272,10 +272,10 @@ extension ConversationListCell: AVSMediaManagerClientObserver {
         guard !ProcessInfo.processInfo.isRunningTests else { return }
 
         // AUDIO-548 AVMediaManager notifications arrive on a background thread.
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             if notification?.microphoneMuteChanged != nil {
                 self.updateAppearance()
             }
-        })
+        }
     }
 }

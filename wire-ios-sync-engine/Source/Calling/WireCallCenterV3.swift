@@ -208,7 +208,7 @@ extension WireCallCenterV3 {
 extension WireCallCenterV3 {
     /// All non idle conversations and their corresponding call state.
     public var nonIdleCalls: [AVSIdentifier: CallState] {
-        callSnapshots.mapValues({ $0.callState })
+        callSnapshots.mapValues { $0.callState }
     }
 
     /// The list of conversation with established calls.

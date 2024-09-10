@@ -21,22 +21,22 @@ import Foundation
 
 class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
     func assetWithImage() -> WireProtos.Asset {
-        let original = WireProtos.Asset.Original.with({
+        let original = WireProtos.Asset.Original.with {
             $0.size = 1000
             $0.mimeType = "image"
             $0.name = "foo"
-        })
+        }
         let remoteData = WireProtos.Asset.RemoteData.with {
             $0.otrKey = Data()
             $0.sha256 = Data()
             $0.assetID = "id"
             $0.assetToken = "token"
         }
-        let imageMetaData = WireProtos.Asset.ImageMetaData.with({
+        let imageMetaData = WireProtos.Asset.ImageMetaData.with {
             $0.width = 30
             $0.height = 40
             $0.tag = "bar"
-        })
+        }
         let preview = WireProtos.Asset.Preview(size: 2000, mimeType: "video", remoteData: remoteData, imageMetadata: imageMetaData)
         let asset = WireProtos.Asset(original: original, preview: preview)
         return asset
@@ -224,10 +224,10 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         let permURL = "www.example.com/permanent"
         let origURL = "www.example.com/original"
         let text = "foo www.example.com/original"
-        let tweet = WireProtos.Tweet.with({
+        let tweet = WireProtos.Tweet.with {
             $0.author = "author"
             $0.username = "username"
-        })
+        }
         let offset: Int32 = 4
 
         let linkPreview = LinkPreview.with {
@@ -286,16 +286,16 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
     func testThatItObfuscatesAssetsVideoContent() {
         // given
 
-        let original = WireProtos.Asset.Original.with({
+        let original = WireProtos.Asset.Original.with {
             $0.size = 200
             $0.mimeType = "video"
             $0.name = "foo"
-            $0.video = WireProtos.Asset.VideoMetaData.with({
+            $0.video = WireProtos.Asset.VideoMetaData.with {
                 $0.durationInMillis = 500
                 $0.width = 305
                 $0.height = 200
-            })
-        })
+            }
+        }
 
         let asset = WireProtos.Asset(original: original, preview: nil)
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)
@@ -320,15 +320,15 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
 
     func testCheckThatItObfuscatesAudioMessages() {
         // given
-        let original = WireProtos.Asset.Original.with({
+        let original = WireProtos.Asset.Original.with {
             $0.size = 200
             $0.mimeType = "audio"
             $0.name = "foo"
-            $0.audio = WireProtos.Asset.AudioMetaData.with({
+            $0.audio = WireProtos.Asset.AudioMetaData.with {
                 $0.durationInMillis = 300
                 $0.normalizedLoudness = NSData(bytes: [2.9], length: [2.9].count) as Data
-            })
-        })
+            }
+        }
 
         let asset = WireProtos.Asset(original: original, preview: nil)
         let genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)

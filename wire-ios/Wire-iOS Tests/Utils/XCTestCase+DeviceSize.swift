@@ -44,21 +44,21 @@ extension XCTestCase {
     static var deviceScreenSizes: [String: CGSize] = phoneScreenSizes.merging(tabletScreenSizes) { $1 }
 
     func phoneWidths() -> Set<CGFloat> {
-        Set(XCTestCase.phoneScreenSizes.map({ size in
+        Set(XCTestCase.phoneScreenSizes.map { size in
             size.value.width
-        }))
+        })
     }
 
     var smallestWidth: CGFloat {
-        XCTestCase.phoneScreenSizes.map({ size in
+        XCTestCase.phoneScreenSizes.map { size in
             size.value.width
-        }).sorted().first!
+        }.sorted().first!
     }
 
     func tabletWidths() -> Set<CGFloat> {
-        Set(XCTestCase.tabletScreenSizes.map({ size in
+        Set(XCTestCase.tabletScreenSizes.map { size in
             size.value.width
-        }))
+        })
     }
 
     // swiftlint:disable:next todo_requires_jira_link

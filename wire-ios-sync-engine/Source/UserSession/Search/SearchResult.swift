@@ -61,7 +61,7 @@ extension SearchResult {
 
         contacts = []
         addressBook = []
-        directory = searchUsers.filter({ !$0.isConnected && !$0.isTeamMember })
+        directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         conversations = []
         services = []
         self.searchUsersCache = searchUsersCache
@@ -129,7 +129,7 @@ extension SearchResult {
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
         for membershipPayload in payload.members {
             let searchUser = teamMembers.first(where: { $0.remoteIdentifier == membershipPayload.userID })
-            let permissions = membershipPayload.permissions.flatMap({ Permissions(rawValue: $0.selfPermissions) })
+            let permissions = membershipPayload.permissions.flatMap { Permissions(rawValue: $0.selfPermissions) }
             searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: membershipPayload.createdBy)
         }
     }
@@ -143,11 +143,11 @@ extension SearchResult {
         let isHandleQuery = query.hasPrefix("@")
         let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query).lowercased()
 
-        teamMembers = teamMembers.filter({
+        teamMembers = teamMembers.filter {
             $0.teamRole != .partner ||
                 $0.teamCreatedBy == selfUser.remoteIdentifier ||
                 isHandleQuery && $0.handle == queryWithoutAtSymbol
-        })
+        }
     }
 
     func copy(on context: NSManagedObjectContext) -> SearchResult {

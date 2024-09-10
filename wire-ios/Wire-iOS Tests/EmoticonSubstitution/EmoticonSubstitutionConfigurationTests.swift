@@ -52,13 +52,13 @@ final class EmoticonSubstitutionConfigurationTests: XCTestCase {
 
         // Given
 
-        measure({
+        measure {
             // When
             let config = createEmoticonSubstitutionConfiguration(fileName: "emoticons.min.json")
 
             // Then
             XCTAssertNotNil(config)
-        })
+        }
     }
 
     func testThatShortcutsAreSortedCorrectly() {

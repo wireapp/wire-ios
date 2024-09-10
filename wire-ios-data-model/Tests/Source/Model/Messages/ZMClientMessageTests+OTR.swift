@@ -437,7 +437,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             }
 
             let payloadClients = messageMetadata.recipients.compactMap { user -> [String] in
-                user.clients.map({ String(format: "%llx", $0.client.client) })
+                user.clients.map { String(format: "%llx", $0.client.client) }
             }.flatMap { $0 }
             XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
         }
@@ -568,7 +568,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             try? $0.merge(serializedData: payload)
         }
 
-        let client = self.uiMOC.performAndWait({ self.selfClient1.clientId.client })
+        let client = self.uiMOC.performAndWait { self.selfClient1.clientId.client }
         XCTAssertEqual(messageMetadata.sender.client, client, file: file, line: line)
         assertRecipients(messageMetadata.recipients, file: file, line: line)
     }

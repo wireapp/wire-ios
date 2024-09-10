@@ -69,7 +69,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
         let request = sutNextRequest(for: .v0)
 
         // then
-        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        let id = try XCTUnwrap(syncMOC.performAndWait { team.remoteIdentifier })
         XCTAssertEqual(request?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertEqual(request?.payload?.asDictionary()?["email"] as? String, "example1@test.com")
         XCTAssertEqual(request?.payload?.asDictionary()?["inviter_name"] as? String, "Self User")
@@ -85,7 +85,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
         let request2 = sutNextRequest(for: .v0)
 
         // then
-        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        let id = try XCTUnwrap(syncMOC.performAndWait { team.remoteIdentifier })
         XCTAssertEqual(request1?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertNil(request2)
     }
@@ -102,7 +102,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
         // then
         let retryRequest = sutNextRequest(for: .v0)
-        let id = try XCTUnwrap(syncMOC.performAndWait({ team.remoteIdentifier }))
+        let id = try XCTUnwrap(syncMOC.performAndWait { team.remoteIdentifier })
         XCTAssertEqual(retryRequest?.path, "/teams/\(id.transportString())/invitations")
         XCTAssertEqual(retryRequest?.payload?.asDictionary()?["email"] as? String, "example1@test.com")
         XCTAssertEqual(retryRequest?.payload?.asDictionary()?["inviter_name"] as? String, "Self User")
@@ -128,7 +128,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
             return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: httpStatus, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let inviteResults = responses.map({ InviteResult(response: $0, email: "") })
+        let inviteResults = responses.map { InviteResult(response: $0, email: "") }
         let expectedResults: [InviteResult] = [.success(email: ""),
                                                .failure(email: "", error: .tooManyTeamInvitations),
                                                .failure(email: "", error: .blacklistedEmail),

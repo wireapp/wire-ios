@@ -46,7 +46,7 @@ extension WireAnalytics {
             enableOnlyOnce.execute()
         }
 
-        static var enableOnlyOnce = OnceOnlyThreadSafeFunction({
+        static var enableOnlyOnce = OnceOnlyThreadSafeFunction {
             guard let shared else { return }
 
             shared.enable()
@@ -55,7 +55,7 @@ extension WireAnalytics {
             // pass tags to DataDog through WireLogger
             WireLogger.system.addTag(.processId, value: "\(ProcessInfo.processInfo.processIdentifier)")
             WireLogger.system.addTag(.processName, value: ProcessInfo.processInfo.processName)
-        })
+        }
     }
 }
 

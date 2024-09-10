@@ -70,10 +70,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             searchUsersCache: searchUsersCache
         )
 
-        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
-        self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
-        self.eventAsyncConsumers = strategies.compactMap({ $0 as? ZMEventAsyncConsumer })
-        self.contextChangeTrackers = strategies.flatMap({ (object: Any) -> [ZMContextChangeTracker] in
+        self.requestStrategies = strategies.compactMap { $0 as? RequestStrategy }
+        self.eventConsumers = strategies.compactMap { $0 as? ZMEventConsumer }
+        self.eventAsyncConsumers = strategies.compactMap { $0 as? ZMEventAsyncConsumer }
+        self.contextChangeTrackers = strategies.flatMap { (object: Any) -> [ZMContextChangeTracker] in
             if let source = object as? ZMContextChangeTrackerSource {
                 return source.contextChangeTrackers
             } else if let tracker = object as? ZMContextChangeTracker {
@@ -81,7 +81,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             } else {
                 return []
             }
-        })
+        }
     }
 
     deinit {

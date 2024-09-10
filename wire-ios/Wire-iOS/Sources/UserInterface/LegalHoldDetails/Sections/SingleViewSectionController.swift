@@ -27,7 +27,7 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
         didSet {
             guard wrappedView != oldValue else { return }
 
-            contentView.subviews.forEach({ $0.removeFromSuperview() })
+            contentView.subviews.forEach { $0.removeFromSuperview() }
 
             guard let wrappedView else { return }
 

@@ -100,7 +100,7 @@ extension Member {
 
         member.updatePermissions(with: payload)
         member.createdAt = createdAt
-        member.createdBy = createdBy.flatMap({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) })
+        member.createdBy = createdBy.flatMap { ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }
 
         return member
     }

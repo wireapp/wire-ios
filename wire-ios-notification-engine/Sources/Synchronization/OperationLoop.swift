@@ -40,10 +40,10 @@ public final class RequestGeneratorStore {
         for strategy in strategies {
             if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
                 for requestGenerator in requestGeneratorSource.requestGenerators {
-                    requestGenerators.append({
+                    requestGenerators.append {
                         guard let apiVersion = BackendInfo.apiVersion else { return nil }
                         return requestGenerator.nextRequest(for: apiVersion)
-                    })
+                    }
                 }
             }
 
@@ -56,10 +56,10 @@ public final class RequestGeneratorStore {
             }
 
             if let requestStrategy = strategy as? RequestStrategy {
-                requestGenerators.append({
+                requestGenerators.append {
                     guard let apiVersion = BackendInfo.apiVersion else { return nil }
                     return requestStrategy.nextRequest(for: apiVersion)
-                })
+                }
             }
         }
 

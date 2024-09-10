@@ -35,9 +35,9 @@ final class UserTests_swift: IntegrationTest {
         _ = conversation?.lastModifiedDate
 
         weak var selfUser = ZMUser.selfUser(inUserSession: userSession!)
-        userSession!.perform({
+        userSession!.perform {
             selfUser?.name = "Super Name"
-        })
+        }
         if !waitForAllGroupsToBeEmpty(withTimeout: 0.2) {
             XCTFail("Timed out waiting for groups to empty.")
         }
@@ -52,11 +52,11 @@ final class UserTests_swift: IntegrationTest {
         // add new user to groupConversation remotely
 
         var extraUser: MockUser?
-        mockTransportSession.performRemoteChanges({ [self] session in
+        mockTransportSession.performRemoteChanges { [self] session in
             extraUser = session.insertUser(withName: "Max Tester")
             self.groupConversation.addUsers(by: self.selfUser, addedUsers: [extraUser!])
             XCTAssertNotNil(extraUser?.name)
-        })
+        }
 
         if !waitForAllGroupsToBeEmpty(withTimeout: 0.5) {
             XCTFail("Timed out waiting for groups to empty.")

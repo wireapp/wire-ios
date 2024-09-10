@@ -32,12 +32,12 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         mockMessageSender = MockMessageSenderInterface()
 
-        self.sut = syncMOC.performAndWait({
+        self.sut = syncMOC.performAndWait {
             AssetClientMessageRequestStrategy(
                 managedObjectContext: self.syncMOC,
                 messageSender: mockMessageSender
             )
-        })
+        }
     }
 
     override func tearDown() {

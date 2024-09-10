@@ -344,7 +344,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
         if remainingKeys.count < keys.count {
             let conversationSet: Set<NSManagedObject> = [conversation]
-            contextChangeTrackers.forEach({ $0.objectsDidChange(conversationSet) })
+            contextChangeTrackers.forEach { $0.objectsDidChange(conversationSet) }
             managedObjectContext.enqueueDelayedSave()
         }
 
@@ -760,7 +760,7 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         // GET /conversations?ids=?
         guard apiVersion < .v2 else { return nil }
-        let converationIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
+        let converationIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/conversations?ids=\(converationIDs)", apiVersion: apiVersion.rawValue)
     }
 

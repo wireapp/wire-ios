@@ -378,7 +378,7 @@ final class ConversationListViewModel: NSObject {
             conversationListType = .folder(label)
         }
 
-        return conversationDirectory.conversations(by: conversationListType).filter({ !$0.hasIncompleteMetadata }).map({ SectionItem(item: $0, kind: kind) })
+        return conversationDirectory.conversations(by: conversationListType).filter { !$0.hasIncompleteMetadata }.map { SectionItem(item: $0, kind: kind) }
     }
 
     private func updateAllSections() {
@@ -396,7 +396,7 @@ final class ConversationListViewModel: NSObject {
                      .groups,
                      .contacts]
 
-            let folders: [Section.Kind] = conversationDirectory.allFolders.map({ .folder(label: $0) })
+            let folders: [Section.Kind] = conversationDirectory.allFolders.map { .folder(label: $0) }
             kinds.append(contentsOf: folders)
         } else {
             kinds = [.contactRequests,
@@ -491,11 +491,11 @@ final class ConversationListViewModel: NSObject {
     // MARK: - folder badge
 
     func folderBadge(at sectionIndex: Int) -> Int {
-        sections[sectionIndex].items.filter({
+        sections[sectionIndex].items.filter {
             let status = ($0.item as? ZMConversation)?.status
             return status?.messagesRequiringAttention.isEmpty == false &&
                 status?.showingAllMessages == true
-        }).count
+        }.count
     }
 
     // MARK: - collapse section

@@ -619,7 +619,7 @@ final class CallingV3Tests: IntegrationTest {
         establishSession(with: user2)
         let selfClient = ZMUser.selfUser(inUserSession: userSession!).selfClient()!
         userSession?.perform {
-            remoteUser.clients.forEach({ selfClient.trustClient($0) })
+            remoteUser.clients.forEach { selfClient.trustClient($0) }
         }
         XCTAssertEqual(conversationUnderTest.securityLevel, .secure)
 

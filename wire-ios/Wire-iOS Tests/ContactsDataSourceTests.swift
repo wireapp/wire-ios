@@ -79,9 +79,9 @@ final class ContactsDataSourceTests: XCTestCase {
         // GIVEN
         let mockUsers = SwiftMockLoader.mockUsers(fromResource: "a_lot_of_people.json")
 
-        measure({
+        measure {
             // WHEN
             self.dataSource?.ungroupedSearchResults = mockUsers
-        })
+        }
     }
 }

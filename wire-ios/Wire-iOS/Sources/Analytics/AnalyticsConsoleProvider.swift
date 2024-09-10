@@ -71,11 +71,11 @@ extension AnalyticsConsoleProvider: AnalyticsProvider {
 
         if !printableAttributes.isEmpty {
             var localAttributes = [String: String]()
-            printableAttributes.map({ key, value -> (String, String) in
+            printableAttributes.map { key, value -> (String, String) in
                 (key, (value as AnyObject).description!)
-            }).forEach({ key, value in
+            }.forEach { key, value in
                 localAttributes[key] = value
-            })
+            }
             loggingDict["attributes"] = localAttributes
         }
 

@@ -79,7 +79,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
             guard let userSession = ZMUserSession.shared(), let conversation = self?.conversation else { return }
 
             cell.isUserInteractionEnabled = false
-            (conversation as? ZMConversation)?.setEnableReadReceipts(enabled, in: userSession, { result in
+            (conversation as? ZMConversation)?.setEnableReadReceipts(enabled, in: userSession) { result in
                 cell.isUserInteractionEnabled = true
 
                 switch result {
@@ -89,7 +89,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
                 default:
                     break
                 }
-            })
+            }
         }
 
         cell.showSeparator = false

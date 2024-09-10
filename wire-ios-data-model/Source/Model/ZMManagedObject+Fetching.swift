@@ -69,7 +69,7 @@ extension ZMManagedObject {
 
 extension Collection<NSManagedObjectID> {
     public func existingObjects<T: ZMManagedObject>(in context: NSManagedObjectContext) -> [T]? {
-        let objects = compactMap({ T.existingObject(for: $0, in: context) })
+        let objects = compactMap { T.existingObject(for: $0, in: context) }
         return objects.count == self.count ? objects : nil
     }
 }

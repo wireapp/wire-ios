@@ -234,7 +234,7 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard apiVersion == .v0 else { return nil }
         // GET /users?ids=?
-        let userIDs = identifiers.map({ $0.transportString() }).joined(separator: ",")
+        let userIDs = identifiers.map { $0.transportString() }.joined(separator: ",")
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 

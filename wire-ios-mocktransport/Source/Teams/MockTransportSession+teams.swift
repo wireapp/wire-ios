@@ -181,7 +181,7 @@ extension MockTransportSession {
         guard let teamId, let userIds else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
-        let members = team.members.filter({ userIds.contains($0.user.identifier) })
+        let members = team.members.filter { userIds.contains($0.user.identifier) }
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
             return permissionError
         }

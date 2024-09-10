@@ -154,9 +154,9 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         case .incoming(video: _, shouldRing: true, degraded: _):
             guard let sessionManager = SessionManager.shared, conversation.mutedMessageTypesIncludingAvailability == .none else { return }
 
-            let otherNonIdleCalls = callCenter.nonIdleCalls.filter({ (key: AVSIdentifier, _) -> Bool in
+            let otherNonIdleCalls = callCenter.nonIdleCalls.filter { (key: AVSIdentifier, _) -> Bool in
                 key != conversationId
-            })
+            }
 
             if otherNonIdleCalls.count > 0 {
                 playSoundIfAllowed(.ringingFromThemInCallSound)

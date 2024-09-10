@@ -71,7 +71,8 @@
     spaceInsideParens, \
     strongOutlets, \
     strongifiedSelf, \
-    todos
+    todos, \
+    trailingClosures
 
 
 # Options

@@ -33,17 +33,17 @@ final class UserSelection: NSObject {
 
     func replace(_ users: [UserType]) {
         self.users = UserSet(users)
-        observers.forEach({ $0.unbox?.userSelection(self, wasReplacedBy: users) })
+        observers.forEach { $0.unbox?.userSelection(self, wasReplacedBy: users) }
     }
 
     func add(_ user: UserType) {
         users.insert(user)
-        observers.forEach({ $0.unbox?.userSelection(self, didAddUser: user) })
+        observers.forEach { $0.unbox?.userSelection(self, didAddUser: user) }
     }
 
     func remove(_ user: UserType) {
         users.remove(user)
-        observers.forEach({ $0.unbox?.userSelection(self, didRemoveUser: user) })
+        observers.forEach { $0.unbox?.userSelection(self, didRemoveUser: user) }
     }
 
     func add(observer: UserSelectionObserver) {

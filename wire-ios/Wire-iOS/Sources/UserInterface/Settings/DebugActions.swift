@@ -292,7 +292,7 @@ enum DebugActions {
         var conversations: [ZMConversation]?
         userSession.syncManagedObjectContext.performGroupedBlock {
             conversations = try? userSession.syncManagedObjectContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
-            conversations?.forEach({ _ = $0.estimatedUnreadCount })
+            conversations?.forEach { _ = $0.estimatedUnreadCount }
         }
         userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
         userSession.syncManagedObjectContext.performGroupedAndWait {

@@ -72,7 +72,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             membership.user = selfUser
             membership.team = team
 
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) }
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -88,7 +88,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
             self.otherUser.needsToBeUpdatedFromBackend = false
             self.otherUser.modifiedKeys = availabilityKeySet
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: self.otherUser)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: self.otherUser)) }
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

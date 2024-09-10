@@ -202,7 +202,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             fatal("User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object).")
         }
 
-        let relationClients = user.clients.filter({ $0.remoteIdentifier == remoteIdentifier })
+        let relationClients = user.clients.filter { $0.remoteIdentifier == remoteIdentifier }
 
         if relationClients.count > 1 {
             WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")

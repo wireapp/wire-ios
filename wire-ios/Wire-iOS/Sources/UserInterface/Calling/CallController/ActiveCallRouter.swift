@@ -276,7 +276,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func executeOrSchedulePostCallAction(_ action: @escaping PostCallAction) {
         if !isActiveCallShown {
-            action({})
+            action {}
         } else {
             scheduledPostCallAction = action
         }

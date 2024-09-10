@@ -68,7 +68,7 @@ public final class Canvas: UIView {
     public var mode: EditingMode = .draw {
         didSet {
             selection = nil
-            gestureRecognizers?.forEach({ $0.isEnabled = mode == .edit })
+            gestureRecognizers?.forEach { $0.isEnabled = mode == .edit }
             setNeedsDisplay()
         }
     }
@@ -103,7 +103,7 @@ public final class Canvas: UIView {
     private var flattenIndex = 0
 
     fileprivate var sceneExcludingReferenceObject: [Renderable] {
-        scene.filter({ $0 !== referenceObject })
+        scene.filter { $0 !== referenceObject }
     }
 
     fileprivate var selection: Editable? {
@@ -221,7 +221,7 @@ public final class Canvas: UIView {
     }
 
     private func pickObject(at position: CGPoint) -> Editable? {
-        let editables = scene.compactMap({ $0 as? Editable })
+        let editables = scene.compactMap { $0 as? Editable }
         return editables.reversed().first(where: { editable in
             guard editable.selectable else { return false }
             let bounds = CGRect(origin: CGPoint.zero, size: editable.size)
@@ -382,7 +382,7 @@ extension Canvas: UIGestureRecognizerDelegate {
         rotateGestureRecognzier.delegate = self
         addGestureRecognizer(rotateGestureRecognzier)
 
-        gestureRecognizers?.forEach({ $0.isEnabled = mode == .edit })
+        gestureRecognizers?.forEach { $0.isEnabled = mode == .edit }
     }
 
     @objc public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

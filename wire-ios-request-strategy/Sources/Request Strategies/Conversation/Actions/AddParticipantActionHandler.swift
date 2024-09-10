@@ -160,7 +160,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             // Refresh user data since this operation might have failed
             // due to a team member being removed/deleted from the team.
             let users: [ZMUser]? = action.userIDs.existingObjects(in: context)
-            users?.filter(\.isTeamMember).forEach({ $0.refreshData() })
+            users?.filter(\.isTeamMember).forEach { $0.refreshData() }
 
             action.fail(with: ConversationAddParticipantsError(response: response) ?? .unknown)
 

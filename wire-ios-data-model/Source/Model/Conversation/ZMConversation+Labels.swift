@@ -22,7 +22,7 @@ extension ZMConversation {
     @objc
     public var isFavorite: Bool {
         get {
-            labels.any({ $0.kind == .favorite })
+            labels.any { $0.kind == .favorite }
         }
         set {
             guard let managedObjectContext else { return }
@@ -52,7 +52,7 @@ extension ZMConversation {
 
     @objc
     public func removeFromFolder() {
-        let existingFolders = labels.filter({ $0.kind == .folder })
+        let existingFolders = labels.filter { $0.kind == .folder }
         labels.subtract(existingFolders)
 
         for emptyFolder in existingFolders.filter(\.conversations.isEmpty) {

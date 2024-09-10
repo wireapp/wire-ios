@@ -246,7 +246,7 @@ extension URLActionRouter: PresentationDelegate {
         let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
         alert.addAction(agreeAction)
 
-        let cancelAction = UIAlertAction.cancel({ decisionHandler(false) })
+        let cancelAction = UIAlertAction.cancel { decisionHandler(false) }
         alert.addAction(cancelAction)
 
         presentAlert(alert)

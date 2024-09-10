@@ -27,7 +27,7 @@ class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
     var pendingModifications: [() -> Void] = []
 
     func completePendingModifiations() {
-        pendingModifications.forEach({ $0() })
+        pendingModifications.forEach { $0() }
         pendingModifications.removeAll()
     }
 

@@ -39,11 +39,11 @@ class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
     }
 
     func invoke(username: String) async throws {
-        _ = try await withCheckedThrowingContinuation({ continuation in
+        _ = try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
             userProfile.requestSettingHandle(handle: username)
             token = userProfile.add(observer: self)
-        })
+        }
     }
 }
 

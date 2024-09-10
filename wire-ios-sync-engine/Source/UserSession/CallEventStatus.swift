@@ -42,7 +42,7 @@ public class CallEventStatus: NSObject, ZMTimerClient {
 
     public func timerDidFire(_ timer: ZMTimer!) {
         zmLog.debug("CallEventStatus: finished timer")
-        observers.forEach({ $0() })
+        observers.forEach { $0() }
         observers = []
         eventProcessingTimer = nil
     }

@@ -64,9 +64,9 @@ final class MessagePresenter: NSObject {
             assertionFailure(errorMessage)
 
             zmLog.error(errorMessage)
-            ZMUserSession.shared()?.enqueue({
+            ZMUserSession.shared()?.enqueue {
                 message.fileMessageData?.requestFileDownload()
-            })
+            }
 
             return
         }

@@ -58,12 +58,12 @@ extension ConversationInputBarViewController {
                 self.inputBar.textView.becomeFirstResponder()
             }
         default:
-            UIApplication.wr_requestOrWarnAboutMicrophoneAccess({ accepted in
+            UIApplication.wr_requestOrWarnAboutMicrophoneAccess { accepted in
                 if accepted {
                     self.mode = .audioRecord
                     self.inputBar.textView.becomeFirstResponder()
                 }
-            })
+            }
         }
     }
 

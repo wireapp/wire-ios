@@ -76,7 +76,7 @@ final class MessageSendingStatusPayloadProcessor {
                 message.detectedRedundantUsers(redundantUsers)
             }
 
-            newMissingClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
+            newMissingClients.forEach { $0.discoveredByMessage = message as? ZMOTRMessage }
             message.registersNewMissingClients(Set(newMissingClients))
             message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(newMissingClients), causedBy: message as? ZMOTRMessage)
 

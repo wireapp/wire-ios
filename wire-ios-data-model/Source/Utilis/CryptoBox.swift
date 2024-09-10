@@ -131,14 +131,14 @@ open class UserClientKeysStore: NSObject {
     open func lastPreKey() throws -> String {
         var error: NSError?
         if internalLastPreKey == nil {
-            encryptionContext.perform({ [weak self] sessionsDirectory in
+            encryptionContext.perform { [weak self] sessionsDirectory in
                 guard let self else { return }
                 do {
                     internalLastPreKey = try sessionsDirectory.generateLastPrekey()
                 } catch let anError as NSError {
                     error = anError
                 }
-            })
+            }
         }
         if let error {
             throw error
@@ -152,7 +152,7 @@ open class UserClientKeysStore: NSObject {
             var newPreKeys: [(id: UInt16, prekey: String)] = []
 
             let range = preKeysRange(count, start: start)
-            encryptionContext.perform({ sessionsDirectory in
+            encryptionContext.perform { sessionsDirectory in
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
                     if newPreKeys.count == 0 {
@@ -161,7 +161,7 @@ open class UserClientKeysStore: NSObject {
                 } catch let anError as NSError {
                     error = anError
                 }
-            })
+            }
             if let error {
                 throw error
             }

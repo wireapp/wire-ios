@@ -25,9 +25,9 @@ final class UpsideDownTableView: UITableView {
     override init(frame: CGRect, style: UITableView.Style) {
         super.init(frame: frame, style: style)
 
-        UIView.performWithoutAnimation({
+        UIView.performWithoutAnimation {
             self.transform = CGAffineTransform(scaleX: 1, y: -1)
-        })
+        }
     }
 
     @available(*, unavailable)

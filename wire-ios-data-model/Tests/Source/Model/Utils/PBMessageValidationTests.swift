@@ -147,7 +147,7 @@ class PBMessageValidationTests: XCTestCase {
 
     func testThatItCreatesMessageEditWithValidFields() {
         let messageEdit = MessageEdit.with {
-            $0.text = Text.with({ $0.content = "Hello" })
+            $0.text = Text.with { $0.content = "Hello" }
             $0.replacingMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
         }
 
@@ -156,7 +156,7 @@ class PBMessageValidationTests: XCTestCase {
 
     func testThatItDoesNotCreateMessageEditWithInvalidFields() {
         let messageEdit = MessageEdit.with {
-            $0.text = Text.with({ $0.content = "Hello" })
+            $0.text = Text.with { $0.content = "Hello" }
             $0.replacingMessageID = "N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!"
         }
 
@@ -218,13 +218,13 @@ class PBMessageValidationTests: XCTestCase {
     // MARK: User ID
 
     func testThatItCreatesUserIDWithValidFields() {
-        let userId = Proteus_UserId.with({ $0.uuid = NSUUID().data() })
+        let userId = Proteus_UserId.with { $0.uuid = NSUUID().data() }
 
         XCTAssertNotNil(userId.validatingFields())
     }
 
     func testThatItDoesNotCreateUserIDWithInvalidFields() {
-        let userId = Proteus_UserId.with({ $0.uuid = Data() })
+        let userId = Proteus_UserId.with { $0.uuid = Data() }
 
         XCTAssertNil(userId.validatingFields())
     }

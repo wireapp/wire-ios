@@ -48,10 +48,10 @@ extension JSONDecoder {
 extension JSONEncoder {
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ date, encoder in
+        encoder.dateEncodingStrategy = .custom { date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(date.transportString())
-        })
+        }
 
         return encoder
     }

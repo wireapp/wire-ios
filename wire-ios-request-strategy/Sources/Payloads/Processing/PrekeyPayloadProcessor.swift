@@ -164,10 +164,10 @@ extension Payload.ClientListByQualifiedUserID {
                     return nil
                 }
 
-                let userClients = user.clients.filter({
+                let userClients = user.clients.filter {
                     guard let clientID = $0.remoteIdentifier else { return false }
                     return userClientIDs.contains(clientID)
-                })
+                }
 
                 return [user: Array(userClients)]
             }

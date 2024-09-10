@@ -117,7 +117,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.groupConversation.userDefinedName = "Hello World"
             let conversationUserDefinedNameKeySet: Set<AnyHashable> = [ZMConversationUserDefinedNameKey]
             self.groupConversation.setLocallyModifiedKeys(conversationUserDefinedNameKeySet)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
             let request = self.sut.nextRequest(for: self.apiVersion)!
@@ -139,7 +139,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.groupConversation.isArchived = true
             let conversationArchivedChangedTimeStampKeySet: Set<AnyHashable> = [ZMConversationArchivedChangedTimeStampKey]
             self.groupConversation.setLocallyModifiedKeys(conversationArchivedChangedTimeStampKeySet)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
             let request = self.sut.nextRequest(for: self.apiVersion)!
@@ -161,7 +161,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
             self.groupConversation.mutedMessageTypes = .all
             let conversationSilencedChangedTimeStampKeySet: Set<AnyHashable> = [ZMConversationSilencedChangedTimeStampKey]
             self.groupConversation.setLocallyModifiedKeys(conversationSilencedChangedTimeStampKeySet)
-            self.sut.contextChangeTrackers.forEach({ $0.objectsDidChange(Set([self.groupConversation])) })
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([self.groupConversation])) }
 
             // when
             let request = self.sut.nextRequest(for: self.apiVersion)!
@@ -459,7 +459,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func successfulResponse(request: Payload.QualifiedUserIDList,
                             notFound: [QualifiedID],
                             failed: [QualifiedID]) -> ZMTransportResponse {
-        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain) })
+        let found = request.qualifiedIDs.map { conversation(uuid: $0.uuid, domain: $0.domain) }
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!

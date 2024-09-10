@@ -97,9 +97,9 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 
 extension SettingsInternalGroupCellDescriptorType {
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
+        items.flatMap { (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
             section.allCellDescriptors()
-        })
+        }
     }
 }
 

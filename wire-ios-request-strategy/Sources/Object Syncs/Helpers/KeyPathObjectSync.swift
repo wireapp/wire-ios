@@ -60,7 +60,7 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
     // MARK: - ZMContextChangeTracker
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        let objects = objects.compactMap({ $0 as? Transcoder.T })
+        let objects = objects.compactMap { $0 as? Transcoder.T }
 
         for object in objects {
             var mutableObject = object

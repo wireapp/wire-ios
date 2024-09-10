@@ -58,11 +58,11 @@ extension Mention {
               let messageText,
               let managedObjectContext = moc else { return [] }
 
-        let mentions = Array(protos.compactMap({ Mention($0, context: managedObjectContext) }).prefix(500))
+        let mentions = Array(protos.compactMap { Mention($0, context: managedObjectContext) }.prefix(500))
         var mentionRanges = IndexSet()
         let messageRange = NSRange(messageText.startIndex ..< messageText.endIndex, in: messageText)
 
-        return mentions.filter({ mention  in
+        return mentions.filter { mention  in
             let range = mention.range.range
 
             guard !mentionRanges.intersects(integersIn: range), range.upperBound <= messageRange.upperBound else { return false }
@@ -70,7 +70,7 @@ extension Mention {
             mentionRanges.insert(integersIn: range)
 
             return true
-        })
+        }
     }
 }
 

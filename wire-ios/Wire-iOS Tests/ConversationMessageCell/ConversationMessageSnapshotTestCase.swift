@@ -143,7 +143,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         let context = (context ?? ConversationMessageContext.defaultContext)!
 
         let section = ConversationMessageSectionController(message: message, context: context, userSession: userSession)
-        let views = section.cellDescriptions.map({ $0.makeView() })
+        let views = section.cellDescriptions.map { $0.makeView() }
         let stackView = UIStackView(arrangedSubviews: views)
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false

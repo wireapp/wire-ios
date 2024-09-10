@@ -198,7 +198,7 @@ final class DeveloperToolsViewModel: ObservableObject {
             // add new builder here
         ]
 
-        let actions = actionsProviders.reduce(into: [], { $0 += ($1?.getActionItems() ?? []) })
+        let actions = actionsProviders.reduce(into: []) { $0 += ($1?.getActionItems() ?? []) }
         guard !actions.isEmpty else { return }
 
         sections.append(

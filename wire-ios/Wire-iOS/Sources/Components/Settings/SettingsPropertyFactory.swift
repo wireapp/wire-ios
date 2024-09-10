@@ -157,9 +157,9 @@ final class SettingsPropertyFactory {
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .number(number):
-                    self.userSession?.enqueue({
+                    self.userSession?.enqueue {
                         self.selfUser?.accentColorValue = number.int16Value
-                    })
+                    }
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }

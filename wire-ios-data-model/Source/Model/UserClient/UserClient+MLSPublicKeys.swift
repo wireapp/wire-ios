@@ -125,7 +125,7 @@ extension UserClient {
         }
 
         public var allKeys: [String] {
-            [ed25519, ed448, p256, p384, p521].compactMap({ $0 })
+            [ed25519, ed448, p256, p384, p521].compactMap { $0 }
         }
     }
 }

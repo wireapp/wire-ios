@@ -27,7 +27,7 @@ class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
     var pendingInsertions: [() -> Void] = []
 
     func completePendingInsertions() {
-        pendingInsertions.forEach({ $0() })
+        pendingInsertions.forEach { $0() }
         pendingInsertions.removeAll()
     }
 

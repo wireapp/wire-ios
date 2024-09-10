@@ -208,12 +208,12 @@ final class ConversationListItemView: UIView {
 
     @objc
     private func mediaPlayerStateChanged(_ notification: Notification?) {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             if let conversation = self.conversation as? ZMConversation,
                AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
                 self.update(for: conversation)
             }
-        })
+        }
     }
 
     func configure(with title: NSAttributedString?,

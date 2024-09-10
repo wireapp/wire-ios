@@ -123,7 +123,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatNextRequestCreatesARequestForAllUserIDsWeHaveRequested() {
         // given
         let searchSet = setupSearchDirectory(userCount: 3)
-        searchSet.forEach({ $0.requestPreviewProfileImage() })
+        searchSet.forEach { $0.requestPreviewProfileImage() }
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -141,7 +141,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatNextRequestDoesNotCreateARequestClientNotReady() {
         // given
         let searchSet = setupSearchDirectory(userCount: 3)
-        searchSet.forEach({ $0.requestPreviewProfileImage() })
+        searchSet.forEach { $0.requestPreviewProfileImage() }
         mockApplicationStatus.mockSynchronizationState = .unauthenticated
 
         // when
@@ -154,12 +154,12 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatNextRequestCreatesARequestForAllUserIDsForAllUserIDsWeHaveRequestedThatWeAreNotAlreadyRequesting() {
         // given
         let searchSet1 = setupSearchDirectory(userCount: 2)
-        searchSet1.forEach({ $0.requestPreviewProfileImage() })
+        searchSet1.forEach { $0.requestPreviewProfileImage() }
         guard sut.nextRequest(for: .v0) != nil else { return XCTFail() } // start first request
 
         // when
         let searchSet2 = setupSearchDirectory(userCount: 1)
-        searchSet2.forEach({ $0.requestPreviewProfileImage() })
+        searchSet2.forEach { $0.requestPreviewProfileImage() }
         guard let request2 = sut.nextRequest(for: .v0) else { return XCTFail() }
 
         // then
@@ -176,7 +176,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
         let searchUsers = Array(setupSearchDirectory(userCount: 2))
         let searchUser1 = searchUsers.first!
         let searchUser2 = searchUsers.last!
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
 
         let previewAssetKey1 = "previewAssetKey1", completeAssetKey1 = "completeAssetKey1"
         let previewAssetKey2 = "previewAssetKey2", completeAssetKey2 = "completeAssetKey2"
@@ -204,7 +204,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatAFailingUserProfileRequestWithAPermanentErrorClearsThemFromTheDownloadQueue() {
         // given
         let searchUsers = setupSearchDirectory(userCount: 2)
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
         let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
@@ -219,7 +219,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatFailingAUserProfileRequestWithATemporaryErrorAllowsThemToBeDownloadedAgain() {
         // given
         let searchUsers = setupSearchDirectory(userCount: 2)
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
         let response = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
@@ -236,7 +236,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     func testThatCompletingAUserProfileRequestDoesNotAllowForThemToBeDownloadedAgain() {
         // given
         let searchUsers = Array(setupSearchDirectory(userCount: 2))
-        searchUsers.forEach({ $0.requestPreviewProfileImage() })
+        searchUsers.forEach { $0.requestPreviewProfileImage() }
 
         let payload = [
             userData(previewAssetKey: UUID().transportString(), for: searchUsers.first!.remoteIdentifier!),

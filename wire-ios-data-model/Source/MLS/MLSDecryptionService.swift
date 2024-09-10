@@ -169,7 +169,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
             }
 
-            var results = try decryptedMessage.bufferedMessages?.compactMap({ try decryptResult(from: $0) }) ?? []
+            var results = try decryptedMessage.bufferedMessages?.compactMap { try decryptResult(from: $0) } ?? []
 
             if let result = try decryptResult(from: decryptedMessage) {
                 results.append(result)

@@ -419,13 +419,13 @@ final class ConversationContentViewController: UIViewController {
            mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         } else {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         }
     }
 
@@ -456,9 +456,9 @@ extension ConversationContentViewController: UITableViewDelegate {
         // using dispatch_async because when this method gets run, the cell is not yet in visible cells,
         // so the update will fail
         // dispatch_async runs it with next runloop, when the cell has been added to visible cells
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             self.updateVisibleMessagesWindow()
-        })
+        }
 
         cachedRowHeights[indexPath] = cell.frame.size.height
     }

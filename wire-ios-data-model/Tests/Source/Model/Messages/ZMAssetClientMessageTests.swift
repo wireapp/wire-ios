@@ -576,14 +576,14 @@ extension ZMAssetClientMessageTests {
             // given
             let previewSize: UInt64 = 46
             let previewMimeType = "image/jpeg"
-            let remoteData = WireProtos.Asset.RemoteData.with({
+            let remoteData = WireProtos.Asset.RemoteData.with {
                 $0.otrKey = Data.zmRandomSHA256Key()
                 $0.sha256 = Data.zmRandomSHA256Key()
-            })
-            let imageMetadata = WireProtos.Asset.ImageMetaData.with({
+            }
+            let imageMetadata = WireProtos.Asset.ImageMetaData.with {
                 $0.width = 4235
                 $0.height = 324
-            })
+            }
 
             let uuid = "asset-id"
             let sut = appendFileMessage(to: syncConversation)!

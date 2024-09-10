@@ -79,7 +79,7 @@ extension GenericMessage {
 
 extension ImageAsset {
     func obfuscated() -> ImageAsset {
-        WireProtos.ImageAsset.with({
+        WireProtos.ImageAsset.with {
             $0.tag = tag
             $0.width = width
             $0.height = height
@@ -87,7 +87,7 @@ extension ImageAsset {
             $0.originalHeight = originalHeight
             $0.mimeType = mimeType
             $0.size = 1
-        })
+        }
     }
 }
 
@@ -122,10 +122,10 @@ extension Tweet {
     func obfuscated() -> Tweet {
         let obfAuthorName = hasAuthor ? author.obfuscated() : ""
         let obfUserName = hasUsername ? username.obfuscated() : ""
-        return Tweet.with({
+        return Tweet.with {
             $0.author = obfAuthorName
             $0.username = obfUserName
-        })
+        }
     }
 }
 

@@ -62,9 +62,9 @@ extension UIAlertController {
 
         // Add actions
         if let confirmationBlock {
-            controller.addAction(.cancel({
+            controller.addAction(.cancel {
                 confirmationBlock(false)
-            }))
+            })
 
             controller.addAction(UIAlertAction(title: DegradedCallLocale.Incoming.Alert.Action.continue, style: .default) { _ in
                 confirmationBlock(true)
@@ -151,9 +151,9 @@ extension UIAlertController {
             confirmationBlock(true)
         })
 
-        controller.addAction(.cancel({
+        controller.addAction(.cancel {
             confirmationBlock(false)
-        }))
+        })
 
         return controller
     }

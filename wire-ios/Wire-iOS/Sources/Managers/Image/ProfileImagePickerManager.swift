@@ -25,9 +25,9 @@ final class ProfileImagePickerManager: ImagePickerManager {
             guard let jpegData = image.jpegData else {
                 return
             }
-            ZMUserSession.shared()?.enqueue({
+            ZMUserSession.shared()?.enqueue {
                 ZMUserSession.shared()?.userProfileImage.updateImage(imageData: jpegData)
-            })
+            }
         }
         return actionSheet
     }

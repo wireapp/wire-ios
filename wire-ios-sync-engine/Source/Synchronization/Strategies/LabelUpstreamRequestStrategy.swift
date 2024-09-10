@@ -54,7 +54,7 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let labels = object.compactMap({ $0 as? Label })
+        let labels = object.compactMap { $0 as? Label }
 
         guard !labels.isEmpty, labels.any({ Label.predicateForObjectsThatNeedToBeUpdatedUpstream()!.evaluate(with: $0) }) else { return }
 
@@ -66,10 +66,10 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
         let labels = managedObjectContext.fetchOrAssert(request: fetchRequest)
-        let labelsToUpload = labels.filter({ !$0.markedForDeletion })
-        let updatedKeys = labels.map({ ($0, $0.modifiedKeys) })
+        let labelsToUpload = labels.filter { !$0.markedForDeletion }
+        let updatedKeys = labels.map { ($0, $0.modifiedKeys) }
 
-        let labelPayload = LabelPayload(labels: labelsToUpload.compactMap({ LabelUpdate($0) }))
+        let labelPayload = LabelPayload(labels: labelsToUpload.compactMap { LabelUpdate($0) })
         let transportPayload: Any
         do {
             let data = try jsonEncoder.encode(labelPayload)

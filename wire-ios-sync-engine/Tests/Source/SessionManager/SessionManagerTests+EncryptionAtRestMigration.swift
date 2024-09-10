@@ -49,10 +49,10 @@ final class SessionManagerEncryptionAtRestMigrationTests: IntegrationTest {
         XCTAssertFalse(session.encryptMessagesAtRest)
 
         let expectedText = "Hello World"
-        session.perform({
+        session.perform {
             let groupConversation = self.conversation(for: self.groupConversation)
             try! groupConversation?.appendText(content: expectedText)
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -80,10 +80,10 @@ final class SessionManagerEncryptionAtRestMigrationTests: IntegrationTest {
         try session.setEncryptionAtRest(enabled: true, skipMigration: true)
         XCTAssertTrue(session.encryptMessagesAtRest)
 
-        session.perform({
+        session.perform {
             let groupConversation = self.conversation(for: self.groupConversation)
             try! groupConversation?.appendText(content: expectedText)
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when

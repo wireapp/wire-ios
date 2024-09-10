@@ -39,11 +39,11 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        actions.filter({ $0 != .deleteGroup })
+        actions.filter { $0 != .deleteGroup }
     }
 
     var detailActions: [Action] {
-        actions.filter({ $0 != .configureNotifications })
+        actions.filter { $0 != .configureNotifications }
     }
 
     private var actions: [Action] {

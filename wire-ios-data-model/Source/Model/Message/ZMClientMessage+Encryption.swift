@@ -787,7 +787,7 @@ extension GenericMessage {
 
         var failedToEstablishSession: Bool {
             get async {
-                await context.perform({ client.failedToEstablishSession })
+                await context.perform { client.failedToEstablishSession }
             }
         }
 

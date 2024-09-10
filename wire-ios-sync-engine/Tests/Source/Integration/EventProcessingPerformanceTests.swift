@@ -95,17 +95,17 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
     func createUsersAndConversations(userCount: Int, conversationCount: Int) {
         mockTransportSession.performRemoteChanges { session in
-            self.users = (1 ... userCount).map({
+            self.users = (1 ... userCount).map {
                 session.insertUser(withName: "User \($0)")
-            })
+            }
 
             let usersIncludingSelfUser = self.users + [self.selfUser!]
 
-            self.conversations = (1 ... conversationCount).map({
+            self.conversations = (1 ... conversationCount).map {
                 let conversation = session.insertTeamConversation(to: self.team, with: usersIncludingSelfUser, creator: self.selfUser)
                 conversation.changeName(by: self.selfUser, name: "Team conversation \($0)")
                 return conversation
-            })
+            }
         }
     }
 }

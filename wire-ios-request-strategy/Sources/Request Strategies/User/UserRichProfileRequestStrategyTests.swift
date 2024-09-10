@@ -46,7 +46,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
 
             // when
             guard let request = self.sut.nextRequest(for: .v0) else { XCTFail("Request is nil"); return }
@@ -63,7 +63,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
             let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
 
@@ -90,7 +90,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
-            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
+            self.sut.contextChangeTrackers.forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) }
             let request = self.sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
 

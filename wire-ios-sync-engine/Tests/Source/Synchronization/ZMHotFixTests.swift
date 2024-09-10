@@ -153,9 +153,9 @@ final class ZMHotFixTests_Integration: MessagingTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlock {
-            ZMUser.selfUser(in: self.syncMOC).team?.members.forEach({ member in
+            ZMUser.selfUser(in: self.syncMOC).team?.members.forEach { member in
                 XCTAssertTrue(member.needsToBeUpdatedFromBackend)
-            })
+            }
         }
     }
 

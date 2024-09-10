@@ -301,7 +301,7 @@ final class FullscreenImageViewController: UIViewController {
         let imageIsAnimatedGIF = message.imageMessageData?.isAnimatedGIF
         let imageData = message.imageMessageData?.imageData
 
-        DispatchQueue.global(qos: .default).async(execute: { [weak self] in
+        DispatchQueue.global(qos: .default).async { [weak self] in
 
             let mediaAsset: MediaAsset
 
@@ -314,12 +314,12 @@ final class FullscreenImageViewController: UIViewController {
                 return
             }
 
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 if let parentSize = self?.parent?.view.bounds.size {
                     self?.setupImageView(image: mediaAsset, parentSize: parentSize)
                 }
-            })
-        })
+            }
+        }
     }
 
     // MARK: - PullToDismiss

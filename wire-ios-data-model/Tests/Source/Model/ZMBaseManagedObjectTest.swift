@@ -94,6 +94,6 @@ extension ZMBaseManagedObjectTest {
                                  includingPropertiesForKeys: nil,
                                  options: [])
 
-        try files.forEach({ try FileManager.default.removeItem(at: $0) })
+        try files.forEach { try FileManager.default.removeItem(at: $0) }
     }
 }

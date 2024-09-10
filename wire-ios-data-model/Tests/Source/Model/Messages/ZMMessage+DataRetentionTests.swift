@@ -33,7 +33,7 @@ class ZMMessage_DataRetentionTests: BaseZMMessageTests {
         }
 
         // when
-        let matches = messages.filter({ ZMMessage.predicateForMessagesOlderThan(now).evaluate(with: $0) })
+        let matches = messages.filter { ZMMessage.predicateForMessagesOlderThan(now).evaluate(with: $0) }
 
         // then
         XCTAssertEqual(matches.count, 1)

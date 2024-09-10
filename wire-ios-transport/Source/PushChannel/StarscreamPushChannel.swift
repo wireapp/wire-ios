@@ -197,9 +197,9 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     fileprivate func onOpen() {
         startPingTimer()
 
-        consumerQueue?.performGroupedBlock({
+        consumerQueue?.performGroupedBlock {
             self.consumer?.pushChannelDidOpen()
-        })
+        }
     }
 
     private func stopPingTimer() {

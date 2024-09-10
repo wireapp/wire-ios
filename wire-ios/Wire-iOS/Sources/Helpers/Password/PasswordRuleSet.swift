@@ -96,8 +96,8 @@ public struct PasswordRuleSet: Decodable, Equatable {
 
     /// Encodes the rules in the format used by the Apple keychain.
     func encodeInKeychainFormat() -> String {
-        let allowed = allowedCharacters.map({ "allowed: \($0.rawValue)" }).joined(separator: "; ")
-        let required = requiredCharacters.map({ "required: \($0.rawValue)" }).joined(separator: "; ")
+        let allowed = allowedCharacters.map { "allowed: \($0.rawValue)" }.joined(separator: "; ")
+        let required = requiredCharacters.map { "required: \($0.rawValue)" }.joined(separator: "; ")
         return "minlength: \(minimumLength); maxlength: \(maximumLength); \(allowed); \(required);"
     }
 

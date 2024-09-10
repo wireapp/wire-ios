@@ -53,9 +53,9 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         // when
         var sut: TextMessage?
-        performPretendingUiMocIsSyncMoc({ [self] in
+        performPretendingUiMocIsSyncMoc { [self] in
             sut = TextMessage.createOrUpdate(from: event!, in: uiMOC, prefetchResult: nil)
-        })
+        }
 
         // then
         XCTAssertNil(sut)
@@ -163,10 +163,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             $0.content = initialText
             $0.mentions = []
             $0.linkPreview = [linkPreview]
-            $0.quote = Quote.with({
+            $0.quote = Quote.with {
                 $0.quotedMessageID = existingMessage.nonce?.transportString() ?? ""
                 $0.quotedMessageSha256 = existingMessage.hashOfContent!
-            })
+            }
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
@@ -223,10 +223,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             $0.content = initialText
             $0.mentions = []
             $0.linkPreview = [linkPreview]
-            $0.quote = Quote.with({
+            $0.quote = Quote.with {
                 $0.quotedMessageID = existingMessage.nonce?.transportString() ?? ""
                 $0.quotedMessageSha256 = existingMessage.hashOfContent!
-            })
+            }
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 

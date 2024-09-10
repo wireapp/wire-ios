@@ -667,7 +667,7 @@ final class ConversationInputBarViewController: UIViewController,
         guard let conversation = conversation as? ZMConversation else { return }
 
         notificationFeedbackGenerator.prepare()
-        userSession.enqueue({
+        userSession.enqueue {
             do {
                 try conversation.appendKnock()
                 Analytics.shared.tagMediaActionCompleted(.ping, inConversation: conversation)
@@ -677,7 +677,7 @@ final class ConversationInputBarViewController: UIViewController,
             } catch {
                 Logging.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
             }
-        })
+        }
 
         pingButton.isEnabled = false
         delay(0.5) {

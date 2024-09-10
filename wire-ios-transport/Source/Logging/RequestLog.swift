@@ -99,7 +99,7 @@ extension URL {
 
         var endpoint = [components?.host, components?.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))]
             .compactMap { $0 }
-            .filter({ !$0.isEmpty })
+            .filter { !$0.isEmpty }
             .joined(separator: "/")
         endpoint.append(components?.query?.isEmpty == false ? "?\(components!.query!)" : "")
         return endpoint

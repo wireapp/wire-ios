@@ -53,7 +53,7 @@ final class RandomHandleGeneratorTests: XCTestCase {
         XCTAssertGreaterThan(handles.count, 5 * (variations + 1))
         XCTAssertLessThanOrEqual(handles.count, 50)
 
-        XCTAssertEqual(handles.filter({ $0.utf8.count > 21 }), [])
+        XCTAssertEqual(handles.filter { $0.utf8.count > 21 }, [])
 
         // first is normalized name
         XCTAssertEqual(handles.popLast(), expectedNormalized)

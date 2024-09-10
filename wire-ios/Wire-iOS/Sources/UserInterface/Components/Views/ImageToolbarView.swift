@@ -105,7 +105,7 @@ final class ImageToolbarView: UIView {
     }
 
     func updateButtonConfiguration() {
-        buttons.forEach({ $0.removeFromSuperview() })
+        buttons.forEach { $0.removeFromSuperview() }
         var newButtons = showsSketchButton ? [sketchButton] : []
 
         switch configuration {

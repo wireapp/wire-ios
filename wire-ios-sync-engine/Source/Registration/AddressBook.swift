@@ -79,9 +79,9 @@ extension AddressBookAccessor {
 
             guard cards.count > 0 || startingContactIndex > 0 else {
                 // this should happen if I have zero contacts
-                groupQueue.performGroupedBlock({
+                groupQueue.performGroupedBlock {
                     completion(nil)
-                })
+                }
                 return
             }
 

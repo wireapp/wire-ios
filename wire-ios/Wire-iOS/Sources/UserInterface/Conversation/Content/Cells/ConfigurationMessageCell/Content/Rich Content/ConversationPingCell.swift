@@ -67,7 +67,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
             guard let self else { return }
             self.imageView.alpha = 1.0
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 if !self.canAnimationContinue(for: self.configuration?.message) {
                     return
                 }
@@ -86,7 +86,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
                     if reps > 0 {
                         (otherBlock as! AnimationBlock)(self.animationBlock as Any, reps - 1)
                     } else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
                             if !self.canAnimationContinue(for: self.configuration?.message) {
                                 return
                             }
@@ -96,10 +96,10 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
                             }, completion: { _ in
                                 self.stopAnimation()
                             })
-                        })
+                        }
                     }
                 })
-            })
+            }
         }
 
         return animationBlock

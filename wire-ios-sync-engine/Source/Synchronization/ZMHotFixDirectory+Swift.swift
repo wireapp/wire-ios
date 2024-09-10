@@ -89,7 +89,7 @@ import Foundation
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
 
-        conversations.filter({ $0.conversationType == .group }).forEach { conversation in
+        conversations.filter { $0.conversationType == .group }.forEach { conversation in
 
             let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
             fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMMessageConversationKey, conversation.objectID)
@@ -220,9 +220,9 @@ import Foundation
     }
 
     public static func refetchTeamMembers(_ context: NSManagedObjectContext) {
-        ZMUser.selfUser(in: context).team?.members.forEach({ member in
+        ZMUser.selfUser(in: context).team?.members.forEach { member in
             member.needsToBeUpdatedFromBackend = true
-        })
+        }
     }
 
     /// Marks all conversations to be refetched.
@@ -260,7 +260,7 @@ import Foundation
             return
         }
 
-        let confirmationReceiptsForDeletedMessages = possibleMatches.filter({ candidate in
+        let confirmationReceiptsForDeletedMessages = possibleMatches.filter { candidate in
             guard
                 let conversation = candidate.conversation,
                 let underlyingMessage = candidate.underlyingMessage,
@@ -276,7 +276,7 @@ import Foundation
                 return false
             }
             return true
-        })
+        }
 
         for message in confirmationReceiptsForDeletedMessages {
             context.delete(message)

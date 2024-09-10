@@ -23,7 +23,7 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
     func testThatWeCanMaterializeSearchUsers() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
-        let searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0, teamIdentifier: nil) }) as [UserType]
+        let searchUsers = userIDs.map { createSearchUser(name: "John Doe", remoteIdentifier: $0, teamIdentifier: nil) } as [UserType]
 
         // when
         let materializedUsers = searchUsers.materialize(in: uiMOC)
@@ -59,7 +59,7 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
             remoteIdentifier: nil,
             teamIdentifier: nil
         )
-        var searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0, teamIdentifier: nil) }) as [UserType]
+        var searchUsers = userIDs.map { createSearchUser(name: "John Doe", remoteIdentifier: $0, teamIdentifier: nil) } as [UserType]
         searchUsers.append(incompleteSearchUser)
 
         // when
@@ -73,11 +73,11 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
     func testThatAlreadyMaterializedUsersAreUntouched() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
-        let concreteUsers = userIDs.map({
+        let concreteUsers = userIDs.map {
             let user = ZMUser.insertNewObject(in: uiMOC)
             user.remoteIdentifier = $0
             return user
-        }) as [ZMUser]
+        } as [ZMUser]
 
         // when
         let materializedUsers = (concreteUsers as [UserType]).materialize(in: uiMOC)

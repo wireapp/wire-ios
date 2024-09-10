@@ -75,7 +75,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
             link: View.userClientURL
         )
 
-        let clients = systemMessage.clients.compactMap({ $0 as? UserClientType })
+        let clients = systemMessage.clients.compactMap { $0 as? UserClientType }
         let users = systemMessage.userTypes
             .lazy
             .compactMap { $0 as? UserType }

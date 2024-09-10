@@ -689,14 +689,14 @@ public final class MLSService: MLSServiceInterface {
     ) -> AsyncThrowingStream<MLSConferenceInfo, Error> {
         var sequence = onEpochChanged()
             .buffer(size: Self.epochChangeBufferSize, prefetch: .keepFull, whenFull: .dropOldest)
-            .filter({ $0.isOne(of: parentGroupID, subConversationGroupID) })
+            .filter { $0.isOne(of: parentGroupID, subConversationGroupID) }
             .values
-            .compactMap({ [weak self] _ in
+            .compactMap { [weak self] _ in
                 try await self?.generateConferenceInfo(
                     parentGroupID: parentGroupID,
                     subconversationGroupID: subConversationGroupID
                 )
-            }).makeAsyncIterator()
+            }.makeAsyncIterator()
 
         return AsyncThrowingStream {
             try await sequence.next()

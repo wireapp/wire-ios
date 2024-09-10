@@ -134,9 +134,9 @@ extension ConversationContentViewController {
         case .copy:
             message.copy(in: .general)
         case .download:
-            userSession.enqueue({
+            userSession.enqueue {
                 message.fileMessageData?.requestFileDownload()
-            })
+            }
         case .reply:
             delegate?.conversationContentViewController(self, didTriggerReplyingTo: message)
         case .openQuote:

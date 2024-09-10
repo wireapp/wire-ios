@@ -367,8 +367,8 @@ extension Proteus_QualifiedNewOtrMessage {
             case .ignoreAllMissingClients:
                 $0.clientMismatchStrategy = .ignoreAll(.init())
             case let .ignoreAllMissingClientsNotFromUsers(users: users):
-                $0.clientMismatchStrategy = .reportOnly(.with({
-                    $0.userIds = users.compactMap({
+                $0.clientMismatchStrategy = .reportOnly(.with {
+                    $0.userIds = users.compactMap {
                         guard
                             let uuid = $0.remoteIdentifier,
                             let domain = $0.domain
@@ -377,8 +377,8 @@ extension Proteus_QualifiedNewOtrMessage {
                         }
 
                         return Proteus_QualifiedUserId(with: uuid, domain: domain)
-                    })
-                }))
+                    }
+                })
             }
         }
     }
@@ -590,11 +590,11 @@ extension WireProtos.Confirmation {
             return nil
         }
         let moreMessageIds = Array(messageIds.dropFirst())
-        self = WireProtos.Confirmation.with({
+        self = WireProtos.Confirmation.with {
             $0.firstMessageID = firstMessageID.transportString()
             $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
             $0.type = type
-        })
+        }
     }
 
     public init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
@@ -690,10 +690,10 @@ extension LinkPreview {
             guard let author = twitterMetadata.author,
                   let username = twitterMetadata.username else { return }
 
-            $0.tweet = WireProtos.Tweet.with({
+            $0.tweet = WireProtos.Tweet.with {
                 $0.author = author
                 $0.username = username
-            })
+            }
         }
     }
 

@@ -68,7 +68,7 @@ extension ZMUpdateEvent {
               let userIds = dataPayload["user_ids"] as? [String] else {
             return []
         }
-        return userIds.compactMap({ UUID(uuidString: $0) })
+        return userIds.compactMap { UUID(uuidString: $0) }
     }
 
     public var qualifiedUserIDs: [QualifiedID]? {
@@ -81,7 +81,7 @@ extension ZMUpdateEvent {
             return nil
         }
 
-        let qualifiedIDs: [QualifiedID] = userDicts.compactMap({
+        let qualifiedIDs: [QualifiedID] = userDicts.compactMap {
             let qualifiedID = $0.optionalDictionary(forKey: "qualified_id") as NSDictionary?
 
             guard
@@ -92,7 +92,7 @@ extension ZMUpdateEvent {
             }
 
             return QualifiedID(uuid: uuid, domain: domain)
-        })
+        }
 
         if !qualifiedIDs.isEmpty {
             return qualifiedIDs
@@ -107,7 +107,7 @@ extension ZMUpdateEvent {
             return nil
         }
 
-        let qualifiedIDs: [QualifiedID] = userDicts.compactMap({
+        let qualifiedIDs: [QualifiedID] = userDicts.compactMap {
             guard
                 let uuid = $0.uuid(forKey: "id"),
                 let domain = $0.string(forKey: "domain")
@@ -116,7 +116,7 @@ extension ZMUpdateEvent {
             }
 
             return QualifiedID(uuid: uuid, domain: domain)
-        })
+        }
 
         if !qualifiedIDs.isEmpty {
             return qualifiedIDs

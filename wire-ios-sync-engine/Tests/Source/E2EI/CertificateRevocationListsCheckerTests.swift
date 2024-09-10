@@ -227,12 +227,12 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
             Set([dp2])
         )
         XCTAssertEqual(
-            mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map({
+            mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_Invocations.map {
                 String(reflecting: $0.expirationDate)
-            }),
-            [Date.distantFuture].map({
+            },
+            [Date.distantFuture].map {
                 String(reflecting: $0)
-            })
+            }
         )
 
         // It updates conversations verification statuses for dp1

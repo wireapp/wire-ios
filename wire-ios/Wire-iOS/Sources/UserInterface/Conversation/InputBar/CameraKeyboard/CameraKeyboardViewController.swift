@@ -297,14 +297,14 @@ class CameraKeyboardViewController: UIViewController {
                 data
             }
 
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.cameraKeyboardViewController(
                     self,
                     didSelectImageData: returnData,
                     isFromCamera: false,
                     uti: uti
                 )
-            })
+            }
         }
 
         let limit = CGFloat.Image.maxSupportedLength
@@ -401,13 +401,13 @@ class CameraKeyboardViewController: UIViewController {
                       let resultURL,
                       let asset else { return }
 
-                DispatchQueue.main.async(execute: {
+                DispatchQueue.main.async {
                     self.delegate?.cameraKeyboardViewController(
                         self,
                         didSelectVideo: resultURL,
                         duration: CMTimeGetSeconds(asset.duration)
                     )
-                })
+                }
             }
         }
     }

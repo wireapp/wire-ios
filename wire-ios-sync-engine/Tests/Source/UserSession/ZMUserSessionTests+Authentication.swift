@@ -49,7 +49,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = UserEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // when
-        sut.logout(credentials: credentials, { _ in })
+        sut.logout(credentials: credentials) { _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -66,7 +66,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = UserEmailCredentials(email: "john.doe@domain.com", password: "")
 
         // when
-        sut.logout(credentials: credentials, { _ in })
+        sut.logout(credentials: credentials) { _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -84,7 +84,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = UserEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // when
-        sut.logout(credentials: credentials, { _ in })
+        sut.logout(credentials: credentials) { _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -103,14 +103,14 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
-        sut.logout(credentials: credentials, { result in
+        sut.logout(credentials: credentials) { result in
             switch result {
             case .success:
                 completionHandlerCalled.fulfill()
             case .failure:
                 XCTFail()
             }
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -131,7 +131,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
-        sut.logout(credentials: credentials, { result in
+        sut.logout(credentials: credentials) { result in
             switch result {
             case .success:
                 XCTFail()
@@ -140,7 +140,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
                     completionHandlerCalled.fulfill()
                 }
             }
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         transportSession.lastEnqueuedRequest?.complete(with: response)
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

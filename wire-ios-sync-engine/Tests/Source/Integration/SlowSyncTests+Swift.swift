@@ -65,10 +65,10 @@ final class SlowSyncTests_Swift: IntegrationTest {
         }
 
         // when
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             session.simulatePushChannelClosed()
             session.simulatePushChannelOpened()
-        })
+        }
         if !waitForAllGroupsToBeEmpty(withTimeout: 0.5) {
             XCTFail("Timed out waiting for groups to empty.")
         }

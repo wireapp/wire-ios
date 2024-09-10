@@ -74,13 +74,13 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
     }
 
     private func mockCallParticipants(mockUsers: [MockUserType], count: Int, state: CallParticipantState) -> [CallParticipant] {
-        mockUsers[0 ..< count].map({
+        mockUsers[0 ..< count].map {
             CallParticipant(user: $0,
                             userId: AVSIdentifier.stub,
                             clientId: "123",
                             state: state,
                             activeSpeakerState: .inactive)
-        })
+        }
     }
 
     // MARK: - OneToOne Audio

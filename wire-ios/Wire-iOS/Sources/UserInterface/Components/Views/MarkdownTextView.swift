@@ -103,9 +103,9 @@ final class MarkdownTextView: NextResponderTextView {
         let textWithPlainTextMentions = NSMutableString(string: attributedText.string)
 
         // We reverse to maintain correct ranges for subsequent inserts.
-        let mentionRanges = mentionAttachmentsWithRange(from: attributedText).map({ attachment, range in
+        let mentionRanges = mentionAttachmentsWithRange(from: attributedText).map { attachment, range in
             (range, attachment.attributedText.string)
-        }).reversed()
+        }.reversed()
 
         mentionRanges.forEach(textWithPlainTextMentions.replaceCharacters)
 

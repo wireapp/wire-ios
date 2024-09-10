@@ -108,7 +108,7 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
-        user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
+        user.allClients.sortedByRelevance().filter { !$0.isSelfClient() }
     }
 
     private func updateCertificatesForUserClients() {
@@ -245,7 +245,7 @@ extension Array where Element: UserClientType {
                 nil
             }
         })
-        let mlsClienIds = mlsClients.values.map({ $0 })
+        let mlsClienIds = mlsClients.values.map { $0 }
         do {
             let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
                                                                                        clientIds: mlsClienIds)

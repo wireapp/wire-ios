@@ -32,9 +32,9 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let conversation = self.conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform({
+        self.userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
-        })
+        }
         let nonce = message?.nonce
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -70,15 +70,15 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let conversation = self.conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform({
+        self.userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "❤️"
-        self.userSession?.perform({
+        self.userSession?.perform {
             ZMMessage.addReaction(reactionEmoji, to: message!)
-        })
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let observer = MessageChangeObserver(message: message)
         let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: message!.nonce!) as MessageCapable, nonce: UUID.create())

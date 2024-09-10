@@ -104,11 +104,11 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     private func activeMediaPlayerChanged() {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
                 (cell as? ConversationListCell)?.updateAppearance()
             }
-        })
+        }
     }
 
     func reload() {
@@ -377,11 +377,11 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         guard let item else {
             // Deselect all items in the collection view
             let indexPaths = collectionView.indexPathsForSelectedItems
-            (indexPaths as NSArray?)?.enumerateObjects({ obj, _, _ in
+            (indexPaths as NSArray?)?.enumerateObjects { obj, _, _ in
                 if let obj = obj as? IndexPath {
                     self.collectionView.deselectItem(at: obj, animated: false)
                 }
-            })
+            }
             zClientViewController?.loadPlaceholderConversationController(animated: true)
             zClientViewController?.transitionToList(animated: true, completion: nil)
 

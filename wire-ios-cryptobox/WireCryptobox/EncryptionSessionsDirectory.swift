@@ -423,7 +423,7 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     /// - returns: HEX encoded fingerprint
     @objc(fingerprintFromPrekey:)
     public static func fingerprint(fromPrekey prekey: Data) -> Data? {
-        prekey.withUnsafeBytes({
+        prekey.withUnsafeBytes {
             let bytes = $0.baseAddress?.assumingMemoryBound(to: UInt8.self)
             var vectorBacking: OpaquePointer?
             let result = cbox_fingerprint_prekey(bytes, $0.count, &vectorBacking)
@@ -433,7 +433,7 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
             }
 
             return Data.moveFromCBoxVector(vectorBacking)!
-        })
+        }
     }
 }
 

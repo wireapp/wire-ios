@@ -180,9 +180,9 @@ final class ConversationViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
-        UIView.performWithoutAnimation({
+        UIView.performWithoutAnimation {
             self.view.backgroundColor = SemanticColors.View.backgroundConversationView
-        })
+        }
 
         setupInputBarController()
         setupContentViewController()
@@ -229,9 +229,9 @@ final class ConversationViewController: UIViewController {
                     }
                 })
             case .archive:
-                self?.userSession.enqueue({
+                self?.userSession.enqueue {
                     self?.conversation.isArchived = true
-                })
+                }
             }
             self?.openConversationList()
         }
@@ -584,7 +584,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                                                             withText newText: String?,
                                                             mentions: [Mention]) {
         contentViewController.didFinishEditing(message)
-        userSession.enqueue({
+        userSession.enqueue {
             if let newText,
                !newText.isEmpty {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
@@ -592,7 +592,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             } else {
                 ZMMessage.deleteForEveryone(message)
             }
-        })
+        }
     }
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {

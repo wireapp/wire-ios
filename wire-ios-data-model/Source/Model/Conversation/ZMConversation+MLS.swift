@@ -71,7 +71,7 @@ extension ZMConversation {
 
         set {
             willChangeValue(forKey: Self.ciphersuiteKey)
-            primitiveCiphersuite = newValue.map({ NSNumber(value: $0.rawValue) })
+            primitiveCiphersuite = newValue.map { NSNumber(value: $0.rawValue) }
             didChangeValue(forKey: Self.ciphersuiteKey)
         }
     }

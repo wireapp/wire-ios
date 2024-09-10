@@ -491,7 +491,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients
         let deletedClients = otherClients.filter {
-            $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
+            $0 != selfClient && $0.remoteIdentifier.map { foundClientsIdentifier.contains($0) } == false
         }
 
         WaitingGroupTask(context: context) {

@@ -714,8 +714,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteAllAccounts(reason: ZMAccountDeletedReason) {
-        let inactiveAccounts = accountManager.accounts.filter({ $0 != accountManager.selectedAccount })
-        inactiveAccounts.forEach({ delete(account: $0, reason: reason) })
+        let inactiveAccounts = accountManager.accounts.filter { $0 != accountManager.selectedAccount }
+        inactiveAccounts.forEach { delete(account: $0, reason: reason) }
 
         if let activeAccount = accountManager.selectedAccount {
             delete(account: activeAccount, reason: reason)

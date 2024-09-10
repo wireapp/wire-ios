@@ -46,9 +46,9 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         mockFileManager = nil
         mockSafeCoreCrypto = nil
 
-        syncMOC.performAndWait({
+        syncMOC.performAndWait {
             syncMOC.proteusService = nil
-        })
+        }
 
         proteusViaCoreCryptoFlag.isOn = false
         DeveloperFlag.storage = UserDefaults.standard

@@ -50,7 +50,7 @@ final class SectionCollectionViewController: NSObject {
     }
 
     var visibleSections: [CollectionViewSectionController] {
-        sections.filter({ !$0.isHidden })
+        sections.filter { !$0.isHidden }
     }
 
     init(sections: [CollectionViewSectionController] = []) {

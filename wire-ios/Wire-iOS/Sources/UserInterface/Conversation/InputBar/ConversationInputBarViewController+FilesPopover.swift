@@ -33,7 +33,7 @@ extension ConversationInputBarViewController {
         // Alert actions  for debugging
         #if targetEnvironment(simulator)
             let plistHandler: ((UIAlertAction) -> Void) = { _ in
-                self.userSession.enqueue({
+                self.userSession.enqueue {
                     let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
                     guard let basePath = paths.first,
                           let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist") else { return }
@@ -42,7 +42,7 @@ extension ConversationInputBarViewController {
 
                     try? FileManager.default.copyItem(at: sourceLocation, to: destLocation)
                     self.uploadFile(at: destLocation)
-                })
+                }
             }
 
             alertController.addAction(UIAlertAction(title: "CountryCodes.plist",
@@ -146,7 +146,7 @@ extension ConversationInputBarViewController {
     #if targetEnvironment(simulator)
         private func uploadTestAlertAction(size: UInt, title: String, fileName: String) -> UIAlertAction {
             UIAlertAction(title: title, style: .default, handler: { _ in
-                self.userSession.enqueue({
+                self.userSession.enqueue {
                     let randomData = Data.secureRandomData(length: UInt(size))
 
                     if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -155,7 +155,7 @@ extension ConversationInputBarViewController {
 
                         self.uploadFile(at: fileURL)
                     }
-                })
+                }
             })
         }
     #endif

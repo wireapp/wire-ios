@@ -108,7 +108,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
         // WHEN
         self.disableZMLogError(true)
-        let keystore = await self.syncMOC.perform({ self.syncMOC.zm_cryptKeyStore })
+        let keystore = await self.syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
         let unwrappedKeyStore = try XCTUnwrap(keystore)
         await unwrappedKeyStore.encryptionContext.performAsync { session in
             _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -158,7 +158,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
         // When
         self.disableZMLogError(true)
-        let keystore = await self.syncMOC.perform({ self.syncMOC.zm_cryptKeyStore })
+        let keystore = await self.syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
         let unwrappedKeyStore = try XCTUnwrap(keystore)
         await unwrappedKeyStore.encryptionContext.performAsync { session in
             _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -208,7 +208,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
 
         // When
         self.disableZMLogError(true)
-        let keystore = await self.syncMOC.perform({ self.syncMOC.zm_cryptKeyStore })
+        let keystore = await self.syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
         let unwrappedKeyStore = try XCTUnwrap(keystore)
         await unwrappedKeyStore.encryptionContext.performAsync { session in
             _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in

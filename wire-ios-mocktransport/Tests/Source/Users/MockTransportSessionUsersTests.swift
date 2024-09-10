@@ -37,14 +37,14 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         var otherUserClient: MockUserClient!
         var secondOtherUserClient: MockUserClient!
 
-        sut.performRemoteChanges({ session in
+        sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "foo")
             otherUser = session.insertUser(withName: "bar")
             thirdUser = session.insertUser(withName: "foobar")
             selfClient = session.registerClient(for: selfUser!, label: "self1", type: "permanent", deviceClass: "phone")
             otherUserClient = session.registerClient(for: otherUser!, label: "other1", type: "permanent", deviceClass: "phone")
             secondOtherUserClient = session.registerClient(for: otherUser!, label: "other2", type: "permanent", deviceClass: "phone")
-        })
+        }
 
         let redunduntClientId: String = .randomClientIdentifier()
         let payload: ZMTransportData = [
