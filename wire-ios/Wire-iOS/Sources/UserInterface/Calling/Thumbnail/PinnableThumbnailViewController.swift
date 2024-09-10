@@ -145,7 +145,7 @@ final class PinnableThumbnailViewController: UIViewController {
 
         // Calculate the new size of the container
 
-        let insets = view.safeAreaInsetsOrFallback
+        let insets = view.safeAreaInsets
 
         let safeSize = CGSize(width: size.width - insets.left - insets.right,
                               height: size.height - insets.top - insets.bottom)

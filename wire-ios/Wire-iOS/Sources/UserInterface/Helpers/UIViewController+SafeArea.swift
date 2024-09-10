@@ -20,12 +20,6 @@ import UIKit
 
 extension UIView {
 
-
-    @available(*, deprecated, message: "Will be removed")
-    var safeAreaInsetsOrFallback: UIEdgeInsets {
-        return safeAreaInsets
-    }
-
     @available(*, deprecated, message: "Will be removed")
     var safeLeadingAnchor: NSLayoutXAxisAnchor {
         return safeAreaLayoutGuide.leadingAnchor
