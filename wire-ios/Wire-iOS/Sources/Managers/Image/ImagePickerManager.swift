@@ -147,6 +147,7 @@ class ImagePickerManager: NSObject {
         case .camera:
             picker.dismiss(animated: true)
             completion?(image)
+
         @unknown default:
             picker.dismiss(animated: true)
             completion?(image)

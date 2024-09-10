@@ -176,6 +176,7 @@ extension URLAction {
                 }
 
                 throw CompanyLoginError(label: label)
+
             default:
                 throw ConmpanyLoginRequestError.invalidLink
             }

@@ -61,7 +61,6 @@ public enum CompanyLoginError: Error, Equatable {
         case "-25346": self = .tokenNotFound
 
             // MARK: - SAML
-
         case "server-error-unsupported-saml": self = .serverErrorUnsupportedSAML
         case "bad-success-redirect": self = .badSuccessRedirect
         case "bad-failure-redirect": self = .badFailureRedirect

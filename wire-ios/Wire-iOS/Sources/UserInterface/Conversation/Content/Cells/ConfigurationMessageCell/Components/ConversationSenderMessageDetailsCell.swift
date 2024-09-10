@@ -200,11 +200,13 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             if let attachment = attachment(from: .externalPartner, size: 16) {
                 attributedString.append(attachment)
             }
+
         case .federated:
             accessibilityIdentifier = "img.federatedUser"
             if let attachment = attachment(from: .federated, size: 14) {
                 attributedString.append(attachment)
             }
+
         case .service:
             accessibilityIdentifier = "img.serviceUser"
             if let attachment = attachment(from: .bot, size: 14) {

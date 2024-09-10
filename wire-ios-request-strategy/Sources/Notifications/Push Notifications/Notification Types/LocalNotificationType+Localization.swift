@@ -136,6 +136,7 @@ extension LocalNotificationType {
             case .newConnection:
                 return ZMPushStringNewConnection
             }
+
         case .failedMessage:
             return ZMPushStringFailedToSend
 

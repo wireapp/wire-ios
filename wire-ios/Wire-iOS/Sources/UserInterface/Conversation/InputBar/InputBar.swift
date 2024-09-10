@@ -406,6 +406,7 @@ final class InputBar: UIView {
                 if let oldState, oldState.isEditing {
                     self.textView.text = nil
                 }
+
             case .editing(let text, let mentions):
                 self.setInputBarText(text, mentions: mentions)
                 self.secondaryButtonsView.setEditBarView()

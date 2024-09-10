@@ -117,6 +117,7 @@ extension ZMConversation {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 zmLog.error("Could not check guest link status: \(error)")
                 completion(.failure(error))
+
             default:
                 completion(.failure(WirelessLinkError.unknown))
             }

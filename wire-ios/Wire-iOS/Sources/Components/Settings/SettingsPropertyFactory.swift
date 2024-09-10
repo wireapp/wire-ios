@@ -137,6 +137,7 @@ final class SettingsPropertyFactory {
             }
 
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
+
         case .email:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.emailAddress)
 
@@ -166,6 +167,7 @@ final class SettingsPropertyFactory {
             }
 
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
+
         case .darkMode:
             let getAction: GetAction = { [unowned self] _ in
 
@@ -193,6 +195,7 @@ final class SettingsPropertyFactory {
             return SettingsBlockProperty(propertyName: propertyName,
                                          getAction: getAction,
                                          setAction: setAction)
+
         case .soundAlerts:
             let getAction: GetAction = { [unowned self] _ in
                 if let mediaManager = self.mediaManager {
@@ -304,6 +307,7 @@ final class SettingsPropertyFactory {
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
             })
+
         case .lockApp:
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -351,6 +355,7 @@ final class SettingsPropertyFactory {
                         throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                     }
             })
+
         case .disableCallKit:
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -363,6 +368,7 @@ final class SettingsPropertyFactory {
                         Settings.shared[.disableCallKit] = disabled.boolValue
                     }
             })
+
         case .muteIncomingCallsWhileInACall:
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -375,6 +381,7 @@ final class SettingsPropertyFactory {
                         Settings.shared[.muteIncomingCallsWhileInACall] = shouldMute.boolValue
                     }
             })
+
         case .readReceiptsEnabled:
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -390,6 +397,7 @@ final class SettingsPropertyFactory {
                             }
                         }
             })
+
         case .encryptMessagesAtRest:
             return SettingsBlockProperty(
                 propertyName: propertyName,
@@ -401,6 +409,7 @@ final class SettingsPropertyFactory {
                     guard case .number(let enabled) = value else { return }
                     try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
             })
+
         default:
             if let userDefaultsKey = type(of: self).userDefaultsPropertiesToKeys[propertyName] {
                 return SettingsUserDefaultsProperty(propertyName: propertyName, userDefaultsKey: userDefaultsKey.rawValue, userDefaults: userDefaults)

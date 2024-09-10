@@ -200,6 +200,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             var viewControllers = presenter.viewControllers
             viewControllers[viewControllers.count - 1] = stepViewController
             presenter.setViewControllers(viewControllers, animated: true)
+
         case .rewindToOrReset(let milestone):
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
@@ -361,6 +362,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 activateNetworkSessions { [weak self] _ in
                     self?.startCompanyLoginFlowIfPossible(linkCode: code)
                 }
+
             case .startSSOFlow:
                 startAutomaticSSOFlow()
 

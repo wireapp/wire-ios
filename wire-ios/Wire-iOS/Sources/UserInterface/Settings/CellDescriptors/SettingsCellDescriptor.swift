@@ -229,7 +229,6 @@ extension SettingsPropertyName {
             return "Disable Markdown support"
         case .darkMode:
             return Settings.AccountPictureGroup.theme
-
         // Profile
         case .profileName:
             return Account.Name.title
@@ -241,7 +240,6 @@ extension SettingsPropertyName {
             return Account.Team.title
         case .domain:
             return Account.Domain.title
-
         // AVS
         case .soundAlerts:
             return SoundMenu.title
@@ -251,7 +249,6 @@ extension SettingsPropertyName {
             return SoundMenu.Ringtone.title
         case .pingSoundName:
             return SoundMenu.Ping.title
-
         case .accentColor:
             return Settings.AccountPictureGroup.color
         case .disableSendButton:
@@ -276,7 +273,6 @@ extension SettingsPropertyName {
             return Settings.Vbr.title
         case .disableLinkPreviews:
             return Settings.PrivacySecurity.DisableLinkPreviews.title
-
             // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title

@@ -99,7 +99,6 @@ extension ConversationContentViewController {
         case .present:
             dataSource.selectedMessage = message
             presentDetails(for: message)
-
         case .save:
             if Message.isImage(message) {
                 saveImage(from: message, view: view)
@@ -114,7 +113,6 @@ extension ConversationContentViewController {
             } else {
                 WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
             }
-
         case .digitallySign:
             dataSource.selectedMessage = message
             if message.isFileDownloaded() {
@@ -129,7 +127,6 @@ extension ConversationContentViewController {
             openSketch(for: message, in: .draw)
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
-
         case .showInConversation:
             scroll(to: message) { _ in
                 self.dataSource.highlight(message: message)

@@ -112,6 +112,7 @@ extension ZMOTRMessage {
                 return nil
             }
             conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
+
         case .calling, .availability:
             return nil
 

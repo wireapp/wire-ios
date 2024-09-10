@@ -127,6 +127,7 @@ public final class ProteusService: ProteusServiceInterface {
             switch (lhs, rhs) {
             case (let failedToEncryptData(lhsError), let failedToEncryptData(rhsError)):
                 return lhsError as NSError == rhsError as NSError
+
             case (let failedToEncryptDataBatch(lhsError), let failedToEncryptDataBatch(rhsError)):
                 return lhsError as NSError == rhsError as NSError
 

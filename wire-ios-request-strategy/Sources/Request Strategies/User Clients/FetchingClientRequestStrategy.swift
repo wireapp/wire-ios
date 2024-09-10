@@ -164,6 +164,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
                     // Fallback.
                     result.1.append(userClientID)
                 }
+
             case .v2, .v3, .v4, .v5, .v6:
                 if let qualifiedID = qualifiedIDWithFallback(from: userClient) {
                     result.0.append(qualifiedID)

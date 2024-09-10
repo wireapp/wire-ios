@@ -243,7 +243,6 @@ final class ProfileDetailsContentController: NSObject,
         case .blockingReason:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
-
         case .messageProtocol:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
@@ -266,6 +265,7 @@ final class ProfileDetailsContentController: NSObject,
             }))
 
             return cell
+
         case .richProfile(let fields):
             let field = fields[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(style: .default, reuseIdentifier: userPropertyCellID)
@@ -309,7 +309,6 @@ final class ProfileDetailsContentController: NSObject,
             return footer
         case .blockingReason:
            return nil
-
         case .messageProtocol:
             return nil
         }

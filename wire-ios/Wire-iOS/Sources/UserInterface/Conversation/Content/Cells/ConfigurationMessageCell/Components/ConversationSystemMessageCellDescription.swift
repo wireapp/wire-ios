@@ -96,6 +96,7 @@ final class ConversationSystemMessageCellDescription {
         case .conversationIsDegraded:
             let shieldCell = ConversationDegradedSystemMessageSectionDescription()
             return [AnyConversationMessageCellDescription(shieldCell)]
+
         case .sessionReset:
             let sessionResetCell = ConversationSessionResetSystemMessageCellDescription(
                 message: message,

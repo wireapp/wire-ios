@@ -197,6 +197,7 @@ extension CallController: WireCallCenterCallStateObserver {
               .incoming(video: _, shouldRing: true, degraded: true)):
             router?.presentIncomingSecurityDegradedAlert(for: degradationReason,
                                                  completion: alertCompletion)
+
         case (_, .terminating(reason: .securityDegraded)):
             if let reason = voiceChannel.degradationReason {
                 router?.presentEndingSecurityDegradedAlert(for: reason,

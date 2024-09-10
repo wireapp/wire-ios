@@ -74,7 +74,6 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .start: return false
         case .landingScreen: return true
         case .reauthenticate: return true
-
         // Sign-In
         case .provideCredentials: return true
         case .enterEmailVerificationCode: return true
@@ -82,7 +81,6 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .registerEmailCredentials: return false
         case .companyLogin: return false
         case .switchBackend: return true
-
         // Post Sign-In
         case .noHistory: return true
         case .clientManagement: return true
@@ -93,7 +91,6 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .addUsername: return true
         case .pendingInitialSync: return false
         case .pendingEmailLinkVerification: return true
-
         // Registration
         case .createCredentials: return true
         case .sendActivationCode: return false
@@ -101,7 +98,6 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .activateCredentials: return false
         case .incrementalUserCreation(_, let intermediateStep): return intermediateStep.needsInterface
         case .createUser: return false
-
         // Configuration
         case .configureDevice: return false
         }

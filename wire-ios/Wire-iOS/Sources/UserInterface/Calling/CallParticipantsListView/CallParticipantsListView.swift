@@ -125,6 +125,7 @@ extension UserCell: CallParticipantsListCellConfigurable {
             videoIconView.set(style: VideoIconStyle(state: videoState))
             connectingLabel.isHidden = true
             unconnectedStateOverlay.isHidden = true
+
         case .connecting, .unconnectedButMayConnect:
             microphoneIconView.set(style: MicrophoneIconStyle(
                 state: nil,

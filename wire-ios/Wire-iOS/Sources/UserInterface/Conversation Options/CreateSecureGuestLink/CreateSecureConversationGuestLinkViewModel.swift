@@ -104,6 +104,7 @@ final class CreateSecureConversationGuestLinkViewModel {
 
             case .success(nil):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
+
             case .failure(let error):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
             }

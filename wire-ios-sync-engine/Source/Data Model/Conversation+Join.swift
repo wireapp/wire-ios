@@ -106,6 +106,7 @@ extension ZMConversation {
                  if response.payloadLabel() == "invalid-conversation-password" {
                     completion(.failure(ConversationJoinError.invalidConversationPassword))
                 }
+
             default:
                 let error = ConversationJoinError(response: response)
                 Logging.network.debug("Error joining conversation using a reusable code: \(error)")

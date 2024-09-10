@@ -307,7 +307,6 @@ final class SettingsClientViewController: UIViewController,
             return L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.subtitle
         case .removeDevice:
             return L10n.Localizable.Self.Settings.DeviceDetails.RemoveDevice.subtitle
-
         default:
             return .none
         }

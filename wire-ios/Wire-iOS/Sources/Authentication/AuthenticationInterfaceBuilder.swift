@@ -176,6 +176,7 @@ final class AuthenticationInterfaceBuilder {
                 viewController.authenticationCoordinator?.executeAction(.completeE2EIEnrollment)
             }
             return viewController
+
         default:
             return nil
         }

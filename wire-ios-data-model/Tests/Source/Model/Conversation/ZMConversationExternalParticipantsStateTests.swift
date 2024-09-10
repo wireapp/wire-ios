@@ -186,6 +186,7 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
             case .external:
                 let external = createExternal(in: uiMOC)
                 conversation.addParticipantAndUpdateConversationState(user: external, role: nil)
+
             case .federated:
                 let otherUser = createUser(in: uiMOC)
                 otherUser.domain = "other.com"

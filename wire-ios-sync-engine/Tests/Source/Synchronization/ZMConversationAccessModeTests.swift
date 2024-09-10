@@ -267,6 +267,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
             selfUser.membership?.user = nil
 
         case .teamA: createMembership(user: selfUser, team: teamA)
+
         case .teamB: createMembership(user: selfUser, team: teamB)
         }
 

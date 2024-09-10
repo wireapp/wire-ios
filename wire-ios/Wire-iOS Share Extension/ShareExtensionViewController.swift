@@ -320,6 +320,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                         change: ConversationDegradationInfo(conversation: conversation, users: users),
                         callback: strategyChoice)
                 }
+
             case .timedOut:
                 WireLogger.shareExtension.error("progress event: timed out")
                 self.popConfigurationViewController()
@@ -357,6 +358,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                         self.popConfigurationViewController()
                     }
                 }
+
             case .fileSharingRestriction:
                 WireLogger.shareExtension.warn("progress event: file sharing restricted")
 
@@ -395,6 +397,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 case .image(let image):
                     self.preview?.image = image
                     self.preview?.displayMode = displayMode
+
                 case .placeholder(let iconType):
                     self.preview?.setIcon(iconType, size: .medium, color: UIColor.Wire.secondaryLabel)
 

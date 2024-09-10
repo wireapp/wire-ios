@@ -87,7 +87,6 @@ extension ZMUpdateEventType {
         switch self {
         case .unknown:
             return nil
-
         case .conversationAssetAdd:
             return "conversation.asset-add"
         case .conversationConnectRequest:

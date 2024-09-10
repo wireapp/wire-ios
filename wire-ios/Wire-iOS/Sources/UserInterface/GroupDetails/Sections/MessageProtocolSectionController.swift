@@ -94,6 +94,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         case (.mls, 2) where Bundle.developerModeEnabled:
             cell.title = "Group ID (hashed)"
             cell.status = groupID?.safeForLoggingDescription
+
         default:
             break
         }
@@ -136,6 +137,7 @@ private extension MessageProtocol {
 
         case .mls:
             return "MLS"
+
         case .mixed:
             return "Mixed"
         }

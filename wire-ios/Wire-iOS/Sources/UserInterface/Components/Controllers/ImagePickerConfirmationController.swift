@@ -74,6 +74,7 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
         case .camera:
             picker.dismiss(animated: true)
             imagePickedBlock?(image.pngData())
+
         @unknown default:
             picker.dismiss(animated: true)
             imagePickedBlock?(image.pngData())

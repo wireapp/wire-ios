@@ -12,7 +12,8 @@
     blankLinesBetweenChainedFunctions, \
     blankLinesBetweenScopes, \
     braces, \
-    conditionalAssignment
+    conditionalAssignment, \
+    consistentSwitchCaseSpacing
 
 # Options
 
