@@ -227,26 +227,29 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     private func onRightAccessorySelected(_ sender: UIButton?) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            let activeMediaPlayer = appDelegate.mediaPlaybackManager?.activeMediaPlayer
 
-        if activeMediaPlayer != nil &&
-            activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
-            toggleMediaPlayer()
-        } else if conversation.canJoinCall {
-            delegate?.conversationListCellJoinCallButtonTapped(self)
+            if activeMediaPlayer != nil && activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+                toggleMediaPlayer()
+            } else if conversation.canJoinCall {
+                delegate?.conversationListCellJoinCallButtonTapped(self)
+            }
         }
     }
 
     func toggleMediaPlayer() {
-        let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            let mediaPlaybackManager = appDelegate.mediaPlaybackManager
 
-        if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
-            mediaPlaybackManager?.pause()
-        } else {
-            mediaPlaybackManager?.play()
+            if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
+                mediaPlaybackManager?.pause()
+            } else {
+                mediaPlaybackManager?.play()
+            }
+
+            updateAppearance()
         }
-
-        updateAppearance()
     }
 
     // MARK: - ConversationChangeInfo
