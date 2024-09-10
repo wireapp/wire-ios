@@ -276,7 +276,8 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    @objc func backPressed(_: AnyObject!) {
+    @objc
+    func backPressed(_: AnyObject!) {
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 

@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol ChangeInfoConsumer: NSObjectProtocol {
+@objc
+public protocol ChangeInfoConsumer: NSObjectProtocol {
     func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]])
     func startObserving()
     func stopObserving()

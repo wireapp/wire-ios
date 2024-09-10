@@ -128,7 +128,8 @@ extension ZMClientMessage {
         }
     }
 
-    @nonobjc func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
+    @nonobjc
+    func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
         guard
             let nonce = self.nonce,
             let senderUUID = updateEvent.senderUUID,
@@ -157,23 +158,27 @@ extension ZMClientMessage {
 
 extension ZMClientMessage: ZMImageOwner {
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
-    @objc public func requiredImageFormats() -> NSOrderedSet {
+    @objc
+    public func requiredImageFormats() -> NSOrderedSet {
         if let genericMessage = self.underlyingMessage, genericMessage.linkPreviews.count > 0 {
             return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
         }
         return NSOrderedSet()
     }
 
-    @objc public func originalImageData() -> Data? {
+    @objc
+    public func originalImageData() -> Data? {
         managedObjectContext?.zm_fileAssetCache.originalImageData(for: self)
     }
 
-    @objc public func originalImageSize() -> CGSize {
+    @objc
+    public func originalImageSize() -> CGSize {
         guard let originalImageData = self.originalImageData() else { return CGSize.zero }
         return ZMImagePreprocessor.sizeOfPrerotatedImage(with: originalImageData)
     }
 
-    @objc public func processingDidFinish() {
+    @objc
+    public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
         moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
@@ -197,7 +202,8 @@ extension ZMClientMessage: ZMImageOwner {
         self.nonce?.uuidString
     }
 
-    @objc public func setImageData(
+    @objc
+    public func setImageData(
         _ imageData: Data,
         for format: ZMImageFormat,
         properties: ZMIImageProperties?

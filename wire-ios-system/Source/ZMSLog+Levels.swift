@@ -25,7 +25,8 @@ import os.log
 private var logTagToLevel: [String: ZMLogLevel] = [:]
 private var logTagToLogger: [String: OSLog] = [:]
 
-@objc extension ZMSLog {
+@objc
+extension ZMSLog {
     /// Sets the minimum logging level for the tag
     /// - note: switches to the log queue
     public static func set(level: ZMLogLevel, tag: String) {

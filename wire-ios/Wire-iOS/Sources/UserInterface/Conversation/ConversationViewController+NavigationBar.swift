@@ -227,7 +227,8 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc func videoCallItemTapped(_: UIBarButtonItem) {
+    @objc
+    func videoCallItemTapped(_: UIBarButtonItem) {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             view.window?.endEditing(true)
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
@@ -236,11 +237,13 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
+    @objc
+    private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
         startCallController.joinCall()
     }
 
-    @objc func dismissCollectionIfNecessary() {
+    @objc
+    func dismissCollectionIfNecessary() {
         if let collectionController = self.collectionController {
             collectionController.dismiss(animated: false)
         }

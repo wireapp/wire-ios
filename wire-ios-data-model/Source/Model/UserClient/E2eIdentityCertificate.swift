@@ -31,7 +31,8 @@ public enum E2eIdentityCertificateConstants {
     public static let randomInterval: TimeInterval = .random(in: 0 ..< TimeInterval.oneDay)
 }
 
-@objc public class E2eIdentityCertificate: NSObject {
+@objc
+public class E2eIdentityCertificate: NSObject {
     public var clientId: String
     public var details: String
     public var mlsThumbprint: String

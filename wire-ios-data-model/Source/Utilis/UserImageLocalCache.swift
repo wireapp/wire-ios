@@ -30,7 +30,8 @@ extension ZMUser {
         return userRemoteId + "-" + suffix
     }
 
-    @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {
+    @objc
+    public func imageCacheKey(for size: ProfileImageSize) -> String? {
         switch size {
         case .preview:
             cacheIdentifier(suffix: previewProfileAssetIdentifier)
@@ -57,7 +58,8 @@ extension NSManagedObjectContext {
 
 // MARK: Cache
 
-@objcMembers open class UserImageLocalCache: NSObject {
+@objcMembers
+open class UserImageLocalCache: NSObject {
     fileprivate let log = ZMSLog(tag: "UserImageCache")
 
     /// Cache for large user profile image

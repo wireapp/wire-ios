@@ -60,7 +60,8 @@ extension ZMUser: ObjectInSnapshot {
     }
 }
 
-@objcMembers open class UserChangeInfo: ObjectChangeInfo {
+@objcMembers
+open class UserChangeInfo: ObjectChangeInfo {
     static let UserClientChangeInfoKey = "clientChanges"
 
     static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {

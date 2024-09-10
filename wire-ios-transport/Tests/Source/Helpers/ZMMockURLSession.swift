@@ -22,7 +22,8 @@ import WireTransport
 final class ZMMockURLSession: ZMURLSession {
     @objc var cancellationHandler: (() -> Void)?
 
-    @objc static func createMockSession() -> ZMMockURLSession {
+    @objc
+    static func createMockSession() -> ZMMockURLSession {
         ZMMockURLSession(
             configuration: .ephemeral,
             trustProvider: MockEnvironment(),

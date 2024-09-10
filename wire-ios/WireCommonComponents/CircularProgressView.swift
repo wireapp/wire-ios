@@ -152,7 +152,8 @@ public class CircularProgressView: UIView {
 }
 
 extension CircularProgressView {
-    @objc func applicationDidBecomeActive(_: Notification) {
+    @objc
+    func applicationDidBecomeActive(_: Notification) {
         updateSpinningAnimation()
     }
 }

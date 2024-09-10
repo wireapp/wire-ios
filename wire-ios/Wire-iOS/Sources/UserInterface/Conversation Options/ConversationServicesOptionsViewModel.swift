@@ -81,7 +81,8 @@ final class ConversationServicesOptionsViewModel {
     ///   - allowServices: new state AllowServices
     ///   - sender: the source view which triggers setAllowServices action
     /// - Returns: alert controller
-    @discardableResult func setAllowServices(
+    @discardableResult
+    func setAllowServices(
         _ allowServices: Bool,
         sender: UIView
     ) -> UIAlertController? {

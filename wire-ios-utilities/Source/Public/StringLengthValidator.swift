@@ -57,7 +57,8 @@ open class StringLengthValidator: NSObject {
         )
     }
 
-    @discardableResult public static func validateStringValue(
+    @discardableResult
+    public static func validateStringValue(
         _ ioValue: inout Any?,
         minimumStringLength: UInt32,
         maximumStringLength: UInt32,

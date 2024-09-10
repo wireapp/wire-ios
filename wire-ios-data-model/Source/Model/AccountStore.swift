@@ -62,7 +62,8 @@ public final class AccountStore: NSObject {
     /// Stores an `Account` in the account store.
     /// - parameter account: The account which should be saved (or updated).
     /// - returns: Whether or not the operation was successful.
-    @discardableResult func add(_ account: Account) -> Bool {
+    @discardableResult
+    func add(_ account: Account) -> Bool {
         do {
             try account.write(to: url(for: account))
             return true
@@ -77,7 +78,8 @@ public final class AccountStore: NSObject {
     /// Deletes an `Account` from the account store.
     /// - parameter account: The account which should be deleted.
     /// - returns: `false` if the account cannot be found or cannot be deleted otherwise `true`.
-    @discardableResult func remove(_ account: Account) -> Bool {
+    @discardableResult
+    func remove(_ account: Account) -> Bool {
         do {
             try fileManager.removeItem(at: url(for: account))
             return true
@@ -92,7 +94,8 @@ public final class AccountStore: NSObject {
     /// Deletes the persistence layer of an `AccountStore` from the file system.
     /// Mostly useful for cleaning up after tests or for complete account resets.
     /// - parameter root: The root url of the store that should be deleted.
-    @discardableResult static func delete(at root: URL) -> Bool {
+    @discardableResult
+    static func delete(at root: URL) -> Bool {
         do {
             try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
             return true

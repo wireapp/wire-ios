@@ -21,8 +21,7 @@ import SwiftUI
 struct DeveloperToolsView: View {
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: DeveloperToolsViewModel
+    @StateObject var viewModel: DeveloperToolsViewModel
 
     // MARK: - Views
 

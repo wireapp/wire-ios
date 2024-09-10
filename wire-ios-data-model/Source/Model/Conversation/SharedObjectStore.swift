@@ -33,14 +33,16 @@ extension Notification {
 
 /// This class is used to persist `NSManagedObjectContext` change
 /// notifications in order to merge them into the main app contexts.
-@objcMembers public class ContextDidSaveNotificationPersistence: NSObject {
+@objcMembers
+public class ContextDidSaveNotificationPersistence: NSObject {
     private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 
     public required init(accountContainer url: URL) {
         objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
     }
 
-    @discardableResult public func add(_ note: Notification) -> Bool {
+    @discardableResult
+    public func add(_ note: Notification) -> Bool {
         objectStore.store(note.contextDidSaveData)
     }
 
@@ -53,7 +55,8 @@ extension Notification {
     }
 }
 
-@objcMembers public class StorableTrackingEvent: NSObject {
+@objcMembers
+public class StorableTrackingEvent: NSObject {
     private static let eventNameKey = "eventName"
     private static let eventAttributesKey = "eventAttributes"
 
@@ -80,14 +83,16 @@ extension Notification {
     }
 }
 
-@objcMembers public class ShareExtensionAnalyticsPersistence: NSObject {
+@objcMembers
+public class ShareExtensionAnalyticsPersistence: NSObject {
     private let objectStore: SharedObjectStore<[String: Any]>
 
     public required init(accountContainer url: URL) {
         objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
     }
 
-    @discardableResult public func add(_ storableEvent: StorableTrackingEvent) -> Bool {
+    @discardableResult
+    public func add(_ storableEvent: StorableTrackingEvent) -> Bool {
         objectStore.store(storableEvent.dictionaryRepresentation())
     }
 
@@ -125,7 +130,8 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         try! FileManager.default.createAndProtectDirectory(at: directory)
     }
 
-    @discardableResult public func store(_ object: T) -> Bool {
+    @discardableResult
+    public func store(_ object: T) -> Bool {
         do {
             var current = load()
             current.append(object)

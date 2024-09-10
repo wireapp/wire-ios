@@ -21,34 +21,44 @@ import WireUtilities
 
 // MARK: - Observer
 
-@objc public protocol UserProfileUpdateObserver: NSObjectProtocol {
+@objc
+public protocol UserProfileUpdateObserver: NSObjectProtocol {
     /// Invoked when the password could not be set on the backend
-    @objc optional func passwordUpdateRequestDidFail()
+    @objc
+    optional func passwordUpdateRequestDidFail()
 
     /// Invoked when the email could not be set on the backend (duplicated?).
     /// The password might already have been set though - this is how BE is designed and there's nothing SE can do about it
-    @objc optional func emailUpdateDidFail(_ error: Error!)
+    @objc
+    optional func emailUpdateDidFail(_ error: Error!)
 
     /// Invoked when the email was sent to the backend
-    @objc optional func didSendVerificationEmail()
+    @objc
+    optional func didSendVerificationEmail()
 
     /// Invoked when the availability of a handle was determined
-    @objc optional func didCheckAvailiabilityOfHandle(handle: String, available: Bool)
+    @objc
+    optional func didCheckAvailiabilityOfHandle(handle: String, available: Bool)
 
     /// Invoked when failed to check for availability of a handle
-    @objc optional func didFailToCheckAvailabilityOfHandle(handle: String)
+    @objc
+    optional func didFailToCheckAvailabilityOfHandle(handle: String)
 
     /// Invoked when the handle is set
-    @objc optional func didSetHandle()
+    @objc
+    optional func didSetHandle()
 
     /// Invoked when failed to set the handle
-    @objc optional func didFailToSetHandle()
+    @objc
+    optional func didFailToSetHandle()
 
     /// Invoked when failed to set the handle because already taken
-    @objc optional func didFailToSetHandleBecauseExisting()
+    @objc
+    optional func didFailToSetHandleBecauseExisting()
 
     /// Invoked when a good handle suggestion is found
-    @objc optional func didFindHandleSuggestion(handle: String)
+    @objc
+    optional func didFindHandleSuggestion(handle: String)
 }
 
 // MARK: - Notification

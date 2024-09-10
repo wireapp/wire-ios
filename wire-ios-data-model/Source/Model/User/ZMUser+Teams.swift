@@ -21,7 +21,8 @@ extension ZMUser {
         membership?.team
     }
 
-    @objc public static func keyPathsForValuesAffectingTeam() -> Set<String> {
+    @objc
+    public static func keyPathsForValuesAffectingTeam() -> Set<String> {
         [#keyPath(ZMUser.membership)]
     }
 
@@ -49,7 +50,8 @@ extension ZMUser {
         }
     }
 
-    @objc public func createOrDeleteMembershipIfBelongingToTeam() {
+    @objc
+    public func createOrDeleteMembershipIfBelongingToTeam() {
         guard
             let teamIdentifier = self.teamIdentifier,
             let managedObjectContext = self.managedObjectContext,

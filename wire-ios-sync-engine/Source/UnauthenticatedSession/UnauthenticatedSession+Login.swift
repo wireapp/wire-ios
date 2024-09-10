@@ -54,7 +54,8 @@ extension UnauthenticatedSession {
     ///
     /// Returns: false if the email address was invalid.
     @objc(requestEmailVerificationCodeForLogin:)
-    @discardableResult public func requestEmailVerificationCodeForLogin(email: String) -> Bool {
+    @discardableResult
+    public func requestEmailVerificationCodeForLogin(email: String) -> Bool {
         do {
             var email: String? = email
             _ = try userPropertyValidator.validate(emailAddress: &email)

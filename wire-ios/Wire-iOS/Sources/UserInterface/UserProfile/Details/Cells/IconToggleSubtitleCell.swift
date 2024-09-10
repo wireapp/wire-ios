@@ -161,7 +161,8 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         topContainer.addBorder(for: .bottom)
     }
 
-    @objc private func toggleChanged(_ sender: UISwitch) {
+    @objc
+    private func toggleChanged(_ sender: UISwitch) {
         action?(sender.isOn, self)
     }
 

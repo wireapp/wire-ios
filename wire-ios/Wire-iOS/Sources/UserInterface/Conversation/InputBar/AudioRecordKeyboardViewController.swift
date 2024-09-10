@@ -440,7 +440,8 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - Button Actions
 
-    @objc func recordButtonPressed(_: AnyObject!) {
+    @objc
+    func recordButtonPressed(_: AnyObject!) {
         self.recorder.startRecording { _ in
             self.state = .recording
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
@@ -448,11 +449,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
-    @objc func stopRecordButtonPressed(_: UIButton?) {
+    @objc
+    func stopRecordButtonPressed(_: UIButton?) {
         self.recorder.stopRecording()
     }
 
-    @objc func confirmButtonPressed(_ button: UIButton?) {
+    @objc
+    func confirmButtonPressed(_ button: UIButton?) {
         guard let audioPath = self.currentEffectFilePath else {
             zmLog.error("No file to send")
             return
@@ -483,12 +486,14 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
-    @objc func redoButtonPressed(_: UIButton?) {
+    @objc
+    func redoButtonPressed(_: UIButton?) {
         recorder.deleteRecording()
         self.state = .ready
     }
 
-    @objc func cancelButtonPressed(_: UIButton?) {
+    @objc
+    func cancelButtonPressed(_: UIButton?) {
         self.delegate?.audioRecordViewControllerDidCancel(self)
     }
 }

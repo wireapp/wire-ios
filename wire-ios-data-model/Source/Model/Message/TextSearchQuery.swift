@@ -22,7 +22,8 @@ import WireUtilities
 extension ZMMessage {
     /// This function should be called everytime the
     /// message text of a message changes.
-    @objc func updateNormalizedText() {
+    @objc
+    func updateNormalizedText() {
         // no-op
     }
 }

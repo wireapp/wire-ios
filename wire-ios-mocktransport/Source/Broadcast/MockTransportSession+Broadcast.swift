@@ -21,7 +21,8 @@ import WireProtos
 
 extension MockTransportSession {
     // POST /broadcast/otr/messages
-    @objc public func processBroascastOTRMessageToConversation(
+    @objc
+    public func processBroascastOTRMessageToConversation(
         protobuffData data: Data,
         query: [String: Any],
         apiVersion: APIVersion

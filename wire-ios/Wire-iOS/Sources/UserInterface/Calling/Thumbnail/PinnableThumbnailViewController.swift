@@ -135,7 +135,8 @@ final class PinnableThumbnailViewController: UIViewController {
 
     // MARK: - Orientation
 
-    @objc func orientationDidChange() {
+    @objc
+    func orientationDidChange() {
         contentView?.layoutForOrientation()
     }
 
@@ -226,7 +227,8 @@ final class PinnableThumbnailViewController: UIViewController {
 
     // MARK: - Panning
 
-    @objc private func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
             // Disable the pinning while the user moves the thumbnail

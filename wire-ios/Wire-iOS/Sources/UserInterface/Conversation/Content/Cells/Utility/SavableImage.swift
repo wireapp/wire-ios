@@ -31,8 +31,10 @@ protocol PhotoLibraryProtocol {
 extension PHPhotoLibrary: PhotoLibraryProtocol {}
 
 protocol AssetChangeRequestProtocol: AnyObject {
-    @discardableResult static func creationRequestForAsset(from image: UIImage) -> Self
-    @discardableResult static func creationRequestForAssetFromImage(atFileURL fileURL: URL) -> Self?
+    @discardableResult
+    static func creationRequestForAsset(from image: UIImage) -> Self
+    @discardableResult
+    static func creationRequestForAssetFromImage(atFileURL fileURL: URL) -> Self?
 }
 
 protocol AssetCreationRequestProtocol: AnyObject {

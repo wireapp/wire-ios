@@ -79,7 +79,8 @@
     unusedArguments, \
     void, \
     wrap, \
-    wrapArguments
+    wrapArguments, \
+    wrapAttributes
 
 # Options
 
@@ -104,3 +105,8 @@
 --wrapparameters before-first # wrapArguments
 --wrapcollections before-first # wrapArguments
 --callsiteparen balanced # wrapArguments
+--funcattributes prev-line # wrapAttributes
+--typeattributes prev-line # wrapAttributes
+--storedvarattrs same-line # wrapAttributes
+--computedvarattrs same-line # wrapAttributes
+--complexattrs prev-line # wrapAttributes

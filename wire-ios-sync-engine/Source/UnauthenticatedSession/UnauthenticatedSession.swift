@@ -28,7 +28,8 @@ public protocol UnauthenticatedSessionDelegate: AnyObject {
     func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool
 }
 
-@objc public protocol UserInfoParser: AnyObject {
+@objc
+public protocol UserInfoParser: AnyObject {
     @objc(accountExistsLocallyFromUserInfo:)
     func accountExistsLocally(from userInfo: UserInfo) -> Bool
     @objc(upgradeToAuthenticatedSessionWithUserInfo:)

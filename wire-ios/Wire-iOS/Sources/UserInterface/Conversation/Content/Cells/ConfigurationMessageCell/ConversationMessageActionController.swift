@@ -200,55 +200,68 @@ final class ConversationMessageActionController {
         )
     }
 
-    @objc func digitallySignMessage() {
+    @objc
+    func digitallySignMessage() {
         perform(action: .digitallySign)
     }
 
-    @objc func copyMessage() {
+    @objc
+    func copyMessage() {
         perform(action: .copy)
     }
 
-    @objc func editMessage() {
+    @objc
+    func editMessage() {
         perform(action: .edit)
     }
 
-    @objc func quoteMessage() {
+    @objc
+    func quoteMessage() {
         perform(action: .reply)
     }
 
-    @objc func openMessageDetails() {
+    @objc
+    func openMessageDetails() {
         perform(action: .openDetails)
     }
 
-    @objc func cancelDownloadingMessage() {
+    @objc
+    func cancelDownloadingMessage() {
         perform(action: .cancel)
     }
 
-    @objc func downloadMessage() {
+    @objc
+    func downloadMessage() {
         perform(action: .download)
     }
 
-    @objc func saveMessage() {
+    @objc
+    func saveMessage() {
         perform(action: .save)
     }
 
-    @objc func deleteMessage() {
+    @objc
+    func deleteMessage() {
         perform(action: .delete)
     }
 
-    @objc func resendMessage() {
+    @objc
+    func resendMessage() {
         perform(action: .resend)
     }
 
-    @objc func revealMessage() {
+    @objc
+    func revealMessage() {
         perform(action: .showInConversation)
     }
 
-    @objc func addReaction(reaction: Emoji.ID) {
+    @objc
+    func addReaction(reaction: Emoji.ID) {
         perform(action: .react(reaction))
     }
 
-    @objc func visitLink() {
+    @objc
+    func visitLink() {
         perform(action: .visitLink)
     }
 }

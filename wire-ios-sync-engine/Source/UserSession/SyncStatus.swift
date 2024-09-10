@@ -25,7 +25,8 @@ extension Notification.Name {
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
 }
 
-@objcMembers public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
+@objcMembers
+public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
 
     public internal(set) var currentSyncPhase: SyncPhase = .done {

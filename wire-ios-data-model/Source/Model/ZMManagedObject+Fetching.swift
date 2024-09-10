@@ -19,7 +19,8 @@
 import Foundation
 
 extension ZMManagedObject {
-    @objc public static func fetch(with remoteIdentifier: UUID, in context: NSManagedObjectContext) -> Self? {
+    @objc
+    public static func fetch(with remoteIdentifier: UUID, in context: NSManagedObjectContext) -> Self? {
         internalFetch(withRemoteIdentifier: remoteIdentifier, in: context)
     }
 
@@ -30,7 +31,8 @@ extension ZMManagedObject {
     /// - parameter context: The `NSManagedObjectContext` on which the object will be fetched.
     ///
     /// If the domain is nil only objects belonging to your own domain will be returned. Similarily if the self user aren't associated with a domain the domain parameter will be ignored.
-    @objc public static func fetch(
+    @objc
+    public static func fetch(
         with remoteIdentifier: UUID,
         domain: String?,
         in context: NSManagedObjectContext

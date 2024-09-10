@@ -359,7 +359,8 @@ extension ZMMessage {
             .mapValues { $0.flatMap(\.users) }
     }
 
-    @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
+    @objc
+    public func reactionsSortedByCreationDate() -> [ReactionData] {
         self.reactionData.sorted {
             $0.creationDate < $1.creationDate
         }
@@ -377,7 +378,8 @@ extension ZMMessage {
         nil
     }
 
-    @objc public func startSelfDestructionIfNeeded() -> Bool {
+    @objc
+    public func startSelfDestructionIfNeeded() -> Bool {
         if !isZombieObject, isEphemeral, let sender, !sender.isSelfUser {
             return startDestructionIfNeeded()
         }

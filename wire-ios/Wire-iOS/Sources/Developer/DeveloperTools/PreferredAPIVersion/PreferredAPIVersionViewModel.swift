@@ -56,8 +56,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
 
     let sections: [Section]
 
-    @Published
-    var selectedItemID: Item.ID
+    @Published var selectedItemID: Item.ID
 
     // MARK: - Life cycle
 

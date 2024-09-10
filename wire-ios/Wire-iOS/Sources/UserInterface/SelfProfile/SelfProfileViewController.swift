@@ -210,7 +210,8 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    @objc private func userDidTapProfileImage(_: UIGestureRecognizer) {
+    @objc
+    private func userDidTapProfileImage(_: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let alertController = profileImagePicker.selectProfileImage()

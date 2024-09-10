@@ -34,7 +34,8 @@ public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
     }
 }
 
-@objc public protocol ZMNewUnreadMessagesObserver: NSObjectProtocol {
+@objc
+public protocol ZMNewUnreadMessagesObserver: NSObjectProtocol {
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo)
 }
 
@@ -64,7 +65,8 @@ extension NewUnreadMessagesChangeInfo {
 ///
 //////////////////////////
 
-@objc public final class NewUnreadKnockMessagesChangeInfo: ObjectChangeInfo {
+@objc
+public final class NewUnreadKnockMessagesChangeInfo: ObjectChangeInfo {
     public convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
@@ -74,7 +76,8 @@ extension NewUnreadMessagesChangeInfo {
     }
 }
 
-@objc public protocol ZMNewUnreadKnocksObserver: NSObjectProtocol {
+@objc
+public protocol ZMNewUnreadKnocksObserver: NSObjectProtocol {
     func didReceiveNewUnreadKnockMessages(_ changeInfo: NewUnreadKnockMessagesChangeInfo)
 }
 
@@ -104,7 +107,8 @@ extension NewUnreadKnockMessagesChangeInfo {
 ///
 //////////////////////////
 
-@objc public final class NewUnreadUnsentMessageChangeInfo: ObjectChangeInfo {
+@objc
+public final class NewUnreadUnsentMessageChangeInfo: ObjectChangeInfo {
     public required convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
@@ -114,7 +118,8 @@ extension NewUnreadKnockMessagesChangeInfo {
     }
 }
 
-@objc public protocol ZMNewUnreadUnsentMessageObserver: NSObjectProtocol {
+@objc
+public protocol ZMNewUnreadUnsentMessageObserver: NSObjectProtocol {
     func didReceiveNewUnreadUnsentMessages(_ changeInfo: NewUnreadUnsentMessageChangeInfo)
 }
 

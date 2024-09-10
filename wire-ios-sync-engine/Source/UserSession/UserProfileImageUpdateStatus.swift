@@ -37,7 +37,8 @@ protocol UserProfileImageUploadStatusProtocol: AnyObject {
     func uploadingFailed(imageSize: ProfileImageSize, error: Error)
 }
 
-@objc public protocol UserProfileImageUpdateProtocol: AnyObject {
+@objc
+public protocol UserProfileImageUpdateProtocol: AnyObject {
     @objc(updateImageWithImageData:)
     func updateImage(imageData: Data)
 }

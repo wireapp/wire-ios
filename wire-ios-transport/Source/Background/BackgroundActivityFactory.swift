@@ -38,10 +38,10 @@ import WireUtilities
  * 2. We end the active background task and block new activities from starting
  */
 
-@objc public final class BackgroundActivityFactory: NSObject {
+@objc
+public final class BackgroundActivityFactory: NSObject {
     /// Get the shared instance.
-    @objc(sharedFactory)
-    public static let shared = BackgroundActivityFactory()
+    @objc(sharedFactory) public static let shared = BackgroundActivityFactory()
 
     // MARK: - Configuration
 
@@ -128,7 +128,8 @@ import WireUtilities
      * Call this method when the app resumes from foreground.
      */
 
-    @objc public func resume() {
+    @objc
+    public func resume() {
         isolationQueue.sync {
             if currentBackgroundTask == UIBackgroundTaskIdentifier.invalid {
                 WireLogger.backgroundActivity.info(
@@ -145,7 +146,8 @@ import WireUtilities
      * - parameter activity: The activity to end.
      */
 
-    @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
+    @objc
+    public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
             guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
                 return

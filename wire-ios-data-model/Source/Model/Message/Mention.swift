@@ -87,7 +87,8 @@ extension NSRange {
     }
 }
 
-@objc extension Mention {
+@objc
+extension Mention {
     public var isForSelf: Bool {
         user.isSelfUser
     }

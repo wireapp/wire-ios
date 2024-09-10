@@ -35,8 +35,7 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
         }
     }
 
-    @objc
-    var stateChanges_objc: [NSNumber] {
+    @objc var stateChanges_objc: [NSNumber] {
         queue.sync {
             _stateChanges.map { NSNumber(value: $0.rawValue) }
         }

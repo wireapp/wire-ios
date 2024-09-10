@@ -175,12 +175,7 @@ final class AuthenticationEventResponderChain {
     /// Registers a handler inside the specified type erased array.
     private func registerHandler<Handler: AuthenticationEventHandler>(
         _ handler: Handler,
-        to handlerList: inout [
-            AnyAuthenticationEventHandler<
-                Handler
-                    .Context
-            >,
-        ]
+        to handlerList: inout [AnyAuthenticationEventHandler<Handler.Context>]
     ) {
         let box = AnyAuthenticationEventHandler(handler)
         handlerList.append(box)

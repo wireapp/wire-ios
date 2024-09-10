@@ -150,7 +150,8 @@ final class BackupPasswordViewController: UIViewController {
         }
     }
 
-    @objc private dynamic func completeWithCurrentResult() {
+    @objc
+    private dynamic func completeWithCurrentResult() {
         onCompletion?(password)
     }
 }

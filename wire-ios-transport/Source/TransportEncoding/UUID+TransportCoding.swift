@@ -29,8 +29,7 @@ extension UUID: TransportCoding {
 }
 
 extension NSUUID {
-    @objc(transportString)
-    public var transportString: String {
+    @objc(transportString) public var transportString: String {
         (self as UUID).transportString()
     }
 

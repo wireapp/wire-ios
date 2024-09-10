@@ -148,14 +148,16 @@ final class MarkdownBarView: UIView {
         codeButton.accessibilityLabel = Conversation.CodeButton.description
     }
 
-    @objc func textViewDidChangeActiveMarkdown(note: Notification) {
+    @objc
+    func textViewDidChangeActiveMarkdown(note: Notification) {
         guard let textView = note.object as? MarkdownTextView else { return }
         updateIcons(for: textView.activeMarkdown)
     }
 
     // MARK: Actions
 
-    @objc private func buttonTapped(sender: IconButton) {
+    @objc
+    private func buttonTapped(sender: IconButton) {
         guard let markdown = markdown(for: sender) else { return }
 
         if sender.iconColor(for: .normal) != enabledStateIconColor {
@@ -197,7 +199,8 @@ final class MarkdownBarView: UIView {
         }
     }
 
-    @objc func resetIcons() {
+    @objc
+    func resetIcons() {
         for button in buttons {
             button.setIconColor(enabledStateIconColor, for: .normal)
             button.setBorderColor(enabledStateBorderColor, for: .normal)

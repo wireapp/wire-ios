@@ -414,7 +414,8 @@ final class AddParticipantsViewController: UIViewController {
         navigationItem.rightBarButtonItem?.isEnabled = !isVisible
     }
 
-    @objc func keyboardFrameWillChange(notification: Notification) {
+    @objc
+    func keyboardFrameWillChange(notification: Notification) {
         // Don't adjust the frame when being presented in a popover.
         if let arrowDirection = popoverPresentationController?.arrowDirection, arrowDirection == .unknown {
             return
@@ -478,7 +479,8 @@ extension AddParticipantsViewController: UserSelectionObserver {
 }
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
-    @objc func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
+    @objc
+    func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
         if case let .add(conversation) = viewModel.context {
             self.dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)

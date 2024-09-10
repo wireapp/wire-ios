@@ -300,7 +300,8 @@ final class AudioEffectsPickerViewController: UIViewController {
         updatePlayProgressTime()
     }
 
-    @objc private func updatePlayProgressTime() {
+    @objc
+    private func updatePlayProgressTime() {
         let selector = #selector(AudioEffectsPickerViewController.updatePlayProgressTime)
         if let player = audioPlayerController?.player {
             progressView.progress = Float(player.currentTime / player.duration)

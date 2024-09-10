@@ -20,7 +20,8 @@ import Foundation
 
 extension ZMMessage {
     @discardableResult
-    @objc public static func addReaction(
+    @objc
+    public static func addReaction(
         _ reaction: String,
         to message: ZMConversationMessage
     ) -> ZMClientMessage? {
@@ -37,7 +38,8 @@ extension ZMMessage {
         )
     }
 
-    @objc public static func removeReaction(
+    @objc
+    public static func removeReaction(
         _ reaction: String,
         from message: ZMConversationMessage
     ) {
@@ -97,7 +99,8 @@ extension ZMMessage {
         }
     }
 
-    @objc public func setReactions(
+    @objc
+    public func setReactions(
         _ updatedReactions: Set<String>,
         forUser user: ZMUser,
         newReactionsCreationDate: Date? = nil
@@ -141,14 +144,16 @@ extension ZMMessage {
         }
     }
 
-    @objc public func clearAllReactions() {
+    @objc
+    public func clearAllReactions() {
         let oldReactions = self.reactions
         reactions.removeAll()
         guard let moc = managedObjectContext else { return }
         oldReactions.forEach(moc.delete)
     }
 
-    @objc public func clearConfirmations() {
+    @objc
+    public func clearConfirmations() {
         let oldConfirmations = self.confirmations
         mutableSetValue(forKey: ZMMessageConfirmationKey).removeAllObjects()
         guard let moc = managedObjectContext else { return }

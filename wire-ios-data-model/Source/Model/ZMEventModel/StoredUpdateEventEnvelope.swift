@@ -34,15 +34,13 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
 
     /// The encoded data of the event envelope.
 
-    @NSManaged
-    public var data: Data
+    @NSManaged public var data: Data
 
     /// The sort index of the event.
     ///
     /// Events should be processed in the order they are received.
 
-    @NSManaged
-    public var sortIndex: Int64
+    @NSManaged public var sortIndex: Int64
 
     /// Create a fetch request sorted by the `sortIndex`.
     ///

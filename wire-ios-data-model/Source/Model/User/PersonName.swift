@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objcMembers public class PersonName: NSObject {
+@objcMembers
+public class PersonName: NSObject {
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? PersonName else { return false }
         return self.components == other.components

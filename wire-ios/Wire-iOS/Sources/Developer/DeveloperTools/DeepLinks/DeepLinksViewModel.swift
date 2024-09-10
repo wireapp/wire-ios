@@ -34,11 +34,9 @@ final class DeepLinksViewModel: ObservableObject {
     let router: AppRootRouter?
     let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
-    @Published
-    var isShowingAlert = false
+    @Published var isShowingAlert = false
 
-    @Published
-    var error: Error?
+    @Published var error: Error?
 
     // MARK: - Life cycle
 

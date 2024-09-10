@@ -26,7 +26,8 @@ import Foundation
 /// Changes are only observed on the main UI managed object context and are triggered by automatically by
 /// Core Data notifications or manually for non Core Data changes.
 
-@objcMembers public class NotificationDispatcher: NSObject, TearDownCapable {
+@objcMembers
+public class NotificationDispatcher: NSObject, TearDownCapable {
     static var log = ZMSLog(tag: "notifications")
 
     // MARK: - Public properties

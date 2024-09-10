@@ -103,13 +103,15 @@ final class InputBarEditView: UIView {
         ])
     }
 
-    @objc func buttonTapped(_ sender: IconButton) {
+    @objc
+    func buttonTapped(_ sender: IconButton) {
         let typeBySender = [undoButton: EditButtonType.undo, confirmButton: .confirm, cancelButton: .cancel]
         guard let type = typeBySender[sender] else { return }
         delegate?.inputBarEditView(self, didTapButtonWithType: type)
     }
 
-    @objc func didLongPressUndoButton(_ sender: UILongPressGestureRecognizer) {
+    @objc
+    func didLongPressUndoButton(_ sender: UILongPressGestureRecognizer) {
         guard sender.state == .began else { return }
         delegate?.inputBarEditViewDidLongPressUndoButton(self)
     }

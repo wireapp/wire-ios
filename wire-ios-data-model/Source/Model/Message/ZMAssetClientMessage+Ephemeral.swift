@@ -43,7 +43,8 @@ extension ZMAssetClientMessage {
         return TimeInterval(ephemeral.expireAfterMillis / 1000)
     }
 
-    @objc override public func obfuscate() {
+    @objc
+    override public func obfuscate() {
         super.obfuscate()
 
         var obfuscatedMessage: GenericMessage?
@@ -64,7 +65,8 @@ extension ZMAssetClientMessage {
         }
     }
 
-    @discardableResult @objc override public func startDestructionIfNeeded() -> Bool {
+    @discardableResult @objc
+    override public func startDestructionIfNeeded() -> Bool {
         let imageNotDownloaded = imageMessageData != nil && !hasDownloadedFile
         let fileHasNoUploadState = fileMessageData != nil
             && underlyingMessage?.assetData?.hasUploaded == false

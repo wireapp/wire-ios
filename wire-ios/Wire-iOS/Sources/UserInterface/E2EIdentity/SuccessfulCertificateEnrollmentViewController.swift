@@ -204,7 +204,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     }
 
     @MainActor
-    @objc private func okTapped() {
+    @objc
+    private func okTapped() {
         onOkTapped?(self)
     }
 

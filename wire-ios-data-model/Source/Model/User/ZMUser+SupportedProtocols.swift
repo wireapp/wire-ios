@@ -19,11 +19,9 @@
 import Foundation
 
 extension ZMUser {
-    @objc
-    public static let supportedProtocolsKey = "supportedProtocols"
+    @objc public static let supportedProtocolsKey = "supportedProtocols"
 
-    @NSManaged
-    private var primitiveSupportedProtocols: [Int16]?
+    @NSManaged private var primitiveSupportedProtocols: [Int16]?
 
     /// Objc-C helper method because enum 'MessageProtocol' is not available.
     @objc(setSupportedProtocols:)

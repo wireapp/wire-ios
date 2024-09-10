@@ -102,7 +102,8 @@ final class LegalHoldDisclosureController: UserObserving {
 
     // MARK: - Notifications
 
-    @objc private func applicationDidEnterForeground() {
+    @objc
+    private func applicationDidEnterForeground() {
         discloseCurrentState(cause: .appOpen)
     }
 

@@ -352,7 +352,8 @@ final class ConversationGuestOptionsViewModel {
     ///   - allowGuests: new state AllowGuests
     ///   - view: the source view which triggers setAllowGuests action
     /// - Returns: alert controller
-    @discardableResult func setAllowGuests(_ allowGuests: Bool, view: UIView) -> UIAlertController? {
+    @discardableResult
+    func setAllowGuests(_ allowGuests: Bool, view: UIView) -> UIAlertController? {
         func _setAllowGuests() {
             let item = CancelableItem(delay: 0.4) { [weak self] in
                 self?.state.isLoading = true

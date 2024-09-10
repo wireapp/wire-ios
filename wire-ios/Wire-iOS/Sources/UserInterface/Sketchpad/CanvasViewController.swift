@@ -237,7 +237,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 
     // MARK: - Actions
 
-    @objc func toggleDrawTool() {
+    @objc
+    func toggleDrawTool() {
         if canvas.mode == .edit {
             canvas.mode = .draw
         } else {
@@ -247,11 +248,13 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         updateButtonSelection()
     }
 
-    @objc func openEmojiKeyboard() {
+    @objc
+    func openEmojiKeyboard() {
         select(editMode: .emoji, animated: true)
     }
 
-    @objc func exportImage() {
+    @objc
+    func exportImage() {
         if let image = canvas.trimmedImage {
             delegate?.canvasViewController(self, didExportImage: image)
         }
@@ -385,7 +388,8 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
 // MARK: - UIImagePickerControllerDelegate
 
 extension CanvasViewController: UIImagePickerControllerDelegate {
-    @objc func pickImage() {
+    @objc
+    func pickImage() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)

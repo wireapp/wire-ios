@@ -19,7 +19,8 @@
 import Foundation
 import WireTransport
 
-@objc class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
+@objc
+class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
     var backgroundTimeRemaining: TimeInterval = 10
 
     var applicationState: UIApplication.State = .active

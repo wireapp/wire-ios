@@ -386,7 +386,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Highlight
 
-    @objc func highlight(in tableView: UITableView, sectionIndex: Int) {
+    @objc
+    func highlight(in tableView: UITableView, sectionIndex: Int) {
         let cellDescriptions = tableViewCellDescriptions
 
         let highlightableCells: [HighlightableView] = cellDescriptions.indices.compactMap {

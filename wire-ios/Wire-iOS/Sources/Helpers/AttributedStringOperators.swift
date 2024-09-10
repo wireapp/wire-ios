@@ -55,22 +55,26 @@ func + (left: NSAttributedString, right: String) -> NSAttributedString {
 // Concats the lhs and rhs and assigns the result to the lhs
 infix operator +=: AssignmentPrecedence
 
-@discardableResult func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
+@discardableResult
+func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
     left.append(right.attributedString)
     return left
 }
 
-@discardableResult func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
+@discardableResult
+func += (left: inout NSAttributedString, right: String) -> NSAttributedString {
     left = left + right
     return left
 }
 
-@discardableResult func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
+@discardableResult
+func += (left: inout NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     left = left + right
     return left
 }
 
-@discardableResult func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
+@discardableResult
+func += (left: inout NSAttributedString, right: NSAttributedString?) -> NSAttributedString {
     guard let rhs = right else { return left }
     return left += rhs
 }

@@ -41,7 +41,8 @@ public final class LinkAttachmentDetectorHelper: NSObject {
     }
 }
 
-@objcMembers public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
+@objcMembers
+public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
     fileprivate let linkAttachmentDetector: LinkAttachmentDetectorType
 
     public init(linkAttachmentDetector: LinkAttachmentDetectorType, managedObjectContext: NSManagedObjectContext) {

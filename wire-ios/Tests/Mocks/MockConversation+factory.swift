@@ -19,19 +19,16 @@
 import Foundation
 
 extension MockConversation {
-    @objc
-    var isSelfAnActiveMember: Bool {
+    @objc var isSelfAnActiveMember: Bool {
         let selfUserPredicate = NSPredicate(format: "isSelfUser == YES")
         return !sortedActiveParticipants.filter { selfUserPredicate.evaluate(with: $0) }.isEmpty
     }
 
-    @objc
-    var localParticipants: Set<AnyHashable> {
+    @objc var localParticipants: Set<AnyHashable> {
         Set(sortedActiveParticipants as! [AnyHashable])
     }
 
-    @objc
-    var activeParticipants: [AnyHashable] {
+    @objc var activeParticipants: [AnyHashable] {
         get {
             sortedActiveParticipants as! [AnyHashable]
         }
@@ -41,8 +38,7 @@ extension MockConversation {
         }
     }
 
-    @objc
-    var primitiveMlsGroupID: Data? {
+    @objc var primitiveMlsGroupID: Data? {
         nil
     }
 

@@ -45,7 +45,8 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         CategoryMatch(including: .image, excluding: .none)
     }
 
-    @discardableResult func insertAssetMessages(count: Int) -> [ZMMessage] {
+    @discardableResult
+    func insertAssetMessages(count: Int) -> [ZMMessage] {
         var offset: TimeInterval = 0
         var messages = [ZMMessage]()
         for _ in 0 ..< count {

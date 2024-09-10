@@ -213,7 +213,8 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         )
     }
 
-    @objc func actionButtonPressed(sender: Any?) {
+    @objc
+    func actionButtonPressed(sender: Any?) {
         if let user, let action {
             actionButtonHandler?(user, action)
         }

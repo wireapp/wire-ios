@@ -85,11 +85,13 @@ extension ConversationInputBarViewController {
         return commands
     }
 
-    @objc func upArrowPressedForMention() {
+    @objc
+    func upArrowPressedForMention() {
         mentionsView?.selectPreviousUser()
     }
 
-    @objc func downArrowPressedForMention() {
+    @objc
+    func downArrowPressedForMention() {
         mentionsView?.selectNextUser()
     }
 

@@ -27,7 +27,8 @@ public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
         try validateValue(&pointee)
     }
 
-    @discardableResult public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
+    @discardableResult
+    public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
         guard let phoneNumber = ioValue as? NSString,
               phoneNumber.length >= 1 else {
             return true

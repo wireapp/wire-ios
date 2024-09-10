@@ -20,7 +20,8 @@ import Foundation
 import WireCryptobox
 
 @objc(ZMGenericMessageData)
-@objcMembers public class ZMGenericMessageData: ZMManagedObject {
+@objcMembers
+public class ZMGenericMessageData: ZMManagedObject {
     // MARK: - Static
 
     override open class func entityName() -> String {

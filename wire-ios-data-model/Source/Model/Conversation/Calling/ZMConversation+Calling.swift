@@ -18,7 +18,8 @@
 
 extension ZMConversation {
     @discardableResult
-    @objc public func appendMissedCallMessage(
+    @objc
+    public func appendMissedCallMessage(
         fromUser user: ZMUser,
         at timestamp: Date,
         relevantForStatus: Bool = true

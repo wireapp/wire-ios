@@ -657,7 +657,8 @@ private final class AssetDeletionNotificationObserver: NSObject {
         )
     }
 
-    @objc private func handle(note: Notification) {
+    @objc
+    private func handle(note: Notification) {
         guard let identifier = note.object as? String else { return }
         deletedIdentifiers.append(identifier)
     }

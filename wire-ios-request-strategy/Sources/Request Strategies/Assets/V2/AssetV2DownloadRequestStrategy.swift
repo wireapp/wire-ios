@@ -19,7 +19,8 @@
 import WireImages
 import WireTransport
 
-@objcMembers public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
+@objcMembers
+public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []

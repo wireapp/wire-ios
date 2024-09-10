@@ -21,8 +21,7 @@ import SwiftUI
 struct SwitchBackendView: View {
     // MARK: - Properties
 
-    @StateObject
-    var viewModel: SwitchBackendViewModel
+    @StateObject var viewModel: SwitchBackendViewModel
 
     // MARK: - Views
 

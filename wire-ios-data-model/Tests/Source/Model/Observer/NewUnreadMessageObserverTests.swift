@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
+@objc
+class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
     var unreadMessageNotes: [NewUnreadMessagesChangeInfo] = []
     var unreadKnockNotes: [NewUnreadKnockMessagesChangeInfo] = []
 
@@ -26,11 +27,13 @@ import Foundation
         super.init()
     }
 
-    @objc func didReceiveNewUnreadKnockMessages(_ changeInfo: NewUnreadKnockMessagesChangeInfo) {
+    @objc
+    func didReceiveNewUnreadKnockMessages(_ changeInfo: NewUnreadKnockMessagesChangeInfo) {
         self.unreadKnockNotes.append(changeInfo)
     }
 
-    @objc func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
+    @objc
+    func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
         self.unreadMessageNotes.append(changeInfo)
     }
 

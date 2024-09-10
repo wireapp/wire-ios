@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc extension ZMMessage {
+@objc
+extension ZMMessage {
     var shouldBeDisplayed: Bool {
         !hasBeenDeleted && !isZombieObject
     }

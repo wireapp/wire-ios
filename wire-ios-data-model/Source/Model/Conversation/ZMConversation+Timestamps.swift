@@ -358,8 +358,7 @@ extension ZMConversation {
     /// Returns the first unread message in a converation. If the first unread message is child message
     /// of system message the parent message will be returned.
 
-    @objc
-    public var firstUnreadMessage: ZMConversationMessage? {
+    @objc public var firstUnreadMessage: ZMConversationMessage? {
         let replaceChildWithParent: (ZMMessage) -> ZMMessage = { message in
             if let systemMessage = message as? ZMSystemMessage,
                let parentMessage = systemMessage.parentMessage as? ZMMessage {
@@ -384,8 +383,7 @@ extension ZMConversation {
     /// Returns all unread messages. This may contain unread child messages of a system message
     /// which aren't directly visible in the conversation.
 
-    @objc
-    public var unreadMessages: [ZMConversationMessage] {
+    @objc public var unreadMessages: [ZMConversationMessage] {
         unreadMessages()
     }
 

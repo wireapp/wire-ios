@@ -48,7 +48,8 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
     // MARK: Helper
 
-    @discardableResult func createMessage(
+    @discardableResult
+    func createMessage(
         isImage: Bool = true,
         uploaded: Bool = false,
         preview: Bool = false,

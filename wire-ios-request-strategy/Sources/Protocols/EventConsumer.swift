@@ -31,11 +31,14 @@ public protocol ZMEventConsumer: NSObjectProtocol {
     /// and conversations from the events array. All messages and conversations will be prefetched and
     /// passed to @c processEvents:liveEvents:prefetchResult as last parameter
 
-    @objc optional func processEventsWhileInBackground(_ events: [ZMUpdateEvent])
+    @objc
+    optional func processEventsWhileInBackground(_ events: [ZMUpdateEvent])
 
-    @objc optional func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
+    @objc
+    optional func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
 
-    @objc optional func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
+    @objc
+    optional func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID>
 }
 
 @objc

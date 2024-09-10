@@ -52,8 +52,7 @@ extension Date: TransportCoding {
 }
 
 extension NSDate {
-    @objc(transportString)
-    public var transportString: String {
+    @objc(transportString) public var transportString: String {
         (self as Date).transportString()
     }
 

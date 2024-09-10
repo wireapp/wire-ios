@@ -22,10 +22,12 @@ public enum ZMUserKeys {
     public static let RichProfile = "richProfile"
 }
 
-@objc public class UserRichProfileField: NSObject, Codable {
+@objc
+public class UserRichProfileField: NSObject, Codable {
     public var type: String
     public var value: String
-    @objc public init(type: String, value: String) {
+    @objc
+    public init(type: String, value: String) {
         self.type = type
         self.value = value
     }

@@ -255,7 +255,8 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     // MARK: - Tap gesture of avatar
 
-    @objc func tappedOnAvatar() {
+    @objc
+    func tappedOnAvatar() {
         guard let user = avatar.user else { return }
 
         SessionManager.shared?.showUserProfile(user: user)

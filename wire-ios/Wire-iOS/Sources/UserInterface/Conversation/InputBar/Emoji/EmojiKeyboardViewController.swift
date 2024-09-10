@@ -111,11 +111,13 @@ final class EmojiKeyboardViewController: UIViewController {
         self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
     }
 
-    @objc func backspaceTapped(_: IconButton) {
+    @objc
+    func backspaceTapped(_: IconButton) {
         delete()
     }
 
-    @objc func backspaceLongPressed(_ sender: UILongPressGestureRecognizer) {
+    @objc
+    func backspaceLongPressed(_ sender: UILongPressGestureRecognizer) {
         switch sender.state {
         case .began:
             deleting = true

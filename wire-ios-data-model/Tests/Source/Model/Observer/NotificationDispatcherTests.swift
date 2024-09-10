@@ -47,7 +47,8 @@ extension ObjectChangeInfo {
     }
 }
 
-@objcMembers public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
+@objcMembers
+public class NotificationDispatcherTestBase: ZMBaseManagedObjectTest {
     var dispatcher: NotificationDispatcher! {
         sut
     }
@@ -95,7 +96,8 @@ extension ObjectChangeInfo {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    @discardableResult public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
+    @discardableResult
+    public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
         guard let change = mergeNotifications.last else { return [] }
         let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map(\.objectID) ?? []
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

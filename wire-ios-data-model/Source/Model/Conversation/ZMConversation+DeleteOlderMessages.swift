@@ -19,7 +19,8 @@
 import Foundation
 
 extension ZMConversation {
-    @objc public func deleteOlderMessages() {
+    @objc
+    public func deleteOlderMessages() {
         guard let managedObjectContext = self.managedObjectContext,
               let clearedTimeStamp = self.clearedTimeStamp,
               managedObjectContext.zm_isSyncContext else {

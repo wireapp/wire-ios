@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc(ZMVersion) public final class Version: NSObject, Comparable {
+@objc(ZMVersion)
+public final class Version: NSObject, Comparable {
     @objc public private(set) var versionString: String
     @objc public private(set) var arrayRepresentation: [Int]
 

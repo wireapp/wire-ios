@@ -23,7 +23,8 @@ extension FileManager {
     /// If the destionation folder does not exists, it creates it.
     /// If it exists, it moves files and folders from the first folder to the second, then
     /// deletes the first folder.
-    @objc public func moveFolderRecursively(
+    @objc
+    public func moveFolderRecursively(
         from source: URL,
         to destination: URL,
         overwriteExistingFiles: Bool
@@ -41,7 +42,8 @@ extension FileManager {
 
     /// Copies the content of the folder recursively to another folder.
     /// If the destionation folder does not exists, it creates it.
-    @objc public func copyFolderRecursively(
+    @objc
+    public func copyFolderRecursively(
         from source: URL,
         to destination: URL,
         overwriteExistingFiles: Bool

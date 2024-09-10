@@ -23,8 +23,7 @@ extension ZMOTRMessage {
 
     @NSManaged dynamic var expectsReadConfirmation: Bool
 
-    @objc
-    var needsDeliveryConfirmation: Bool {
+    @objc var needsDeliveryConfirmation: Bool {
         needsDeliveryConfirmationAtCurrentDate()
     }
 

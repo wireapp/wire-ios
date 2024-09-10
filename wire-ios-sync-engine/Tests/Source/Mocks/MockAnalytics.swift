@@ -34,15 +34,18 @@ final class MockAnalytics: NSObject, AnalyticsType {
         return value
     }
 
-    @objc func tagEvent(_ event: String) {
+    @objc
+    func tagEvent(_ event: String) {
         taggedEvents.append(event)
     }
 
-    @objc func tagEvent(_ event: String, attributes: [String: NSObject]) {
+    @objc
+    func tagEvent(_ event: String, attributes: [String: NSObject]) {
         taggedEventsWithAttributes.append(EventWithAttributes(event: event, attributes: attributes))
     }
 
-    @objc func upload() {
+    @objc
+    func upload() {
         uploadCallCount += 1
     }
 

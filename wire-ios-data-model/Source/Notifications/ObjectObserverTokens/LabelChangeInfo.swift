@@ -30,7 +30,8 @@ extension Label: ObjectInSnapshot {
     }
 }
 
-@objcMembers public class LabelChangeInfo: ObjectChangeInfo {
+@objcMembers
+public class LabelChangeInfo: ObjectChangeInfo {
     public let label: LabelType
 
     static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
@@ -55,7 +56,8 @@ extension Label: ObjectInSnapshot {
     }
 }
 
-@objc public protocol LabelObserver: NSObjectProtocol {
+@objc
+public protocol LabelObserver: NSObjectProtocol {
     func labelDidChange(_ changeInfo: LabelChangeInfo)
 }
 

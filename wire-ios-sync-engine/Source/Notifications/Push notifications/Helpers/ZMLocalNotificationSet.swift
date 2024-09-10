@@ -20,11 +20,13 @@ import UIKit
 import UserNotifications
 import WireTransport
 
-@objc public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
+@objc
+public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
     func enqueueDelayedSave()
 }
 
-@objc final class ZMLocalNotificationSet: NSObject {
+@objc
+final class ZMLocalNotificationSet: NSObject {
     let archivingKey: String
     let keyValueStore: ZMSynchonizableKeyValueStore
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
@@ -62,7 +64,8 @@ import WireTransport
         keyValueStore.enqueueDelayedSave() // we need to save otherwise changes might not be stored
     }
 
-    @discardableResult func remove(_ notification: ZMLocalNotification) -> ZMLocalNotification? {
+    @discardableResult
+    func remove(_ notification: ZMLocalNotification) -> ZMLocalNotification? {
         notifications.remove(notification)
     }
 

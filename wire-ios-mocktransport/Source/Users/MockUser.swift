@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockUser: NSManagedObject {
+@objcMembers
+public class MockUser: NSManagedObject {
     public enum LegalHoldState: Equatable {
         case enabled
         case pending(MockPendingLegalHoldClient)
@@ -80,7 +81,8 @@ extension MockUser {
         return request
     }
 
-    @objc public static func sortedFetchRequest(withPredicate predicate: NSPredicate) -> NSFetchRequest<MockUser> {
+    @objc
+    public static func sortedFetchRequest(withPredicate predicate: NSPredicate) -> NSFetchRequest<MockUser> {
         let request = sortedFetchRequest
         request.predicate = predicate
         return request
@@ -174,7 +176,8 @@ extension MockUser {
         return nil
     }
 
-    @objc public func removeLegacyPictures() {
+    @objc
+    public func removeLegacyPictures() {
         [smallProfileImage, mediumImage].compactMap { $0 }.forEach(managedObjectContext!.delete)
     }
 }
@@ -260,8 +263,7 @@ extension MockUser {
         ]
     }
 
-    @objc
-    public var mockPushEventForChangedValues: MockPushEvent? {
+    @objc public var mockPushEventForChangedValues: MockPushEvent? {
         let changedValues = self.changedValues()
 
         if changedValues.keys.contains(#keyPath(MockUser.isAccountDeleted)) {
@@ -303,7 +305,8 @@ extension MockUser {
 // MARK: - Participant Roles
 
 extension MockUser {
-    @objc public func role(in conversation: MockConversation) -> MockRole? {
+    @objc
+    public func role(in conversation: MockConversation) -> MockRole? {
         participantRoles.first(where: { $0.conversation == conversation })?.role
     }
 }

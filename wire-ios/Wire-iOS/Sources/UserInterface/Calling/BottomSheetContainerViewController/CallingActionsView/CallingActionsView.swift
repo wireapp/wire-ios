@@ -106,7 +106,8 @@ final class CallingActionsView: UIView {
         createConstraints()
     }
 
-    @available(*, unavailable) required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -249,7 +250,8 @@ final class CallingActionsView: UIView {
 
     // MARK: - Action Output
 
-    @objc private func performButtonAction(_ sender: IconLabelButton) {
+    @objc
+    private func performButtonAction(_ sender: IconLabelButton) {
         delegate?.callingActionsViewPerformAction(action(for: sender))
     }
 
@@ -293,7 +295,8 @@ final class CallingActionsView: UIView {
             : Calling.SwipeUpParticipants.hint
     }
 
-    @objc private func handleViewAccessibilityAction() {
+    @objc
+    private func handleViewAccessibilityAction() {
         bottomSheetScrollingDelegate?.toggleBottomSheetVisibility()
         updateHandleViewAccessibilityLabel()
     }

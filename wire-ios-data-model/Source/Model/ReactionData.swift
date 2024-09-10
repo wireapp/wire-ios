@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc public class ReactionData: NSObject {
+@objc
+public class ReactionData: NSObject {
     public let reactionString: String
     public let users: [UserType]
     public let creationDate: Date

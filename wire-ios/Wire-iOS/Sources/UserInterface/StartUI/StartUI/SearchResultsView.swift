@@ -23,8 +23,7 @@ final class SearchResultsView: UIView {
     let accessoryViewMargin: CGFloat = 16.0
     let emptyResultContainer = UIView()
 
-    @objc
-    let collectionView: UICollectionView
+    @objc let collectionView: UICollectionView
     let collectionViewLayout: UICollectionViewFlowLayout
     let accessoryContainer = UIView()
     var lastLayoutBounds = CGRect.zero

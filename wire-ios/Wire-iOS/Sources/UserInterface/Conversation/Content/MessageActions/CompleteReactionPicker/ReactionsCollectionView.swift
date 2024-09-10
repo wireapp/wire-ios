@@ -64,7 +64,8 @@ extension ReactionsCollectionView {
         )
     }
 
-    @objc private func handleKeyboardPresentation(notification: Notification) {
+    @objc
+    private func handleKeyboardPresentation(notification: Notification) {
         let keyboardHeight = UIView.keyboardFrame(in: self, forKeyboardNotification: notification).height
 
         contentInset = UIEdgeInsets(

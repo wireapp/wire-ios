@@ -19,8 +19,7 @@
 import Foundation
 
 extension ZMConversation {
-    @objc
-    public var isFavorite: Bool {
+    @objc public var isFavorite: Bool {
         get {
             labels.any { $0.kind == .favorite }
         }
@@ -37,8 +36,7 @@ extension ZMConversation {
         }
     }
 
-    @objc
-    public var folder: LabelType? {
+    @objc public var folder: LabelType? {
         labels.first(where: { $0.kind == .folder })
     }
 

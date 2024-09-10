@@ -21,7 +21,8 @@ import UserNotifications
 import WireTransport
 import WireUtilities
 
-@objc public class ZMLocalNotificationSet: NSObject {
+@objc
+public class ZMLocalNotificationSet: NSObject {
     let archivingKey: String
     let keyValueStore: ZMSynchonizableKeyValueStore
     public var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())

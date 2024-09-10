@@ -40,7 +40,8 @@ public struct CircularArray<Element> {
 
     /// Insert an element in the array
     /// - Returns: old element that is going to be replaced with @c element
-    @discardableResult public mutating func add(_ element: Element) -> Element? {
+    @discardableResult
+    public mutating func add(_ element: Element) -> Element? {
         let discardedElement: Element?
 
         if !self.isFull {

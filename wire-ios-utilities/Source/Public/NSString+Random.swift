@@ -19,15 +19,18 @@
 import Foundation
 
 extension NSString {
-    @objc static func randomAlphanumerical(length: UInt) -> String {
+    @objc
+    static func randomAlphanumerical(length: UInt) -> String {
         String.randomAlphanumerical(length: length)
     }
 
-    @objc public static func randomClientIdentifier() -> String {
+    @objc
+    public static func randomClientIdentifier() -> String {
         String.randomClientIdentifier()
     }
 
-    @objc public static func randomRemoteIdentifier() -> String {
+    @objc
+    public static func randomRemoteIdentifier() -> String {
         String.randomRemoteIdentifier()
     }
 }
@@ -36,7 +39,8 @@ extension NSString {
 
 extension NSString {
     @available(*, deprecated, message: "Better use one of the newer random string methods!")
-    @objc public static func createLegacyAlphanumerical() -> String {
+    @objc
+    public static func createLegacyAlphanumerical() -> String {
         String.createLegacyAlphanumerical()
     }
 }

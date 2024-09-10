@@ -27,7 +27,8 @@ extension ConversationList {
     }
 }
 
-@objcMembers public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
+@objcMembers
+public final class ConversationListChangeInfo: NSObject, SetChangeInfoOwner {
     public typealias ChangeInfoContent = ZMConversation
     public var setChangeInfo: SetChangeInfo<ZMConversation>
 
@@ -49,16 +50,20 @@ extension ConversationList {
     }
 }
 
-@objc public protocol ZMConversationListObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationListObserver: NSObjectProtocol {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo)
-    @objc optional func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo)
+    @objc
+    optional func conversationInsideList(_ list: ConversationList, didChange changeInfo: ConversationChangeInfo)
 }
 
-@objc public protocol ZMConversationListReloadObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationListReloadObserver: NSObjectProtocol {
     func conversationListsDidReload()
 }
 
-@objc public protocol ZMConversationListFolderObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationListFolderObserver: NSObjectProtocol {
     func conversationListsDidChangeFolders()
 }
 

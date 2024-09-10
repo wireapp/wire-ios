@@ -778,7 +778,8 @@ extension EncryptionSessionsDirectoryTests {
     /// Checks if a message can be encrypted and successfully decrypted
     /// by the other person
     /// - note: it does commit the session cache
-    @discardableResult func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache: Bool = true) -> Bool {
+    @discardableResult
+    func checkThatAMessageCanBeSent(_ from: Person, saveReceiverCache: Bool = true) -> Bool {
         let senderId = from.identifier
         let receiverId = from.other.identifier
 

@@ -34,7 +34,8 @@ extension NSManagedObjectContext {
     }
 
     /// Report an error during save
-    @objc public func reportSaveError(error: NSError) {
+    @objc
+    public func reportSaveError(error: NSError) {
         if let callback = self.errorOnSaveCallback {
             callback(self, error)
         }

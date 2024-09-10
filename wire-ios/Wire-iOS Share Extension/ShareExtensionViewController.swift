@@ -207,7 +207,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     // MARK: - Events
 
-    @objc private func extensionHostDidEnterBackground() {
+    @objc
+    private func extensionHostDidEnterBackground() {
         postContent?.cancel { [weak self] in
             self?.cancel()
         }

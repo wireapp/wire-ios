@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol NetworkSocketDelegate {
+@objc
+public protocol NetworkSocketDelegate {
     @objc(networkSocketDidOpen:)
     func didOpen(socket: NetworkSocket)
 
@@ -59,7 +60,8 @@ public final class DataBuffer: NSObject {
     }
 }
 
-@objcMembers public final class NetworkSocket: NSObject {
+@objcMembers
+public final class NetworkSocket: NSObject {
     // MARK: - Public API
 
     public let url: URL
@@ -235,7 +237,8 @@ public final class DataBuffer: NSObject {
 
     fileprivate let dataBuffer = DataBuffer()
 
-    @inline(__always) fileprivate func preconditionQueue() {
+    @inline(__always)
+    fileprivate func preconditionQueue() {
         dispatchPrecondition(condition: .onQueue(queue))
     }
 

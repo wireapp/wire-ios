@@ -76,7 +76,8 @@ protocol AudioRecorderType: AnyObject {
     var recordEndedCallback: ((Result<Void, Error>) -> Void)? { get set }
 
     func startRecording(_ completion: @escaping (_ success: Bool) -> Void)
-    @discardableResult func stopRecording() -> Bool
+    @discardableResult
+    func stopRecording() -> Bool
     func deleteRecording()
     func playRecording()
     func stopPlaying()
@@ -188,7 +189,8 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     // MARK: Audio Session Interruption handling
 
-    @objc func handleInterruption(_ notification: Notification) {
+    @objc
+    func handleInterruption(_ notification: Notification) {
         guard let info = notification.userInfo,
               let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
               let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
@@ -234,7 +236,8 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         }
     }
 
-    @discardableResult func stopRecording() -> Bool {
+    @discardableResult
+    func stopRecording() -> Bool {
         UIApplication.shared.isIdleTimerDisabled = false
         audioRecorder?.stop()
         state = .stopped
@@ -269,7 +272,8 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         displayLink = nil
     }
 
-    @objc fileprivate func displayLinkDidFire() {
+    @objc
+    fileprivate func displayLinkDidFire() {
         recordLevelCallBack?(levelForCurrentState())
         guard let duration = durationForCurrentState(), currentDuration != duration else { return }
         currentDuration = duration
@@ -435,7 +439,8 @@ final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
         super.init()
     }
 
-    @objc func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+    @objc
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         playerDidFinishClosure(flag)
     }
 }

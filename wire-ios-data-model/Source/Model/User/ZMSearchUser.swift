@@ -116,8 +116,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalCompleteImageData: Data?
     fileprivate var internalIsAccountDeleted: Bool?
 
-    @objc
-    public var hasTeam: Bool {
+    @objc public var hasTeam: Bool {
         user?.hasTeam ?? false
     }
 
@@ -663,8 +662,7 @@ public class ZMSearchUser: NSObject, UserType {
         user?.cancelConnectionRequest(completion: completion)
     }
 
-    @objc
-    public var canBeConnected: Bool {
+    @objc public var canBeConnected: Bool {
         guard !isServiceUser else { return false }
 
         if let user {

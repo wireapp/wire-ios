@@ -94,7 +94,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
     }
 
-    @objc private func backButtonTapped() {
+    @objc
+    private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 

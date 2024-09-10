@@ -105,7 +105,8 @@ final class AnimatedPenView: UIView {
         pen.layer.add(moveX, forKey: WritingAnimationKey)
     }
 
-    @objc func applicationDidBecomeActive(_: Notification) {
+    @objc
+    func applicationDidBecomeActive(_: Notification) {
         startWritingAnimation()
     }
 }

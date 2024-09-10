@@ -24,7 +24,8 @@ import WireTransport
  * A controllable objects that mocks the behavior of UIApplication regarding background tasks.
  */
 
-@objc final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
+@objc
+final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
     var backgroundTimeRemaining: TimeInterval = 10
 
     var applicationState: UIApplication.State = .active
@@ -84,7 +85,8 @@ import WireTransport
 
     // MARK: - Helpers
 
-    @objc func triggerExpiration() {
+    @objc
+    func triggerExpiration() {
         isExpiring = true
 
         for value in tasks.values {
@@ -92,7 +94,8 @@ import WireTransport
         }
     }
 
-    @objc func reset() {
+    @objc
+    func reset() {
         limit = 1
         isExpiring = false
         tasks.removeAll()

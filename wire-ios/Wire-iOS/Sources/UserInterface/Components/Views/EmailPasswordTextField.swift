@@ -165,7 +165,8 @@ class EmailPasswordTextField: UIView, MagicTappable {
         emailField.canResignFirstResponder || passwordField.canResignFirstResponder
     }
 
-    @discardableResult override func resignFirstResponder() -> Bool {
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
         if emailField.isFirstResponder {
             emailField.resignFirstResponder()
         } else if passwordField.isFirstResponder {
@@ -187,7 +188,8 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     // MARK: - Submission
 
-    @objc func confirmButtonTapped() {
+    @objc
+    func confirmButtonTapped() {
         guard emailValidationError == nil, passwordValidationError == nil else {
             delegate?.textFieldDidSubmitWithValidationError(self)
             return
@@ -205,7 +207,8 @@ class EmailPasswordTextField: UIView, MagicTappable {
         return true
     }
 
-    @objc private func textInputDidChange(sender: UITextField) {
+    @objc
+    private func textInputDidChange(sender: UITextField) {
         if sender == emailField {
             emailField.validateInput()
         } else if sender == passwordField {

@@ -248,7 +248,8 @@ final class MarkdownTextView: NextResponderTextView {
     /// Called after each text change has been committed. We use this opportunity
     /// to insert new list items in the case a newline was entered, as well as
     /// to validate any potential list items on the currently selected line.
-    @objc private func textViewDidChange() {
+    @objc
+    private func textViewDidChange() {
         if newlineFlag {
             // flip immediately to avoid infinity
             newlineFlag = false

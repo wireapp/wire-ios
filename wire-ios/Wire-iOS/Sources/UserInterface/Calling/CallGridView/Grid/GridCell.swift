@@ -40,7 +40,8 @@ class GridCell: UICollectionViewCell {
         streamView?.layoutForOrientation()
     }
 
-    @objc func orientationDidChange() {
+    @objc
+    func orientationDidChange() {
         streamView?.layoutForOrientation()
     }
 

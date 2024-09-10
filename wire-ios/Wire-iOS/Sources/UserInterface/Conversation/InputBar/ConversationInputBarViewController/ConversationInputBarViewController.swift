@@ -552,7 +552,8 @@ final class ConversationInputBarViewController: UIViewController,
         view.isHidden = conversation.isReadOnly
     }
 
-    @objc func updateInputBarButtons() {
+    @objc
+    func updateInputBarButtons() {
         inputBar.buttonsView.buttons = inputBarButtons
         for inputBarButton in inputBarButtons {
             inputBarButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)

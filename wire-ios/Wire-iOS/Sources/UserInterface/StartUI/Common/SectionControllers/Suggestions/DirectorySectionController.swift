@@ -78,7 +78,8 @@ final class DirectorySectionController: SearchSectionController {
         return cell
     }
 
-    @objc func connect(_ sender: AnyObject) {
+    @objc
+    func connect(_ sender: AnyObject) {
         guard let button = sender as? UIButton else { return }
 
         let indexPath = IndexPath(row: button.tag, section: 0)

@@ -104,7 +104,8 @@ final class RemoveClientsViewController: UIViewController,
 
     // MARK: - Actions
 
-    @objc func backPressed(_: AnyObject!) {
+    @objc
+    func backPressed(_: AnyObject!) {
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 

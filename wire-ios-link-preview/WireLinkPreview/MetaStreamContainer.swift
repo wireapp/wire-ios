@@ -43,7 +43,8 @@ final class MetaStreamContainer {
 
     var reachedEndOfHead = false
 
-    @discardableResult func addData(_ data: Data) -> Data {
+    @discardableResult
+    func addData(_ data: Data) -> Data {
         updateReachedEndOfHead(withData: data)
         bytes.append(data)
         return bytes as Data

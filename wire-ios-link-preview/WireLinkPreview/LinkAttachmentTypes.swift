@@ -65,7 +65,8 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
      * - parameter originalRange: The range of the attachment in the text.
      */
 
-    @objc public init(
+    @objc
+    public init(
         type: LinkAttachmentType,
         title: String,
         permalink: URL,

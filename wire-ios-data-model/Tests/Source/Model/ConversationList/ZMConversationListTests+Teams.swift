@@ -358,7 +358,8 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     // MARK: - Helper
 
-    @discardableResult func createGroupConversation(in team: Team?, archived: Bool = false) -> ZMConversation {
+    @discardableResult
+    func createGroupConversation(in team: Team?, archived: Bool = false) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.lastServerTimeStamp = Date()
         conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp

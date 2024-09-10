@@ -91,8 +91,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     var sections: [Section]
 
-    @Published
-    var isPresentingAlert = false
+    @Published var isPresentingAlert = false
 
     var alertTitle: String?
     var alertBody: String?

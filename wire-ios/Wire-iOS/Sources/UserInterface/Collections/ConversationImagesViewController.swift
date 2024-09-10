@@ -440,7 +440,8 @@ final class ConversationImagesViewController: UIViewController {
         perform(action: .delete, sender: sender)
     }
 
-    @objc func revealCurrent(_ sender: AnyObject!) {
+    @objc
+    func revealCurrent(_ sender: AnyObject!) {
         perform(action: .showInConversation, sender: sender)
     }
 

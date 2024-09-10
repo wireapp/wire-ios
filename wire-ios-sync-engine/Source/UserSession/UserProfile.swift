@@ -19,7 +19,8 @@
 import Foundation
 
 // sourcery: AutoMockable
-@objc public protocol UserProfile {
+@objc
+public protocol UserProfile {
     /// Requests email change
     /// The email will need to be verified externally
     /// - throws: if the email is not already set, or if empty email is passed
@@ -48,7 +49,8 @@ import Foundation
 
     /// Add an observer for callbacks about the user profile.
     /// Returns a token which should retained as long as the observer should be active.
-    @objc(addObserver:) func add(observer: UserProfileUpdateObserver) -> Any
+    @objc(addObserver:)
+    func add(observer: UserProfileUpdateObserver) -> Any
 
     /// Last handle to have been suggested
     @objc var lastSuggestedHandle: String? { get }

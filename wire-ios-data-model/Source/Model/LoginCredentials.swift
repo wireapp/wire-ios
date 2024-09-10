@@ -22,7 +22,8 @@ import Foundation
  * Contains the credentials used by a user to sign into the app.
  */
 
-@objc public class LoginCredentials: NSObject, Codable {
+@objc
+public class LoginCredentials: NSObject, Codable {
     @objc public let emailAddress: String?
     @objc public let hasPassword: Bool
     @objc public let usesCompanyLogin: Bool

@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockRole: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockRole: NSManagedObject, EntityNamedProtocol {
     public static let nameKey = #keyPath(MockRole.name)
     public static let teamKey = #keyPath(MockRole.team)
     public static let conversationKey = #keyPath(MockRole.conversation)

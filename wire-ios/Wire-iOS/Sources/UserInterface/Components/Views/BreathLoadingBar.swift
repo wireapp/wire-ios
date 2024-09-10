@@ -126,13 +126,15 @@ final class BreathLoadingBar: UIView {
         }
     }
 
-    @objc func applicationDidBecomeActive(_: Any) {
+    @objc
+    func applicationDidBecomeActive(_: Any) {
         if animating, !isAnimationRunning {
             startAnimation()
         }
     }
 
-    @objc func applicationDidEnterBackground(_: Any) {
+    @objc
+    func applicationDidEnterBackground(_: Any) {
         if animating {
             stopAnimation()
         }

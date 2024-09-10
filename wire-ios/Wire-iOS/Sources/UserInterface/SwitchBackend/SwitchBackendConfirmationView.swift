@@ -23,8 +23,7 @@ struct SwitchBackendConfirmationView: View {
 
     let viewModel: SwitchBackendConfirmationViewModel
 
-    @Environment(\.dismiss)
-    var dismiss
+    @Environment(\.dismiss) var dismiss
 
     var body: some View {
         VStack(spacing: 24) {
@@ -36,15 +35,13 @@ struct SwitchBackendConfirmationView: View {
         .interactiveDismissDisabled()
     }
 
-    @ViewBuilder
-    private var title: some View {
+    @ViewBuilder private var title: some View {
         Text(Strings.title)
             .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
     }
 
-    @ViewBuilder
-    private var backendDetails: some View {
+    @ViewBuilder private var backendDetails: some View {
         ScrollView {
             VStack(spacing: 16) {
                 Text(Strings.message)
@@ -110,16 +107,14 @@ struct SwitchBackendConfirmationView: View {
         }
     }
 
-    @ViewBuilder
-    private var buttons: some View {
+    @ViewBuilder private var buttons: some View {
         VStack(spacing: 6) {
             cancelButton
             proceedButton
         }
     }
 
-    @ViewBuilder
-    private var cancelButton: some View {
+    @ViewBuilder private var cancelButton: some View {
         Button {
             viewModel.handleEvent(.userDidCancel)
             dismiss()
@@ -130,8 +125,7 @@ struct SwitchBackendConfirmationView: View {
         .buttonStyle(SecondaryButtonStyle())
     }
 
-    @ViewBuilder
-    private var proceedButton: some View {
+    @ViewBuilder private var proceedButton: some View {
         Button {
             viewModel.handleEvent(.userDidConfirm)
             dismiss()

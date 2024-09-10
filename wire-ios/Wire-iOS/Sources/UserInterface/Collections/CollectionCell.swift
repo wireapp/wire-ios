@@ -144,7 +144,8 @@ class CollectionCell: UICollectionViewCell {
         self.message = .none
     }
 
-    @objc func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
+    @objc
+    func onLongPress(_ gestureRecognizer: UILongPressGestureRecognizer!) {
         if gestureRecognizer.state == .began {
             self.showMenu()
         }

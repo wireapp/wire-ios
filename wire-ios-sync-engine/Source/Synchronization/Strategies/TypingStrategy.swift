@@ -24,7 +24,8 @@ let StatusKey = "status"
 let StoppedKey = "stopped"
 let StartedKey = "started"
 
-@objc extension ZMConversation {
+@objc
+extension ZMConversation {
     // Used for handling remote notifications
     public static let typingNotificationName = Notification.Name(rawValue: "ZMTypingNotification")
 
@@ -172,7 +173,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         assert(tornDown, "Need to tearDown TypingStrategy")
     }
 
-    @objc fileprivate func addConversationForNextRequest(note: NotificationInContext) {
+    @objc
+    fileprivate func addConversationForNextRequest(note: NotificationInContext) {
         guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
         else { return }
 
@@ -181,7 +183,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         }
     }
 
-    @objc fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
+    @objc
+    fileprivate func shouldClearTypingForConversation(note: NotificationInContext) {
         guard let conversation = note.object as? ZMConversation, conversation.remoteIdentifier != nil
         else { return }
 

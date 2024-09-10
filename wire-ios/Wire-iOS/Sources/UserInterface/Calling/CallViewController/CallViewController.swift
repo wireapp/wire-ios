@@ -156,7 +156,8 @@ final class CallViewController: UIViewController {
         toggleOverlayVisibility()
     }
 
-    @objc func handleDoubleTap(_ sender: UITapGestureRecognizer) {
+    @objc
+    func handleDoubleTap(_ sender: UITapGestureRecognizer) {
         guard !isOverlayVisible else { return }
 
         callGridViewController.handleDoubleTap(gesture: sender)

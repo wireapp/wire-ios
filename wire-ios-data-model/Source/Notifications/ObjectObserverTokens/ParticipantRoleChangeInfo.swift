@@ -88,6 +88,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     }
 }
 
-@objc public protocol ParticipantRoleObserver: NSObjectProtocol {
+@objc
+public protocol ParticipantRoleObserver: NSObjectProtocol {
     func participantRoleDidChange(_ changeInfo: ParticipantRoleChangeInfo)
 }

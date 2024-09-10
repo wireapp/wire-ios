@@ -98,7 +98,8 @@ extension ZMSystemMessage {
     }
 }
 
-@objcMembers public final class MessageChangeInfo: ObjectChangeInfo {
+@objcMembers
+public final class MessageChangeInfo: ObjectChangeInfo {
     static let UserChangeInfoKey = "userChanges"
     static let ReactionChangeInfoKey = "reactionChanges"
     static let ButtonStateChangeInfoKey = "buttonStateChanges"
@@ -213,7 +214,8 @@ extension ZMSystemMessage {
     public let message: ZMMessage
 }
 
-@objc public protocol ZMMessageObserver: NSObjectProtocol {
+@objc
+public protocol ZMMessageObserver: NSObjectProtocol {
     func messageDidChange(_ changeInfo: MessageChangeInfo)
 }
 

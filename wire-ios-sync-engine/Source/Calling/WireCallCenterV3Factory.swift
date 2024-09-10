@@ -23,7 +23,8 @@ import WireDataModel
  * Creates call centers.
  */
 
-@objcMembers public class WireCallCenterV3Factory: NSObject {
+@objcMembers
+public class WireCallCenterV3Factory: NSObject {
     /// The class to use when creating a call center,
     public static var wireCallCenterClass: WireCallCenterV3.Type = WireCallCenterV3.self
 

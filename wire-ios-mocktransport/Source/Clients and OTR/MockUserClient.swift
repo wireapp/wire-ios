@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public class MockUserClient: NSManagedObject {
+@objc
+public class MockUserClient: NSManagedObject {
     /// User that owns the client
     @NSManaged public var user: MockUser?
 
@@ -73,7 +74,8 @@ extension MockUserClient {
     }
 
     /// Returns a fetch request to fetch MockUserClients with the given predicate
-    @objc public static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
+    @objc
+    public static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
         let request = NSFetchRequest<MockUserClient>(entityName: "UserClient")
         request.predicate = predicate
         return request
@@ -90,7 +92,8 @@ extension MockUserClient {
 
 // MARK: - JSON de/serialization
 
-@objc extension MockUserClient {
+@objc
+extension MockUserClient {
     /// Creates a new client from JSON payload
     public static func insertClient(payload: [String: Any], context: NSManagedObjectContext) -> MockUserClient? {
         let label = payload["label"] as? String
@@ -212,7 +215,8 @@ extension MockUserClient {
 
 // MARK: - Encryption and sessions
 
-@objc extension MockUserClient {
+@objc
+extension MockUserClient {
     public static var mockEncryptionSessionDirectory: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
             .appendingPathComponent("mocktransport-encryptionDirectory")

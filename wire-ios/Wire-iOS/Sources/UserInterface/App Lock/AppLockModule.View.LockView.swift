@@ -176,7 +176,8 @@ extension AppLockModule.View {
 
         // MARK: - Actions
 
-        @objc func onButtonPressed(_: AnyObject!) {
+        @objc
+        func onButtonPressed(_: AnyObject!) {
             actionRequested?()
         }
     }

@@ -30,7 +30,8 @@ extension ZMMessage {
     }
 
     /// Obj-c compatible function
-    @objc public func updateCategoryCache() {
+    @objc
+    public func updateCategoryCache() {
         _ = self.storeCategoryCache()
     }
 

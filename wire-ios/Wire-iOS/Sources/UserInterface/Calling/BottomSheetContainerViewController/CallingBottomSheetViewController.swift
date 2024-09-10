@@ -309,7 +309,8 @@ extension CallingBottomSheetViewController: CallViewControllerDelegate {
         delegate?.activeCallViewControllerDidDisappear(self, for: conversation)
     }
 
-    @objc func hideCallView() {
+    @objc
+    func hideCallView() {
         delegate?.activeCallViewControllerDidDisappear(self, for: voiceChannel.conversation)
     }
 }

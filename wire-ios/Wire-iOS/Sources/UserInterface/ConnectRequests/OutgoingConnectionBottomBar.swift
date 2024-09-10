@@ -81,7 +81,8 @@ final class OutgoingConnectionViewController: UIViewController {
         ])
     }
 
-    @objc private func buttonTapped(sender: IconButton) {
+    @objc
+    private func buttonTapped(sender: IconButton) {
         switch sender {
         case cancelButton: buttonCallback?(.cancel)
         case archiveButton: buttonCallback?(.archive)

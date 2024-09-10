@@ -123,7 +123,8 @@ final class FolderPickerViewController: UIViewController {
         ])
     }
 
-    @objc private func createNewFolder() {
+    @objc
+    private func createNewFolder() {
         let folderCreation = FolderCreationController(conversation: conversation, directory: conversationDirectory)
         folderCreation.delegate = self
         self.navigationController?.pushViewController(folderCreation, animated: true)

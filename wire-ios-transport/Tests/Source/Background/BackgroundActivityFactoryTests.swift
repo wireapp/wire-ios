@@ -249,7 +249,8 @@ extension BackgroundActivityFactoryTests {
 }
 
 extension BackgroundActivityFactory {
-    @objc func reset() {
+    @objc
+    func reset() {
         currentBackgroundTask = nil
         activities.removeAll()
         activityManager = nil

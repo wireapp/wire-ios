@@ -520,8 +520,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: a protocol for this for testing
-    @objc
-    var shouldBlockCallingRelatedActions: Bool {
+    @objc var shouldBlockCallingRelatedActions: Bool {
         ZMUserSession.shared()?.isCallOngoing ?? false
     }
 

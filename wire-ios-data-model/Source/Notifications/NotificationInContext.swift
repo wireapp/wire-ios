@@ -28,7 +28,8 @@ import WireUtilities
 /// use the object as the implicit context because when registering for `nil`
 /// we would get all notifications, even from other contexts.
 
-@objcMembers public class NotificationInContext: NSObject {
+@objcMembers
+public class NotificationInContext: NSObject {
     static let objectInNotificationKey = "objectInNotification"
 
     /// Name of the notification

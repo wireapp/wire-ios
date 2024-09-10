@@ -21,7 +21,8 @@ import WireDataModel
 import WireLinkPreview
 import WireUtilities
 
-@objcMembers public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
+@objcMembers
+public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
     fileprivate let linkPreviewDetector: LinkPreviewDetectorType
 
     public init(linkPreviewDetector: LinkPreviewDetectorType, managedObjectContext: NSManagedObjectContext) {

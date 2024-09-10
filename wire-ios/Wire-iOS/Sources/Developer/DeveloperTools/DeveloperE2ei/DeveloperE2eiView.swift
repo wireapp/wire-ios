@@ -20,8 +20,7 @@ import SwiftUI
 import WireUtilities
 
 struct DeveloperE2eiView: View {
-    @StateObject
-    var viewModel: DeveloperE2eiViewModel
+    @StateObject var viewModel: DeveloperE2eiViewModel
 
     var body: some View {
         List {

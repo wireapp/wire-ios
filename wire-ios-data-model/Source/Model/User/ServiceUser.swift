@@ -18,12 +18,14 @@
 
 import Foundation
 
-@objc public protocol ServiceUser: AnyObject, UserType {
+@objc
+public protocol ServiceUser: AnyObject, UserType {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
 
-@objc public protocol SearchServiceUser: ServiceUser {
+@objc
+public protocol SearchServiceUser: ServiceUser {
     var summary: String? { get }
 }
 

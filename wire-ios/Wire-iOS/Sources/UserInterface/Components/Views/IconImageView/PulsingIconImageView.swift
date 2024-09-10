@@ -40,7 +40,8 @@ class PulsingIconImageView: IconImageView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc func applicationDidBecomeActive() {
+    @objc
+    func applicationDidBecomeActive() {
         refreshPulsing()
     }
 

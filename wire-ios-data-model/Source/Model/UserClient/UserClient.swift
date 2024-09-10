@@ -404,7 +404,8 @@ public class UserClient: ZMManagedObject, UserClientType {
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 
 extension UserClient {
-    @objc public static func fetchExistingUserClient(
+    @objc
+    public static func fetchExistingUserClient(
         with remoteIdentifier: String,
         in context: NSManagedObjectContext
     ) -> UserClient? {
@@ -422,7 +423,8 @@ extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc public static func createOrUpdateSelfUserClient(
+    @objc
+    public static func createOrUpdateSelfUserClient(
         _ payloadData: [String: AnyObject],
         context: NSManagedObjectContext
     ) -> UserClient? {
@@ -521,7 +523,8 @@ extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc public func markForDeletion() {
+    @objc
+    public func markForDeletion() {
         guard let context = self.managedObjectContext else {
             zmLog.error("Object already deleted?")
             return
@@ -560,18 +563,21 @@ extension UserClient {
 // MARK: - SelfClient methods
 
 extension UserClient {
-    @objc public func isSelfClient() -> Bool {
+    @objc
+    public func isSelfClient() -> Bool {
         guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return self == selfClient
     }
 
-    @objc public func missesClient(_ client: UserClient) {
+    @objc
+    public func missesClient(_ client: UserClient) {
         missesClients([client])
     }
 
-    @objc public func missesClients(_ clients: Set<UserClient>) {
+    @objc
+    public func missesClients(_ clients: Set<UserClient>) {
         zmLog.debug("Adding clients(\(clients.count)) to list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
@@ -581,7 +587,8 @@ extension UserClient {
     }
 
     /// Use this method only for the selfClient
-    @objc public func removeMissingClient(_ client: UserClient) {
+    @objc
+    public func removeMissingClient(_ client: UserClient) {
         zmLog.debug("Removing client from list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
@@ -706,7 +713,8 @@ extension UserClient {
     }
 
     /// Use this method only for the selfClient
-    @objc public func decrementNumberOfRemainingProteusKeys() {
+    @objc
+    public func decrementNumberOfRemainingProteusKeys() {
         guard isSelfClient() else {
             fatal("`decrementNumberOfRemainingProteusKeys` should only be called on the self client")
         }
@@ -746,12 +754,14 @@ enum SecurityChangeType {
 // MARK: - Trusting
 
 extension UserClient {
-    @objc public func trustClient(_ client: UserClient) {
+    @objc
+    public func trustClient(_ client: UserClient) {
         trustClients([client])
     }
 
     /// Will change conversations security level as side effect
-    @objc public func trustClients(_ clients: Set<UserClient>) {
+    @objc
+    public func trustClients(_ clients: Set<UserClient>) {
         guard clients.count > 0 else { return }
         self.mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
         self.mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
@@ -764,7 +774,8 @@ extension UserClient {
     }
 
     /// Ignore a know client
-    @objc public func ignoreClient(_ client: UserClient) {
+    @objc
+    public func ignoreClient(_ client: UserClient) {
         ignoreClients([client])
     }
 
@@ -783,19 +794,22 @@ extension UserClient {
     }
 
     /// Ignore known clients
-    @objc public func ignoreClients(_ clients: Set<UserClient>) {
+    @objc
+    public func ignoreClients(_ clients: Set<UserClient>) {
         let notSelfClients = self.addIgnoredClients(clients)
         guard notSelfClients.count > 0 else { return }
         self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 
     /// Adds a new client that was just discovered to the ignored ones
-    @objc public func addNewClientToIgnored(_ client: UserClient) {
+    @objc
+    public func addNewClientToIgnored(_ client: UserClient) {
         addNewClientsToIgnored([client])
     }
 
     /// Add new clients that were just discovered to the ignored ones
-    @objc public func addNewClientsToIgnored(_ clients: Set<UserClient>) {
+    @objc
+    public func addNewClientsToIgnored(_ clients: Set<UserClient>) {
         _ = self.addIgnoredClients(clients)
     }
 

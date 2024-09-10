@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockParticipantRole: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversation: MockConversation
     @NSManaged public var user: MockUser
     @NSManaged public var role: MockRole?

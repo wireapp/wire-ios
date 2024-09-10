@@ -35,7 +35,8 @@ extension NSManagedObjectContext {
         return userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer
     }
 
-    @objc public func zm_createMessageObfuscationTimer() {
+    @objc
+    public func zm_createMessageObfuscationTimer() {
         precondition(zm_isSyncContext, "MessageObfuscationTimer should be started only on the syncContext")
 
         guard userInfo[MessageObfuscationTimerKey] == nil else {
@@ -47,7 +48,8 @@ extension NSManagedObjectContext {
         log.debug("creating obfuscation timer")
     }
 
-    @objc public func zm_createMessageDeletionTimer() {
+    @objc
+    public func zm_createMessageDeletionTimer() {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimer should be started only on the uiContext")
 
         guard userInfo[MessageDeletionTimerKey] == nil else {
@@ -61,7 +63,8 @@ extension NSManagedObjectContext {
 
     /// Tears down zm_messageObfuscationTimer and zm_messageDeletionTimer
     /// Call inside a performGroupedBlock(AndWait) when calling it from another context
-    @objc public func zm_teardownMessageObfuscationTimer() {
+    @objc
+    public func zm_teardownMessageObfuscationTimer() {
         precondition(zm_isSyncContext, "MessageObfuscationTimer is located on the syncContext")
         if let timer = userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer {
             timer.tearDown()
@@ -72,7 +75,8 @@ extension NSManagedObjectContext {
 
     /// Tears down zm_messageDeletionTimer
     /// Call inside a performGroupedBlock(AndWait) when calling it from another context
-    @objc public func zm_teardownMessageDeletionTimer() {
+    @objc
+    public func zm_teardownMessageDeletionTimer() {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimerKey is located on the uiContext")
         if let timer = userInfo[MessageDeletionTimerKey] as? ZMMessageDestructionTimer {
             timer.tearDown()
@@ -88,7 +92,8 @@ enum MessageDestructionType: String {
     case obfuscation, deletion
 }
 
-@objcMembers public class ZMMessageDestructionTimer: ZMMessageTimer {
+@objcMembers
+public class ZMMessageDestructionTimer: ZMMessageTimer {
     var isTesting = false
 
     override init(managedObjectContext: NSManagedObjectContext!) {

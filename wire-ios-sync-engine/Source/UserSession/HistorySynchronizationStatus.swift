@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public protocol HistorySynchronizationStatus: NSObjectProtocol {
+@objc
+public protocol HistorySynchronizationStatus: NSObjectProtocol {
     /// Should be called when the sync is completed
     func didCompleteSync()
 
@@ -29,7 +30,8 @@ import Foundation
     var shouldDownloadFullHistory: Bool { get }
 }
 
-@objc public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, HistorySynchronizationStatus {
+@objc
+public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, HistorySynchronizationStatus {
     fileprivate var isSyncing = false
     fileprivate var isInBackground = false
     fileprivate let application: ZMApplication

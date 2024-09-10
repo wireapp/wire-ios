@@ -188,7 +188,8 @@ class BottomSheetContainerViewController: UIViewController {
         }
     }
 
-    @objc func handlePan(_ sender: UIPanGestureRecognizer) {
+    @objc
+    func handlePan(_ sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: bottomSheetViewController.view)
         let velocity = sender.velocity(in: bottomSheetViewController.view)
 

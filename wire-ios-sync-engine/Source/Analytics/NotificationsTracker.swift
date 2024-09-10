@@ -19,7 +19,8 @@
 import Foundation
 import WireDataModel
 
-@objcMembers public class NotificationsTracker: NSObject {
+@objcMembers
+public class NotificationsTracker: NSObject {
     let eventName = "notifications.processing"
 
     enum Attributes: String {

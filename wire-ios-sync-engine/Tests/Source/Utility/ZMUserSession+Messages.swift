@@ -19,7 +19,8 @@
 import Foundation
 
 extension ZMUserSession {
-    @discardableResult func insertUnreadDotGeneratingMessageMessage(in conversation: ZMConversation)
+    @discardableResult
+    func insertUnreadDotGeneratingMessageMessage(in conversation: ZMConversation)
         -> ZMSystemMessage {
         let newTime = conversation.lastServerTimeStamp?.addingTimeInterval(5) ?? Date()
 
@@ -33,7 +34,8 @@ extension ZMUserSession {
         return message
     }
 
-    @discardableResult func insertConversationWithUnreadMessage() -> ZMConversation {
+    @discardableResult
+    func insertConversationWithUnreadMessage() -> ZMConversation {
         let conversation = ZMConversation.insertGroupConversation(session: self, participants: [])!
         conversation.remoteIdentifier = UUID()
 

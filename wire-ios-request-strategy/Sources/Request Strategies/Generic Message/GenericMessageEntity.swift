@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
+@objcMembers
+public class GenericMessageEntity: NSObject, ProteusMessage {
     public enum Recipients {
         case conversationParticipants
         case users(Set<ZMUser>)

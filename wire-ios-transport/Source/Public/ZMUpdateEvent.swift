@@ -19,19 +19,22 @@
 import Foundation
 import WireUtilities
 
-@objc public enum ZMUpdateEventsPolicy: Int {
+@objc
+public enum ZMUpdateEventsPolicy: Int {
     case buffer /// store live events in a buffer, to be processed later
     case ignore /// process events received through /notifications or /conversation/.../events
     case process /// process events received through the push channel
 }
 
-@objc public enum ZMUpdateEventSource: Int {
+@objc
+public enum ZMUpdateEventSource: Int {
     case webSocket
     case pushNotification
     case download
 }
 
-@objc public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
+@objc
+public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case unknown = 0
     case conversationAssetAdd = 1
     case conversationConnectRequest = 2
@@ -195,12 +198,14 @@ extension ZMUpdateEventType {
 }
 
 extension ZMUpdateEvent {
-    @objc(updateEventTypeForEventTypeString:) public static func updateEventType(for string: String)
+    @objc(updateEventTypeForEventTypeString:)
+    public static func updateEventType(for string: String)
         -> ZMUpdateEventType {
         ZMUpdateEventType(string: string)
     }
 
-    @objc(eventTypeStringForUpdateEventType:) public static func eventTypeString(for eventType: ZMUpdateEventType)
+    @objc(eventTypeStringForUpdateEventType:)
+    public static func eventTypeString(for eventType: ZMUpdateEventType)
         -> String? {
         eventType.stringValue
     }

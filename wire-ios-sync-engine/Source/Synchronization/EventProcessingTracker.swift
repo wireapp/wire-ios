@@ -19,7 +19,8 @@
 import Foundation
 import WireDataModel
 
-@objc public protocol EventProcessingTrackerProtocol: AnyObject {
+@objc
+public protocol EventProcessingTrackerProtocol: AnyObject {
     func registerEventProcessed()
     func registerDataInsertionPerformed(amount: UInt)
     func registerDataUpdatePerformed(amount: UInt)
@@ -29,7 +30,8 @@ import WireDataModel
     var debugDescription: String { get }
 }
 
-@objc public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
+@objc
+public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
     var eventAttributes = [String: [String: NSObject]]()
     public let eventName = "event.processing"
 

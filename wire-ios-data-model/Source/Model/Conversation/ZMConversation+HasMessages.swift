@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc extension ZMConversation {
+@objc
+extension ZMConversation {
     /// Specifies whether the conversation has content.
     ///
     /// This is an optimized O(1) computation that avoids making Core Data fetch

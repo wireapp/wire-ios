@@ -81,7 +81,8 @@ final class NavigationController: UINavigationController {
         super.pushViewController(viewController, animated: animated)
     }
 
-    @objc func onEdgeSwipe(gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+    @objc
+    func onEdgeSwipe(gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
         if gestureRecognizer.state == .recognized {
             self.popViewController(animated: true)
         }

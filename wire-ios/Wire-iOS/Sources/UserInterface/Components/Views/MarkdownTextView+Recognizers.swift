@@ -25,7 +25,8 @@ extension MarkdownTextView {
         addGestureRecognizer(tapRecognizer)
     }
 
-    @objc func didTapTextView(_ recognizer: UITapGestureRecognizer) {
+    @objc
+    func didTapTextView(_ recognizer: UITapGestureRecognizer) {
         var location = recognizer.location(in: self)
         location.x -= textContainerInset.left
         location.y -= textContainerInset.top

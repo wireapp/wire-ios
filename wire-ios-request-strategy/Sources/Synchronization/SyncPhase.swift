@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
+@objc
+public enum SyncPhase: Int, CustomStringConvertible, CaseIterable {
     // start here for slow sync
     case fetchingLastUpdateEventID
     case fetchingTeams

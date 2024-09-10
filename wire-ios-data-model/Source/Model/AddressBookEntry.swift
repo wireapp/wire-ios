@@ -20,7 +20,8 @@ import AddressBook
 import Contacts
 import Foundation
 
-@objcMembers public class AddressBookEntry: ZMManagedObject {
+@objcMembers
+public class AddressBookEntry: ZMManagedObject {
     public enum Fields: String {
         case localIdentifier
         case user

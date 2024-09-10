@@ -20,8 +20,7 @@ import CoreData
 import WireSystem
 
 extension NSManagedObjectContext: GroupQueue {
-    @objc
-    public var dispatchGroup: ZMSDispatchGroup? {
+    @objc public var dispatchGroup: ZMSDispatchGroup? {
         dispatchGroupContext?.groups.first
     }
 
@@ -38,8 +37,7 @@ extension NSManagedObjectContext: GroupQueue {
 }
 
 extension NSManagedObjectContext {
-    @objc
-    public var pendingSaveCounter: Int {
+    @objc public var pendingSaveCounter: Int {
         get { objc_getAssociatedObject(self, &AssociatedPendingSaveCountKey) as? Int ?? 0 }
         set { objc_setAssociatedObject(
             self,
@@ -49,8 +47,7 @@ extension NSManagedObjectContext {
         ) }
     }
 
-    @objc
-    public var dispatchGroupContext: DispatchGroupContext? {
+    @objc public var dispatchGroupContext: DispatchGroupContext? {
         get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as? DispatchGroupContext }
         set { objc_setAssociatedObject(
             self,
@@ -61,8 +58,7 @@ extension NSManagedObjectContext {
     }
 
     /// List of all groups associated with this context
-    @objc
-    public var allGroups: [ZMSDispatchGroup] {
+    @objc public var allGroups: [ZMSDispatchGroup] {
         dispatchGroupContext?.groups ?? []
     }
 

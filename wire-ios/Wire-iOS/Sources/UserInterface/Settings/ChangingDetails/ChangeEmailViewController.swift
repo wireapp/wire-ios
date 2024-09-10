@@ -181,7 +181,8 @@ extension ChangeEmailViewController: ConfirmEmailDelegate {
 // MARK: - TextFieldValidationDelegate
 
 extension ChangeEmailViewController: TextFieldValidationDelegate {
-    @objc func emailTextFieldEditingChanged(sender: ValidatedTextField) {
+    @objc
+    func emailTextFieldEditingChanged(sender: ValidatedTextField) {
         let newEmail = sender.input.trimmingCharacters(in: .whitespacesAndNewlines)
         viewModel.updateNewEmail(newEmail)
         sender.validateInput()

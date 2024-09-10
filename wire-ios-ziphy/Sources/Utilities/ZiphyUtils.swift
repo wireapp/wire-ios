@@ -47,7 +47,8 @@ public protocol CancelableTask {
  * An opaque object that identifies as a single Ziphy network request
  */
 
-@objc public protocol ZiphyRequestIdentifier {}
+@objc
+public protocol ZiphyRequestIdentifier {}
 
 /**
  * An object that performs network requests to the Giphy API.

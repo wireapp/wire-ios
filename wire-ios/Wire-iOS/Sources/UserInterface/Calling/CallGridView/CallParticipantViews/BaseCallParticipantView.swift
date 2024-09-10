@@ -276,7 +276,8 @@ class BaseCallParticipantView: OrientableView {
 
     // MARK: - Visibility
 
-    @objc private func updateUserDetailsVisibility(_ notification: Notification?) {
+    @objc
+    private func updateUserDetailsVisibility(_ notification: Notification?) {
         guard let isCovered = notification?.userInfo?[CallGridViewController.isCoveredKey] as? Bool else {
             return
         }

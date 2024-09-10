@@ -73,7 +73,8 @@ extension NSManagedObjectContext {
         return keyStore as? UserClientKeysStore
     }
 
-    @objc public func zm_tearDownCryptKeyStore() {
+    @objc
+    public func zm_tearDownCryptKeyStore() {
         self.userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
     }
 }

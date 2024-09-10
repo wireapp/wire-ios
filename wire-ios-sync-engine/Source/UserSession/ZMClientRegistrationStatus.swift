@@ -97,10 +97,8 @@ extension ClientRegistrationPhase: CustomDebugStringConvertible {
 
 @objc
 public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-    @objc
-    public weak var registrationStatusDelegate: ZMClientRegistrationStatusDelegate?
-    @objc
-    public var emailCredentials: UserEmailCredentials?
+    @objc public weak var registrationStatusDelegate: ZMClientRegistrationStatusDelegate?
+    @objc public var emailCredentials: UserEmailCredentials?
     var prekeys: [IdPrekeyTuple]?
     var lastResortPrekey: IdPrekeyTuple?
 
@@ -135,8 +133,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         observeProfileUpdates()
     }
 
-    @objc
-    public var currentPhase: ClientRegistrationPhase {
+    @objc public var currentPhase: ClientRegistrationPhase {
         /*
           The flow is as follows
           ZMClientRegistrationPhaseWaitingForLogin
@@ -639,8 +636,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         registrationStatusDelegate?.didFailToRegisterSelfUserClient(error: error)
     }
 
-    @objc
-    public var needsToEnrollE2EI: Bool {
+    @objc public var needsToEnrollE2EI: Bool {
         FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 

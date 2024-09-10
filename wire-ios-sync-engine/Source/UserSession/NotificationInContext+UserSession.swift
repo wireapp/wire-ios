@@ -48,7 +48,8 @@ extension ZMConversation {
     }
 }
 
-@objc public protocol ZMTypingChangeObserver: NSObjectProtocol {
+@objc
+public protocol ZMTypingChangeObserver: NSObjectProtocol {
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType])
 }
 

@@ -34,8 +34,7 @@ extension ZMConversation {
     /// Whether the roles defined for this conversation should be re-downloaded
     @NSManaged public var needsToDownloadRoles: Bool
 
-    @objc
-    public var isSelfAnActiveMember: Bool {
+    @objc public var isSelfAnActiveMember: Bool {
         self.participantRoles.contains(where: { role -> Bool in
             role.user?.isSelfUser == true
         })
@@ -82,23 +81,20 @@ extension ZMConversation {
 
     /// Participants that are in the conversation, according to the local state,
     /// even if that state is not yet synchronized with the backend
-    @objc
-    public var localParticipantRoles: Set<ParticipantRole> {
+    @objc public var localParticipantRoles: Set<ParticipantRole> {
         participantRoles
     }
 
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
-    @objc
-    public var localParticipants: Set<ZMUser> {
+    @objc public var localParticipants: Set<ZMUser> {
         Set(localParticipantRoles.compactMap(\.user))
     }
 
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
 
-    @objc
-    public var localParticipantsExcludingSelf: Set<ZMUser> {
+    @objc public var localParticipantsExcludingSelf: Set<ZMUser> {
         self.localParticipants.filter { !$0.isSelfUser }
     }
 
@@ -313,7 +309,8 @@ extension ZMConversation {
     }
 
     /// Check if roles are missing, and mark them to download if needed
-    @objc public func markToDownloadRolesIfNeeded() {
+    @objc
+    public func markToDownloadRolesIfNeeded() {
         guard
             conversationType == .group,
             !isTeamConversation

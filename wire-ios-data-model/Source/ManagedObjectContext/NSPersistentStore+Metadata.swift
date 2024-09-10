@@ -20,7 +20,8 @@ import Foundation
 
 // MARK: - Public accessors
 
-@objc(ZMPersistableMetadata) public protocol PersistableInMetadata: NSObjectProtocol {}
+@objc(ZMPersistableMetadata)
+public protocol PersistableInMetadata: NSObjectProtocol {}
 
 extension NSString: PersistableInMetadata {}
 extension NSNumber: PersistableInMetadata {}
@@ -38,7 +39,8 @@ extension Int: SwiftPersistableInMetadata {}
 // TODO: Swift 4
 // extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
 extension NSManagedObjectContext {
-    @objc(setPersistentStoreMetadata:forKey:) public func setPersistentStoreMetadata(
+    @objc(setPersistentStoreMetadata:forKey:)
+    public func setPersistentStoreMetadata(
         _ persistable: PersistableInMetadata?,
         key: String
     ) {
@@ -78,7 +80,8 @@ extension NSManagedObjectContext {
     }
 
     /// Persist in-memory metadata to persistent store
-    @objc func makeMetadataPersistent() -> Bool {
+    @objc
+    func makeMetadataPersistent() -> Bool {
         guard nonCommittedMetadata.count > 0 || nonCommittedDeletedMetadataKeys.count > 0 else { return false }
 
         let store = self.persistentStoreCoordinator!.persistentStores.first!

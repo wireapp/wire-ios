@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public final class ManagedObjectContextChangeObserver: NSObject {
+@objc
+public final class ManagedObjectContextChangeObserver: NSObject {
     public typealias ChangeCallback = () -> Void
     private unowned var context: NSManagedObjectContext
     private let callback: ChangeCallback

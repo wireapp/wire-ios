@@ -41,7 +41,8 @@ public enum ClientUpdateError: NSInteger {
     }
 }
 
-@objcMembers open class ClientUpdateStatus: NSObject {
+@objcMembers
+open class ClientUpdateStatus: NSObject {
     var syncManagedObjectContext: NSManagedObjectContext
 
     fileprivate var isFetchingClients = false

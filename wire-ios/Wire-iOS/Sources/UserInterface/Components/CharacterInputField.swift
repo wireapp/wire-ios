@@ -219,13 +219,15 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         true
     }
 
-    @discardableResult override func becomeFirstResponder() -> Bool {
+    @discardableResult
+    override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
         updateCharacterViews(isFirstResponder: true)
         return result
     }
 
-    @discardableResult override func resignFirstResponder() -> Bool {
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
         let result = super.resignFirstResponder()
         updateCharacterViews(isFirstResponder: false)
         return result
@@ -243,7 +245,8 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
 
     // MARK: - Paste support
 
-    @objc fileprivate func onLongPress(_: Any?) {
+    @objc
+    fileprivate func onLongPress(_: Any?) {
         self.showMenu()
     }
 

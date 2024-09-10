@@ -151,7 +151,8 @@ final class ProxyCredentialsViewController: UIViewController {
         ])
     }
 
-    @objc private func textInputDidChange(sender: ValidatedTextField) {
+    @objc
+    private func textInputDidChange(sender: ValidatedTextField) {
         textFieldDidUpdateText(sender)
     }
 }

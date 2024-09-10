@@ -47,7 +47,8 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     fileprivate var observers: [Any] = []
 
-    @objc public convenience init(
+    @objc
+    public convenience init(
         managedObjectContext: NSManagedObjectContext,
         applicationStatusDirectory: ApplicationStatusDirectory,
         userProfileImageUpdateStatus: UserProfileImageUpdateStatus

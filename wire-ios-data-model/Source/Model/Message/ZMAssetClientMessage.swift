@@ -19,7 +19,8 @@
 import Foundation
 
 /// An asset message (image, file, ...)
-@objcMembers public class ZMAssetClientMessage: ZMOTRMessage {
+@objcMembers
+public class ZMAssetClientMessage: ZMOTRMessage {
     /// In memory cache
     var cachedUnderlyingAssetMessage: GenericMessage?
 
@@ -287,26 +288,30 @@ extension ZMAssetClientMessage {
     }
 }
 
-@objc public enum AssetClientMessageDataType: UInt {
+@objc
+public enum AssetClientMessageDataType: UInt {
     case placeholder = 1
     case fullAsset = 2
     case thumbnail = 3
 }
 
-@objc public enum AssetDownloadState: Int16 {
+@objc
+public enum AssetDownloadState: Int16 {
     case remote = 0
     case downloaded
     case downloading
 }
 
-@objc public enum AssetTransferState: Int16 {
+@objc
+public enum AssetTransferState: Int16 {
     case uploading = 0
     case uploaded
     case uploadingFailed
     case uploadingCancelled
 }
 
-@objc public enum AssetProcessingState: Int16 {
+@objc
+public enum AssetProcessingState: Int16 {
     case done = 0
     case preprocessing
     case uploading

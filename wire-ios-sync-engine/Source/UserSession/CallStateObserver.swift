@@ -33,7 +33,8 @@ public final class CallStateObserver: NSObject {
     fileprivate var missedCalltoken: Any?
     fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
 
-    @objc public init(
+    @objc
+    public init(
         localNotificationDispatcher: LocalNotificationDispatcher,
         contextProvider: ContextProvider,
         callNotificationStyleProvider: CallNotificationStyleProvider

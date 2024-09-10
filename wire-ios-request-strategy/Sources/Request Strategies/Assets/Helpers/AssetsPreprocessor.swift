@@ -25,7 +25,8 @@ import Foundation
  - all assets are encrypted
 
  */
-@objcMembers public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
+@objcMembers
+public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
     /// Group to track preprocessing operations
     fileprivate let processingGroup: ZMSDispatchGroup
 

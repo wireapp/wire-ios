@@ -36,11 +36,9 @@ final class SwitchBackendViewModel: ObservableObject {
 
     let items: [Item]
 
-    @Published
-    var selectedItemID: Item.ID
+    @Published var selectedItemID: Item.ID
 
-    @Published
-    var alertItem: AlertItem?
+    @Published var alertItem: AlertItem?
 
     struct AlertItem: Identifiable {
         let id = UUID()

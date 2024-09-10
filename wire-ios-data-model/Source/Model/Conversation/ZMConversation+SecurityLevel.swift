@@ -19,7 +19,8 @@
 import Foundation
 import WireCryptobox
 
-@objc public enum ZMConversationLegalHoldStatus: Int16 {
+@objc
+public enum ZMConversationLegalHoldStatus: Int16 {
     case disabled = 0
     case pendingApproval = 1
     case enabled = 2
@@ -95,7 +96,8 @@ extension ZMConversation {
     }
 
     /// Verify the legal hold subjects in the conversation. This will synchronize with the backend on who's currently under legal hold.
-    @objc public func verifyLegalHoldSubjects() {
+    @objc
+    public func verifyLegalHoldSubjects() {
         needsToVerifyLegalHold = true
         managedObjectContext?.saveOrRollback()
     }
@@ -255,7 +257,8 @@ extension ZMConversation {
     // MARK: - Messages
 
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
-    @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
+    @objc
+    public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
         guard let context = managedObjectContext else { return }
 
         let previousLastMessage = lastMessage
@@ -543,7 +546,8 @@ extension ZMConversation {
 
 extension ZMConversation {
     /// Replaces the first NewClient systemMessage for the selfClient with a UsingNewDevice system message
-    @objc public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
+    @objc
+    public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
 
@@ -724,8 +728,7 @@ extension ZMConversation {
 
 extension ZMConversation {
     /// Returns true if all participants are connected to the self user and all participants are trusted
-    @objc
-    public var allUsersTrusted: Bool {
+    @objc public var allUsersTrusted: Bool {
         guard !localParticipants.isEmpty,
               isSelfAnActiveMember else { return false }
 

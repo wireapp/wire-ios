@@ -29,17 +29,20 @@ import XCTest
 
 final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControllerDelegate {
     var cameraKeyboardWantsToOpenCameraRollHitCount: UInt = 0
-    @objc func cameraKeyboardViewControllerWantsToOpenCameraRoll(_: CameraKeyboardViewController) {
+    @objc
+    func cameraKeyboardViewControllerWantsToOpenCameraRoll(_: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenCameraRollHitCount += 1
     }
 
     var cameraKeyboardWantsToOpenFullScreenCameraHitCount: UInt = 0
-    @objc func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_: CameraKeyboardViewController) {
+    @objc
+    func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenFullScreenCameraHitCount += 1
     }
 
     var cameraKeyboardDidSelectVideoHitCount: UInt = 0
-    @objc func cameraKeyboardViewController(
+    @objc
+    func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
         didSelectVideo: URL,
         duration: TimeInterval

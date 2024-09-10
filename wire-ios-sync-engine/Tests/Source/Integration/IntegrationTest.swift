@@ -345,8 +345,7 @@ extension IntegrationTest {
         sharedSearchDirectory = nil
     }
 
-    @objc
-    var unauthenticatedSession: UnauthenticatedSession? {
+    @objc var unauthenticatedSession: UnauthenticatedSession? {
         sessionManager?.unauthenticatedSession
     }
 

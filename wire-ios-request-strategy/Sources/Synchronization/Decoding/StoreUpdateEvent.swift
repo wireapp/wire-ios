@@ -30,33 +30,23 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     // MARK: - Properties
 
-    @NSManaged
-    /// hash Value of payload and eventId combined
-    var eventHash: Int64
+    @NSManaged var eventHash: Int64
 
-    @NSManaged
-    var uuidString: String?
+    @NSManaged var uuidString: String?
 
-    @NSManaged
-    var debugInformation: String?
+    @NSManaged var debugInformation: String?
 
-    @NSManaged
-    var isTransient: Bool
+    @NSManaged var isTransient: Bool
 
-    @NSManaged
-    var payload: NSDictionary?
+    @NSManaged var payload: NSDictionary?
 
-    @NSManaged
-    var isEncrypted: Bool
+    @NSManaged var isEncrypted: Bool
 
-    @NSManaged
-    var isCallEvent: Bool
+    @NSManaged var isCallEvent: Bool
 
-    @NSManaged
-    var source: Int16
+    @NSManaged var source: Int16
 
-    @NSManaged
-    var sortIndex: Int64
+    @NSManaged var sortIndex: Int64
 
     // MARK: - Creation
 

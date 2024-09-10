@@ -21,7 +21,8 @@ import WireCryptobox
 
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
-@objcMembers public final class DraftMessage: NSObject {
+@objcMembers
+public final class DraftMessage: NSObject {
     /// The text of the message.
     public let text: String
     /// The mentiones contained in the text.
@@ -105,7 +106,8 @@ private struct StorableQuote: Codable {
 
 // MARK: - Conversation Accessors
 
-@objc extension ZMConversation {
+@objc
+extension ZMConversation {
     private static let log = ZMSLog(tag: "EAR")
 
     /// Internal storage of the serialized `draftMessage`.

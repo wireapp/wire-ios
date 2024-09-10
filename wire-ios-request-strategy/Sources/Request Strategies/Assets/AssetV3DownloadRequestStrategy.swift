@@ -21,7 +21,8 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")
 
-@objcMembers public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
+@objcMembers
+public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
     ZMContextChangeTrackerSource {
     private let requestFactory = AssetDownloadRequestFactory()
 
@@ -141,10 +142,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
         if decryptSuccess {
             NotificationDispatcher.notifyNonCoreDataChanges(
                 objectID: assetClientMessage.objectID,
-                changedKeys: [#keyPath(
-                    ZMAssetClientMessage
-                        .hasDownloadedFile
-                )],
+                changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
                 uiContext: self.managedObjectContext.zm_userInterface!
             )
         }

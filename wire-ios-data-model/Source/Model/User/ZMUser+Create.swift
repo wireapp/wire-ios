@@ -25,7 +25,8 @@ extension ZMUser {
     ///     - context: `NSManagedObjectContext` on which to fetch or create the user.
     ///                NOTE that this **must** be the sync context.
 
-    @objc public static func fetchOrCreate(
+    @objc
+    public static func fetchOrCreate(
         with remoteIdentifier: UUID,
         domain: String?,
         in context: NSManagedObjectContext
@@ -43,7 +44,8 @@ extension ZMUser {
     ///                NOTE that this **must** be the sync context.
     ///     - created: Will be set `true` if a new user was created.
 
-    @objc public static func fetchOrCreate(
+    @objc
+    public static func fetchOrCreate(
         with remoteIdentifier: UUID,
         domain: String?,
         in context: NSManagedObjectContext,

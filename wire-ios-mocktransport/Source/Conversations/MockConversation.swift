@@ -22,7 +22,8 @@ extension MockConversation {
     @objc public static let admin = "wire_admin"
     @objc public static let member = "wire_member"
 
-    @objc public static func insertConversationInto(
+    @objc
+    public static func insertConversationInto(
         context: NSManagedObjectContext,
         withCreator creator: MockUser,
         forTeam team: MockTeam,
@@ -76,17 +77,20 @@ extension MockConversation {
         return conversation
     }
 
-    @objc public static func defaultAccessMode(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
+    @objc
+    public static func defaultAccessMode(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
         let (accessMode, _, _) = defaultAccess(conversationType: conversationType, team: team)
         return accessMode
     }
 
-    @objc public static func defaultAccessRole(conversationType: ZMTConversationType, team: MockTeam?) -> String {
+    @objc
+    public static func defaultAccessRole(conversationType: ZMTConversationType, team: MockTeam?) -> String {
         let (_, accessRole, _) = defaultAccess(conversationType: conversationType, team: team)
         return accessRole
     }
 
-    @objc public static func defaultAccessRoleV2(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
+    @objc
+    public static func defaultAccessRoleV2(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
         let (_, _, accessRoleV2) = defaultAccess(conversationType: conversationType, team: team)
         return accessRoleV2
     }
@@ -107,7 +111,8 @@ extension MockConversation {
         }
     }
 
-    @objc public func set(allowGuests: Bool, allowServices: Bool) {
+    @objc
+    public func set(allowGuests: Bool, allowServices: Bool) {
         guard type == .group, team != nil else {
             return
         }
@@ -137,7 +142,8 @@ extension MockConversation: EntityNamedProtocol {
     }
 }
 
-@objc extension MockConversation {
+@objc
+extension MockConversation {
     public static func existingConversation(
         with identifier: String,
         managedObjectContext: NSManagedObjectContext

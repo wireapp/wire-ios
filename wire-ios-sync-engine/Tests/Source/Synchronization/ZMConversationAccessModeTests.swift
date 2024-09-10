@@ -271,7 +271,8 @@ public class ZMConversationAccessModeTests: MessagingTest {
     var teamA: Team!
     var teamB: Team!
 
-    @discardableResult func createMembership(user: ZMUser, team: Team) -> Member {
+    @discardableResult
+    func createMembership(user: ZMUser, team: Team) -> Member {
         let member = Member.insertNewObject(in: self.uiMOC)
         member.user = user
         member.team = team
@@ -313,7 +314,8 @@ public class ZMConversationAccessModeTests: MessagingTest {
         let team: ConversationOptionsTeam
     }
 
-    @discardableResult func selfUser(options: SelfUserOptions) -> ZMUser {
+    @discardableResult
+    func selfUser(options: SelfUserOptions) -> ZMUser {
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         switch options.team {
         case .none:

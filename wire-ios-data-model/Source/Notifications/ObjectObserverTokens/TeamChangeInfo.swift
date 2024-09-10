@@ -34,7 +34,8 @@ extension Team: ObjectInSnapshot {
     }
 }
 
-@objcMembers public class TeamChangeInfo: ObjectChangeInfo {
+@objcMembers
+public class TeamChangeInfo: ObjectChangeInfo {
     static func changeInfo(for team: Team, changes: Changes) -> TeamChangeInfo? {
         TeamChangeInfo(object: team, changes: changes)
     }
@@ -59,7 +60,8 @@ extension Team: ObjectInSnapshot {
     }
 }
 
-@objc public protocol TeamObserver: NSObjectProtocol {
+@objc
+public protocol TeamObserver: NSObjectProtocol {
     func teamDidChange(_ changeInfo: TeamChangeInfo)
 }
 

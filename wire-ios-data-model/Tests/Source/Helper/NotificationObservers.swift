@@ -99,7 +99,8 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
     }
 }
 
-@objcMembers class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
+@objcMembers
+class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
     public var notifications = [ConversationListChangeInfo]()
     public var observerCallback: ((ConversationListChangeInfo) -> Void)?
     unowned var conversationList: ConversationList

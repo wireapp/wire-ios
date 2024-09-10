@@ -34,7 +34,8 @@ extension Bundle {
     }
 }
 
-@objc public enum CallNotificationStyle: UInt {
+@objc
+public enum CallNotificationStyle: UInt {
     case pushNotifications
     case callKit
 }
@@ -1420,7 +1421,8 @@ extension SessionManager: AccountDeletedObserver {
 // MARK: - Application lifetime notifications
 
 extension SessionManager {
-    @objc private func applicationWillEnterForeground(_: Notification) {
+    @objc
+    private func applicationWillEnterForeground(_: Notification) {
         BackgroundActivityFactory.shared.resume()
 
         updateAllUnreadCounts()
@@ -1441,11 +1443,13 @@ extension SessionManager {
         }
     }
 
-    @objc func applicationWillResignActive(_: Notification) {
+    @objc
+    func applicationWillResignActive(_: Notification) {
         activeUserSession?.appLockController.beginTimer()
     }
 
-    @objc private func applicationDidBecomeActive(_: Notification) {
+    @objc
+    private func applicationDidBecomeActive(_: Notification) {
         notificationsTracker?.dispatchEvent()
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
@@ -1550,7 +1554,8 @@ extension SessionManager {
 
 // MARK: - Session manager observer
 
-@objc public protocol SessionManagerCreatedSessionObserver: AnyObject {
+@objc
+public protocol SessionManagerCreatedSessionObserver: AnyObject {
     /// Invoked when the SessionManager creates a user session either by
     /// activating one or creating one in the background. No assumption should
     /// be made that the session is active.
@@ -1560,7 +1565,8 @@ extension SessionManager {
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession)
 }
 
-@objc public protocol SessionManagerDestroyedSessionObserver: AnyObject {
+@objc
+public protocol SessionManagerDestroyedSessionObserver: AnyObject {
     /// Invoked when the SessionManager tears down the user session associated
     /// with the accountId.
     func sessionManagerDestroyedUserSession(for accountId: UUID)

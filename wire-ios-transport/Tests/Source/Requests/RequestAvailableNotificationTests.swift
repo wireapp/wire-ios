@@ -19,7 +19,8 @@
 import XCTest
 @testable import WireTransport
 
-@objc class NotificationObserver: NSObject, RequestAvailableObserver {
+@objc
+class NotificationObserver: NSObject, RequestAvailableObserver {
     var requestsAvailable = false
 
     func newRequestsAvailable() {

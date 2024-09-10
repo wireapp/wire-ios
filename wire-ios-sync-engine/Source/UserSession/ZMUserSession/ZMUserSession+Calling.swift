@@ -23,7 +23,8 @@ public protocol CallNotificationStyleProvider: AnyObject {
     var callNotificationStyle: CallNotificationStyle { get }
 }
 
-@objc extension ZMUserSession: CallNotificationStyleProvider {
+@objc
+extension ZMUserSession: CallNotificationStyleProvider {
     public var callCenter: WireCallCenterV3? {
         managedObjectContext.zm_callCenter
     }

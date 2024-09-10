@@ -22,7 +22,8 @@ import UIKit
  * A protocol for objects that can start and end background activities.
  */
 
-@objc public protocol BackgroundActivityManager: NSObjectProtocol {
+@objc
+public protocol BackgroundActivityManager: NSObjectProtocol {
     /// Begin a background task.
     func beginBackgroundTask(withName name: String?, expirationHandler: (() -> Void)?) -> UIBackgroundTaskIdentifier
 

@@ -25,7 +25,8 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 extension String {
-    @discardableResult func deleteFileAtPath() -> Bool {
+    @discardableResult
+    func deleteFileAtPath() -> Bool {
         do {
             try FileManager.default.removeItem(atPath: self)
         } catch {

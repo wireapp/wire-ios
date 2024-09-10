@@ -22,29 +22,21 @@ import WireUtilities
 extension ZMConversation {
     // MARK: Keys
 
-    @objc
-    public static let messageProtocolKey = "messageProtocol"
+    @objc public static let messageProtocolKey = "messageProtocol"
 
-    @objc
-    static let mlsGroupIdKey = "mlsGroupID"
+    @objc static let mlsGroupIdKey = "mlsGroupID"
 
-    @objc
-    static let mlsStatusKey = "mlsStatus"
+    @objc static let mlsStatusKey = "mlsStatus"
 
-    @objc
-    static let mlsVerificationStatusKey = "mlsVerificationStatus"
+    @objc static let mlsVerificationStatusKey = "mlsVerificationStatus"
 
-    @objc
-    static let commitPendingProposalDateKey = "commitPendingProposalDate"
+    @objc static let commitPendingProposalDateKey = "commitPendingProposalDate"
 
-    @objc
-    static let ciphersuiteKey = "ciphersuite"
+    @objc static let ciphersuiteKey = "ciphersuite"
 
-    @objc
-    static let epochKey = #keyPath(epoch)
+    @objc static let epochKey = #keyPath(epoch)
 
-    @objc
-    static let epochTimestampKey = #keyPath(epochTimestamp)
+    @objc static let epochTimestampKey = #keyPath(epochTimestamp)
 
     // MARK: Properties
 

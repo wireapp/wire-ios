@@ -102,12 +102,14 @@ final class ReactionSectionViewController: UIViewController {
         selectedType = type
     }
 
-    @objc private func didTappButton(_ sender: ReactionCategoryButton) {
+    @objc
+    private func didTappButton(_ sender: ReactionCategoryButton) {
         guard let type = typesByButton[sender] else { return }
         sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: false)
     }
 
-    @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func didPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .possible: break
         case .began:

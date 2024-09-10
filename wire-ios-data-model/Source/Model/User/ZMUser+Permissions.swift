@@ -200,7 +200,8 @@ extension ZMUser {
         return selfUserTeamID == otherUserTeamID && !isFederating(with: otherUser)
     }
 
-    @objc public func _isGuest(in conversation: ConversationLike) -> Bool {
+    @objc
+    public func _isGuest(in conversation: ConversationLike) -> Bool {
         guard let conversation = conversation as? ZMConversation else { return false }
         if isSelfUser {
             // In case the self user is a guest in a team conversation, the backend will

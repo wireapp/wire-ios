@@ -20,8 +20,7 @@ import Foundation
 extension NSManagedObjectContext {
     private static let PackagingFeatureConfigKey = "PackagingFeatureConfigKey"
 
-    @objc
-    public var zm_usePackagingFeatureConfig: Bool {
+    @objc public var zm_usePackagingFeatureConfig: Bool {
         get {
             precondition(
                 zm_isUserInterfaceContext,

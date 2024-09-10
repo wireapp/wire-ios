@@ -22,7 +22,8 @@ public let ZMReactionUnicodeValueKey    = "unicodeValue"
 public let ZMReactionMessageValueKey    = "message"
 public let ZMReactionUsersValueKey      = "users"
 
-@objc public enum TransportReaction: UInt32 {
+@objc
+public enum TransportReaction: UInt32 {
     case none  = 0
     case heart = 1
     case thumbsUp
@@ -32,7 +33,8 @@ public let ZMReactionUsersValueKey      = "users"
     case frowningFace
 }
 
-@objcMembers open class Reaction: ZMManagedObject {
+@objcMembers
+open class Reaction: ZMManagedObject {
     @NSManaged var unicodeValue: String?
     @NSManaged var message: ZMMessage?
     @NSManaged var users: Set<ZMUser>

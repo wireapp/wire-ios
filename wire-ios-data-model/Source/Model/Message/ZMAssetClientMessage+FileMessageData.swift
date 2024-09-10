@@ -21,7 +21,8 @@ import MobileCoreServices
 
 // MARK: - ZMFileMessageData
 
-@objc public protocol ZMFileMessageData: NSObjectProtocol {
+@objc
+public protocol ZMFileMessageData: NSObjectProtocol {
     /// MIME type of the file being transfered (implied from file extension)
     var mimeType: String? { get }
 

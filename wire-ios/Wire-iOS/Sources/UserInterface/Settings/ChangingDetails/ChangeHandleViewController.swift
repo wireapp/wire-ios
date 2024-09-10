@@ -120,7 +120,8 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
 
     // MARK: - UITextField
 
-    @objc func editingChanged(textField: UITextField) {
+    @objc
+    func editingChanged(textField: UITextField) {
         let lowercase = textField.text?.lowercased() ?? ""
         textField.text = lowercase
         delegate?.tableViewCellDidChangeText(cell: self, text: lowercase)
@@ -363,7 +364,8 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
         updateUI()
     }
 
-    @objc fileprivate func checkAvailability(of handle: String) {
+    @objc
+    fileprivate func checkAvailability(of handle: String) {
         userProfile?.requestCheckHandleAvailability(handle: handle)
     }
 }

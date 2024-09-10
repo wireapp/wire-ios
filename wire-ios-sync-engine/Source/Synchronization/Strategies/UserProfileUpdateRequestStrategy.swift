@@ -69,7 +69,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
         )
     }
 
-    @objc override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    @objc
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if self.userProfileUpdateStatus.currentlySettingEmail ||
             self.userProfileUpdateStatus.currentlyChangingEmail {
             self.emailUpdateSync.readyForNextRequestIfNotBusy()

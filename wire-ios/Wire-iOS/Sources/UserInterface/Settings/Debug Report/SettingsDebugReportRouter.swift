@@ -24,7 +24,8 @@ import WireReusableUIComponents
 protocol SettingsDebugReportRouterProtocol {
     /// Presents the mail composer with the debug report
 
-    @MainActor func presentMailComposer()
+    @MainActor
+    func presentMailComposer()
 
     /// Presents the fallback alert
 

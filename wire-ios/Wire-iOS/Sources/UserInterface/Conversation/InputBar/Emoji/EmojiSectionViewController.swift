@@ -92,12 +92,14 @@ final class EmojiSectionViewController: UIViewController {
         selectedType = type
     }
 
-    @objc private func didTappButton(_ sender: IconButton) {
+    @objc
+    private func didTappButton(_ sender: IconButton) {
         guard let type = typesByButton[sender] else { return }
         sectionDelegate?.sectionViewControllerDidSelectType(type, scrolling: true)
     }
 
-    @objc private func didPan(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func didPan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .possible: break
         case .began:

@@ -331,7 +331,8 @@ final class SettingsValueCell: SettingsTableCell {
 
     // MARK: - Properties observing
 
-    @objc func onPropertyChanged(_: Notification) {
+    @objc
+    func onPropertyChanged(_: Notification) {
         descriptor?.featureCell(self)
     }
 }

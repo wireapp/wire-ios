@@ -19,7 +19,8 @@
 import Foundation
 
 extension ZMMessage {
-    @objc public func prepareToSend() {
+    @objc
+    public func prepareToSend() {
         expireAndNotifyIfInsertingIntoDegradedConversation()
     }
 

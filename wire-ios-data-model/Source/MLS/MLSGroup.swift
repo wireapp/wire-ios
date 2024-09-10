@@ -60,11 +60,9 @@ public class MLSGroup: ZMManagedObject {
 
     static let idKey = "id"
 
-    @NSManaged
-    private var primitiveId: Data?
+    @NSManaged private var primitiveId: Data?
 
-    @NSManaged
-    public var lastKeyMaterialUpdate: Date?
+    @NSManaged public var lastKeyMaterialUpdate: Date?
 
     // MARK: - Methods
 

@@ -21,8 +21,7 @@ import Foundation
 extension ZMUserSession {
     /// Whether the user completed the registration on this device
 
-    @objc
-    public var registeredOnThisDevice: Bool {
+    @objc public var registeredOnThisDevice: Bool {
         managedObjectContext.registeredOnThisDevice
     }
 

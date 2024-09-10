@@ -20,7 +20,8 @@ import Foundation
 import UserNotifications
 import WireSyncEngine
 
-@objc class UserNotificationCenterMock: NSObject, UserNotificationCenter {
+@objc
+class UserNotificationCenterMock: NSObject, UserNotificationCenter {
     weak var delegate: UNUserNotificationCenterDelegate?
 
     /// Identifiers of scheduled notification requests.

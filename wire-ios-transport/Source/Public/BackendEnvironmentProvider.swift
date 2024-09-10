@@ -18,14 +18,17 @@
 
 import Foundation
 
-@objc public protocol BackendTrustProvider: NSObjectProtocol {
+@objc
+public protocol BackendTrustProvider: NSObjectProtocol {
     /// Returns true if certificate matches what we expect it to be OR it's a host we don't need to check
     /// False if certificate doesn't match
-    @objc func verifyServerTrust(trust: SecTrust, host: String?) -> Bool
+    @objc
+    func verifyServerTrust(trust: SecTrust, host: String?) -> Bool
 }
 
 // Wrapper around Swift-only EnvironmentType so that it would be useable in Objective-C
-@objc public final class EnvironmentTypeProvider: NSObject {
+@objc
+public final class EnvironmentTypeProvider: NSObject {
     public var value: EnvironmentType
     public init(environmentType: EnvironmentType) {
         self.value = environmentType
@@ -33,7 +36,8 @@ import Foundation
 }
 
 // Swift migration notice: this protocol conforms to NSObjectProtocol only to be usable from Obj-C.
-@objc public protocol BackendEndpointsProvider: NSObjectProtocol {
+@objc
+public protocol BackendEndpointsProvider: NSObjectProtocol {
     /// Backend base URL.
     var backendURL: URL { get }
     /// URL for SSL WebSocket connection.
@@ -46,7 +50,8 @@ import Foundation
     var countlyURL: URL? { get }
 }
 
-@objc public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpointsProvider {
+@objc
+public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpointsProvider {
     /// Descriptive name of the backend
     var title: String { get }
 
@@ -54,7 +59,8 @@ import Foundation
     var proxy: ProxySettingsProvider? { get }
 }
 
-@objc public protocol ProxySettingsProvider: NSObjectProtocol {
+@objc
+public protocol ProxySettingsProvider: NSObjectProtocol {
     /// Host is expressed as domain name or an IP address **without** scheme
     var host: String { get }
     var port: Int { get }

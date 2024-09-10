@@ -75,12 +75,14 @@ extension NSUUID {
 
     /// Returns the comparison result for this NSUUID of type 1 and another NSUUID of type 1
     /// - Requires: will assert if any UUID is not of type 1
-    @objc public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
+    @objc
+    public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
         assert(self.isType1UUID && type1UUID.isType1UUID)
         return self.type1Timestamp!.compare(type1UUID.type1Timestamp!)
     }
 
-    @objc public static func timeBasedUUID() -> NSUUID {
+    @objc
+    public static func timeBasedUUID() -> NSUUID {
         let uuidSize = MemoryLayout<uuid_t>.size
         let uuidPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: uuidSize)
         uuid_generate_time(uuidPointer)

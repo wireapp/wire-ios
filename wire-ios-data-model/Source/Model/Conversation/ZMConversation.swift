@@ -21,23 +21,19 @@ import Foundation
 extension ZMConversation {
     /// Whether the conversation was deleted on the backend.
 
-    @NSManaged
-    public var isDeletedRemotely: Bool
+    @NSManaged public var isDeletedRemotely: Bool
 
     /// Whether the converstion is marked as read only
 
-    @NSManaged
-    public var isForcedReadOnly: Bool
+    @NSManaged public var isForcedReadOnly: Bool
 
     /// The other user of a one on one conversation.
 
-    @NSManaged
-    public var oneOnOneUser: ZMUser?
+    @NSManaged public var oneOnOneUser: ZMUser?
 
     /// True until the metadata has been fetched for the first time
 
-    @NSManaged
-    public var isPendingInitialFetch: Bool
+    @NSManaged public var isPendingInitialFetch: Bool
 
     // MARK: - CoreData unique constraint
 
@@ -62,8 +58,7 @@ extension ZMConversation {
     static let remoteIdentifierKey = "remoteIdentifier"
     @NSManaged private var primitiveRemoteIdentifier: String?
     // keep the same as objc non_specified for now
-    @objc
-    public var remoteIdentifier: UUID! {
+    @objc public var remoteIdentifier: UUID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
             let value = self.transientUUID(forKey: Self.remoteIdentifierKey)

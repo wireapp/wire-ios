@@ -30,8 +30,7 @@ struct DeviceDetailsView: View {
     @State private var isCertificateViewPresented = false
     @State private var didEnrollCertificateFail = false
 
-    @ViewBuilder
-    var e2eIdentityCertificateView: some View {
+    @ViewBuilder var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
                 viewModel: viewModel,
@@ -49,8 +48,7 @@ struct DeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
-    var proteusView: some View {
+    @ViewBuilder var proteusView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
             DeviceDetailsProteusView(viewModel: viewModel, isVerified: viewModel.isProteusVerificationEnabled)
@@ -67,8 +65,7 @@ struct DeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
-    @ViewBuilder
-    var mlsView: some View {
+    @ViewBuilder var mlsView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(
                 title: L10n.Localizable.Device.Details.Section.Mls

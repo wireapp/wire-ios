@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc class TypingUsers: NSObject {
+@objc
+class TypingUsers: NSObject {
     // MARK: - Properties
 
     private var conversationIdToUserIds = [NSManagedObjectID: [NSManagedObjectID]]()

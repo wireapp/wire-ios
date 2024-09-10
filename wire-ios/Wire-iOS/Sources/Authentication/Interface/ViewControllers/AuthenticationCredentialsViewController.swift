@@ -412,11 +412,13 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         (contextualFirstResponder as? MagicTappable)?.performMagicTap() == true
     }
 
-    @objc private func emailConfirmButtonTapped(sender: IconButton) {
+    @objc
+    private func emailConfirmButtonTapped(sender: IconButton) {
         valueSubmitted(emailInputField.input)
     }
 
-    @objc private func emailTextInputDidChange(sender: ValidatedTextField) {
+    @objc
+    private func emailTextInputDidChange(sender: ValidatedTextField) {
         sender.validateInput()
     }
 

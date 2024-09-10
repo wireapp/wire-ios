@@ -181,7 +181,8 @@ final class SettingsClientViewController: UIViewController,
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc func onVerifiedChanged(_ sender: UISwitch!) {
+    @objc
+    func onVerifiedChanged(_ sender: UISwitch!) {
         let selfClient = userSession.selfUserClient
 
         userSession.enqueue({

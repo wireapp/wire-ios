@@ -90,12 +90,14 @@ extension TextFieldDescription: ViewDescriptor {
 }
 
 extension TextFieldDescription: UITextFieldDelegate {
-    @objc func confirmButtonTapped(_: AnyObject) {
+    @objc
+    func confirmButtonTapped(_: AnyObject) {
         guard let textField = self.textField, acceptsInput else { return }
         submitValue(with: textField.input)
     }
 
-    @objc func editingChanged(sender: ValidatedTextField) {
+    @objc
+    func editingChanged(sender: ValidatedTextField) {
         // If we use deferred validation, remove the error when the text changes
         guard useDeferredValidation else { return }
         self.valueValidated?(nil)

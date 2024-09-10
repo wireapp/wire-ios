@@ -19,8 +19,7 @@
 import Foundation
 
 extension ZMClientMessage {
-    @objc
-    override public var isEphemeral: Bool {
+    @objc override public var isEphemeral: Bool {
         destructionDate != nil
             || ephemeral != nil
             || isObfuscated
@@ -37,8 +36,7 @@ extension ZMClientMessage {
             })?.ephemeral
     }
 
-    @objc
-    override public var deletionTimeout: TimeInterval {
+    @objc override public var deletionTimeout: TimeInterval {
         guard let ephemeral = self.ephemeral else {
             return -1
         }

@@ -59,7 +59,8 @@ public struct MockPermissions: OptionSet {
     public static let owner: MockPermissions  = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
 
-@objc public final class MockMember: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockMember: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var team: MockTeam
     @NSManaged public var user: MockUser
 

@@ -188,7 +188,8 @@ final class CallGridViewController: UIViewController {
         pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)
     }
 
-    @objc func didChangePage(sender: UIPageControl) {
+    @objc
+    func didChangePage(sender: UIPageControl) {
         let newCurrentPage = sender.currentPage
         pageIndicator.currentPage = newCurrentPage
         gridView.scrollToPage(page: newCurrentPage, animated: true)

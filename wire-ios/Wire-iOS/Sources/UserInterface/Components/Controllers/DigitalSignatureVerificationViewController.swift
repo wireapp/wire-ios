@@ -87,7 +87,8 @@ final class DigitalSignatureVerificationViewController: UIViewController {
         webView.load(request)
     }
 
-    @objc private func onClose() {
+    @objc
+    private func onClose() {
         dismiss(animated: true, completion: nil)
     }
 }

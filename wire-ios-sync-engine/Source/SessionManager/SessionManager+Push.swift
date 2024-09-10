@@ -34,7 +34,8 @@ extension PKPushRegistry: PushRegistry {}
 
 // MARK: - UNUserNotificationCenterDelegate
 
-@objc extension SessionManager: UNUserNotificationCenterDelegate {
+@objc
+extension SessionManager: UNUserNotificationCenterDelegate {
     // Called by the OS when the app receieves a notification while in the
     // foreground.
     public func userNotificationCenter(

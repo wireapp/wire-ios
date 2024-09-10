@@ -22,8 +22,7 @@ import WireSystem
 import WireUtilities
 
 extension ZMUser: UserType {
-    @objc
-    public var hasTeam: Bool {
+    @objc public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
         nil != team || nil != teamIdentifier
     }
@@ -93,8 +92,7 @@ extension ZMUser: UserType {
 
     /// The one on one conversation with this user.
 
-    @NSManaged
-    public var oneOnOneConversation: ZMConversation?
+    @NSManaged public var oneOnOneConversation: ZMConversation?
 
     // MARK: - Conversation Roles
 
@@ -121,7 +119,8 @@ extension ZMUser: UserType {
         clients.any(\.isLegalHoldDevice)
     }
 
-    @objc class func keyPathsForValuesAffectingIsUnderLegalHold() -> Set<String> {
+    @objc
+    class func keyPathsForValuesAffectingIsUnderLegalHold() -> Set<String> {
         [UserClientsKey, "clients.deviceClass"]
     }
 
@@ -179,7 +178,8 @@ public struct AssetKey {
     }
 }
 
-@objc public enum ProfileImageSize: Int {
+@objc
+public enum ProfileImageSize: Int {
     case preview
     case complete
 
@@ -380,7 +380,8 @@ extension ZMUser {
         setLocallyModifiedKeys([ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey])
     }
 
-    @objc public func updateAssetData(with assets: NSArray?, authoritative: Bool) {
+    @objc
+    public func updateAssetData(with assets: NSArray?, authoritative: Bool) {
         guard !hasLocalModifications(forKeys: [
             ZMUser.previewProfileAssetIdentifierKey,
             ZMUser.completeProfileAssetIdentifierKey,
@@ -408,7 +409,8 @@ extension ZMUser {
         }
     }
 
-    @objc public func requestPreviewProfileImage() {
+    @objc
+    public func requestPreviewProfileImage() {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
             self,
             size: .preview
@@ -421,7 +423,8 @@ extension ZMUser {
         ).post()
     }
 
-    @objc public func requestCompleteProfileImage() {
+    @objc
+    public func requestCompleteProfileImage() {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
             self,
             size: .complete
@@ -436,7 +439,8 @@ extension ZMUser {
 
     /// Mark the user's account as having been deleted. This will also remove the user from any conversations he/she
     /// is still a participant of.
-    @objc public func markAccountAsDeleted(at timestamp: Date) {
+    @objc
+    public func markAccountAsDeleted(at timestamp: Date) {
         isAccountDeleted = true
         removeFromAllConversations(at: timestamp)
     }
@@ -464,8 +468,7 @@ extension ZMUser {
 extension ZMUser {
     // MARK: - Participant role
 
-    @objc
-    public var conversations: Set<ZMConversation> {
+    @objc public var conversations: Set<ZMConversation> {
         Set(participantRoles.compactMap(\.conversation))
     }
 }

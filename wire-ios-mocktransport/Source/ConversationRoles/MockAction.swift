@@ -19,7 +19,8 @@
 import CoreData
 import Foundation
 
-@objc public final class MockAction: NSManagedObject, EntityNamedProtocol {
+@objc
+public final class MockAction: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var name: String
     @NSManaged public var roles: Set<MockRole>
 

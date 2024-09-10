@@ -37,7 +37,8 @@ public final class ExtremeCombiningCharactersValidator: NSObject, ZMPropertyVali
         try validateCharactersValue(&anyPointee)
     }
 
-    @discardableResult public static func validateCharactersValue(_ ioValue: inout Any?) throws -> Bool {
+    @discardableResult
+    public static func validateCharactersValue(_ ioValue: inout Any?) throws -> Bool {
         guard let string = ioValue as? String else {
             throw ExtremeCombiningCharactersValidationError.notAString
         }

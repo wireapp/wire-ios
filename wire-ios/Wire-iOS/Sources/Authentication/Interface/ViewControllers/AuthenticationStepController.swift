@@ -303,7 +303,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         navigationItem.rightBarButtonItem = button
     }
 
-    @objc private func rightItemTapped() {
+    @objc
+    private func rightItemTapped() {
         guard let rightItemAction = self.rightItemAction else {
             return
         }
@@ -325,7 +326,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         navigationItem.backButtonDisplayMode = .minimal
     }
 
-    @objc private func backButtonTapped() {
+    @objc
+    private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
 
@@ -346,7 +348,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         )
     }
 
-    @objc private func handleKeyboardPresentation(notification: Notification) {
+    @objc
+    private func handleKeyboardPresentation(notification: Notification) {
         updateOffsetForKeyboard(in: notification)
     }
 

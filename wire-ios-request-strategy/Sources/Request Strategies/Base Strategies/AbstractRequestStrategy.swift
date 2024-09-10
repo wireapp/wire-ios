@@ -20,7 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "Request Configuration")
 
-@objcMembers open class AbstractRequestStrategy: NSObject, RequestStrategy {
+@objcMembers
+open class AbstractRequestStrategy: NSObject, RequestStrategy {
     public weak var applicationStatus: ApplicationStatus?
 
     public let managedObjectContext: NSManagedObjectContext

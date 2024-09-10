@@ -121,11 +121,13 @@ extension BasicReactionPicker {
         NSLayoutConstraint.activate(constraints)
     }
 
-    @objc private func didTapMoreEmojis() {
+    @objc
+    private func didTapMoreEmojis() {
         delegate?.didTapMoreEmojis()
     }
 
-    @objc private func didTapEmoji(sender: UIButton) {
+    @objc
+    private func didTapEmoji(sender: UIButton) {
         guard
             let value = sender.titleLabel?.text,
             let emoji = emojis.first(where: { $0.value == value })
@@ -136,7 +138,8 @@ extension BasicReactionPicker {
         delegate?.didPickReaction(reaction: emoji)
     }
 
-    @objc private func preferredContentSizeChanged(_: Notification) {
+    @objc
+    private func preferredContentSizeChanged(_: Notification) {
         titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
         buttons.forEach { $0.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle) }
         setNeedsLayout()

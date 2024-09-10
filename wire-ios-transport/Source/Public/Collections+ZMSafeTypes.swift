@@ -65,51 +65,63 @@ func optionalObjectWhichIsKindOfClass<T>(
 }
 
 extension NSDictionary {
-    @objc public func string(forKey key: String) -> String? {
+    @objc
+    public func string(forKey key: String) -> String? {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func optionalString(forKey key: String) -> String? {
+    @objc
+    public func optionalString(forKey key: String) -> String? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func number(forKey key: String) -> NSNumber? {
+    @objc
+    public func number(forKey key: String) -> NSNumber? {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func optionalNumber(forKey key: String) -> NSNumber? {
+    @objc
+    public func optionalNumber(forKey key: String) -> NSNumber? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func array(forKey key: String) -> [AnyObject]? {
+    @objc
+    public func array(forKey key: String) -> [AnyObject]? {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func optionalArray(forKey key: String) -> [AnyObject]? {
+    @objc
+    public func optionalArray(forKey key: String) -> [AnyObject]? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func data(forKey key: String) -> Data? {
+    @objc
+    public func data(forKey key: String) -> Data? {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func optionalData(forKey key: String) -> Data? {
+    @objc
+    public func optionalData(forKey key: String) -> Data? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func dictionary(forKey key: String) -> [String: AnyObject]? {
+    @objc
+    public func dictionary(forKey key: String) -> [String: AnyObject]? {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
+    @objc
+    public func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
-    @objc public func uuid(forKey key: String) -> UUID? {
+    @objc
+    public func uuid(forKey key: String) -> UUID? {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
-    @objc public func optionalUuid(forKey key: String) -> UUID? {
+    @objc
+    public func optionalUuid(forKey key: String) -> UUID? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
@@ -118,7 +130,8 @@ extension NSDictionary {
         requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
     }
 
-    @objc public func optionalDate(forKey key: String) -> Date? {
+    @objc
+    public func optionalDate(forKey key: String) -> Date? {
         optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
     }
 }

@@ -63,7 +63,8 @@ final class CallActionsView: UIView {
         updateToLayoutSize(layoutSize)
     }
 
-    @available(*, unavailable) required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -223,7 +224,8 @@ final class CallActionsView: UIView {
         delegate?.callActionsView(self, perform: .updateVideoGridPresentationMode(mode))
     }
 
-    @objc private func performButtonAction(_ sender: IconLabelButton) {
+    @objc
+    private func performButtonAction(_ sender: IconLabelButton) {
         delegate?.callActionsView(self, perform: action(for: sender))
     }
 

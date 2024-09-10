@@ -21,7 +21,8 @@ import Foundation
 private let cookieLabelKey = "ZMCookieLabel"
 private let registeredOnThisDeviceKey = "ZMRegisteredOnThisDevice"
 
-@objc extension NSManagedObjectContext {
+@objc
+extension NSManagedObjectContext {
     public var registeredOnThisDevice: Bool {
         get {
             self.metadataBoolValueForKey(registeredOnThisDeviceKey)

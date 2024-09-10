@@ -58,7 +58,8 @@ extension ZMOTRMessage: OTREntity {
 }
 
 /// Message that can block following messages
-@objc private protocol BlockingMessage {
+@objc
+private protocol BlockingMessage {
     /// If true, no other messages should be sent until this message is sent
     var shouldBlockFurtherMessages: Bool { get }
 }

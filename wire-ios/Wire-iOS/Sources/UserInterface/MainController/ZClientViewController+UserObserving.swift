@@ -26,7 +26,8 @@ extension ZClientViewController: UserObserving {
         }
     }
 
-    @objc func setupUserChangeInfoObserver() {
+    @objc
+    func setupUserChangeInfoObserver() {
         userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
     }
 }

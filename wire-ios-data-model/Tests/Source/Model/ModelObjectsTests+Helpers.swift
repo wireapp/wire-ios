@@ -21,7 +21,8 @@ import Foundation
 extension ModelObjectsTests {
     // MARK: Users & Teams Members
 
-    @discardableResult func createTeamAndMember(
+    @discardableResult
+    func createTeamAndMember(
         for user: ZMUser,
         with permissions: Permissions? = nil
     ) -> (Team, Member) {
@@ -35,7 +36,8 @@ extension ModelObjectsTests {
         return (member.team!, member)
     }
 
-    @discardableResult func createUserAndAddMember(to team: Team, with domain: String? = nil) -> (ZMUser, Member) {
+    @discardableResult
+    func createUserAndAddMember(to team: Team, with domain: String? = nil) -> (ZMUser, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.user = .insertNewObject(in: uiMOC)
         member.user?.remoteIdentifier = .create()

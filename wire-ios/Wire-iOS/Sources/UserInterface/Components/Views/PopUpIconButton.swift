@@ -41,7 +41,8 @@ final class PopUpIconButton: IconButton {
         addGestureRecognizer(longPressGR)
     }
 
-    @objc private func longPressHandler(gestureRecognizer: UILongPressGestureRecognizer) {
+    @objc
+    private func longPressHandler(gestureRecognizer: UILongPressGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
 

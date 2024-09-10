@@ -35,7 +35,8 @@ extension NSManagedObjectContext {
         }()
     }
 
-    @objc public func zm_tearDownCallState() {
+    @objc
+    public func zm_tearDownCallState() {
         if (self.userInfo[UserInfoCallStateKey] as? ZMCallState) != nil {
             self.userInfo.removeObject(forKey: UserInfoCallStateKey)
         }
@@ -58,7 +59,8 @@ extension NSManagedObjectContext {
         hasChanges || self.zm_hasUserInfoChanges
     }
 
-    @objc public func mergeCallStateChanges(fromUserInfo userInfo: [String: Any]) {
+    @objc
+    public func mergeCallStateChanges(fromUserInfo userInfo: [String: Any]) {
         guard self.zm_isSyncContext else { return } // we don't merge anything to UI, UI is autoritative
 
         if let callState = self.userInfo[UserInfoCallStateKey] as? ZMCallState {

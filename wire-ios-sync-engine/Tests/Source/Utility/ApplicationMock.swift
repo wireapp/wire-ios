@@ -22,7 +22,8 @@ import WireDataModel
 @testable import WireSyncEngine
 
 /// A mock of Application that records the calls
-@objcMembers public final class ApplicationMock: NSObject {
+@objcMembers
+public final class ApplicationMock: NSObject {
     public var applicationState: UIApplication.State = .active
     public var deviceToken: Data?
     public var userSession: ZMUserSession?
@@ -150,7 +151,8 @@ extension ApplicationMock {
         self.applicationState == .background
     }
 
-    @objc func setBackground() {
+    @objc
+    func setBackground() {
         self.applicationState = .background
     }
 
@@ -158,7 +160,8 @@ extension ApplicationMock {
         self.applicationState == .inactive
     }
 
-    @objc func setInactive() {
+    @objc
+    func setInactive() {
         self.applicationState = .inactive
     }
 
@@ -166,7 +169,8 @@ extension ApplicationMock {
         self.applicationState == .active
     }
 
-    @objc func setActive() {
+    @objc
+    func setActive() {
         self.applicationState = .active
     }
 

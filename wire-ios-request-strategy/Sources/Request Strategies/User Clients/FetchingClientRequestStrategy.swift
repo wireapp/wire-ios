@@ -25,7 +25,8 @@ import WireUtilities
 
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
-@objc extension ZMUser {
+@objc
+extension ZMUser {
     public func fetchUserClients() {
         NotificationInContext(
             name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,

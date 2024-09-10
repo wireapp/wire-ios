@@ -103,7 +103,8 @@ public class SearchUserSnapshot {
     }
 }
 
-@objcMembers public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
+@objcMembers
+public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     /// Map of searchUser remoteID to snapshot
     var snapshots: [UUID: SearchUserSnapshot] = [:]
 

@@ -115,7 +115,8 @@ class IncomingRequestFooterView: UIView {
 
     // MARK: - Events
 
-    @objc private func acceptButtonTapped() {
+    @objc
+    private func acceptButtonTapped() {
         delegate?.footerView(self, didRespondToRequestWithAction: .accept)
     }
 

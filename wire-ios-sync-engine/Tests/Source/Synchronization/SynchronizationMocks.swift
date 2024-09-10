@@ -202,7 +202,8 @@ public class MockSyncStatus: SyncStatus {
     }
 }
 
-@objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
+@objc
+public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
     var registeredUserClient: UserClient?
     var registeredMLSClient: UserClient?
     @objc public var didCallStartSlowSync = false
@@ -245,7 +246,8 @@ public class MockSyncStatus: SyncStatus {
     }
 }
 
-@objc public class MockPushMessageHandler: NSObject, PushMessageHandler {
+@objc
+public class MockPushMessageHandler: NSObject, PushMessageHandler {
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
     }
@@ -284,7 +286,8 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
     }
 }
 
-@objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
+@objcMembers
+public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
     public var objectsDidChangeCalled = false
     public func objectsDidChange(_: Set<NSManagedObject>) {
         objectsDidChangeCalled = true

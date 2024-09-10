@@ -46,7 +46,8 @@ final class CopyableLabel: UILabel {
         UIPasteboard.general.string = text
     }
 
-    @objc private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
+    @objc
+    private func longPressed(_ recognizer: UILongPressGestureRecognizer) {
         guard recognizer.state == .began,
               let view = recognizer.view,
               let superview = view.superview,
@@ -63,7 +64,8 @@ final class CopyableLabel: UILabel {
         fade(dimmed: true)
     }
 
-    @objc private func menuDidHide(_: Notification) {
+    @objc
+    private func menuDidHide(_: Notification) {
         NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
         fade(dimmed: false)
     }

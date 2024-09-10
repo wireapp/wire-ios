@@ -17,7 +17,8 @@
 //
 
 public typealias TeamMembership = Member
-@objcMembers public class Member: ZMManagedObject {
+@objcMembers
+public class Member: ZMManagedObject {
     @NSManaged public var team: Team?
     @NSManaged public var user: ZMUser?
     @NSManaged public var createdBy: ZMUser?

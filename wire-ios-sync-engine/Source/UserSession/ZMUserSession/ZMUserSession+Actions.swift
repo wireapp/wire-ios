@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc extension ZMUserSession {
+@objc
+extension ZMUserSession {
     // MARK: - Foreground Actions
 
     public func acceptConnectionRequest(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {

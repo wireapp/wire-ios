@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class MockTeamEvent: NSObject {
+@objcMembers
+public class MockTeamEvent: NSObject {
     public enum Kind: String {
         case delete = "team.delete"
         case update = "team.update"

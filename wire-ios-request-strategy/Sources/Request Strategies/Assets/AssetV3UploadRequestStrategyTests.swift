@@ -40,7 +40,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helpers
 
-    @discardableResult func createFileMessage(
+    @discardableResult
+    func createFileMessage(
         transferState: AssetTransferState = .uploading,
         hasCompletedPreprocessing: Bool = true,
         line: UInt = #line
@@ -77,7 +78,8 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         return message
     }
 
-    @discardableResult func createImageMessage(
+    @discardableResult
+    func createImageMessage(
         transferState: AssetTransferState = .uploading,
         line: UInt = #line
     ) -> ZMAssetClientMessage {

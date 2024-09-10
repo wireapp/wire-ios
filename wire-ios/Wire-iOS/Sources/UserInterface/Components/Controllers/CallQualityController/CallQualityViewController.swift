@@ -196,11 +196,13 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
 
     // MARK: Dismiss Events
 
-    @objc func onCloseButtonTapped() {
+    @objc
+    func onCloseButtonTapped() {
         delegate?.callQualityControllerDidFinishWithoutScore(self)
     }
 
-    @objc func onTapToDismiss() {
+    @objc
+    func onTapToDismiss() {
         delegate?.callQualityControllerDidFinishWithoutScore(self)
     }
 
@@ -298,7 +300,8 @@ final class CallQualityView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc func onClick(_: UIButton) {
+    @objc
+    func onClick(_: UIButton) {
         callback(buttonScore)
     }
 }

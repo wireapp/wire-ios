@@ -25,11 +25,13 @@ protocol ConversationMessageCellMenuPresenter: AnyObject {
 }
 
 extension UITableViewCell {
-    @objc func willDisplayCell() {
+    @objc
+    func willDisplayCell() {
         // to be overriden in subclasses
     }
 
-    @objc func didEndDisplayingCell() {
+    @objc
+    func didEndDisplayingCell() {
         // to be overriden in subclasses
     }
 }
@@ -223,7 +225,8 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     // MARK: - Single Tap Action
 
-    @objc private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+    @objc
+    private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
@@ -231,7 +234,8 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     // MARK: - Double Tap Action
 
-    @objc private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
+    @objc
+    private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }

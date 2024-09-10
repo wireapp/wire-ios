@@ -156,7 +156,8 @@ extension ZMConversation {
         self.team = Team.fetch(with: teamId, in: moc)
     }
 
-    @objc func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
+    @objc
+    func updatePotentialGapSystemMessagesIfNeeded(users: Set<ZMUser>) {
         guard let latestSystemMessage = ZMSystemMessage.fetchLatestPotentialGapSystemMessage(in: self)
         else { return }
 

@@ -67,7 +67,8 @@ extension CompanyLoginVerificationToken {
     /// Stores the token in the provided defaults.
     /// - parameter defaults: The defaults to store the token in.
     /// - returns: Whether the write operation succeeded.
-    @discardableResult public func store(in defaults: UserDefaults = .shared()) -> Bool {
+    @discardableResult
+    public func store(in defaults: UserDefaults = .shared()) -> Bool {
         do {
             let data = try JSONEncoder().encode(self)
             defaults.set(data, forKey: CompanyLoginVerificationToken.defaultsKey)

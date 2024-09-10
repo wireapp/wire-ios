@@ -21,8 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 struct E2EIdentityCertificateDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
     var certificateDetails: String
     var isDownloadAndCopyEnabled: Bool
 

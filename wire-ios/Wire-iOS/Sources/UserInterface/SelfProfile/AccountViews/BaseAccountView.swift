@@ -162,7 +162,8 @@ class BaseAccountView: UIView {
         }
     }
 
-    @objc func didTap(_: UITapGestureRecognizer) {
+    @objc
+    func didTap(_: UITapGestureRecognizer) {
         onTap(account)
     }
 }

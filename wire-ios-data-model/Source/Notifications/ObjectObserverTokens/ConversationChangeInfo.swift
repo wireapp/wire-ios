@@ -66,7 +66,8 @@ extension ZMConversation: ObjectInSnapshot {
 ////
 ////////////////////
 
-@objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
+@objcMembers
+public final class ConversationChangeInfo: ObjectChangeInfo {
     public var isDeletedChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
     }
@@ -228,7 +229,8 @@ extension ZMConversation: ObjectInSnapshot {
     }
 }
 
-@objc public protocol ZMConversationObserver: NSObjectProtocol {
+@objc
+public protocol ZMConversationObserver: NSObjectProtocol {
     func conversationDidChange(_ changeInfo: ConversationChangeInfo)
 }
 

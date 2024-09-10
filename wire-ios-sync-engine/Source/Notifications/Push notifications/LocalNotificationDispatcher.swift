@@ -20,7 +20,8 @@ import Foundation
 import UserNotifications
 
 /// Creates and cancels local notifications
-@objcMembers public class LocalNotificationDispatcher: NSObject {
+@objcMembers
+public class LocalNotificationDispatcher: NSObject {
     public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
     let eventNotifications: ZMLocalNotificationSet

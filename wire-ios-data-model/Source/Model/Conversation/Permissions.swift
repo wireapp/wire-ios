@@ -103,7 +103,8 @@ extension Permissions: Hashable {
 /// only interested in the role of a user in determining various logic for
 /// specific users.
 ///
-@objc public enum TeamRole: Int {
+@objc
+public enum TeamRole: Int {
     case none, partner, member, admin, owner
 
     public init(rawPermissions: Int64) {
@@ -145,7 +146,8 @@ extension Permissions: Hashable {
 }
 
 extension Member {
-    @objc public func setTeamRole(_ role: TeamRole) {
+    @objc
+    public func setTeamRole(_ role: TeamRole) {
         permissions = role.permissions
     }
 }

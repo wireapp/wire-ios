@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objc public enum ZMManagedObjectValidationErrorCode: Int {
+@objc
+public enum ZMManagedObjectValidationErrorCode: Int {
     case tooLong
     case tooShort
     case emailAddressIsInvalid

@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
+@objcMembers
+public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
     private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!

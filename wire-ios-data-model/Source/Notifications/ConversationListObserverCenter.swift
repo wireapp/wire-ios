@@ -58,7 +58,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Adds a conversationList to the objects to observe or replace any existing snapshot
-    @objc public func startObservingList(_ conversationList: ConversationList) {
+    @objc
+    public func startObservingList(_ conversationList: ConversationList) {
         if listSnapshots[conversationList.identifier] == nil {
             zmLog.debug("Adding conversationList with identifier \(conversationList.identifier)")
         } else {
@@ -80,7 +81,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Removes the conversationList from the objects to observe
-    @objc public func removeConversationList(_ conversationList: ConversationList) {
+    @objc
+    public func removeConversationList(_ conversationList: ConversationList) {
         zmLog.debug("Removing conversationList with identifier \(conversationList.identifier)")
         listSnapshots.removeValue(forKey: conversationList.identifier)
     }

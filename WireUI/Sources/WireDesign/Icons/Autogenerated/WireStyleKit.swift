@@ -33,7 +33,8 @@ public class WireStyleKit: NSObject {
 
     //// Drawing Methods
 
-    @objc public dynamic class func drawIcon_plus_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_plus_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -60,7 +61,8 @@ public class WireStyleKit: NSObject {
         addPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_checkmark_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_checkmark_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -81,7 +83,8 @@ public class WireStyleKit: NSObject {
         removePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_block_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_block_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -156,7 +159,8 @@ public class WireStyleKit: NSObject {
         blockPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_flipCamera_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_flipCamera_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -218,7 +222,8 @@ public class WireStyleKit: NSObject {
         flipPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_ellipsis_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_ellipsis_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -300,7 +305,8 @@ public class WireStyleKit: NSObject {
         morePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_ping_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_ping_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -469,7 +475,8 @@ public class WireStyleKit: NSObject {
         pingPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_cameraLens_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_cameraLens_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -567,7 +574,8 @@ public class WireStyleKit: NSObject {
         cameraPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_cameraShutter_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_cameraShutter_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -649,7 +657,8 @@ public class WireStyleKit: NSObject {
         shutterPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_photo_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_photo_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -717,7 +726,8 @@ public class WireStyleKit: NSObject {
         picturePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_conversation_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_conversation_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -768,7 +778,8 @@ public class WireStyleKit: NSObject {
         chatPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_speaker_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_speaker_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -824,7 +835,8 @@ public class WireStyleKit: NSObject {
         speakerPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_bellWithStrikethrough_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_bellWithStrikethrough_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -933,7 +945,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_pencil_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_pencil_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -977,7 +990,8 @@ public class WireStyleKit: NSObject {
         editPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_save_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_save_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1007,7 +1021,8 @@ public class WireStyleKit: NSObject {
         downloadPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_archive_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_archive_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1105,7 +1120,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_export_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_export_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1136,7 +1152,8 @@ public class WireStyleKit: NSObject {
         sharePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_minus_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_minus_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1148,7 +1165,8 @@ public class WireStyleKit: NSObject {
         removePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_addPerson_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_addPerson_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1233,7 +1251,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_plusCircled_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_plusCircled_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1282,7 +1301,8 @@ public class WireStyleKit: NSObject {
         addPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_envelope_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_envelope_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1308,7 +1328,8 @@ public class WireStyleKit: NSObject {
         emailPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_redo_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_redo_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1370,7 +1391,8 @@ public class WireStyleKit: NSObject {
         resendPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_brush_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_brush_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1624,7 +1646,8 @@ public class WireStyleKit: NSObject {
         sketchPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_gif_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_gif_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1709,7 +1732,8 @@ public class WireStyleKit: NSObject {
         gIFPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_undo_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_undo_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1771,7 +1795,8 @@ public class WireStyleKit: NSObject {
         undoPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_exclamationMark_16pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_exclamationMark_16pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1812,7 +1837,8 @@ public class WireStyleKit: NSObject {
         pathPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_spinner_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_spinner_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1881,7 +1907,8 @@ public class WireStyleKit: NSObject {
         spinnerPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_clock_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_clock_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -1961,7 +1988,8 @@ public class WireStyleKit: NSObject {
         pendingPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_search_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_search_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2026,7 +2054,8 @@ public class WireStyleKit: NSObject {
         searchPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_endCall_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_endCall_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2135,7 +2164,8 @@ public class WireStyleKit: NSObject {
         hangupPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_exclamationMark_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_exclamationMark_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2160,7 +2190,8 @@ public class WireStyleKit: NSObject {
         errorPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_downArrow_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_downArrow_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2181,7 +2212,8 @@ public class WireStyleKit: NSObject {
         downPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_hamburger_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_hamburger_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2215,7 +2247,8 @@ public class WireStyleKit: NSObject {
         listPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_forwardArrow_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_forwardArrow_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2240,7 +2273,8 @@ public class WireStyleKit: NSObject {
         backPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_camera_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_camera_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2350,7 +2384,8 @@ public class WireStyleKit: NSObject {
         videoPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_play_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_play_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2368,7 +2403,8 @@ public class WireStyleKit: NSObject {
         playPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_gear_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_gear_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2471,7 +2507,8 @@ public class WireStyleKit: NSObject {
         settingsPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_pause_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_pause_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2498,7 +2535,8 @@ public class WireStyleKit: NSObject {
         pausePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_backArrow_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_backArrow_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2523,7 +2561,8 @@ public class WireStyleKit: NSObject {
         backPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_cross_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_cross_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2550,7 +2589,8 @@ public class WireStyleKit: NSObject {
         closePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_phone_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_phone_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2658,7 +2698,8 @@ public class WireStyleKit: NSObject {
         callPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_person_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_person_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2731,7 +2772,8 @@ public class WireStyleKit: NSObject {
         contactsPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_document_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_document_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2782,7 +2824,8 @@ public class WireStyleKit: NSObject {
         filePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_eye_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_eye_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -2841,7 +2884,8 @@ public class WireStyleKit: NSObject {
         viewPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_movie_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_movie_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3036,7 +3080,8 @@ public class WireStyleKit: NSObject {
         moviePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_videoMessage_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_videoMessage_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3115,7 +3160,8 @@ public class WireStyleKit: NSObject {
         recordPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_paperclip_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_paperclip_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3223,7 +3269,8 @@ public class WireStyleKit: NSObject {
         attachmentPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_locationPin_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_locationPin_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3282,7 +3329,8 @@ public class WireStyleKit: NSObject {
         locationPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_recordDot_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_recordDot_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3294,7 +3342,8 @@ public class WireStyleKit: NSObject {
         recordPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_stopRecording_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_stopRecording_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3333,7 +3382,8 @@ public class WireStyleKit: NSObject {
         stopPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_location_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_location_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3352,7 +3402,8 @@ public class WireStyleKit: NSObject {
         locatePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_effectBalloon_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_effectBalloon_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3410,7 +3461,8 @@ public class WireStyleKit: NSObject {
         heliumPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_effectChurch_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_effectChurch_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3482,7 +3534,8 @@ public class WireStyleKit: NSObject {
         cathedralPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_robot_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_robot_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3669,7 +3722,8 @@ public class WireStyleKit: NSObject {
         robotPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_alien_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_alien_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3748,7 +3802,8 @@ public class WireStyleKit: NSObject {
         alienPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_effectJellyfish_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_effectJellyfish_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3896,7 +3951,8 @@ public class WireStyleKit: NSObject {
         jellyfishPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_effectRollercoaster_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_effectRollercoaster_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -3997,7 +4053,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_effectRabbit_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_effectRabbit_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4147,7 +4204,8 @@ public class WireStyleKit: NSObject {
         harePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_fullScreen_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_fullScreen_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4182,7 +4240,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_trash_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_trash_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4240,7 +4299,8 @@ public class WireStyleKit: NSObject {
         deletePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_like_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_like_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4340,7 +4400,8 @@ public class WireStyleKit: NSObject {
         likePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_liked_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_liked_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4387,7 +4448,8 @@ public class WireStyleKit: NSObject {
         likedPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_devices_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_devices_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4663,7 +4725,8 @@ public class WireStyleKit: NSObject {
         devicesPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_settingsOptions_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_settingsOptions_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4820,7 +4883,8 @@ public class WireStyleKit: NSObject {
         optionsPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_settingsAdvanced_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_settingsAdvanced_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -4898,7 +4962,8 @@ public class WireStyleKit: NSObject {
         advancedPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_settingsSupport_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_settingsSupport_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5061,7 +5126,8 @@ public class WireStyleKit: NSObject {
         supportPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_about_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_about_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5163,7 +5229,8 @@ public class WireStyleKit: NSObject {
         infoPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_send_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_send_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5199,7 +5266,8 @@ public class WireStyleKit: NSObject {
         sendPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_emoji_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_emoji_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5331,7 +5399,8 @@ public class WireStyleKit: NSObject {
         emojiPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_flower_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_flower_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5452,7 +5521,8 @@ public class WireStyleKit: NSObject {
         flowerPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_cake_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_cake_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5595,7 +5665,8 @@ public class WireStyleKit: NSObject {
         cakePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_car_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_car_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5710,7 +5781,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_ball_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_ball_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5831,7 +5903,8 @@ public class WireStyleKit: NSObject {
         ballPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_crown_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_crown_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -5988,7 +6061,8 @@ public class WireStyleKit: NSObject {
         crownPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_asterisk_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_asterisk_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6022,7 +6096,8 @@ public class WireStyleKit: NSObject {
         symbolPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_flag_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_flag_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6073,7 +6148,8 @@ public class WireStyleKit: NSObject {
         flagPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_typingDots_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_typingDots_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6155,7 +6231,8 @@ public class WireStyleKit: NSObject {
         morePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_hourglass_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_hourglass_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6279,7 +6356,8 @@ public class WireStyleKit: NSObject {
         timedMessagePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutSecond_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutSecond_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6413,7 +6491,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutMinute_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutMinute_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6536,7 +6615,8 @@ public class WireStyleKit: NSObject {
         bezier3Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutHour_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutHour_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6634,7 +6714,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutDay_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutDay_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6753,7 +6834,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_link_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_link_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6856,7 +6938,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_library_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_library_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6917,7 +7000,8 @@ public class WireStyleKit: NSObject {
         collectionPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_copy_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_copy_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -6985,7 +7069,8 @@ public class WireStyleKit: NSObject {
         copyPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_activeSearch_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_activeSearch_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7071,7 +7156,8 @@ public class WireStyleKit: NSObject {
         returnsearchPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_clearInput_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_clearInput_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7133,7 +7219,8 @@ public class WireStyleKit: NSObject {
         dismissPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_backArrowWithDot_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_backArrowWithDot_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7179,7 +7266,8 @@ public class WireStyleKit: NSObject {
         unreadPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_team_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_team_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7237,7 +7325,8 @@ public class WireStyleKit: NSObject {
         spacesPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_personalProfile_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_personalProfile_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7329,7 +7418,8 @@ public class WireStyleKit: NSObject {
         profilePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownToggle_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownToggle_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7519,7 +7609,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownH1_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownH1_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7555,7 +7646,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownH2_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownH2_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7700,7 +7792,8 @@ public class WireStyleKit: NSObject {
         bezier3Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownH3_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownH3_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -7955,7 +8048,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownBold_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownBold_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8069,7 +8163,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownItalic_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownItalic_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8096,7 +8191,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIconmarkdownUnderline_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIconmarkdownUnderline_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8161,7 +8257,8 @@ public class WireStyleKit: NSObject {
         rectanglePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownBulletList_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownBulletList_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8222,7 +8319,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownNumberList_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownNumberList_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8395,7 +8493,8 @@ public class WireStyleKit: NSObject {
         bezier4Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_markdownCode_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_markdownCode_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8443,7 +8542,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_statusBusy_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_statusBusy_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8502,7 +8602,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_statusAway_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_statusAway_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8559,7 +8660,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_statusAvailable_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_statusAvailable_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8594,7 +8696,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_exclamationMarkCircle_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_exclamationMarkCircle_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8675,7 +8778,8 @@ public class WireStyleKit: NSObject {
         alertPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_bot_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_bot_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8839,7 +8943,8 @@ public class WireStyleKit: NSObject {
         servicePath.fill()
     }
 
-    @objc public dynamic class func drawIcon_longDownArrow_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_longDownArrow_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -8863,7 +8968,8 @@ public class WireStyleKit: NSObject {
         downArrowPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_createConversation_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_createConversation_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9007,7 +9113,8 @@ public class WireStyleKit: NSObject {
         groupPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_disclosureIndicator_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_disclosureIndicator_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9028,7 +9135,8 @@ public class WireStyleKit: NSObject {
         arrowPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_guest_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_guest_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9140,7 +9248,8 @@ public class WireStyleKit: NSObject {
         guestPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_missedCall_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_missedCall_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9245,7 +9354,8 @@ public class WireStyleKit: NSObject {
         missedCallPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutWeek_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutWeek_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9330,7 +9440,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutMonth_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutMonth_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9415,7 +9526,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_timeoutYear_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_timeoutYear_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9513,7 +9625,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_browser_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_browser_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9589,7 +9702,8 @@ public class WireStyleKit: NSObject {
         browserPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_networkCondition_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_networkCondition_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9771,7 +9885,8 @@ public class WireStyleKit: NSObject {
         networkPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_mention_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_mention_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -9947,7 +10062,8 @@ public class WireStyleKit: NSObject {
         mentionPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_alerts_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_alerts_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10030,7 +10146,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_reply_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_reply_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10132,7 +10249,8 @@ public class WireStyleKit: NSObject {
         replyPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_externalLink_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_externalLink_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10156,7 +10274,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_forwardArrowWithDot_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_forwardArrowWithDot_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10202,7 +10321,8 @@ public class WireStyleKit: NSObject {
         unreadPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_legalholdpending_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_legalholdpending_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10318,7 +10438,8 @@ public class WireStyleKit: NSObject {
         pendingPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_legalholdactive_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_legalholdactive_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10389,7 +10510,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_folderList_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_folderList_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10508,7 +10630,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_recentList_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_recentList_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10606,7 +10729,8 @@ public class WireStyleKit: NSObject {
         bezier3Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_externalPartner_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_externalPartner_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10696,7 +10820,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_groupAdmin_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_groupAdmin_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -10996,7 +11121,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawIcon_circleCross_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_circleCross_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11075,7 +11201,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_eyeSlash_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_eyeSlash_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11223,7 +11350,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_circleTick_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_circleTick_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11266,7 +11394,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_eyeWithIris_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_eyeWithIris_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11374,7 +11503,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_federated_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_federated_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11543,7 +11673,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_screenshare_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_screenshare_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11597,7 +11728,8 @@ public class WireStyleKit: NSObject {
         prefix__aPath.fill()
     }
 
-    @objc public dynamic class func drawIcon_cameraOff_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_cameraOff_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11734,7 +11866,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_speakerOff_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_speakerOff_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11784,7 +11917,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_microphoneOff_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_microphoneOff_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -11926,7 +12060,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_microphone_64pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_microphone_64pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -12005,7 +12140,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawMissedcall(accent: UIColor = UIColor(
+    @objc
+    public dynamic class func drawMissedcall(accent: UIColor = UIColor(
         red: 1.000,
         green: 0.000,
         blue: 0.000,
@@ -12034,7 +12170,8 @@ public class WireStyleKit: NSObject {
         oval3Path.stroke()
     }
 
-    @objc public dynamic class func drawYoutube(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawYoutube(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -12572,7 +12709,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawMissedcalllast(accent: UIColor = UIColor(
+    @objc
+    public dynamic class func drawMissedcalllast(accent: UIColor = UIColor(
         red: 1.000,
         green: 0.000,
         blue: 0.000,
@@ -12749,7 +12887,8 @@ public class WireStyleKit: NSObject {
         textPath.fill()
     }
 
-    @objc public dynamic class func drawVimeo(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawVimeo(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -13414,7 +13553,8 @@ public class WireStyleKit: NSObject {
         logovimeoPath.fill()
     }
 
-    @objc public dynamic class func drawOngoingcall() {
+    @objc
+    public dynamic class func drawOngoingcall() {
         //// Color Declarations
         let fillColor9 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
         let black16 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.160)
@@ -13460,7 +13600,8 @@ public class WireStyleKit: NSObject {
         oval2Path.fill()
     }
 
-    @objc public dynamic class func drawJoinongoingcall(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawJoinongoingcall(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -13569,7 +13710,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawLogo(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawLogo(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -13676,7 +13818,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawWire(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawWire(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -13877,7 +14020,8 @@ public class WireStyleKit: NSObject {
         logo2Path.fill()
     }
 
-    @objc public dynamic class func drawShieldverified() {
+    @objc
+    public dynamic class func drawShieldverified() {
         //// Color Declarations
         let e2EE = UIColor(red: 0.000, green: 0.588, blue: 0.941, alpha: 1.000)
         let black24 = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.240)
@@ -13921,7 +14065,8 @@ public class WireStyleKit: NSObject {
         shadowPath.fill()
     }
 
-    @objc public dynamic class func drawShieldnotverified() {
+    @objc
+    public dynamic class func drawShieldnotverified() {
         //// Color Declarations
         let e2EE = UIColor(red: 0.000, green: 0.588, blue: 0.941, alpha: 1.000)
 
@@ -13961,7 +14106,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawShield(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawShield(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17124,7 +17270,8 @@ public class WireStyleKit: NSObject {
         fill91Path.fill()
     }
 
-    @objc public dynamic class func drawDegradation(
+    @objc
+    public dynamic class func drawDegradation(
         frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 260, height: 260),
         resizing: ResizingBehavior = .aspectFit
     ) {
@@ -17200,7 +17347,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawSpace(
+    @objc
+    public dynamic class func drawSpace(
         frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 28, height: 28),
         resizing: ResizingBehavior = .aspectFit,
         color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
@@ -17267,7 +17415,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawSpaceFocus(
+    @objc
+    public dynamic class func drawSpaceFocus(
         frame targetFrame: CGRect = CGRect(x: 0, y: 0, width: 36, height: 36),
         resizing: ResizingBehavior = .aspectFit,
         color: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
@@ -17367,7 +17516,8 @@ public class WireStyleKit: NSObject {
         context.restoreGState()
     }
 
-    @objc public dynamic class func drawIcon_restore_48pt(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawIcon_restore_48pt(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17435,7 +17585,8 @@ public class WireStyleKit: NSObject {
         bezierPath.fill()
     }
 
-    @objc public dynamic class func drawMentions(
+    @objc
+    public dynamic class func drawMentions(
         frame: CGRect = CGRect(x: 10, y: 10, width: 176, height: 57),
         backgroundColor: UIColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 1.000)
     ) {
@@ -17519,7 +17670,8 @@ public class WireStyleKit: NSObject {
         bezier2Path.fill()
     }
 
-    @objc public dynamic class func drawTab(color: UIColor = UIColor(
+    @objc
+    public dynamic class func drawTab(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17540,7 +17692,8 @@ public class WireStyleKit: NSObject {
 
     //// Generated Images
 
-    @objc public dynamic class func imageOfMissedcall(accent: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfMissedcall(accent: UIColor = UIColor(
         red: 1.000,
         green: 0.000,
         blue: 0.000,
@@ -17555,7 +17708,8 @@ public class WireStyleKit: NSObject {
         return imageOfMissedcall
     }
 
-    @objc public dynamic class func imageOfYoutube(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfYoutube(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17570,7 +17724,8 @@ public class WireStyleKit: NSObject {
         return imageOfYoutube
     }
 
-    @objc public dynamic class func imageOfMissedcalllast(accent: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfMissedcalllast(accent: UIColor = UIColor(
         red: 1.000,
         green: 0.000,
         blue: 0.000,
@@ -17585,7 +17740,8 @@ public class WireStyleKit: NSObject {
         return imageOfMissedcalllast
     }
 
-    @objc public dynamic class func imageOfVimeo(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfVimeo(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17614,7 +17770,8 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfOngoingcall!
     }
 
-    @objc public dynamic class func imageOfJoinongoingcall(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfJoinongoingcall(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17629,7 +17786,8 @@ public class WireStyleKit: NSObject {
         return imageOfJoinongoingcall
     }
 
-    @objc public dynamic class func imageOfLogo(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfLogo(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17644,7 +17802,8 @@ public class WireStyleKit: NSObject {
         return imageOfLogo
     }
 
-    @objc public dynamic class func imageOfWire(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfWire(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17687,7 +17846,8 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfShieldnotverified!
     }
 
-    @objc public dynamic class func imageOfShield(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfShield(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17716,7 +17876,8 @@ public class WireStyleKit: NSObject {
         return Cache.imageOfDegradation!
     }
 
-    @objc public dynamic class func imageOfSpace(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfSpace(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17731,7 +17892,8 @@ public class WireStyleKit: NSObject {
         return imageOfSpace
     }
 
-    @objc public dynamic class func imageOfSpaceFocus(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfSpaceFocus(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,
@@ -17746,7 +17908,8 @@ public class WireStyleKit: NSObject {
         return imageOfSpaceFocus
     }
 
-    @objc public dynamic class func imageOfTab(color: UIColor = UIColor(
+    @objc
+    public dynamic class func imageOfTab(color: UIColor = UIColor(
         red: 0.000,
         green: 0.000,
         blue: 0.000,

@@ -55,8 +55,7 @@ extension UserClient {
         }
     }
 
-    @objc
-    public var hasRegisteredMLSClient: Bool {
+    @objc public var hasRegisteredMLSClient: Bool {
         !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
     }
 

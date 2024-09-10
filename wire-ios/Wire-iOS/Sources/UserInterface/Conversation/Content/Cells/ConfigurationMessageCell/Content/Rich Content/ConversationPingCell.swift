@@ -40,7 +40,8 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
         lineView.isHidden = true
     }
 
-    @objc func startAnimation() {
+    @objc
+    func startAnimation() {
         self.animationBlock = createAnimationBlock()
         animate()
     }

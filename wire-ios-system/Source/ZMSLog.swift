@@ -65,7 +65,8 @@ public final class ZMSLog: NSObject {
     /// Log observers
     fileprivate static var logHooks: [UUID: LogEntryHook] = [:]
 
-    @objc public init(tag: String) {
+    @objc
+    public init(tag: String) {
         self.tag = tag
         logQueue.sync {
             ZMSLog.register(tag: tag)
@@ -178,7 +179,8 @@ extension ZMSLog {
     // MARK: - Rich Hooks
 
     /// Adds a log hook
-    @objc public static func addEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
+    @objc
+    public static func addEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
         var token: LogHookToken! = nil
         logQueue.sync {
             token = self.nonLockingAddEntryHook(logHook: logHook)
@@ -187,21 +189,24 @@ extension ZMSLog {
     }
 
     /// Adds a log hook without locking
-    @objc public static func nonLockingAddEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
+    @objc
+    public static func nonLockingAddEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
         let token = LogHookToken()
         logHooks[token.token] = logHook
         return token
     }
 
     /// Remove a log hook
-    @objc public static func removeLogHook(token: LogHookToken) {
+    @objc
+    public static func removeLogHook(token: LogHookToken) {
         logQueue.sync {
             _ = self.logHooks.removeValue(forKey: token.token)
         }
     }
 
     /// Remove all log hooks
-    @objc public static func removeAllLogHooks() {
+    @objc
+    public static func removeAllLogHooks() {
         logQueue.sync {
             self.logHooks = [:]
         }
@@ -211,7 +216,8 @@ extension ZMSLog {
 // MARK: - Internal stuff
 
 extension ZMSLog {
-    @objc public static func logWithLevel(
+    @objc
+    public static func logWithLevel(
         _ level: ZMLogLevel,
         message: @autoclosure () -> String,
         tag: String?,
@@ -279,7 +285,8 @@ extension ZMSLog {
             cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
         }
 
-    @objc public static func clearLogs() {
+    @objc
+    public static func clearLogs() {
         guard let currentLogURL else { return }
 
         logQueue.async {
@@ -299,7 +306,8 @@ extension ZMSLog {
         }
     }
 
-    @objc public static func switchCurrentLogToPrevious() {
+    @objc
+    public static func switchCurrentLogToPrevious() {
         guard let currentLogURL else { return }
 
         logQueue.async {

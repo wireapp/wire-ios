@@ -31,7 +31,8 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
     var environment: BackendEnvironmentProvider { get }
 }
 
-@objcMembers public final class UserInfo: NSObject {
+@objcMembers
+public final class UserInfo: NSObject {
     public let identifier: UUID
     public let cookieData: Data
 
@@ -218,7 +219,8 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
 // MARK: - Request Configuration
 
 extension NSMutableURLRequest {
-    @objc(configureWithRequest:) func configure(with request: ZMTransportRequest) {
+    @objc(configureWithRequest:)
+    func configure(with request: ZMTransportRequest) {
         httpMethod = request.methodAsString
         request.setAcceptedResponseMediaTypeOnHTTP(self)
         request.setBodyDataAndMediaTypeOnHTTP(self)
@@ -260,7 +262,8 @@ extension ZMTransportResponse {
             ?? (data[UserKey.id.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
-    @objc public func extractUserInfo() -> UserInfo? {
+    @objc
+    public func extractUserInfo() -> UserInfo? {
         guard let data = extractCookieData(), let id = extractUserIdentifier() else { return nil }
         return .init(identifier: id, cookieData: data)
     }

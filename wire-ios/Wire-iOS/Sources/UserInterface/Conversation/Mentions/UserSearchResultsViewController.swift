@@ -150,7 +150,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         ])
     }
 
-    @objc func reloadTable(with results: [UserType]) {
+    @objc
+    func reloadTable(with results: [UserType]) {
         searchResults = results
         resizeTable()
 
@@ -193,7 +194,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         view.isHidden = false
     }
 
-    @objc dynamic func keyboardWillChangeFrame(_ notification: Notification) {
+    @objc
+    dynamic func keyboardWillChangeFrame(_ notification: Notification) {
         guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
         else { return }
         resizeTable()

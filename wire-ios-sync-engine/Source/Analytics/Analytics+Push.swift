@@ -30,8 +30,7 @@ extension AnalyticsType {
 }
 
 extension ZMConversation {
-    @objc
-    public var ephemeralTrackingAttributes: [String: Any] {
+    @objc public var ephemeralTrackingAttributes: [String: Any] {
         if let timeout = activeMessageDestructionTimeoutValue {
             [
                 "is_ephemeral": true,
@@ -43,8 +42,7 @@ extension ZMConversation {
     }
 
     /// Whether the conversation includes at least 1 service user.
-    @objc
-    public var includesServiceUser: Bool {
+    @objc public var includesServiceUser: Bool {
         localParticipants.any { $0.isServiceUser }
     }
 }
