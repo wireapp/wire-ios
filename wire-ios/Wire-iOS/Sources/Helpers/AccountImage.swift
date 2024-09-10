@@ -21,7 +21,7 @@ import WireDataModel
 import WireSyncEngine
 import WireReusableUIComponents
 
-// TODO: make it a use case
+// TODO: [WPB-9727] make it a use case
 
 @MainActor
 func AccountImage(

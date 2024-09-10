@@ -147,7 +147,7 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
                     selectedImage: .init(systemName: "gearshape.fill")
                 )
                 tabBarItem.accessibilityIdentifier = "bottomBarSettingsButton"
-                // TODO: missing strings
+                // TODO: [WPB-9727] missing string localization
                 tabBarItem.accessibilityLabel = String(localized: "tabBar.settings.description", bundle: .module)
                 tabBarItem.accessibilityHint = String(localized: "tabBar.settings.hint", bundle: .module)
 
