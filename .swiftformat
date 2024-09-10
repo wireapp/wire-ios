@@ -37,7 +37,8 @@
     redundantBreak, \
     redundantClosure, \
     redundantExtensionACL, \
-    redundantFileprivate
+    redundantFileprivate, \
+    redundantGet
 
 # Options
 
