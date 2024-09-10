@@ -115,7 +115,7 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
             validName = name
             textField.endEditing(true)
         case .error:
-            // TODO show error
+            // TODO: show error
             textField.endEditing(true)
         }
     }

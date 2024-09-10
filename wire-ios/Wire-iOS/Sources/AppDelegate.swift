@@ -85,7 +85,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
 
-    // TODO [WPB-9867]: remove this property
+    // TODO: [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
         appRootRouter?.zClientViewController?.mediaPlaybackManager

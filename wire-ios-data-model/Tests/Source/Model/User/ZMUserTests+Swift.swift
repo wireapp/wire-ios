@@ -839,8 +839,8 @@ extension ZMUserTests_Swift {
         sut.markAccountAsDeleted(at: Date())
 
         // then
-        XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) // FIXME -> It was XCTAssertNotNil
-        XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) // FIXME -> It was XCTAssertNotNil
+        XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) // FIXME: -> It was XCTAssertNotNil
+        XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) // FIXME: -> It was XCTAssertNotNil
     }
 
     func testThatUserIsNotRemovedFromTeamOneToOneConversationsWhenAccountIsDeleted() {

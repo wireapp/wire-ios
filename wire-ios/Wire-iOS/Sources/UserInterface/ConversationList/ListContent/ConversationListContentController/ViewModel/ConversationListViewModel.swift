@@ -553,7 +553,7 @@ final class ConversationListViewModel: NSObject {
 
     let isFolderStatePersistenceEnabled: Bool
 
-    // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
+    // TODO: [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
         var folderEnabled: Bool

@@ -106,7 +106,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         fetchRequest.predicate = predicate
 
         let deletedLabels = managedObjectContext.fetchOrAssert(request: fetchRequest)
-        deletedLabels.forEach { managedObjectContext.delete($0) } // TODO jacob consider doing a batch delete
+        deletedLabels.forEach { managedObjectContext.delete($0) } // TODO: jacob consider doing a batch delete
         managedObjectContext.saveOrRollback()
     }
 

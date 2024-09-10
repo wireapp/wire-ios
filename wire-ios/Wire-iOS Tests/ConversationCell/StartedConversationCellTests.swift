@@ -66,7 +66,7 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         verify(message: message)
     }
 
-    /// TODO
+    // TODO:
     func testThatItRendersNewConversationCellWithOneParticipantAndName() {
         let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .justYou)
         verify(message: message)

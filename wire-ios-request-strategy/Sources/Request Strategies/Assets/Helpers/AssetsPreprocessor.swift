@@ -95,7 +95,7 @@ import Foundation
             self?.managedObjectContext.performGroupedBlock {
                 self?.objectsBeingProcessed.remove(message)
                 let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
-                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO jacob hacky
+                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO: jacob hacky
                 message.managedObjectContext?.saveOrRollback()
                 self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
@@ -121,11 +121,11 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     }
 
     public func failedPreprocessingImageOwner(_ imageOwner: ZMImageOwner) {
-        // TODO jacob is never called, remove
+        // TODO: jacob is never called, remove
     }
 
     public func didCompleteProcessingImageOwner(_ imageOwner: ZMImageOwner) {
-        // TODO jacob is never called, remove
+        // TODO: jacob is never called, remove
     }
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {

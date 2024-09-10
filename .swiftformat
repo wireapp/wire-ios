@@ -70,7 +70,8 @@
     spaceInsideGenerics, \
     spaceInsideParens, \
     strongOutlets, \
-    strongifiedSelf
+    strongifiedSelf, \
+    todos
 
 
 # Options

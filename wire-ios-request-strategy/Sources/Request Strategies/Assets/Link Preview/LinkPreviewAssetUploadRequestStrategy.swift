@@ -61,7 +61,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 
     /// Processors
     fileprivate let linkPreviewPreprocessor: LinkPreviewPreprocessor
-    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO replace with AssetPreprocessor
+    fileprivate let previewImagePreprocessor: ZMImagePreprocessingTracker // TODO: replace with AssetPreprocessor
 
     /// Upstream sync
     fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!

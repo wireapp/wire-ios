@@ -95,7 +95,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
                 return
             }
 
-            // TODO jacob this logic should be moved to data model
+            // TODO: jacob this logic should be moved to data model
             // Update cleared timestamp if self user left and deleted history
             if let clearedTimestamp = conversation.clearedTimeStamp, clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)

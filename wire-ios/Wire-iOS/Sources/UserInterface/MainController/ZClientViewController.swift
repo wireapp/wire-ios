@@ -35,10 +35,10 @@ final class ZClientViewController: UIViewController {
 
     let wireSplitViewController = SplitViewController()
 
-    // TODO [WPB-9867]: make private or remove this property
+    // TODO: [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     private(set) var mainTabBarController: MainTabBarController!
-    // TODO [WPB-6647]: Remove in navigation overhaul
+    // TODO: [WPB-6647]: Remove in navigation overhaul
     private var tabBarChangeHandler: TabBarChangeHandler!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
@@ -60,7 +60,7 @@ final class ZClientViewController: UIViewController {
         isFolderStatePersistenceEnabled: false,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
     )
-    // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
+    // TODO: [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
     private lazy var conversationListWithFoldersViewController = {
         let viewController = ConversationListViewController(
             account: account,
@@ -198,7 +198,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController[tab: .folders].viewControllers = [conversationListWithFoldersViewController]
         wireSplitViewController.leftViewController = mainTabBarController
 
-        // TODO [WPB-6647]: Remove in navigation overhaul
+        // TODO: [WPB-6647]: Remove in navigation overhaul
         // `selectedTab` must be in sync with tab set in MainTabBarController(contacts:conversations:folders:archive:)
         tabBarChangeHandler = TabBarChangeHandler(
             conversationsViewController: conversationListViewController,

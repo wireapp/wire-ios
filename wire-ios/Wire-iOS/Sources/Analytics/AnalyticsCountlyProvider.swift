@@ -254,7 +254,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     }
 
     func setSuperProperty(_ name: String, value: Any?) {
-        // TODO
+        // TODO:
     }
 
     func flush(completion: Completion?) {

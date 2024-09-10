@@ -376,7 +376,7 @@ extension WireCallCenterV3 {
     }
 
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
-        // TODO [WPB-9604]: - refactor to avoid processing call data on the UI context 
+        // TODO: [WPB-9604]: - refactor to avoid processing call data on the UI context 
         handleEventInContext("active-speakers-change") {
             guard let data = data.data(using: .utf8) else {
                 WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)

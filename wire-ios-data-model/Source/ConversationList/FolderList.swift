@@ -19,7 +19,7 @@
 import Foundation
 
 @objcMembers
-public class FolderList: NSObject { // TODO jacob turn into struct and make generic
+public class FolderList: NSObject { // TODO: jacob turn into struct and make generic
     var backingList: [Label]
 
     public init(labels: [Label]) {

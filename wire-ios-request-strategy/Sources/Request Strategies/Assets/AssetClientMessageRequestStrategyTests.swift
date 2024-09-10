@@ -119,7 +119,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded, line: line)
             XCTAssertEqual(message.isEphemeral, self.groupConversation.activeMessageDestructionTimeoutValue != nil, line: line)
         } else {
-            message.updateTransferState(transferState, synchronize: true) // TODO jacob
+            message.updateTransferState(transferState, synchronize: true) // TODO: jacob
         }
 
         if let sender {

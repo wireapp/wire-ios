@@ -162,23 +162,23 @@ public final class ZMUserSession: NSObject {
     var cRLsChecker: CertificateRevocationListsChecker?
     var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
-    public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
+    public var managedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
         coreDataStack.viewContext
     }
 
-    public var syncManagedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
+    public var syncManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
         coreDataStack.syncContext
     }
 
-    public var searchManagedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
+    public var searchManagedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
         coreDataStack.searchContext
     }
 
-    public var sharedContainerURL: URL { // TODO jacob we don't want this to be public
+    public var sharedContainerURL: URL { // TODO: jacob we don't want this to be public
         coreDataStack.applicationContainer
     }
 
-    public var selfUserClient: UserClient? { // TODO jacob we don't want this to be public
+    public var selfUserClient: UserClient? { // TODO: jacob we don't want this to be public
         ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
