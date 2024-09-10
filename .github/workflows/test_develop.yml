@@ -2,10 +2,9 @@ name: Test Develop
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'develop'
-
+  schedule:
+    - cron: "0 21 * * *"
+  
 # This is what will cancel the workflow
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,4 +15,5 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
+      branch: develop
     secrets: inherit

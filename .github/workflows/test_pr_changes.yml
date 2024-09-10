@@ -92,4 +92,5 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      branch: ${{ github.head_ref }}
     secrets: inherit

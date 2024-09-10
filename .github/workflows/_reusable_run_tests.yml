@@ -7,6 +7,9 @@ on:
         type: boolean
         default: false
         required: false
+      branch:
+        type: string
+        required: true
     secrets:
       ZENKINS_USERNAME:
         required: true
@@ -26,7 +29,9 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Retrieve Xcode version
         run: |
