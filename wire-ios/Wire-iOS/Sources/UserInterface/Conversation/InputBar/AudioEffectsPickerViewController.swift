@@ -344,10 +344,10 @@ private protocol AudioPlayerControllerDelegate: AnyObject {
 }
 
 private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
-
+    
     let player: AVAudioPlayer
     weak var delegate: AudioPlayerControllerDelegate?
-    weak var mediaManager: MediaPlayerDelegate? = AppDelegate.shared.mediaPlaybackManager
+    weak var mediaManager: MediaPlayerDelegate? = (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager
 
     init(contentOf URL: URL) throws {
         player = try AVAudioPlayer(contentsOf: URL)
@@ -399,5 +399,4 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
             delegate?.audioPlayerControllerDidFinishPlaying()
         }
     }
-
 }
