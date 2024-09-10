@@ -105,9 +105,9 @@ class ConversationDetailFooterView: UIView {
 
             // containerView
             containerView.heightAnchor.constraint(equalToConstant: 56),
-            containerView.leadingAnchor.constraint(equalTo: safeLeadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: safeTrailingAnchor),
-            containerView.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+            containerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
 
             // leftButton
             leftButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),

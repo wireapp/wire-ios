@@ -135,9 +135,9 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     private func createConstraints() {
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stackView.topAnchor.constraint(equalTo: safeTopAnchor),
+            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuideOrFallback.bottomAnchor, constant: -25),
+            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25),
             statusViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor),
 
             actionsView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
