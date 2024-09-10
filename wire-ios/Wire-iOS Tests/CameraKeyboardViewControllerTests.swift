@@ -18,7 +18,6 @@
 
 import AVFoundation
 import Photos
-import SnapshotTesting
 import WireDesign
 import WireTestingPackage
 import XCTest
