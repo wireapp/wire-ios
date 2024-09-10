@@ -29,7 +29,7 @@ extension NSExtensionContext {
 
 // MARK: - Sorting
 
-extension Array<NSItemProvider> {
+extension [NSItemProvider] {
     /// Returns the attachments sorted by type.
     var sorted: [AttachmentType: [NSItemProvider]] {
         var attachments: [AttachmentType: [NSItemProvider]] = [:]

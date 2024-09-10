@@ -354,7 +354,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     }
 }
 
-extension Dictionary<String, Any> {
+extension [String: Any] {
     fileprivate enum PayloadKey: String {
         case type
         case email

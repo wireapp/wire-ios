@@ -41,7 +41,7 @@ extension ShareDestination where Self: ConversationAvatarViewConversation {
     }
 }
 
-extension Array<ZMConversation> {
+extension [ZMConversation] {
     // Should be called inside ZMUserSession.shared().perform block
     func forEachNonEphemeral(_ block: (ZMConversation) -> Void) {
         forEach {

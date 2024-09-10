@@ -216,7 +216,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 }
 
-extension Array<CallParticipant> {
+extension [CallParticipant] {
     fileprivate func excludingParticipant(withID userID: AVSIdentifier) -> Self {
         filter {
             $0.userId != userID

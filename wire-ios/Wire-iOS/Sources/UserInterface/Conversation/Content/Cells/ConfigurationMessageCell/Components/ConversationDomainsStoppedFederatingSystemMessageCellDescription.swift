@@ -70,7 +70,7 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
     }
 }
 
-extension Array<String> {
+extension [String] {
     fileprivate var hasSelfDomain: Bool {
         self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }

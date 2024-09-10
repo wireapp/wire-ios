@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-extension Array<CallParticipant> {
+extension [CallParticipant] {
     var hasMoreThanTwoConnectedParticipants: Bool {
         filter(\.state.isConnected).count > 2
     }

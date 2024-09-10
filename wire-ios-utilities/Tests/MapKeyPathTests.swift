@@ -60,8 +60,8 @@ class MapKeyPathTests: XCTestCase {
         XCTAssertEqual(botName, String?.some("Bot"))
         XCTAssertEqual(botAge, Int??.some(.none))
 
-        XCTAssertEqual(ghostName, Optional<String>.none)
-        XCTAssertEqual(ghostAge, Optional<Optional<Int>>.none)
+        XCTAssertEqual(ghostName, String?.none)
+        XCTAssertEqual(ghostAge, Int??.none)
     }
 
     func testOptionalFlatMap() {
@@ -77,8 +77,8 @@ class MapKeyPathTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(humanAge, Int?.some(20))
-        XCTAssertEqual(botAge, Optional<Int>.none)
-        XCTAssertEqual(ghostAge, Optional<Int>.none)
+        XCTAssertEqual(botAge, Int?.none)
+        XCTAssertEqual(ghostAge, Int?.none)
     }
 
     // MARK: - Sequence
