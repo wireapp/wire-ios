@@ -50,8 +50,12 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Send Logs
 
     private func sendDebugLogs() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let rootViewController = appDelegate.mainWindow?.rootViewController else {
+            return
+        }
 
-        var presentingViewController = AppDelegate.shared.mainWindow!.rootViewController!
+        var presentingViewController = rootViewController
         while let presentedViewController = presentingViewController.presentedViewController {
             presentingViewController = presentedViewController
         }
@@ -69,7 +73,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             )
         )
     }
-
     // MARK: Quick Sync
 
     private func breakNextQuickSync() {
