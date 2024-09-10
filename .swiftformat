@@ -52,7 +52,8 @@
     # redundantSelf, \ TODO
     redundantStaticSelf, \
     redundantType, \
-    redundantTypedThrows
+    redundantTypedThrows, \
+    redundantVoidReturnType
 
 # Options
 
