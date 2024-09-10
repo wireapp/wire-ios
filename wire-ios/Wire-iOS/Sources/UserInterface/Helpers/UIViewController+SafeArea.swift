@@ -24,11 +24,6 @@ extension UIViewController {
 
 
     @available(*, deprecated, message: "Will be removed")
-    var safeTopAnchor: NSLayoutYAxisAnchor {
-        return self.view.safeAreaLayoutGuide.topAnchor
-    }
-
-    @available(*, deprecated, message: "Will be removed")
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
         return view.safeAreaLayoutGuide.centerYAnchor
     }

@@ -84,7 +84,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         topBar.delegate = self
         topBar.needsSeparator = false
         topBar.backgroundColor = SemanticColors.View.backgroundDefault
-        topBar.configure(title: Strings.title, subtitle: nil, topAnchor: safeTopAnchor)
+        topBar.configure(title: Strings.title, subtitle: nil, topAnchor: view.safeAreaLayoutGuide.topAnchor)
 
         addChild(sectionViewController)
         view.addSubview(sectionViewController.view)

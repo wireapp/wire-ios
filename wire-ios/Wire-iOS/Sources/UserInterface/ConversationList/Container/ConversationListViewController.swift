@@ -237,7 +237,7 @@ final class ConversationListViewController: UIViewController {
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
+            contentContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             contentContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),

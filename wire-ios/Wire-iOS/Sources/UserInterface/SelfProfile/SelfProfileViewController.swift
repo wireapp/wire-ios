@@ -181,7 +181,7 @@ final class SelfProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             // profileContainerView
             profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            profileContainerView.topAnchor.constraint(equalTo: safeTopAnchor),
+            profileContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             profileContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             // profileView

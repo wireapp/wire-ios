@@ -162,7 +162,7 @@ final class ConversationRootViewController: UIViewController {
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            networkStatusViewController.view.topAnchor.constraint(equalTo: self.safeTopAnchor),
+            networkStatusViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             networkStatusViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
             networkStatusViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
 
