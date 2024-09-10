@@ -176,8 +176,8 @@ final class BlockingActivityIndicatorTests: XCTestCase {
     }
 }
 
-private extension BlockingActivityIndicator {
-    convenience init(view: UIView) {
+extension BlockingActivityIndicator {
+    fileprivate convenience init(view: UIView) {
         self.init(
             view: view,
             accessibilityAnnouncement: .none
@@ -187,8 +187,8 @@ private extension BlockingActivityIndicator {
 
 // TODO: [WPB-10368] remove this temporary extension once XCTestCase+waitForPredicate.swift has been moved to a Swift package and is accessible from WireUI
 
-private extension XCTestCase {
-    func wait(
+extension XCTestCase {
+    fileprivate func wait(
         forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
         timeout seconds: TimeInterval
     ) {

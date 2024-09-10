@@ -109,8 +109,8 @@ extension ConversationCreateOptionsCell: ConversationCreationValuesConfigurable 
     }
 }
 
-private extension Bool {
-    var localized: String {
+extension Bool {
+    fileprivate var localized: String {
         return self ? L10n.Localizable.General.on : L10n.Localizable.General.off
     }
 }

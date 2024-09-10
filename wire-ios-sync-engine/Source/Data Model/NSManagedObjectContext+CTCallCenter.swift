@@ -19,11 +19,11 @@
 import CoreTelephony
 import Foundation
 
-public extension NSManagedObjectContext {
+extension NSManagedObjectContext {
     private static let WireCallCenterKey = "WireCallCenterKey"
 
     @objc
-    var zm_callCenter: WireCallCenterV3? {
+    public var zm_callCenter: WireCallCenterV3? {
         get {
             precondition(zm_isUserInterfaceContext, "callCenter can only be accessed on the ui context")
             return userInfo[NSManagedObjectContext.WireCallCenterKey] as? WireCallCenterV3
@@ -38,7 +38,7 @@ public extension NSManagedObjectContext {
     private static let ConstantBitRateAudioKey = "ConstantBitRateAudioKey"
 
     @objc
-    var zm_useConstantBitRateAudio: Bool {
+    public var zm_useConstantBitRateAudio: Bool {
         get {
             precondition(zm_isUserInterfaceContext, "zm_useConstantBitRateAudio can only be accessed on the ui context")
             return userInfo[NSManagedObjectContext.ConstantBitRateAudioKey] as? Bool ?? false

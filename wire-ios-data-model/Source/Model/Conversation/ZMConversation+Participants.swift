@@ -327,8 +327,8 @@ extension ZMConversation {
     }
 }
 
-public extension Collection where Element == ZMUser {
-    func belongingTo(domains: Set<String>) -> Set<ZMUser> {
+extension Collection where Element == ZMUser {
+    public func belongingTo(domains: Set<String>) -> Set<ZMUser> {
         let result = filter { user in
             guard let domain = user.domain else { return false }
             return domain.isOne(of: domains)

@@ -148,10 +148,10 @@ final class SecurityLevelView: UIView {
 
 // MARK: - SecurityClassification Extension
 
-private extension SecurityClassification {
-    typealias SecurityClassificationLevel = L10n.Localizable.SecurityClassification.Level
+extension SecurityClassification {
+    fileprivate typealias SecurityClassificationLevel = L10n.Localizable.SecurityClassification.Level
 
-    var levelText: String? {
+    fileprivate var levelText: String? {
         switch self {
         case .classified:
             SecurityClassificationLevel.bund
@@ -161,7 +161,7 @@ private extension SecurityClassification {
         }
     }
 
-    var accessibilitySuffix: String {
+    fileprivate var accessibilitySuffix: String {
         switch self {
         case .classified:
             "Classified"

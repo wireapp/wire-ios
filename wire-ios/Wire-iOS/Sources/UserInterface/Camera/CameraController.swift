@@ -274,10 +274,10 @@ final class CameraController {
     }
 }
 
-private extension AVCaptureVideoOrientation {
+extension AVCaptureVideoOrientation {
     /// The video orientation matches against first the device orientation,
     /// then the interface orientation. Must be called on the main thread.
-    static var current: AVCaptureVideoOrientation {
+    fileprivate static var current: AVCaptureVideoOrientation {
         let device = UIDevice.current.orientation
         let ui = UIWindow.interfaceOrientation ?? .unknown
 
@@ -289,7 +289,7 @@ private extension AVCaptureVideoOrientation {
     /// convert UIDeviceOrientation to AVCaptureVideoOrientation except face up/down
     ///
     /// - Parameter deviceOrientation: a UIDeviceOrientation
-    init?(deviceOrientation: UIDeviceOrientation) {
+    fileprivate init?(deviceOrientation: UIDeviceOrientation) {
         switch deviceOrientation {
         case .landscapeLeft:        self = .landscapeRight
         case .portrait:             self = .portrait
@@ -299,7 +299,7 @@ private extension AVCaptureVideoOrientation {
         }
     }
 
-    init?(uiOrientation: UIInterfaceOrientation) {
+    fileprivate init?(uiOrientation: UIInterfaceOrientation) {
         switch uiOrientation {
         case .landscapeLeft:        self = .landscapeLeft
         case .portrait:             self = .portrait

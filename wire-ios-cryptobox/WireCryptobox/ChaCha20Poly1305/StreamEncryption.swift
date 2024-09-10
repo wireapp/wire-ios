@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension ChaCha20Poly1305 {
-    final class StreamEncryption {
+extension ChaCha20Poly1305 {
+    public final class StreamEncryption {
         private static let bufferSize = 1024 * 1024
 
         public enum EncryptionError: Error {

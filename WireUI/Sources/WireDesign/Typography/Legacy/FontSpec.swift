@@ -16,162 +16,162 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension FontSpec {
+extension FontSpec {
     // MARK: - Small
 
-    static var smallFont: Self {
+    public static var smallFont: Self {
         self.init(.small, .none)
     }
 
-    static var smallLightFont: Self {
+    public static var smallLightFont: Self {
         self.init(.small, .light)
     }
 
-    static var smallRegularFont: Self {
+    public static var smallRegularFont: Self {
         self.init(.small, .regular)
     }
 
-    static var smallMediumFont: Self {
+    public static var smallMediumFont: Self {
         self.init(.small, .medium)
     }
 
-    static var smallSemiboldFont: Self {
+    public static var smallSemiboldFont: Self {
         self.init(.small, .semibold)
     }
 
-    static var smallBoldFont: Self {
+    public static var smallBoldFont: Self {
         self.init(.small, .bold)
     }
 
     // MARK: - Normal
 
-    static var normalFont: Self {
+    public static var normalFont: Self {
         self.init(.normal, .none)
     }
 
-    static var normalLightFont: Self {
+    public static var normalLightFont: Self {
         self.init(.normal, .light)
     }
 
-    static var normalRegularFont: Self {
+    public static var normalRegularFont: Self {
         self.init(.normal, .regular)
     }
 
-    static var normalMediumFont: Self {
+    public static var normalMediumFont: Self {
         self.init(.normal, .medium)
     }
 
-    static var normalSemiboldFont: Self {
+    public static var normalSemiboldFont: Self {
         self.init(.normal, .semibold)
     }
 
-    static var normalBoldFont: Self {
+    public static var normalBoldFont: Self {
         self.init(.normal, .bold)
     }
 
-    static var normalRegularFontWithInputTextStyle: Self {
+    public static var normalRegularFontWithInputTextStyle: Self {
         self.init(.normal, .regular, .inputText)
     }
 
     // MARK: - Medium
 
-    static var mediumFont: Self {
+    public static var mediumFont: Self {
         self.init(.medium, .none)
     }
 
-    static var mediumSemiboldFont: Self {
+    public static var mediumSemiboldFont: Self {
         self.init(.medium, .semibold)
     }
 
-    static var mediumLightLargeTitleFont: Self {
+    public static var mediumLightLargeTitleFont: Self {
         self.init(.medium, .light, .largeTitle)
     }
 
-    static var mediumRegularFont: Self {
+    public static var mediumRegularFont: Self {
         self.init(.medium, .regular)
     }
 
-    static var mediumSemiboldInputText: Self {
+    public static var mediumSemiboldInputText: Self {
         self.init(.medium, .semibold, .inputText)
     }
 
     // MARK: - Large
 
-    static var largeFont: Self {
+    public static var largeFont: Self {
         self.init(.large, .none)
     }
 
-    static var largeThinFont: Self {
+    public static var largeThinFont: Self {
         self.init(.large, .thin)
     }
 
-    static var largeLightFont: Self {
+    public static var largeLightFont: Self {
         self.init(.large, .light)
     }
 
-    static var largeRegularFont: Self {
+    public static var largeRegularFont: Self {
         self.init(.large, .regular)
     }
 
-    static var largeMediumFont: Self {
+    public static var largeMediumFont: Self {
         self.init(.large, .medium)
     }
 
-    static var largeSemiboldFont: Self {
+    public static var largeSemiboldFont: Self {
         self.init(.large, .semibold)
     }
 
-    static var largeLightWithTextStyleFont: Self {
+    public static var largeLightWithTextStyleFont: Self {
         self.init(.large, .light, .largeTitle)
     }
 
     // Account
-    static var accountName: Self {
+    public static var accountName: Self {
         self.init(.titleThree, .semibold)
     }
 
-    static var accountTeam: Self {
+    public static var accountTeam: Self {
         self.init(.subHeadline, .regular)
     }
 
     // Navigation
-    static var headerSemiboldFont: Self {
+    public static var headerSemiboldFont: Self {
         self.init(.header, .semibold)
     }
 
-    static var headerRegularFont: Self {
+    public static var headerRegularFont: Self {
         self.init(.header, .regular)
     }
 
-    static var subheadlineFont: Self {
+    public static var subheadlineFont: Self {
         self.init(.subHeadline, .regular)
     }
 
     // MARK: - Body
 
-    static var body: Self {
+    public static var body: Self {
         self.init(.body, .regular)
     }
 
     // MARK: - Body Two
 
-    static var bodyTwoSemibold: Self {
+    public static var bodyTwoSemibold: Self {
         self.init(.bodyTwo, .semibold)
     }
 
     // MARK: - Button Small
 
-    static var buttonSmallBold: Self {
+    public static var buttonSmallBold: Self {
         self.init(.buttonSmall, .bold)
     }
 
-    static var buttonSmallSemibold: Self {
+    public static var buttonSmallSemibold: Self {
         self.init(.buttonSmall, .semibold)
     }
 
     // MARK: - Button Big
 
-    static var buttonBigSemibold: Self {
+    public static var buttonBigSemibold: Self {
         self.init(.buttonBig, .semibold)
     }
 }

@@ -20,8 +20,8 @@ import SwiftUI
 import WireDesign
 import WireFoundation
 
-public extension AccentColor {
-    var uiColor: UIColor {
+extension AccentColor {
+    public var uiColor: UIColor {
         switch self {
         case .blue:
             SemanticColors.Accent.blue

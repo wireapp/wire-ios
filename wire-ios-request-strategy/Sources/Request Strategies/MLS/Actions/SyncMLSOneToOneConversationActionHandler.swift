@@ -115,8 +115,8 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
     }
 }
 
-private extension Payload.Conversation {
-    mutating func addMissingMember(userID: QualifiedID) {
+extension Payload.Conversation {
+    fileprivate mutating func addMissingMember(userID: QualifiedID) {
         guard
             let selfMember = members?.selfMember,
             members?.others.isEmpty == true

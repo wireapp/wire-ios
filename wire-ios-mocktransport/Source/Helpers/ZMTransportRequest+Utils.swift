@@ -18,8 +18,8 @@
 
 import Foundation
 
-@objc public extension ZMTransportRequest {
-    var URL: URL {
+@objc extension ZMTransportRequest {
+    public var URL: URL {
         Foundation.URL(string: path)!
     }
 
@@ -27,18 +27,18 @@ import Foundation
     // because an array is sorted (compared to dictionary here).
     // It can make a difference in the final call,
     // e.g. for caching requests and have them equal with other platforms.
-    var queryParameters: [String: Any] {
+    public var queryParameters: [String: Any] {
         queryItems.reduce(into: [:]) { partialResult, queryItem in
             partialResult[queryItem.name] = queryItem.value
         }
     }
 
-    var queryItems: [URLQueryItem] {
+    public var queryItems: [URLQueryItem] {
         let urlComponents = URLComponents(string: path)
         return urlComponents?.queryItems ?? []
     }
 
-    var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
+    public var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
         if let items = self.multipartBodyItems() as? [ZMMultipartBodyItem] {
             return items
         }
@@ -53,7 +53,7 @@ import Foundation
     }
 
     @objc(RESTComponentAtIndex:)
-    func RESTComponents(index: Int) -> String? {
+    public func RESTComponents(index: Int) -> String? {
         guard self.pathComponents.count > index, index > 0 else {
             return nil
         }
@@ -73,20 +73,20 @@ import Foundation
     }
 }
 
-@objc public extension ZMTransportRequest {
+@objc extension ZMTransportRequest {
     /// Returns whether the path of the request matches the given string.
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
-    func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
+    public func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
         return self.method == method && self.matches(path: path)
     }
 }
 
-public extension ZMTransportRequest {
+extension ZMTransportRequest {
     /// Returns whether the path of the request matches the given string.
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
-    func matches(path: String) -> Bool {
+    public func matches(path: String) -> Bool {
         let pathComponents = self.pathComponents
         let expectedComponents = path.components(separatedBy: "/").filter { !$0.isEmpty }
 
@@ -99,7 +99,7 @@ public extension ZMTransportRequest {
         }) == nil
     }
 
-    static func ~= (path: String, request: ZMTransportRequest) -> Bool {
+    public static func ~= (path: String, request: ZMTransportRequest) -> Bool {
         return request.matches(path: path)
     }
 }

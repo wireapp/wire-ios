@@ -18,6 +18,6 @@
 
 import Foundation
 
-public extension ZMConversation {
-    @NSManaged var language: String?
+extension ZMConversation {
+    @NSManaged public var language: String?
 }

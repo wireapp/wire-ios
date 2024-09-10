@@ -65,8 +65,8 @@ extension URL {
 
 // MARK: - Private
 
-fileprivate extension UIApplication {
-    var googleMapsInstalled: Bool {
+extension UIApplication {
+    fileprivate var googleMapsInstalled: Bool {
         return canHandleScheme("comgooglemaps://")
     }
 }

@@ -132,8 +132,8 @@ final class AudioRecordViewControllerTests: XCTestCase {
     }
 }
 
-private extension UIViewController {
-    @discardableResult func prepareForSnapshot() -> UIView {
+extension UIViewController {
+    @discardableResult fileprivate func prepareForSnapshot() -> UIView {
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()
 

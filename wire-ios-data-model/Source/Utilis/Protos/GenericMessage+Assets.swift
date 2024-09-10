@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension WireProtos.Asset {
-    init(_ metadata: ZMFileMetadata) {
+extension WireProtos.Asset {
+    public init(_ metadata: ZMFileMetadata) {
         self = WireProtos.Asset.with({
             $0.original = WireProtos.Asset.Original.with({
                 $0.size = metadata.size
@@ -29,7 +29,7 @@ public extension WireProtos.Asset {
         })
     }
 
-    init(_ metadata: ZMAudioMetadata) {
+    public init(_ metadata: ZMAudioMetadata) {
         self = WireProtos.Asset.with({
             $0.original = WireProtos.Asset.Original.with({
                 $0.size = metadata.size
@@ -45,7 +45,7 @@ public extension WireProtos.Asset {
         })
     }
 
-    init(_ metadata: ZMVideoMetadata) {
+    public init(_ metadata: ZMVideoMetadata) {
         self = WireProtos.Asset.with({
             $0.original = WireProtos.Asset.Original.with({
                 $0.size = metadata.size
@@ -60,7 +60,7 @@ public extension WireProtos.Asset {
         })
     }
 
-    init(imageSize: CGSize, mimeType: String, size: UInt64) {
+    public init(imageSize: CGSize, mimeType: String, size: UInt64) {
         self = WireProtos.Asset.with({
             $0.original = WireProtos.Asset.Original.with({
                 $0.size = size
@@ -73,7 +73,7 @@ public extension WireProtos.Asset {
         })
     }
 
-    init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
+    public init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
         self = WireProtos.Asset.with({
             if let original {
                 $0.original = original
@@ -84,26 +84,26 @@ public extension WireProtos.Asset {
         })
     }
 
-    init(withUploadedOTRKey otrKey: Data, sha256: Data) {
+    public init(withUploadedOTRKey otrKey: Data, sha256: Data) {
         self = WireProtos.Asset.with {
             $0.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         }
     }
 
-    init(withNotUploaded notUploaded: WireProtos.Asset.NotUploaded) {
+    public init(withNotUploaded notUploaded: WireProtos.Asset.NotUploaded) {
         self = WireProtos.Asset.with {
             $0.notUploaded = notUploaded
         }
     }
 
-    var hasUploaded: Bool {
+    public var hasUploaded: Bool {
         guard case .uploaded? = status else {
             return false
         }
         return true
     }
 
-    var hasNotUploaded: Bool {
+    public var hasNotUploaded: Bool {
         guard case .notUploaded? = status else {
             return false
         }
@@ -111,8 +111,8 @@ public extension WireProtos.Asset {
     }
 }
 
-public extension WireProtos.Asset.Original {
-    init(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: WireProtos.Asset.ImageMetaData? = nil) {
+extension WireProtos.Asset.Original {
+    public init(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: WireProtos.Asset.ImageMetaData? = nil) {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
@@ -125,7 +125,7 @@ public extension WireProtos.Asset.Original {
         }
     }
 
-    init(withSize size: UInt64, mimeType: String, name: String?, audioDurationInMillis: UInt, normalizedLoudness: [Float]) {
+    public init(withSize size: UInt64, mimeType: String, name: String?, audioDurationInMillis: UInt, normalizedLoudness: [Float]) {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
@@ -141,7 +141,7 @@ public extension WireProtos.Asset.Original {
     }
 
     /// Returns the normalized loudness as floats between 0 and 1
-    var normalizedLoudnessLevels: [Float] {
+    public var normalizedLoudnessLevels: [Float] {
         guard audio.hasNormalizedLoudness else { return [] }
         guard audio.normalizedLoudness.count > 0 else { return [] }
 
@@ -159,8 +159,8 @@ public extension WireProtos.Asset.Original {
     }
 }
 
-public extension WireProtos.Asset.Preview {
-    init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
+extension WireProtos.Asset.Preview {
+    public init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
         self = WireProtos.Asset.Preview.with({
             $0.size = size
             $0.mimeType = mimeType
@@ -172,8 +172,8 @@ public extension WireProtos.Asset.Preview {
     }
 }
 
-public extension WireProtos.Asset.ImageMetaData {
-    init(width: Int32, height: Int32) {
+extension WireProtos.Asset.ImageMetaData {
+    public init(width: Int32, height: Int32) {
         self = WireProtos.Asset.ImageMetaData.with {
             $0.width = width
             $0.height = height
@@ -181,8 +181,8 @@ public extension WireProtos.Asset.ImageMetaData {
     }
 }
 
-public extension WireProtos.Asset.RemoteData {
-    init(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil, assetDomain: String? = nil) {
+extension WireProtos.Asset.RemoteData {
+    public init(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil, assetDomain: String? = nil) {
         self = WireProtos.Asset.RemoteData.with {
             $0.otrKey = otrKey
             $0.sha256 = sha256

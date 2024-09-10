@@ -40,8 +40,8 @@ extension UIImage {
     }
 }
 
-private extension CGContext {
-    static func fromRawImage(_ rawImage: CGImage) -> CGContext? {
+extension CGContext {
+    fileprivate static func fromRawImage(_ rawImage: CGImage) -> CGContext? {
         return CGContext(data: nil,
                          width: rawImage.width,
                          height: rawImage.height,

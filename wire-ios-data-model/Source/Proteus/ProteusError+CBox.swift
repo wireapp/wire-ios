@@ -19,8 +19,8 @@
 import Foundation
 import WireCryptobox
 
-public extension ProteusError {
-    init?(cboxResult: CBoxResult) {
+extension ProteusError {
+    public init?(cboxResult: CBoxResult) {
         switch cboxResult {
         case CBOX_STORAGE_ERROR:
             self = .storageError

@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension NSNotification.Name {
-    static let requestAvailableNotification = RequestAvailableNotification.name
+extension NSNotification.Name {
+    public static let requestAvailableNotification = RequestAvailableNotification.name
 }
 
 @objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver: NSObjectProtocol {

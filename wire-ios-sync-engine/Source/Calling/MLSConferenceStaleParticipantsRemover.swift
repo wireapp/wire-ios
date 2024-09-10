@@ -216,16 +216,16 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     }
 }
 
-private extension Array where Element == CallParticipant {
-    func excludingParticipant(withID userID: AVSIdentifier) -> Self {
+extension Array where Element == CallParticipant {
+    fileprivate func excludingParticipant(withID userID: AVSIdentifier) -> Self {
         filter {
             $0.userId != userID
         }
     }
 }
 
-private extension MLSClientID {
-    init?(callParticipant: CallParticipant) {
+extension MLSClientID {
+    fileprivate init?(callParticipant: CallParticipant) {
         // Note: callParticipant user comes from uiMoc and init is called from syncContext
         guard let context = (callParticipant.user as? ZMUser)?.managedObjectContext else {
             assertionFailure("expecting ZMUser's context")

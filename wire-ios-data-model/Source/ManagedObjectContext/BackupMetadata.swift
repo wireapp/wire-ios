@@ -72,15 +72,15 @@ public func == (lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
 
 // MARK: - Serialization Helper
 
-public extension BackupMetadata {
-    func write(to url: URL) throws {
+extension BackupMetadata {
+    public func write(to url: URL) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(.iso8601)
         let data = try encoder.encode(self)
         try data.write(to: url)
     }
 
-    init(url: URL) throws {
+    public init(url: URL) throws {
         let data = try Data(contentsOf: url)
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .formatted(.iso8601)
@@ -88,8 +88,8 @@ public extension BackupMetadata {
     }
 }
 
-private extension DateFormatter {
-    static let iso8601: DateFormatter = {
+extension DateFormatter {
+    fileprivate static let iso8601: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .usPOSIX
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -99,19 +99,19 @@ private extension DateFormatter {
     }()
 }
 
-private extension Locale {
-    static let usPOSIX = Locale(identifier: "en_US_POSIX")
+extension Locale {
+    fileprivate static let usPOSIX = Locale(identifier: "en_US_POSIX")
 }
 
 // MARK: - Verification
 
-public extension BackupMetadata {
-    enum VerificationError: Error {
+extension BackupMetadata {
+    public enum VerificationError: Error {
         case backupFromNewerAppVersion
         case userMismatch
     }
 
-    func verify(
+    public func verify(
         using userIdentifier: UUID,
         modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
         ) -> VerificationError? {

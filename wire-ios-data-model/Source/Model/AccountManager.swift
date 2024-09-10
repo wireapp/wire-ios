@@ -23,11 +23,11 @@ private let log = ZMSLog(tag: "Accounts")
 
 public let AccountManagerDidUpdateAccountsNotificationName = Notification.Name("AccountManagerDidUpdateAccountsNotification")
 
-fileprivate extension UserDefaults {
+extension UserDefaults {
     private var selectedAccountKey: String { "AccountManagerSelectedAccountKey" }
 
     /// The identifier of the currently selected `Account` or `nil` if there is none.
-    var selectedAccountIdentifier: UUID? {
+    fileprivate var selectedAccountIdentifier: UUID? {
         get { string(forKey: selectedAccountKey).flatMap(UUID.init(transportString:)) }
         set { set(newValue?.uuidString, forKey: selectedAccountKey) }
     }

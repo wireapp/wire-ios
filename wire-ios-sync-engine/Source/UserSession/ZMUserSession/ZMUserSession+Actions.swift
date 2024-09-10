@@ -217,8 +217,8 @@ import Foundation
     }
 }
 
-public extension ZMUserSession {
-    func markAllConversationsAsRead() {
+extension ZMUserSession {
+    public func markAllConversationsAsRead() {
         let allConversations = managedObjectContext.fetchOrAssert(request: NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
         allConversations.forEach({ $0.markAsRead() })
     }

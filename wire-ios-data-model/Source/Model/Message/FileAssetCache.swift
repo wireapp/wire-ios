@@ -843,10 +843,10 @@ public final class FileAssetCache: NSObject {
 
 // MARK: - Testing
 
-public extension FileAssetCache {
+extension FileAssetCache {
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
-    func wipeCaches() throws {
+    public func wipeCaches() throws {
         try fileCache.wipeCaches()
         try tempCache.wipeCaches()
     }

@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-public extension UIBarButtonItem {
+extension UIBarButtonItem {
     /// Creates a customized close button for use in navigation bars.
     ///
     /// This method creates a UIBarButtonItem configured as a close button with a custom image,
@@ -30,7 +30,7 @@ public extension UIBarButtonItem {
     ///   - accessibilityLabel: A string describing the button's purpose for accessibility.
     ///
     /// - Returns: A UIBarButtonItem configured as a close button.
-    static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
+    public static func closeButton(action: UIAction, accessibilityLabel: String) -> UIBarButtonItem {
         let closeImage = UIImage(named: "Close")
 
         let closeItem = UIBarButtonItem(title: accessibilityLabel, primaryAction: action)

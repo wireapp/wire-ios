@@ -292,8 +292,8 @@ public final class MessageSender: MessageSenderInterface {
     }
 }
 
-private extension Payload.ClientListByQualifiedUserID {
-    var qualifiedClientIDs: [QualifiedClientID] {
+extension Payload.ClientListByQualifiedUserID {
+    fileprivate var qualifiedClientIDs: [QualifiedClientID] {
         var qualifiedClientIDs: [QualifiedClientID] = []
         for (domain, clientListByUserID) in self {
             for (userID, clientIDs) in clientListByUserID {

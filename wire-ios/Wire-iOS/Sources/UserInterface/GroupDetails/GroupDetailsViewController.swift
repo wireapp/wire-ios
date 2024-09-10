@@ -382,15 +382,15 @@ extension GroupDetailsViewController {
 
 // MARK: - Conversation verification status
 
-private extension GroupDetailsViewController {
-    var verificationStatus: NSAttributedString? {
+extension GroupDetailsViewController {
+    fileprivate var verificationStatus: NSAttributedString? {
         guard conversation.isVerified else {
             return nil
         }
         return attributedString(title: verificationStatusTitle, icon: verificationStatusIcon)
     }
 
-    var verificationStatusTitle: String {
+    fileprivate var verificationStatusTitle: String {
         typealias ConversationVerificationStatus = L10n.Localizable.GroupDetails.ConversationVerificationStatus
 
         switch conversation.messageProtocol {
@@ -401,7 +401,7 @@ private extension GroupDetailsViewController {
         }
     }
 
-    var verificationStatusIcon: UIImage {
+    fileprivate var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
             return .init(resource: .verifiedShield)
@@ -410,7 +410,7 @@ private extension GroupDetailsViewController {
         }
     }
 
-    var verificationStatusColor: UIColor {
+    fileprivate var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
             return SemanticColors.Label.textCertificateVerified
@@ -419,7 +419,7 @@ private extension GroupDetailsViewController {
         }
     }
 
-    func attributedString(title: String, icon: UIImage) -> NSAttributedString {
+    fileprivate func attributedString(title: String, icon: UIImage) -> NSAttributedString {
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: verificationStatusColor
         ]

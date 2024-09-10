@@ -18,16 +18,16 @@
 
 import Foundation
 
-public extension UUID {
-    func create() -> UUID {
+extension UUID {
+    public func create() -> UUID {
         return UUID.create()
     }
 
-    static func create() -> UUID {
+    public static func create() -> UUID {
         return NSUUID.create() as UUID
     }
 
-    static func reseed(testName: String) {
+    public static func reseed(testName: String) {
         NSUUID.reseedUUID(testName)
     }
 }

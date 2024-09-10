@@ -18,28 +18,28 @@
 
 import Foundation
 
-public extension String {
-    var utf8Data: Data? {
+extension String {
+    public var utf8Data: Data? {
         return data(using: .utf8)
     }
 
-    var base64EncodedData: Data? {
+    public var base64EncodedData: Data? {
         return utf8Data?.base64EncodedData()
     }
 
-    var base64EncodedBytes: [Byte]? {
+    public var base64EncodedBytes: [Byte]? {
         return base64EncodedData?.bytes
     }
 
-    var base64EncodedString: String? {
+    public var base64EncodedString: String? {
         return utf8Data?.base64EncodedString()
     }
 
-    var base64DecodedData: Data? {
+    public var base64DecodedData: Data? {
         return Data(base64Encoded: self)
     }
 
-    var base64DecodedBytes: [Byte]? {
+    public var base64DecodedBytes: [Byte]? {
         return base64DecodedData?.bytes
     }
 }

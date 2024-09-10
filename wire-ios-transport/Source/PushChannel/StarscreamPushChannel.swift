@@ -277,8 +277,8 @@ final class StarscreamCertificatePinning: CertificatePinning {
     }
 }
 
-private extension TLSVersion {
-    var starscreamValue: Starscream.TLSVersion {
+extension TLSVersion {
+    fileprivate var starscreamValue: Starscream.TLSVersion {
         switch self {
         case .v1_2:
             return .v1_2

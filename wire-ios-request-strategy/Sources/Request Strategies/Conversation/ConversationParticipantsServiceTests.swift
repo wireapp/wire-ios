@@ -357,10 +357,10 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
 // MARK: - Federation tests helpers
 
-private extension ConversationParticipantsServiceTests {
-    typealias DomainUserTuple = (domain: String, user: ZMUser)
+extension ConversationParticipantsServiceTests {
+    fileprivate typealias DomainUserTuple = (domain: String, user: ZMUser)
 
-    func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
+    fileprivate func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
         return await uiMOC.perform { [self] in
 
             let applesDomain = "apples.com"
@@ -391,7 +391,7 @@ private extension ConversationParticipantsServiceTests {
         }
     }
 
-    func assertSystemMessageWasInserted(
+    fileprivate func assertSystemMessageWasInserted(
         forUsers users: Set<ZMUser>,
         in conversation: ZMConversation,
         file: StaticString = #file,
@@ -407,7 +407,7 @@ private extension ConversationParticipantsServiceTests {
         }
     }
 
-    func assertReachableUsersWereAddedOnRetry(
+    fileprivate func assertReachableUsersWereAddedOnRetry(
         expectedUsers: Set<ZMUser>,
         file: StaticString = #file,
         line: UInt = #line
@@ -434,7 +434,7 @@ private extension ConversationParticipantsServiceTests {
         )
     }
 
-    func mockProteusAddParticipantsFailingOnce(with error: FederationError) {
+    fileprivate func mockProteusAddParticipantsFailingOnce(with error: FederationError) {
         var firstAttempt = true
 
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in
@@ -444,7 +444,7 @@ private extension ConversationParticipantsServiceTests {
         }
     }
 
-    func mockMLSAddParticipantsFailingOnce(with error: MLSConversationParticipantsError) {
+    fileprivate func mockMLSAddParticipantsFailingOnce(with error: MLSConversationParticipantsError) {
         var firstAttempt = true
 
         mockMLSParticipantsService.addParticipantsTo_MockMethod = { _, _ in

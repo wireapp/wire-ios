@@ -20,15 +20,15 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-private extension ZMConversationMessage {
+extension ZMConversationMessage {
     /// Whether the `Delete for everyone` option should be allowed and shown for this message.
-    var canBeDeletedForEveryone: Bool {
+    fileprivate var canBeDeletedForEveryone: Bool {
         guard let sender = senderUser,
               let conversation = conversationLike else { return false }
         return sender.isSelfUser && conversation.isSelfAnActiveMember
     }
 
-    var deletionConfiguration: DeletionConfiguration {
+    fileprivate var deletionConfiguration: DeletionConfiguration {
         // If the message failed to send we only want to show the delete for everyone option,
         // as we can not be sure that it did not hit the backend before we expired it.
         if deliveryState == .failedToSend {
@@ -156,8 +156,8 @@ private enum DeletionConfiguration {
     }
 }
 
-private extension UIAlertController {
-    static func forMessageDeletion(with configuration: DeletionConfiguration, selectedAction: @escaping (AlertAction, UIAlertController) -> Void) -> UIAlertController {
+extension UIAlertController {
+    fileprivate static func forMessageDeletion(with configuration: DeletionConfiguration, selectedAction: @escaping (AlertAction, UIAlertController) -> Void) -> UIAlertController {
         let alertTitle = L10n.Localizable.Message.DeleteDialog.message
         let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
 

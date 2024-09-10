@@ -176,17 +176,17 @@ public protocol SwiftConversationMessage {
     var failedToSendUsers: [UserType] { get }
 }
 
-public extension ZMConversationMessage {
+extension ZMConversationMessage {
     /// Whether the given user is the sender of the message.
 
-    func isUserSender(_ user: UserType) -> Bool {
+    public func isUserSender(_ user: UserType) -> Bool {
         guard let zmUser = user as? ZMUser else { return false }
 
         return zmUser == senderUser as? ZMUser
     }
 }
 
-public extension Equatable where Self: ZMConversationMessage {}
+extension Equatable where Self: ZMConversationMessage {}
 
 public func == (lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
     return lhs.isEqual(rhs)

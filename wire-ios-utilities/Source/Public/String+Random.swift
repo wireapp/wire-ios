@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension String {
-    static func randomAlphanumerical(length: UInt) -> String {
+extension String {
+    public static func randomAlphanumerical(length: UInt) -> String {
         if length == 0 {
             return String()
         }
@@ -32,22 +32,22 @@ public extension String {
         return s
     }
 
-    static func randomClientIdentifier(length: UInt = 16) -> String {
+    public static func randomClientIdentifier(length: UInt = 16) -> String {
         randomAlphanumerical(length: length)
     }
 
-    static func randomDomain(hostLength: UInt = 5) -> String {
+    public static func randomDomain(hostLength: UInt = 5) -> String {
         return "\(String.randomAlphanumerical(length: hostLength)).com"
     }
 
-    static func randomRemoteIdentifier(length: UInt = 16) -> String {
+    public static func randomRemoteIdentifier(length: UInt = 16) -> String {
         randomAlphanumerical(length: length)
     }
 }
 
 // MARK: - Legacy
 
-public extension String {
+extension String {
     // https://github.com/wireapp/wire-ios/pull/920
     // Replacing all random strings didn't work for the some places,
     // so we reverted the change to keep the legacy random func.
@@ -55,7 +55,7 @@ public extension String {
     // ClientMessageTests_OTR and ClientMessageTests_OTR_Legacy seem to use rely on a "%llx",
     // but the underlying logic is not clear to me at this point.
     @available(*, deprecated, message: "Better use one of the newer random string methods!")
-    static func createLegacyAlphanumerical() -> String {
+    public static func createLegacyAlphanumerical() -> String {
         String(format: "%llx", arc4random()) // swiftlint:disable:this legacy_random
     }
 }

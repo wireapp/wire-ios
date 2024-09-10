@@ -18,13 +18,13 @@
 
 import SwiftUI
 
-public extension Font {
+extension Font {
     /// Creates a font from the given text style.
     ///
     /// - Parameter textStyle: The text style to use to create the Font.
     /// - Returns: Font that uses the style you specify.
 
-    static func textStyle(_ textStyle: WireTextStyle) -> Font {
+    public static func textStyle(_ textStyle: WireTextStyle) -> Font {
         switch textStyle {
         case .largeTitle:
             .largeTitle

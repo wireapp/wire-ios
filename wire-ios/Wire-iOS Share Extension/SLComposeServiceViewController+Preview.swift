@@ -178,7 +178,7 @@ extension PreviewDisplayMode {
 
 // MARK: - Attachment Main
 
-private extension Dictionary where Key == AttachmentType, Value == [NSItemProvider] {
+extension Dictionary where Key == AttachmentType, Value == [NSItemProvider] {
     /**
      * Determines the main preview item for the post.
      *
@@ -189,7 +189,7 @@ private extension Dictionary where Key == AttachmentType, Value == [NSItemProvid
      * - video > photo
      */
 
-    var main: (AttachmentType, NSItemProvider)? {
+    fileprivate var main: (AttachmentType, NSItemProvider)? {
         let sortedAttachments = self
 
         for attachmentType in AttachmentType.allCases {

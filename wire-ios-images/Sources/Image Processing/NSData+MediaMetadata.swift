@@ -26,7 +26,7 @@ public enum MetadataError: Error {
     case cannotCreate
 }
 
-public extension NSData {
+extension NSData {
     private static let nullMetadataProperties: CFDictionary = {
         var swiftMetadataProperties: [String: AnyObject] = [:]
         swiftMetadataProperties[String(kCGImagePropertyExifDictionary)] = kCFNull
@@ -53,7 +53,7 @@ public extension NSData {
     // Supports JPEG, TIFF, PNG and other image (container) formats/types.
     // @throws MetadataError
     @objc
-    func wr_imageDataWithoutMetadata() throws -> NSData {
+    public func wr_imageDataWithoutMetadata() throws -> NSData {
         guard let imageSource = CGImageSourceCreateWithData(self, nil),
               let type = CGImageSourceGetType(imageSource) else {
             throw MetadataError.unknownFormat
@@ -84,7 +84,7 @@ public extension NSData {
     // Retrieves image metadata from the binary image.
     // @throws MetadataError
     @objc
-    func wr_metadata() throws -> [String: Any] {
+    public func wr_metadata() throws -> [String: Any] {
         guard let imageSource = CGImageSourceCreateWithData(self, nil) else {
             throw MetadataError.unknownFormat
         }
@@ -93,17 +93,17 @@ public extension NSData {
     }
 }
 
-public extension Data {
+extension Data {
     // Removes the privacy-related metadata tags from the binary image (see nullMetadataProperties).
     // Supports JPEG, TIFF, PNG and other image (container) formats/types.
     // @throws MetadataError
-    func wr_removingImageMetadata() throws -> Data {
+    public func wr_removingImageMetadata() throws -> Data {
         return try (self as NSData).wr_imageDataWithoutMetadata() as Data
     }
 
     // Retrieves image metadata from the binary image.
     // @throws MetadataError
-    func wr_metadata() throws -> [String: Any] {
+    public func wr_metadata() throws -> [String: Any] {
         return try (self as NSData).wr_metadata()
     }
 }

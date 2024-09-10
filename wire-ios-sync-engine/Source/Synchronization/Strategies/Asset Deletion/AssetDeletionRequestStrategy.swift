@@ -18,8 +18,8 @@
 
 import Foundation
 
-fileprivate extension AssetRequestFactory {
-    static func request(for identifier: String, on queue: GroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
+extension AssetRequestFactory {
+    fileprivate static func request(for identifier: String, on queue: GroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
         let path: String
 
         switch apiVersion {

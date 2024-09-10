@@ -18,14 +18,14 @@
 
 import Foundation
 
-public extension NSManagedObjectContext {
+extension NSManagedObjectContext {
     /// Execute an NSBatchUpdateRequest and merge the resulting changes into all contexts.
     ///
     /// - parameters:
     ///   - request: NSBatchUpdateRequest to exectute
     ///
     /// If the operation can't be performed we intentionally crash the app
-    func executeBatchUpdateRequestOrAssert(_ request: NSBatchUpdateRequest) {
+    public func executeBatchUpdateRequestOrAssert(_ request: NSBatchUpdateRequest) {
         do {
             let result = try execute(request) as? NSBatchUpdateResult
             let objectIDArray = result?.result as? [NSManagedObjectID] ?? []

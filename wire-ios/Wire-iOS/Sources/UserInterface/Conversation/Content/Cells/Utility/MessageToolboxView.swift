@@ -28,8 +28,8 @@ protocol MessageToolboxViewDelegate: AnyObject {
     func messageToolboxViewDidSelectDelete(_ sender: UIView?)
 }
 
-private extension UILabel {
-    static func createSeparatorLabel() -> UILabel {
+extension UILabel {
+    fileprivate static func createSeparatorLabel() -> UILabel {
         let label = UILabel()
         label.numberOfLines = 1
         label.textColor = SemanticColors.View.backgroundSeparatorCell

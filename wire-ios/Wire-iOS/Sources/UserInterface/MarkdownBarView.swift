@@ -218,8 +218,8 @@ extension MarkdownBarView: PopUpIconButtonDelegate {
     }
 }
 
-private extension StyleKitIcon {
-    var headerMarkdown: Markdown? {
+extension StyleKitIcon {
+    fileprivate var headerMarkdown: Markdown? {
         switch self {
         case .markdownH1: return .h1
         case .markdownH2: return .h2
@@ -229,8 +229,8 @@ private extension StyleKitIcon {
     }
 }
 
-private extension Markdown {
-    var headerIcon: StyleKitIcon? {
+extension Markdown {
+    fileprivate var headerIcon: StyleKitIcon? {
         switch self {
         case .h1: return .markdownH1
         case .h2: return .markdownH2

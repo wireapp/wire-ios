@@ -18,11 +18,11 @@
 
 import Foundation
 
-public extension String {
+extension String {
     private static let hexRegex = try! NSRegularExpression(pattern: "^([a-fA-F0-9][a-fA-F0-9])*$", options: [])
 
     /// A data representation of the hexadecimal bytes in this string.
-    func zmHexDecodedData() -> Data? {
+    public func zmHexDecodedData() -> Data? {
         if String.hexRegex.matches(in: self, range: NSRange(location: 0, length: self.utf16.count)).isEmpty {
             return nil // does not look like a hexadecimal string
         }

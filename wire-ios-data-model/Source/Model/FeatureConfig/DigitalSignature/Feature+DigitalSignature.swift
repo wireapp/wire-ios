@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct DigitalSignature: Codable {
+extension Feature {
+    public struct DigitalSignature: Codable {
         // MARK: - Properties
 
         /// Whether the digital signature feature is available to the user.

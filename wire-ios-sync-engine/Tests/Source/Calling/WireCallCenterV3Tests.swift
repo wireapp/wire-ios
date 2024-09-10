@@ -2165,15 +2165,15 @@ extension WireCallCenterV3Tests {
 
 // MARK: - Helpers
 
-private extension AVSClient {
-    static var mockClient: AVSClient {
+extension AVSClient {
+    fileprivate static var mockClient: AVSClient {
         return AVSClient(userId: AVSIdentifier(identifier: UUID(), domain: "wire.com"),
                          clientId: UUID().transportString())
     }
 }
 
-private extension AVSActiveSpeakersChange {
-    var data: String {
+extension AVSActiveSpeakersChange {
+    fileprivate var data: String {
         let encoded = try! JSONEncoder().encode(self)
         return String(decoding: encoded, as: UTF8.self)
     }

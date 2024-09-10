@@ -227,9 +227,9 @@ extension ZMUser: ServiceUser {
     @NSManaged public var serviceIdentifier: String?
 }
 
-public extension Notification.Name {
-    static let userDidRequestPreviewAsset = Notification.Name("UserDidRequestPreviewAsset")
-    static let userDidRequestCompleteAsset = Notification.Name("UserDidRequestCompleteAsset")
+extension Notification.Name {
+    public static let userDidRequestPreviewAsset = Notification.Name("UserDidRequestPreviewAsset")
+    public static let userDidRequestCompleteAsset = Notification.Name("UserDidRequestCompleteAsset")
 }
 
 extension ZMUser {

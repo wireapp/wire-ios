@@ -21,10 +21,10 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "FileLocation")
 
-public extension FileManager {
+extension FileManager {
     /// Returns the URL for the sharedContainerDirectory of the app
     @objc(sharedContainerDirectoryForAppGroupIdentifier:)
-    static func sharedContainerDirectory(for appGroupIdentifier: String) -> URL {
+    public static func sharedContainerDirectory(for appGroupIdentifier: String) -> URL {
         let fm = FileManager.default
         let sharedContainerURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
 
@@ -40,16 +40,16 @@ public extension FileManager {
         return sharedContainerURL!
     }
 
-    @objc static let cachesFolderPrefix: String = "wire-account"
+    @objc public static let cachesFolderPrefix: String = "wire-account"
 
     /// Returns the URL for caches appending the accountIdentifier if specified
-    @objc func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
+    @objc public func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
         guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else { return nil }
         return cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
     }
 
     /// Returns the URL for caches appending the accountIdentifier if specified
-    @objc func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
+    @objc public func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
                                     .appendingPathComponent("Caches", isDirectory: true)
         if let accountIdentifier {

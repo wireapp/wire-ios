@@ -216,8 +216,8 @@ extension CallParticipantState {
     }
 }
 
-fileprivate extension VoiceChannel {
-    func canUpgradeToVideo(selfUser: UserType) -> Bool {
+extension VoiceChannel {
+    fileprivate func canUpgradeToVideo(selfUser: UserType) -> Bool {
         guard !isConferenceCall else {
             return true
         }
@@ -233,13 +233,13 @@ fileprivate extension VoiceChannel {
         return selfUser.isTeamMember || isAnyParticipantSendingVideo
     }
 
-    var isAnyParticipantSendingVideo: Bool {
+    fileprivate var isAnyParticipantSendingVideo: Bool {
         return videoState.isSending                                  // Current user is sending video and can toggle off
         || participants.any { $0.state.isSendingVideo } // Other participants are sending video
         || isIncomingVideoCall                                   // This is an incoming video call
     }
 
-    func sortedParticipants() -> [CallParticipant] {
+    fileprivate func sortedParticipants() -> [CallParticipant] {
         participants.sortedAscendingPrependingNil { $0.user.name?.lowercased() }
     }
 
@@ -250,7 +250,7 @@ fileprivate extension VoiceChannel {
         }
     }
 
-    var allowPresentationModeUpdates: Bool {
+    fileprivate var allowPresentationModeUpdates: Bool {
         return participants.count > 2
     }
 }

@@ -176,8 +176,8 @@ extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
     }
 }
 
-private extension CallClosedReason {
-    var analyticsValue: String {
+extension CallClosedReason {
+    fileprivate var analyticsValue: String {
         switch self {
         case .canceled:
             return "canceled"

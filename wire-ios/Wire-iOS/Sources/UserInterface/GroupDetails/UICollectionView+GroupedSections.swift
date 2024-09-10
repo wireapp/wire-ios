@@ -18,8 +18,8 @@
 
 import UIKit
 
-fileprivate extension UICollectionViewFlowLayout {
-    convenience init(forGroupedSections: ()) {
+extension UICollectionViewFlowLayout {
+    fileprivate convenience init(forGroupedSections: ()) {
         self.init()
         scrollDirection = .vertical
         minimumInteritemSpacing = 12

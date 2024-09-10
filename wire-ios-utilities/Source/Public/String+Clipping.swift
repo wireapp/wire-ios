@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension String {
-    func truncated(afterCharacterCount count: Int = 25) -> String {
+extension String {
+    public func truncated(afterCharacterCount count: Int = 25) -> String {
         if self.count > count {
             return String(
                 self[...self.index(

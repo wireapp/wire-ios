@@ -18,7 +18,7 @@
 
 import UIKit
 
-public extension UIBarButtonItem {
+extension UIBarButtonItem {
     /// Creates a bar button item for a navigation bar with a specified title and action.
     ///
     /// This method follows Apple's guidelines for bar button items, using a fixed font size.
@@ -70,7 +70,7 @@ public extension UIBarButtonItem {
     }
 
     /// Creates a right bar button item for a navigation bar.
-    static func createNavigationRightBarButtonItem(
+    public static func createNavigationRightBarButtonItem(
         title: String,
         action: UIAction
     ) -> UIBarButtonItem {
@@ -78,7 +78,7 @@ public extension UIBarButtonItem {
     }
 
     /// Creates a left bar button item for a navigation bar.
-    static func createNavigationLeftBarButtonItem(
+    public static func createNavigationLeftBarButtonItem(
         title: String,
         action: UIAction
     ) -> UIBarButtonItem {

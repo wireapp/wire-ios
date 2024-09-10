@@ -463,8 +463,8 @@ extension SharingSession: LinkPreviewDetectorType {
 
 // MARK: - Helper
 
-fileprivate extension ConversationList {
-    var writeableConversations: [Conversation] {
+extension ConversationList {
+    fileprivate var writeableConversations: [Conversation] {
         items.filter { !$0.isReadOnly }
     }
 }

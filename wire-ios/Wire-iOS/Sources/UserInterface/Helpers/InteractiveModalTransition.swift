@@ -23,8 +23,8 @@ struct ModalPresentationConfiguration {
     let duration: TimeInterval
 }
 
-fileprivate extension UIViewControllerContextTransitioning {
-    func complete(_ success: Bool) {
+extension UIViewControllerContextTransitioning {
+    fileprivate func complete(_ success: Bool) {
         completeTransition(!transitionWasCancelled)
     }
 }

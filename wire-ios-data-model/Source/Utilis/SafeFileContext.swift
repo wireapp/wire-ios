@@ -42,14 +42,14 @@ public final class SafeFileContext: NSObject {
     }
 }
 
-public extension SafeFileContext {
-    func acquireDirectoryLock() {
+extension SafeFileContext {
+    public func acquireDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(self.fileURL)")
         }
     }
 
-    func releaseDirectoryLock() {
+    public func releaseDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_UN) != 0 {
             fatal("Failed to unlock \(self.fileURL)")
         }

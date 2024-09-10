@@ -162,9 +162,9 @@ private struct StorableQuote: Codable {
 
 // MARK: - Storable Helper
 
-fileprivate extension UserType {
+extension UserType {
     // Private helper to get the user identifier for a `UserType`.
-    var userIdentifier: UUID? {
+    fileprivate var userIdentifier: UUID? {
         if let user = self as? ZMUser {
             return user.remoteIdentifier
         } else if let user = self as? ServiceUser {
@@ -175,18 +175,18 @@ fileprivate extension UserType {
     }
 }
 
-fileprivate extension Mention {
+extension Mention {
     /// The storable version of the object.
-    var storable: StorableMention? {
+    fileprivate var storable: StorableMention? {
         return user.userIdentifier.map {
             StorableMention(range: range, userIdentifier: $0)
         }
     }
 }
 
-fileprivate extension DraftMessage {
+extension DraftMessage {
     /// The storable version of the object.
-    var storable: StorableDraftMessage {
+    fileprivate var storable: StorableDraftMessage {
         return .init(text: text,
                      mentions: mentions.compactMap(\.storable),
                      quote: StorableQuote(nonce: quote?.nonce))

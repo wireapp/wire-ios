@@ -34,9 +34,9 @@ extension NSString {
 
 // MARK: - Legacy
 
-public extension NSString {
+extension NSString {
     @available(*, deprecated, message: "Better use one of the newer random string methods!")
-    @objc static func createLegacyAlphanumerical() -> String {
+    @objc public static func createLegacyAlphanumerical() -> String {
         String.createLegacyAlphanumerical()
     }
 }

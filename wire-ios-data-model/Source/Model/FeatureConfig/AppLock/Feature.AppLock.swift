@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct AppLock: Codable {
+extension Feature {
+    public struct AppLock: Codable {
         // MARK: - Properties
 
         public let status: Status

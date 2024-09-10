@@ -62,8 +62,8 @@ final class BasicReactionPicker: UIView {
     }
 }
 
-private extension BasicReactionPicker {
-    func setupViews() {
+extension BasicReactionPicker {
+    fileprivate func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = L10n.Localizable.Content.Message.reactions
         titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -84,7 +84,7 @@ private extension BasicReactionPicker {
         addButtons()
     }
 
-    func addButtons() {
+    fileprivate func addButtons() {
         let currentDevice = DeviceWrapper(device: .current)
         var constraints = [NSLayoutConstraint]()
         emojis.forEach { emoji in
@@ -116,11 +116,11 @@ private extension BasicReactionPicker {
         NSLayoutConstraint.activate(constraints)
     }
 
-    @objc func didTapMoreEmojis() {
+    @objc fileprivate func didTapMoreEmojis() {
         delegate?.didTapMoreEmojis()
     }
 
-    @objc func didTapEmoji(sender: UIButton) {
+    @objc fileprivate func didTapEmoji(sender: UIButton) {
         guard
             let value = sender.titleLabel?.text,
             let emoji = emojis.first(where: { $0.value == value })
@@ -131,7 +131,7 @@ private extension BasicReactionPicker {
         delegate?.didPickReaction(reaction: emoji)
     }
 
-    @objc func preferredContentSizeChanged(_ notification: Notification) {
+    @objc fileprivate func preferredContentSizeChanged(_ notification: Notification) {
         titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
         buttons.forEach { $0.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle) }
         setNeedsLayout()

@@ -38,7 +38,7 @@ private struct TupleKeyArray<Key: Hashable, Value: Any>: TupleKeyArrayType {
     public let value: [Value]
 }
 
-private extension Array where Element: TupleKeyArrayType {
+extension Array where Element: TupleKeyArrayType {
     // Merges the array in the format of
     // [[Key_a => [Value_v1_1,
     //             Value_v1_2,
@@ -63,7 +63,7 @@ private extension Array where Element: TupleKeyArrayType {
     //            ...]
     //  ...]
     // (Dictionary from @c Key to array of @c Value)
-    func merge() -> [Element.Key: [Element.Value]] {
+    fileprivate func merge() -> [Element.Key: [Element.Value]] {
         let initialValue: [Element.Key: [Element.Value]] = [:]
         return self.reduce(initialValue) {
             var objectsForKey = $0[$1.key] ?? []

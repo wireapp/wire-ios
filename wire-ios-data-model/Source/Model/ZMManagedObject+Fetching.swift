@@ -49,12 +49,12 @@ extension ZMManagedObject {
     }
 }
 
-public extension ZMManagedObject {
-    static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) -> Self? {
+extension ZMManagedObject {
+    public static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) -> Self? {
         return try? context.existingObject(with: id) as? Self
     }
 
-    static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) throws -> Self {
+    public static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) throws -> Self {
         guard let object = try context.existingObject(with: id) as? Self else {
             throw ObjectError.nonMatchingType
         }
@@ -62,21 +62,21 @@ public extension ZMManagedObject {
         return object
     }
 
-    enum ObjectError: Error {
+    public enum ObjectError: Error {
         case nonMatchingType
     }
 }
 
-public extension Collection where Element == NSManagedObjectID {
-    func existingObjects<T: ZMManagedObject>(in context: NSManagedObjectContext) -> [T]? {
+extension Collection where Element == NSManagedObjectID {
+    public func existingObjects<T: ZMManagedObject>(in context: NSManagedObjectContext) -> [T]? {
         let objects = compactMap({ T.existingObject(for: $0, in: context) })
         return objects.count == self.count ? objects : nil
     }
 }
 
-public extension ZMManagedObject {
+extension ZMManagedObject {
     // common implementation of primaryKey for ZMConversation and ZMUser
-    static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
+    public static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
         return "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
     }
 }

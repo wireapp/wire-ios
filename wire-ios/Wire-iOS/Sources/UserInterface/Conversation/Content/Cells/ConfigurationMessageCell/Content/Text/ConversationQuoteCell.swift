@@ -323,8 +323,8 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     }
 }
 
-private extension ZMConversationMessage {
-    var typeString: String {
+extension ZMConversationMessage {
+    fileprivate var typeString: String {
         if isText {
             return "text"
         } else if isLocation {

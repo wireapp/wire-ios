@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension ZMUser {
-    var isAppLockActive: Bool {
+extension ZMUser {
+    public var isAppLockActive: Bool {
         get {
             return managedObjectContext?.isAppLockEnabled ?? false
         }

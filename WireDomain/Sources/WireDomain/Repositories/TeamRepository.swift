@@ -232,8 +232,8 @@ final class TeamRepository: TeamRepositoryProtocol {
     }
 }
 
-private extension ConversationAction {
-    var name: String {
+extension ConversationAction {
+    fileprivate var name: String {
         switch self {
         case .addConversationMember:
             "add_conversation_member"

@@ -150,8 +150,8 @@ public enum KeychainManager {
     }
 }
 
-public extension KeychainManager {
-    enum Error: LocalizedError {
+extension KeychainManager {
+    public enum Error: LocalizedError {
         case failedToStoreItemInKeychain(OSStatus)
         case failedToFetchItemFromKeychain(OSStatus)
         case failedToDeleteItemFromKeychain(OSStatus)

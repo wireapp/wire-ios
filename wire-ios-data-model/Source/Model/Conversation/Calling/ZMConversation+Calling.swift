@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ZMConversation {
+extension ZMConversation {
     @discardableResult
-    @objc func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date, relevantForStatus: Bool = true) -> ZMSystemMessage {
+    @objc public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date, relevantForStatus: Bool = true) -> ZMSystemMessage {
         let associatedMessage = associatedSystemMessage(of: .missedCall, sender: user)
 
         let message = appendSystemMessage(
@@ -53,8 +53,8 @@ public extension ZMConversation {
     }
 }
 
-public extension ZMSystemMessage {
-    func addChild(_ message: ZMSystemMessage) {
+extension ZMSystemMessage {
+    public func addChild(_ message: ZMSystemMessage) {
         mutableSetValue(forKey: #keyPath(ZMSystemMessage.childMessages)).add(message)
         message.visibleInConversation = nil
         message.hiddenInConversation = conversation

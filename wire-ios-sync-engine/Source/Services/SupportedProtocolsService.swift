@@ -153,16 +153,16 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
 // MARK: -
 
-private extension UserClient {
-    var isActiveMLSClient: Bool {
+extension UserClient {
+    fileprivate var isActiveMLSClient: Bool {
         return hasMLSIdentity && isRecentlyActive
     }
 
-    var hasMLSIdentity: Bool {
+    fileprivate var hasMLSIdentity: Bool {
         return !mlsPublicKeys.isEmpty
     }
 
-    var isRecentlyActive: Bool {
+    fileprivate var isRecentlyActive: Bool {
         if isSelfClient() {
             return true
         }

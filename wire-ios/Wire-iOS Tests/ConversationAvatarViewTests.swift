@@ -165,8 +165,8 @@ final class ConversationAvatarViewTests: XCTestCase {
 
 // MARK: - Helper method
 
-fileprivate extension UIView {
-    func prepareForSnapshots() -> UIView {
+extension UIView {
+    fileprivate func prepareForSnapshots() -> UIView {
         let container = UIView()
         container.backgroundColor = .white
         container.addSubview(self)

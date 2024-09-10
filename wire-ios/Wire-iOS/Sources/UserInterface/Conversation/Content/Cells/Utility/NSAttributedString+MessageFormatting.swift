@@ -212,8 +212,8 @@ extension NSMutableAttributedString {
     }
 }
 
-private extension String {
-    mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
+extension String {
+    fileprivate mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
         return mentions.sorted(by: {
             return $0.range.location > $1.range.location
         }).compactMap({ mention in
@@ -229,8 +229,8 @@ private extension String {
     }
 }
 
-private extension IndexSet {
-    init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
+extension IndexSet {
+    fileprivate init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
         var excludedIndexSet = IndexSet()
         var includedIndexSet = IndexSet()
 

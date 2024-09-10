@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension NSNotification.Name {
-    static let teamDidRequestAsset = Notification.Name("TeamDidRequestAsset")
+extension NSNotification.Name {
+    public static let teamDidRequestAsset = Notification.Name("TeamDidRequestAsset")
 }
 
 public protocol TeamType: AnyObject {

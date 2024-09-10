@@ -283,7 +283,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
 // MARK: - Private Helpers
 
-private extension AppDelegate {
+extension AppDelegate {
     private func setupWindowAndRootViewController() {
         mainWindow.rootViewController = LaunchScreenViewController()
         mainWindow.makeKeyAndVisible()

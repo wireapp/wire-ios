@@ -22,8 +22,8 @@ import WireDesign
 
 private typealias Attributes = [NSAttributedString.Key: AnyObject]
 
-private extension ConversationActionType {
-    func formatKey(senderIsSelfUser: Bool) -> String {
+extension ConversationActionType {
+    fileprivate func formatKey(senderIsSelfUser: Bool) -> String {
         switch self {
         case .left: return localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
         case .added(herself: true): return "content.system.conversation.guest.joined"

@@ -83,8 +83,8 @@ public final class ZMSLog: NSObject {
 
 // MARK: - Emit logs
 
-public extension ZMSLog {
-    func safePublic(
+extension ZMSLog {
+    public func safePublic(
         _ message: @autoclosure () -> SanitizedString,
         level: ZMLogLevel = .info,
         osLogOn: Bool = true,
@@ -95,19 +95,19 @@ public extension ZMSLog {
         ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
 
-    func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.error, message: message(), tag: tag, file: file, line: line)
     }
 
-    func warn(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    public func warn(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.warn, message: message(), tag: tag, file: file, line: line)
     }
 
-    func info(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    public func info(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.info, message: message(), tag: tag, file: file, line: line)
     }
 
-    func debug(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
+    public func debug(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.debug, message: message(), tag: tag, file: file, line: line)
     }
 }
@@ -120,23 +120,23 @@ public extension ZMSLog {
 //     // do expensive calculation of 'foo' here
 //     zmLog.error("foo: \(foo)")
 // }
-public extension ZMSLog {
+extension ZMSLog {
     /// Executes the closure only if the log level is Warning or higher
-    func ifWarn(_ closure: () -> Void) {
+    public func ifWarn(_ closure: () -> Void) {
         if ZMLogLevel.warn.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
             closure()
         }
     }
 
     /// Executes the closure only if the log level is Info or higher
-    func ifInfo(_ closure: () -> Void) {
+    public func ifInfo(_ closure: () -> Void) {
         if ZMLogLevel.info.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
             closure()
         }
     }
 
     /// Executes the closure only if the log level is Debug or higher
-    func ifDebug(_ closure: () -> Void) {
+    public func ifDebug(_ closure: () -> Void) {
         if ZMLogLevel.debug.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
             closure()
         }
@@ -162,7 +162,7 @@ public final class LogHookToken: NSObject {
 
 // MARK: - Hooks (log observing)
 
-public extension ZMSLog {
+extension ZMSLog {
     /// Notify all hooks of a new log
     fileprivate static func notifyHooks(
         level: ZMLogLevel,
@@ -178,7 +178,7 @@ public extension ZMSLog {
     // MARK: - Rich Hooks
 
     /// Adds a log hook
-    @objc static func addEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
+    @objc public static func addEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
         var token: LogHookToken! = nil
         logQueue.sync {
             token = self.nonLockingAddEntryHook(logHook: logHook)
@@ -187,21 +187,21 @@ public extension ZMSLog {
     }
 
     /// Adds a log hook without locking
-    @objc static func nonLockingAddEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
+    @objc public static func nonLockingAddEntryHook(logHook: @escaping LogEntryHook) -> LogHookToken {
         let token = LogHookToken()
         logHooks[token.token] = logHook
         return token
     }
 
     /// Remove a log hook
-    @objc static func removeLogHook(token: LogHookToken) {
+    @objc public static func removeLogHook(token: LogHookToken) {
         logQueue.sync {
             _ = self.logHooks.removeValue(forKey: token.token)
         }
     }
 
     /// Remove all log hooks
-    @objc static func removeAllLogHooks() {
+    @objc public static func removeAllLogHooks() {
         logQueue.sync {
             self.logHooks = [:]
         }
@@ -252,7 +252,7 @@ extension ZMSLog {
 
 // MARK: - Save on disk & file management
 
-public extension ZMSLog {
+extension ZMSLog {
     private enum Constant {
         static let maxNumberOfLogFiles = 5
     }
@@ -261,19 +261,19 @@ public extension ZMSLog {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
-    @objc static let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
+    @objc public static let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
-    @objc static var currentZipLog: Data? {
+    @objc public static var currentZipLog: Data? {
         FileManager.default.zipData(from: currentLogURL)
     }
 
-    @objc static let previousZipLogURLs: [URL] = [0 ..< Constant.maxNumberOfLogFiles]
+    @objc public static let previousZipLogURLs: [URL] = [0 ..< Constant.maxNumberOfLogFiles]
         .joined()
         .compactMap { index in
             cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
         }
 
-    @objc static func clearLogs() {
+    @objc public static func clearLogs() {
         guard let currentLogURL else { return }
 
         logQueue.async {
@@ -293,7 +293,7 @@ public extension ZMSLog {
         }
     }
 
-    @objc static func switchCurrentLogToPrevious() {
+    @objc public static func switchCurrentLogToPrevious() {
         guard let currentLogURL else { return }
 
         logQueue.async {
@@ -332,7 +332,7 @@ public extension ZMSLog {
         }
     }
 
-    static var pathsForExistingLogs: [URL] {
+    public static var pathsForExistingLogs: [URL] {
         var paths: [URL] = []
         for url in previousZipLogURLs where FileManager.default.fileExists(atPath: url.path) {
             paths.append(url)
@@ -387,8 +387,8 @@ public extension ZMSLog {
 /// Synchronization queue
 let logQueue = DispatchQueue(label: "ZMSLog")
 
-public extension FileManager {
-    func zipData(from url: URL?) -> Data? {
+extension FileManager {
+    public func zipData(from url: URL?) -> Data? {
         guard
             let url,
             fileExists(atPath: url.path)

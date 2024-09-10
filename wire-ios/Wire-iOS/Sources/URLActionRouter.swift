@@ -295,8 +295,8 @@ extension URLActionRouter: PresentationDelegate {
 
 // MARK: - Errors
 
-private extension URLActionRouter {
-    enum URLActionError: LocalizedError {
+extension URLActionRouter {
+    fileprivate enum URLActionError: LocalizedError {
         private typealias AlertStrings = L10n.Localizable.UrlAction.JoinConversation.Error.Alert
 
         /// Could not join a conversation because it is full.

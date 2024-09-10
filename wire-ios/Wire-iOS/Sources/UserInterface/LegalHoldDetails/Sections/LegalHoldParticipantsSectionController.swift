@@ -38,8 +38,8 @@ protocol LegalHoldParticipantsSectionControllerDelegate: AnyObject {
 
 typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
 
-private extension ConversationLike {
-    func createViewModel() -> LegalHoldParticipantsSectionViewModel {
+extension ConversationLike {
+    fileprivate func createViewModel() -> LegalHoldParticipantsSectionViewModel {
         return LegalHoldParticipantsSectionViewModel(participants: sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold))
     }
 }

@@ -185,8 +185,8 @@ public final class AccountImageView: UIView {
 
 // MARK: - Convenience Init
 
-public extension AccountImageView {
-    convenience init(
+extension AccountImageView {
+    public convenience init(
         accountImage: UIImage,
         isTeamAccount: Bool,
         availability: Availability?
@@ -255,8 +255,8 @@ struct AccountImageView_Previews: PreviewProvider {
     }
 }
 
-private extension View {
-    func center() -> some View {
+extension View {
+    fileprivate func center() -> some View {
         VStack {
             Spacer()
             HStack {
@@ -269,8 +269,8 @@ private extension View {
     }
 }
 
-private extension UIImage {
-    static func from(solidColor color: UIColor) -> UIImage {
+extension UIImage {
+    fileprivate static func from(solidColor color: UIColor) -> UIImage {
         UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
             color.setFill()
             rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))

@@ -247,12 +247,12 @@ extension EventDecoder {
     }
 }
 
-private extension ZMUpdateEvent {
-    var recipientID: String? {
+extension ZMUpdateEvent {
+    fileprivate var recipientID: String? {
         return self.eventData?["recipient"] as? String
     }
 
-    var eventData: [String: Any]? {
+    fileprivate var eventData: [String: Any]? {
         guard let eventData = (self.payload as? [String: Any])?["data"] as? [String: Any] else {
             return nil
         }
@@ -260,7 +260,7 @@ private extension ZMUpdateEvent {
         return eventData
     }
 
-    func encryptedMessageData() throws -> Data? {
+    fileprivate func encryptedMessageData() throws -> Data? {
         guard
             let key = payloadKey,
             let string = eventData?[key] as? String,
@@ -282,7 +282,7 @@ private extension ZMUpdateEvent {
         return data
     }
 
-    var payloadKey: String? {
+    fileprivate var payloadKey: String? {
         switch type {
         case .conversationOtrMessageAdd:
             return "text"
@@ -295,7 +295,7 @@ private extension ZMUpdateEvent {
         }
     }
 
-    var externalStringCount: Int {
+    fileprivate var externalStringCount: Int {
         return (eventData?["data"] as? String)?.count ?? 0
     }
 }

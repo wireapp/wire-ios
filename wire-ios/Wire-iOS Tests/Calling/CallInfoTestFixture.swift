@@ -19,8 +19,8 @@
 import Foundation
 @testable import Wire
 
-private extension CallStateMock {
-    static var connecting: CallStateMock { return .outgoing }
+extension CallStateMock {
+    fileprivate static var connecting: CallStateMock { return .outgoing }
 }
 
 struct CallInfoTestFixture {

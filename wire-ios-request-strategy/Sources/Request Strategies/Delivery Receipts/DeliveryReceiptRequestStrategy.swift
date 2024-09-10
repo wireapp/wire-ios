@@ -132,8 +132,8 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     }
 }
 
-private extension GenericMessage {
-    var needsDeliveryConfirmation: Bool {
+extension GenericMessage {
+    fileprivate var needsDeliveryConfirmation: Bool {
         switch content {
         case .text, .image, .asset, .knock, .external, .location, .ephemeral, .composite:
             return true

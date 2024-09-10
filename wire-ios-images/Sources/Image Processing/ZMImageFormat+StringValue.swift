@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension ZMImageFormat {
-    init(_ string: String) {
+extension ZMImageFormat {
+    public init(_ string: String) {
         switch string {
         case "preview":
             self = .preview
@@ -38,7 +38,7 @@ public extension ZMImageFormat {
         }
     }
 
-    var stringValue: String {
+    public var stringValue: String {
         switch self {
         case .invalid:
             return "invalid"

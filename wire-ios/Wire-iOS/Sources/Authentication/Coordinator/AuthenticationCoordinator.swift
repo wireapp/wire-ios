@@ -896,8 +896,8 @@ extension AuthenticationCoordinator {
     }
 }
 
-private extension AuthenticationStateController.RewindMilestone {
-    func shouldRewind(to step: UIViewController) -> Bool {
+extension AuthenticationStateController.RewindMilestone {
+    fileprivate func shouldRewind(to step: UIViewController) -> Bool {
         switch self {
         case .createCredentials:
             return (step as? AuthenticationCredentialsViewController) != nil

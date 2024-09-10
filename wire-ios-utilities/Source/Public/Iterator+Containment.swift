@@ -16,25 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension IteratorProtocol {
-    mutating func any(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
+extension IteratorProtocol {
+    public mutating func any(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         guard let current = next() else { return false }
         return try predicate(current) || any(predicate)
     }
 
-    mutating func all(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
+    public mutating func all(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         guard let current = next() else { return true }
         return try predicate(current) && all(predicate)
     }
 }
 
-public extension Sequence {
-    func any(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
+extension Sequence {
+    public func any(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
         var iterator = makeIterator()
         return try iterator.any(predicate)
     }
 
-     func all(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
+     public func all(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
         var iterator = makeIterator()
         return try iterator.all(predicate)
     }

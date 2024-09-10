@@ -106,16 +106,16 @@ extension URL {
     }
 }
 
-public extension String {
-    var redacted: String {
+extension String {
+    public var redacted: String {
         return "*".repeat(self.count)
     }
 
-    func `repeat`(_ count: Int) -> String {
+    public func `repeat`(_ count: Int) -> String {
         return String(repeating: self, count: count)
     }
 
-    func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {
+    public func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {
         if self.count <= maxVisibleCharacters {
             return redacted
         }
@@ -123,7 +123,7 @@ public extension String {
         return String(newString.prefix(length))
     }
 
-    func truncated(_ maxCharacters: Int) -> String {
+    public func truncated(_ maxCharacters: Int) -> String {
         let result = String(prefix(maxCharacters))
         let fillCount = count - result.count
         return result + "*".repeat(fillCount)

@@ -182,8 +182,8 @@ extension ZMConversation {
 
 // MARK: - Fetch by group id
 
-public extension ZMConversation {
-    static func fetch(
+extension ZMConversation {
+    public static func fetch(
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
@@ -200,7 +200,7 @@ public extension ZMConversation {
         return result.first as? ZMConversation
     }
 
-    static func fetchConversationsWithPendingProposals(
+    public static func fetchConversationsWithPendingProposals(
         in context: NSManagedObjectContext
     ) -> [ZMConversation] {
         let request = Self.fetchRequest()
@@ -213,7 +213,7 @@ public extension ZMConversation {
         return try! context.fetch(request) as? [ZMConversation] ?? []
     }
 
-    static func fetchConversationsWithMLSGroupStatus(
+    public static func fetchConversationsWithMLSGroupStatus(
         mlsGroupStatus: MLSGroupStatus,
         in context: NSManagedObjectContext
     ) throws -> [ZMConversation] {
@@ -230,7 +230,7 @@ public extension ZMConversation {
         return try context.fetch(request)
     }
 
-    static func fetchSelfMLSConversation(
+    public static func fetchSelfMLSConversation(
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         let request = Self.fetchRequest()
@@ -244,13 +244,13 @@ public extension ZMConversation {
         return result.first as? ZMConversation
     }
 
-    static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
+    public static func fetchMLSConversations(in context: NSManagedObjectContext) -> [ZMConversation] {
         let request = NSFetchRequest<Self>(entityName: Self.entityName())
         request.predicate = .isMLSConversation
         return context.fetchOrAssert(request: request)
     }
 
-    func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
+    public func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
         guard let syncContext = self.managedObjectContext?.zm_sync else {
             completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
             return
@@ -272,15 +272,15 @@ public extension ZMConversation {
         }
     }
 
-    enum JoinNewMLSGroupError: Error {
+    public enum JoinNewMLSGroupError: Error {
         case couldNotFindSyncContext
     }
 }
 
 // MARK: - Migration releated fetch requests
 
-public extension ZMConversation {
-    static func fetchAllTeamGroupConversations(
+extension ZMConversation {
+    public static func fetchAllTeamGroupConversations(
         messageProtocol: MessageProtocol,
         in context: NSManagedObjectContext
     ) throws -> [ZMConversation] {
@@ -305,8 +305,8 @@ public extension ZMConversation {
 
 // MARK: - NSPredicate Extensions
 
-private extension NSPredicate {
-    static var isMLSConversation: NSPredicate {
+extension NSPredicate {
+    fileprivate static var isMLSConversation: NSPredicate {
         NSPredicate(
             format: "%K == %i && %K != nil",
             argumentArray: [
@@ -317,7 +317,7 @@ private extension NSPredicate {
         )
     }
 
-    static func hasConversationType(_ conversationType: ZMConversationType) -> NSPredicate {
+    fileprivate static func hasConversationType(_ conversationType: ZMConversationType) -> NSPredicate {
         .init(
             format: "%K == %i",
             argumentArray: [
@@ -327,7 +327,7 @@ private extension NSPredicate {
         )
     }
 
-    static func hasMessageProtocol(_ messageProtocol: MessageProtocol) -> NSPredicate {
+    fileprivate static func hasMessageProtocol(_ messageProtocol: MessageProtocol) -> NSPredicate {
         .init(
             format: "%K == %i",
             argumentArray: [
@@ -337,7 +337,7 @@ private extension NSPredicate {
         )
     }
 
-    static func teamRemoteIdentifier(matches teamRemoteIdentifier: UUID) -> NSPredicate {
+    fileprivate static func teamRemoteIdentifier(matches teamRemoteIdentifier: UUID) -> NSPredicate {
         .init(
             format: "%K == %@",
             argumentArray: [

@@ -182,8 +182,8 @@ struct AuthenticatedWireFrame {
     }
 }
 
-private extension UIViewController {
-    func presentAlert(_ alert: UIAlertController) {
+extension UIViewController {
+    fileprivate func presentAlert(_ alert: UIAlertController) {
         present(alert, animated: true, completion: nil)
     }
 }

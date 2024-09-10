@@ -53,8 +53,8 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
     }
 }
 
-fileprivate extension UIViewController {
-    func prepareForSnapshots() -> UIView {
+extension UIViewController {
+    fileprivate func prepareForSnapshots() -> UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([

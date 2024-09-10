@@ -309,12 +309,12 @@ extension LocalNotificationType {
     }
 }
 
-public extension String {
-    var pushFormatString: String {
+extension String {
+    public var pushFormatString: String {
         return Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
     }
 
-    var pushActionString: String {
+    public var pushActionString: String {
         return Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
     }
 

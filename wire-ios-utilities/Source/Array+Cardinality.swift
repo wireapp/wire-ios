@@ -18,14 +18,14 @@
 
 import Foundation
 
-public extension Array {
-    enum Cardinality {
+extension Array {
+    public enum Cardinality {
         case zero
         case singular
         case plural
     }
 
-    var cardinality: Cardinality {
+    public var cardinality: Cardinality {
         switch count {
         case 0:
             return .zero

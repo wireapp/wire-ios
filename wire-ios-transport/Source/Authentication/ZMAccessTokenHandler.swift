@@ -19,12 +19,12 @@
 import Foundation
 
 @objc
-public extension ZMAccessTokenHandler {
-    func logDebug(_ message: String) {
+extension ZMAccessTokenHandler {
+    public func logDebug(_ message: String) {
         WireLogger.authentication.debug(message)
     }
 
-    func logError(_ message: String) {
+    public func logError(_ message: String) {
         WireLogger.authentication.error(message)
     }
 }

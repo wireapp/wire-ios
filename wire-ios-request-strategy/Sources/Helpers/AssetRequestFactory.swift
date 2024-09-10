@@ -137,8 +137,8 @@ public final class AssetRequestFactory: NSObject {
     }
 }
 
-public extension AssetRequestFactory.Retention {
-    init(conversation: ZMConversation) {
+extension AssetRequestFactory.Retention {
+    public init(conversation: ZMConversation) {
         if ZMUser.selfUser(in: conversation.managedObjectContext!).hasTeam || conversation.hasTeam || conversation.containsTeamUser {
             self = .eternalInfrequentAccess
         } else {

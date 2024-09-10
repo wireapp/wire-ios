@@ -204,10 +204,10 @@ private enum BackupFileExtensions: String, CaseIterable {
     case fileExtensionWithHyphen = "ios-wbu"
 }
 
-fileprivate extension BackupMetadata {
-    static let nameAppName = "Wire"
-    static let nameFileName = "Backup"
-    static let fileExtension = BackupFileExtensions.fileExtensionWithUnderscore.rawValue
+extension BackupMetadata {
+    fileprivate static let nameAppName = "Wire"
+    fileprivate static let nameFileName = "Backup"
+    fileprivate static let fileExtension = BackupFileExtensions.fileExtensionWithUnderscore.rawValue
 
     private static let formatter: DateFormatter = {
        let formatter = DateFormatter()
@@ -215,7 +215,7 @@ fileprivate extension BackupMetadata {
         return formatter
     }()
 
-    func backupFilename(for handle: String) -> String {
+    fileprivate func backupFilename(for handle: String) -> String {
         return "\(BackupMetadata.nameAppName)-\(handle)-\(BackupMetadata.nameFileName)_\(BackupMetadata.formatter.string(from: creationTime)).\(BackupMetadata.fileExtension)"
     }
 }

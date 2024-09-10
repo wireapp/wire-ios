@@ -258,8 +258,8 @@ class ProteusServiceTests: XCTestCase {
 
 // MARK: - Helpers
 
-private extension ProteusSessionID {
-    static func random() -> Self {
+extension ProteusSessionID {
+    fileprivate static func random() -> Self {
         ProteusSessionID(
             domain: .randomDomain(),
             userID: UUID.create().uuidString,

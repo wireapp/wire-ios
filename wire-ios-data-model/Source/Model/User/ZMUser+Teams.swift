@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ZMUser {
-    @objc var team: Team? {
+extension ZMUser {
+    @objc public var team: Team? {
         return membership?.team
     }
 
-    @objc static func keyPathsForValuesAffectingTeam() -> Set<String> {
+    @objc public static func keyPathsForValuesAffectingTeam() -> Set<String> {
          return [#keyPath(ZMUser.membership)]
     }
 
-    @objc var isWirelessUser: Bool {
+    @objc public var isWirelessUser: Bool {
         return self.expiresAt != nil
     }
 
-    @objc var isExpired: Bool {
+    @objc public var isExpired: Bool {
         guard let expiresAt = self.expiresAt else {
             return false
         }
@@ -37,7 +37,7 @@ public extension ZMUser {
         return expiresAt.compare(Date()) != .orderedDescending
     }
 
-    @objc var expiresAfter: TimeInterval {
+    @objc public var expiresAfter: TimeInterval {
         guard let expiresAt = self.expiresAt else {
             return 0
         }
@@ -49,7 +49,7 @@ public extension ZMUser {
         }
     }
 
-    @objc func createOrDeleteMembershipIfBelongingToTeam() {
+    @objc public func createOrDeleteMembershipIfBelongingToTeam() {
         guard
             let teamIdentifier = self.teamIdentifier,
             let managedObjectContext = self.managedObjectContext,

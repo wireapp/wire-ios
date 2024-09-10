@@ -173,8 +173,8 @@ extension NSManagedObjectContext {
     }
 }
 
-public extension UserImageLocalCache {
-    func wipeCache() {
+extension UserImageLocalCache {
+    public func wipeCache() {
         smallUserImageCache.removeAllObjects()
         largeUserImageCache.removeAllObjects()
     }

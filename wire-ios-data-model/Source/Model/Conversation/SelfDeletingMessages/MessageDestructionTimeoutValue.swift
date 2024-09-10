@@ -88,8 +88,8 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
     }
 }
 
-public extension MessageDestructionTimeoutValue {
-    static var all: [Self] {
+extension MessageDestructionTimeoutValue {
+    public static var all: [Self] {
         return [
             .none,
             .tenSeconds,
@@ -101,12 +101,12 @@ public extension MessageDestructionTimeoutValue {
         ]
     }
 
-    var displayString: String? {
+    public var displayString: String? {
         guard .none != self else { return NSLocalizedString("input.ephemeral.timeout.none", comment: "") }
         return longStyleFormatter.string(from: TimeInterval(rawValue))
     }
 
-    var shortDisplayString: String? {
+    public var shortDisplayString: String? {
         if isSeconds {
             return String(Int(rawValue))
         }
@@ -134,27 +134,27 @@ public extension MessageDestructionTimeoutValue {
         return nil
     }
 
-    var isSeconds: Bool {
+    public var isSeconds: Bool {
         return (.zero)..<(.oneMinute) ~= rawValue
     }
 
-    var isMinutes: Bool {
+    public var isMinutes: Bool {
         return (.oneMinute)..<(.oneHour) ~= rawValue
     }
 
-    var isHours: Bool {
+    public var isHours: Bool {
         return (.oneHour)..<(.oneDay) ~= rawValue
     }
 
-    var isDays: Bool {
+    public var isDays: Bool {
         return (.oneDay)..<(.oneWeek) ~= rawValue
     }
 
-    var isWeeks: Bool {
+    public var isWeeks: Bool {
         return (.oneWeek)..<(.oneYearFromNow) ~= rawValue
     }
 
-    var isYears: Bool {
+    public var isYears: Bool {
         return rawValue >= .oneYearFromNow
     }
 }

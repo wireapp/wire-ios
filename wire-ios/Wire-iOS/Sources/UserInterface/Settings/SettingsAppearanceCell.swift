@@ -148,8 +148,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     }
 }
 
-private extension AccentColor {
-    static var current: AccentColor {
+extension AccentColor {
+    fileprivate static var current: AccentColor {
         (UIColor.indexedAccentColor() ?? .default).accentColor
     }
 }

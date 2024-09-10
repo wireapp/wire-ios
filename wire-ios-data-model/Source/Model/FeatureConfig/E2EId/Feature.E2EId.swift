@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct E2EI: Codable {
+extension Feature {
+    public struct E2EI: Codable {
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.
@@ -62,8 +62,8 @@ public extension Feature {
     }
 }
 
-public extension Feature.E2EI {
-    var isEnabled: Bool {
+extension Feature.E2EI {
+    public var isEnabled: Bool {
         return status == .enabled
     }
 }

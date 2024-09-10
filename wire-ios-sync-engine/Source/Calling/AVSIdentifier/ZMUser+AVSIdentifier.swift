@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension ZMUser {
-    var avsIdentifier: AVSIdentifier {
+extension ZMUser {
+    public var avsIdentifier: AVSIdentifier {
         .init(identifier: remoteIdentifier, domain: domain)
     }
 }

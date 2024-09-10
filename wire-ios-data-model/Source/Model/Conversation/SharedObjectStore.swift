@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-fileprivate extension Notification {
-    var contextDidSaveData: [AnyHashable: AnyObject] {
+extension Notification {
+    fileprivate var contextDidSaveData: [AnyHashable: AnyObject] {
         guard let info = userInfo else { return [:] }
         var changes = [AnyHashable: AnyObject]()
         for (key, value) in info {

@@ -41,6 +41,6 @@ public enum LogAttributesKey: String, Comparable {
     }
 }
 
-public extension LogAttributes {
-    static var safePublic = [LogAttributesKey.public: true]
+extension LogAttributes {
+    public static var safePublic = [LogAttributesKey.public: true]
 }

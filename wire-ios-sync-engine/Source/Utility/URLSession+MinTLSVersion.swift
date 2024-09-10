@@ -19,8 +19,8 @@
 import Foundation
 
 @objc
-public extension URLSession {
-    func setMinTLSVersionIfNeeded(_ minTLSVersion: String?) {
+extension URLSession {
+    public func setMinTLSVersionIfNeeded(_ minTLSVersion: String?) {
         let minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
         configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
     }

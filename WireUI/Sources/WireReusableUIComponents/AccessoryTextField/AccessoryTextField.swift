@@ -153,13 +153,13 @@ extension AccessoryTextField {
 
 // MARK: - Custom edge insets
 
-public extension AccessoryTextField {
-    override func textRect(forBounds bounds: CGRect) -> CGRect {
+extension AccessoryTextField {
+    public override func textRect(forBounds bounds: CGRect) -> CGRect {
         let textRect = super.textRect(forBounds: bounds)
         return textRect.inset(by: textInsets.directionAwareInsets(view: self))
     }
 
-    override func editingRect(forBounds bounds: CGRect) -> CGRect {
+    public override func editingRect(forBounds bounds: CGRect) -> CGRect {
         let editingRect: CGRect = super.editingRect(forBounds: bounds)
         return editingRect.inset(by: textInsets.directionAwareInsets(view: self))
     }
@@ -167,14 +167,14 @@ public extension AccessoryTextField {
 
 // MARK: - Placeholder
 
-public extension AccessoryTextField {
+extension AccessoryTextField {
     internal func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
         let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: textFieldAttributes.placeholderColor,
                                                          .font: textFieldAttributes.placeholderFont.font!]
         return NSAttributedString(string: placeholder, attributes: attributes)
     }
 
-    override var placeholder: String? {
+    public override var placeholder: String? {
         get {
             super.placeholder
         }
@@ -185,14 +185,14 @@ public extension AccessoryTextField {
         }
     }
 
-    override func drawPlaceholder(in rect: CGRect) {
+    public override func drawPlaceholder(in rect: CGRect) {
         super.drawPlaceholder(in: rect.inset(by: placeholderInsets.directionAwareInsets(view: self)))
     }
 }
 
 // MARK: - Right and left accessory
 
-public extension AccessoryTextField {
+extension AccessoryTextField {
     internal func rightAccessoryViewRect(forBounds bounds: CGRect, isLeftToRight: Bool) -> CGRect {
         let contentSize = accessoryContainer.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         var rightViewRect: CGRect
@@ -206,13 +206,13 @@ public extension AccessoryTextField {
         return rightViewRect
     }
 
-    override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+    public override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         isLeftToRight
             ? rightAccessoryViewRect(forBounds: bounds, isLeftToRight: isLeftToRight)
             : .zero
     }
 
-    override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+    public override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
         isLeftToRight
             ? .zero
             : rightAccessoryViewRect(forBounds: bounds, isLeftToRight: isLeftToRight)
@@ -221,15 +221,15 @@ public extension AccessoryTextField {
 
 // MARK: -
 
-private extension UIView {
-    var isLeftToRight: Bool {
+extension UIView {
+    fileprivate var isLeftToRight: Bool {
         effectiveUserInterfaceLayoutDirection == .leftToRight
     }
 }
 
-private extension UIEdgeInsets {
+extension UIEdgeInsets {
     /// The leading insets, that respect the layout direction.
-    func leading(view: UIView) -> CGFloat {
+    fileprivate func leading(view: UIView) -> CGFloat {
         if view.isLeftToRight {
             left
         } else {
@@ -238,7 +238,7 @@ private extension UIEdgeInsets {
     }
 
     /// The trailing insets, that respect the layout direction.
-    func trailing(view: UIView) -> CGFloat {
+    fileprivate func trailing(view: UIView) -> CGFloat {
         if view.isLeftToRight {
             right
         } else {
@@ -247,7 +247,7 @@ private extension UIEdgeInsets {
     }
 
     /// Returns a copy of the insets that are adapted for the current layout.
-    func directionAwareInsets(view: UIView) -> UIEdgeInsets {
+    fileprivate func directionAwareInsets(view: UIView) -> UIEdgeInsets {
         UIEdgeInsets(top: top,
                      left: leading(view: view),
                      bottom: bottom,

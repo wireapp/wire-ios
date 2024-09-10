@@ -75,12 +75,12 @@ extension URL {
 
 // MARK: - Private
 
-fileprivate extension UIApplication {
-    var tweetbotInstalled: Bool {
+extension UIApplication {
+    fileprivate var tweetbotInstalled: Bool {
         return canHandleScheme("tweetbot://")
     }
 
-    var twitterrificInstalled: Bool {
+    fileprivate var twitterrificInstalled: Bool {
         return canHandleScheme("twitterrific://")
     }
 }
@@ -91,8 +91,8 @@ extension URL {
     }
 }
 
-fileprivate extension URL {
-    var tweetbotURL: URL? {
+extension URL {
+    fileprivate var tweetbotURL: URL? {
         guard isTweet else { return nil }
 
         let components = [
@@ -109,7 +109,7 @@ fileprivate extension URL {
         return URL(string: tweetbot)
     }
 
-    var twitterrificURL: URL? {
+    fileprivate var twitterrificURL: URL? {
         return tweetID.flatMap { URL(string: "twitterrific://current/tweet?id=\($0)") }
     }
 
@@ -119,8 +119,8 @@ fileprivate extension URL {
     }
 }
 
-private extension String {
-    func replacingWithTweetbotURLScheme(_ string: String) -> String {
+extension String {
+    fileprivate func replacingWithTweetbotURLScheme(_ string: String) -> String {
         return replacingOccurrences(of: string, with: "tweetbot://")
     }
 }

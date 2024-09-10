@@ -18,7 +18,7 @@
 
 import Foundation
 
-public extension UserType {
+extension UserType {
     private var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd-hh.mm.ss"
@@ -28,7 +28,7 @@ public extension UserType {
     /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
     ///
     /// - Returns: a string <= 214 characters
-    func filename(suffix: String? = nil) -> String {
+    public func filename(suffix: String? = nil) -> String {
         let dateString = "-" + dateFormatter.string(from: Date())
         let normalizedFilename = name!.normalizedFilename
 

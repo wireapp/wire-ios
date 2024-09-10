@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ZMConversation {
+extension ZMConversation {
     /// A meaningful display name is one that can be constructed from the conversation data
     @objc
-    var displayName: String? {
+    public var displayName: String? {
         switch conversationType {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()

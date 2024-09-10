@@ -18,10 +18,10 @@
 
 import Foundation
 
-public extension Account {
+extension Account {
     /// Delete the keychain items associated with the account.
 
-    func deleteKeychainItems() {
+    public func deleteKeychainItems() {
         let item = AppLockController.PasscodeKeychainItem(userId: userIdentifier)
         try? Keychain.deleteItem(item)
     }

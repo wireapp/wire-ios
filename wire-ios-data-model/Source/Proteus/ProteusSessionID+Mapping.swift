@@ -19,8 +19,8 @@
 import Foundation
 import WireCryptobox
 
-public extension ProteusSessionID {
-    func mapToEncryptionSessionID() -> EncryptionSessionIdentifier {
+extension ProteusSessionID {
+    public func mapToEncryptionSessionID() -> EncryptionSessionIdentifier {
         return EncryptionSessionIdentifier(
             domain: domain,
             userId: userID,

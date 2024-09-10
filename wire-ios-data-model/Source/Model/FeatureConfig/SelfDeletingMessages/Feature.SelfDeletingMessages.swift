@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct SelfDeletingMessages: Codable {
+extension Feature {
+    public struct SelfDeletingMessages: Codable {
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.

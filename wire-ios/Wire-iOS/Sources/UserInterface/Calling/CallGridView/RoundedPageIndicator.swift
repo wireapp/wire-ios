@@ -79,12 +79,12 @@ class RoundedPageIndicator: RoundedBlurView {
     }
 }
 
-private extension CGFloat {
-    static let pageControlMargin: CGFloat = 10
+extension CGFloat {
+    fileprivate static let pageControlMargin: CGFloat = 10
 }
 
-private extension UIImage {
-    class func circle(filled: Bool) -> UIImage? {
+extension UIImage {
+    fileprivate class func circle(filled: Bool) -> UIImage? {
         let size = CGSize(width: 12, height: 12)
         let lineWidth = 1.0
 

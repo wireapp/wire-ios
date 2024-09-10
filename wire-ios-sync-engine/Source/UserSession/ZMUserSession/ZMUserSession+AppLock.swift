@@ -26,10 +26,10 @@ public protocol UserSessionAppLockInterface {
     var lock: SessionLock? { get }
 }
 
-public extension UserSessionAppLockInterface {
+extension UserSessionAppLockInterface {
     /// Whether the session is currently locked.
 
-    var isLocked: Bool {
+    public var isLocked: Bool {
         return lock != .none
     }
 }

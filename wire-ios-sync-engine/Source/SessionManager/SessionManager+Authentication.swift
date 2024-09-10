@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension SessionManager {
-    static let previousSystemBootTimeContainer = "PreviousSystemBootTime"
+extension SessionManager {
+    public static let previousSystemBootTimeContainer = "PreviousSystemBootTime"
 
-    static var previousSystemBootTime: Date? {
+    public static var previousSystemBootTime: Date? {
         get {
             guard let string = ZMKeychain.data(forAccount: previousSystemBootTimeContainer).map({ String(decoding: $0, as: UTF8.self) }),
                 let timeInterval = TimeInterval(string) else {

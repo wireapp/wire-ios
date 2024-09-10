@@ -86,9 +86,9 @@ extension URL {
     }
 }
 
-public extension NSURL {
+extension NSURL {
     /// Returns the location of the persistent store file in the given account folder
-    @objc func URLByAppendingPersistentStoreLocation() -> URL {
+    @objc public func URLByAppendingPersistentStoreLocation() -> URL {
         return (self as URL).appendingPersistentStoreLocation()
     }
 }

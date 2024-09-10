@@ -111,8 +111,8 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
 // MARK: - Append system messages
 
-private extension ZMConversation {
-    func appendConversationVerifiedSystemMessage() {
+extension ZMConversation {
+    fileprivate func appendConversationVerifiedSystemMessage() {
         guard let context = managedObjectContext else {
             return
         }
@@ -120,7 +120,7 @@ private extension ZMConversation {
         appendConversationVerifiedSystemMessage(sender: selfUser, at: Date())
     }
 
-    func appendConversationDegradedSystemMessage() {
+    fileprivate func appendConversationDegradedSystemMessage() {
         guard let context = managedObjectContext else {
             return
         }

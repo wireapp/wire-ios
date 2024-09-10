@@ -20,8 +20,8 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
-fileprivate extension String {
-    var isValidQuery: Bool {
+extension String {
+    fileprivate var isValidQuery: Bool {
         return !isEmpty && self != "@"
     }
 }

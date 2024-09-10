@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension Equatable {
-    func isOne(of others: Self...) -> Bool {
+extension Equatable {
+    public func isOne(of others: Self...) -> Bool {
         return isOne(of: others)
     }
 
-    func isOne<T: Collection>(of others: T) -> Bool where T.Element == Self {
+    public func isOne<T: Collection>(of others: T) -> Bool where T.Element == Self {
         return others.contains(self)
     }
 }

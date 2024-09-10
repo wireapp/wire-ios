@@ -100,10 +100,10 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
     }
 }
 
-private extension UserClient {
+extension UserClient {
     /// Creates session and update missing clients and messages that depend on those clients
 
-    func establishSessionAndUpdateMissingClients(
+    fileprivate func establishSessionAndUpdateMissingClients(
         prekey: Payload.Prekey,
         selfClient: UserClient
     ) async {
@@ -121,13 +121,13 @@ private extension UserClient {
         }
    }
 
-    func markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: UserClient) {
+    fileprivate func markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: UserClient) {
         failedToEstablishSession = true
         clearMessagesMissingRecipient()
         selfClient.removeMissingClient(self)
     }
 
-    func clearMessagesMissingRecipient() {
+    fileprivate func clearMessagesMissingRecipient() {
         messagesMissingRecipient.forEach {
             if let message = $0 as? ZMOTRMessage {
                 message.doesNotMissRecipient(self)

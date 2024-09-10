@@ -98,12 +98,12 @@ open class ZMVideoMetadata: ZMFileMetadata {
     }
 }
 
-public extension ZMFileMetadata {
-    var mimeType: String {
+extension ZMFileMetadata {
+    public var mimeType: String {
         return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
     }
 
-    var size: UInt64 {
+    public var size: UInt64 {
         do {
             let attributes = try fileURL.resourceValues(forKeys: [.fileSizeKey])
             let size = attributes.fileSize ?? 0

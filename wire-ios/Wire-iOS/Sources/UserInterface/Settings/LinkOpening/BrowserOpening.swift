@@ -86,20 +86,20 @@ extension URL {
 
 // MARK: - Private
 
-fileprivate extension UIApplication {
-    var chromeInstalled: Bool {
+extension UIApplication {
+    fileprivate var chromeInstalled: Bool {
         return canHandleScheme("googlechrome://")
     }
 
-    var firefoxInstalled: Bool {
+    fileprivate var firefoxInstalled: Bool {
         return canHandleScheme("firefox://")
     }
 
-    var snowhazeInstalled: Bool {
+    fileprivate var snowhazeInstalled: Bool {
         return canHandleScheme("shtps://")
     }
 
-    var braveInstalled: Bool {
+    fileprivate var braveInstalled: Bool {
         return canHandleScheme("brave://")
     }
 }

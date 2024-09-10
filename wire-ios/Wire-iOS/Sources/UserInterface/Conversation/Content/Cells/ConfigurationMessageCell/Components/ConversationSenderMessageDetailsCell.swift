@@ -337,8 +337,8 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     }
 }
 
-private extension UserType {
-    func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
+extension UserType {
+    fileprivate func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
         if self.isServiceUser {
             return .service
 

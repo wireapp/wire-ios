@@ -18,10 +18,10 @@
 
 import WireDataModel
 
-public extension ZMLocalNotification {
-    static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
+extension ZMLocalNotification {
+    public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
-    convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
+    public convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
         var builderType: EventNotificationBuilder.Type?
 
         switch event.type {
@@ -59,7 +59,7 @@ public extension ZMLocalNotification {
 
     // Determines if the notification content should be hidden as reflected in the store
     // metatdata for the given managed object context.
-    static func shouldHideNotificationContent(moc: NSManagedObjectContext?) -> Bool {
+    public static func shouldHideNotificationContent(moc: NSManagedObjectContext?) -> Bool {
         let value = moc?.persistentStoreMetadata(forKey: ZMShouldHideNotificationContentKey) as? NSNumber
         return value?.boolValue ?? false
     }

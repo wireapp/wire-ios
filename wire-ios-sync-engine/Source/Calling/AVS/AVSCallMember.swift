@@ -93,8 +93,8 @@ extension AVSCallMember {
     }
 }
 
-private extension AVSClient {
-    init(member: AVSParticipantsChange.Member) {
+extension AVSClient {
+    fileprivate init(member: AVSParticipantsChange.Member) {
         userId = member.userid
         clientId = member.clientid
     }

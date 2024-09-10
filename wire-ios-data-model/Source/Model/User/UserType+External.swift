@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension UserType {
-    var isExternalPartner: Bool {
+extension UserType {
+    public var isExternalPartner: Bool {
         return teamRole == .partner
     }
 }

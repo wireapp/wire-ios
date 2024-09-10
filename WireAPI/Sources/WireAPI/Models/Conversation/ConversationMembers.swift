@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension Conversation {
+extension Conversation {
     /// Represents all conversation's members including self.
 
-    struct Members: Equatable, Codable {
+    public struct Members: Equatable, Codable {
         /// The particiants excluding the self user.
 
         public let others: [Member]

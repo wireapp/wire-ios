@@ -19,12 +19,12 @@
 import Foundation
 import WireUtilities
 
-public extension ChaCha20Poly1305 {
+extension ChaCha20Poly1305 {
     /// AEAD Encryption wrapper for IETF ChaCha20-Poly1305 construction.
     /// 
     /// See https://libsodium.gitbook.io/doc/secret-key_cryptography/aead/chacha20-poly1305/ietf_chacha20-poly1305_construction
 
-    enum AEADEncryption {
+    public enum AEADEncryption {
         // MARK: - Public Functions
 
         /// Encrypts a message with a key.

@@ -49,8 +49,8 @@ private class HTTPClientImpl: HTTPClient {
     }
 }
 
-private extension HTTPRequest {
-    func toZMTransportRequest() -> ZMTransportRequest {
+extension HTTPRequest {
+    fileprivate func toZMTransportRequest() -> ZMTransportRequest {
         .init(
             path: path,
             method: method.toZMTransportRequestMethod(),
@@ -60,8 +60,8 @@ private extension HTTPRequest {
     }
 }
 
-private extension HTTPRequest.Method {
-    func toZMTransportRequestMethod() -> ZMTransportRequestMethod {
+extension HTTPRequest.Method {
+    fileprivate func toZMTransportRequestMethod() -> ZMTransportRequestMethod {
         switch self {
         case .delete:
             return .delete
@@ -77,8 +77,8 @@ private extension HTTPRequest.Method {
     }
 }
 
-private extension ZMTransportResponse {
-    func toHTTPResponse() -> HTTPResponse {
+extension ZMTransportResponse {
+    fileprivate func toHTTPResponse() -> HTTPResponse {
         return HTTPResponse(
             code: httpStatus,
             payload: rawData

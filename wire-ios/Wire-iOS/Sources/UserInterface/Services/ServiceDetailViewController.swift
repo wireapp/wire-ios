@@ -238,31 +238,31 @@ final class ServiceDetailViewController: UIViewController {
     }
 }
 
-fileprivate extension ZMButton {
-    typealias PeoplePickerServices = L10n.Localizable.Peoplepicker.Services
+extension ZMButton {
+    fileprivate typealias PeoplePickerServices = L10n.Localizable.Peoplepicker.Services
 
-    static func openServiceConversationButton() -> Self {
+    fileprivate static func openServiceConversationButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
             title: PeoplePickerServices.OpenConversation.item.capitalized
         )
     }
 
-    static func createAddServiceButton() -> Self {
+    fileprivate static func createAddServiceButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
             title: PeoplePickerServices.AddService.button.capitalized
         )
     }
 
-    static func createDestructiveServiceButton() -> Self {
+    fileprivate static func createDestructiveServiceButton() -> Self {
         .init(
             style: .accentColorTextButtonStyle,
             title: L10n.Localizable.Participants.Services.RemoveIntegration.button.capitalized
         )
     }
 
-    convenience init(style: ButtonStyle, title: String) {
+    fileprivate convenience init(style: ButtonStyle, title: String) {
         self.init(style: style, cornerRadius: 16, fontSpec: .normalSemiboldFont)
         self.setTitle(title, for: .normal)
     }

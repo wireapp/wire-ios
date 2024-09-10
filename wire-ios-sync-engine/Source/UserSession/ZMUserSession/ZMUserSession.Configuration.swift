@@ -18,10 +18,10 @@
 
 import Foundation
 
-public extension ZMUserSession {
+extension ZMUserSession {
     /// An object used to configure a user session.
 
-    final class Configuration: NSObject {
+    public final class Configuration: NSObject {
         // MARK: - Properties
 
         public let appLockConfig: AppLockController.LegacyConfig?

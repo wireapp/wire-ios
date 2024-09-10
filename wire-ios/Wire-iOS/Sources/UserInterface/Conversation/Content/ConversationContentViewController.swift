@@ -486,8 +486,8 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
     }
 }
 
-private extension UIAlertController {
-    static func showErrorAlertWithLink(title: String,
+extension UIAlertController {
+    fileprivate static func showErrorAlertWithLink(title: String,
                                        message: String) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 

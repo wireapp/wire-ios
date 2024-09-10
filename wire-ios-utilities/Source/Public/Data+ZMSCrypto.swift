@@ -30,15 +30,15 @@ public enum AESError: Error {
 }
 
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
-public extension Data {
-    init?(hexString: String) {
+extension Data {
+    public init?(hexString: String) {
         guard let decodedData = hexString.zmHexDecodedData() else {
             return nil
         }
         self = decodedData
     }
 
-    func zmMD5Digest() -> Data {
+    public func zmMD5Digest() -> Data {
         var md5Hash = Insecure.MD5()
 
         // We may have a lot of data to hash, so compute in chunks of 512 bytes.
@@ -50,11 +50,11 @@ public extension Data {
         return Data(digest)
     }
 
-    func zmHMACSHA256Digest(key: Data) -> Data {
+    public func zmHMACSHA256Digest(key: Data) -> Data {
         return (self as NSData).zmHMACSHA256Digest(withKey: key)
     }
 
-    func zmHexEncodedString() -> String {
+    public func zmHexEncodedString() -> String {
         let hexDigits = Array("0123456789abcdef".utf16)
         var characters: [unichar] = []
         characters.reserveCapacity(count * 2)
@@ -67,27 +67,27 @@ public extension Data {
         return String(utf16CodeUnits: characters, count: characters.count)
     }
 
-    static func zmRandomSHA256Key() -> Data {
+    public static func zmRandomSHA256Key() -> Data {
         return NSData.zmRandomSHA256Key()
     }
 
-    func zmSHA256Digest() -> Data {
+    public func zmSHA256Digest() -> Data {
         return (self as NSData).zmSHA256Digest()
     }
 
-    func base64String() -> String {
+    public func base64String() -> String {
         return (self as NSData).base64String()
     }
 
-    func zmEncryptPrefixingIV(key: Data) -> Data {
+    public func zmEncryptPrefixingIV(key: Data) -> Data {
         return (self as NSData).zmEncryptPrefixingIV(withKey: key)
     }
 
-    func zmDecryptPrefixedIV(key: Data) -> Data {
+    public func zmDecryptPrefixedIV(key: Data) -> Data {
         return (self as NSData).zmDecryptPrefixedIV(withKey: key)
     }
 
-    func zmEncryptPrefixingPlainTextIV(key: Data) throws -> Data {
+    public func zmEncryptPrefixingPlainTextIV(key: Data) throws -> Data {
         let keyLength = key.count
         guard keyLength == kCCKeySizeAES256 else {
             throw AESError.keySizeError
@@ -126,21 +126,21 @@ public extension Data {
         return output
     }
 
-    func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {
+    public func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {
         return (self as NSData).zmDecryptPrefixedPlainTextIV(withKey: key)
     }
 
-    static func secureRandomData(length: UInt) -> Data {
+    public static func secureRandomData(length: UInt) -> Data {
         return NSData.secureRandomData(ofLength: length)
     }
 
-    static func randomEncryptionKey() -> Data {
+    public static func randomEncryptionKey() -> Data {
         return NSData.randomEncryptionKey()
     }
 }
 
-private extension Range where Index == Int {
-    func chunked(by chunkSize: Int) -> [Self] {
+extension Range where Index == Int {
+    fileprivate func chunked(by chunkSize: Int) -> [Self] {
         guard chunkSize > 0 else { return [] }
 
         let numberOfWholeChunks = endIndex / chunkSize

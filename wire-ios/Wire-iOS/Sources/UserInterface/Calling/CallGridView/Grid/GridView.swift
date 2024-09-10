@@ -98,8 +98,8 @@ final class GridView: UICollectionView {
 
 // MARK: - Helpers
 
-private extension GridView {
-    func firstIndexPath(forPage page: Int) -> IndexPath? {
+extension GridView {
+    fileprivate func firstIndexPath(forPage page: Int) -> IndexPath? {
         let yPosition = CGFloat(page) * bounds.height + 1
         return indexPathForItem(at: CGPoint(x: 0, y: yPosition))
     }
@@ -107,13 +107,13 @@ private extension GridView {
 
 // MARK: - Segment calculation
 
-private extension GridView {
-    enum SegmentType {
+extension GridView {
+    fileprivate enum SegmentType {
         case row
         case column
     }
 
-    enum ParticipantAmount {
+    fileprivate enum ParticipantAmount {
         case moreThanTwo
         case twoOrLess
 
@@ -122,7 +122,7 @@ private extension GridView {
         }
     }
 
-    enum SplitType {
+    fileprivate enum SplitType {
         case middleSplit
         case proportionalSplit
 
@@ -151,7 +151,7 @@ private extension GridView {
         return itemsRemaining > maxItemsPerPage ? maxItemsPerPage : itemsRemaining
     }
 
-    func numberOfItemsIn(_ segmentType: SegmentType, for indexPath: IndexPath) -> Int {
+    fileprivate func numberOfItemsIn(_ segmentType: SegmentType, for indexPath: IndexPath) -> Int {
         let numberOfItemsInPage = self.numberOfItemsInPage(indexPath: indexPath)
 
         let participantAmount = ParticipantAmount(numberOfItemsInPage)
@@ -174,7 +174,7 @@ private extension GridView {
         }
     }
 
-    func isOddLastRow(_ indexPath: IndexPath) -> Bool {
+    fileprivate func isOddLastRow(_ indexPath: IndexPath) -> Bool {
         guard let numberOfItems = dataSource?.collectionView(self, numberOfItemsInSection: indexPath.section) else {
             return false
         }

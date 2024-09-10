@@ -161,7 +161,7 @@ protocol APIVersionResolverDelegate: AnyObject {
 
 // MARK: - Prod/Dev versions
 
-public extension APIVersion {
+extension APIVersion {
     /// API versions considered production ready by the client.
     ///
     /// IMPORTANT: A version X should only be considered a production version
@@ -172,10 +172,10 @@ public extension APIVersion {
     /// Only if these critera are met should we explicitly mark the version
     /// as production ready.
 
-    static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6]
+    public static let productionVersions: Set<Self> = [.v0, .v1, .v2, .v3, .v4, .v5, .v6]
 
     /// API versions currently under development and not suitable for production
     /// environments.
 
-    static let developmentVersions: Set<Self> = Set(allCases).subtracting(productionVersions)
+    public static let developmentVersions: Set<Self> = Set(allCases).subtracting(productionVersions)
 }

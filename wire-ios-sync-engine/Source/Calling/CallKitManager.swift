@@ -869,13 +869,13 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
 
 // MARK: - Helpers
 
-private extension Date {
-    func clampForCallKit() -> Date {
+extension Date {
+    fileprivate func clampForCallKit() -> Date {
         let twoWeeksBefore = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
         return clamp(between: twoWeeksBefore, and: Date())
     }
 
-    func clamp(between fromDate: Date, and toDate: Date) -> Date {
+    fileprivate func clamp(between fromDate: Date, and toDate: Date) -> Date {
         if timeIntervalSinceReferenceDate < fromDate.timeIntervalSinceReferenceDate {
             return fromDate
         } else if timeIntervalSinceReferenceDate > toDate.timeIntervalSinceReferenceDate {
@@ -939,8 +939,8 @@ extension CallKitCallRegister {
     }
 }
 
-private extension CXCallController {
-    func existingCall(for callKitCall: CallKitCall) -> CXCall? {
+extension CXCallController {
+    fileprivate func existingCall(for callKitCall: CallKitCall) -> CXCall? {
         return callObserver.calls.first { $0.uuid == callKitCall.id }
     }
 }

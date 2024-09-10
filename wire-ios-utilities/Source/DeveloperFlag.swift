@@ -120,8 +120,8 @@ private final class DeveloperFlagsDefault {
     }
 }
 
-public extension Bundle {
-    func infoForKey(_ key: String) -> String? {
+extension Bundle {
+    public func infoForKey(_ key: String) -> String? {
         return infoDictionary?[key] as? String
     }
 }

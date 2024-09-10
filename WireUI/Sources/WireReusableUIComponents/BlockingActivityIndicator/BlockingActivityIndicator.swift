@@ -79,8 +79,8 @@ private struct BlockingActivityIndicatorState {
 
 // MARK: - UIView + BlockingActivityIndicators
 
-private extension UIView {
-    func blockAndStartAnimating(
+extension UIView {
+    fileprivate func blockAndStartAnimating(
         blockingActivityIndicator reference: BlockingActivityIndicator,
         text: String
     ) {
@@ -120,7 +120,7 @@ private extension UIView {
         blockingActivityIndicatorState = state
     }
 
-    func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
+    fileprivate func unblockAndStopAnimatingIfNeeded(blockingActivityIndicator reference: BlockingActivityIndicator?) {
         guard var state = blockingActivityIndicatorState else { return }
 
         state.weakReferences = state.weakReferences.filter { $0.reference != nil && $0.reference !== reference }

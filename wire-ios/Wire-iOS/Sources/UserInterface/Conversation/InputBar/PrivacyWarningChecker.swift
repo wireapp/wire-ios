@@ -86,13 +86,13 @@ struct PrivacyWarningChecker {
     }
 }
 
-private extension Notification.Name {
-    static let presentPrivacyWarningAlert = Notification.Name("presentPrivacyWarningAlert")
-    static let privacyWarningConfirm = Notification.Name("privacyWarningConfirm")
+extension Notification.Name {
+    fileprivate static let presentPrivacyWarningAlert = Notification.Name("presentPrivacyWarningAlert")
+    fileprivate static let privacyWarningConfirm = Notification.Name("privacyWarningConfirm")
 }
 
-private extension Notification {
-    var sendAnyway: Bool {
+extension Notification {
+    fileprivate var sendAnyway: Bool {
         get {
             userInfo?["sendAnyway"] as? Bool ?? false
         }
@@ -108,12 +108,12 @@ extension Notification {
     }
 }
 
-private extension Notification {
-    static func privacyWarningConfirm(sendAnyway: Bool) -> Notification {
+extension Notification {
+    fileprivate static func privacyWarningConfirm(sendAnyway: Bool) -> Notification {
         Notification(name: .privacyWarningConfirm, object: nil, userInfo: ["sendAnyway": sendAnyway])
     }
 
-    static func presentPrivacyWarningAlert(type: PrivacyWarningChecker.AlertType) -> Notification {
+    fileprivate static func presentPrivacyWarningAlert(type: PrivacyWarningChecker.AlertType) -> Notification {
         Notification(name: .presentPrivacyWarningAlert, object: nil, userInfo: ["alertType": type])
     }
 }

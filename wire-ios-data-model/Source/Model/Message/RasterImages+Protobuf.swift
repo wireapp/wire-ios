@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension WireProtos.Asset.Original {
-    var hasRasterImage: Bool {
+extension WireProtos.Asset.Original {
+    public var hasRasterImage: Bool {
         guard case .image? = metaData else {
             return false
         }
@@ -28,14 +28,14 @@ public extension WireProtos.Asset.Original {
     }
 }
 
-fileprivate extension ImageAsset {
-    var isRaster: Bool {
+extension ImageAsset {
+    fileprivate var isRaster: Bool {
         return !UTIHelper.conformsToVectorType(mime: mimeType)
     }
 }
 
-public extension GenericMessage {
-    var hasRasterImage: Bool {
+extension GenericMessage {
+    public var hasRasterImage: Bool {
         guard let content else { return false }
         switch content {
         case .image(let data):

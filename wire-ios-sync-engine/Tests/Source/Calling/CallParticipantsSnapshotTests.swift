@@ -251,22 +251,22 @@ final class CallParticipantsSnapshotTests: MessagingTest {
     }
 }
 
-private extension AVSCallMember {
-    func with(audioState: AudioState) -> AVSCallMember {
+extension AVSCallMember {
+    fileprivate func with(audioState: AudioState) -> AVSCallMember {
         return AVSCallMember(client: client,
                              audioState: audioState,
                              videoState: videoState,
                              microphoneState: microphoneState)
     }
 
-    func with(videoState: VideoState) -> AVSCallMember {
+    fileprivate func with(videoState: VideoState) -> AVSCallMember {
         return AVSCallMember(client: client,
                              audioState: audioState,
                              videoState: videoState,
                              microphoneState: microphoneState)
     }
 
-    func with(microphoneState: MicrophoneState) -> AVSCallMember {
+    fileprivate func with(microphoneState: MicrophoneState) -> AVSCallMember {
         return AVSCallMember(client: client,
                              audioState: audioState,
                              videoState: videoState,

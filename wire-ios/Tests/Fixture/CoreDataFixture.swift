@@ -314,8 +314,8 @@ extension CoreDataFixture {
     }
 }
 
-private extension UIColor {
-    class var accentOverrideColor: AccentColor? {
+extension UIColor {
+    fileprivate class var accentOverrideColor: AccentColor? {
         ZMUser.selfUser()?.accentColor
     }
 }

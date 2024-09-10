@@ -71,8 +71,8 @@ extension TeamPayload {
     }
 }
 
-fileprivate extension Team {
-    static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
+extension Team {
+    fileprivate static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
     }()
 }
@@ -259,12 +259,12 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 
 // MARK: - Event
 
-fileprivate extension ZMUpdateEvent {
-    var teamId: UUID? {
+extension ZMUpdateEvent {
+    fileprivate var teamId: UUID? {
         (payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
 
-    var dataPayload: [String: Any]? {
+    fileprivate var dataPayload: [String: Any]? {
         return payload[TeamEventPayloadKey.data.rawValue] as? [String: Any]
     }
 }

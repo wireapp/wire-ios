@@ -18,6 +18,6 @@
 
 import Foundation
 
-public extension NSNotification.Name {
-    static let quickSyncCompletedNotification = NSNotification.Name(rawValue: "QuickSyncCompletedNotification")
+extension NSNotification.Name {
+    public static let quickSyncCompletedNotification = NSNotification.Name(rawValue: "QuickSyncCompletedNotification")
 }

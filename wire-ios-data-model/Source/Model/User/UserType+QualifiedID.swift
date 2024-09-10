@@ -19,8 +19,8 @@
 import Foundation
 import WireTransport
 
-public extension UserType {
-    var qualifiedID: QualifiedID? {
+extension UserType {
+    public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
             let domain = domain ?? BackendInfo.domain

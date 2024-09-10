@@ -18,12 +18,12 @@
 
 import Foundation
 
-fileprivate extension ZMConversation {
-    static var predicateForObjectsNeedingToDownloadRoles: NSPredicate = {
+extension ZMConversation {
+    fileprivate static var predicateForObjectsNeedingToDownloadRoles: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(ZMConversation.needsToDownloadRoles), ZMConversation.remoteIdentifierDataKey())
     }()
 
-    func updateRoles(with response: ZMTransportResponse) {
+    fileprivate func updateRoles(with response: ZMTransportResponse) {
         guard let rolesPayload = response.payload?.asDictionary()?["conversation_roles"] as? [[String: Any]] else { return }
         let existingRoles = nonTeamRoles
 

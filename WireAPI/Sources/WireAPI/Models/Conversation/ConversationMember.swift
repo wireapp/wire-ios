@@ -18,10 +18,10 @@
 
 import Foundation
 
-public extension Conversation {
+extension Conversation {
     /// Represents a conversation's member.
 
-    struct Member: Equatable, Codable {
+    public struct Member: Equatable, Codable {
         public let qualifiedID: QualifiedID?
         public let id: UUID?
         public let qualifiedTarget: QualifiedID?

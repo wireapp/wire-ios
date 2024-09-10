@@ -18,9 +18,9 @@
 
 import Foundation
 
-public extension NSUUID {
+extension NSUUID {
     /// Returns whether this UUID is of Type 1
-    @objc var isType1UUID: Bool {
+    @objc public var isType1UUID: Bool {
         // looking at most significant bits of #7, as defined in: https://tools.ietf.org/html/rfc4122
         let type = ((self as UUID).uuid.6 & 0xf0) >> 4
         return type == 1
@@ -43,7 +43,7 @@ public extension NSUUID {
 
     /// Returns the type 1 timestamp
     /// - returns: NSDate, or `nil` if the NSUUID is not of Type 1
-    @objc var type1Timestamp: Date? {
+    @objc public var type1Timestamp: Date? {
         /*
         see https://tools.ietf.org/html/rfc4122
         UUID schema
@@ -75,12 +75,12 @@ public extension NSUUID {
 
     /// Returns the comparison result for this NSUUID of type 1 and another NSUUID of type 1
     /// - Requires: will assert if any UUID is not of type 1
-    @objc func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
+    @objc public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
         assert(self.isType1UUID && type1UUID.isType1UUID)
         return self.type1Timestamp!.compare(type1UUID.type1Timestamp!)
     }
 
-    @objc static func timeBasedUUID() -> NSUUID {
+    @objc public static func timeBasedUUID() -> NSUUID {
         let uuidSize = MemoryLayout<uuid_t>.size
         let uuidPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: uuidSize)
         uuid_generate_time(uuidPointer)
@@ -90,8 +90,8 @@ public extension NSUUID {
     }
 }
 
-public extension UUID {
-    var isType1UUID: Bool {
+extension UUID {
+    public var isType1UUID: Bool {
         return (self as NSUUID).isType1UUID
     }
 
@@ -99,19 +99,19 @@ public extension UUID {
         return (self as NSUUID).readOctectsReverted(start, len: len)
     }
 
-    var type1Timestamp: Date? {
+    public var type1Timestamp: Date? {
         return (self as NSUUID).type1Timestamp
     }
 
-    func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
+    public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
         return (self as NSUUID).compare(withType1UUID: type1UUID)
     }
 
-    func compare(withType1 uuid: UUID) -> ComparisonResult {
+    public func compare(withType1 uuid: UUID) -> ComparisonResult {
         return (self as NSUUID).compare(withType1UUID: uuid as NSUUID)
     }
 
-    static func timeBasedUUID() -> NSUUID {
+    public static func timeBasedUUID() -> NSUUID {
         return NSUUID.timeBasedUUID()
     }
 }

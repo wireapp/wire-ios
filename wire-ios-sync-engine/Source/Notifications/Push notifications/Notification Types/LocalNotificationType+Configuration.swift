@@ -49,8 +49,8 @@ extension LocalNotificationType {
     }
 }
 
-private extension PushNotificationCategory {
-    init(notificationType: LocalNotificationType) {
+extension PushNotificationCategory {
+    fileprivate init(notificationType: LocalNotificationType) {
         switch notificationType {
         case .calling(let callState):
             self.init(callState: callState)
@@ -65,7 +65,7 @@ private extension PushNotificationCategory {
         }
     }
 
-    init(callState: CallState) {
+    fileprivate init(callState: CallState) {
         switch callState {
         case .incoming:
             self = .incomingCall
@@ -76,7 +76,7 @@ private extension PushNotificationCategory {
         }
     }
 
-    init(eventType: LocalNotificationEventType) {
+    fileprivate init(eventType: LocalNotificationEventType) {
         switch eventType {
         case .connectionRequestPending, .conversationCreated:
             self = .connect
@@ -85,7 +85,7 @@ private extension PushNotificationCategory {
         }
     }
 
-    init(contentType: LocalNotificationContentType) {
+    fileprivate init(contentType: LocalNotificationContentType) {
         switch contentType {
         case .audio, .video, .fileUpload, .image, .text, .location:
             self = .conversationWithLike
@@ -96,7 +96,7 @@ private extension PushNotificationCategory {
         }
     }
 
-    func addMuteIfNeeded(hasTeam: Bool) -> Self {
+    fileprivate func addMuteIfNeeded(hasTeam: Bool) -> Self {
         guard !hasTeam else { return self }
 
         switch self {
@@ -111,7 +111,7 @@ private extension PushNotificationCategory {
         }
     }
 
-    func addEncryptionAtRestIfNeeded(encryptionAtRestEnabled: Bool) -> Self {
+    fileprivate func addEncryptionAtRestIfNeeded(encryptionAtRestEnabled: Bool) -> Self {
         guard encryptionAtRestEnabled else { return self }
 
         switch self {

@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension AVSIdentifier {
-    static var stub: AVSIdentifier {
+extension AVSIdentifier {
+    public static var stub: AVSIdentifier {
         AVSIdentifier(identifier: UUID(), domain: "domain.com")
     }
 }

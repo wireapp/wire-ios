@@ -130,12 +130,12 @@ extension FlowLog {
   }
 }
 
-public extension Flow {
-    static var createGroup: Flow {
+extension Flow {
+    public static var createGroup: Flow {
         Flow(tag: WireLogger.conversation.tag, name: "CreateGroup")
     }
 
-    static var addParticipants: Flow {
+    public static var addParticipants: Flow {
         Flow(tag: WireLogger.conversation.tag, name: "AddParticipants")
     }
 }

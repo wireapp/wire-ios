@@ -120,10 +120,10 @@ public struct SearchRequest {
     }
 }
 
-private extension SearchRequest {
-    static let maxQueryLength = 200
+extension SearchRequest {
+    fileprivate static let maxQueryLength = 200
 
-    static func parseQuery(_ searchString: String) -> (Query, domain: String?) {
+    fileprivate static func parseQuery(_ searchString: String) -> (Query, domain: String?) {
         let components = searchString
             .truncated(at: maxQueryLength)
             .split(separator: "@")
@@ -149,8 +149,8 @@ private extension SearchRequest {
     }
 }
 
-fileprivate extension String {
-    func normalizedAndTrimmed() -> String {
+extension String {
+    fileprivate func normalizedAndTrimmed() -> String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)
     }

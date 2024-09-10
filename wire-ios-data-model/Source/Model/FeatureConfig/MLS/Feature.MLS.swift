@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct MLS: Codable {
+extension Feature {
+    public struct MLS: Codable {
         // MARK: - Properties
 
         /// Whether MLS is availble to the user.

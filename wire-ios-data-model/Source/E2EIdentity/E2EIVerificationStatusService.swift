@@ -73,8 +73,8 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
     }
 }
 
-private extension WireCoreCrypto.E2eiConversationState {
-    func toMLSVerificationStatus() -> MLSVerificationStatus {
+extension WireCoreCrypto.E2eiConversationState {
+    fileprivate func toMLSVerificationStatus() -> MLSVerificationStatus {
         switch self {
         case .verified:
             return .verified

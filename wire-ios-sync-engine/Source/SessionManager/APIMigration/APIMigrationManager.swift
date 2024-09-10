@@ -138,10 +138,10 @@ final class APIMigrationManager {
     }
 }
 
-private extension UserDefaults {
+extension UserDefaults {
     private var lastUsedAPIVersionKey: String { "LastUsedAPIVersionKey" }
 
-    var lastUsedAPIVersion: APIVersion? {
+    fileprivate var lastUsedAPIVersion: APIVersion? {
         get {
             guard let value = object(forKey: lastUsedAPIVersionKey) as? Int32 else {
                 return nil

@@ -259,8 +259,8 @@ private struct ColorPair {
     let dark: UIColor
 }
 
-private extension ColorPair {
-    init(both color: UIColor) {
+extension ColorPair {
+    fileprivate init(both color: UIColor) {
         self.init(light: color, dark: color)
     }
 }

@@ -382,8 +382,8 @@ public class UserClient: ZMManagedObject, UserClientType {
 
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 
-public extension UserClient {
-    @objc static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
+extension UserClient {
+    @objc public static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
         fetchRequest.fetchLimit = 1
@@ -391,14 +391,14 @@ public extension UserClient {
         return context.fetchOrAssert(request: fetchRequest).first
     }
 
-    static func fetchClientsNeedingUpdateFromBackend(in context: NSManagedObjectContext) -> [UserClient] {
+    public static func fetchClientsNeedingUpdateFromBackend(in context: NSManagedObjectContext) -> [UserClient] {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == YES", #keyPath(UserClient.needsToBeUpdatedFromBackend))
         return context.fetchOrAssert(request: fetchRequest)
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc static func createOrUpdateSelfUserClient(
+    @objc public static func createOrUpdateSelfUserClient(
         _ payloadData: [String: AnyObject],
         context: NSManagedObjectContext
     ) -> UserClient? {
@@ -494,7 +494,7 @@ public extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc func markForDeletion() {
+    @objc public func markForDeletion() {
         guard let context = self.managedObjectContext else {
             zmLog.error("Object already deleted?")
             return
@@ -513,8 +513,8 @@ public extension UserClient {
 
 // MARK: - Corrupted Session
 
-public extension UserClient {
-    @objc var failedToEstablishSession: Bool {
+extension UserClient {
+    @objc public var failedToEstablishSession: Bool {
         get {
             return managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
         }
@@ -530,19 +530,19 @@ public extension UserClient {
 
 // MARK: - SelfClient methods
 
-public extension UserClient {
-    @objc func isSelfClient() -> Bool {
+extension UserClient {
+    @objc public func isSelfClient() -> Bool {
         guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return self == selfClient
     }
 
-    @objc func missesClient(_ client: UserClient) {
+    @objc public func missesClient(_ client: UserClient) {
         missesClients([client])
     }
 
-    @objc func missesClients(_ clients: Set<UserClient>) {
+    @objc public func missesClients(_ clients: Set<UserClient>) {
         zmLog.debug("Adding clients(\( clients.count)) to list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
@@ -552,7 +552,7 @@ public extension UserClient {
     }
 
     /// Use this method only for the selfClient
-    @objc func removeMissingClient(_ client: UserClient) {
+    @objc public func removeMissingClient(_ client: UserClient) {
         zmLog.debug("Removing client from list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
@@ -560,7 +560,7 @@ public extension UserClient {
 
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
-    func deleteSession() async throws {
+    public func deleteSession() async throws {
         guard
             let context = managedObjectContext,
             await context.perform({ !self.isSelfClient() }),
@@ -581,7 +581,7 @@ public extension UserClient {
         )
     }
 
-    func establishSessionWithClient(
+    public func establishSessionWithClient(
         _ client: UserClient,
         usingPreKey preKey: String
     ) async -> Bool {
@@ -602,7 +602,7 @@ public extension UserClient {
     /// Creates a session between the selfClient and the given userClient
     /// Returns false if the session could not be established
     /// Use this method only for the selfClient
-    func establishSessionWithClient(
+    public func establishSessionWithClient(
         sessionId: EncryptionSessionIdentifier,
         usingPreKey preKey: String,
         proteusProviding: ProteusProviding
@@ -637,7 +637,7 @@ public extension UserClient {
         }
     }
 
-    func establishSession(
+    public func establishSession(
         through keystore: UserClientKeysStore,
         sessionId: EncryptionSessionIdentifier,
         preKey: String
@@ -671,7 +671,7 @@ public extension UserClient {
     }
 
     /// Use this method only for the selfClient
-    @objc func decrementNumberOfRemainingProteusKeys() {
+    @objc public func decrementNumberOfRemainingProteusKeys() {
         guard isSelfClient() else {
             fatal("`decrementNumberOfRemainingProteusKeys` should only be called on the self client")
         }

@@ -116,8 +116,8 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     }
 }
 
-private extension DeviceStatus {
-    var e2eIdentityStatus: E2EIdentityCertificateStatus {
+extension DeviceStatus {
+    fileprivate var e2eIdentityStatus: E2EIdentityCertificateStatus {
         switch self {
         case .valid:
             return .valid

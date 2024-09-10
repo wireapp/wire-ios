@@ -121,8 +121,8 @@ public protocol PushTokenServiceInterface: AnyObject {
     ) async throws
 }
 
-public extension PushTokenServiceInterface {
-    func syncLocalTokenWithRemote(
+extension PushTokenServiceInterface {
+    public func syncLocalTokenWithRemote(
         clientID: String,
         in context: NotificationContext
     ) async throws {

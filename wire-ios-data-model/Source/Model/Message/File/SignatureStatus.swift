@@ -161,8 +161,8 @@ public final class SignatureStatus: NSObject {
 
 // MARK: - Observable
 
-public extension SignatureStatus {
-    static func addObserver(_ observer: SignatureObserver,
+extension SignatureStatus {
+    public static func addObserver(_ observer: SignatureObserver,
                             context: NSManagedObjectContext) -> Any {
         return NotificationInContext.addObserver(name: DigitalSignatureNotification.notificationName,
                                                  context: context.notificationContext,

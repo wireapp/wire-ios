@@ -104,7 +104,7 @@ public final class ServiceDetails: NSObject {
     }
 }
 
-public extension ServiceUserData {
+extension ServiceUserData {
     fileprivate func requestToAddService(to conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let remoteIdentifier = conversation.remoteIdentifier
         else {
@@ -131,8 +131,8 @@ public extension ServiceUserData {
     }
 }
 
-public extension ServiceUser {
-    func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
+extension ServiceUser {
+    public func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
         guard let serviceUserData = self.serviceUserData else {
             fatal("Not a service user")
         }
@@ -159,7 +159,7 @@ public extension ServiceUser {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    func fetchDetails(in userSession: ZMUserSession, completion: @escaping (ServiceDetails?) -> Void) {
+    public func fetchDetails(in userSession: ZMUserSession, completion: @escaping (ServiceDetails?) -> Void) {
         guard let serviceUserData = self.serviceUserData else {
             fatal("Not a service user")
         }
@@ -186,7 +186,7 @@ public extension ServiceUser {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
+    public func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
         createConversation(transportSession: userSession.transportSession,
                            eventProcessor: userSession.conversationEventProcessor,
                            contextProvider: userSession,
@@ -276,8 +276,8 @@ extension AddBotError {
     }
 }
 
-public extension ZMConversation {
-    func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+extension ZMConversation {
+    public func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         guard let serviceUserData = serviceUser.serviceUserData else {
             fatal("Not a service user")
         }
@@ -285,7 +285,7 @@ public extension ZMConversation {
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)
     }
 
-    func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    public func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         add(serviceUser: serviceUserData,
             transportSession: userSession.transportSession,
             eventProcessor: userSession.conversationEventProcessor,

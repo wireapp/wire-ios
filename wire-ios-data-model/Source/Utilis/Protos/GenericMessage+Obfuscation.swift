@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension String {
-    static func randomChar() -> UnicodeScalar {
+extension String {
+    public static func randomChar() -> UnicodeScalar {
         let string = "abcdefghijklmnopqrstuvxyz"
         let chars = Array(string.unicodeScalars)
         let random = UInt.secureRandomNumber(upperBound: UInt(chars.count))
@@ -27,7 +27,7 @@ public extension String {
         return chars[Int(random)]
     }
 
-    func obfuscated() -> String {
+    public func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
         for char in self.unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {
@@ -40,8 +40,8 @@ public extension String {
     }
 }
 
-public extension GenericMessage {
-    func obfuscatedMessage() -> GenericMessage? {
+extension GenericMessage {
+    public func obfuscatedMessage() -> GenericMessage? {
         guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else { return nil }
         guard case .ephemeral? = self.content else { return nil }
 

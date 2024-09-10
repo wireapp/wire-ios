@@ -31,9 +31,9 @@ private enum PushNotificationType: String {
 }
 
 @objc
-public extension ZMOperationLoop {
+extension ZMOperationLoop {
     @objc(fetchEventsFromPushChannelPayload:completionHandler:)
-    func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
+    public func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
         guard let nonce = messageNonce(fromPushChannelData: payload) else {
             return completionHandler()
         }
@@ -48,7 +48,7 @@ public extension ZMOperationLoop {
         })
     }
 
-    func messageNonce(fromPushChannelData payload: [AnyHashable: Any]) -> UUID? {
+    public func messageNonce(fromPushChannelData payload: [AnyHashable: Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
               let rawNotificationType = notificationData[PushChannelKeys.notificationType.rawValue] as? String,
               let notificationType = PushNotificationType(rawValue: rawNotificationType) else {
@@ -67,7 +67,7 @@ public extension ZMOperationLoop {
         return nil
     }
 
-    func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable: Any]) -> UUID? {
+    public func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable: Any]) -> UUID? {
         //    @"aps" : @{ @"alert": @{@"loc-args": @[],
         //                          @"loc-key"   : @"push.notification.new_message"}
         //              },

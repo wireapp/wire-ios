@@ -399,8 +399,8 @@ import Foundation
 
 // MARK: - Helper extensions
 
-private extension LazySequenceProtocol {
-    func collect() -> [Element] {
+extension LazySequenceProtocol {
+    fileprivate func collect() -> [Element] {
         return Array(self)
     }
 }

@@ -7457,38 +7457,38 @@ public class WireStyleKit: NSObject {
     }
 }
 
-private extension UIColor {
-    func withHue(_ newHue: CGFloat) -> UIColor {
+extension UIColor {
+    fileprivate func withHue(_ newHue: CGFloat) -> UIColor {
         var saturation: CGFloat = 1, brightness: CGFloat = 1, alpha: CGFloat = 1
         getHue(nil, saturation: &saturation, brightness: &brightness, alpha: &alpha)
         return UIColor(hue: newHue, saturation: saturation, brightness: brightness, alpha: alpha)
     }
 
-    func withSaturation(_ newSaturation: CGFloat) -> UIColor {
+    fileprivate func withSaturation(_ newSaturation: CGFloat) -> UIColor {
         var hue: CGFloat = 1, brightness: CGFloat = 1, alpha: CGFloat = 1
         getHue(&hue, saturation: nil, brightness: &brightness, alpha: &alpha)
         return UIColor(hue: hue, saturation: newSaturation, brightness: brightness, alpha: alpha)
     }
 
-    func withBrightness(_ newBrightness: CGFloat) -> UIColor {
+    fileprivate func withBrightness(_ newBrightness: CGFloat) -> UIColor {
         var hue: CGFloat = 1, saturation: CGFloat = 1, alpha: CGFloat = 1
         getHue(&hue, saturation: &saturation, brightness: nil, alpha: &alpha)
         return UIColor(hue: hue, saturation: saturation, brightness: newBrightness, alpha: alpha)
     }
 
-    func withAlpha(_ newAlpha: CGFloat) -> UIColor {
+    fileprivate func withAlpha(_ newAlpha: CGFloat) -> UIColor {
         var hue: CGFloat = 1, saturation: CGFloat = 1, brightness: CGFloat = 1
         getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: nil)
         return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: newAlpha)
     }
 
-    func highlight(withLevel highlight: CGFloat) -> UIColor {
+    fileprivate func highlight(withLevel highlight: CGFloat) -> UIColor {
         var red: CGFloat = 1, green: CGFloat = 1, blue: CGFloat = 1, alpha: CGFloat = 1
         getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         return UIColor(red: red * (1 - highlight) + highlight, green: green * (1 - highlight) + highlight, blue: blue * (1 - highlight) + highlight, alpha: alpha * (1 - highlight) + highlight)
     }
 
-    func shadow(withLevel shadow: CGFloat) -> UIColor {
+    fileprivate func shadow(withLevel shadow: CGFloat) -> UIColor {
         var red: CGFloat = 1, green: CGFloat = 1, blue: CGFloat = 1, alpha: CGFloat = 1
         getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         return UIColor(red: red * (1 - shadow), green: green * (1 - shadow), blue: blue * (1 - shadow), alpha: alpha * (1 - shadow) + shadow)

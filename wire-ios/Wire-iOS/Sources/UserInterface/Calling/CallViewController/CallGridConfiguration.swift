@@ -195,8 +195,8 @@ extension VoiceChannel {
     }
 }
 
-private extension VideoGridPresentationMode {
-    var callParticipantsListKind: CallParticipantsListKind {
+extension VideoGridPresentationMode {
+    fileprivate var callParticipantsListKind: CallParticipantsListKind {
         switch self {
         case .activeSpeakers:
             return .smoothedActiveSpeakers
@@ -205,7 +205,7 @@ private extension VideoGridPresentationMode {
         }
     }
 
-    var needsSelfStream: Bool {
+    fileprivate var needsSelfStream: Bool {
         return self == .allVideoStreams
     }
 }

@@ -80,8 +80,8 @@ final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
     }
 }
 
-private extension DownStyle {
-    static var labelStyle: DownStyle {
+extension DownStyle {
+    fileprivate static var labelStyle: DownStyle {
         let style = DownStyle()
         style.baseFont = UIFont.systemFont(ofSize: 14)
         style.baseFontColor = SemanticColors.Label.textDefault

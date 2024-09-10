@@ -19,12 +19,12 @@
 import Foundation
 import WireDataModel
 
-fileprivate extension TimeInterval {
-    var hours: Double {
+extension TimeInterval {
+    fileprivate var hours: Double {
         return self / 3600
     }
 
-    var minutes: Double {
+    fileprivate var minutes: Double {
         return self / 60
     }
 }

@@ -24,8 +24,8 @@ private let redactedValue = "<redacted>"
 
 // MARK: - Text
 
-fileprivate extension Text {
-    func sanitize() -> Text {
+extension Text {
+    fileprivate func sanitize() -> Text {
         var text = self
         text.content = redactedValue
         text.linkPreview = text.linkPreview.map { $0.sanitize() }
@@ -35,8 +35,8 @@ fileprivate extension Text {
 
 // MARK: - LinkPreview
 
-fileprivate extension LinkPreview {
-    func sanitize() -> LinkPreview {
+extension LinkPreview {
+    fileprivate func sanitize() -> LinkPreview {
         return LinkPreview(withOriginalURL: redactedValue,
                            permanentURL: redactedValue,
                            offset: urlOffset,
@@ -50,8 +50,8 @@ fileprivate extension LinkPreview {
 
 // MARK: - Article
 
-fileprivate extension Article {
-    func sanitize() -> Article {
+extension Article {
+    fileprivate func sanitize() -> Article {
         return Article.with {
             $0.title = redactedValue
             $0.permanentURL = redactedValue

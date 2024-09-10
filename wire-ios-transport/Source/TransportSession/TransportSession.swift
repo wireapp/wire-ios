@@ -58,8 +58,8 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
 extension ZMTransportSession: TransportSessionType {}
 
 @objc
-public extension ZMTransportSession {
-    static func foregroundSessionConfiguration(minTLSVersion: String?) -> URLSessionConfiguration {
+extension ZMTransportSession {
+    public static func foregroundSessionConfiguration(minTLSVersion: String?) -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
 
         // If not data is transmitted for this amount of time for a request, it will time out.
@@ -75,7 +75,7 @@ public extension ZMTransportSession {
         return configuration
     }
 
-    static func backgroundSessionConfiguration(
+    public static func backgroundSessionConfiguration(
         sharedContainerIdentifier: String,
         userIdentifier: UUID,
         minTLSVersion: String?
@@ -92,7 +92,7 @@ public extension ZMTransportSession {
         return configuration
     }
 
-    static func setUpConfiguration(
+    public static func setUpConfiguration(
         _ configuration: URLSessionConfiguration,
         minTLSVersion: String?
     ) {
@@ -111,7 +111,7 @@ public extension ZMTransportSession {
         configuration.urlCache = nil
     }
 
-    static func identifierWith(
+    public static func identifierWith(
         prefix: String,
         userIdentifier: UUID
     ) -> String {

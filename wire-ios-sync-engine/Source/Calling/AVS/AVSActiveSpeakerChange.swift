@@ -51,8 +51,8 @@ extension AVSActiveSpeakersChange.ActiveSpeaker {
     }
 }
 
-private extension AVSClient {
-    init(activeSpeaker: AVSActiveSpeakersChange.ActiveSpeaker) {
+extension AVSClient {
+    fileprivate init(activeSpeaker: AVSActiveSpeakersChange.ActiveSpeaker) {
         userId = activeSpeaker.userId
         clientId = activeSpeaker.clientId
     }

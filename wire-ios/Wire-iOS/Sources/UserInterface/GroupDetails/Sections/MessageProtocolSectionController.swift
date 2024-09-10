@@ -129,8 +129,8 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     }
 }
 
-private extension MessageProtocol {
-    var name: String {
+extension MessageProtocol {
+    fileprivate var name: String {
         switch self {
         case .proteus:
             return "Proteus"

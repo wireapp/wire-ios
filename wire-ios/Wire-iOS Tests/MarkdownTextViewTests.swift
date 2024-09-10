@@ -789,8 +789,8 @@ final class MarkdownTextViewTests: XCTestCase {
     }
 }
 
-private extension String {
-    var length: Int {
+extension String {
+    fileprivate var length: Int {
         return (self as NSString).length
     }
 }

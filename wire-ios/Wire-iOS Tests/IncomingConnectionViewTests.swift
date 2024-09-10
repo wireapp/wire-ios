@@ -110,8 +110,8 @@ final class IncomingConnectionViewTests: XCTestCase {
 
 // MARK: - UIView extension
 
-private extension UIView {
-    func layoutForTest(in size: CGSize = .init(width: 375, height: 667)) -> UIView {
+extension UIView {
+    fileprivate func layoutForTest(in size: CGSize = .init(width: 375, height: 667)) -> UIView {
         let fittingSize = systemLayoutSizeFitting(size)
         frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
         return self

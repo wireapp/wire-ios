@@ -247,8 +247,8 @@ extension SelfUserAPITests {
     }
 }
 
-private extension APIVersion {
-    func buildAPI(client: any HTTPClient) -> any SelfUserAPI {
+extension APIVersion {
+    fileprivate func buildAPI(client: any HTTPClient) -> any SelfUserAPI {
         let builder = SelfUserAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)
     }

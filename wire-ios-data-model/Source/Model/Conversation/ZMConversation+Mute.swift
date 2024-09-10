@@ -56,11 +56,11 @@ public struct MutedMessageTypes: OptionSet {
     public static let mentionsAndReplies = MutedMessageTypes(rawValue: MutedMessageOptionValue.mentionsAndReplies.rawValue)
 }
 
-public extension ZMConversation {
-    @NSManaged var mutedStatus: Int32
+extension ZMConversation {
+    @NSManaged public var mutedStatus: Int32
 
     /// Returns an option set of messages types which should be muted
-    var mutedMessageTypes: MutedMessageTypes {
+    public var mutedMessageTypes: MutedMessageTypes {
         get {
             guard let managedObjectContext = self.managedObjectContext else {
                 return .none
@@ -96,7 +96,7 @@ public extension ZMConversation {
 
     /// Returns an option set of messages types which should be muted when also considering the
     /// the availability status of the self user.
-    var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
+    public var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
         guard let managedObjectContext = self.managedObjectContext else {
             return .none
         }
@@ -119,8 +119,8 @@ extension ZMUser {
     }
 }
 
-public extension ZMConversation {
-    func isMessageSilenced(_ message: GenericMessage?, senderID: UUID?) -> Bool {
+extension ZMConversation {
+    public func isMessageSilenced(_ message: GenericMessage?, senderID: UUID?) -> Bool {
         guard let managedObjectContext = self.managedObjectContext else {
             return false
         }

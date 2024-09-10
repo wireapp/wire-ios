@@ -333,8 +333,8 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 }
 
-private extension NSAttributedString {
-    static var attributedTextForNoConversationLabel: NSAttributedString? {
+extension NSAttributedString {
+    fileprivate static var attributedTextForNoConversationLabel: NSAttributedString? {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
 

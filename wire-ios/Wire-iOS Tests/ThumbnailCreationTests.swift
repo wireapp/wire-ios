@@ -131,8 +131,8 @@ final class ThumbnailCreationTests: XCTestCase {
 
 // MARK: - Helper
 
-fileprivate extension UIImage {
-    func wrappedInImageView() -> UIImageView {
+extension UIImage {
+    fileprivate func wrappedInImageView() -> UIImageView {
         let view = UIImageView()
         view.frame = CGRect(origin: .zero, size: size)
         view.image = self

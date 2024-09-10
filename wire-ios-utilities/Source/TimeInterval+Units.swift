@@ -18,19 +18,19 @@
 
 import Foundation
 
-public extension TimeInterval {
-    static let fourWeeks = 4 * oneWeek
-    static let oneWeek = 7 * oneDay
-    static let oneDay = 24 * oneHour
-    static let oneHour = 60 * oneMinute
-    static let fiveMinutes = 5 * oneMinute
-    static let oneMinute = 60 * oneSecond
-    static let tenSeconds = 10 * oneSecond
-    static let oneSecond = TimeInterval(1)
+extension TimeInterval {
+    public static let fourWeeks = 4 * oneWeek
+    public static let oneWeek = 7 * oneDay
+    public static let oneDay = 24 * oneHour
+    public static let oneHour = 60 * oneMinute
+    public static let fiveMinutes = 5 * oneMinute
+    public static let oneMinute = 60 * oneSecond
+    public static let tenSeconds = 10 * oneSecond
+    public static let oneSecond = TimeInterval(1)
 
     /// Number of seconds for a whole year (accounting for leap years) from now.
 
-    static var oneYearFromNow: Self {
+    public static var oneYearFromNow: Self {
         let now = Date()
         let oneYearFromNow = Calendar.current.date(byAdding: .year, value: 1, to: now)!
         return oneYearFromNow.timeIntervalSince(now)

@@ -249,14 +249,14 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
     }
 }
 
-private extension ConversationLabelsRepositoryTests {
-    func cleanUpEntity() {
+extension ConversationLabelsRepositoryTests {
+    fileprivate func cleanUpEntity() {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         _ = try? context.execute(batchDeleteRequest)
     }
 
-    func setupConversations() {
+    fileprivate func setupConversations() {
         conversation1 = ZMConversation.insertNewObject(in: context)
         conversation1.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[0]
 

@@ -21,8 +21,8 @@ import WireProtos
 
 // MARK: - GenericMessage
 
-public extension GenericMessage {
-    init?(withBase64String base64String: String?) {
+extension GenericMessage {
+    public init?(withBase64String base64String: String?) {
         guard
             let string = base64String,
             let data = Data(base64Encoded: string),
@@ -31,11 +31,11 @@ public extension GenericMessage {
         self = message
     }
 
-    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: MessageDestructionTimeoutValue? = nil) {
+    public init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: MessageDestructionTimeoutValue? = nil) {
         self.init(content: content, nonce: nonce, expiresAfterTimeInterval: timeout?.rawValue)
     }
 
-    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
+    public init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable = if let timeout, timeout > 0 {
@@ -47,7 +47,7 @@ public extension GenericMessage {
         }
     }
 
-    init(content: MessageCapable, nonce: UUID = UUID()) {
+    public init(content: MessageCapable, nonce: UUID = UUID()) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             let messageContent = content
@@ -55,7 +55,7 @@ public extension GenericMessage {
         }
     }
 
-    init(clientAction action: ClientAction, nonce: UUID = UUID()) {
+    public init(clientAction action: ClientAction, nonce: UUID = UUID()) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             $0.clientAction = action
@@ -210,12 +210,12 @@ extension GenericMessage {
     }
 }
 
-public extension Text {
-    func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
+extension Text {
+    public func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
         return mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
-    func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
+    public func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
         return quotedMessage?.sender?.isSelfUser ?? false
     }
 }
@@ -295,8 +295,8 @@ extension Ephemeral {
     }
 }
 
-public extension Proteus_QualifiedUserId {
-    init(with uuid: UUID, domain: String) {
+extension Proteus_QualifiedUserId {
+    public init(with uuid: UUID, domain: String) {
         self = Proteus_QualifiedUserId.with {
             $0.id = uuid.transportString()
             $0.domain = domain
@@ -306,15 +306,15 @@ public extension Proteus_QualifiedUserId {
 
 // MARK: - ClientEntry
 
-public extension Proteus_ClientEntry {
-    init(withClient client: UserClient, data: Data) {
+extension Proteus_ClientEntry {
+    public init(withClient client: UserClient, data: Data) {
         self = Proteus_ClientEntry.with {
             $0.client = client.clientId
             $0.text = data
         }
     }
 
-    init(withClientId clientId: Proteus_ClientId, data: Data) {
+    public init(withClientId clientId: Proteus_ClientId, data: Data) {
         self = Proteus_ClientEntry.with {
             $0.client = clientId
             $0.text = data
@@ -324,8 +324,8 @@ public extension Proteus_ClientEntry {
 
 // MARK: - QualifiedUserEntry
 
-public extension Proteus_QualifiedUserEntry {
-    init(withDomain domain: String, userEntries: [Proteus_UserEntry]) {
+extension Proteus_QualifiedUserEntry {
+    public init(withDomain domain: String, userEntries: [Proteus_UserEntry]) {
         self = Proteus_QualifiedUserEntry.with {
             $0.domain = domain
             $0.entries = userEntries
@@ -335,8 +335,8 @@ public extension Proteus_QualifiedUserEntry {
 
 // MARK: - UserEntry
 
-public extension Proteus_UserEntry {
-    init(withUser user: ZMUser, clientEntries: [Proteus_ClientEntry]) {
+extension Proteus_UserEntry {
+    public init(withUser user: ZMUser, clientEntries: [Proteus_ClientEntry]) {
         self = Proteus_UserEntry.with {
             $0.user = user.userId
             $0.clients = clientEntries
@@ -346,8 +346,8 @@ public extension Proteus_UserEntry {
 
 // MARK: - QualifiedNewOtrMessage
 
-public extension Proteus_QualifiedNewOtrMessage {
-    init(withSender sender: UserClient,
+extension Proteus_QualifiedNewOtrMessage {
+    public init(withSender sender: UserClient,
          nativePush: Bool,
          recipients: [Proteus_QualifiedUserEntry],
          missingClientsStrategy: MissingClientsStrategy,
@@ -386,8 +386,8 @@ public extension Proteus_QualifiedNewOtrMessage {
 
 // MARK: - NewOtrMessage
 
-public extension Proteus_NewOtrMessage {
-    init(withSender sender: UserClient, nativePush: Bool, recipients: [Proteus_UserEntry], blob: Data? = nil) {
+extension Proteus_NewOtrMessage {
+    public init(withSender sender: UserClient, nativePush: Bool, recipients: [Proteus_UserEntry], blob: Data? = nil) {
         self = Proteus_NewOtrMessage.with {
             $0.nativePush = nativePush
             $0.sender = sender.clientId
@@ -622,14 +622,14 @@ extension External {
 
 // MARK: - Mention
 
-public extension WireProtos.Mention {
-    static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
+extension WireProtos.Mention {
+    public static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
         return mention.convertToProtosMention()
     }
 }
 
-public extension WireDataModel.Mention {
-    func convertToProtosMention() -> WireProtos.Mention? {
+extension WireDataModel.Mention {
+    public func convertToProtosMention() -> WireProtos.Mention? {
         guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
 
         return WireProtos.Mention.with {
@@ -649,8 +649,8 @@ public extension WireDataModel.Mention {
 
 // MARK: - LinkPreview
 
-public extension LinkPreview {
-    init(_ linkMetadata: LinkMetadata) {
+extension LinkPreview {
+    public init(_ linkMetadata: LinkMetadata) {
         if let articleMetadata = linkMetadata as? ArticleMetadata {
             self = LinkPreview(articleMetadata: articleMetadata)
         } else if let twitterMetadata = linkMetadata as? TwitterStatusMetadata {
@@ -664,7 +664,7 @@ public extension LinkPreview {
         }
     }
 
-    init(articleMetadata: ArticleMetadata) {
+    public init(articleMetadata: ArticleMetadata) {
         self = LinkPreview.with {
             $0.url = articleMetadata.originalURLString
             $0.permanentURL = articleMetadata.permanentURL?.absoluteString ?? articleMetadata.resolvedURL?.absoluteString ?? articleMetadata.originalURLString
@@ -677,7 +677,7 @@ public extension LinkPreview {
         }
     }
 
-    init(twitterMetadata: TwitterStatusMetadata) {
+    public init(twitterMetadata: TwitterStatusMetadata) {
         self = LinkPreview.with {
             $0.url = twitterMetadata.originalURLString
             $0.permanentURL = twitterMetadata.permanentURL?.absoluteString ?? twitterMetadata.resolvedURL?.absoluteString ?? twitterMetadata.originalURLString
@@ -697,7 +697,7 @@ public extension LinkPreview {
         }
     }
 
-    init(withOriginalURL originalURL: String,
+    public init(withOriginalURL originalURL: String,
          permanentURL: String,
          offset: Int32,
          title: String?,
@@ -728,20 +728,20 @@ public extension LinkPreview {
         }
     }
 
-    mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
+    public mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
         image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
         if let original {
             image.original = original
         }
     }
 
-    mutating func update(withAssetKey assetKey: String, assetToken: String?, assetDomain: String?) {
+    public mutating func update(withAssetKey assetKey: String, assetToken: String?, assetDomain: String?) {
         image.uploaded.assetID = assetKey
         image.uploaded.assetToken = assetToken ?? ""
         image.uploaded.assetDomain = assetDomain ?? ""
     }
 
-    var hasTweet: Bool {
+    public var hasTweet: Bool {
         switch metaData {
         case .tweet:
             return true
@@ -751,8 +751,8 @@ public extension LinkPreview {
     }
 }
 
-public extension Tweet {
-    init(author: String?, username: String?) {
+extension Tweet {
+    public init(author: String?, username: String?) {
         self = Tweet.with {
             if let author {
                 $0.author = author

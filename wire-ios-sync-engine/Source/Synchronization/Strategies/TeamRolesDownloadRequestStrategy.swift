@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-private extension Team {
-    static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = {
+extension Team {
+    fileprivate static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey())
     }()
 
-    func updateRoles(with payload: [String: Any]) {
+    fileprivate func updateRoles(with payload: [String: Any]) {
         guard let rolesPayload = payload["conversation_roles"] as? [[String: Any]] else { return }
         let existingRoles = self.roles
 

@@ -18,19 +18,19 @@
 
 import Foundation
 
-@objc public extension ZMConversation {
+@objc extension ZMConversation {
     @objc (setIsTyping:)
-    func setIsTyping(_ isTyping: Bool) {
+    public func setIsTyping(_ isTyping: Bool) {
         TypingStrategy.notifyTranscoderThatUser(isTyping: isTyping, in: self)
     }
 
-    var typingUsers: [UserType] {
+    public var typingUsers: [UserType] {
         guard let users = managedObjectContext?.typingUsers?.typingUsers(in: self) else { return [] }
         return Array(users)
     }
 
     /// Strictly for UI tests. Remove once mockable conversation abstraction exists.
-    func setTypingUsers(_ users: [UserType]) {
+    public func setTypingUsers(_ users: [UserType]) {
         guard let typingUsers = managedObjectContext?.typingUsers else { return }
         let zmUsers = users.compactMap { $0 as? ZMUser }
         typingUsers.update(typingUsers: Set(zmUsers), in: self)

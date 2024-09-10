@@ -936,26 +936,26 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     }
 }
 
-private extension ZMGenericMessageData {
-    var unencryptedContent: String? {
+extension ZMGenericMessageData {
+    fileprivate var unencryptedContent: String? {
         return underlyingMessage?.text.content
     }
 }
 
-private extension NSManagedObjectContext {
-    func fetchObjects<T: ZMManagedObject>() throws -> [T] {
+extension NSManagedObjectContext {
+    fileprivate func fetchObjects<T: ZMManagedObject>() throws -> [T] {
         let request = NSFetchRequest<T>(entityName: T.entityName())
         request.returnsObjectsAsFaults = false
         return try fetch(request)
     }
 }
 
-private extension ZMConversation {
-    var hasEncryptedDraftMessageData: Bool {
+extension ZMConversation {
+    fileprivate var hasEncryptedDraftMessageData: Bool {
         return draftMessageData != nil && draftMessageNonce != nil
     }
 
-    var unencryptedDraftMessageContent: String? {
+    fileprivate var unencryptedDraftMessageContent: String? {
         return draftMessage?.text
     }
 }

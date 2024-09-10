@@ -18,12 +18,12 @@
 
 import Foundation
 
-public extension UserType {
-    func isOnSameTeam(otherUser: UserType) -> Bool {
+extension UserType {
+    public func isOnSameTeam(otherUser: UserType) -> Bool {
         return canAccessCompanyInformation(of: otherUser)
     }
 
-    var isTemporaryUser: Bool {
+    public var isTemporaryUser: Bool {
         return expiresAfter > 0.0
     }
 }

@@ -75,16 +75,16 @@ extension URL {
 
 // MARK: - BackendEnvironment Standard URLs
 
-private extension BackendEnvironment {
-    static func websiteLink(path: String) -> URL {
+extension BackendEnvironment {
+    fileprivate static func websiteLink(path: String) -> URL {
         shared.websiteURL.appendingPathComponent(path)
     }
 
-    static func accountsLink(path: String) -> URL {
+    fileprivate static func accountsLink(path: String) -> URL {
         shared.accountsURL.appendingPathComponent(path)
     }
 
-    static var selfUserProfileLink: URL? {
+    fileprivate static var selfUserProfileLink: URL? {
         guard let userID = SelfUser.provider?.providedSelfUser.remoteIdentifier?.uuidString else {
             return nil
         }

@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct MLSMigration: Codable {
+extension Feature {
+    public struct MLSMigration: Codable {
         // MARK: - Properties
 
         /// Whether MLS Migration is enabled.

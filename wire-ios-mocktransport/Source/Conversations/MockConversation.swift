@@ -107,8 +107,8 @@ extension MockConversation: EntityNamedProtocol {
     }
 }
 
-@objc public extension MockConversation {
-    static func existingConversation(with identifier: String, managedObjectContext: NSManagedObjectContext) -> MockConversation? {
+@objc extension MockConversation {
+    public static func existingConversation(with identifier: String, managedObjectContext: NSManagedObjectContext) -> MockConversation? {
         let conversationPredicate = NSPredicate(format: "%K == %@", #keyPath(MockConversation.identifier), identifier)
         return MockConversation.fetch(in: managedObjectContext, withPredicate: conversationPredicate)
     }

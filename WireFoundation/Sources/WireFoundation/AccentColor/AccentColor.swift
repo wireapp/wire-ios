@@ -28,7 +28,7 @@ public enum AccentColor: Int16, CaseIterable, Hashable {
 
 // MARK: - Default and random value
 
-public extension AccentColor {
-    static var `default`: Self { .blue }
-    static var random: Self! { allCases.randomElement() }
+extension AccentColor {
+    public static var `default`: Self { .blue }
+    public static var random: Self! { allCases.randomElement() }
 }

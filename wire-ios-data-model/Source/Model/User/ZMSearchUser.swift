@@ -18,9 +18,9 @@
 
 import Foundation
 
-public extension Notification.Name {
-    static let searchUserDidRequestPreviewAsset = Notification.Name("SearchUserDidRequestPreviewAsset")
-    static let searchUserDidRequestCompleteAsset = Notification.Name("SearchUserDidRequestCompleteAsset")
+extension Notification.Name {
+    public static let searchUserDidRequestPreviewAsset = Notification.Name("SearchUserDidRequestPreviewAsset")
+    public static let searchUserDidRequestCompleteAsset = Notification.Name("SearchUserDidRequestCompleteAsset")
 }
 
 private enum ResponseKey: String {

@@ -18,9 +18,9 @@
 
 import Foundation
 
-public extension NSManagedObjectContext {
+extension NSManagedObjectContext {
     /// Executes a fetch request and asserts in case of error
-    func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T] {
+    public func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T] {
         do {
             let result = try fetch(request)
             return result
@@ -32,7 +32,7 @@ public extension NSManagedObjectContext {
     }
 
     /// Counts a fetch request and asserts in case of error
-    func countOrAssert<T>(request: NSFetchRequest<T>) -> Int {
+    public func countOrAssert<T>(request: NSFetchRequest<T>) -> Int {
         do {
             let result = try count(for: request)
             return result

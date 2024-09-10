@@ -97,8 +97,8 @@ extension ZMUser {
 
 // MARK: - Domain
 
-private extension NSPredicate {
-    static func isHostedOnDomain(_ domain: String) -> NSPredicate {
+extension NSPredicate {
+    fileprivate static func isHostedOnDomain(_ domain: String) -> NSPredicate {
         return NSPredicate(
             format: "%K == %@",
             #keyPath(ZMUser.domain),

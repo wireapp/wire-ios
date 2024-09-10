@@ -107,12 +107,12 @@ struct GenericPasswordKeychainItem: KeychainItem {
     }
 }
 
-private extension KeychainItem where Self == GenericPasswordKeychainItem {
-    static func usernameItem(for proxy: ProxySettingsProvider) -> GenericPasswordKeychainItem {
+extension KeychainItem where Self == GenericPasswordKeychainItem {
+    fileprivate static func usernameItem(for proxy: ProxySettingsProvider) -> GenericPasswordKeychainItem {
         GenericPasswordKeychainItem(itemIdentifier: "proxy-\(proxy.host):\(proxy.port)-username")
     }
 
-    static func passwordItem(for proxy: ProxySettingsProvider) -> GenericPasswordKeychainItem {
+    fileprivate static func passwordItem(for proxy: ProxySettingsProvider) -> GenericPasswordKeychainItem {
         GenericPasswordKeychainItem(itemIdentifier: "proxy-\(proxy.host):\(proxy.port)-password")
     }
 }

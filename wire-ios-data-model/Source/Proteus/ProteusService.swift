@@ -347,8 +347,8 @@ public final class ProteusService: ProteusServiceInterface {
     }
 }
 
-private extension CoreCryptoProtocol {
-    var lastProteusError: ProteusError {
+extension CoreCryptoProtocol {
+    fileprivate var lastProteusError: ProteusError {
         return ProteusError(proteusCode: proteusLastErrorCode())
     }
 }

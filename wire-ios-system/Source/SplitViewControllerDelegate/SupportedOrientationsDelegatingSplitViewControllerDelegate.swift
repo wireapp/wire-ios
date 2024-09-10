@@ -50,9 +50,9 @@ public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: U
 
 // MARK: - Associated Object
 
-public extension SupportedOrientationsDelegatingSplitViewControllerDelegate {
+extension SupportedOrientationsDelegatingSplitViewControllerDelegate {
     /// By setting the instance as delegate and retained associated object we don't need to subclass the split view controller in order to achieve the desired behavior.
-    func setAsDelegateAndNontomicRetainedAssociatedObject(_ splitViewController: UISplitViewController) {
+    public func setAsDelegateAndNontomicRetainedAssociatedObject(_ splitViewController: UISplitViewController) {
         guard splitViewController.viewController(for: .compact) == nil else {
             fatalError("This implementation does not support `.compact` columns. Extend it if needed.")
         }

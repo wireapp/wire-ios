@@ -77,8 +77,8 @@ extension WireProtos.Asset: BigEndianDataConvertible {
     }
 }
 
-fileprivate extension Float {
-    var times1000: Int {
+extension Float {
+    fileprivate var times1000: Int {
         return Int(roundf(self * 1000.0))
     }
 }

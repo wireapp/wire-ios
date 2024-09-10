@@ -66,9 +66,9 @@ extension FileManager {
     }
 }
 
-public extension URL {
+extension URL {
     /// Sets the resource value to exclude this entry from backups
-    func excludeFromBackup() throws {
+    public func excludeFromBackup() throws {
         var mutableCopy = self
         do {
             var resourceValues = URLResourceValues()
@@ -79,19 +79,19 @@ public extension URL {
         }
     }
 
-    func excludeFromBackupIfExists() throws {
+    public func excludeFromBackupIfExists() throws {
         if FileManager.default.fileExists(atPath: path) {
             try excludeFromBackup()
         }
     }
 
     /// Returns whether the item is excluded from backups
-    var isExcludedFromBackup: Bool {
+    public var isExcludedFromBackup: Bool {
         guard let values = try? resourceValues(forKeys: [.isExcludedFromBackupKey]) else { return false }
         return values.isExcludedFromBackup ?? false
     }
 
-    static func directory(for searchPathDirectory: FileManager.SearchPathDirectory) -> URL {
+    public static func directory(for searchPathDirectory: FileManager.SearchPathDirectory) -> URL {
         return URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(searchPathDirectory, .userDomainMask, true).first!)
     }
 }

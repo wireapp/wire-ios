@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension ZMConversation {
-    var avsIdentifier: AVSIdentifier? {
+extension ZMConversation {
+    public var avsIdentifier: AVSIdentifier? {
         guard let identifier = remoteIdentifier else {
             return nil
         }

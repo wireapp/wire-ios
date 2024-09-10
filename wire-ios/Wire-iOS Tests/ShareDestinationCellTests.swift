@@ -354,8 +354,8 @@ final class ShareDestinationCellTests: XCTestCase {
 
 // MARK: - Helper
 
-fileprivate extension UITableViewCell {
-    func prepareForSnapshotWithCellSelected() -> UITableView {
+extension UITableViewCell {
+    fileprivate func prepareForSnapshotWithCellSelected() -> UITableView {
         let view = prepareForSnapshots()
         view.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
         return view

@@ -76,7 +76,7 @@ public enum E2eIdentityCertificateConstants {
     }
 }
 
-public extension E2eIdentityCertificate {
+extension E2eIdentityCertificate {
     private var isExpired: Bool {
         return expiryDate <= comparedDate.now
     }
@@ -89,7 +89,7 @@ public extension E2eIdentityCertificate {
         return notValidBefore <= comparedDate.now
     }
 
-    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
+    public func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
         let renewalNudgingDate = renewalNudgingDate(with: gracePeriod)
         return isExpired || (isActivated && comparedDate.now >= renewalNudgingDate)
     }
@@ -99,7 +99,7 @@ public extension E2eIdentityCertificate {
     /// Renewal nudging date = VP - (HT + GP + UT)
     /// Here we calculate it from the other way where we deduct the standard deductions from the expiry date to get the renewal nudging date
     /// This is done so as to be in sync with Android codebase
-    func renewalNudgingDate(with gracePeriod: TimeInterval) -> Date {
+    public func renewalNudgingDate(with gracePeriod: TimeInterval) -> Date {
         let standardDeductionsFromExpiry = serverStoragePeriod + gracePeriod + randomPeriod
         return expiryDate - standardDeductionsFromExpiry
     }

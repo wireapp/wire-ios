@@ -183,6 +183,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     }
 }
 
-public extension Notification.Name {
-    static let presentRevokedCertificateWarningAlert = Notification.Name("presentRevokedCertificateWarningAlert")
+extension Notification.Name {
+    public static let presentRevokedCertificateWarningAlert = Notification.Name("presentRevokedCertificateWarningAlert")
 }

@@ -59,8 +59,8 @@ final class CameraAccess: NSObject {
     }
 }
 
-fileprivate extension CameraAccessFeature {
-    var message: String {
+extension CameraAccessFeature {
+    fileprivate var message: String {
         switch self {
         case .recordVideo: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Video.message
         case .recordAudioMessage: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Audio.message

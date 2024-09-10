@@ -232,8 +232,8 @@ public actor CommitSender: CommitSending {
     }
 }
 
-private extension CommitError.RecoveryStrategy {
-    init(from error: SendCommitBundleAction.Failure) {
+extension CommitError.RecoveryStrategy {
+    fileprivate init(from error: SendCommitBundleAction.Failure) {
         switch error {
         case .mlsClientMismatch:
             self = .retryAfterQuickSync
@@ -247,8 +247,8 @@ private extension CommitError.RecoveryStrategy {
     }
 }
 
-private extension ExternalCommitError.RecoveryStrategy {
-    init(from error: SendCommitBundleAction.Failure) {
+extension ExternalCommitError.RecoveryStrategy {
+    fileprivate init(from error: SendCommitBundleAction.Failure) {
         switch error {
         case .mlsStaleMessage:
             self = .retry

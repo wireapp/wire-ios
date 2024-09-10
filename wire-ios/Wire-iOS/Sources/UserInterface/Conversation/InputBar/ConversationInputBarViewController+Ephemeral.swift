@@ -104,8 +104,8 @@ extension ConversationInputBarViewController {
     }
 }
 
-private extension MessageDestructionTimeoutValue {
-    var accessibilityValue: String? {
+extension MessageDestructionTimeoutValue {
+    fileprivate var accessibilityValue: String? {
         typealias Conversation = L10n.Accessibility.Conversation
 
         guard

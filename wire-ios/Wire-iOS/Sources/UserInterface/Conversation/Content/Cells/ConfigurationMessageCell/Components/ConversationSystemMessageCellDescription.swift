@@ -223,12 +223,12 @@ enum ConversationSystemMessageCellDescription {
     }
 }
 
-private extension ConversationLike {
-    var isOpenGroup: Bool {
+extension ConversationLike {
+    fileprivate var isOpenGroup: Bool {
         return conversationType == .group && allowGuests
     }
 
-    var selfCanAddUsers: Bool {
+    fileprivate var selfCanAddUsers: Bool {
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return false

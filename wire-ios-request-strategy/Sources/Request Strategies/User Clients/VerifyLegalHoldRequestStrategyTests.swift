@@ -26,8 +26,8 @@ private protocol TransportDataConvertible: Codable {
     var transportData: ZMTransportData { get }
 }
 
-private extension TransportDataConvertible {
-    var transportData: ZMTransportData {
+extension TransportDataConvertible {
+    fileprivate var transportData: ZMTransportData {
         let encoded = try! JSONEncoder.defaultEncoder.encode(self)
         return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
     }

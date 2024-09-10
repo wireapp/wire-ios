@@ -76,20 +76,20 @@ extension Mention {
 
 // MARK: - Helper
 
-fileprivate extension NSRange {
-    var range: Range<Int> {
+extension NSRange {
+    fileprivate var range: Range<Int> {
         return lowerBound..<upperBound
     }
 }
 
-@objc public extension Mention {
-    var isForSelf: Bool {
+@objc extension Mention {
+    public var isForSelf: Bool {
         return user.isSelfUser
     }
 }
 
-public extension TextMessageData {
-    var isMentioningSelf: Bool {
+extension TextMessageData {
+    public var isMentioningSelf: Bool {
         return mentions.any(\.isForSelf)
     }
 }

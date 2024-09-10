@@ -698,8 +698,8 @@ extension DownStyle {
 
 // MARK: - Helper Extensions
 
-private extension NSRange {
-    func textRange(in textInput: UITextInput) -> UITextRange? {
+extension NSRange {
+    fileprivate func textRange(in textInput: UITextInput) -> UITextRange? {
         guard
             let start = textInput.position(from: textInput.beginningOfDocument, offset: location),
             let end = textInput.position(from: start, offset: length),

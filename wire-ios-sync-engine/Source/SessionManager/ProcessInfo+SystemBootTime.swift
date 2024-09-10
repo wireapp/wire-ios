@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ProcessInfo {
-    func bootTime() -> Date? {
+extension ProcessInfo {
+    public func bootTime() -> Date? {
         var tv = timeval()
         var tvSize = MemoryLayout<timeval>.size
         let err = sysctlbyname("kern.boottime", &tv, &tvSize, nil, 0)

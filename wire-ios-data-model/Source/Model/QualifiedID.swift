@@ -43,8 +43,8 @@ extension QualifiedID: SafeForLoggingStringConvertible {
     }
 }
 
-public extension ZMUser {
-    var qualifiedID: QualifiedID? {
+extension ZMUser {
+    public var qualifiedID: QualifiedID? {
         guard
             let context = managedObjectContext,
             let uuid = remoteIdentifier,
@@ -57,8 +57,8 @@ public extension ZMUser {
     }
 }
 
-public extension ZMConversation {
-    var qualifiedID: QualifiedID? {
+extension ZMConversation {
+    public var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
             let domain = domain ?? BackendInfo.domain
@@ -70,24 +70,24 @@ public extension ZMConversation {
     }
 }
 
-public extension Collection where Element == ZMUser {
-    var qualifiedUserIDs: [QualifiedID]? {
+extension Collection where Element == ZMUser {
+    public var qualifiedUserIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
 
         return list.count == count ? list : nil
     }
 }
 
-public extension Collection where Element == ZMConversation {
-    var qualifiedIDs: [QualifiedID]? {
+extension Collection where Element == ZMConversation {
+    public var qualifiedIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
 
         return list.count == count ? list : nil
     }
 }
 
-public extension QualifiedID {
-    static func random() -> QualifiedID {
+extension QualifiedID {
+    public static func random() -> QualifiedID {
         return QualifiedID(
             uuid: UUID(),
             domain: .randomDomain()

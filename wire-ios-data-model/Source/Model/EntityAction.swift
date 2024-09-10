@@ -41,19 +41,19 @@ public protocol EntityAction {
     var resultHandler: ResultHandler? { get set }
 }
 
-public extension EntityAction {
-    typealias ResultHandler = (Swift.Result<Result, Failure>) -> Void
+extension EntityAction {
+    public typealias ResultHandler = (Swift.Result<Result, Failure>) -> Void
 
-    static var notificationName: Notification.Name {
+    public static var notificationName: Notification.Name {
         return Notification.Name(String(describing: Self.Type.self))
     }
 
-    static var userInfoKey: String {
+    public static var userInfoKey: String {
         return "action"
     }
 
     /// Request the action to be performed
-    func send(in context: NotificationContext) {
+    public func send(in context: NotificationContext) {
         let notification = NotificationInContext(
             name: Self.notificationName,
             context: context,
@@ -64,7 +64,7 @@ public extension EntityAction {
     }
 
     /// Called by an `EntityActionHandler` when the action has been performed.
-    mutating func notifyResult(_ result: Swift.Result<Result, Failure>) {
+    public mutating func notifyResult(_ result: Swift.Result<Result, Failure>) {
         let resultHandler = self.resultHandler
         self.resultHandler = nil
 
@@ -74,7 +74,7 @@ public extension EntityAction {
     }
 
     /// Register a result handler which will be called when the action has been performed.
-    mutating func onResult(resultHandler: @escaping ResultHandler) {
+    public mutating func onResult(resultHandler: @escaping ResultHandler) {
         self.resultHandler = resultHandler
     }
 
@@ -84,7 +84,7 @@ public extension EntityAction {
     ///   - handler: action handler
     ///   - context: context in which to listen for actions
     ///   - queue: queue on which the `performAction()` will be called
-    static func registerHandler<Handler: EntityActionHandler>(
+    public static func registerHandler<Handler: EntityActionHandler>(
         _ handler: Handler,
         context: NotificationContext,
         queue: OperationQueue? = nil
@@ -101,12 +101,12 @@ public extension EntityAction {
     }
 }
 
-public extension EntityAction {
+extension EntityAction {
     /// Notify a success result.
     ///
     /// - Parameter result: The successful result.
 
-    mutating func succeed(with result: Result) {
+    public mutating func succeed(with result: Result) {
         notifyResult(.success(result))
     }
 
@@ -114,22 +114,22 @@ public extension EntityAction {
     ///
     /// - Parameter failure: The reason the action failured.
 
-    mutating func fail(with failure: Failure) {
+    public mutating func fail(with failure: Failure) {
         notifyResult(.failure(failure))
     }
 }
 
-public extension EntityAction where Result == Void {
+extension EntityAction where Result == Void {
     /// Notify a success result.
 
-    mutating func succeed() {
+    public mutating func succeed() {
         notifyResult(.success(()))
     }
 }
 
 // MARK: - Async / Await
 
-public extension EntityAction {
+extension EntityAction {
     /// Perform the action with the given result handler.
     ///
     /// - Parameters:
@@ -137,7 +137,7 @@ public extension EntityAction {
     ///   - resultHandler a closure to recieve the action's result.
 
     @available(*, renamed: "perform(in:)")
-    mutating func perform(
+    public mutating func perform(
         in context: NotificationContext,
         resultHandler: @escaping ResultHandler
     ) {
@@ -156,7 +156,7 @@ public extension EntityAction {
     /// - Throws:
     ///   The action's error.
 
-    mutating func perform(in context: NotificationContext) async throws -> Result {
+    public mutating func perform(in context: NotificationContext) async throws -> Result {
         try await withCheckedThrowingContinuation { continuation in
             perform(in: context, resultHandler: continuation.resume(with:))
         }

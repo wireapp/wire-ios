@@ -60,12 +60,12 @@ enum TransferApplockKeychain {
     }
 }
 
-private extension Bundle {
-    var sharedContainerURL: URL? {
+extension Bundle {
+    fileprivate var sharedContainerURL: URL? {
         return appGroupIdentifier.map(FileManager.sharedContainerDirectory)
     }
 
-    var appGroupIdentifier: String? {
+    fileprivate var appGroupIdentifier: String? {
         return bundleIdentifier.map { "group." + $0 }
     }
 }

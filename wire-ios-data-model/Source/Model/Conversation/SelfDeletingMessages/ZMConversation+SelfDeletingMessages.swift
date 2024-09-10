@@ -125,16 +125,16 @@ extension ZMConversation {
     }
 }
 
-private extension Feature.SelfDeletingMessages {
-    var isForcedOff: Bool {
+extension Feature.SelfDeletingMessages {
+    fileprivate var isForcedOff: Bool {
         return status == .disabled
     }
 
-    var isForcedOn: Bool {
+    fileprivate var isForcedOn: Bool {
         return config.enforcedTimeoutSeconds > 0
     }
 
-    var timeoutValue: MessageDestructionTimeoutValue {
+    fileprivate var timeoutValue: MessageDestructionTimeoutValue {
         return .init(rawValue: Double(config.enforcedTimeoutSeconds))
     }
 }

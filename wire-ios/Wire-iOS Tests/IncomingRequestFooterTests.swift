@@ -61,10 +61,10 @@ final class IncomingRequestFooterTests: XCTestCase {
     }
 }
 
-private extension IncomingRequestFooterView {
+extension IncomingRequestFooterView {
     // MARK: - Helper Method
 
-    func prepareForSnapshots() -> UIView {
+    fileprivate func prepareForSnapshots() -> UIView {
         let container = UIView()
         container.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false

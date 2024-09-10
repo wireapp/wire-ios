@@ -88,8 +88,8 @@ final class ChangeHandleViewControllerTests: XCTestCase {
     }
 }
 
-fileprivate extension UIViewController {
-    func prepareForSettingsSnapshots() -> UIView {
+extension UIViewController {
+    fileprivate func prepareForSettingsSnapshots() -> UIView {
         let navigationController = wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
         beginAppearanceTransition(true, animated: false)

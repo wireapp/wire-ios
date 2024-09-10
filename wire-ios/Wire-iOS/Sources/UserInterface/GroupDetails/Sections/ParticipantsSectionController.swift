@@ -329,8 +329,8 @@ extension ParticipantsSectionController: UserObserving {
     }
 }
 
-private extension UICollectionView {
-    func dequeueFooter(for indexPath: IndexPath) -> UICollectionReusableView {
+extension UICollectionView {
+    fileprivate func dequeueFooter(for indexPath: IndexPath) -> UICollectionReusableView {
         dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
                                          withReuseIdentifier: "SectionFooter",
                                          for: indexPath)

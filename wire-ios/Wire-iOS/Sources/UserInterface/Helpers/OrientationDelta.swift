@@ -83,8 +83,8 @@ enum OrientationAngle {
     }
 }
 
-private extension UIDeviceOrientation {
-    var deltaFromPortrait: OrientationDelta {
+extension UIDeviceOrientation {
+    fileprivate var deltaFromPortrait: OrientationDelta {
         switch self {
         case .landscapeLeft:
             return .rotatedLeft
@@ -98,8 +98,8 @@ private extension UIDeviceOrientation {
     }
 }
 
-private extension UIInterfaceOrientation {
-    var deltaFromPortrait: OrientationDelta {
+extension UIInterfaceOrientation {
+    fileprivate var deltaFromPortrait: OrientationDelta {
         switch self {
         case .landscapeLeft:
             return .rotatedLeft

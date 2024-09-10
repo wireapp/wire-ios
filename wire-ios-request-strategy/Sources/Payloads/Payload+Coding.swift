@@ -191,8 +191,8 @@ enum APIVersionAwareCodingError: Error {
     case missingAPIVersion
 }
 
-private extension CodingUserInfoKey {
-    static var apiVersion: Self = .init(rawValue: "APIVersionKey")!
+extension CodingUserInfoKey {
+    fileprivate static var apiVersion: Self = .init(rawValue: "APIVersionKey")!
 }
 
 extension Decoder {

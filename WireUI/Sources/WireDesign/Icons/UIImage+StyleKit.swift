@@ -18,7 +18,7 @@
 
 import UIKit
 
-public extension StyleKitIcon {
+extension StyleKitIcon {
     /**
      * Creates an image of the icon, with specified size and color.
      * - parameter size: The desired size of the image.
@@ -26,7 +26,7 @@ public extension StyleKitIcon {
      * - returns: The image that represents the icon.
      */
 
-    func makeImage(size: StyleKitIcon.Size, color: UIColor) -> UIImage {
+    public func makeImage(size: StyleKitIcon.Size, color: UIColor) -> UIImage {
         let imageProperties = renderingProperties
         let imageSize = size.rawValue
         let targetSize = CGSize(width: imageSize, height: imageSize)
@@ -40,7 +40,7 @@ public extension StyleKitIcon {
     }
 }
 
-public extension UIImage {
+extension UIImage {
     /**
      * Creates an image with the specified icon, size and color.
      * - parameter icon: The icon to display.
@@ -49,7 +49,7 @@ public extension UIImage {
      * - returns: The image to use in the specified configuration.
      */
 
-    static func imageForIcon(
+    public static func imageForIcon(
         _ icon: StyleKitIcon,
         size: CGFloat,
         color: UIColor
@@ -65,7 +65,7 @@ public extension UIImage {
      * programmer error and will cause an assertion failure.
      */
 
-    func downscaling(to targetSize: CGSize) -> UIImage {
+    public func downscaling(to targetSize: CGSize) -> UIImage {
         assert(targetSize.width < size.width)
         assert(targetSize.height < size.height)
 
@@ -78,7 +78,7 @@ public extension UIImage {
     }
 }
 
-public extension UIImageView {
+extension UIImageView {
     /**
      * Sets the image of the image view to the given icon, size and color.
      * - parameter icon: The icon to display.
@@ -87,7 +87,7 @@ public extension UIImageView {
      * - returns: The image that represents the icon.
      */
 
-    func setIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size, color: UIColor) {
+    public func setIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size, color: UIColor) {
         image = icon.makeImage(size: size, color: color)
     }
 
@@ -100,7 +100,7 @@ public extension UIImageView {
      * - returns: The image that represents the icon.
      */
 
-    func setTemplateIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size) {
+    public func setTemplateIcon(_ icon: StyleKitIcon, size: StyleKitIcon.Size) {
         image = icon.makeImage(size: size, color: .black).withRenderingMode(.alwaysTemplate)
     }
 }

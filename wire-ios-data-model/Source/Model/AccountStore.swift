@@ -132,8 +132,8 @@ public final class AccountStore: NSObject {
     }
 }
 
-private extension Error {
-    var safeForLoggingDescription: String {
+extension Error {
+    fileprivate var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
     }
 }

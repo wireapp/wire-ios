@@ -65,8 +65,8 @@ public struct UpdateConnectionAction: EntityAction {
     }
 }
 
-public extension ZMUser {
-    func sendConnectionRequest(to user: UserType, completion: @escaping ConnectToUserAction.ResultHandler) {
+extension ZMUser {
+    public func sendConnectionRequest(to user: UserType, completion: @escaping ConnectToUserAction.ResultHandler) {
         guard let userID = user.remoteIdentifier, let managedObjectContext else {
             return completion(.failure(.internalInconsistency))
         }
@@ -77,8 +77,8 @@ public extension ZMUser {
     }
 }
 
-public extension ZMConnection {
-    func updateStatus(_ status: ZMConnectionStatus, completion: @escaping UpdateConnectionAction.ResultHandler) {
+extension ZMConnection {
+    public func updateStatus(_ status: ZMConnectionStatus, completion: @escaping UpdateConnectionAction.ResultHandler) {
         guard let context = managedObjectContext else {
             return completion(.failure(.internalInconsistency))
         }

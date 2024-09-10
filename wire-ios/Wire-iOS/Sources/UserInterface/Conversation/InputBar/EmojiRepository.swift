@@ -100,8 +100,8 @@ final class EmojiRepository: EmojiRepositoryInterface {
     }()
 }
 
-private extension EmojiRepository {
-    static func loadAllFromDisk() -> [Emoji] {
+extension EmojiRepository {
+    fileprivate static func loadAllFromDisk() -> [Emoji] {
         guard let url = Bundle.main.url(forResource: "emojis", withExtension: "json") else {
             logger.error("failed to load emojis: emojis.json file not found")
             return []

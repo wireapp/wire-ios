@@ -22,20 +22,20 @@ let MessageDeletionTimerKey = "MessageDeletionTimer"
 let MessageObfuscationTimerKey = "MessageObfuscationTimer"
 private let log = ZMSLog(tag: "ephemeral")
 
-public extension NSManagedObjectContext {
-    @objc var zm_messageDeletionTimer: ZMMessageDestructionTimer? {
+extension NSManagedObjectContext {
+    @objc public var zm_messageDeletionTimer: ZMMessageDestructionTimer? {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimerKey should be started only on the uiContext")
 
         return userInfo[MessageDeletionTimerKey] as? ZMMessageDestructionTimer
     }
 
-    @objc var zm_messageObfuscationTimer: ZMMessageDestructionTimer? {
+    @objc public var zm_messageObfuscationTimer: ZMMessageDestructionTimer? {
         precondition(zm_isSyncContext, "MessageObfuscationTimer should be started only on the syncContext")
 
         return userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer
     }
 
-    @objc func zm_createMessageObfuscationTimer() {
+    @objc public func zm_createMessageObfuscationTimer() {
         precondition(zm_isSyncContext, "MessageObfuscationTimer should be started only on the syncContext")
 
         guard userInfo[MessageObfuscationTimerKey] == nil else {
@@ -47,7 +47,7 @@ public extension NSManagedObjectContext {
         log.debug("creating obfuscation timer")
     }
 
-    @objc func zm_createMessageDeletionTimer() {
+    @objc public func zm_createMessageDeletionTimer() {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimer should be started only on the uiContext")
 
         guard userInfo[MessageDeletionTimerKey] == nil else {
@@ -61,7 +61,7 @@ public extension NSManagedObjectContext {
 
     /// Tears down zm_messageObfuscationTimer and zm_messageDeletionTimer
     /// Call inside a performGroupedBlock(AndWait) when calling it from another context
-    @objc func zm_teardownMessageObfuscationTimer() {
+    @objc public func zm_teardownMessageObfuscationTimer() {
         precondition(zm_isSyncContext, "MessageObfuscationTimer is located on the syncContext")
         if let timer = userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer {
             timer.tearDown()
@@ -72,7 +72,7 @@ public extension NSManagedObjectContext {
 
     /// Tears down zm_messageDeletionTimer
     /// Call inside a performGroupedBlock(AndWait) when calling it from another context
-    @objc func zm_teardownMessageDeletionTimer() {
+    @objc public func zm_teardownMessageDeletionTimer() {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimerKey is located on the uiContext")
         if let timer = userInfo[MessageDeletionTimerKey] as? ZMMessageDestructionTimer {
             timer.tearDown()

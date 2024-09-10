@@ -28,8 +28,8 @@ import WireUtilities
 
 public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
-public extension Bundle {
-    @objc var appGroupIdentifier: String? {
+extension Bundle {
+    @objc public var appGroupIdentifier: String? {
         return bundleIdentifier.map { "group." + $0 }
     }
 }

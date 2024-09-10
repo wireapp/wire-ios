@@ -113,14 +113,14 @@ extension TopConversationsDirectory {
     }
 }
 
-fileprivate extension ZMConversation {
-    static var predicateForActiveOneOnOneConversations: NSPredicate {
+extension ZMConversation {
+    fileprivate static var predicateForActiveOneOnOneConversations: NSPredicate {
         let oneOnOnePredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.conversationType), ZMConversationType.oneOnOne.rawValue)
         let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.oneOnOneUser.connection.status), ZMConnectionStatus.accepted.rawValue)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [oneOnOnePredicate, acceptedPredicate])
     }
 
-    func lastMonthMessageCount() -> Int {
+    fileprivate func lastMonthMessageCount() -> Int {
         guard let oneMonthAgo = Calendar.current.date(byAdding: .month, value: -1, to: Date()) else { return 0 }
 
         var count = 0

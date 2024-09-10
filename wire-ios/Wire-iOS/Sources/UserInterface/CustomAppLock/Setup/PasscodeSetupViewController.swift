@@ -330,8 +330,8 @@ extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate 
     }
 }
 
-private extension DownStyle {
-    static func infoLabelStyle(compact: Bool) -> DownStyle {
+extension DownStyle {
+    fileprivate static func infoLabelStyle(compact: Bool) -> DownStyle {
         let style = DownStyle()
         style.baseFont = compact ? FontSpec.smallRegularFont.font! : FontSpec.normalRegularFont.font!
         style.baseFontColor = SemanticColors.Label.textDefault

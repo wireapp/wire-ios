@@ -175,8 +175,8 @@ final class ExplicitChangeDetector: ChangeDetector {
 
 // MARK: - Helper extensions
 
-fileprivate extension ExplicitChangeDetector {
-    struct UpdatedObject {
+extension ExplicitChangeDetector {
+    fileprivate struct UpdatedObject {
         let object: ZMManagedObject
         let changedKeys: Set<String>
 
@@ -186,20 +186,20 @@ fileprivate extension ExplicitChangeDetector {
     }
 }
 
-private extension Sequence where Element: SetAlgebra {
-    var flattened: Element {
+extension Sequence where Element: SetAlgebra {
+    fileprivate var flattened: Element {
         reduce(Element()) { $0.union($1) }
     }
 }
 
-private extension LazySequence {
-    func collect() -> [Self.Element] {
+extension LazySequence {
+    fileprivate func collect() -> [Self.Element] {
         return Array(self)
     }
 }
 
-private extension NSManagedObject {
-    var changedKeys: Set<String> {
+extension NSManagedObject {
+    fileprivate var changedKeys: Set<String> {
         return Set(changedValues().keys)
     }
 }
@@ -210,8 +210,8 @@ protocol Mergeable {
     func merged(with other: Self) -> Self
 }
 
-private extension Dictionary where Value: Mergeable {
-    mutating func merge(with other: Dictionary) {
+extension Dictionary where Value: Mergeable {
+    fileprivate mutating func merge(with other: Dictionary) {
         other.forEach { key, value in
             if let currentValue = self[key] {
                 self[key] = currentValue.merged(with: value)
@@ -221,7 +221,7 @@ private extension Dictionary where Value: Mergeable {
         }
     }
 
-    func merged(with other: Dictionary) -> Dictionary {
+    fileprivate func merged(with other: Dictionary) -> Dictionary {
         var newDict = self
         other.forEach { key, value in
             newDict[key] = newDict[key]?.merged(with: value) ?? value

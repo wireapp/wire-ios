@@ -804,12 +804,12 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     }
 }
 
-private extension Encodable {
-    func toTransportDictionary() throws -> ZMTransportData {
+extension Encodable {
+    fileprivate func toTransportDictionary() throws -> ZMTransportData {
         return try toDictionary() as ZMTransportData
     }
 
-    func toDictionary() throws -> [String: Any] {
+    fileprivate func toDictionary() throws -> [String: Any] {
         let data = try JSONEncoder().encode(self)
         let json = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
         return json as! [String: Any]

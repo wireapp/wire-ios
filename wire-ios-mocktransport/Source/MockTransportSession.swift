@@ -20,7 +20,7 @@ import CoreData
 import Foundation
 import WireTransport
 
-public extension MockTransportSession {
+extension MockTransportSession {
     private func selfUserPartOfTeam(_ team: MockTeam) -> Bool {
         return team.contains(user: selfUser)
     }
@@ -30,7 +30,7 @@ public extension MockTransportSession {
     }
 
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
-    func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+    public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
         let updatedEvents = updated
@@ -144,8 +144,8 @@ extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
 
 // MARK: - Email activation
 
-public extension MockTransportSession {
-    @objc var emailActivationCode: String {
+extension MockTransportSession {
+    @objc public var emailActivationCode: String {
         return "123456"
     }
 }
@@ -169,19 +169,19 @@ extension MockTransportSession: TransportSessionType {
     public func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {}
 }
 
-public extension MockTransportSession {
-    @objc var invalidSinceParameter400: UUID {
+extension MockTransportSession {
+    @objc public var invalidSinceParameter400: UUID {
         return UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
     }
 
-    @objc var unknownSinceParameter404: UUID {
+    @objc public var unknownSinceParameter404: UUID {
         return UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
     }
 }
 
-public extension NSString {
+extension NSString {
     @objc
-    func removingAPIVersion() -> NSString {
+    public func removingAPIVersion() -> NSString {
         for version in APIVersion.allCases {
             if version == .v0 {
                 continue

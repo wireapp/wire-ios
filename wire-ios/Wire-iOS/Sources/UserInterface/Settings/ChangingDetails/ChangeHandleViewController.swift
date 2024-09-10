@@ -21,8 +21,8 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-fileprivate extension UIView {
-    func wiggle() {
+extension UIView {
+    fileprivate func wiggle() {
         let animation = CAKeyframeAnimation()
         animation.keyPath = "position.x"
         animation.duration = 0.3

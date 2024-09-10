@@ -157,8 +157,8 @@ final class AuthenticationStateController {
     }
 }
 
-private extension AuthenticationStateController.RewindMilestone {
-    func shouldRewind(to step: AuthenticationFlowStep) -> Bool {
+extension AuthenticationStateController.RewindMilestone {
+    fileprivate func shouldRewind(to step: AuthenticationFlowStep) -> Bool {
         switch (self, step) {
         case (.createCredentials, .createCredentials):
             return true
@@ -167,7 +167,7 @@ private extension AuthenticationStateController.RewindMilestone {
         }
     }
 
-    var stepsToAdd: [AuthenticationFlowStep] {
+    fileprivate var stepsToAdd: [AuthenticationFlowStep] {
         switch self {
         case .createCredentials(let user):
             return [.createCredentials(user)]

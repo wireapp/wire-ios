@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct ClassifiedDomains: Codable {
+extension Feature {
+    public struct ClassifiedDomains: Codable {
         // MARK: - Properties
 
         /// If `enabled` then the user must consider classified domains.

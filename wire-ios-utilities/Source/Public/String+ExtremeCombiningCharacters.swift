@@ -18,7 +18,7 @@
 
 import Foundation
 
-public extension CharacterSet {
+extension CharacterSet {
     // http://www.unicode.org/charts/PDF/U0300.pdf
     private static let diacriticsCombiningCodes              = CharacterSet(charactersIn: UnicodeScalar(0x0300 as UInt16)!...UnicodeScalar(0x036f as UInt16)!)
     // http://www.unicode.org/charts/PDF/U1AB0.pdf
@@ -30,7 +30,7 @@ public extension CharacterSet {
     // http://www.unicode.org/charts/PDF/UFE20.pdf
     private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xfe20 as UInt16)!...UnicodeScalar(0xfe2f as UInt16)!)
 
-    static var diacriticsCombining: CharacterSet = {
+    public static var diacriticsCombining: CharacterSet = {
         [
             diacriticsCombiningCodes,
             diacriticsCombiningCodesExtended,
@@ -43,8 +43,8 @@ public extension CharacterSet {
     }()
 }
 
-public extension UnicodeScalar {
-    var isDiacritics: Bool {
+extension UnicodeScalar {
+    public var isDiacritics: Bool {
         return CharacterSet.diacriticsCombining.contains(self)
     }
 }
@@ -53,11 +53,11 @@ private let extremeDiacriticsViewWindowSize: Int = 10
 private let extremeDiacriticsViewMinWindowSize: Int = 3
 private let diacriticsPerCharMaxRatio: Float = 0.5
 
-public extension String {
+extension String {
     // Sanitizes the string from excessive use of diacritic combining characters.
     // @warning the return value would still contain some amount of diacritic combining characters. The algorithm
     // implemented in the way that the text with valid diacritics should not be sanitized.
-    var removingExtremeCombiningCharacters: String {
+    public var removingExtremeCombiningCharacters: String {
         if self.unicodeScalars.count < extremeDiacriticsViewWindowSize {
             return self
         }
@@ -99,9 +99,9 @@ public extension String {
     }
 }
 
-public extension NSString {
+extension NSString {
     @objc(stringByRemovingExtremeCombiningCharacters)
-    var removingExtremeCombiningCharacters: NSString {
+    public var removingExtremeCombiningCharacters: NSString {
         let selfString = (self as String)
         let result = selfString.removingExtremeCombiningCharacters
         return result as NSString

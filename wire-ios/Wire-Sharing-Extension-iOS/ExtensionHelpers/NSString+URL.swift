@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension NSString {
-    func containsURL() -> Bool {
+extension NSString {
+    public func containsURL() -> Bool {
         do {
             let urlDetector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
             let matches = urlDetector.matches(in: self as String, options: [], range: NSRange(location: 0, length: self.length))
@@ -31,15 +31,15 @@ public extension NSString {
 
     // MARK: - URL Formatting
 
-    func removingPrefixWWW() -> String {
+    public func removingPrefixWWW() -> String {
         return replacingOccurrences(of: "www.", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
     }
 
-    func removingTrailingForwardSlash() -> String {
+    public func removingTrailingForwardSlash() -> String {
         return replacingOccurrences(of: "/", with: "", options: [.anchored, .backwards], range: NSRange(location: 0, length: self.length))
     }
 
-    func removingURLScheme(_ scheme: String) -> String {
+    public func removingURLScheme(_ scheme: String) -> String {
         return replacingOccurrences(of: scheme + "://", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
     }
 }

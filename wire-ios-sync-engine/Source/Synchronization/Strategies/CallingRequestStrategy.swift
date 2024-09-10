@@ -619,8 +619,8 @@ extension CallingRequestStrategy {
 
 // MARK: - Message sending
 
-private extension GenericMessageEntity {
-    var isRejected: Bool {
+extension GenericMessageEntity {
+    fileprivate var isRejected: Bool {
         guard
             message.hasCalling else {
             return false
@@ -630,8 +630,8 @@ private extension GenericMessageEntity {
     }
 }
 
-private extension Calling {
-    var isRejected: Bool {
+extension Calling {
+    fileprivate var isRejected: Bool {
         guard
             let payload = content.data(using: .utf8, allowLossyConversion: false),
             let callContent = CallEventContent(from: payload)
@@ -643,8 +643,8 @@ private extension Calling {
     }
 }
 
-private extension AVSIdentifier {
-    func toQualifiedId() -> QualifiedID {
+extension AVSIdentifier {
+    fileprivate func toQualifiedId() -> QualifiedID {
         QualifiedID(uuid: identifier, domain: domain ?? BackendInfo.domain ?? "")
     }
 }

@@ -18,25 +18,25 @@
 
 import Foundation
 
-public extension Date {
+extension Date {
     /// The number of days from this date til now.
     ///
     /// If this date is in the future, the return value will be 0.
 
-    var ageInDays: Int {
+    public var ageInDays: Int {
         let now = Date()
         return Calendar.current.dateComponents([.day], from: self, to: now).day!
     }
 
     /// Whether the date is after the current instant.
 
-    var isInTheFuture: Bool {
+    public var isInTheFuture: Bool {
         return !isInThePast
     }
 
     /// Whether the date is before the current instant.
 
-    var isInThePast: Bool {
+    public var isInThePast: Bool {
         return compare(Date()) != .orderedDescending
     }
 }

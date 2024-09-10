@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension ZMConversation {
-    func isFederating(with user: UserType) -> Bool {
+extension ZMConversation {
+    public func isFederating(with user: UserType) -> Bool {
         guard
             let domain,
             let userDomain = user.domain
@@ -28,7 +28,7 @@ public extension ZMConversation {
         return domain != userDomain
     }
 
-    static func groupConversations(
+    public static func groupConversations(
         hostedOnDomain domain: String,
         in context: NSManagedObjectContext
     ) -> [ZMConversation] {
@@ -37,7 +37,7 @@ public extension ZMConversation {
         return context.fetchOrAssert(request: request) as? [ZMConversation] ?? []
     }
 
-    static func groupConversations(
+    public static func groupConversations(
         notHostedOnDomains domains: [String],
         in context: NSManagedObjectContext
     ) -> [ZMConversation] {
@@ -47,12 +47,12 @@ public extension ZMConversation {
     }
 }
 
-private extension NSPredicate {
-    static var isGroupConversation: NSPredicate {
+extension NSPredicate {
+    fileprivate static var isGroupConversation: NSPredicate {
         return hasConversationType(.group)
     }
 
-    static func hasConversationType(_ type: ZMConversationType) -> NSPredicate {
+    fileprivate static func hasConversationType(_ type: ZMConversationType) -> NSPredicate {
         return NSPredicate(
             format: "%K == %d",
             ZMConversationConversationTypeKey,
@@ -60,7 +60,7 @@ private extension NSPredicate {
         )
     }
 
-    static func isHostedOnDomain(_ domain: String) -> NSPredicate {
+    fileprivate static func isHostedOnDomain(_ domain: String) -> NSPredicate {
         return NSPredicate(
             format: "%K == %@",
             ZMConversationDomainKey,
@@ -68,11 +68,11 @@ private extension NSPredicate {
         )
     }
 
-    static func isNotHostedOnDomains(_ domains: [String]) -> NSPredicate {
+    fileprivate static func isNotHostedOnDomains(_ domains: [String]) -> NSPredicate {
         return isHostedOnAnyDomain(domains).inverse
     }
 
-    static func isHostedOnAnyDomain(_ domains: [String]) -> NSPredicate {
+    fileprivate static func isHostedOnAnyDomain(_ domains: [String]) -> NSPredicate {
         return NSPredicate(
             format: "%K IN %@",
             ZMConversationDomainKey,

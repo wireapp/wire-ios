@@ -59,8 +59,8 @@ final class LocationSendViewControllerTests: XCTestCase {
 
 // MARK: - Helpers
 
-private extension UIViewController {
-    func prepareForSnapshot(heightConstant: CGFloat = 56) -> UIView {
+extension UIViewController {
+    fileprivate func prepareForSnapshot(heightConstant: CGFloat = 56) -> UIView {
         view.heightAnchor.constraint(equalToConstant: heightConstant).isActive = true
         return view
     }

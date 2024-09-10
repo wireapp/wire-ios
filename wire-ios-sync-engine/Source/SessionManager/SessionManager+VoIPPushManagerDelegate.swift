@@ -100,8 +100,8 @@ extension SessionManager: VoIPPushManagerDelegate {
     }
 }
 
-private extension VoIPPushPayload {
-    func caller(in context: NSManagedObjectContext) -> ZMUser? {
+extension VoIPPushPayload {
+    fileprivate func caller(in context: NSManagedObjectContext) -> ZMUser? {
         return ZMUser.fetch(
             with: senderID,
             domain: senderDomain,
@@ -109,7 +109,7 @@ private extension VoIPPushPayload {
         )
     }
 
-    func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
+    fileprivate func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
         return ZMConversation.fetch(
             with: conversationID,
             domain: conversationDomain,
@@ -118,8 +118,8 @@ private extension VoIPPushPayload {
     }
 }
 
-private extension Dictionary where Key == AnyHashable, Value == Any {
-    var stringIdentifier: String {
+extension Dictionary where Key == AnyHashable, Value == Any {
+    fileprivate var stringIdentifier: String {
         guard
             let data = self["data"] as? [AnyHashable: Any],
             let innerData = data["data"] as? [AnyHashable: Any],

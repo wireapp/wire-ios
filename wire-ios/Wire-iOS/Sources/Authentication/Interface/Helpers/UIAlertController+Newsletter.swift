@@ -80,18 +80,18 @@ extension UIAlertController {
     }
 }
 
-private extension AuthenticationCoordinatorAlertAction {
-    static var privacyPolicy: Self {
+extension AuthenticationCoordinatorAlertAction {
+    fileprivate static var privacyPolicy: Self {
         Self.init(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
                   coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])
     }
 
-    static var decline: Self {
+    fileprivate static var decline: Self {
         Self.init(title: L10n.Localizable.General.decline,
                   coordinatorActions: [.setMarketingConsent(false)])
     }
 
-    static var accept: Self {
+    fileprivate static var accept: Self {
         Self.init(title: L10n.Localizable.General.accept,
                   coordinatorActions: [.setMarketingConsent(true)])
     }

@@ -73,8 +73,8 @@ final class NetworkStatusViewTests: XCTestCase {
 
 // MARK: - Method Swizzling
 
-private extension UIScene {
-    @objc var backgroundActivationState: UIScene.ActivationState {
+extension UIScene {
+    @objc fileprivate var backgroundActivationState: UIScene.ActivationState {
         .background
     }
 }

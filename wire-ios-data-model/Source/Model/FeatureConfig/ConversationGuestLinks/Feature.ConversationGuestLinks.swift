@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct ConversationGuestLinks: Codable {
+extension Feature {
+    public struct ConversationGuestLinks: Codable {
         // MARK: - Properties
 
         public let status: Status

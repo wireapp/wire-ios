@@ -598,6 +598,6 @@ extension Notification.Name {
     static let videoGridVisibilityChanged = Notification.Name(rawValue: "VideoGridVisibilityChanged")
 }
 
-fileprivate extension CGFloat {
-    static let pageIndicatorHeight: CGFloat = 24
+extension CGFloat {
+    fileprivate static let pageIndicatorHeight: CGFloat = 24
 }

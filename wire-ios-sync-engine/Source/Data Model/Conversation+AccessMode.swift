@@ -20,8 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ConversationLink")
 
-fileprivate extension ZMConversation {
-    enum TransportKey {
+extension ZMConversation {
+    fileprivate enum TransportKey {
         static let data = "data"
         static let uri = "uri"
         static let hasPassword = "has_password"

@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension AppLockController {
-    struct Config {
+extension AppLockController {
+    public struct Config {
         public let isAvailable: Bool
         public let isForced: Bool
         public let timeout: UInt
@@ -35,7 +35,7 @@ public extension AppLockController {
     /// is only used by whitelabel custom builds. The new config is retrieved from the backend using
     /// the 'features' endpoint.
 
-    struct LegacyConfig: Codable {
+    public struct LegacyConfig: Codable {
         public let isForced: Bool
         public let timeout: UInt
         public let requireCustomPasscode: Bool

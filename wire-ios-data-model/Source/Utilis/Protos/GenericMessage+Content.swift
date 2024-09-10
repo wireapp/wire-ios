@@ -20,88 +20,88 @@ import Foundation
 
 // MARK: - GenericMessage
 
-public extension GenericMessage {
-    var hasText: Bool {
+extension GenericMessage {
+    public var hasText: Bool {
         return messageData is Text
     }
 
-    var hasConfirmation: Bool {
+    public var hasConfirmation: Bool {
         return messageData is Confirmation
     }
 
-    var hasReaction: Bool {
+    public var hasReaction: Bool {
         return messageData is WireProtos.Reaction
     }
 
-    var hasAsset: Bool {
+    public var hasAsset: Bool {
         return messageData is WireProtos.Asset
     }
 
-    var hasClientAction: Bool {
+    public var hasClientAction: Bool {
         return messageData is ClientAction
     }
 
-    var hasCleared: Bool {
+    public var hasCleared: Bool {
         return messageData is Cleared
     }
 
-    var hasLastRead: Bool {
+    public var hasLastRead: Bool {
         return messageData is LastRead
     }
 
-    var hasKnock: Bool {
+    public var hasKnock: Bool {
         return messageData is Knock
     }
 
-    var hasExternal: Bool {
+    public var hasExternal: Bool {
         return messageData is External
     }
 
-    var hasAvailability: Bool {
+    public var hasAvailability: Bool {
         return messageData is WireProtos.Availability
     }
 
-    var hasEdited: Bool {
+    public var hasEdited: Bool {
         return messageData is MessageEdit
     }
 
-    var hasDeleted: Bool {
+    public var hasDeleted: Bool {
         return messageData is MessageDelete
     }
 
-    var hasCalling: Bool {
+    public var hasCalling: Bool {
         return messageData is Calling
     }
 
-    var hasHidden: Bool {
+    public var hasHidden: Bool {
         return messageData is MessageHide
     }
 
-    var hasLocation: Bool {
+    public var hasLocation: Bool {
         return messageData is Location
     }
 
-    var hasDataTransfer: Bool {
+    public var hasDataTransfer: Bool {
         return messageData is DataTransfer
     }
 }
 
 // MARK: - Ephemeral
 
-public extension Ephemeral {
-    var hasAsset: Bool {
+extension Ephemeral {
+    public var hasAsset: Bool {
         return messageData is WireProtos.Asset
     }
 
-    var hasKnock: Bool {
+    public var hasKnock: Bool {
         return messageData is Knock
     }
 
-    var hasLocation: Bool {
+    public var hasLocation: Bool {
         return messageData is Location
     }
 
-    var hasText: Bool {
+    public var hasText: Bool {
         return messageData is Text
     }
 }

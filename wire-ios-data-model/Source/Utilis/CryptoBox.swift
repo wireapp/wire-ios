@@ -75,12 +75,12 @@ extension NSManagedObjectContext {
     }
 }
 
-public extension FileManager {
-    @objc static let keyStoreFolderPrefix = "otr"
+extension FileManager {
+    @objc public static let keyStoreFolderPrefix = "otr"
 
     /// Returns the URL for the keyStore
     @objc(keyStoreURLForAccountInDirectory:createParentIfNeeded:)
-    static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
+    public static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
         if createParentIfNeeded {
             try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }

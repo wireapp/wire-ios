@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModel
 
-private extension Availability {
-    var dontRemindMeUserDefaultsKey: String {
+extension Availability {
+    fileprivate var dontRemindMeUserDefaultsKey: String {
         "dont_remind_me_\(localizedName)"
     }
 }

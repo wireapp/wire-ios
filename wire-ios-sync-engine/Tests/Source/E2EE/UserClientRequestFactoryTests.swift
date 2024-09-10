@@ -354,8 +354,8 @@ final class UserClientRequestFactoryTests: MessagingTest {
     }
 }
 
-private extension Dictionary where Key == String, Value == Any {
-    enum PayloadKey: String {
+extension Dictionary where Key == String, Value == Any {
+    fileprivate enum PayloadKey: String {
         case type
         case email
         case password
@@ -371,59 +371,59 @@ private extension Dictionary where Key == String, Value == Any {
         case ed25519
     }
 
-    var type: String? {
+    fileprivate var type: String? {
         value(forKey: .type)
     }
 
-    var password: String? {
+    fileprivate var password: String? {
         value(forKey: .password)
     }
 
-    var email: String? {
+    fileprivate var email: String? {
         value(forKey: .email)
     }
 
-    var verificationCode: String? {
+    fileprivate var verificationCode: String? {
         value(forKey: .verificationCode)
     }
 
-    var lastKey: [String: Any]? {
+    fileprivate var lastKey: [String: Any]? {
         value(forKey: .lastkey)
     }
 
-    var key: String? {
+    fileprivate var key: String? {
         value(forKey: .key)
     }
 
-    var id: NSNumber? {
+    fileprivate var id: NSNumber? {
         value(forKey: .id)
     }
 
-    var prekeys: [[String: Any]]? {
+    fileprivate var prekeys: [[String: Any]]? {
         value(forKey: .prekeys)
     }
 
-    var sigkeys: [String: Any]? {
+    fileprivate var sigkeys: [String: Any]? {
         value(forKey: .sigkeys)
     }
 
-    var enckey: String? {
+    fileprivate var enckey: String? {
         value(forKey: .enckey)
     }
 
-    var mackey: String? {
+    fileprivate var mackey: String? {
         value(forKey: .mackey)
     }
 
-    var mlsPublicKeys: [String: Any]? {
+    fileprivate var mlsPublicKeys: [String: Any]? {
         value(forKey: .mlsPublicKeys)
     }
 
-    var ed25519: String? {
+    fileprivate var ed25519: String? {
         value(forKey: .ed25519)
     }
 
-    func value<T>(forKey key: PayloadKey) -> T? {
+    fileprivate func value<T>(forKey key: PayloadKey) -> T? {
         return self[key.rawValue] as? T
     }
 }

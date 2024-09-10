@@ -70,8 +70,8 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
     }
 }
 
-private extension Array where Element == String {
-    var hasSelfDomain: Bool {
+extension Array where Element == String {
+    fileprivate var hasSelfDomain: Bool {
         return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
 }

@@ -175,8 +175,8 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
     }
 }
 
-private extension Payload.UserProfile.MessageProtocol {
-    var dataModelMessageProtocol: MessageProtocol {
+extension Payload.UserProfile.MessageProtocol {
+    fileprivate var dataModelMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:
             return .proteus

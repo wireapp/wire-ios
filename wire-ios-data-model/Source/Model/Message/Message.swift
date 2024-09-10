@@ -18,52 +18,52 @@
 
 import Foundation
 
-public extension ZMConversationMessage {
+extension ZMConversationMessage {
     /// Returns YES, if the message has text to display.
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo
-    var isText: Bool {
+    public var isText: Bool {
         return textMessageData != nil
     }
 
-    var isImage: Bool {
+    public var isImage: Bool {
         return imageMessageData != nil || (fileMessageData != nil && fileMessageData!.v3_isImage)
     }
 
-    var isKnock: Bool {
+    public var isKnock: Bool {
         return knockMessageData != nil
     }
 
     /// Returns YES, if the message is a file transfer message
     /// This also includes audio messages and video messages
-    var isFile: Bool {
+    public var isFile: Bool {
         return fileMessageData != nil && !fileMessageData!.v3_isImage
     }
 
-    var isPDF: Bool {
+    public var isPDF: Bool {
         return isFile && fileMessageData?.isPDF ?? false
     }
 
-    var isPass: Bool {
+    public var isPass: Bool {
         return isFile && fileMessageData!.isPass
     }
 
-    var isVideo: Bool {
+    public var isVideo: Bool {
         return isFile && fileMessageData!.isVideo
     }
 
-    var isAudio: Bool {
+    public var isAudio: Bool {
         return isFile && fileMessageData!.isAudio
     }
 
-    var isLocation: Bool {
+    public var isLocation: Bool {
         return locationMessageData != nil
     }
 
-    var isSystem: Bool {
+    public var isSystem: Bool {
         return systemMessageData != nil
     }
 
-    var isNormal: Bool {
+    public var isNormal: Bool {
         return isText
             || isImage
             || isKnock
@@ -73,24 +73,24 @@ public extension ZMConversationMessage {
             || isLocation
     }
 
-    var isConnectionRequest: Bool {
+    public var isConnectionRequest: Bool {
         guard isSystem else { return false }
         return systemMessageData!.systemMessageType == .connectionRequest
     }
 
-    var isMissedCall: Bool {
+    public var isMissedCall: Bool {
         guard isSystem else { return false }
         return systemMessageData!.systemMessageType == .missedCall
     }
 
-    var isDeletion: Bool {
+    public var isDeletion: Bool {
         guard isSystem else { return false }
         return systemMessageData!.systemMessageType == .messageDeletedForEveryone
     }
 }
 
-public extension ConversationCompositeMessage {
-    var isComposite: Bool {
+extension ConversationCompositeMessage {
+    public var isComposite: Bool {
         return compositeMessageData != nil
     }
 }

@@ -17,7 +17,8 @@
     duplicateImports, \
     elseOnSameLine, \
     emptyBraces, \
-    enumNamespaces
+    enumNamespaces, \
+    extensionAccessControl, \
 
 # Options
 
@@ -29,3 +30,4 @@
 --guardelse auto # elseOnSameLine
 --emptybraces no-space # emptyBraces
 --enumnamespaces always # enumNamespaces
+--extensionacl on-declarations # extensionAccessControl

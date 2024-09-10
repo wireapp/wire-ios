@@ -18,8 +18,8 @@
 
 import Foundation
 
-public extension Feature {
-    struct ConferenceCalling: Codable {
+extension Feature {
+    public struct ConferenceCalling: Codable {
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.

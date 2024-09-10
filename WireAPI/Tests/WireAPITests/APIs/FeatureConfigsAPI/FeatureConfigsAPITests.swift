@@ -396,8 +396,8 @@ extension FeatureConfigsAPITests {
     }
 }
 
-private extension APIVersion {
-    func buildAPI(client: any HTTPClient) -> any FeatureConfigsAPI {
+extension APIVersion {
+    fileprivate func buildAPI(client: any HTTPClient) -> any FeatureConfigsAPI {
         let builder = FeatureConfigsAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)
     }

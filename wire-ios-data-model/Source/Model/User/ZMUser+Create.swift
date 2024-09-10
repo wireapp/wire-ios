@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public extension ZMUser {
+extension ZMUser {
     /// Fetch an existing user or create a new one if it doesn't already exist.
     ///
     /// - Parameters:
@@ -25,7 +25,7 @@ public extension ZMUser {
     ///     - context: `NSManagedObjectContext` on which to fetch or create the user.
     ///                NOTE that this **must** be the sync context.
 
-    @objc static func fetchOrCreate(with remoteIdentifier: UUID,
+    @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
                                     domain: String?,
                                     in context: NSManagedObjectContext) -> ZMUser {
         var created: Bool = false
@@ -41,7 +41,7 @@ public extension ZMUser {
     ///                NOTE that this **must** be the sync context.
     ///     - created: Will be set `true` if a new user was created.
 
-    @objc static func fetchOrCreate(with remoteIdentifier: UUID,
+    @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
                                     domain: String?,
                                     in context: NSManagedObjectContext,
                                     created: UnsafeMutablePointer<Bool>) -> ZMUser {

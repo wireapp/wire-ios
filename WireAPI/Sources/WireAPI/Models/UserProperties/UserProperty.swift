@@ -39,10 +39,10 @@ public enum UserProperty: Equatable, Codable {
     case unknown(key: String)
 }
 
-public extension UserProperty {
+extension UserProperty {
     /// The user property key.
 
-    enum Key: String {
+    public enum Key: String {
         /// Wire receipt mode
 
         case wireReceiptMode = "WIRE_RECEIPT_MODE"

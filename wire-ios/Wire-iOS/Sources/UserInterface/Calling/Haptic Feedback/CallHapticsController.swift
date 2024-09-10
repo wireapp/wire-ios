@@ -105,13 +105,13 @@ final class CallHapticsController {
 
 // MARK: - Helper
 
-fileprivate extension CallState {
-    var isEstablished: Bool {
+extension CallState {
+    fileprivate var isEstablished: Bool {
         guard case .established = self else { return false }
         return true
     }
 
-    var isEnding: Bool {
+    fileprivate var isEnding: Bool {
         guard case .terminating = self else { return false }
         return true
     }

@@ -117,8 +117,8 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
 // MARK: - Helpers
 
-private extension AnalyticsIdentifierProviderTests {
-    func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
+extension AnalyticsIdentifierProviderTests {
+    fileprivate func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
         let user = selfUser ? self.selfUser! : createUser(in: uiMOC)
         guard inTeam else { return user }
         createMembership(in: uiMOC, user: user, team: createTeam(in: uiMOC))
@@ -126,8 +126,8 @@ private extension AnalyticsIdentifierProviderTests {
     }
 }
 
-private extension ZMConversation {
-    func numberOfDataTransferMessagesContaining(analyticsIdentifier: String) -> Int {
+extension ZMConversation {
+    fileprivate func numberOfDataTransferMessagesContaining(analyticsIdentifier: String) -> Int {
         return allMessages.lazy
             .compactMap { $0 as? ZMClientMessage }
             .compactMap(\.underlyingMessage)

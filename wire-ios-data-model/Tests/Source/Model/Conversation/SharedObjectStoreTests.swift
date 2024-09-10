@@ -18,8 +18,8 @@
 
 @testable import WireDataModel
 
-fileprivate extension Notification {
-    init(inserted: [NSManagedObject] = [], updated: [NSManagedObject] = [], deleted: [NSManagedObject] = []) {
+extension Notification {
+    fileprivate init(inserted: [NSManagedObject] = [], updated: [NSManagedObject] = [], deleted: [NSManagedObject] = []) {
         self.init(name: .NSManagedObjectContextDidSave, userInfo: [
             NSInsertedObjectsKey: Set<NSManagedObject>(inserted),
             NSUpdatedObjectsKey: Set<NSManagedObject>(updated),
