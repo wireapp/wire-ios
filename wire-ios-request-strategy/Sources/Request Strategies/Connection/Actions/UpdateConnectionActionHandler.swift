@@ -126,6 +126,6 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
             context.saveOrRollback()
         }
 
-        action.notifyResult(.success(Void()))
+        action.notifyResult(.success(()))
     }
 }

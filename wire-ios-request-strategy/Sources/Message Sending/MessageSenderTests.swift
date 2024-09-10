@@ -64,7 +64,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: nil)
             .arrange()
 
@@ -85,7 +85,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: nil)
             .arrange()
 
@@ -106,7 +106,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: nil)
             .arrange()
 
@@ -162,7 +162,7 @@ final class MessageSenderTests: MessagingTestBase {
                 Arrangement.Scaffolding.messageSendingStatusMissingClients,
                 response)
             )
-            .withEstablishSessions(returning: .success(Void()))
+            .withEstablishSessions(returning: .success(()))
             .arrange()
 
         // when
@@ -185,7 +185,7 @@ final class MessageSenderTests: MessagingTestBase {
             .withQuickSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
-            .withEstablishSessions(returning: .success(Void()))
+            .withEstablishSessions(returning: .success(()))
             .arrange()
 
         // when
@@ -215,7 +215,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
@@ -237,13 +237,13 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.missingClients(
                 Arrangement.Scaffolding.messageSendingStatusMissingClients,
                 response)
             )
-            .withEstablishSessions(returning: .success(Void()))
+            .withEstablishSessions(returning: .success(()))
             .arrange()
 
         // when
@@ -264,10 +264,10 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
-            .withEstablishSessions(returning: .success(Void()))
+            .withEstablishSessions(returning: .success(()))
             .arrange()
 
         // when
@@ -289,7 +289,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
             .arrange()
@@ -312,7 +312,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
@@ -346,7 +346,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
@@ -383,7 +383,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
             .arrange()
@@ -418,7 +418,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
@@ -455,7 +455,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
@@ -488,7 +488,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
             .withSendMlsMessage(returning: .failure(networkError))
@@ -518,7 +518,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .arrange()
 
@@ -541,7 +541,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
             .withQuickSyncObserverCompleting()
-            .withMessageDependencyResolverReturning(result: .success(Void()))
+            .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
             .withMLServiceConfigured()
             .arrange()

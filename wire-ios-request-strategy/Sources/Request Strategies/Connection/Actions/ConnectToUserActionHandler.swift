@@ -99,6 +99,6 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
             context.saveOrRollback()
         }
 
-        action.notifyResult(.success(Void()))
+        action.notifyResult(.success(()))
     }
 }

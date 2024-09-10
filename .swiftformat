@@ -76,7 +76,8 @@
     trailingCommas, \
     trailingSpace, \
     typeSugar, \
-    unusedArguments
+    unusedArguments, \
+    void
 
 
 # Options

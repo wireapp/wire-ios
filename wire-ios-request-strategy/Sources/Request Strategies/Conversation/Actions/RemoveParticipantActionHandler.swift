@@ -101,7 +101,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)
             }
             let success = {
-                action.notifyResult(.success(Void()))
+                action.notifyResult(.success(()))
             }
             WaitingGroupTask(context: context) { [self] in
                 await eventProcessor.processAndSaveConversationEvents([updateEvent])
@@ -109,7 +109,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             }
 
         case 204:
-            action.notifyResult(.success(Void()))
+            action.notifyResult(.success(()))
 
         default:
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))

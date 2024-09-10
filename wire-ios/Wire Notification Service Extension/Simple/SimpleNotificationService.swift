@@ -29,7 +29,7 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
     // MARK: - Properties
 
     private let environment: BackendEnvironmentProvider = BackendEnvironment.shared
-    private var currentTasks: [String: Task<(), Never>] = [:]
+    private var currentTasks: [String: Task<Void, Never>] = [:]
     private var latestContentHandler: ContentHandler?
 
     // MARK: - Life cycle

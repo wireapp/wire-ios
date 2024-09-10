@@ -81,7 +81,7 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
             }
 
             let success = {
-                action.notifyResult(.success(Void()))
+                action.notifyResult(.success(()))
             }
             Task {
                 await eventProcessor.processAndSaveConversationEvents([updateEvent])
