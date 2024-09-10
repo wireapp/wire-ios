@@ -46,6 +46,7 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 # SETUP
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
+git lfs install
 
 # Workaround for carthage "The file couldn’t be saved." error
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
