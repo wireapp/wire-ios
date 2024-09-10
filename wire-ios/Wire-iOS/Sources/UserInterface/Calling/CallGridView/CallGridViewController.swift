@@ -161,12 +161,11 @@ final class CallGridViewController: UIViewController {
     }
 
     private func createConstraints() {
-        for item in [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator] {
-            item?.translatesAutoresizingMaskIntoConstraints = false
+        [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
         }
-        for item in [ thumbnailViewController.view] {
-            item.fitIn(view: view)
-        }
+
+        thumbnailViewController.view.fitIn(view: view)
 
         NSLayoutConstraint.activate([
             gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),

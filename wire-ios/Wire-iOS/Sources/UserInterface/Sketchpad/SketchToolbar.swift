@@ -70,7 +70,7 @@ final class SketchToolbar: UIView {
         let buttonSpacing: CGFloat = 8
 
         for item in [containerView, leftButton, rightButton, centerButtonContainer, separatorLine] {
-            item.translatesAutoresizingMaskIntoConstraints = false
+            item?.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             containerView.leftAnchor.constraint(equalTo: leftAnchor),

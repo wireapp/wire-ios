@@ -101,7 +101,7 @@ final class CollectionsView: UIView {
         centerYConstraint.priority = .defaultLow
 
         for item in [searchBar, resultsView, collectionView, noResultsView] {
-            item.translatesAutoresizingMaskIntoConstraints = false
+            item?.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: topAnchor),

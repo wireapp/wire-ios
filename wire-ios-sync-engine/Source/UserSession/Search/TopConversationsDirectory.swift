@@ -53,7 +53,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
                 .filter { _, value in value > 0 }
                 .sorted { $0.1 > $1.1 }
                 .prefix(TopConversationsDirectory.topConversationSize)
-                .compactMap(\.0.objectID)
+                .map(\.0.objectID)
             self.updateUIList(with: identifiers)
         }
     }

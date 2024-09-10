@@ -50,3 +50,4 @@
 --extensionacl on-declarations # extensionAccessControl
 --patternlet hoist # hoistPatternLet
 --indent 4 # indent
+--anonymousforeach ignore # preferForLoop
