@@ -331,7 +331,8 @@ final class ConversationViewController: UIViewController {
 
     @objc
     func didTapMediaBar(_ tapGestureRecognizer: UITapGestureRecognizer?) {
-        if let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage,
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let mediaPlayingMessage = appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage,
            conversation === mediaPlayingMessage.conversationLike {
             contentViewController.scroll(to: mediaPlayingMessage, completion: nil)
         }
