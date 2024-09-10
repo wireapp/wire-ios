@@ -168,7 +168,7 @@ extension AccessoryTextField {
 // MARK: - Placeholder
 
 extension AccessoryTextField {
-    internal func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
+    func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
         let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: textFieldAttributes.placeholderColor,
                                                          .font: textFieldAttributes.placeholderFont.font!]
         return NSAttributedString(string: placeholder, attributes: attributes)
@@ -193,7 +193,7 @@ extension AccessoryTextField {
 // MARK: - Right and left accessory
 
 extension AccessoryTextField {
-    internal func rightAccessoryViewRect(forBounds bounds: CGRect, isLeftToRight: Bool) -> CGRect {
+    func rightAccessoryViewRect(forBounds bounds: CGRect, isLeftToRight: Bool) -> CGRect {
         let contentSize = accessoryContainer.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         var rightViewRect: CGRect
         let newY = bounds.origin.y + (bounds.size.height - contentSize.height) / 2

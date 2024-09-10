@@ -28,7 +28,7 @@ extension Notification.Name {
 @objcMembers public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
 
-    public internal (set) var currentSyncPhase: SyncPhase = .done {
+    public internal(set) var currentSyncPhase: SyncPhase = .done {
         didSet {
             if currentSyncPhase != oldValue {
                 self.log()
@@ -45,10 +45,10 @@ extension Notification.Name {
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     fileprivate var resyncResourcesToken: Any?
 
-    public internal (set) var isFetchingNotificationStream: Bool = false
-    public internal (set) var isInBackground: Bool = false
-    public internal (set) var needsToRestartQuickSync: Bool = false
-    public internal (set) var pushChannelEstablishedDate: Date?
+    public internal(set) var isFetchingNotificationStream: Bool = false
+    public internal(set) var isInBackground: Bool = false
+    public internal(set) var needsToRestartQuickSync: Bool = false
+    public internal(set) var pushChannelEstablishedDate: Date?
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 

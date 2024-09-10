@@ -89,7 +89,7 @@ enum MessageDestructionType: String {
 }
 
 @objcMembers public class ZMMessageDestructionTimer: ZMMessageTimer {
-    internal var isTesting: Bool = false
+    var isTesting: Bool = false
 
     override init(managedObjectContext: NSManagedObjectContext!) {
         super.init(managedObjectContext: managedObjectContext)

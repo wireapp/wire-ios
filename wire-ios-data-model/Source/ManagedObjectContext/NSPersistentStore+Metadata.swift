@@ -58,13 +58,13 @@ private let metadataKeysToRemove = "ZMMetadataKeysToRemove"
 
 extension NSManagedObjectContext {
     /// Non-persisted store metadata
-    @objc internal var nonCommittedMetadata: NSMutableDictionary {
+    @objc var nonCommittedMetadata: NSMutableDictionary {
         return self.userInfo[metadataKey] as? NSMutableDictionary ?? NSMutableDictionary()
     }
 
     /// Non-persisted deleted metadata (need to keep around to know what to remove
     /// from the store when persisting)
-    @objc internal var nonCommittedDeletedMetadataKeys: Set<String> {
+    @objc var nonCommittedDeletedMetadataKeys: Set<String> {
         return self.userInfo[metadataKeysToRemove] as? Set<String> ?? Set<String>()
     }
 

@@ -45,7 +45,7 @@ extension ChaCha20Poly1305 {
             case unknown
         }
 
-        internal struct Header {
+        struct Header {
             enum Field: Int {
                 case platform = 4
                 case emptySpace = 1
@@ -132,7 +132,7 @@ extension ChaCha20Poly1305 {
                 self.buffer = buffer
             }
 
-            internal func deriveKey(from passphrase: Passphrase) throws -> Key {
+            func deriveKey(from passphrase: Passphrase) throws -> Key {
                 let salt = Array(self.salt)
 
                 guard try Header.hash(uuid: passphrase.uuid, salt: salt) == Array(uuidHash) else {
@@ -175,7 +175,7 @@ extension ChaCha20Poly1305 {
         }
 
         /// ChaCha20 Key
-        internal struct Key {
+        struct Key {
             fileprivate let buffer: [UInt8]
 
             /// Generate a key from a passphrase.

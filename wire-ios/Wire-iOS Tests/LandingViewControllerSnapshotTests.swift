@@ -81,7 +81,7 @@ final class FakeProxySettings: NSObject, ProxySettingsProvider {
     var port: Int
     var needsAuthentication: Bool
 
-    internal init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
+    init(host: String = "api.example.org", port: Int = 1345, needsAuthentication: Bool = false) {
         self.host = host
         self.port = port
         self.needsAuthentication = needsAuthentication

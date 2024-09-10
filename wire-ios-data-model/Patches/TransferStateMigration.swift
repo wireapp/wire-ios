@@ -19,7 +19,7 @@
 import Foundation
 
 enum TransferStateMigration {
-    internal enum LegacyTransferState: Int, CaseIterable {
+    enum LegacyTransferState: Int, CaseIterable {
         case uploading = 0
         case uploaded
         case downloading

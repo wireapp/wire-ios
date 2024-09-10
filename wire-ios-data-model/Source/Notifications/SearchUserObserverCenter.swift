@@ -100,7 +100,7 @@ public class SearchUserSnapshot {
 
 @objcMembers public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     /// Map of searchUser remoteID to snapshot
-    internal var snapshots: [UUID: SearchUserSnapshot] = [:]
+    var snapshots: [UUID: SearchUserSnapshot] = [:]
 
     weak var managedObjectContext: NSManagedObjectContext?
 

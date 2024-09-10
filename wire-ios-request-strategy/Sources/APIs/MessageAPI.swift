@@ -50,7 +50,7 @@ class MessageAPIV0: MessageAPI {
         .v0
     }
 
-    internal let httpClient: HttpClient
+    let httpClient: HttpClient
     private let protobufContentType = "application/x-protobuf"
 
     init(httpClient: HttpClient) {

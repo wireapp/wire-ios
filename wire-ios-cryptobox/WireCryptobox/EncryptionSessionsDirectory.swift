@@ -23,7 +23,7 @@ import WireUtilities
 @objc enum EncryptionSessionError: Int {
     case unknown, encryptionFailed, decryptionFailed
 
-    internal var userInfo: [String: AnyObject] {
+    var userInfo: [String: AnyObject] {
         var info: String = switch self {
         case .unknown:
             "Unknown EncryptionSessionError"

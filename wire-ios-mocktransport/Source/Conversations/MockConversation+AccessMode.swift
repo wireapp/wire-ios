@@ -75,10 +75,10 @@ public struct MockConversationAccessMode: OptionSet {
     public static let teamOnly  = MockConversationAccessMode()
     public static let allowGuests: MockConversationAccessMode = [.invite, .code]
 
-    internal static let stringValues: [MockConversationAccessMode: String] = [.invite: "invite",
-                                                                              .code: "code",
-                                                                              .link: "link",
-                                                                              .private: "private"]
+    static let stringValues: [MockConversationAccessMode: String] = [.invite: "invite",
+                                                                     .code: "code",
+                                                                     .link: "link",
+                                                                     .private: "private"]
 
     public var stringValue: [String] {
         return MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }

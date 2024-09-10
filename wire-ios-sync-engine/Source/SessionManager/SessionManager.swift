@@ -1083,7 +1083,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         return newSession
     }
 
-    internal func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
+    func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
         guard let userSession = self.backgroundUserSessions[accountId] else {
             WireLogger.sessionManager.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             completion?()
@@ -1101,7 +1101,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     // Tears down and releases all background user sessions.
-    internal func tearDownAllBackgroundSessions() {
+    func tearDownAllBackgroundSessions() {
         let backgroundSessions = backgroundUserSessions.filter { _, session in
             activeUserSession != session
         }

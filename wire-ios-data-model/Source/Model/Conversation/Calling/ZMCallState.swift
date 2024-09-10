@@ -71,7 +71,7 @@ extension NSManagedObjectContext {
 
 // This needs to be set to display the correct conversationListIndicator
 extension ZMConversation {
-    internal var callState: ZMConversationCallState {
+    var callState: ZMConversationCallState {
         return managedObjectContext!.zm_callState.stateForConversation(self)
     }
 

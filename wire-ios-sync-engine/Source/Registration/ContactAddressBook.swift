@@ -28,7 +28,7 @@ final class ContactAddressBook: AddressBook {
 
 extension ContactAddressBook: AddressBookAccessor {
     /// Gets a specific address book user by the local address book indentifier
-    internal func contact(identifier: String) -> ContactRecord? {
+    func contact(identifier: String) -> ContactRecord? {
         return try? store.unifiedContact(withIdentifier: identifier, keysToFetch: ContactAddressBook.keysToFetch)
     }
 

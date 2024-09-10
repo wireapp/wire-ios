@@ -37,7 +37,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
             self.requestBlock = requestBlock
         }
 
-        internal func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
             return requestBlock()
         }
     }

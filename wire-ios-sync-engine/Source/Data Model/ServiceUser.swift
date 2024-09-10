@@ -193,7 +193,7 @@ extension ServiceUser {
                            completionHandler: completionHandler)
     }
 
-    internal func createConversation(
+    func createConversation(
         transportSession: TransportSessionType,
         eventProcessor: ConversationEventProcessorProtocol,
         contextProvider: ContextProvider,
@@ -293,11 +293,11 @@ extension ZMConversation {
             completionHandler: completionHandler)
     }
 
-    internal func add(serviceUser serviceUserData: ServiceUserData,
-                      transportSession: TransportSessionType,
-                      eventProcessor: ConversationEventProcessorProtocol,
-                      contextProvider: ContextProvider,
-                      completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    func add(serviceUser serviceUserData: ServiceUserData,
+             transportSession: TransportSessionType,
+             eventProcessor: ConversationEventProcessorProtocol,
+             contextProvider: ContextProvider,
+             completionHandler: @escaping (Result<Void, Error>) -> Void) {
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
             return

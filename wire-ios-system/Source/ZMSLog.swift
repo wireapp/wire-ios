@@ -257,7 +257,7 @@ extension ZMSLog {
         static let maxNumberOfLogFiles = 5
     }
 
-    internal static var cachesDirectory: URL? {
+    static var cachesDirectory: URL? {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
@@ -360,7 +360,7 @@ extension ZMSLog {
         updatingHandle = nil
     }
 
-    internal static func appendToCurrentLog(_ string: String) {
+    static func appendToCurrentLog(_ string: String) {
         guard let currentLogPath = currentLogURL?.path else { return }
         let manager = FileManager.default
 

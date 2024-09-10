@@ -227,13 +227,13 @@ extension WireCallCenterV3 {
     }
 
     /// Handles sending call messages
-    internal func handleCallMessageRequest(token: WireCallMessageToken,
-                                           conversationId: AVSIdentifier,
-                                           senderUserId: AVSIdentifier,
-                                           senderClientId: String,
-                                           targets: AVSClientList?,
-                                           data: Data,
-                                           overMLSSelfConversation: Bool = false) {
+    func handleCallMessageRequest(token: WireCallMessageToken,
+                                  conversationId: AVSIdentifier,
+                                  senderUserId: AVSIdentifier,
+                                  senderClientId: String,
+                                  targets: AVSClientList?,
+                                  data: Data,
+                                  overMLSSelfConversation: Bool = false) {
         guard isEnabled else { return }
 
         handleEventInContext("send-call-message") { managedObjectContext in

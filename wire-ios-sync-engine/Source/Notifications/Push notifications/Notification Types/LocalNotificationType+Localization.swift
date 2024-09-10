@@ -298,11 +298,11 @@ extension LocalNotificationType {
 }
 
 extension String {
-    internal var pushFormatString: String {
+    var pushFormatString: String {
         return Bundle(for: ZMUserSession.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
     }
 
-    internal var pushActionString: String {
+    var pushActionString: String {
         return Bundle(for: ZMUserSession.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
     }
 

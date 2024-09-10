@@ -23,10 +23,10 @@ import Foundation
     /// In memory cache
     var cachedUnderlyingAssetMessage: GenericMessage?
 
-    internal convenience init(asset: WireProtos.Asset,
-                              nonce: UUID,
-                              managedObjectContext: NSManagedObjectContext,
-                              expiresAfter timeout: TimeInterval?) throws {
+    convenience init(asset: WireProtos.Asset,
+                     nonce: UUID,
+                     managedObjectContext: NSManagedObjectContext,
+                     expiresAfter timeout: TimeInterval?) throws {
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
 
         transferState = .uploading

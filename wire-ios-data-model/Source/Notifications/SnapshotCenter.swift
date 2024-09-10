@@ -34,7 +34,7 @@ extension NSSet: Countable {}
 
 public class SnapshotCenter {
     private unowned var managedObjectContext: NSManagedObjectContext
-    internal var snapshots: [NSManagedObjectID: Snapshot] = [:]
+    var snapshots: [NSManagedObjectID: Snapshot] = [:]
 
     public init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext

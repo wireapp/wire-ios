@@ -158,7 +158,7 @@ extension ZMConversation {
     }
 }
 
-internal enum WirelessRequestFactory {
+enum WirelessRequestFactory {
     static func fetchLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")

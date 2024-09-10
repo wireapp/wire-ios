@@ -19,16 +19,16 @@
 import Foundation
 import WireDataModel
 
-internal enum UserProfileImageUpdateError: Error {
+enum UserProfileImageUpdateError: Error {
     case preprocessingFailed
     case uploadFailed(Error)
 }
 
-internal protocol UserProfileImageUpdateStateDelegate: AnyObject {
+protocol UserProfileImageUpdateStateDelegate: AnyObject {
     func failed(withError: UserProfileImageUpdateError)
 }
 
-internal protocol UserProfileImageUploadStatusProtocol: AnyObject {
+protocol UserProfileImageUploadStatusProtocol: AnyObject {
     func hasAssetToDelete() -> Bool
     func consumeAssetToDelete() -> String?
     func consumeImage(for size: ProfileImageSize) -> Data?
@@ -42,7 +42,7 @@ internal protocol UserProfileImageUploadStatusProtocol: AnyObject {
     func updateImage(imageData: Data)
 }
 
-internal protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
+protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
     func didTransition(from oldState: UserProfileImageUpdateStatus.ProfileUpdateState, to currentState: UserProfileImageUpdateStatus.ProfileUpdateState)
     func didTransition(from oldState: UserProfileImageUpdateStatus.ImageState, to currentState: UserProfileImageUpdateStatus.ImageState, for size: ProfileImageSize)
 }
@@ -50,7 +50,7 @@ internal protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
 public final class UserProfileImageUpdateStatus: NSObject {
     fileprivate var log = ZMSLog(tag: "UserProfileImageUpdateStatus")
 
-    internal enum ImageState {
+    enum ImageState {
         case ready
         case preprocessing
         case upload(image: Data)
@@ -58,7 +58,7 @@ public final class UserProfileImageUpdateStatus: NSObject {
         case uploaded(assetId: String)
         case failed(UserProfileImageUpdateError)
 
-        internal func canTransition(to newState: ImageState) -> Bool {
+        func canTransition(to newState: ImageState) -> Bool {
             switch (self, newState) {
             case (.ready, .preprocessing),
                  (.preprocessing, .upload),
@@ -79,13 +79,13 @@ public final class UserProfileImageUpdateStatus: NSObject {
         }
     }
 
-    internal enum ProfileUpdateState {
+    enum ProfileUpdateState {
         case ready
         case preprocess(image: Data)
         case update(previewAssetId: String, completeAssetId: String)
         case failed(UserProfileImageUpdateError)
 
-        internal func canTransition(to newState: ProfileUpdateState) -> Bool {
+        func canTransition(to newState: ProfileUpdateState) -> Bool {
             switch (self, newState) {
             case (.ready, .preprocess),
                  (.preprocess, .update),
@@ -104,9 +104,9 @@ public final class UserProfileImageUpdateStatus: NSObject {
         }
     }
 
-    internal var preprocessor: ZMAssetsPreprocessorProtocol?
-    internal let queue: OperationQueue
-    internal weak var changeDelegate: UserProfileImageUploadStateChangeDelegate?
+    var preprocessor: ZMAssetsPreprocessorProtocol?
+    let queue: OperationQueue
+    weak var changeDelegate: UserProfileImageUploadStateChangeDelegate?
 
     fileprivate var changeDelegates: [UserProfileImageUpdateStateDelegate] = []
     fileprivate var imageOwner: ImageOwner?
@@ -114,14 +114,14 @@ public final class UserProfileImageUpdateStatus: NSObject {
 
     fileprivate var imageState = [ProfileImageSize: ImageState]()
     fileprivate var resizedImages = [ProfileImageSize: Data]()
-    internal fileprivate(set) var state: ProfileUpdateState = .ready
-    internal fileprivate(set) var assetsToDelete = Set<String>()
+    fileprivate(set) var state: ProfileUpdateState = .ready
+    fileprivate(set) var assetsToDelete = Set<String>()
 
     public convenience init(managedObjectContext: NSManagedObjectContext) {
         self.init(managedObjectContext: managedObjectContext, preprocessor: ZMAssetsPreprocessor(delegate: nil), queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(), delegate: nil)
     }
 
-    internal init(managedObjectContext: NSManagedObjectContext, preprocessor: ZMAssetsPreprocessorProtocol, queue: OperationQueue, delegate: UserProfileImageUploadStateChangeDelegate?) {
+    init(managedObjectContext: NSManagedObjectContext, preprocessor: ZMAssetsPreprocessorProtocol, queue: OperationQueue, delegate: UserProfileImageUploadStateChangeDelegate?) {
         log.debug("Created")
         self.queue = queue
         self.preprocessor = preprocessor
@@ -135,7 +135,7 @@ public final class UserProfileImageUpdateStatus: NSObject {
 // MARK: Main state transitions
 
 extension UserProfileImageUpdateStatus {
-    internal func setState(state newState: ProfileUpdateState) {
+    func setState(state newState: ProfileUpdateState) {
         let currentState = self.state
         guard currentState.canTransition(to: newState) else {
             log.debug("Invalid transition: [\(currentState)] -> [\(newState)], ignoring")
@@ -192,11 +192,11 @@ extension UserProfileImageUpdateStatus {
 // MARK: Image state transitions
 
 extension UserProfileImageUpdateStatus {
-    internal func imageState(for imageSize: ProfileImageSize) -> ImageState {
+    func imageState(for imageSize: ProfileImageSize) -> ImageState {
         return imageState[imageSize] ?? .ready
     }
 
-    internal func setState(state newState: ImageState, for imageSize: ProfileImageSize) {
+    func setState(state newState: ImageState, for imageSize: ProfileImageSize) {
         let currentState = self.imageState(for: imageSize)
         guard currentState.canTransition(to: newState) else {
             // Trying to transition to invalid state - ignore
@@ -207,7 +207,7 @@ extension UserProfileImageUpdateStatus {
         self.didTransition(from: currentState, to: newState, for: imageSize)
     }
 
-    internal func resetImageState() {
+    func resetImageState() {
         imageState.removeAll()
         resizedImages.removeAll()
     }
@@ -291,7 +291,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     /// Takes an asset ID that needs to be deleted and removes from the internal list
     ///
     /// - Returns: Asset ID or nil if nothing needs to be deleted
-    internal func consumeAssetToDelete() -> String? {
+    func consumeAssetToDelete() -> String? {
         return assetsToDelete.removeFirst()
     }
 
@@ -300,7 +300,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     /// - Important: should be called from sync thread
     /// - Parameter size: which image size to check
     /// - Returns: true if there is an image of this size ready for upload
-    internal func hasImageToUpload(for size: ProfileImageSize) -> Bool {
+    func hasImageToUpload(for size: ProfileImageSize) -> Bool {
         switch imageState(for: size) {
         case .upload:
             return true
@@ -314,7 +314,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     ///
     /// - Parameter size: size of the image
     /// - Returns: Image data if there is image of this size ready for upload
-    internal func consumeImage(for size: ProfileImageSize) -> Data? {
+    func consumeImage(for size: ProfileImageSize) -> Data? {
         switch imageState(for: size) {
         case let .upload(image: image):
             setState(state: .uploading, for: size)
@@ -329,7 +329,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     /// - Parameters:
     ///   - imageSize: size of the image
     ///   - assetId: resulting asset identifier after uploading it to the store
-    internal func uploadingDone(imageSize: ProfileImageSize, assetId: String) {
+    func uploadingDone(imageSize: ProfileImageSize, assetId: String) {
         setState(state: .uploaded(assetId: assetId), for: imageSize)
     }
 
@@ -338,7 +338,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     /// - Parameters:
     ///   - imageSize: size of the image
     ///   - error: transport error
-    internal func uploadingFailed(imageSize: ProfileImageSize, error: Error) {
+    func uploadingFailed(imageSize: ProfileImageSize, error: Error) {
         setState(state: .failed(.uploadFailed(error)), for: imageSize)
     }
 }

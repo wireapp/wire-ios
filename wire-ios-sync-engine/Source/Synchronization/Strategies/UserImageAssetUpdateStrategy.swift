@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-internal enum AssetTransportError: Error {
+enum AssetTransportError: Error {
     case invalidLength
     case assetTooLarge
     case other(Error?)
@@ -37,12 +37,12 @@ internal enum AssetTransportError: Error {
 }
 
 public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
-    internal let requestFactory = AssetRequestFactory()
-    internal var upstreamRequestSyncs = [ProfileImageSize: ZMSingleRequestSync]()
-    internal var deleteRequestSync: ZMSingleRequestSync?
-    internal var downstreamRequestSyncs = [ProfileImageSize: ZMDownstreamObjectSyncWithWhitelist]()
-    internal let moc: NSManagedObjectContext
-    internal weak var imageUploadStatus: UserProfileImageUploadStatusProtocol?
+    let requestFactory = AssetRequestFactory()
+    var upstreamRequestSyncs = [ProfileImageSize: ZMSingleRequestSync]()
+    var deleteRequestSync: ZMSingleRequestSync?
+    var downstreamRequestSyncs = [ProfileImageSize: ZMDownstreamObjectSyncWithWhitelist]()
+    let moc: NSManagedObjectContext
+    weak var imageUploadStatus: UserProfileImageUploadStatusProtocol?
 
     fileprivate var observers: [Any] = []
 
@@ -52,7 +52,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         self.init(managedObjectContext: managedObjectContext, applicationStatus: applicationStatusDirectory, imageUploadStatus: userProfileImageUpdateStatus)
     }
 
-    internal init(managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, imageUploadStatus: UserProfileImageUploadStatusProtocol) {
+    init(managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, imageUploadStatus: UserProfileImageUploadStatusProtocol) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -93,14 +93,14 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
                                                    managedObjectContext: moc)
     }
 
-    internal func size(for requestSync: ZMDownstreamObjectSyncWithWhitelist) -> ProfileImageSize? {
+    func size(for requestSync: ZMDownstreamObjectSyncWithWhitelist) -> ProfileImageSize? {
         for (size, sync) in downstreamRequestSyncs where sync === requestSync {
             return size
         }
         return nil
     }
 
-    internal func size(for requestSync: ZMSingleRequestSync) -> ProfileImageSize? {
+    func size(for requestSync: ZMSingleRequestSync) -> ProfileImageSize? {
         for (size, sync) in upstreamRequestSyncs where sync === requestSync {
             return size
         }

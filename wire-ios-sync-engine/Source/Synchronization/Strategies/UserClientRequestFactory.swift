@@ -105,20 +105,20 @@ extension UserClientRequestFactory {
         return completionHandler
     }
 
-    internal func payloadForPreKeys(_ prekeys: [IdPrekeyTuple]) -> [[String: Any]] {
+    func payloadForPreKeys(_ prekeys: [IdPrekeyTuple]) -> [[String: Any]] {
         return prekeys.map {
             ["key": $0.prekey, "id": NSNumber(value: $0.id)]
         }
     }
 
-    internal func payloadForLastPreKey(_ lastResortPrekey: IdPrekeyTuple) -> [String: Any] {
+    func payloadForLastPreKey(_ lastResortPrekey: IdPrekeyTuple) -> [String: Any] {
         return [
             "key": lastResortPrekey.prekey,
             "id": NSNumber(value: lastResortPrekey.id)
         ]
     }
 
-    internal func payloadForSignalingKeys() -> (payload: [String: String], signalingKeys: SignalingKeys) {
+    func payloadForSignalingKeys() -> (payload: [String: String], signalingKeys: SignalingKeys) {
         let signalingKeys = APSSignalingKeysStore.createKeys()
         let payload = ["enckey": signalingKeys.decryptionKey.base64String(), "mackey": signalingKeys.verificationKey.base64String()]
         return (payload, signalingKeys)

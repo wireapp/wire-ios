@@ -375,20 +375,20 @@ extension ZMConversation {
         return unreadMessages()
     }
 
-    internal func unreadMessages(until timestamp: Date = .distantFuture) -> [ZMMessage] {
+    func unreadMessages(until timestamp: Date = .distantFuture) -> [ZMMessage] {
         return unreadMessagesIncludingInvisible(until: timestamp).filter(ZMMessage.isVisible)
     }
 
-    internal func unreadMessagesIncludingInvisible(until timestamp: Date = .distantFuture) -> [ZMMessage] {
+    func unreadMessagesIncludingInvisible(until timestamp: Date = .distantFuture) -> [ZMMessage] {
         let range = (lastReadServerTimeStamp ?? .distantPast)...timestamp
         return unreadMessagesIncludingInvisible(in: range)
     }
 
-    internal func unreadMessages(in range: ClosedRange<Date>) -> [ZMMessage] {
+    func unreadMessages(in range: ClosedRange<Date>) -> [ZMMessage] {
         return unreadMessagesIncludingInvisible(in: range).filter(ZMMessage.isVisible)
     }
 
-    internal func unreadMessagesIncludingInvisible(in range: ClosedRange<Date>) -> [ZMMessage] {
+    func unreadMessagesIncludingInvisible(in range: ClosedRange<Date>) -> [ZMMessage] {
         guard let managedObjectContext else { return [] }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)

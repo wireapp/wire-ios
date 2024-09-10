@@ -39,7 +39,8 @@
     redundantExtensionACL, \
     redundantFileprivate, \
     redundantGet, \
-    redundantInit
+    redundantInit, \
+    redundantInternal
 
 # Options
 

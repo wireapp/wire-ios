@@ -28,7 +28,7 @@ public enum CompositeMessageItem {
     case text(TextMessageData)
     case button(ButtonMessageData)
 
-    internal init?(with protoItem: Composite.Item, message: ZMClientMessage) {
+    init?(with protoItem: Composite.Item, message: ZMClientMessage) {
         guard let content = protoItem.content else { return nil }
         let itemContent = CompositeMessageItemContent(with: protoItem, message: message)
         switch content {

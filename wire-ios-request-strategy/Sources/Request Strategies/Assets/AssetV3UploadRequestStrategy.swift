@@ -22,9 +22,9 @@ import Foundation
 /// after they've been preprocessed (downscaled & encrypted). After all the assets have been uploaded
 /// transfer state is changed to .uploaded which is the signal that the asset message is ready to be sent.
 public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
-    internal let requestFactory = AssetRequestFactory()
-    internal var upstreamSync: ZMUpstreamModifiedObjectSync!
-    internal var preprocessor: AssetsPreprocessor
+    let requestFactory = AssetRequestFactory()
+    var upstreamSync: ZMUpstreamModifiedObjectSync!
+    var preprocessor: AssetsPreprocessor
 
     public var shouldUseBackgroundSession = true
 

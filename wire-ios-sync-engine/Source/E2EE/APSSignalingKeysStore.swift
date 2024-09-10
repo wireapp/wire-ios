@@ -33,12 +33,12 @@ public struct SignalingKeys {
 @objcMembers
 public final class APSSignalingKeysStore: NSObject {
     public var apsDecoder: ZMAPSMessageDecoder!
-    internal var verificationKey: Data!
-    internal var decryptionKey: Data!
+    var verificationKey: Data!
+    var decryptionKey: Data!
 
-    internal static let verificationKeyAccountName = "APSVerificationKey"
-    internal static let decryptionKeyAccountName = "APSDecryptionKey"
-    internal static let defaultKeyLengthBytes: UInt = 256 / 8
+    static let verificationKeyAccountName = "APSVerificationKey"
+    static let decryptionKeyAccountName = "APSDecryptionKey"
+    static let defaultKeyLengthBytes: UInt = 256 / 8
 
     public init?(userClient: UserClient) {
         super.init()
