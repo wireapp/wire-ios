@@ -154,7 +154,7 @@ public final class Canvas: UIView {
         }
     }
 
-    override public func draw(_ rect: CGRect) {
+    override public func draw(_: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
 
         if flattenIndex == 0, referenceObject != nil {

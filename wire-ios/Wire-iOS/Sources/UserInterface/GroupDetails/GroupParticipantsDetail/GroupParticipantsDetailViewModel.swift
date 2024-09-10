@@ -125,7 +125,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         computeVisibleParticipants()
     }
 
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
+    func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
         // no-op
     }
 

@@ -29,12 +29,12 @@ import XCTest
 
 final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControllerDelegate {
     var cameraKeyboardWantsToOpenCameraRollHitCount: UInt = 0
-    @objc func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
+    @objc func cameraKeyboardViewControllerWantsToOpenCameraRoll(_: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenCameraRollHitCount += 1
     }
 
     var cameraKeyboardWantsToOpenFullScreenCameraHitCount: UInt = 0
-    @objc func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_ controller: CameraKeyboardViewController) {
+    @objc func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenFullScreenCameraHitCount += 1
     }
 
@@ -69,7 +69,7 @@ private final class MockAssetLibrary: AssetLibrary {
 // MARK: - MockImageManager
 
 private final class MockImageManager: ImageManagerProtocol {
-    func cancelImageRequest(_ requestID: PHImageRequestID) {
+    func cancelImageRequest(_: PHImageRequestID) {
         // no op
     }
 

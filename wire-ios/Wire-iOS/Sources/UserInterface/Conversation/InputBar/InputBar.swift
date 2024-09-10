@@ -520,15 +520,15 @@ final class InputBar: UIView {
 }
 
 extension InputBar {
-    @objc func textViewTextDidChange(_ notification: Notification) {
+    @objc func textViewTextDidChange(_: Notification) {
         updateEditViewState()
     }
 
-    @objc func textViewDidBeginEditing(_ notification: Notification) {
+    @objc func textViewDidBeginEditing(_: Notification) {
         updateEditViewState()
     }
 
-    @objc func textViewDidEndEditing(_ notification: Notification) {
+    @objc func textViewDidEndEditing(_: Notification) {
         updateEditViewState()
     }
 }

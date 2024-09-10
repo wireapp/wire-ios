@@ -132,7 +132,7 @@ extension BasicReactionPicker {
         delegate?.didPickReaction(reaction: emoji)
     }
 
-    @objc private func preferredContentSizeChanged(_ notification: Notification) {
+    @objc private func preferredContentSizeChanged(_: Notification) {
         titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
         buttons.forEach { $0.titleLabel?.font = UIFont.preferredFont(forTextStyle: .largeTitle) }
         setNeedsLayout()

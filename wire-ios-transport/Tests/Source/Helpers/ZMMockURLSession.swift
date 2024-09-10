@@ -47,7 +47,7 @@ final class ZMMockURLSessionDelegate: NSObject, ZMURLSessionDelegate {
         // no-op
     }
 
-    func urlSessionDidReceiveData(_ URLSession: ZMURLSession) {
+    func urlSessionDidReceiveData(_: ZMURLSession) {
         // no-op
     }
 

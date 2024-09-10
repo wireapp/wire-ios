@@ -459,7 +459,7 @@ extension AppLockControllerTests {
     class Delegate: AppLockDelegate {
         var didCallAppLockDidOpen = false
 
-        func appLockDidOpen(_ appLock: AppLockType) {
+        func appLockDidOpen(_: AppLockType) {
             didCallAppLockDidOpen = true
         }
     }

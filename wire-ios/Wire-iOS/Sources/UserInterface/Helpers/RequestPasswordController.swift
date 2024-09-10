@@ -118,7 +118,7 @@ final class RequestPasswordController {
     }
 
     @objc
-    func passwordTextFieldChanged(_ textField: UITextField) {
+    func passwordTextFieldChanged(_: UITextField) {
         guard let passwordField = alertController.textFields?[0] else { return }
 
         okAction?.isEnabled = passwordField.text?.isEmpty == false

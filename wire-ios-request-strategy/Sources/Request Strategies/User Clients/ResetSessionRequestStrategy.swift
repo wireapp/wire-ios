@@ -70,5 +70,5 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
         }
     }
 
-    func cancel(_ object: UserClient) {}
+    func cancel(_: UserClient) {}
 }

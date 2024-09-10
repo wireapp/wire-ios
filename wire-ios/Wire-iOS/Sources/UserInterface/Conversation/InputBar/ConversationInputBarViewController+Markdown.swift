@@ -60,7 +60,7 @@ extension ConversationInputBarViewController {
     }
 
     @objc
-    private func markdownButtonTapped(_ sender: IconButton) {
+    private func markdownButtonTapped(_: IconButton) {
         if !inputBar.isMarkingDown {
             inputBar.textView.becomeFirstResponder()
             inputBar.setInputBarState(.markingDown(ephemeral: ephemeralState), animated: true)

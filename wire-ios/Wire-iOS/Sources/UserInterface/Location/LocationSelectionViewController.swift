@@ -231,7 +231,7 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
 // MARK: - Modal Top Bar Delegate
 
 extension LocationSelectionViewController: ModalTopBarDelegate {
-    func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
+    func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
         delegate?.locationSelectionViewControllerDidCancel(self)
     }
 }
@@ -268,7 +268,7 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
         }
     }
 
-    func didFailWithError(_ error: Error) {
+    func didFailWithError(_: Error) {
         let alertController = UIAlertController(
             title: L10n.Localizable.Location.Error.Alert.title,
             message: L10n.Localizable.Location.Error.Alert.description,

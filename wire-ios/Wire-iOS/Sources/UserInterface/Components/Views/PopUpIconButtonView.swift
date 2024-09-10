@@ -81,7 +81,7 @@ class PopUpIconButtonView: UIView {
         backgroundColor = UIColor.clear
     }
 
-    override func draw(_ rect: CGRect) {
+    override func draw(_: CGRect) {
         guard let path = pathForOverlay(), let context = UIGraphicsGetCurrentContext() else { return }
 
         context.saveGState()

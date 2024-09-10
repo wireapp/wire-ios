@@ -36,11 +36,11 @@ extension ZMOTRMessage: OTREntity {
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
 
-    public func detectedRedundantUsers(_ users: [ZMUser]) {
+    public func detectedRedundantUsers(_: [ZMUser]) {
         // no-op
     }
 
-    public func missesRecipients(_ recipients: Set<WireDataModel.UserClient>!) {
+    public func missesRecipients(_: Set<WireDataModel.UserClient>!) {
         // no-op
     }
 

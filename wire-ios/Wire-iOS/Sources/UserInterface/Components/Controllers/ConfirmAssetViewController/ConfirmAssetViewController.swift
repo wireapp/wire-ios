@@ -246,22 +246,22 @@ final class ConfirmAssetViewController: UIViewController {
     // MARK: - Actions
 
     @objc
-    private func acceptImage(_ sender: Any?) {
+    private func acceptImage(_: Any?) {
         context.onConfirm?(nil)
     }
 
     @objc
-    private func rejectImage(_ sender: Any?) {
+    private func rejectImage(_: Any?) {
         context.onCancel?()
     }
 
     @objc
-    private func sketchEdit(_ sender: Any?) {
+    private func sketchEdit(_: Any?) {
         openSketch(in: .draw)
     }
 
     @objc
-    private func emojiEdit(_ sender: Any?) {
+    private func emojiEdit(_: Any?) {
         openSketch(in: .emoji)
     }
 

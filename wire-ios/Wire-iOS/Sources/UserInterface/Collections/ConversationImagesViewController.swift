@@ -458,11 +458,11 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
 }
 
 extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
-    func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
+    func pageViewControllerPreferredInterfaceOrientationForPresentation(_: UIPageViewController) -> UIInterfaceOrientation {
         .portrait
     }
 
-    func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController) -> UIInterfaceOrientationMask {
+    func pageViewControllerSupportedInterfaceOrientations(_: UIPageViewController) -> UIInterfaceOrientationMask {
         self.traitCollection.horizontalSizeClass == .compact ? .portrait : .all
     }
 

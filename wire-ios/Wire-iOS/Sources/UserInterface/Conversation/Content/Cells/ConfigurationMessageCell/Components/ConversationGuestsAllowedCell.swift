@@ -114,7 +114,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
 
     func configure(with object: GuestsAllowedCellConfiguration, animated: Bool) {}
 
-    @objc private func inviteButtonTapped(_ sender: UIButton) {
+    @objc private func inviteButtonTapped(_: UIButton) {
         delegate?.conversationMessageWantsToOpenGuestOptionsFromView(self, sourceView: self)
     }
 }

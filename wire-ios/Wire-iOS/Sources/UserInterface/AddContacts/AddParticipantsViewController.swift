@@ -455,7 +455,7 @@ extension AddParticipantsViewController: UserSelectionObserver {
 }
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
-    @objc func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
+    @objc func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
         if case let .add(conversation) = viewModel.context {
             self.dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)

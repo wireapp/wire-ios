@@ -33,7 +33,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
     var typingUsers: [UserType] = []
 
     func setIsTyping(
-        _ isTyping: Bool
+        _: Bool
     ) {
         // no-op
     }

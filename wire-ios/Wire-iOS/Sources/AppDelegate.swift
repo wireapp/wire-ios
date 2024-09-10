@@ -228,7 +228,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     @objc
-    func userSessionDidBecomeAvailable(_ notification: Notification?) {
+    func userSessionDidBecomeAvailable(_: Notification?) {
         launchType = .direct
         if launchOptions[UIApplication.LaunchOptionsKey.url] != nil {
             launchType = .url
@@ -273,7 +273,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
+    func applicationProtectedDataDidBecomeAvailable(_: UIApplication) {
         guard appRootRouter == nil else { return }
         createAppRootRouterAndInitialiazeOperations(launchOptions)
     }

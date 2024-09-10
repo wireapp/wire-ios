@@ -120,7 +120,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 }
 
 extension ConnectRequestsCell: ZMConversationListObserver {
-    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+    func conversationListDidChange(_: ConversationListChangeInfo) {
         updateAppearance()
     }
 }

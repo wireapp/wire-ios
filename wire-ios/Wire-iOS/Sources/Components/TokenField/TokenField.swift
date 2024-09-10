@@ -702,7 +702,7 @@ extension TokenField: UITextViewDelegate {
         !(textAttachment is TokenSeparatorAttachment)
     }
 
-    func textViewDidChange(_ textView: UITextView) {
+    func textViewDidChange(_: UITextView) {
         userDidConfirmInput = false
 
         filterUnwantedAttachments()

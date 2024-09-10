@@ -88,12 +88,12 @@ final class ProfileFooterView: ConversationDetailFooterView {
 
     // MARK: - Events
 
-    override func leftButtonTapped(_ sender: IconButton) {
+    override func leftButtonTapped(_: IconButton) {
         guard let leftAction = self.leftAction else { return }
         delegate?.footerView(self, shouldPerformAction: leftAction)
     }
 
-    override func rightButtonTapped(_ sender: IconButton) {
+    override func rightButtonTapped(_: IconButton) {
         guard let rightActions = self.rightActions else { return }
         delegate?.footerView(self, shouldPresentMenuWithActions: rightActions)
     }

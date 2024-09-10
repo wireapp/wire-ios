@@ -49,7 +49,7 @@ final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDe
         authenticationDidFailEvents.append(error)
     }
 
-    func authenticationReadyImportingBackup(_ existingAccount: Bool) {
+    func authenticationReadyImportingBackup(_: Bool) {
         authenticationDidSucceedEvents += 1
     }
 
@@ -100,7 +100,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
         return willAcceptUpdatedCredentials
     }
 
-    func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
+    func sessionIsAllowedToCreateNewAccount(_: UnauthenticatedSession) -> Bool {
         isAllowedToCreatingNewAccounts
     }
 }

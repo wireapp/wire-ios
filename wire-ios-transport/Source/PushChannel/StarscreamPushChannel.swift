@@ -220,7 +220,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 }
 
 extension StarscreamPushChannel: ZMTimerClient {
-    func timerDidFire(_ timer: ZMTimer!) {
+    func timerDidFire(_: ZMTimer!) {
         WireLogger.pushChannel.debug("Sending ping")
         webSocket?.write(ping: Data())
         schedulePingTimer()

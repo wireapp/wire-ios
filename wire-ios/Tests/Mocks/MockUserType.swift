@@ -197,7 +197,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var canManageTeam = false
 
-    func canLeave(_ conversation: ZMConversation) -> Bool {
+    func canLeave(_: ZMConversation) -> Bool {
         canLeaveConversation
     }
 
@@ -205,7 +205,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         canCreateConversation
     }
 
-    func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
+    func canDeleteConversation(_: ZMConversation) -> Bool {
         canDeleteConversation
     }
 

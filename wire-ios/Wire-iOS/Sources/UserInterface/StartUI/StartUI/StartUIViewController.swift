@@ -260,7 +260,7 @@ final class StartUIViewController: UIViewController {
     // MARK: - Action bar
 
     @objc
-    func inviteMoreButtonTapped(_ sender: UIButton?) {
+    func inviteMoreButtonTapped(_: UIButton?) {
         if needsAddressBookPermission {
             presentShareContactsViewController()
         } else {

@@ -51,15 +51,15 @@ import Foundation
 
     public var shouldIgnoreTheSecurityLevelCheck = false
 
-    public func missesRecipients(_ recipients: Set<UserClient>!) {
+    public func missesRecipients(_: Set<UserClient>!) {
         // no-op
     }
 
-    public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+    public func addFailedToSendRecipients(_: [ZMUser]) {
         // no-op
     }
 
-    public func detectedRedundantUsers(_ users: [ZMUser]) {
+    public func detectedRedundantUsers(_: [ZMUser]) {
         // no-op
     }
 

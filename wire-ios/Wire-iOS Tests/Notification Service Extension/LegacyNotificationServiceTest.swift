@@ -189,7 +189,7 @@ final class LegacyNotificationServiceTests: XCTestCase {
 private final class CallEventHandlerMock: CallEventHandlerProtocol {
     var reportIncomingVoIPCallCalled = false
 
-    func reportIncomingVoIPCall(_ payload: [String: Any]) {
+    func reportIncomingVoIPCall(_: [String: Any]) {
         reportIncomingVoIPCallCalled = true
     }
 }

@@ -47,7 +47,7 @@ extension ButtonDescription: ViewDescriptor {
         return button
     }
 
-    @objc dynamic func buttonTapped(_ sender: UIButton) {
+    @objc dynamic func buttonTapped(_: UIButton) {
         buttonTapped?()
     }
 }

@@ -28,7 +28,7 @@ extension UIResponder {
     }
 
     @objc
-    private func findFirstResponder(_ sender: Any?) {
+    private func findFirstResponder(_: Any?) {
         UIResponder.currentFirstResponder = self
     }
 }

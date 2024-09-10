@@ -28,7 +28,7 @@ protocol LinkViewDelegate: AnyObject {
 extension LinkViewDelegate {
     /// default implementation
     /// - Parameter view: view to open the URL
-    func linkViewWantsToOpenURL(_ view: UIView) {
+    func linkViewWantsToOpenURL(_: UIView) {
         url?.open()
     }
 }

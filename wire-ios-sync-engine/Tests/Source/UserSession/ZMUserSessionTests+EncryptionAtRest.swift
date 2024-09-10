@@ -30,7 +30,7 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
         prepareForMigration_Invocations.append(account)
     }
 
-    func userSessionDidUnlock(_ session: ZMUserSession) {}
+    func userSessionDidUnlock(_: ZMUserSession) {}
 
     func clientRegistrationDidSucceed(accountId: UUID) {}
 

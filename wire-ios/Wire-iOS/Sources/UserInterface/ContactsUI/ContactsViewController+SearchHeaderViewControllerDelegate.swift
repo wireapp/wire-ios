@@ -24,7 +24,7 @@ extension ContactsViewController: SearchHeaderViewControllerDelegate {
         dataSource.searchQuery = query
     }
 
-    func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
+    func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
         // No op
     }
 }

@@ -204,9 +204,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     weak var authenticationCoordinator: AuthenticationCoordinator?
 
-    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {}
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {}
 
-    func displayError(_ error: Error) {}
+    func displayError(_: Error) {}
 }
 
 // MARK: - Previews

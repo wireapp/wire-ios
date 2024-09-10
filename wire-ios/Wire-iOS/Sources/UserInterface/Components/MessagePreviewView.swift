@@ -205,7 +205,7 @@ final class MessageThumbnailPreviewView: UIView {
 }
 
 extension MessageThumbnailPreviewView: ZMMessageObserver {
-    func messageDidChange(_ changeInfo: MessageChangeInfo) {
+    func messageDidChange(_: MessageChangeInfo) {
         guard !message.hasBeenDeleted else {
             return // Deleted message won't have any content
         }
@@ -337,7 +337,7 @@ final class MessagePreviewView: UIView {
 }
 
 extension MessagePreviewView: ZMMessageObserver {
-    func messageDidChange(_ changeInfo: MessageChangeInfo) {
+    func messageDidChange(_: MessageChangeInfo) {
         updateForMessage()
     }
 }

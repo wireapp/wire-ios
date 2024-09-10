@@ -385,7 +385,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 extension AuthenticationStepController {
     // MARK: - AuthenticationCoordinatedViewController
 
-    func displayError(_ error: Error) {
+    func displayError(_: Error) {
         // no-op
     }
 

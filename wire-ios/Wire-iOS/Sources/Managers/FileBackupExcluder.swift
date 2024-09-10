@@ -43,12 +43,12 @@ final class FileBackupExcluder: BackupExcluder {
     }
 
     @objc
-    private func applicationWillEnterForeground(_ sender: AnyObject!) {
+    private func applicationWillEnterForeground(_: AnyObject!) {
         self.excludeFilesFromBackup()
     }
 
     @objc
-    private func applicationWillResignActive(_ sender: AnyObject!) {
+    private func applicationWillResignActive(_: AnyObject!) {
         self.excludeFilesFromBackup()
     }
 

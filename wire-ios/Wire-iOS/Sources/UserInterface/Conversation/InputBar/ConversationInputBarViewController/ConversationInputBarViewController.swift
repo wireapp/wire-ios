@@ -644,7 +644,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     @objc
-    private func pingButtonPressed(_ button: UIButton?) {
+    private func pingButtonPressed(_: UIButton?) {
         presentMLSPrivacyWarningIfNeeded { [self] in
             /// Don't take into account the selfUser when we check against the minimumPingParticipants
             /// That's why participantsIndex is **conversation.localParticipantsCount - 1**
@@ -688,7 +688,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - SendButton
 
     @objc
-    func sendButtonPressed(_ sender: Any?) {
+    func sendButtonPressed(_: Any?) {
         inputBar.textView.autocorrectLastWord()
         sendText()
     }
@@ -696,7 +696,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - Giphy
 
     @objc
-    private func giphyButtonPressed(_ sender: Any?) {
+    private func giphyButtonPressed(_: Any?) {
         guard
             case .ok = networkStatusObservable.reachability,
             let conversation = conversation as? ZMConversation
@@ -877,7 +877,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         }
     }
 
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    func imagePickerControllerDidCancel(_: UIImagePickerController) {
         statusBarBlinksRedFix()
 
         parent?.dismiss(animated: true) {
@@ -892,7 +892,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     // MARK: - Sketch
 
     @objc
-    func sketchButtonPressed(_ sender: Any?) {
+    func sketchButtonPressed(_: Any?) {
         let checker = PrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
             sketch()
         })

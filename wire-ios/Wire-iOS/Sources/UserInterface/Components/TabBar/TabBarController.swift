@@ -203,7 +203,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         startOffset = scrollView.contentOffset.x
     }
 
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_: UIScrollView) {
         isSwiping = false
     }
 

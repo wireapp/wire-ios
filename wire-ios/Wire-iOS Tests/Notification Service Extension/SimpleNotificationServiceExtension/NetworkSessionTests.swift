@@ -182,7 +182,7 @@ final class NetworkSessionTests: XCTestCase {
 final class MockCookieStorage: CookieProvider {
     var isAuthenticated = true
 
-    func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
+    func setRequestHeaderFieldsOn(_: NSMutableURLRequest) {}
 
     func deleteKeychainItems() {}
 }

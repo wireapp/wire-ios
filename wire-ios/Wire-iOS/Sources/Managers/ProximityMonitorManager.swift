@@ -103,7 +103,7 @@ final class ProximityMonitorManager: NSObject {
         UIDevice.current.isProximityMonitoringEnabled = false
     }
 
-    @objc func handleProximityChange(_ notification: Notification) {
+    @objc func handleProximityChange(_: Notification) {
         self.raisedToEar = UIDevice.current.proximityState
     }
 }

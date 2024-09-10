@@ -34,7 +34,7 @@ public final class RequestAvailableNotification: NSObject {
     public static let name = NSNotification.Name(rawValue: "RequestAvailableNotification")
 
     @objc
-    public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
+    public static func notifyNewRequestsAvailable(_: NSObjectProtocol?) {
         NotificationCenter.default.post(
             name: name,
             object: nil

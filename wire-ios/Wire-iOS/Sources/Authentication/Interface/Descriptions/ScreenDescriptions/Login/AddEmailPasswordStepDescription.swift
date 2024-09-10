@@ -72,7 +72,7 @@ extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 
     func textField(_ textField: EmailPasswordTextField, didConfirmCredentials credentials: (String, String)) {}
 
-    func textFieldDidSubmitWithValidationError(_ textField: EmailPasswordTextField) {}
+    func textFieldDidSubmitWithValidationError(_: EmailPasswordTextField) {}
 }
 
 // MARK: - CTAFooterDescription

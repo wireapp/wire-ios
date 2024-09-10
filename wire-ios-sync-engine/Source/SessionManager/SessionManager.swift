@@ -1293,7 +1293,7 @@ extension SessionManager {
 }
 
 extension SessionManager: UnauthenticatedSessionDelegate {
-    public func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
+    public func sessionIsAllowedToCreateNewAccount(_: UnauthenticatedSession) -> Bool {
         accountManager.accounts.count < maxNumberAccounts
     }
 
@@ -1352,7 +1352,7 @@ extension SessionManager: AccountDeletedObserver {
 // MARK: - Application lifetime notifications
 
 extension SessionManager {
-    @objc private func applicationWillEnterForeground(_ note: Notification) {
+    @objc private func applicationWillEnterForeground(_: Notification) {
         BackgroundActivityFactory.shared.resume()
 
         updateAllUnreadCounts()
@@ -1373,11 +1373,11 @@ extension SessionManager {
         }
     }
 
-    @objc func applicationWillResignActive(_ note: Notification) {
+    @objc func applicationWillResignActive(_: Notification) {
         activeUserSession?.appLockController.beginTimer()
     }
 
-    @objc private func applicationDidBecomeActive(_ note: Notification) {
+    @objc private func applicationDidBecomeActive(_: Notification) {
         notificationsTracker?.dispatchEvent()
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()

@@ -459,7 +459,7 @@ extension CallViewController: WireCallCenterCallParticipantObserver {
 }
 
 extension CallViewController: AVSMediaManagerClientObserver {
-    func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification!) {
+    func mediaManagerDidChange(_: AVSMediaManagerClientChangeNotification!) {
         updateConfiguration()
     }
 }

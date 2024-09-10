@@ -262,7 +262,7 @@ final class PasscodeSetupViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 
 extension PasscodeSetupViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_: UITextField) -> Bool {
         guard presenter.isPasscodeValid else {
             return false
         }
@@ -275,7 +275,7 @@ extension PasscodeSetupViewController: UITextFieldDelegate {
 // MARK: - ValidatedTextFieldDelegate
 
 extension PasscodeSetupViewController: ValidatedTextFieldDelegate {
-    func buttonPressed(_ sender: UIButton) {
+    func buttonPressed(_: UIButton) {
         passcodeTextField.isSecureTextEntry = !passcodeTextField.isSecureTextEntry
 
         passcodeTextField.updatePasscodeIcon()
@@ -312,7 +312,7 @@ extension PasscodeSetupViewController: PasscodeSetupUserInterface {
 // MARK: - UIAdaptivePresentationControllerDelegate
 
 extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate {
-    func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+    func presentationControllerWillDismiss(_: UIPresentationController) {
         appLockSetupViewControllerDismissed()
     }
 

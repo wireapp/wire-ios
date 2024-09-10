@@ -161,7 +161,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     // MARK: - Dynamic Type
 
     @objc
-    func preferredContentSizeChanged(_ notification: Notification) {
+    func preferredContentSizeChanged(_: Notification) {
         collectionView.reloadData()
     }
 }
@@ -192,7 +192,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         emojiDataSource.register(used: emoji)
     }
 
-    func scrollViewDidScroll(_ scrolLView: UIScrollView) {
+    func scrollViewDidScroll(_: UIScrollView) {
         updateSectionSelection()
     }
 
@@ -204,7 +204,7 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
 // MARK: - ModalTopBarDelegate
 
 extension CompleteReactionPickerViewController: ModalTopBarDelegate {
-    func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
+    func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
         dismiss(animated: true)
     }
 }

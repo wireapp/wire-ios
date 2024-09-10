@@ -19,7 +19,7 @@
 import UIKit
 
 extension ConversationContentViewController: UIScrollViewDelegate {
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_: UIScrollView) {
         removeHighlightsAndMenu()
     }
 

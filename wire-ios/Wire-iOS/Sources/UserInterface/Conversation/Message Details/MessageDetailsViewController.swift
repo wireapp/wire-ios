@@ -251,7 +251,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         return true
     }
 
-    func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
+    func modelTopBarWantsToBeDismissed(_: ModalTopBar) {
         dismiss(animated: true)
     }
 
@@ -267,11 +267,11 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
 // MARK: - MessageDetailsDataSourceObserver
 
 extension MessageDetailsViewController: MessageDetailsDataSourceObserver {
-    func dataSourceDidChange(_ dataSource: MessageDetailsDataSource) {
+    func dataSourceDidChange(_: MessageDetailsDataSource) {
         reloadData()
     }
 
-    func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource) {
+    func detailsFooterDidChange(_: MessageDetailsDataSource) {
         reloadFooters()
     }
 }

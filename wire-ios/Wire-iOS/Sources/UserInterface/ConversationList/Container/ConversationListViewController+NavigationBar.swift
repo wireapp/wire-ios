@@ -23,11 +23,11 @@ import WireDesign
 import WireSyncEngine
 
 extension ConversationListViewController {
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_: ViewModel) {
         updateAccountView()
     }
 
-    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_: ViewModel) {
         updateLegalHoldIndictor()
     }
 

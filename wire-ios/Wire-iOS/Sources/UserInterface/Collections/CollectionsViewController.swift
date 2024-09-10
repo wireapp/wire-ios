@@ -317,7 +317,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     @objc
-    private func backButtonPressed(_ button: UIButton) {
+    private func backButtonPressed(_: UIButton) {
         _ = navigationController?.popViewController(animated: true)
     }
 }

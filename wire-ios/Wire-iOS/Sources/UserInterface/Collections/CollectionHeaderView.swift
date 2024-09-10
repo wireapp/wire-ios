@@ -137,7 +137,7 @@ final class CollectionHeaderView: UICollectionReusableView {
         return layoutAttributes
     }
 
-    @objc func didSelect(_ button: UIButton!) {
+    @objc func didSelect(_: UIButton!) {
         selectionAction?(section)
     }
 }

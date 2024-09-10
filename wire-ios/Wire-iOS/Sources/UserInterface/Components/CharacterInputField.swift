@@ -238,11 +238,11 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
 
     // MARK: - Paste support
 
-    @objc fileprivate func onLongPress(_ sender: Any?) {
+    @objc fileprivate func onLongPress(_: Any?) {
         self.showMenu()
     }
 
-    override func paste(_ sender: Any?) {
+    override func paste(_: Any?) {
         guard UIPasteboard.general.hasStrings, let valueToPaste = UIPasteboard.general.string else {
             return
         }

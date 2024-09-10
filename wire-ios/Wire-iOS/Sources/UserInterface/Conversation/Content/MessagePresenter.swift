@@ -288,21 +288,21 @@ final class MessagePresenter: NSObject {
 }
 
 extension MessagePresenter: UIDocumentInteractionControllerDelegate {
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+    func documentInteractionControllerViewControllerForPreview(_: UIDocumentInteractionController) -> UIViewController {
         modalTargetController!
     }
 
-    func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
+    func documentInteractionControllerDidEndPreview(_: UIDocumentInteractionController) {
         cleanupTemporaryFileLink()
         documentInteractionController = nil
     }
 
-    func documentInteractionControllerDidDismissOpenInMenu(_ controller: UIDocumentInteractionController) {
+    func documentInteractionControllerDidDismissOpenInMenu(_: UIDocumentInteractionController) {
         cleanupTemporaryFileLink()
         documentInteractionController = nil
     }
 
-    func documentInteractionControllerDidDismissOptionsMenu(_ controller: UIDocumentInteractionController) {
+    func documentInteractionControllerDidDismissOptionsMenu(_: UIDocumentInteractionController) {
         cleanupTemporaryFileLink()
         documentInteractionController = nil
     }

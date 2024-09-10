@@ -272,7 +272,7 @@ final class CallQualityView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    @objc func onClick(_ sender: UIButton) {
+    @objc func onClick(_: UIButton) {
         callback(buttonScore)
     }
 }

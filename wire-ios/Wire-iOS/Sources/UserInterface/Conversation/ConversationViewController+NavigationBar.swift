@@ -210,7 +210,7 @@ extension ConversationViewController {
     }
 
     @objc
-    func voiceCallItemTapped(_ sender: UIBarButtonItem) {
+    func voiceCallItemTapped(_: UIBarButtonItem) {
         view.window?.endEditing(true)
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
@@ -219,7 +219,7 @@ extension ConversationViewController {
         checker.performAction()
     }
 
-    @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
+    @objc func videoCallItemTapped(_: UIBarButtonItem) {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             view.window?.endEditing(true)
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)

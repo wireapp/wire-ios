@@ -137,7 +137,7 @@ final class URLRequestPromise: CancelableTask {
 
     // MARK: - Utilities
 
-    private func notifyResult(_ data: Data?, _ response: URLResponse?, _ error: Error?) -> ZiphyError? {
+    private func notifyResult(_ data: Data?, _: URLResponse?, _ error: Error?) -> ZiphyError? {
         if let networkError = error {
             return .networkError(networkError)
         }

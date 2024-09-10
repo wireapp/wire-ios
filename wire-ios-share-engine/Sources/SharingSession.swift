@@ -23,7 +23,7 @@ import WireRequestStrategy
 import WireTransport
 
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
-    func didFailToSend(_ message: ZMMessage) {
+    func didFailToSend(_: ZMMessage) {
         // nop
     }
 }

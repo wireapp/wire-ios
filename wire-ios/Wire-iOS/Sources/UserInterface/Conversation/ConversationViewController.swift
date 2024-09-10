@@ -313,7 +313,7 @@ final class ConversationViewController: UIViewController {
     }
 
     @objc
-    func onBackButtonPressed(_ backButton: UIButton?) {
+    func onBackButtonPressed(_: UIButton?) {
         openConversationList()
     }
 
@@ -330,7 +330,7 @@ final class ConversationViewController: UIViewController {
     }
 
     @objc
-    func didTapMediaBar(_ tapGestureRecognizer: UITapGestureRecognizer?) {
+    func didTapMediaBar(_: UITapGestureRecognizer?) {
         if let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage,
            conversation === mediaPlayingMessage.conversationLike {
             contentViewController.scroll(to: mediaPlayingMessage, completion: nil)
@@ -575,7 +575,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         return true
     }
 
-    func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
+    func conversationInputBarViewControllerShouldEndEditing(_: ConversationInputBarViewController) -> Bool {
         setGuestBarForceHidden(false)
         return true
     }
@@ -638,7 +638,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     @objc
-    private func onCollectionButtonPressed(_ sender: AnyObject?) {
+    private func onCollectionButtonPressed(_: AnyObject?) {
         if collectionController == .none {
             let collections = CollectionsViewController(
                 conversation: conversation,

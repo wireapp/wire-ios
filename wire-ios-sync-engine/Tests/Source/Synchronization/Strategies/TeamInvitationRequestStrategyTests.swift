@@ -150,7 +150,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 }
 
 extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncStateDelegate {
-    func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {}
+    func didRegisterMLSClient(_: WireDataModel.UserClient) {}
 
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) {}
 
@@ -162,7 +162,7 @@ extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncState
 
     func didFinishQuickSync() {}
 
-    func didRegisterSelfUserClient(_ userClient: UserClient) {}
+    func didRegisterSelfUserClient(_: UserClient) {}
 
     func didFailToRegisterSelfUserClient(error: Error) {}
 

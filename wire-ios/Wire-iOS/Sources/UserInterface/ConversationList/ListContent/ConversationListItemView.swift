@@ -174,7 +174,7 @@ final class ConversationListItemView: UIView {
     // MARK: - Observer
 
     @objc
-    private func contentSizeCategoryDidChange(_ notification: Notification?) {
+    private func contentSizeCategoryDidChange(_: Notification?) {
         configureFont()
     }
 
@@ -207,7 +207,7 @@ final class ConversationListItemView: UIView {
     }
 
     @objc
-    private func mediaPlayerStateChanged(_ notification: Notification?) {
+    private func mediaPlayerStateChanged(_: Notification?) {
         DispatchQueue.main.async {
             if let conversation = self.conversation as? ZMConversation,
                AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {

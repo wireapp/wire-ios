@@ -239,7 +239,7 @@ final class UnlockViewController: UIViewController {
 // MARK: - ValidatedTextFieldDelegate
 
 extension UnlockViewController: ValidatedTextFieldDelegate {
-    func buttonPressed(_ sender: UIButton) {
+    func buttonPressed(_: UIButton) {
         validatedTextField.isSecureTextEntry = !validatedTextField.isSecureTextEntry
 
         validatedTextField.updatePasscodeIcon()
@@ -258,7 +258,7 @@ extension UnlockViewController: TextFieldValidationDelegate {
 // MARK: - UITextFieldDelegate
 
 extension UnlockViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_: UITextField) -> Bool {
         unlock()
     }
 }

@@ -42,11 +42,11 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
         stateController.transition(to: .switchBackend(url: url), mode: .replace)
     }
 
-    func controllerDidStartCompanyLoginFlow(_ controller: CompanyLoginController) {
+    func controllerDidStartCompanyLoginFlow(_: CompanyLoginController) {
         stateController.transition(to: .companyLogin)
     }
 
-    func controllerDidCancelCompanyLoginFlow(_ controller: CompanyLoginController) {
+    func controllerDidCancelCompanyLoginFlow(_: CompanyLoginController) {
         cancelCompanyLogin()
     }
 

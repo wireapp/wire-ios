@@ -21,11 +21,11 @@ import Photos
 @testable import Wire
 
 final class MockPhotoLibrary: PhotoLibraryProtocol {
-    func register(_ observer: PHPhotoLibraryChangeObserver) {
+    func register(_: PHPhotoLibraryChangeObserver) {
         // no-ops
     }
 
-    func unregisterChangeObserver(_ observer: PHPhotoLibraryChangeObserver) {
+    func unregisterChangeObserver(_: PHPhotoLibraryChangeObserver) {
         // no-ops
     }
 

@@ -81,7 +81,7 @@ extension ConversationInputBarViewController: InputBarEditViewDelegate {
         }
     }
 
-    func inputBarEditViewDidLongPressUndoButton(_ editView: InputBarEditView) {
+    func inputBarEditViewDidLongPressUndoButton(_: InputBarEditView) {
         guard let text = editingMessage?.textMessageData?.messageText else { return }
         inputBar.setInputBarText(text, mentions: editingMessage?.textMessageData?.mentions ?? [])
     }

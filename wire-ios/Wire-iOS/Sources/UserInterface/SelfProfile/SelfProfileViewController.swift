@@ -206,7 +206,7 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
+    @objc private func userDidTapProfileImage(_: UIGestureRecognizer) {
         guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let alertController = profileImagePicker.selectProfileImage()
@@ -243,12 +243,12 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
         navigationController!.topViewController
     }
 
-    func asyncMethodDidStart(_ settingsPropertyFactory: SettingsPropertyFactory) {
+    func asyncMethodDidStart(_: SettingsPropertyFactory) {
         // shown on SettingsTableViewController
         activityIndicator.start()
     }
 
-    func asyncMethodDidComplete(_ settingsPropertyFactory: SettingsPropertyFactory) {
+    func asyncMethodDidComplete(_: SettingsPropertyFactory) {
         activityIndicator.stop()
     }
 

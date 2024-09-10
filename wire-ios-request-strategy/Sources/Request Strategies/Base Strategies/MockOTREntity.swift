@@ -35,7 +35,7 @@ final class MockOTREntity: OTREntity {
 
     let messageData: Data
 
-    func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_: Set<UserClient>!) {
         // no-op
     }
 
@@ -54,7 +54,7 @@ final class MockOTREntity: OTREntity {
         self.context = context
     }
 
-    func detectedRedundantUsers(_ users: [ZMUser]) {
+    func detectedRedundantUsers(_: [ZMUser]) {
         // no-op
     }
 
@@ -62,7 +62,7 @@ final class MockOTREntity: OTREntity {
         isDelivered = true
     }
 
-    func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+    func addFailedToSendRecipients(_: [ZMUser]) {
         isFailedToSendUsers = true
     }
 }

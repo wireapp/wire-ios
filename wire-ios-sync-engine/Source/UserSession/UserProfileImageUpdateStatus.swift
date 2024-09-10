@@ -265,7 +265,7 @@ extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
         }
     }
 
-    public func failedPreprocessingImageOwner(_ imageOwner: ZMImageOwner) {
+    public func failedPreprocessingImageOwner(_: ZMImageOwner) {
         syncMOC.performGroupedBlock {
             self.setState(state: .failed(.preprocessingFailed))
         }

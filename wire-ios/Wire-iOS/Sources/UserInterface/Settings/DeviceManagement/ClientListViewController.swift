@@ -275,7 +275,7 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    @objc func backPressed(_ sender: AnyObject!) {
+    @objc func backPressed(_: AnyObject!) {
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
@@ -328,7 +328,7 @@ final class ClientListViewController: UIViewController,
         editingList = false
     }
 
-    func failedToDeleteClients(_ error: Error) {
+    func failedToDeleteClients(_: Error) {
         // no-op
     }
 

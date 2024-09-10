@@ -173,7 +173,7 @@ extension SimpleTextField: SimpleTextFieldValidatorDelegate {
         textFieldDelegate?.textField(self, valueChanged: newValue)
     }
 
-    func textFieldValueSubmitted(_ value: String) {
+    func textFieldValueSubmitted(_: String) {
         textFieldDelegate?.textFieldReturnPressed(self)
     }
 

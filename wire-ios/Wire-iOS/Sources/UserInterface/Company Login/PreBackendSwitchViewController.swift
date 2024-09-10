@@ -116,11 +116,11 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
             informationLabel.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor)])
     }
 
-    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
         // NO OP
     }
 
-    func displayError(_ error: Error) {
+    func displayError(_: Error) {
         // NO OP
     }
 }

@@ -67,7 +67,7 @@ public struct CoreDataStackHelper {
         try cleanupDirectory(storageDirectory)
     }
 
-    public func cleanupDirectory(_ url: URL) throws {
+    public func cleanupDirectory(_: URL) throws {
         guard storageDirectory.hasDirectoryPath else {
             assertionFailure("url is not a directory path!")
             return

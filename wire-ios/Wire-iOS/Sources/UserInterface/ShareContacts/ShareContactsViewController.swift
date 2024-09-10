@@ -200,11 +200,11 @@ final class ShareContactsViewController: UIViewController {
 // MARK: - ShareContactsViewController Extension
 
 extension ShareContactsViewController: PermissionDeniedViewControllerDelegate {
-    func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController) {
+    func permissionDeniedViewControllerDidSkip(_: PermissionDeniedViewController) {
         delegate?.shareContactsViewControllerDidSkip(self)
     }
 
-    func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController) {
+    func permissionDeniedViewControllerDidOpenNotificationSettings(_: PermissionDeniedViewController) {
         // no op
     }
 }

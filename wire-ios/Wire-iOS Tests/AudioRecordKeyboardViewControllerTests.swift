@@ -23,12 +23,12 @@ import XCTest
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     var didCancelHitCount = 0
-    func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController) {
+    func audioRecordViewControllerDidCancel(_: AudioRecordBaseViewController) {
         didCancelHitCount += 1
     }
 
     var didStartRecordingHitCount = 0
-    func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController) {
+    func audioRecordViewControllerDidStartRecording(_: AudioRecordBaseViewController) {
         didStartRecordingHitCount += 1
     }
 

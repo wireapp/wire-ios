@@ -219,7 +219,7 @@ final class NativePushChannel: NSObject, PushChannelType {
 }
 
 extension NativePushChannel: ZMTimerClient {
-    func timerDidFire(_ timer: ZMTimer!) {
+    func timerDidFire(_: ZMTimer!) {
         WireLogger.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
             if let error {

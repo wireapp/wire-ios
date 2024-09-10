@@ -108,13 +108,13 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         return delegate?.conversationInputBarViewControllerShouldBeginEditing(self) ?? true
     }
 
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewDidBeginEditing(_: UITextView) {
         updateAccessoryViews()
         updateNewButtonTitleLabel()
         hideLeftView()
     }
 
-    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+    func textViewShouldEndEditing(_: UITextView) -> Bool {
         delegate?.conversationInputBarViewControllerShouldEndEditing(self) ?? true
     }
 

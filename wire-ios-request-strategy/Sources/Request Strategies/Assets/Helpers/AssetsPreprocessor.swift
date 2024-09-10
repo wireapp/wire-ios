@@ -120,11 +120,11 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
         }
     }
 
-    public func failedPreprocessingImageOwner(_ imageOwner: ZMImageOwner) {
+    public func failedPreprocessingImageOwner(_: ZMImageOwner) {
         // TODO: jacob is never called, remove
     }
 
-    public func didCompleteProcessingImageOwner(_ imageOwner: ZMImageOwner) {
+    public func didCompleteProcessingImageOwner(_: ZMImageOwner) {
         // TODO: jacob is never called, remove
     }
 

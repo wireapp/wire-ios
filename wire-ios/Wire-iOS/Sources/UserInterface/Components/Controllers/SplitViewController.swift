@@ -542,7 +542,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 }
 
 extension SplitViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {
         if layoutSize == .regularLandscape {
             return false
         }

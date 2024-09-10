@@ -39,7 +39,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
         viewController.dismiss(animated: true)
     }
 
-    func shareContactsViewControllerDidSkip(_ viewController: ShareContactsViewController) {
+    func shareContactsViewControllerDidSkip(_: ShareContactsViewController) {
         guard let tabBarController = presentingViewController as? UITabBarController else {
             return assertionFailure("wrong assumption!")
         }

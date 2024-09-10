@@ -118,7 +118,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
-    func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_ controller: CameraKeyboardViewController) {
+    func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_: CameraKeyboardViewController) {
         hideCameraKeyboardViewController { [self] in
             shouldRefocusKeyboardAfterImagePickerDismiss = true
             presentImagePicker(
@@ -130,7 +130,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
-    func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
+    func cameraKeyboardViewControllerWantsToOpenCameraRoll(_: CameraKeyboardViewController) {
         hideCameraKeyboardViewController { [self] in
             shouldRefocusKeyboardAfterImagePickerDismiss = true
             presentImagePicker(
@@ -280,7 +280,7 @@ extension ConversationInputBarViewController {
     }
 
     @objc
-    func cameraButtonPressed(_ sender: Any?) {
+    func cameraButtonPressed(_: Any?) {
         if mode == .camera {
             inputBar.textView.resignFirstResponder()
             cameraKeyboardViewController = nil

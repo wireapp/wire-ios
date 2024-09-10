@@ -77,11 +77,11 @@ extension SimpleTextFieldValidator: UITextFieldDelegate {
         return true
     }
 
-    func textFieldDidEndEditing(_ textField: UITextField) {
+    func textFieldDidEndEditing(_: UITextField) {
         delegate?.textFieldDidEndEditing()
     }
 
-    func textFieldDidBeginEditing(_ textField: UITextField) {
+    func textFieldDidBeginEditing(_: UITextField) {
         delegate?.textFieldDidBeginEditing()
     }
 }

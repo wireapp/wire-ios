@@ -42,7 +42,7 @@ final class CopyableLabel: UILabel {
         action == #selector(copy(_:))
     }
 
-    override func copy(_ sender: Any?) {
+    override func copy(_: Any?) {
         UIPasteboard.general.string = text
     }
 
@@ -58,7 +58,7 @@ final class CopyableLabel: UILabel {
         fade(dimmed: true)
     }
 
-    @objc private func menuDidHide(_ note: Notification) {
+    @objc private func menuDidHide(_: Notification) {
         NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
         fade(dimmed: false)
     }

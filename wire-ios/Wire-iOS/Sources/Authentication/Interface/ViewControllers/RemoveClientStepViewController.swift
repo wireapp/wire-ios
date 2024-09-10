@@ -112,11 +112,11 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     // MARK: - AuthenticationCoordinatedViewController
 
-    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
         // no-op
     }
 
-    func displayError(_ error: Error) {
+    func displayError(_: Error) {
         // no-op
     }
 }
@@ -124,7 +124,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 // MARK: - ClientListViewControllerDelegate
 
 extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
-    func finishedDeleting(_ clientListViewController: RemoveClientsViewController) {
+    func finishedDeleting(_: RemoveClientsViewController) {
         authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
     }
 

@@ -125,7 +125,7 @@ extension ConversationInputBarViewController {
     }
 
     @objc
-    func videoButtonPressed(_ sender: IconButton) {
+    func videoButtonPressed(_: IconButton) {
         let checker = PrivacyWarningChecker(conversation: conversation) {
             self.recordVideo()
         }

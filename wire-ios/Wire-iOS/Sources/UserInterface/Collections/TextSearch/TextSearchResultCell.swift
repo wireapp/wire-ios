@@ -169,7 +169,7 @@ final class TextSearchResultCell: UITableViewCell {
 }
 
 extension TextSearchResultCell: ZMMessageObserver {
-    func messageDidChange(_ changeInfo: MessageChangeInfo) {
+    func messageDidChange(_: MessageChangeInfo) {
         updateTextView()
     }
 }

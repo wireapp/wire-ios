@@ -49,11 +49,11 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
         rightButton.accessibilityLabel = L10n.Accessibility.ConversationDetails.MoreButton.description
     }
 
-    override func leftButtonTapped(_ sender: IconButton) {
+    override func leftButtonTapped(_: IconButton) {
         delegate?.footerView(self, shouldPerformAction: .invite)
     }
 
-    override func rightButtonTapped(_ sender: IconButton) {
+    override func rightButtonTapped(_: IconButton) {
         delegate?.footerView(self, shouldPerformAction: .more)
     }
 }

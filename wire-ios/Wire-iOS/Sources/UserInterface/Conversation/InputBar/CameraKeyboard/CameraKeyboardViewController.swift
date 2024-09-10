@@ -161,12 +161,12 @@ class CameraKeyboardViewController: UIViewController {
     // MARK: - Notifications
 
     @objc
-    private func applicationDidBecomeActive(_ notification: Notification!) {
+    private func applicationDidBecomeActive(_: Notification!) {
         self.assetLibrary?.refetchAssets()
     }
 
     @objc
-    func splitLayoutChanged(_ notification: Notification!) {
+    func splitLayoutChanged(_: Notification!) {
         self.collectionViewLayout.invalidateLayout()
         self.collectionView.reloadData()
     }
@@ -274,12 +274,12 @@ class CameraKeyboardViewController: UIViewController {
     // MARK: - Actions
 
     @objc
-    func goBackPressed(_ sender: AnyObject) {
+    func goBackPressed(_: AnyObject) {
         scrollToCamera(animated: true)
     }
 
     @objc
-    func openCameraRollPressed(_ sender: AnyObject) {
+    func openCameraRollPressed(_: AnyObject) {
         self.delegate?.cameraKeyboardViewControllerWantsToOpenCameraRoll(self)
     }
 
@@ -564,7 +564,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
 // MARK: - CameraKeyboardViewController - CameraCellDelegate
 
 extension CameraKeyboardViewController: CameraCellDelegate {
-    func cameraCellWantsToOpenFullCamera(_ cameraCell: CameraCell) {
+    func cameraCellWantsToOpenFullCamera(_: CameraCell) {
         self.delegate?.cameraKeyboardViewControllerWantsToOpenFullScreenCamera(self)
     }
 
@@ -576,7 +576,7 @@ extension CameraKeyboardViewController: CameraCellDelegate {
 // MARK: - CameraKeyboardViewController - AssetLibraryDelegate
 
 extension CameraKeyboardViewController: AssetLibraryDelegate {
-    func assetLibraryDidChange(_ library: AssetLibrary) {
+    func assetLibraryDidChange(_: AssetLibrary) {
         self.collectionView.reloadData()
     }
 }

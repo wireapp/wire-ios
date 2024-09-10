@@ -148,13 +148,13 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
         self.activeFieldChange(textField)
     }
 
-    func textFieldDidEndEditing(_ textField: UITextField) {
+    func textFieldDidEndEditing(_: UITextField) {
         self.activeFieldChange(nil)
     }
 }
 
 extension ProxyCredentialsViewController: ValidatedTextFieldDelegate {
-    func buttonPressed(_ sender: UIButton) {
+    func buttonPressed(_: UIButton) {
         passwordInput.isSecureTextEntry.toggle()
         passwordInput.updatePasscodeIcon()
     }

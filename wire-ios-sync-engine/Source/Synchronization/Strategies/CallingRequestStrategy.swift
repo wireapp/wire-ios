@@ -205,7 +205,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         nil
     }
 
-    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+    public func addTrackedObjects(_: Set<NSManagedObject>) {
         // nop
     }
 

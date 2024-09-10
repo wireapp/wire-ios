@@ -225,7 +225,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     @objc
-    private func onRightAccessorySelected(_ sender: UIButton?) {
+    private func onRightAccessorySelected(_: UIButton?) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer

@@ -186,7 +186,7 @@ final class UserSessionMock: UserSession {
         nil
     }
 
-    func addUserObserver(_ observer: UserObserving) -> NSObjectProtocol {
+    func addUserObserver(_: UserObserving) -> NSObjectProtocol {
         NSObject()
     }
 
@@ -227,19 +227,19 @@ final class UserSessionMock: UserSession {
     }
 
     func addConferenceCallingUnavailableObserver(
-        _ observer: ConferenceCallingUnavailableObserver
+        _: ConferenceCallingUnavailableObserver
     ) -> Any {
         NSObject()
     }
 
     func addConferenceCallStateObserver(
-        _ observer: WireCallCenterCallStateObserver
+        _: WireCallCenterCallStateObserver
     ) -> Any {
         NSObject()
     }
 
     func addConferenceCallErrorObserver(
-        _ observer: WireCallCenterCallErrorObserver
+        _: WireCallCenterCallErrorObserver
     ) -> Any {
         NSObject()
     }
@@ -273,7 +273,7 @@ final class UserSessionMock: UserSession {
         ProxyRequest(type: type, path: path, method: method, callback: callback)
     }
 
-    func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {}
+    func cancelProxiedRequest(_: WireSyncEngine.ProxyRequest) {}
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         mockGetUserClientFingerprintUseCaseProtocol

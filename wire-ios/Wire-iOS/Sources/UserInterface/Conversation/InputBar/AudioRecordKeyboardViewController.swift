@@ -428,7 +428,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - Button Actions
 
-    @objc func recordButtonPressed(_ sender: AnyObject!) {
+    @objc func recordButtonPressed(_: AnyObject!) {
         self.recorder.startRecording { _ in
             self.state = .recording
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
@@ -436,7 +436,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
-    @objc func stopRecordButtonPressed(_ button: UIButton?) {
+    @objc func stopRecordButtonPressed(_: UIButton?) {
         self.recorder.stopRecording()
     }
 
@@ -471,12 +471,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
     }
 
-    @objc func redoButtonPressed(_ button: UIButton?) {
+    @objc func redoButtonPressed(_: UIButton?) {
         recorder.deleteRecording()
         self.state = .ready
     }
 
-    @objc func cancelButtonPressed(_ button: UIButton?) {
+    @objc func cancelButtonPressed(_: UIButton?) {
         self.delegate?.audioRecordViewControllerDidCancel(self)
     }
 }

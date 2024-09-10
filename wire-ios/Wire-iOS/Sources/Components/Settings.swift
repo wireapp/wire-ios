@@ -159,7 +159,7 @@ class Settings {
     }
 
     @objc
-    private func applicationDidEnterBackground(_ application: UIApplication) {
+    private func applicationDidEnterBackground(_: UIApplication) {
         synchronize()
     }
 

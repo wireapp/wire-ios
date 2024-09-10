@@ -97,7 +97,7 @@ final class ZMProgressView: UIView {
         }
     }
 
-    fileprivate func updateForStateAnimated(_ animated: Bool) {
+    fileprivate func updateForStateAnimated(_: Bool) {
         if let det = self.deterministic, det {
             self.progressView.isHidden = false
             self.spinner.isHidden = true

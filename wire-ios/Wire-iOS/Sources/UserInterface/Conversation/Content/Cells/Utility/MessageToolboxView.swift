@@ -308,7 +308,7 @@ final class MessageToolboxView: UIView {
 
 extension MessageToolboxView: UIGestureRecognizerDelegate {
     @objc
-    func onTapContent(_ sender: UITapGestureRecognizer!) {
+    func onTapContent(_: UITapGestureRecognizer!) {
         if let displayMode = preferredDetailsDisplayMode() {
             delegate?.messageToolboxDidRequestOpeningDetails(self, preferredDisplayMode: displayMode)
         }

@@ -95,7 +95,7 @@ class MockFederationTerminationManager: FederationTerminationManagerInterface {
     var didCallHandleFederationTerminationWith = false
     var didCallhandleFederationTerminationBetween = false
 
-    func handleFederationTerminationWith(_ domain: String) {
+    func handleFederationTerminationWith(_: String) {
         didCallHandleFederationTerminationWith = true
     }
 

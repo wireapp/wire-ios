@@ -42,7 +42,7 @@ final class Analytics: NSObject {
     }
 
     @objc
-    private func userSessionDidBecomeAvailable(_ note: Notification?) {
+    private func userSessionDidBecomeAvailable(_: Notification?) {
         callingTracker = AnalyticsCallingTracker(analytics: self)
         selfUser = SelfUser.provider?.providedSelfUser
 

@@ -22,7 +22,7 @@ import XCTest
 
 final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelegate {
     var shouldAccept = true
-    func shouldAcceptChanges(_ inputField: CharacterInputField) -> Bool {
+    func shouldAcceptChanges(_: CharacterInputField) -> Bool {
         shouldAccept
     }
 

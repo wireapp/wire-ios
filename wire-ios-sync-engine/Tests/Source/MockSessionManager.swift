@@ -85,7 +85,7 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
 class MockCallKitManager: CallKitManagerInterface {
     var isEnabled = false
 
-    func setDelegate(_ delegate: Any) {
+    func setDelegate(_: Any) {
         // no-op
     }
 
@@ -93,7 +93,7 @@ class MockCallKitManager: CallKitManagerInterface {
         // no-op
     }
 
-    func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
+    func continueUserActivity(_: NSUserActivity) -> Bool {
         false
     }
 

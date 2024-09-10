@@ -566,7 +566,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     @objc
-    private func didTapBackground(_ tapper: UITapGestureRecognizer?) {
+    private func didTapBackground(_: UITapGestureRecognizer?) {
         isShowingChrome = !isShowingChrome
         setSelectedByMenu(false, animated: false)
         UIMenuController.shared.hideMenu()
@@ -721,7 +721,7 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
     }
 
     @objc
-    private func menuDidHide(_ notification: Notification?) {
+    private func menuDidHide(_: Notification?) {
         NotificationCenter.default.removeObserver(self, name: UIMenuController.didHideMenuNotification, object: nil)
         setSelectedByMenu(false, animated: true)
     }
@@ -784,7 +784,7 @@ extension FullscreenImageViewController: UIScrollViewDelegate {
         delegate?.fadeAndHideMenu(true)
     }
 
-    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+    func scrollViewDidZoom(_: UIScrollView) {
         setSelectedByMenu(false, animated: false)
         hideMenu()
 

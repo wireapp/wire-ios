@@ -47,7 +47,7 @@ extension MockUser: SelfLegalHoldSubject {
         legalHoldDataSource.needsToAcknowledgeLegalHoldStatus = false
     }
 
-    public func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
+    public func userDidAcceptLegalHoldRequest(_: LegalHoldRequest) {
         legalHoldDataSource.legalHoldRequest = nil
         isUnderLegalHold = true
     }

@@ -135,17 +135,17 @@ final class CameraCell: UICollectionViewCell {
         cameraController?.updatePreviewOrientation()
     }
 
-    @objc func deviceOrientationDidChange(_ notification: Notification!) {
+    @objc func deviceOrientationDidChange(_: Notification!) {
         self.updateVideoOrientation()
     }
 
     // MARK: - Actions
 
-    @objc func expandButtonPressed(_ sender: AnyObject) {
+    @objc func expandButtonPressed(_: AnyObject) {
         self.delegate?.cameraCellWantsToOpenFullCamera(self)
     }
 
-    @objc func shutterButtonPressed(_ sender: AnyObject) {
+    @objc func shutterButtonPressed(_: AnyObject) {
         cameraController?.capturePhoto { data, error in
             if error == nil {
                 self.delegate?.cameraCell(self, didPickImageData: data!)
@@ -153,7 +153,7 @@ final class CameraCell: UICollectionViewCell {
         }
     }
 
-    @objc func changeCameraPressed(_ sender: AnyObject) {
+    @objc func changeCameraPressed(_: AnyObject) {
         cameraController?.switchCamera { currentCamera in
             Settings.shared[.preferredCamera] = currentCamera
         }

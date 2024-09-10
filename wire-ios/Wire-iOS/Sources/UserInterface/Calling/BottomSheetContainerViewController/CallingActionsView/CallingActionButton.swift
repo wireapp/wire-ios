@@ -32,7 +32,7 @@ class CallingActionButton: IconLabelButton {
         iconButton.setIcon(input.icon(forState: .selected), size: iconSize, for: .selected)
     }
 
-    override func apply(_ configuration: CallActionAppearance) {
+    override func apply(_: CallActionAppearance) {
         iconButton.borderWidth = 1
 
         setTitleColor(SemanticColors.Button.textCallingNormal, for: .normal)
@@ -52,7 +52,7 @@ class CallingActionButton: IconLabelButton {
 }
 
 final class EndCallButton: CallingActionButton {
-    override func apply(_ configuration: CallActionAppearance) {
+    override func apply(_: CallActionAppearance) {
         let redColor = SemanticColors.Button.backgroundLikeHighlighted
         setTitleColor(SemanticColors.Button.textCallingNormal, for: .normal)
         iconButton.setIconColor(SemanticColors.View.backgroundDefaultWhite, for: .normal)
@@ -61,7 +61,7 @@ final class EndCallButton: CallingActionButton {
 }
 
 final class PickUpButton: CallingActionButton {
-    override func apply(_ configuration: CallActionAppearance) {
+    override func apply(_: CallActionAppearance) {
         let greenColor = SemanticColors.Button.backgroundPickUp
         setTitleColor(SemanticColors.Label.textDefault, for: .normal)
         iconButton.setIconColor(SemanticColors.View.backgroundDefaultWhite, for: .normal)

@@ -83,7 +83,7 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
         .identity
     }
 
-    func updateInteractiveTransition(_ percentComplete: CGFloat) {
+    func updateInteractiveTransition(_: CGFloat) {
         // no-op
     }
 

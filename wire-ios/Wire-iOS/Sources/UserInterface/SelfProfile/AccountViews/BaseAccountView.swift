@@ -155,7 +155,7 @@ class BaseAccountView: UIView {
         }
     }
 
-    @objc func didTap(_ sender: UITapGestureRecognizer) {
+    @objc func didTap(_: UITapGestureRecognizer) {
         onTap(account)
     }
 }
@@ -180,7 +180,7 @@ enum DisplayContext {
 // MARK: - ZMConversationListObserver Conformance
 
 extension BaseAccountView: ZMConversationListObserver {
-    func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
+    func conversationListDidChange(_: ConversationListChangeInfo) {
         updateAppearance()
     }
 

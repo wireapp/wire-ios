@@ -525,7 +525,7 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         }
     }
 
-    func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy) {
+    func pushNotificationStrategyDidFinishFetchingEvents(_: PushNotificationStrategy) {
         WireLogger.notifications.info("did finish processing events")
         processCallEvent()
         processLocalNotifications()

@@ -206,7 +206,7 @@ import Foundation
         process(note: note)
     }
 
-    func contextDidSave(_ note: Notification) {
+    func contextDidSave(_: Notification) {
         guard isEnabled else { return }
         fireAllNotificationsIfAllowed()
     }

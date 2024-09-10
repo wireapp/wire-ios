@@ -212,7 +212,7 @@ final class ConnectRequestsViewController: UIViewController,
 // MARK: - ZMConversationListObserver
 
 extension ConnectRequestsViewController: ZMConversationListObserver {
-    func conversationListDidChange(_ change: ConversationListChangeInfo) {
+    func conversationListDidChange(_: ConversationListChangeInfo) {
         reload()
     }
 }
@@ -220,7 +220,7 @@ extension ConnectRequestsViewController: ZMConversationListObserver {
 // MARK: - ZMUserObserving
 
 extension ConnectRequestsViewController: UserObserving {
-    func userDidChange(_ change: UserChangeInfo) {
+    func userDidChange(_: UserChangeInfo) {
         tableView.reloadData() // may need a slightly different approach, like enumerating through table cells of type FirstTimeTableViewCell and setting their bgColor property
     }
 }

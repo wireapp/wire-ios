@@ -65,7 +65,7 @@ extension SolidButtonDescription: ViewDescriptor {
         return buttonContainer
     }
 
-    @objc dynamic func buttonTapped(_ sender: UIButton) {
+    @objc dynamic func buttonTapped(_: UIButton) {
         valueSubmitted?(())
     }
 }

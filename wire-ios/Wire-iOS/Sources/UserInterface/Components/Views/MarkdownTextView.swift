@@ -141,7 +141,7 @@ final class MarkdownTextView: NextResponderTextView {
         }
     }
 
-    override func cut(_ sender: Any?) {
+    override func cut(_: Any?) {
         guard let selectedTextRange else { return }
 
         let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
@@ -152,7 +152,7 @@ final class MarkdownTextView: NextResponderTextView {
         replace(selectedTextRange, withText: "")
     }
 
-    override func copy(_ sender: Any?) {
+    override func copy(_: Any?) {
         let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
         let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
 

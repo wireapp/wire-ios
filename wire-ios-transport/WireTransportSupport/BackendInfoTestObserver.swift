@@ -49,7 +49,7 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
         self.isFederationEnabled = isFederationEnabled
     }
 
-    func testCaseWillStart(_ testCase: XCTestCase) {
+    func testCaseWillStart(_: XCTestCase) {
         BackendInfo.storage = defaults
         BackendInfo.apiVersion = apiVersion
         BackendInfo.preferredAPIVersion = preferredAPIVersion
@@ -57,7 +57,7 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
         BackendInfo.isFederationEnabled = isFederationEnabled
     }
 
-    func testCaseDidFinish(_ testCase: XCTestCase) {
+    func testCaseDidFinish(_: XCTestCase) {
         defaults.removePersistentDomain(forName: suiteName)
     }
 }

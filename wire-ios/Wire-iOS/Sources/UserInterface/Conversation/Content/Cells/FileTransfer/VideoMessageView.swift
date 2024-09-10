@@ -238,7 +238,7 @@ final class VideoMessageView: UIView, TransferView {
     // MARK: - Actions
 
     @objc
-    func onActionButtonPressed(_ sender: UIButton) {
+    func onActionButtonPressed(_: UIButton) {
         guard let fileMessageData = fileMessage?.fileMessageData else {
             return
         }

@@ -41,7 +41,7 @@ final class BrowserViewController: SFSafariViewController {
 }
 
 extension BrowserViewController: SFSafariViewControllerDelegate {
-    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+    func safariViewControllerDidFinish(_: SFSafariViewController) {
         completion?()
     }
 }

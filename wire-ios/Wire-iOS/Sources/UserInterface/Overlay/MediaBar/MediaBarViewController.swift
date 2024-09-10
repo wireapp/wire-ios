@@ -71,7 +71,7 @@ final class MediaBarViewController: UIViewController {
     // MARK: - Actions
 
     @objc
-    private func playPause(_ sender: Any?) {
+    private func playPause(_: Any?) {
         if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {
             mediaPlaybackManager?.pause()
         } else {
@@ -80,7 +80,7 @@ final class MediaBarViewController: UIViewController {
     }
 
     @objc
-    private func stop(_ sender: Any?) {
+    private func stop(_: Any?) {
         mediaPlaybackManager?.stop()
     }
 }

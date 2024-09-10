@@ -47,7 +47,7 @@ extension EmailPasswordFieldDescription: ViewDescriptor {
 }
 
 extension EmailPasswordFieldDescription: ValidatedTextFieldDelegate {
-    func buttonPressed(_ sender: UIButton) {
+    func buttonPressed(_: UIButton) {
         textField.passwordField.isSecureTextEntry = !textField.passwordField.isSecureTextEntry
         textField.passwordField.updatePasscodeIcon()
     }

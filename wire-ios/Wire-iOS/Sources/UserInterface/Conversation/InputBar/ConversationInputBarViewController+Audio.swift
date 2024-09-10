@@ -200,11 +200,11 @@ extension ConversationInputBarViewController {
 }
 
 extension ConversationInputBarViewController: AudioRecordViewControllerDelegate {
-    func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController) {
+    func audioRecordViewControllerDidCancel(_: AudioRecordBaseViewController) {
         self.hideAudioRecordViewController()
     }
 
-    func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController) {
+    func audioRecordViewControllerDidStartRecording(_: AudioRecordBaseViewController) {
         if mode != .audioRecord {
             self.showAudioRecordViewController()
         }

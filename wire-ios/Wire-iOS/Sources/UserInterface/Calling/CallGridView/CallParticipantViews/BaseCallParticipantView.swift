@@ -227,7 +227,7 @@ class BaseCallParticipantView: OrientableView {
         updateVideoShouldFill(shouldFill)
     }
 
-    func updateVideoShouldFill(_ shouldFill: Bool) {
+    func updateVideoShouldFill(_: Bool) {
         // overide in subclasses
     }
 

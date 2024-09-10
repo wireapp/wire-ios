@@ -24,7 +24,7 @@ struct ModalPresentationConfiguration {
 }
 
 extension UIViewControllerContextTransitioning {
-    private func complete(_ success: Bool) {
+    private func complete(_: Bool) {
         completeTransition(!transitionWasCancelled)
     }
 }
@@ -131,7 +131,7 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     }
 
     @objc
-    private func didTapDimView(_ sender: UITapGestureRecognizer) {
+    private func didTapDimView(_: UITapGestureRecognizer) {
         dismiss(animated: true)
     }
 

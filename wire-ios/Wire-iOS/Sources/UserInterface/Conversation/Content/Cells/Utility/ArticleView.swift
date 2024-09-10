@@ -204,7 +204,7 @@ final class ArticleView: UIView {
     }
 
     @objc
-    private func viewTapped(_ sender: UITapGestureRecognizer) {
+    private func viewTapped(_: UITapGestureRecognizer) {
         if UIMenuController.shared.isMenuVisible {
             return UIMenuController.shared.hideMenu()
         }

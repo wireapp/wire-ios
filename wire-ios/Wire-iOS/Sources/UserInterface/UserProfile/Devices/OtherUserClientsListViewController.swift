@@ -226,7 +226,7 @@ extension OtherUserClientsListViewController: UserObserving {
 }
 
 extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegate {
-    func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView) {
+    func participantsDeviceHeaderViewDidTapLearnMore(_: ParticipantDeviceHeaderView) {
         WireURLs.shared.whyToVerifyFingerprintArticle.openInApp(above: self)
     }
 }

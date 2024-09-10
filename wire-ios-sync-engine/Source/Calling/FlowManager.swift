@@ -45,7 +45,7 @@ public class FlowManager: NSObject, FlowManagerType {
 // MARK: - AVSFlowManagerDelegate
 
 extension FlowManager: AVSFlowManagerDelegate {
-    public static func logMessage(_ msg: String!) {
+    public static func logMessage(_: String!) {
         // no-op
     }
 
@@ -62,7 +62,7 @@ extension FlowManager: AVSFlowManagerDelegate {
         // no-op
     }
 
-    public func setFlowManagerActivityState(_ activityState: AVSFlowActivityState) {
+    public func setFlowManagerActivityState(_: AVSFlowActivityState) {
         // no-op
     }
 

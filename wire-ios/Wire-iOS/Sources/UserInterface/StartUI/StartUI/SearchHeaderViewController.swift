@@ -165,7 +165,7 @@ extension SearchHeaderViewController: TokenFieldDelegate {
         updateClearIndicator(for: tokenField)
     }
 
-    func tokenFieldDidConfirmSelection(_ controller: TokenField) {
+    func tokenFieldDidConfirmSelection(_: TokenField) {
         delegate?.searchHeaderViewControllerDidConfirmAction(self)
     }
 }

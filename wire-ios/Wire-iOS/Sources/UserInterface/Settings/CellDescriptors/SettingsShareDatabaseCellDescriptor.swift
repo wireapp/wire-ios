@@ -21,7 +21,7 @@ import WireSyncEngine
 import ZipArchive
 
 final class DocumentDelegate: NSObject, UIDocumentInteractionControllerDelegate {
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+    func documentInteractionControllerViewControllerForPreview(_: UIDocumentInteractionController) -> UIViewController {
         UIApplication.shared.topmostViewController(onlyFullScreen: false)!
     }
 }

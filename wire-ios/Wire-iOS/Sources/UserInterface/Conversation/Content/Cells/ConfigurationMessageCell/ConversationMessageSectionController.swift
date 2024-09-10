@@ -408,7 +408,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 }
 
 extension ConversationMessageSectionController: UserObserving {
-    func userDidChange(_ changeInfo: UserChangeInfo) {
+    func userDidChange(_: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
     }
 }

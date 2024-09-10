@@ -175,7 +175,7 @@ extension TextSearchViewController: UITableViewDelegate, UITableViewDataSource {
         delegate?.perform(action: .showInConversation, for: results[indexPath.row], view: tableView)
     }
 
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func scrollViewDidScroll(_: UIScrollView) {
         searchBar.searchInput.endEditing(true)
     }
 }

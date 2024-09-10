@@ -174,12 +174,12 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     @objc
-    func backButtonTapped(_ sender: AnyObject!) {
+    func backButtonTapped(_: AnyObject!) {
         self.navigationController?.popViewController(animated: true)
     }
 
     @objc
-    func dismissButtonTapped(_ sender: AnyObject!) {
+    func dismissButtonTapped(_: AnyObject!) {
         self.navigationController?.dismiss(animated: true) { [weak self] in
             self?.completion?(nil)
         }

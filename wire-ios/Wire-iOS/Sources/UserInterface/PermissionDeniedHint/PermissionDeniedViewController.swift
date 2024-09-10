@@ -79,7 +79,7 @@ final class PermissionDeniedViewController: UIViewController {
     // MARK: - Actions
 
     @objc
-    private func openSettings(_ sender: Any?) {
+    private func openSettings(_: Any?) {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
@@ -87,7 +87,7 @@ final class PermissionDeniedViewController: UIViewController {
     }
 
     @objc
-    private func continueWithoutAccess(_ sender: Any?) {
+    private func continueWithoutAccess(_: Any?) {
         delegate?.permissionDeniedViewControllerDidSkip(self)
     }
 

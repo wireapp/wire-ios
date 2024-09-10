@@ -42,7 +42,7 @@ final class MockAppLock: AppLockType {
         // No op
     }
 
-    func updatePasscode(_ passcode: String) throws {
+    func updatePasscode(_: String) throws {
         // No op
     }
 

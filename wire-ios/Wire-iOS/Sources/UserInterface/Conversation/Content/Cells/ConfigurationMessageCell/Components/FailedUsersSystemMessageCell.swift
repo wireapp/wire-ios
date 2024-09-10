@@ -160,7 +160,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     // MARK: - Methods
 
     @objc
-    func buttonTapped(_ sender: UIButton) {
+    func buttonTapped(_: UIButton) {
         buttonAction?()
     }
 }

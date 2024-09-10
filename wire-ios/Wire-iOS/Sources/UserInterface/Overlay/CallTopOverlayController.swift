@@ -221,7 +221,7 @@ final class CallTopOverlayController: UIViewController {
     // MARK: - Actions
 
     @objc
-    private func openCall(_ sender: UITapGestureRecognizer?) {
+    private func openCall(_: UITapGestureRecognizer?) {
         delegate?.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: conversation.voiceChannel)
     }
 

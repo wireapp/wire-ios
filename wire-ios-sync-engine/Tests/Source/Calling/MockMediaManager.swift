@@ -20,7 +20,7 @@ import Foundation
 
 @objc
 class MockMediaManager: NSObject, MediaManagerType {
-    func setUiStartsAudio(_ enabled: Bool) {
+    func setUiStartsAudio(_: Bool) {
         // no-op
     }
 

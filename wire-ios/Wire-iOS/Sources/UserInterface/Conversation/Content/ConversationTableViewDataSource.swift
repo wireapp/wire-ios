@@ -351,7 +351,7 @@ final class ConversationTableViewDataSource: NSObject {
 }
 
 extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    func controllerWillChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
         // no-op
     }
 
@@ -373,7 +373,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         // no-op
     }
 
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    func controllerDidChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
         reloadSections(newSections: calculateSections())
     }
 

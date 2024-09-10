@@ -131,7 +131,7 @@ class TextView: UITextView {
     }
 
     @objc
-    func textChanged(_ note: Notification?) {
+    func textChanged(_: Notification?) {
         showOrHidePlaceholder()
     }
 

@@ -104,7 +104,7 @@ final class MockInputBarConversationType: SwiftMockConversation, InputBarConvers
 
     var draftMessage: DraftMessage?
 
-    func setIsTyping(_ isTyping: Bool) {
+    func setIsTyping(_: Bool) {
         // no-op
     }
 

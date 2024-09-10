@@ -53,7 +53,7 @@ import Foundation
             .forEach(processMessage)
     }
 
-    func objectsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
+    func objectsToPreprocess(_: NSObject) -> ZMClientMessage? {
         fatalError("Subclasses need to override objectsToPreprocess(_:)")
     }
 

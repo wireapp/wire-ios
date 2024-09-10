@@ -175,7 +175,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     // MARK: - Actions + Delegates
 
     @objc
-    private func minimizeCallOverlay(_ sender: UIBarButtonItem) {
+    private func minimizeCallOverlay(_: UIBarButtonItem) {
         delegate?.infoViewController(self, perform: .minimizeOverlay)
     }
 

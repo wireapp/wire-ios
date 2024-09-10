@@ -329,7 +329,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 
     @objc
-    func createSecuredLinkButtonTapped(_ sender: UIButton) {
+    func createSecuredLinkButtonTapped(_: UIButton) {
         viewModel.createSecuredGuestLinkIfValid(
             conversation: conversation,
             passwordField: securedGuestLinkPasswordTextfield,
@@ -391,7 +391,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         securedGuestLinkPasswordValidatedTextField.text = password
     }
 
-    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel) {
+    func viewModelDidValidatePasswordSuccessfully(_: CreateSecureConversationGuestLinkViewModel) {
         UIAlertController.presentPasswordCopiedAlert(
             on: self,
             title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
@@ -413,7 +413,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 // MARK: - ValidatedTextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
-    func buttonPressed(_ sender: UIButton) {
+    func buttonPressed(_: UIButton) {
         securedGuestLinkPasswordTextfield.isSecureTextEntry.toggle()
         securedGuestLinkPasswordTextfield.updatePasscodeIcon()
         securedGuestLinkPasswordValidatedTextField.isSecureTextEntry.toggle()
@@ -425,7 +425,7 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
 
 extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
     @objc
-    func textFieldDidChange(_ textField: UITextField) {
+    func textFieldDidChange(_: UITextField) {
         evaluateTextfieldsAndToggleCreateLinkButtonState()
     }
 

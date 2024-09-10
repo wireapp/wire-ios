@@ -76,15 +76,15 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
         passwordIsNecessaryForDelete = false
     }
 
-    func finishedFetching(_ userClients: [UserClient]) {
+    func finishedFetching(_: [UserClient]) {
         // NO-OP
     }
 
-    func failedToFetchClients(_ error: Error) {
+    func failedToFetchClients(_: Error) {
         // NO-OP
     }
 
-    func finishedDeleting(_ remainingClients: [UserClient]) {
+    func finishedDeleting(_: [UserClient]) {
         delegate?.setIsLoadingViewVisible(self, isVisible: false)
         endRemoval(result: nil)
     }

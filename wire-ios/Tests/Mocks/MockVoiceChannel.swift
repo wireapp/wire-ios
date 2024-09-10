@@ -35,19 +35,19 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         self.conversation = conversation
     }
 
-    func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any {
+    func addCallStateObserver(_: WireCallCenterCallStateObserver) -> Any {
         "token"
     }
 
-    func addParticipantObserver(_ observer: WireCallCenterCallParticipantObserver) -> Any {
+    func addParticipantObserver(_: WireCallCenterCallParticipantObserver) -> Any {
         "token"
     }
 
-    func addVoiceGainObserver(_ observer: VoiceGainObserver) -> Any {
+    func addVoiceGainObserver(_: VoiceGainObserver) -> Any {
         "token"
     }
 
-    func addConstantBitRateObserver(_ observer: ConstantBitRateAudioObserver) -> Any {
+    func addConstantBitRateObserver(_: ConstantBitRateAudioObserver) -> Any {
         "token"
     }
 
@@ -55,15 +55,15 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         "token"
     }
 
-    func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any {
+    func addNetworkQualityObserver(_: NetworkQualityObserver) -> Any {
         "token"
     }
 
-    func addMuteStateObserver(_ observer: MuteStateObserver) -> Any {
+    func addMuteStateObserver(_: MuteStateObserver) -> Any {
         "token"
     }
 
-    func addActiveSpeakersObserver(_ observer: ActiveSpeakersObserver) -> Any {
+    func addActiveSpeakersObserver(_: ActiveSpeakersObserver) -> Any {
         "token"
     }
 
@@ -142,7 +142,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         }
     }
 
-    func setVideoCaptureDevice(_ device: CaptureDevice) throws {}
+    func setVideoCaptureDevice(_: CaptureDevice) throws {}
 
     func mute(_ muted: Bool, userSession: ZMUserSession) {}
 

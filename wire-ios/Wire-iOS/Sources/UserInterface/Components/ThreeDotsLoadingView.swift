@@ -139,7 +139,7 @@ final class ThreeDotsLoadingView: UIView {
     // MARK: - Notification
 
     @objc
-    func applicationDidBecomeActive(_ notification: Notification) {
+    func applicationDidBecomeActive(_: Notification) {
         updateLoadingAnimation()
     }
 }

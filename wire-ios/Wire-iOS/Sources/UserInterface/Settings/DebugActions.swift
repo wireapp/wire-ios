@@ -37,7 +37,7 @@ enum DebugActions {
     }
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
-    static func findUnreadConversationContributingToBadgeCount(_ type: SettingsCellDescriptorType) {
+    static func findUnreadConversationContributingToBadgeCount(_: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
         let predicate = ZMConversation.predicateForConversationConsideredUnread()
 
@@ -58,7 +58,7 @@ enum DebugActions {
     }
 
     /// Shows the user ID of the self user
-    static func showUserId(_ type: SettingsCellDescriptorType) {
+    static func showUserId(_: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
               let selfUser = (userSession.providedSelfUser as? ZMUser)
         else { return }
@@ -71,7 +71,7 @@ enum DebugActions {
     }
 
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
-    static func findUnreadConversationContributingToBackArrowDot(_ type: SettingsCellDescriptorType) {
+    static func findUnreadConversationContributingToBackArrowDot(_: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
         let predicate = ZMConversation.predicateForConversationConsideredUnreadExcludingSilenced()
 
@@ -89,7 +89,7 @@ enum DebugActions {
         }
     }
 
-    static func deleteInvalidConversations(_ type: SettingsCellDescriptorType) {
+    static func deleteInvalidConversations(_: SettingsCellDescriptorType) {
         guard let context = ZMUserSession.shared()?.managedObjectContext else { return }
 
         let predicate = NSPredicate(format: "domain = ''")
@@ -98,7 +98,7 @@ enum DebugActions {
     }
 
     /// Sends a message that will fail to decode on every other device, on the first conversation of the list
-    static func sendBrokenMessage(_ type: SettingsCellDescriptorType) {
+    static func sendBrokenMessage(_: SettingsCellDescriptorType) {
         guard
             let userSession = ZMUserSession.shared(),
             let conversation = ConversationList.conversationsIncludingArchived(inUserSession: userSession).items.first
@@ -140,19 +140,19 @@ enum DebugActions {
         sendNext(count: 0)
     }
 
-    static func triggerResyncResources(_ type: SettingsCellDescriptorType) {
+    static func triggerResyncResources(_: SettingsCellDescriptorType) {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
             ZMUserSession.shared()?.requestResyncResources()
         }
     }
 
-    static func triggerSlowSync(_ type: SettingsCellDescriptorType) {
+    static func triggerSlowSync(_: SettingsCellDescriptorType) {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
             ZMUserSession.shared()?.syncStatus.forceSlowSync()
         }
     }
 
-    static func showAnalyticsIdentifier(_ type: SettingsCellDescriptorType) {
+    static func showAnalyticsIdentifier(_: SettingsCellDescriptorType) {
         guard
             let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
             let userSession = ZMUserSession.shared()
@@ -175,7 +175,7 @@ enum DebugActions {
         controller.present(alert, animated: true)
     }
 
-    static func showAPIVersionInfo(_ type: SettingsCellDescriptorType) {
+    static func showAPIVersionInfo(_: SettingsCellDescriptorType) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
@@ -200,7 +200,7 @@ enum DebugActions {
         controller.present(alert, animated: true)
     }
 
-    static func reloadUserInterface(_ type: SettingsCellDescriptorType) {
+    static func reloadUserInterface(_: SettingsCellDescriptorType) {
         guard let appRootRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
             return
         }
@@ -208,7 +208,7 @@ enum DebugActions {
         appRootRouter.reload()
     }
 
-    static func resetCallQualitySurveyMuteFilter(_ type: SettingsCellDescriptorType) {
+    static func resetCallQualitySurveyMuteFilter(_: SettingsCellDescriptorType) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
 
         CallQualityController.resetSurveyMuteFilter()
@@ -227,7 +227,7 @@ enum DebugActions {
     }
 
     /// Accepts a debug command
-    static func enterDebugCommand(_ type: SettingsCellDescriptorType) {
+    static func enterDebugCommand(_: SettingsCellDescriptorType) {
         askString(title: "Debug command") { string in
             guard let command = DebugCommand(string: string) else {
                 alert("Command not recognized")
@@ -285,7 +285,7 @@ enum DebugActions {
         }
     }
 
-    static func recalculateBadgeCount(_ type: SettingsCellDescriptorType) {
+    static func recalculateBadgeCount(_: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
 

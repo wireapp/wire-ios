@@ -102,7 +102,7 @@ final class EmojiKeyboardViewController: UIViewController {
         self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
     }
 
-    @objc func backspaceTapped(_ sender: IconButton) {
+    @objc func backspaceTapped(_: IconButton) {
         delete()
     }
 
@@ -153,7 +153,7 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 0, left: !first ? 12 : 0, bottom: 0, right: !last ? 12 : 0)
     }
 
-    func scrollViewDidScroll(_ scrolLView: UIScrollView) {
+    func scrollViewDidScroll(_: UIScrollView) {
         updateSectionSelection()
     }
 }

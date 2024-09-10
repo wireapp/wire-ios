@@ -127,7 +127,7 @@ final class TextSearchInputView: UIView {
     }
 
     @objc
-    func onCancelButtonTouchUpInside(_ sender: AnyObject!) {
+    func onCancelButtonTouchUpInside(_: AnyObject!) {
         self.query = ""
         self.searchInput.text = ""
         self.searchInput.resignFirstResponder()
@@ -163,11 +163,11 @@ extension TextSearchInputView: UITextViewDelegate {
         return !containsReturn
     }
 
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewDidBeginEditing(_: UITextView) {
         self.updatePlaceholderLabel()
     }
 
-    func textViewDidEndEditing(_ textView: UITextView) {
+    func textViewDidEndEditing(_: UITextView) {
         self.updatePlaceholderLabel()
     }
 }

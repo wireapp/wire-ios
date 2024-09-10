@@ -319,7 +319,7 @@ final class SettingsValueCell: SettingsTableCell {
 
     // MARK: - Properties observing
 
-    @objc func onPropertyChanged(_ notification: Notification) {
+    @objc func onPropertyChanged(_: Notification) {
         descriptor?.featureCell(self)
     }
 }
@@ -375,7 +375,7 @@ final class SettingsTextCell: SettingsTableCell,
     }
 
     @objc
-    func onCellSelected(_ sender: AnyObject!) {
+    func onCellSelected(_: AnyObject!) {
         if !textInput.isFirstResponder {
             textInput.becomeFirstResponder()
         }
@@ -392,7 +392,7 @@ final class SettingsTextCell: SettingsTableCell,
         }
     }
 
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+    func textFieldShouldEndEditing(_: UITextField) -> Bool {
         true
     }
 

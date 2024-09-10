@@ -53,14 +53,14 @@ import Foundation
     }
 
     @objc
-    public func didBecomeActive(_ note: Notification) {
+    public func didBecomeActive(_: Notification) {
         self.moc.performGroupedBlock {
             self.isInBackground = false
         }
     }
 
     @objc
-    public func willResignActive(_ note: Notification) {
+    public func willResignActive(_: Notification) {
         self.moc.performGroupedBlock {
             self.isInBackground = true
         }

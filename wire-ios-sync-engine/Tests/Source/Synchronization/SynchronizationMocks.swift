@@ -282,7 +282,7 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 
 @objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
     public var objectsDidChangeCalled = false
-    public func objectsDidChange(_ object: Set<NSManagedObject>) {
+    public func objectsDidChange(_: Set<NSManagedObject>) {
         objectsDidChangeCalled = true
     }
 
@@ -294,7 +294,7 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
     }
 
     public var addTrackedObjectsCalled = false
-    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+    public func addTrackedObjects(_: Set<NSManagedObject>) {
         addTrackedObjectsCalled = true
     }
 }

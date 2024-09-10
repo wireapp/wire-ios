@@ -401,7 +401,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         )
     }
 
-    private func abort(_ action: UIAlertAction) {
+    private func abort(_: UIAlertAction) {
         dismiss(animated: true)
     }
 }
@@ -417,13 +417,13 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
         }
     }
 
-    func textFieldReturnPressed(_ textField: SimpleTextField) {
+    func textFieldReturnPressed(_: SimpleTextField) {
         tryToProceed()
     }
 
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {}
+    func textFieldDidBeginEditing(_: SimpleTextField) {}
 
-    func textFieldDidEndEditing(_ textField: SimpleTextField) {}
+    func textFieldDidEndEditing(_: SimpleTextField) {}
 }
 
 // MARK: - Handlers

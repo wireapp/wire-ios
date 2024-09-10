@@ -298,7 +298,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         }
     }
 
-    @objc func topContainerTapped(_ sender: UITapGestureRecognizer) {
+    @objc func topContainerTapped(_: UITapGestureRecognizer) {
         delegate?.audioRecordViewControllerDidCancel(self)
     }
 
@@ -377,7 +377,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         }
     }
 
-    @objc func cancelButtonPressed(_ sender: IconButton) {
+    @objc func cancelButtonPressed(_: IconButton) {
         recorder.stopPlaying()
         stopAndDeleteRecordingIfNeeded()
         delegate?.audioRecordViewControllerDidCancel(self)

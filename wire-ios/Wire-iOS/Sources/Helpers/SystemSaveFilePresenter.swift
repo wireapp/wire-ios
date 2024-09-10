@@ -43,7 +43,7 @@ final class SystemSavePresenter: NSObject, SystemSaveFilePresenting {
 
 extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
     @MainActor
-    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+    func documentInteractionControllerViewControllerForPreview(_: UIDocumentInteractionController) -> UIViewController {
         guard let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return UIViewController()
         }
@@ -51,7 +51,7 @@ extension SystemSavePresenter: UIDocumentInteractionControllerDelegate {
     }
 
     @MainActor
-    func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
+    func documentInteractionControllerDidEndPreview(_: UIDocumentInteractionController) {
         finishedPresenting?()
     }
 }

@@ -169,12 +169,12 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     }
 
     @objc
-    func textViewDidBeginEditing(_ note: Notification?) {
+    func textViewDidBeginEditing(_: Notification?) {
         isEditingTextField = true
     }
 
     @objc
-    func textViewDidEndEditing(_ note: Notification?) {
+    func textViewDidEndEditing(_: Notification?) {
         isEditingTextField = false
     }
 

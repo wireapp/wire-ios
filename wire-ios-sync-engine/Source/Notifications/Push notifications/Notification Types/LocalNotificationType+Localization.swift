@@ -141,7 +141,7 @@ extension LocalNotificationType {
         }
     }
 
-    private func senderKey(_ sender: ZMUser?, _ conversation: ZMConversation?) -> String? {
+    private func senderKey(_ sender: ZMUser?, _: ZMConversation?) -> String? {
         guard let sender else { return NoUserNameKey }
 
         if case .failedMessage = self {

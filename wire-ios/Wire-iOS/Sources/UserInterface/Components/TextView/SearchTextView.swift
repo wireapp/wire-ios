@@ -51,12 +51,12 @@ final class SearchTextView: TokenizedTextView {
     }
 
     @objc
-    func textViewDidBeginEditing(_ note: Notification?) {
+    func textViewDidBeginEditing(_: Notification?) {
         isEditing = true
     }
 
     @objc
-    func textViewDidEndEditing(_ note: Notification?) {
+    func textViewDidEndEditing(_: Notification?) {
         isEditing = false
     }
 }

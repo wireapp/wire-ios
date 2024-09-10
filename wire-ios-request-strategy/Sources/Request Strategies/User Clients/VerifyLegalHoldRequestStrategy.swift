@@ -120,15 +120,15 @@ private class VerifyClientsParser: OTREntity {
         self.conversation = conversation
     }
 
-    func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_: Set<UserClient>!) {
         // no-op
     }
 
-    func addFailedToSendRecipients(_ recipients: [ZMUser]) {
+    func addFailedToSendRecipients(_: [ZMUser]) {
         // no-op
     }
 
-    func detectedRedundantUsers(_ users: [ZMUser]) {
+    func detectedRedundantUsers(_: [ZMUser]) {
         // no-op
     }
 

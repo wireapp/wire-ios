@@ -122,7 +122,7 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
 
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {}
 
-    func textFieldDidBeginEditing(_ textField: SimpleTextField) {
+    func textFieldDidBeginEditing(_: SimpleTextField) {
         renameCell?.accessoryIconView.isHidden = true
     }
 

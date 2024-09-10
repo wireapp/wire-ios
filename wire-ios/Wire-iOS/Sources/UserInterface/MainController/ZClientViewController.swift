@@ -247,7 +247,7 @@ final class ZClientViewController: UIViewController {
     }
 
     @objc
-    private func openStartUI(_ sender: Any?) {
+    private func openStartUI(_: Any?) {
         conversationListViewController.presentPeoplePicker()
     }
 
@@ -402,7 +402,7 @@ final class ZClientViewController: UIViewController {
     }
 
     @objc
-    private func dismissClientListController(_ sender: Any?) {
+    private func dismissClientListController(_: Any?) {
         dismiss(animated: true)
     }
 
@@ -524,7 +524,7 @@ final class ZClientViewController: UIViewController {
     }
 
     @objc
-    func contentSizeCategoryDidChange(_ notification: Notification?) {
+    func contentSizeCategoryDidChange(_: Notification?) {
         reloadCurrentConversation()
     }
 

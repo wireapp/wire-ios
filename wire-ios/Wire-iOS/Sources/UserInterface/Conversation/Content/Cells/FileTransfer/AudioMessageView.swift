@@ -374,7 +374,7 @@ final class AudioMessageView: UIView, TransferView {
 
     // MARK: - Actions
 
-    @objc private func onActionButtonPressed(_ sender: UIButton) {
+    @objc private func onActionButtonPressed(_: UIButton) {
         isPausedForIncomingCall = false
 
         guard

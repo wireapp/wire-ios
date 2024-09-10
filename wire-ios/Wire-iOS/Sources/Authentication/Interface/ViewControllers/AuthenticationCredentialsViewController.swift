@@ -412,7 +412,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     // MARK: - Email / Password Input
 
-    func textFieldDidUpdateText(_ textField: EmailPasswordTextField) {
+    func textFieldDidUpdateText(_: EmailPasswordTextField) {
         updateLoginButtonState()
     }
 
@@ -471,7 +471,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 }
 
 extension AuthenticationCredentialsViewController: ValidatedTextFieldDelegate {
-    func buttonPressed(_ sender: UIButton) {
+    func buttonPressed(_: UIButton) {
         emailPasswordInputField.passwordField.isSecureTextEntry.toggle()
         emailPasswordInputField.passwordField.updatePasscodeIcon()
     }

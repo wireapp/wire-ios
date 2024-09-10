@@ -34,7 +34,7 @@ extension ConversationInputBarViewController {
     }
 
     @objc
-    func ephemeralKeyboardButtonTapped(_ sender: IconButton) {
+    func ephemeralKeyboardButtonTapped(_: IconButton) {
         toggleEphemeralKeyboardVisibility()
     }
 
@@ -134,7 +134,7 @@ extension MessageDestructionTimeoutValue {
 }
 
 extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDelegate {
-    func ephemeralKeyboardWantsToBeDismissed(_ keyboard: EphemeralKeyboardViewController) {
+    func ephemeralKeyboardWantsToBeDismissed(_: EphemeralKeyboardViewController) {
         toggleEphemeralKeyboardVisibility()
     }
 

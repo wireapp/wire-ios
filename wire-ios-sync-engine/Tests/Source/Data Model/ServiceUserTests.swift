@@ -103,7 +103,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
         false
     }
 
-    func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
+    func canDeleteConversation(_: ZMConversation) -> Bool {
         false
     }
 
@@ -135,7 +135,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
         false
     }
 
-    func canLeave(_ conversation: ZMConversation) -> Bool {
+    func canLeave(_: ZMConversation) -> Bool {
         false
     }
 

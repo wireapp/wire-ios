@@ -84,7 +84,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         perform(action: .delete, sender: sender)
     }
 
-    func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView) {
+    func messageToolboxViewDidSelectResend(_: MessageToolboxView) {
         perform(action: .resend)
     }
 }

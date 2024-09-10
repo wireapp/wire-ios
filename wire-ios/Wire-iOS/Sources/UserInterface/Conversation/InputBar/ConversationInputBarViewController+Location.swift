@@ -61,7 +61,7 @@ extension ConversationInputBarViewController: LocationSelectionViewControllerDel
         parent?.dismiss(animated: true)
     }
 
-    func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController) {
+    func locationSelectionViewControllerDidCancel(_: LocationSelectionViewController) {
         parent?.dismiss(animated: true)
     }
 }

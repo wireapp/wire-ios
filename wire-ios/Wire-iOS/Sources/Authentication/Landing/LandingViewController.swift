@@ -499,17 +499,17 @@ final class LandingViewController: AuthenticationStepViewController {
     // MARK: - Button tapped target
 
     @objc
-    private func createAccountButtonTapped(_ sender: AnyObject!) {
+    private func createAccountButtonTapped(_: AnyObject!) {
         delegate?.landingViewControllerDidChooseCreateAccount()
     }
 
     @objc
-    private func loginButtonTapped(_ sender: AnyObject!) {
+    private func loginButtonTapped(_: AnyObject!) {
         delegate?.landingViewControllerDidChooseLogin()
     }
 
     @objc
-    private func enterpriseLoginButtonTapped(_ sender: AnyObject!) {
+    private func enterpriseLoginButtonTapped(_: AnyObject!) {
         delegate?.landingViewControllerDidChooseEnterpriseLogin()
     }
 
@@ -520,11 +520,11 @@ final class LandingViewController: AuthenticationStepViewController {
 
     // MARK: - AuthenticationCoordinatedViewController
 
-    func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) {
+    func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {
         // no-op
     }
 
-    func displayError(_ error: Error) {
+    func displayError(_: Error) {
         // no-op
     }
 }

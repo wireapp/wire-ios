@@ -351,7 +351,7 @@ extension GiphySearchViewController: UISearchResultsUpdating {
 }
 
 extension GiphySearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_: UISearchBar) {
         performSearch()
     }
 }

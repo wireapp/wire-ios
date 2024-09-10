@@ -81,11 +81,11 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
                                                           mentions: [Mention],
                                                           replyingTo message: ZMConversationMessage?) {}
 
-    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
+    func conversationInputBarViewControllerShouldBeginEditing(_: ConversationInputBarViewController) -> Bool {
         true
     }
 
-    func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
+    func conversationInputBarViewControllerShouldEndEditing(_: ConversationInputBarViewController) -> Bool {
         true
     }
 
@@ -93,7 +93,7 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
                                                             withText newText: String?,
                                                             mentions: [Mention]) {}
 
-    func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {}
+    func conversationInputBarViewControllerDidCancelEditing(_: ZMConversationMessage) {}
 
     func conversationInputBarViewControllerWants(toShow message: ZMConversationMessage) {}
 

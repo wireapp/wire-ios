@@ -161,7 +161,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         }
     }
 
-    func userDidChange(_ changeInfo: UserChangeInfo) {
+    func userDidChange(_: UserChangeInfo) {
         performChanges {
             setupReactions()
             setupReadReceipts()

@@ -24,5 +24,5 @@ final class MockURLAuthenticationChallengeSender: NSObject, URLAuthenticationCha
 
     func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {}
 
-    func cancel(_ challenge: URLAuthenticationChallenge) {}
+    func cancel(_: URLAuthenticationChallenge) {}
 }

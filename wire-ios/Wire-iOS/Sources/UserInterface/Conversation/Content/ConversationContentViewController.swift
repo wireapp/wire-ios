@@ -225,7 +225,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     @objc
-    private func applicationDidBecomeActive(_ notification: Notification) {
+    private func applicationDidBecomeActive(_: Notification) {
         dataSource.resetSectionControllers()
         tableView.reloadData()
     }
@@ -235,7 +235,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     @objc
-    private func showErrorAlertToSendMessage(_ notification: Notification) {
+    private func showErrorAlertToSendMessage(_: Notification) {
         typealias MessageSendError = L10n.Localizable.Error.Message.Send
         UIAlertController.showErrorAlertWithLink(title: MessageSendError.title,
                                                  message: MessageSendError.missingLegalholdConsent)
@@ -405,7 +405,7 @@ final class ConversationContentViewController: UIViewController {
         UIMenuController.shared.hideMenu()
     }
 
-    func didFinishEditing(_ message: ZMConversationMessage?) {
+    func didFinishEditing(_: ZMConversationMessage?) {
         dataSource.editingMessage = nil
     }
 
