@@ -18,8 +18,8 @@
 
 @testable import Wire
 import WireSyncEngine
-import XCTest
 import WireTestingPackage
+import XCTest
 
 // MARK: - CallActionsViewInput
 
