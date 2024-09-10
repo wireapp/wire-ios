@@ -19,6 +19,7 @@
 @testable import Wire
 import WireSyncEngine
 import XCTest
+import WireTestingPackage
 
 // MARK: - CallActionsViewInput
 
@@ -67,6 +68,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
 
     private var sut: CallActionsView!
     private var widthConstraint: NSLayoutConstraint!
+    private let snapshotHelper = SnapshotHelper()
 
     // MARK: - tearDown
 
@@ -117,7 +119,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.compact)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Call State: Incoming
@@ -143,7 +145,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateIncoming_Video() {
@@ -167,7 +169,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Call State: Outgoing
@@ -193,7 +195,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateOutgoing_Video() {
@@ -217,7 +219,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: Call State: - Ongoing
@@ -243,7 +245,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Audio_Muted() {
@@ -267,7 +269,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Audio_SpeakerUnavailable() {
@@ -291,7 +293,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video() {
@@ -315,7 +317,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video_PresentationMode_AllVideoStreams() {
@@ -339,7 +341,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateOngoing_Video_PresentationMode_ActiveSpeakers() {
@@ -363,7 +365,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: Call State: - Terminating
@@ -389,7 +391,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_StateTerminating_Video() {
@@ -413,7 +415,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     // MARK: - Permissions
@@ -439,7 +441,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testCallActionsView_Permissions_NotAllowed() {
@@ -463,7 +465,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         sut.updateToLayoutSize(.regular)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

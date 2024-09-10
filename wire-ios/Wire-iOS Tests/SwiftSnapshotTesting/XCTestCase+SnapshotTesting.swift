@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 import SnapshotTesting
 import UIKit
 import XCTest
@@ -69,7 +70,7 @@ extension XCTestCase {
             nameWithProperty = "\(width)"
         }
 
-        verify(
+        SnapshotHelper().verify(
             matching: value,
             named: nameWithProperty,
             file: file,
@@ -135,25 +136,6 @@ extension XCTestCase {
             dismissViewController(value)
         }
     }
-
-    @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
-    func verify(matching value: UIView,
-                named name: String? = nil,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-
-        let failure = verifySnapshot(matching: value,
-                                     as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
 }
 
 extension Snapshotting where Value == UIAlertController, Format == UIImage {
