@@ -17,37 +17,47 @@
 //
 
 import MobileCoreServices
+import UniformTypeIdentifiers
 import XCTest
 
 @testable import Wire
 @testable import WireCommonComponents
 
 final class FilePreviewGeneratorTests: XCTestCase {
-    func testThatItDoesNotBreakOn0x0PDF() {
-        // given
-        let pdfPath = Bundle(for: type(of: self)).path(forResource: "0x0", ofType: "pdf")!
-        let sut = PDFFilePreviewGenerator(callbackQueue: OperationQueue.main, thumbnailSize: CGSize(width: 100, height: 100))
-        // when
-        let expectation = self.expectation(description: "Finished generating the preview")
-        sut.generatePreview(URL(fileURLWithPath: pdfPath), UTI: kUTTypePDF as String) { image in
+
+    private lazy var bundle = Bundle(for: Self.self)
+
+    func testThatItDoesNotBreakOn0x0PDF() throws {
+
+        // Given
+        let pdfURL = try XCTUnwrap(bundle.url(forResource: "0x0", withExtension: "pdf"))
+        let sut = PDFFilePreviewGenerator(callbackQueue: .main, thumbnailSize: CGSize(width: 100, height: 100))
+
+        // When
+        let expectation = expectation(description: "Finished generating the preview")
+        sut.generatePreview(pdfURL, type: .pdf) { image in
             XCTAssertNil(image)
             expectation.fulfill()
         }
-        // then
-        self.waitForExpectations(timeout: 2, handler: nil)
+
+        // Then
+        waitForExpectations(timeout: 2)
     }
 
-    func testThatItDoesNotBreakOnHugePDF() {
-        // given
-        let pdfPath = Bundle(for: type(of: self)).path(forResource: "huge", ofType: "pdf")!
-        let sut = PDFFilePreviewGenerator(callbackQueue: OperationQueue.main, thumbnailSize: CGSize(width: 100, height: 100))
-        // when
-        let expectation = self.expectation(description: "Finished generating the preview")
-        sut.generatePreview(URL(fileURLWithPath: pdfPath), UTI: kUTTypePDF as String) { image in
+    func testThatItDoesNotBreakOnHugePDF() throws {
+
+        // Given
+        let pdfURL = try XCTUnwrap(bundle.url(forResource: "huge", withExtension: "pdf"))
+        let sut = PDFFilePreviewGenerator(callbackQueue: .main, thumbnailSize: CGSize(width: 100, height: 100))
+
+        // When
+        let expectation = expectation(description: "Finished generating the preview")
+        sut.generatePreview(pdfURL, type: .pdf) { image in
             XCTAssertNil(image)
             expectation.fulfill()
         }
-        // then
-        self.waitForExpectations(timeout: 2, handler: nil)
+
+        // Then
+        waitForExpectations(timeout: 2)
     }
 }

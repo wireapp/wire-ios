@@ -199,9 +199,16 @@ public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
         self.callbackQueue = callbackQueue
         super.init()
     }
+
+    @available(*, deprecated, message: "TODO: delete")
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return UTTypeConformsTo(uti as CFString, kUTTypePDF)
     }
+
+    func generatePreview(_ fileURL: URL, type: UTType, completion: @escaping (UIImage?) -> Void) {
+        generatePreview(fileURL, UTI: type.identifier, completion: completion)
+    }
+
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
         var result: UIImage? = .none
         defer {

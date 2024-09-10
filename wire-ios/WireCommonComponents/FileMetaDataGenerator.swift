@@ -72,10 +72,11 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
 }
 
 extension AVURLAsset {
+
     static func wr_isAudioVisualUTI(_ UTI: String) -> Bool {
-        return audiovisualTypes().contains(where: { compatibleUTI -> Bool in
+        audiovisualTypes().contains { compatibleUTI -> Bool in
             UTTypeConformsTo(UTI as CFString, compatibleUTI as CFString)
-        })
+        }
     }
 }
 
