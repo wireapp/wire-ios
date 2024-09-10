@@ -117,11 +117,11 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -20),
 
             actionsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            actionsView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            actionsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             actionsViewHeightConstraint,
 
             participantsHeaderView.heightAnchor.constraint(equalToConstant: participantsHeaderHeight),
@@ -129,9 +129,9 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             participantsHeaderLabel.centerYAnchor.constraint(equalTo: participantsHeaderView.centerYAnchor),
 
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             participantsHeaderView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            participantsHeaderView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            participantsHeaderView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             securityLevelView.widthAnchor.constraint(equalTo: stackView.widthAnchor)
         ])
     }

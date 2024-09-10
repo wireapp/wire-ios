@@ -239,7 +239,7 @@ final class ConversationListViewController: UIViewController {
         NSLayoutConstraint.activate([
             contentContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             contentContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             contentContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),

@@ -149,7 +149,7 @@ final class ModalTopBar: UIView {
             contentStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
 
             // dismissButton
-            dismissButton.trailingAnchor.constraint(equalTo: safeTrailingAnchor, constant: -16),
+            dismissButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             dismissButton.centerYAnchor.constraint(equalTo: contentStackView.centerYAnchor),
 
             // separator

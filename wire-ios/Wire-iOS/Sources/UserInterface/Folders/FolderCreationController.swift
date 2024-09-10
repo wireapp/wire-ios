@@ -91,7 +91,7 @@ final class FolderCreationController: UIViewController {
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
         ])
 

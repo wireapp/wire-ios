@@ -263,7 +263,7 @@ final class ClientListViewController: UIViewController,
         NSLayoutConstraint.activate([
             clientsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
+            clientsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
         ])
     }

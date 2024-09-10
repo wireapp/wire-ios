@@ -256,7 +256,7 @@ final class CallViewController: UIViewController {
             callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
             callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
             callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
+            callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
 

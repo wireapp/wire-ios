@@ -115,7 +115,7 @@ final class LabelIndicator: UIView {
 
             // containerView
             containerView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            containerView.trailingAnchor.constraint(equalTo: safeTrailingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             containerView.bottomAnchor.constraint(equalTo: safeBottomAnchor),
 
             // indicatorIcon
