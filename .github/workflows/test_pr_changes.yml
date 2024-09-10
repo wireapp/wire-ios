@@ -92,5 +92,5 @@ jobs:
     needs: detect-changes
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      folders: ${{ join(fromJSON('["wire-ios", "wire-reusable-ui-components", "wire-design", "wire-ios-sync-engine", "wire-ios-data-model", "wire-ios-system", "wire-ios-request-strategy", "wire-api", "wire-domain", "wire-ios-transport", "wire-ios-share-engine", "wire-ios-cryptobox", "wire-ios-mocktransport", "wire-ios-notification-engine", "wire-ios-protos", "wire-ios-images", "wire-ios-link-preview", "wire-ios-utilities", "wire-ios-testing"]') | filter(f => needs.detect-changes.outputs[f] == 'true'), ',') }}
+      folders: "wire-ios-sync-engine"
     secrets: inherit
