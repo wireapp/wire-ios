@@ -74,13 +74,6 @@ extension AVURLAsset {
             .compactMap { avFileType in UTType(avFileType.rawValue) }
             .contains { uniformType.conforms(to: $0) }
     }
-
-    // TODO: remove
-    static func wr_isAudioVisualUTI(_ UTI: String) -> Bool {
-        audiovisualTypes().contains { compatibleUTI -> Bool in
-            UTTypeConformsTo(UTI as CFString, compatibleUTI as CFString)
-        }
-    }
 }
 
 extension AVAsset {
