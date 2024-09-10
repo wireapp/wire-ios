@@ -355,7 +355,7 @@ extension CallGridViewControllerSnapshotTests {
         output.assert(mockHintView: mockHintView)
     }
 
-    private struct HintTestCase {
+    private enum HintTestCase {
         enum Input {
             case configurationChanged(participants: Participants)
             case maximizationChanged(state: MaximizationState)

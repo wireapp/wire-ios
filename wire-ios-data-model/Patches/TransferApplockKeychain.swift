@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct TransferApplockKeychain {
+enum TransferApplockKeychain {
     static func migrateKeychainItems(in moc: NSManagedObjectContext) {
         migrateIsAppLockActiveState(in: moc)
         migrateAppLockPasscode(in: moc)

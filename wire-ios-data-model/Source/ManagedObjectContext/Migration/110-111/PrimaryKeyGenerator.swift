@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct PrimaryKeyGenerator {
+enum PrimaryKeyGenerator {
     static func generateKey(for object: NSManagedObject, entityName: String) -> String {
         let remoteIdentifierData = object.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
 

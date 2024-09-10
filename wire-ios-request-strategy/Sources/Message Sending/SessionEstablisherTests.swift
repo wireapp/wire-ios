@@ -100,7 +100,7 @@ final class SessionEstablisherTests: MessagingTestBase {
     }
 
     struct Arrangement {
-        struct Scaffolding {
+        enum Scaffolding {
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
             static let prekey = Payload.Prekey(key: "prekey123", id: nil)
             static let prekeyByQualifiedUserID = [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]

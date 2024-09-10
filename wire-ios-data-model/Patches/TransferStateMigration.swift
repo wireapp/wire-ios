@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct TransferStateMigration {
+enum TransferStateMigration {
     internal enum LegacyTransferState: Int, CaseIterable {
         case uploading = 0
         case uploaded

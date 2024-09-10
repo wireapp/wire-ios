@@ -139,7 +139,7 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 }
 
-struct HandleValidation {
+enum HandleValidation {
     static var allowedCharacters: CharacterSet = {
         return CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
     }()

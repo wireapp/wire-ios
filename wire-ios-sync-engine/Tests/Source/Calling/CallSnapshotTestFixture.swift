@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-struct CallSnapshotTestFixture {
+enum CallSnapshotTestFixture {
     static func degradedCallSnapshot(conversationId: AVSIdentifier, user: ZMUser, callCenter: WireCallCenterV3) -> CallSnapshot {
         let callMember = AVSCallMember(client: AVSClient(userId: user.avsIdentifier, clientId: UUID().transportString()))
 

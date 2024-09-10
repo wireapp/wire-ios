@@ -81,7 +81,7 @@ extension ZMConversation {
     }
 }
 
-private struct MessageDestructionTimeoutRequestFactory {
+private enum MessageDestructionTimeoutRequestFactory {
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else { fatal("conversation inserted on backend") }
 

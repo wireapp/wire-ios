@@ -21,7 +21,7 @@ import Foundation
 private let zmLog = ZMSLog(tag: "ConversationLink")
 
 fileprivate extension ZMConversation {
-    struct TransportKey {
+    enum TransportKey {
         static let data = "data"
         static let uri = "uri"
         static let hasPassword = "has_password"
@@ -158,7 +158,7 @@ extension ZMConversation {
     }
 }
 
-internal struct WirelessRequestFactory {
+internal enum WirelessRequestFactory {
     static func fetchLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")

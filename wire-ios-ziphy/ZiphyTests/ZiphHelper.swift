@@ -19,7 +19,7 @@
 import Foundation
 @testable import Ziphy
 
-final class ZiphHelper {
+enum ZiphHelper {
     static func createZiph(id: String, url: URL) -> Ziph {
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
             .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51200),

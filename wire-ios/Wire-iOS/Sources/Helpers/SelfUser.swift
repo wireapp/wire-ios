@@ -20,7 +20,7 @@ import Foundation
 import protocol WireSyncEngine.SelfUserProvider
 
 /// Retains a shared self user provider object.
-final class SelfUser {
+enum SelfUser {
     /// The underlying provider of the self user.
     static var provider: SelfUserProvider?
 }

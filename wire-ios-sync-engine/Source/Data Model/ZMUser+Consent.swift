@@ -128,7 +128,7 @@ extension ZMUser {
     }
 }
 
-struct ConsentRequestFactory {
+enum ConsentRequestFactory {
     static let consentPath = "/self/consent"
 
     static func fetchConsentRequest(apiVersion: APIVersion) -> ZMTransportRequest {

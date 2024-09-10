@@ -41,7 +41,7 @@ extension UIFont {
 //        for (weight, weightName) in fontWeights {
 //            print("\(weight.rawValue): \(weightName)")
 //        }
-    private struct WeightValues {
+    private enum WeightValues {
         static let ultraLight: CGFloat = -0.8
         static let thin: CGFloat = -0.6
         static let light: CGFloat = -0.4

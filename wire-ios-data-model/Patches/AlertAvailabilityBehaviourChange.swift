@@ -22,7 +22,7 @@ extension Notification.Name {
     static let applicationUpdateDidChangeAvailabilityBehaviour = Notification.Name("applicationUpdateDidChangeAvailabilityBehaviour")
 }
 
-struct AvailabilityBehaviourChange {
+enum AvailabilityBehaviourChange {
     static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
 
     static func notifyAvailabilityBehaviourChange(in moc: NSManagedObjectContext) {

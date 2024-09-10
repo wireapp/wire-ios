@@ -102,7 +102,7 @@ extension ZMConversation {
     }
 }
 
-struct ConversationDeletionRequestFactory {
+enum ConversationDeletionRequestFactory {
     static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {
         guard
             let apiVersion = BackendInfo.apiVersion,

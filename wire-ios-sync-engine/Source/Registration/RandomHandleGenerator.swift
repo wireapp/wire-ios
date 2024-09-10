@@ -22,7 +22,7 @@ private let maximumUserHandleLength = 21
 
 private let minimumUserHandleLength = 2
 
-struct RandomHandleGenerator {
+enum RandomHandleGenerator {
     /// Generate somes possible handles for the given display name
     static func generatePossibleHandles(displayName: String, alternativeNames: Int) -> [String] {
         let normalized = displayName.normalizedForUserHandle.validHandle // this might be nil. if it is, we generate an extra one

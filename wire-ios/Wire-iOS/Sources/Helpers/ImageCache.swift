@@ -30,6 +30,6 @@ extension UIImage {
     static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 }
 
-final class MediaAssetCache {
+enum MediaAssetCache {
     static var defaultImageCache = ImageCache<AnyObject>()
 }

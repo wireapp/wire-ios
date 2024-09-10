@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationSystemMessageCellDescription {
+enum ConversationSystemMessageCellDescription {
     static func cells(
         for message: ZMConversationMessage,
         isCollapsed: Bool = true,

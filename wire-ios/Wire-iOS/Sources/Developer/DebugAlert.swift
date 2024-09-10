@@ -23,7 +23,7 @@ import WireDataModel
 import WireSystem
 
 /// Presents debug alerts
-final class DebugAlert {
+enum DebugAlert {
     private struct Action {
         let text: String
         let type: UIAlertAction.Style

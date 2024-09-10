@@ -29,7 +29,7 @@ fileprivate extension ZMConversation {
 }
 
 struct ServiceAddedEvent: Event {
-    struct Keys {
+    enum Keys {
         static let serviceID = "service_id"
         static let conversationSize = "conversation_size"
         static let servicesSize = "services_size"
@@ -67,7 +67,7 @@ struct ServiceAddedEvent: Event {
 }
 
 struct ServiceRemovedEvent: Event {
-    struct Keys {
+    enum Keys {
         static let serviceID = "service_id"
     }
 

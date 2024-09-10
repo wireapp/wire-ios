@@ -159,7 +159,7 @@ extension ZMConversation {
     }
 }
 
-struct ConversationJoinRequestFactory {
+enum ConversationJoinRequestFactory {
     static let joinConversationsPath = "/conversations/join"
 
     static func requestForJoinConversation(

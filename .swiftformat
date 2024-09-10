@@ -16,7 +16,8 @@
     consistentSwitchCaseSpacing, \
     duplicateImports, \
     elseOnSameLine, \
-    emptyBraces
+    emptyBraces, \
+    enumNamespaces
 
 # Options
 
@@ -27,3 +28,4 @@
 --elseposition same-line # elseOnSameLine
 --guardelse auto # elseOnSameLine
 --emptybraces no-space # emptyBraces
+--enumnamespaces always # enumNamespaces

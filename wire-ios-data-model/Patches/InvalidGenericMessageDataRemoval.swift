@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class InvalidGenericMessageDataRemoval {
+enum InvalidGenericMessageDataRemoval {
     static func removeInvalid(in moc: NSManagedObjectContext) {
         do {
             try moc.batchDeleteEntities(named: ZMGenericMessageData.entityName(),

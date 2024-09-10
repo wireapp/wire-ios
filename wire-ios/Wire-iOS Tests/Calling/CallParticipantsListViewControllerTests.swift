@@ -22,7 +22,7 @@ import XCTest
 
 @testable import Wire
 
-final class CallParticipantsListHelper {
+enum CallParticipantsListHelper {
     static func participants(count participantCount: Int,
                              videoState: VideoState? = nil,
                              microphoneState: MicrophoneState? = nil,
