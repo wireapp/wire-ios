@@ -174,7 +174,7 @@ final class ConversationRootViewController: UIViewController {
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
             contentView.topAnchor.constraint(equalTo: navBarContainer.view.bottomAnchor),
-            contentView.bottomAnchor.constraint(equalTo: self.safeBottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             conversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             conversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

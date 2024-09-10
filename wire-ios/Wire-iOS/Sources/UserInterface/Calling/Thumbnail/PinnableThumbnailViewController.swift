@@ -127,7 +127,7 @@ final class PinnableThumbnailViewController: UIViewController {
         thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor).isActive = true
         thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor).isActive = true
         thumbnailContainerView.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
-        thumbnailContainerView.bottomAnchor.constraint(equalTo: safeBottomAnchor).isActive = true
+        thumbnailContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
 
     // MARK: - Orientation
