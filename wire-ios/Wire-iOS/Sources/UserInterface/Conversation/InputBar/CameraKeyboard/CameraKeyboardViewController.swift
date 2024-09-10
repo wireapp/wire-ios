@@ -214,7 +214,7 @@ class CameraKeyboardViewController: UIViewController {
             goBackButton.widthAnchor.constraint(equalTo: goBackButton.heightAnchor),
 
             goBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: sideMargin),
-            goBackButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(18 + UIScreen.safeArea.bottom)),
+            goBackButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -18),
 
             cameraRollButton.widthAnchor.constraint(equalToConstant: 36),
             cameraRollButton.widthAnchor.constraint(equalTo: cameraRollButton.heightAnchor),

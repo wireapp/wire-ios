@@ -113,7 +113,7 @@ final class ContactsViewController: UIViewController {
         ContactsCell.register(in: tableView)
         ContactsSectionHeaderView.register(in: tableView)
 
-        let bottomContainerHeight: CGFloat = 56.0 + UIScreen.safeArea.bottom
+        let bottomContainerHeight: CGFloat = 56.0 + view.safeAreaInsets.bottom
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomContainerHeight, right: 0)
         view.addSubview(tableView)
     }

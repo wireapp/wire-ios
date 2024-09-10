@@ -104,7 +104,7 @@ final class CameraCell: UICollectionViewCell {
             takePictureButton.widthAnchor.constraint(equalToConstant: 60),
             takePictureButton.widthAnchor.constraint(equalTo: takePictureButton.heightAnchor),
 
-            takePictureButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -(6 + UIScreen.safeArea.bottom)),
+            takePictureButton.bottomAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor, constant: -6),
             takePictureButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 
             changeCameraButton.widthAnchor.constraint(equalToConstant: 40),
