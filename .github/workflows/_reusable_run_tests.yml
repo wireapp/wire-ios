@@ -76,7 +76,7 @@ jobs:
       - name: "Test all selected frameworks" 
         id: set_frameworks
         run: |
-          bundle exec fastlane test_frameworks folders:${{ inputs.folders }}
+          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
       - name: Save cache with warning counts
         # This step should only run for the test_develop.yml workflow
@@ -93,6 +93,7 @@ jobs:
           name: test-reports
           path: |
             build/reports/*.junit
+            artifacts/**/*.junit
 
       - name: Prepare visual representation of test results
         uses: EnricoMi/publish-unit-test-result-action/macos@v2
@@ -100,6 +101,7 @@ jobs:
         with:
           files: |
             build/reports/*.junit
+            artifacts/**/*.junit
           compare_to_earlier_commit: false
 
       - name: Archiving DerivedData Logs
