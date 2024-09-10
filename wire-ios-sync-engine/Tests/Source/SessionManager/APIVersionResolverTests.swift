@@ -107,8 +107,8 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
-            developmentVersions: 2...2,
+            productionVersions: 0 ... 1,
+            developmentVersions: 2 ... 2,
             domain: "foo.com",
             isFederationEnabled: true
         )
@@ -135,7 +135,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend only has prod versons.
         mockBackendInfo(
-            productionVersions: 0...1,
+            productionVersions: 0 ... 1,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -166,8 +166,8 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...2,
-            developmentVersions: 3...3,
+            productionVersions: 0 ... 2,
+            developmentVersions: 3 ... 3,
             domain: "foo.com",
             isFederationEnabled: true
         )
@@ -197,8 +197,8 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
-            developmentVersions: 2...2,
+            productionVersions: 0 ... 1,
+            developmentVersions: 2 ... 2,
             domain: "foo.com",
             isFederationEnabled: true
         )
@@ -228,7 +228,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend also has prod and dev versions.
         mockBackendInfo(
-            productionVersions: 0...1,
+            productionVersions: 0 ... 1,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -259,7 +259,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
         )
 
         mockBackendInfo(
-            productionVersions: 0...3,
+            productionVersions: 0 ... 3,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: false
@@ -288,7 +288,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend doesn't support version 2
         mockBackendInfo(
-            productionVersions: 0...1,
+            productionVersions: 0 ... 1,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -318,7 +318,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Given backend no longer supports v1.
         mockBackendInfo(
-            productionVersions: 2...2,
+            productionVersions: 2 ... 2,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -351,7 +351,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Backend now has federation enabled.
         mockBackendInfo(
-            productionVersions: 0...2,
+            productionVersions: 0 ... 2,
             developmentVersions: nil,
             domain: "foo.com",
             isFederationEnabled: true
@@ -380,7 +380,7 @@ final class APIVersionResolverTests: ZMTBaseTest {
 
         // Backend now has federation enabled.
         mockBackendInfo(
-            productionVersions: 0...2,
+            productionVersions: 0 ... 2,
             developmentVersions: nil,
             domain: "federated.example.com",
             isFederationEnabled: true

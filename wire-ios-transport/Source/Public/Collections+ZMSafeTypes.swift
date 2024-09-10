@@ -23,7 +23,7 @@ private let zmLog = ZMSLog(tag: "SafeTypes")
 
 func lastCallstackFrames() -> String {
     let symbols = Thread.callStackSymbols
-    return symbols[min(3, symbols.count)..<min(15, symbols.count)].joined(separator: "\n")
+    return symbols[min(3, symbols.count) ..< min(15, symbols.count)].joined(separator: "\n")
 }
 
 func objectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required: Bool, transform: ((String) -> T?)?) -> T? {

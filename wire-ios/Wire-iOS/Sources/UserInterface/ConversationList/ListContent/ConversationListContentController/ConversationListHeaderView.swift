@@ -41,7 +41,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
             badgeWidthConstraint?.constant = isHidden ? 0 : 28
 
             let text: String? = switch folderBadge {
-            case 1...99:
+            case 1 ... 99:
                 String(folderBadge)
             case 100...:
                 "99+"

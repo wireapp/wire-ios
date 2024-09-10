@@ -51,7 +51,7 @@ public final class DataBuffer: NSObject {
     func clear(until offset: Int) {
         let dataOffset = data.index(data.startIndex, offsetBy: offset)
 
-        data = data.subdata(in: dataOffset..<data.endIndex)
+        data = data.subdata(in: dataOffset ..< data.endIndex)
     }
 
     func isEmpty() -> Bool {

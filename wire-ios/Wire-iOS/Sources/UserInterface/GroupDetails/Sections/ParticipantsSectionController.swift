@@ -132,7 +132,7 @@ private struct ParticipantsSectionViewModel {
 
     static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
         guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.user) }
-        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
+        return participants[0 ..< maxDisplayedParticipants].map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
     }
 }
 

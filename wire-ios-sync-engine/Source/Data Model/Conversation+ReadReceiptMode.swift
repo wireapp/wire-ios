@@ -28,7 +28,7 @@ public enum ReadReceiptModeError: Error {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "access-denied"): self = .accessDenied
         case (404, "no-conversation"): self = .noConversation
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }

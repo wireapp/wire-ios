@@ -116,7 +116,7 @@ final class SketchToolbar: UIView {
             rightButton.centerYAnchor.constraint(equalTo: centerButtonContainer.centerYAnchor)
         ]
 
-        for i in 1..<centerButtons.count {
+        for i in 1 ..< centerButtons.count {
             let previousButton = centerButtons[i - 1]
             let button = centerButtons[i]
 

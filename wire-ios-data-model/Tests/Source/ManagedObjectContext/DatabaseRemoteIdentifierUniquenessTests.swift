@@ -57,7 +57,7 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
         try helper.migrateStoreToCurrentVersion(sourceVersion: sourceVersion,
                                                 preMigrationAction: { context in
 
-                                                    for _ in 1...count {
+                                                    for _ in 1 ... count {
                                                         // object with no remoteIdentifier
                                                         _ = T.insertNewObject(in: context)
                                                     }

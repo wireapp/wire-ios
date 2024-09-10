@@ -60,7 +60,7 @@ extension AVSIdentifier {
         let components = string.components(separatedBy: "@")
 
         guard
-            1...2 ~= components.count,
+            1 ... 2 ~= components.count,
             let identifier = UUID(uuidString: components[0])
         else {
             return nil

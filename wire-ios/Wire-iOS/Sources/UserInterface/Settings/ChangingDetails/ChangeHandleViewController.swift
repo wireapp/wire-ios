@@ -143,7 +143,7 @@ enum HandleValidation {
     static var allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
 
     static var allowedLength: CountableClosedRange<Int> {
-        2...256
+        2 ... 256
     }
 }
 

@@ -59,9 +59,9 @@ public struct CircularArray<Element> {
     /// Returns the cache content
     public var content: [Element] {
         if self.isFull {
-            return Array(circularArray[listEnd..<size]) + Array(circularArray[0..<listEnd])
+            return Array(circularArray[listEnd ..< size]) + Array(circularArray[0 ..< listEnd])
         }
-        return Array(circularArray[0..<listEnd])
+        return Array(circularArray[0 ..< listEnd])
     }
 
     /// Remove content from cache

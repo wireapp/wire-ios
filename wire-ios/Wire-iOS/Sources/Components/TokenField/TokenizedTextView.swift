@@ -110,7 +110,7 @@ class TokenizedTextView: TextView {
     private func pasteboardString(from range: NSRange) -> String? {
         // enumerate range of current text, resolving person attachents with user name.
         var string = ""
-        for i in range.location..<NSMaxRange(range) {
+        for i in range.location ..< NSMaxRange(range) {
             guard let nsstring = attributedText?.string as NSString? else {
                 continue
             }

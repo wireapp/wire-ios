@@ -36,8 +36,8 @@ extension UIImage {
         if let context = UIGraphicsGetCurrentContext(), var pixelData = context.data?.assumingMemoryBound(to: UInt32.self) {
             let alignment = (8 - (context.width % 8)) % 8
 
-            for y in 0..<context.height * 1 {
-                for x in 0..<context.width * 1 {
+            for y in 0 ..< context.height * 1 {
+                for x in 0 ..< context.width * 1 {
                     let alpha = UInt8((pixelData.pointee >> 24) & 255)
 
                     if alpha > 0 {

@@ -25,7 +25,7 @@ final class StringFingerprintTests: XCTestCase {
         let testStrings = ["abc", "mfngsdnfgljsfgjdns", "!!@#!@#!@#AASDF", ""]
         let resultStrings = ["ab c", "mf ng sd nf gl js fg jd ns", "!! @# !@ #! @# AA SD F", ""]
 
-        for i in 0..<testStrings.count {
+        for i in 0 ..< testStrings.count {
             // when
 
             let splitString = testStrings[i].fingerprintStringWithSpaces
@@ -40,7 +40,7 @@ final class StringFingerprintTests: XCTestCase {
         let testStrings = ["abc", "mfngsdnfgljsfgjdns", "!!@#!@#!@#AASDF", ""]
         let resultStrings = ["abc", "mfng sdnf gljs fgjd ns", "!!@# !@#! @#AA SDF", ""]
 
-        for i in 0..<testStrings.count {
+        for i in 0 ..< testStrings.count {
             // when
 
             let splitString = testStrings[i].split(every: 4).joined(separator: " ")

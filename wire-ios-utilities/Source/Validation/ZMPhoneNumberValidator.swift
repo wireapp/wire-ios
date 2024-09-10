@@ -85,7 +85,7 @@ public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
 extension NSString {
     func stringByRemovingCharacters(_ characters: NSString) -> NSString {
         var finalString = self
-        for i in 0..<characters.length {
+        for i in 0 ..< characters.length {
             let toRemove = characters.substring(with: NSRange(location: i, length: 1))
             finalString = finalString.replacingOccurrences(of: toRemove,
                                                            with: "",

@@ -435,7 +435,7 @@ extension ConversationCreationController {
         }
 
         let changes: () -> Void
-        let indexSet = IndexSet(integersIn: 3..<(3 + optionsSections.count))
+        let indexSet = IndexSet(integersIn: 3 ..< (3 + optionsSections.count))
 
         if expanded {
             nameSection.resignFirstResponder()

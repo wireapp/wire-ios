@@ -78,7 +78,7 @@ extension Mention {
 
 extension NSRange {
     fileprivate var range: Range<Int> {
-        lowerBound..<upperBound
+        lowerBound ..< upperBound
     }
 }
 

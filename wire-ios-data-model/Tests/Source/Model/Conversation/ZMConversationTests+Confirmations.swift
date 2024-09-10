@@ -43,7 +43,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         conversation.lastReadServerTimeStamp = message1.serverTimestamp
 
         // when
-        var confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp!...(.distantFuture))
+        var confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp! ... .distantFuture)
 
         // then
         XCTAssertEqual(confirmMessages.count, 2)
@@ -86,7 +86,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         message3.updateServerTimestamp(with: 30)
 
         // when
-        let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp!...message2.serverTimestamp!)
+        let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp! ... message2.serverTimestamp!)
 
         // then
         XCTAssertEqual(confirmMessages.count, 1)
@@ -122,7 +122,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // When
         // Before we confirm the unread messages, advance the last read server timestamp.
         conversation.lastReadServerTimeStamp = message4.serverTimestamp
-        let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: message1.serverTimestamp!...(.distantFuture))
+        let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: message1.serverTimestamp! ... .distantFuture)
 
         // Then
         XCTAssertEqual(confirmMessages.count, 1)

@@ -443,7 +443,7 @@ let minimumPower: Float = -160
 
 extension PowerProvider {
     func averagePowerForFirstActiveChannel() -> Float {
-        for power in (0..<3).map(averagePower) where power != minimumPower {
+        for power in (0 ..< 3).map(averagePower) where power != minimumPower {
             return power
         }
 

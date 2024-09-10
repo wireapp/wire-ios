@@ -29,7 +29,7 @@ class WireAnalytics_DatadogTests: XCTestCase {
         let concurrentQueue = DispatchQueue(label: "test", attributes: .concurrent)
 
         // WHEN
-        for i in 1...1000 {
+        for i in 1 ... 1000 {
             concurrentQueue.async {
                 WireAnalytics.Datadog.enable()
             }

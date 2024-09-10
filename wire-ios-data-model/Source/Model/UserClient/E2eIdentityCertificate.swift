@@ -28,7 +28,7 @@ public enum E2eIdentityCertificateConstants {
     public static let serverRetainedDays: TimeInterval = 28 * TimeInterval.oneDay
 
     // Randomising time so that not all clients update certificate at the same time
-    public static let randomInterval: TimeInterval = .random(in: 0..<TimeInterval.oneDay)
+    public static let randomInterval: TimeInterval = .random(in: 0 ..< TimeInterval.oneDay)
 }
 
 @objc public class E2eIdentityCertificate: NSObject {

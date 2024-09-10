@@ -67,7 +67,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     }
 
     private func updateCharacterViews(isFirstResponder: Bool) {
-        for index in 0...(maxLength - 1) {
+        for index in 0 ... (maxLength - 1) {
             let characterView = characterViews[index]
 
             if let character = storage.count > index ? storage[storage.index(storage.startIndex, offsetBy: index)] : nil {
@@ -158,7 +158,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     init(maxLength: Int, characterSet: CharacterSet, size: CGSize) {
         self.maxLength = maxLength
         self.characterSet = characterSet
-        characterViews = (0..<maxLength).map { _ in CharacterView(parentSize: size) }
+        characterViews = (0 ..< maxLength).map { _ in CharacterView(parentSize: size) }
 
         super.init(frame: .zero)
 

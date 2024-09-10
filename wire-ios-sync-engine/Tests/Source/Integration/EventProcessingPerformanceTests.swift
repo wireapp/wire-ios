@@ -95,13 +95,13 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
     func createUsersAndConversations(userCount: Int, conversationCount: Int) {
         mockTransportSession.performRemoteChanges { session in
-            self.users = (1...userCount).map({
+            self.users = (1 ... userCount).map({
                 session.insertUser(withName: "User \($0)")
             })
 
             let usersIncludingSelfUser = self.users + [self.selfUser!]
 
-            self.conversations = (1...conversationCount).map({
+            self.conversations = (1 ... conversationCount).map({
                 let conversation = session.insertTeamConversation(to: self.team, with: usersIncludingSelfUser, creator: self.selfUser)
                 conversation.changeName(by: self.selfUser, name: "Team conversation \($0)")
                 return conversation
@@ -112,14 +112,14 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
 extension MockConversation {
     func insertRandomKnocks(count: Int, from users: [MockUser]) {
-        for _ in 1...count {
+        for _ in 1 ... count {
             let knock = try! GenericMessage(content: Knock.with { $0.hotKnock = false }).serializedData()
             insertClientMessage(from: users.randomElement()!, data: knock)
         }
     }
 
     func insertRandomTextMessages(count: Int, from users: [MockUser]) {
-        for counter in 1...count {
+        for counter in 1 ... count {
             let text = try! GenericMessage(content: Text(content: "Random message \(counter)")).serializedData()
             insertClientMessage(from: users.randomElement()!, data: text)
         }

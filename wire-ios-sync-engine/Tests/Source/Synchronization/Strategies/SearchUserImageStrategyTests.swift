@@ -100,7 +100,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
 
     func setupSearchDirectory(userCount: Int) -> Set<ZMSearchUser> {
         var users = Set<ZMSearchUser>()
-        for _ in 0..<userCount {
+        for _ in 0 ..< userCount {
             let user = createSearchUser()
             users.insert(user)
         }

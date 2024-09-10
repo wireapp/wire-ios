@@ -431,7 +431,7 @@ final class TokenField: UIView {
 
         filterText = ""
 
-        let rangeToDelete = firstCharacterIndex..<text.endIndex
+        let rangeToDelete = firstCharacterIndex ..< text.endIndex
         let nsRange = textView.text.nsRange(from: rangeToDelete)
 
         textView.textStorage.beginEditing()

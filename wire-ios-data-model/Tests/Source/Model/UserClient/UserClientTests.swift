@@ -43,7 +43,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             guard count != 0 else { return nil }
 
             var clients = Set<UserClient>()
-            for _ in 0..<count {
+            for _ in 0 ..< count {
                 clients.insert(UserClient.insertNewObject(in: uiMOC))
             }
             return clients

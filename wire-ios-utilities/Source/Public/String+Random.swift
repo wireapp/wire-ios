@@ -26,7 +26,7 @@ extension String {
 
         let letters = Array("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
         var s = String()
-        for _ in 0..<length {
+        for _ in 0 ..< length {
             s.append(letters.randomElement()!)
         }
         return s

@@ -163,7 +163,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         let recordingHintText = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.recordTip("%@")
 
         let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
-        let randomIndex = Int.random(in: 0..<effects.count)
+        let randomIndex = Int.random(in: 0 ..< effects.count)
         let effect = effects[randomIndex]
         let image = effect.icon.makeImage(size: 14, color: color)
 

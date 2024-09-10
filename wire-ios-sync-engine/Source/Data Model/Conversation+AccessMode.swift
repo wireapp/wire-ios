@@ -42,7 +42,7 @@ public enum WirelessLinkError: Error {
         case (404, "no-conversation-code"?): self = .noCode
         case (404, "no-conversation"?): self = .noConversation
         case (409, "guest-links-disabled"?): self = .guestLinksDisabled
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }

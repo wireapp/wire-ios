@@ -37,7 +37,7 @@ final class MetaStreamContainer {
             startBound = content.startIndex
         }
 
-        let result = content[startBound..<upperBound]
+        let result = content[startBound ..< upperBound]
         return String(result)
     }
 

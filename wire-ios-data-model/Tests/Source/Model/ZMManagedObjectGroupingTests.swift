@@ -60,7 +60,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         // GIVEN
         let name = "foo"
 
-        for _ in 1...10 {
+        for _ in 1 ... 10 {
             let user = ZMUser.insertNewObject(in: self.mocs.viewContext)
             user.name = name
         }
@@ -93,7 +93,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItGroupsByPropertyValue_Many() {
         // GIVEN
-        let range = 1...10
+        let range = 1 ... 10
         let user = ZMUser.insert(in: self.mocs.viewContext, name: "User")
         let clients: [UserClient] = range.map { _ in
             let client = UserClient.insertNewObject(in: self.mocs.viewContext)
@@ -115,7 +115,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItGroupsByPropertyValue_ManyDistinct() {
         // GIVEN
-        let range = 1...10
+        let range = 1 ... 10
         let clients: [UserClient] = range.map {
             let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()
@@ -135,7 +135,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
     public func testThatItIgnoresNil() {
         // GIVEN
-        let range = 1...10
+        let range = 1 ... 10
         let clients: [UserClient] = range.map { _ in
             let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()

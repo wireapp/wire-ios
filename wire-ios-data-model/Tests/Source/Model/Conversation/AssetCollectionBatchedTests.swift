@@ -48,7 +48,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
     @discardableResult func insertAssetMessages(count: Int) -> [ZMMessage] {
         var offset: TimeInterval = 0
         var messages = [ZMMessage]()
-        for _ in 0..<count {
+        for _ in 0 ..< count {
             let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
             offset += 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")
@@ -341,7 +341,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
     func testThatItFetchesPreAndUncategorizedObjectsAndSavesThemAsUIDObjects() {
         // given
         let messages = insertAssetMessages(count: 20)
-        messages[0..<10].forEach { _ = $0.cachedCategory }
+        messages[0 ..< 10].forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         // when

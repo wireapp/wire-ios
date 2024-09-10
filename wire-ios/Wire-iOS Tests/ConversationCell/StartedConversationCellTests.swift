@@ -191,10 +191,10 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
             case .none: return []
             case .sender: return [message.sender!]
             case .justYou: return Set([mockSelfUser])
-            case .youAndAnother: return Set(users[0..<1] + [mockSelfUser])
-            case .one: return Set(users[0...1] + additionalUsers)
-            case .some: return Set(users[0...4] + additionalUsers)
-            case .many: return Set(users[0..<11] + additionalUsers)
+            case .youAndAnother: return Set(users[0 ..< 1] + [mockSelfUser])
+            case .one: return Set(users[0 ... 1] + additionalUsers)
+            case .some: return Set(users[0 ... 4] + additionalUsers)
+            case .many: return Set(users[0 ..< 11] + additionalUsers)
             case .overflow: return Set(users + additionalUsers)
             }
         }()

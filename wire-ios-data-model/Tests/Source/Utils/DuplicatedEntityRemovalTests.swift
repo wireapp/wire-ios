@@ -69,7 +69,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
     }
 
     func messages(conversation: ZMConversation) -> [ZMMessage] {
-        (0..<5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
+        (0 ..< 5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
     }
 }
 
@@ -88,9 +88,9 @@ extension DuplicatedEntityRemovalTests {
         let addedOrRemovedInSystemMessages = Set<ZMSystemMessage>(
             addedOrRemovedSystemMessages(conversation: conversation, client: client2)
         )
-        let ignoredByClients = Set((0..<5).map { _ in createClient(user: user) })
+        let ignoredByClients = Set((0 ..< 5).map { _ in createClient(user: user) })
         let messagesMissingRecipient = Set<ZMMessage>(messages(conversation: conversation))
-        let trustedByClients = Set((0..<5).map { _ in createClient(user: user) })
+        let trustedByClients = Set((0 ..< 5).map { _ in createClient(user: user) })
         let missedByClient = createClient(user: user)
 
         client2.addedOrRemovedInSystemMessages = addedOrRemovedInSystemMessages

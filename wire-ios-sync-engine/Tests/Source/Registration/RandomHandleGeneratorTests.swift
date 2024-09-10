@@ -59,27 +59,27 @@ final class RandomHandleGeneratorTests: XCTestCase {
         XCTAssertEqual(handles.popLast(), expectedNormalized)
 
         // then with digits 1 to 9
-        for item in 1..<10 {
+        for item in 1 ..< 10 {
             XCTAssertEqual(handles.popLast(), expectedNormalized.truncated(at: 20) + "\(item)")
         }
 
         // then 4 with two digits
         let twoDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 19))[0-9]{2}$", options: [])
-        for _ in 0..<4 {
+        for _ in 0 ..< 4 {
             let handle = handles.popLast()
             XCTAssertTrue(twoDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // then 4 with three digits
         let threeDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 18))[0-9]{3}$", options: [])
-        for _ in 0..<4 {
+        for _ in 0 ..< 4 {
             let handle = handles.popLast()
             XCTAssertTrue(threeDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // then 6 with four digits
         let sixDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 17))[0-9]{4}$", options: [])
-        for _ in 0..<6 {
+        for _ in 0 ..< 6 {
             let handle = handles.popLast()
             XCTAssertTrue(sixDigits.matches(handle), "\(String(describing: handle)) does not match")
         }

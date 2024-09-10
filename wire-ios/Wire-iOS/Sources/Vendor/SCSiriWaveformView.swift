@@ -157,7 +157,7 @@ final class SCSiriWaveformView: UIView {
         let maxAmplitude: Float = halfHeight - 4 // 4 corresponds to twice the stroke width
         let mid: Float = width / 2
 
-        for i in 0..<numberOfWaves {
+        for i in 0 ..< numberOfWaves {
             let context = UIGraphicsGetCurrentContext()
 
             context?.setLineWidth(i == 0 ? primaryWaveLineWidth : secondaryWaveLineWidth)

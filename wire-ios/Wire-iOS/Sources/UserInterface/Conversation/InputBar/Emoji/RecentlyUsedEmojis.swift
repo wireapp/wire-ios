@@ -59,6 +59,6 @@ final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
     private func updateContent() {
         defer { items = backing.array as! [Emoji] }
         guard backing.count > capacity else { return }
-        backing.removeObjects(at: IndexSet(integersIn: capacity..<backing.count))
+        backing.removeObjects(at: IndexSet(integersIn: capacity ..< backing.count))
     }
 }

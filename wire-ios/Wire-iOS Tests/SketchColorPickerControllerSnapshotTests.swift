@@ -62,7 +62,7 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
     func testForColorButtonBumpedThreeTimes() {
         // GIVEN & WHEN
-        for _ in 1...3 {
+        for _ in 1 ... 3 {
             sut.collectionView(sut.colorsCollectionView, didSelectItemAt: IndexPath(item: 1, section: 0))
         }
 

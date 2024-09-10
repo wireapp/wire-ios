@@ -94,7 +94,7 @@ public final class AppLockController: AppLockType {
 
     private var isTimeoutExceeded: Bool {
         let timeSinceAuth = -lastCheckpoint.timeIntervalSinceNow
-        let timeoutWindow = 0..<Double(timeout)
+        let timeoutWindow = 0 ..< Double(timeout)
         return !timeoutWindow.contains(timeSinceAuth)
     }
 

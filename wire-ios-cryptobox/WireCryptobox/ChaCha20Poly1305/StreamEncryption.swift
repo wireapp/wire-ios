@@ -71,7 +71,7 @@ extension ChaCha20Poly1305 {
                     var index = 0
                     for field in layout {
                         let upperBound = index + field.rawValue
-                        try into(buffer[index..<upperBound], field)
+                        try into(buffer[index ..< upperBound], field)
                         index = upperBound
                     }
                 }

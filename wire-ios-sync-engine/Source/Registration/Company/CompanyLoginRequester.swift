@@ -75,7 +75,7 @@ public enum ValidationError: Equatable {
     init?(response: HTTPURLResponse?, error: Error?) {
         switch (response?.statusCode, error) {
         case (404?, _): self = .invalidCode
-        case ((400...599)?, _): self = .invalidStatus(response!.statusCode)
+        case ((400 ... 599)?, _): self = .invalidStatus(response!.statusCode)
         case (_, .some), (.none, _): self = .unknown
         default: return nil
         }

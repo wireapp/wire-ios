@@ -155,7 +155,7 @@ final class ImageToolbarView: UIView {
             ])
         }
 
-        for i in 1..<buttons.count {
+        for i in 1 ..< buttons.count {
             let previousButton = buttons[i - 1]
             let button = buttons[i]
 

@@ -89,7 +89,7 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
             selfUser.teamIdentifier = .init()
 
             // create specific conversations
-            let conversations = (0..<4).map { _ in
+            let conversations = (0 ..< 4).map { _ in
                 let conversation = MLSGroupID.random().createConversation(in: syncMOC)
                 conversation.messageProtocol = .proteus
                 conversation.conversationType = .group
@@ -122,7 +122,7 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
             selfUser.teamIdentifier = .init()
 
             // create specific conversations
-            let conversations = (0..<4).map { _ in
+            let conversations = (0 ..< 4).map { _ in
                 let conversation = MLSGroupID.random().createConversation(in: syncMOC)
                 conversation.messageProtocol = .mixed
                 conversation.conversationType = .group

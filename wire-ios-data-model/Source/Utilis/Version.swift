@@ -41,7 +41,7 @@ import Foundation
         guard other.arrayRepresentation.count > 0 else { return .orderedDescending }
         guard versionString != other.versionString else { return .orderedSame }
 
-        for i in 0..<arrayRepresentation.count {
+        for i in 0 ..< arrayRepresentation.count {
             guard other.arrayRepresentation.count != i else { return .orderedDescending }
             let selfNumber = arrayRepresentation[i]
             let otherNumber = other.arrayRepresentation[i]

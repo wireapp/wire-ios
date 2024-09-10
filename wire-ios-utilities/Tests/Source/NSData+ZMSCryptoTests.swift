@@ -71,7 +71,7 @@ extension NSData_ZMSCryptoTests {
         let sampleData = self.sampleDecryptedImageData
 
         // when
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = try sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -92,7 +92,7 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesUniqueEncryptionKey() {
         var generatedDataSet = Set<Data>()
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = Data.randomEncryptionKey()
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -127,7 +127,7 @@ extension NSData_ZMSCryptoTests {
         let sampleData = self.sampleDecryptedImageData
 
         // when
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = sampleData.zmEncryptPrefixingIV(key: self.sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -148,7 +148,7 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesDifferentDataValues() {
         var generatedDataSet = Set<Data>()
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = Data.secureRandomData(length: 10)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -156,7 +156,7 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItReturnsNilIfDecryptingKeyIsNotOfAES256Length() {
-        let badKey = self.sampleKey.subdata(in: Range(0...15))
+        let badKey = self.sampleKey.subdata(in: Range(0 ... 15))
         XCTAssertNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: badKey))
         XCTAssertNotNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: self.sampleKey))
     }
@@ -249,7 +249,7 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesUniqueHashKey() {
         var generatedDataSet = Set<Data>()
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             let data = Data.zmRandomSHA256Key()
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
@@ -262,7 +262,7 @@ extension NSData_ZMSCryptoTests {
 extension NSData_ZMSCryptoTests {
     func testThatDataCanBeEncodedIntoHexString() {
         // given
-        let array: [UInt8] = Array(0...255)
+        let array: [UInt8] = Array(0 ... 255)
         let data = Data(array)
 
         // when
@@ -300,7 +300,7 @@ extension NSData_ZMSCryptoTests {
         let decoded = Data(hexString: hexString)
 
         // then
-        let array: [UInt8] = Array(0...255)
+        let array: [UInt8] = Array(0 ... 255)
         let expectedData = Data(array)
 
         XCTAssertNotNil(decoded)
@@ -348,7 +348,7 @@ extension NSData_ZMSCryptoTests {
         let decoded = Data(hexString: hexString)
 
         // then
-        let array: [UInt8] = Array(0...31)
+        let array: [UInt8] = Array(0 ... 31)
         let expectedData = Data(array)
 
         XCTAssertNotNil(decoded)
@@ -363,7 +363,7 @@ extension NSData_ZMSCryptoTests {
         let decoded = Data(hexString: hexString)
 
         // then
-        let array: [UInt8] = Array(0...31)
+        let array: [UInt8] = Array(0 ... 31)
         let expectedData = Data(array)
 
         XCTAssertNotNil(decoded)

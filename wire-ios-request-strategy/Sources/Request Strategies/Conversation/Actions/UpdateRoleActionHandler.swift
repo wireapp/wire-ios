@@ -46,7 +46,7 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
         var action = action
 
         switch response.httpStatus {
-        case 200..<300:
+        case 200 ..< 300:
             guard
                 let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
                 let role = Role.existingObject(for: action.roleID, in: context),

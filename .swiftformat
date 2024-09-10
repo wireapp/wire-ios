@@ -1,4 +1,4 @@
---exclude **/.build,**/Carthage,**/DerivedData,**.generated.swift,wire-ios-protos/Protos/**,**+Generated.swift
+--exclude **/.build,**/Carthage,**/DerivedData,**.generated.swift,wire-ios-protos/Protos/**,**+Generated.swift,wire-ios/Templates/**
 
 --rules \
     andOperator, \
@@ -61,7 +61,8 @@
     spaceAroundBraces, \
     spaceAroundBrackets, \
     spaceAroundComments, \
-    spaceAroundGenerics
+    spaceAroundGenerics, \
+    spaceAroundOperators
 
 
 # Options

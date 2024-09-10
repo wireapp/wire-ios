@@ -62,7 +62,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     func testThatItRendersALotOfUsers() {
         // given
-        let users: [MockUserType] = (0..<20).map {
+        let users: [MockUserType] = (0 ..< 20).map {
             let user = MockUserType.createUser(name: "User #\($0)")
             user.handle = nil
             return user
@@ -103,7 +103,7 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     func testThatItRendersALotOfUsers_WithoutNames() {
         // given
-        let users: [MockUserType] = (0..<20).map {
+        let users: [MockUserType] = (0 ..< 20).map {
             let user = MockUserType.createUser(name: "\($0)")
             user.name = nil
             user.handle = nil

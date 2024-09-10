@@ -98,7 +98,7 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
     private func participants(amount: Int) -> [CallParticipant] {
         var participants = [CallParticipant]()
 
-        for _ in 0..<amount {
+        for _ in 0 ..< amount {
             participants.append(
                 CallParticipant(user: MockUserType(), userId: AVSIdentifier.stub, clientId: UUID().transportString(), state: .connected(videoState: .started, microphoneState: .unmuted), activeSpeakerState: .inactive)
             )

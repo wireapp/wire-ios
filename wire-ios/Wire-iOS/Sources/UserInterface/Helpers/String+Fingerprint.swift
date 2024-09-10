@@ -24,7 +24,7 @@ extension String {
             let start = index(startIndex, offsetBy: i)
             let end = index(start, offsetBy: every, limitedBy: endIndex) ?? endIndex
 
-            return String(self[start..<end])
+            return String(self[start ..< end])
         }
     }
 

@@ -431,7 +431,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItMarksTheConversationsAsRead() throws {
         // GIVEN
-        let conversationsRange: CountableClosedRange = 1...10
+        let conversationsRange: CountableClosedRange = 1 ... 10
 
         let conversations: [ZMConversation] = conversationsRange.map { _ in
             self.sut.insertConversationWithUnreadMessage()

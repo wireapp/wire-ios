@@ -121,7 +121,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
     func testStatusForMultipleTextMessagesInConversation() throws {
         // GIVEN
         let sut = self.otherUserConversation!
-        for index in 1...5 {
+        for index in 1 ... 5 {
             let message = try sut.appendText(content: "test \(index)") as? ZMClientMessage
             message?.sender = self.otherUser
             message?.serverTimestamp = Date(timeIntervalSince1970: Double(index))
@@ -141,7 +141,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
         let selfMessage = appendSelfMessage(to: sut)
 
-        for index in 1...2 {
+        for index in 1 ... 2 {
             appendReply(
                 to: sut,
                 selfMessage: selfMessage,
@@ -166,7 +166,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let selfMessage = try! sut.appendText(content: "I am a programmer") as! ZMMessage
         selfMessage.sender = selfUser
 
-        for index in 1...3 {
+        for index in 1 ... 3 {
             (try! sut.appendText(content: "Yes, it is true \(index)", replyingTo: selfMessage) as! ZMMessage).sender = self.otherUser
         }
         sut.setPrimitiveValue(3, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
@@ -174,7 +174,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         appendMissedCall(to: sut)
 
         // insert messages from other
-        for index in 1...2 {
+        for index in 1 ... 2 {
             (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
         }
 
@@ -190,7 +190,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
     func testStatusForMultipleTextMessagesInConversationIncludingMention() {
         // GIVEN
         let sut = self.otherUserConversation!
-        for index in 1...5 {
+        for index in 1 ... 5 {
             (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
         }
 
@@ -210,7 +210,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
     func disable_testStatusForMultipleTextMessagesInConversation_LastRename() {
         // GIVEN
         let sut = self.otherUserConversation!
-        for index in 1...5 {
+        for index in 1 ... 5 {
             (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
         }
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)

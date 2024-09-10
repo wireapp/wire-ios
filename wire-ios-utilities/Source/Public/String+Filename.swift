@@ -54,7 +54,7 @@ extension String {
         let start = normalizedFilename.startIndex
 
         let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: offset)
-        let result = normalizedFilename[start..<end]
+        let result = normalizedFilename[start ..< end]
         return String(result)
     }
 }

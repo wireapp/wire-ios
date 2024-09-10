@@ -123,7 +123,7 @@ public struct ModelHelper {
     ) -> (Team, Set<ZMUser>) {
         let team = createTeam(id: id, in: context)
 
-        let users = (0..<numberOfUsers)
+        let users = (0 ..< numberOfUsers)
             .map { _ in
                 let user = self.createUser(in: context)
                 addUser(user, to: team, in: context)

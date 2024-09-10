@@ -185,7 +185,7 @@ extension NSPersistentStoreMetadataTests {
         self.resetUIandSyncContextsAndResetPersistentStore(false)
 
         // THEN
-        for i in 0..<data.count {
+        for i in 0 ..< data.count {
             XCTAssertEqual(data[i], (self.uiMOC.persistentStoreMetadata(forKey: key) as? [String])?[i])
         }
     }

@@ -546,7 +546,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     // MARK: Helper
 
     func fillConversationWithMessages(conversation: ZMConversation, messageCount: Int, normalized: Bool) {
-        for index in 0..<messageCount {
+        for index in 0 ..< messageCount {
             let text = "This is the text message at index \(index)"
             let message = try! conversation.appendText(content: text) as! ZMMessage
             if normalized {

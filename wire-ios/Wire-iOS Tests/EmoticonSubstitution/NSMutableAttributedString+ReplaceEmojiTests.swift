@@ -42,7 +42,7 @@ final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
         let sut = NSMutableAttributedString.markdown(from: plainText, style: NSAttributedString.style)
 
         // WHEN
-        sut.replaceEmoticons(excluding: [5..<999])
+        sut.replaceEmoticons(excluding: [5 ..< 999])
 
         // THEN
         XCTAssertEqual(sut.string, "❤ Lorem Ipsum Dolor Sit Amed. :)")
@@ -56,7 +56,7 @@ final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
         let sut = NSMutableAttributedString.markdown(from: plainText, style: NSAttributedString.style)
 
         // WHEN
-        sut.replaceEmoticons(excluding: [5..<20])
+        sut.replaceEmoticons(excluding: [5 ..< 20])
 
         // THEN
         XCTAssertEqual(sut.string, "❤ Lorem Ipsum Dolor 😈Amed. 😊")

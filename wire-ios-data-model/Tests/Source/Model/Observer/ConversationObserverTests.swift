@@ -1046,7 +1046,7 @@ extension ConversationObserverTests {
 
             var lastName = "bar"
             self.startMeasuring()
-            for _ in 1...count {
+            for _ in 1 ... count {
                 let temp = lastName
                 lastName = user.name!
                 user.name = temp
@@ -1070,7 +1070,7 @@ extension ConversationObserverTests {
             self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
 
             self.startMeasuring()
-            for _ in 1...count {
+            for _ in 1 ... count {
                 try! conversation.appendText(content: "hello")
                 self.uiMOC.saveOrRollback()
             }
@@ -1094,7 +1094,7 @@ extension ConversationObserverTests {
             self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
 
             self.startMeasuring()
-            for _ in 1...count {
+            for _ in 1 ... count {
                 try! conversation.appendText(content: "hello")
             }
             self.uiMOC.saveOrRollback()
@@ -1116,7 +1116,7 @@ extension ConversationObserverTests {
             let observer = ConversationObserver()
 
             self.startMeasuring()
-            for _ in 1...count {
+            for _ in 1 ... count {
                 let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
                 self.uiMOC.saveOrRollback()
                 _ = ConversationChangeInfo.add(observer: observer, for: conversation)

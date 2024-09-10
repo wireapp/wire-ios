@@ -52,7 +52,7 @@
             guard self.components.count > 2 else { return [] }
             startIndex += 1
         }
-        return Array(self.components[startIndex...lastIndex])
+        return Array(self.components[startIndex ... lastIndex])
     }()
 
     lazy var givenName: String = {

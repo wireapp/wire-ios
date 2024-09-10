@@ -42,7 +42,7 @@ extension Data {
         var md5Hash = Insecure.MD5()
 
         // We may have a lot of data to hash, so compute in chunks of 512 bytes.
-        for range in (startIndex..<endIndex).chunked(by: 512) {
+        for range in (startIndex ..< endIndex).chunked(by: 512) {
             md5Hash.update(data: self[range])
         }
 
@@ -146,10 +146,10 @@ extension Range where Index == Int {
         let numberOfWholeChunks = endIndex / chunkSize
         let numberOfChunks = endIndex.isMultiple(of: chunkSize) ? numberOfWholeChunks : numberOfWholeChunks + 1
 
-        return (0..<numberOfChunks).map { chunkIndex in
+        return (0 ..< numberOfChunks).map { chunkIndex in
             let start = chunkIndex * chunkSize
             let end = Swift.min(start + chunkSize, endIndex)
-            return start..<end
+            return start ..< end
         }
     }
 }

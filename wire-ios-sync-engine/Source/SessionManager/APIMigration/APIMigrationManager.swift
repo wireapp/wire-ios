@@ -127,7 +127,7 @@ final class APIMigrationManager {
         guard lVersion < rVersion else { return [] }
 
         return migrations.filter {
-            (lVersion.rawValue + 1..<rVersion.rawValue + 1).contains($0.version.rawValue)
+            (lVersion.rawValue + 1 ..< rVersion.rawValue + 1).contains($0.version.rawValue)
         }
     }
 

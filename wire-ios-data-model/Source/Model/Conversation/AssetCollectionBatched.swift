@@ -150,7 +150,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
 
         // Get and categorize next batch
-        let messagesToAnalyze = Array(allMessages[offset..<(offset + numberToAnalyze)])
+        let messagesToAnalyze = Array(allMessages[offset ..< (offset + numberToAnalyze)])
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
         managedObjectContext.enqueueDelayedSave()
 

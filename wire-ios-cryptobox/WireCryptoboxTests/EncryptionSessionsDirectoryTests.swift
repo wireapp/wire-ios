@@ -140,7 +140,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         let rangeStart = 3
         let rangeLength = 10
-        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart)..<UInt16(rangeStart + rangeLength)
+        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart) ..< UInt16(rangeStart + rangeLength)
 
         // WHEN
         var prekeys: [(id: UInt16, prekey: String)] = []
@@ -148,7 +148,7 @@ extension EncryptionSessionsDirectoryTests {
 
         // THEN
         XCTAssertEqual(prekeyIds.count, rangeLength)
-        for i in 0..<rangeLength {
+        for i in 0 ..< rangeLength {
             let (id, prekey) = prekeys[i]
             let prekeyData = Data(base64Encoded: prekey, options: [])!
             var prekeyRetrievedId: UInt16 = 0

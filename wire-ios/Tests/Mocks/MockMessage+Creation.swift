@@ -123,7 +123,7 @@ final class MockMessageFactory {
         message.serverTimestamp = Date(timeIntervalSince1970: 12_345_678_564)
 
         if numUsers > 0 {
-            mockSystemMessageData.userTypes = Set(SwiftMockLoader.mockUsers()[0...numUsers - 1])
+            mockSystemMessageData.userTypes = Set(SwiftMockLoader.mockUsers()[0 ... numUsers - 1])
         } else {
             mockSystemMessageData.userTypes = Set()
         }

@@ -268,7 +268,7 @@ enum DebugActions {
         let syncContext = userSession.syncManagedObjectContext
         syncContext.performGroupedBlock {
             let syncConversation = try! syncContext.existingObject(with: conversationId) as! ZMConversation
-            let messages: [ZMClientMessage] = (0...count).map { i in
+            let messages: [ZMClientMessage] = (0 ... count).map { i in
                 let nonce = UUID()
                 let genericMessage = GenericMessage(content: Text(content: "Debugging message \(i): Append many messages to the top conversation; Append many messages to the top conversation;"), nonce: nonce)
                 let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: syncContext)

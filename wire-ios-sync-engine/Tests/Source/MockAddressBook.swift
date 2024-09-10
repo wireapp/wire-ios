@@ -62,7 +62,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 
     /// Replace the content with a given number of random hashes
     func fillWithContacts(_ number: UInt) {
-        self.contacts = (0..<number).map {
+        self.contacts = (0 ..< number).map {
             self.createContact(card: $0)
         }
     }

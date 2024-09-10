@@ -47,8 +47,8 @@ final class RandomGeneratorFromDataTests: XCTestCase {
         // WHEN
         let seed1 = RandomGeneratorFromData(uuid: uuid)
         let seed2 = RandomGeneratorFromData(uuid: uuid)
-        let random1: [Int] = (0...100).map { _ in seed1.rand() }
-        let random2: [Int] = (0...100).map { _ in seed2.rand() }
+        let random1: [Int] = (0 ... 100).map { _ in seed1.rand() }
+        let random2: [Int] = (0 ... 100).map { _ in seed2.rand() }
 
         // THEN
         XCTAssertEqual(random1, random2)

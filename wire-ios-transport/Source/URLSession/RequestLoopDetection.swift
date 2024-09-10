@@ -92,7 +92,7 @@ public final class RequestLoopDetection: NSObject {
         // I assume most (if not all) request are inserted in ascending order, so I will
         // search backwards
         var insertionIndex = 0
-        for i in (0..<recordedRequests.count).lazy.reversed() where recordedRequests[i].date < identifier.date {
+        for i in (0 ..< recordedRequests.count).lazy.reversed() where recordedRequests[i].date < identifier.date {
             insertionIndex = i + 1
             break
         }

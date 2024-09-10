@@ -691,7 +691,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatItAnswersACall_legacy_largeGroup_audioOnly() throws {
         // given
         // Make sure group conversation has at least 5 participants (including self)
-        for _ in 0..<4 {
+        for _ in 0 ..< 4 {
             let user = ZMUser.insertNewObject(in: uiMOC)
             user.remoteIdentifier = UUID()
             groupConversation.addParticipantAndUpdateConversationState(user: user, role: nil)

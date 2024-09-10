@@ -36,7 +36,7 @@ extension [Byte] {
     }
 
     public static func random(length: UInt = 8) -> [Byte] {
-        (0..<length).map { _ in
+        (0 ..< length).map { _ in
             Byte.random()
         }
     }
@@ -44,6 +44,6 @@ extension [Byte] {
 
 extension Byte {
     public static func random() -> Byte {
-        random(in: .min...(.max))
+        random(in: .min ... .max)
     }
 }

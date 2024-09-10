@@ -73,7 +73,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
 
         var result = ""
 
-        for _ in 0...20 {
+        for _ in 0 ... 20 {
             result += string
         }
 
@@ -103,7 +103,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
 
         var result = ""
 
-        for _ in 0...20 {
+        for _ in 0 ... 20 {
             result += string
         }
 
@@ -186,7 +186,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
         let string = try! String(contentsOf: self.fileURL(forResource: "excessive_diacritics", extension: "txt"), encoding: .utf8)
         var result = ""
 
-        for _ in 0...64 {
+        for _ in 0 ... 64 {
             result += string
         }
 
@@ -200,7 +200,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
 
         var result = ""
 
-        for _ in 0...20 {
+        for _ in 0 ... 20 {
             result += string
         }
 

@@ -111,7 +111,7 @@ final class Stroke: Renderable {
 
         let controlPoints = controlsPoints(points: points)
 
-        for i in 1..<points.count {
+        for i in 1 ..< points.count {
             path.addCurve(to: points[i], controlPoint1: controlPoints[i - 1].1, controlPoint2: controlPoints[i].0)
         }
 
@@ -122,7 +122,7 @@ final class Stroke: Renderable {
         let points = [points.first!] + points + [points.last!]
         var controlPoints: [(CGPoint, CGPoint)] = []
 
-        for i in 1..<points.count - 1 {
+        for i in 1 ..< points.count - 1 {
             let p0 = points[i - 1]
             let p1 = points[i]
             let p2 = points[i + 1]

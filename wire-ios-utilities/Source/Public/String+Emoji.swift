@@ -31,10 +31,10 @@ extension Unicode.Scalar {
         switch self.value {
         case 0x200D,       // Zero width joiner
              0x2139,            // the info symobol
-             0x2030...0x2BFF,   // Misc symbols
-             0x2600...0x27BF,   // Misc symbols, Dingbats
+             0x2030 ... 0x2BFF,   // Misc symbols
+             0x2600 ... 0x27BF,   // Misc symbols, Dingbats
              0xE007F,           // cancelTag
-             0xFE00...0xFE0F:   // Variation Selectors
+             0xFE00 ... 0xFE0F:   // Variation Selectors
             true
         default:
             false

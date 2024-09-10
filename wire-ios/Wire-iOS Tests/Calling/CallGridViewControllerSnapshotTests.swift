@@ -272,19 +272,19 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         var configuration = MockCallGridViewControllerInput()
 
         // Page 1 - video enabled
-        for _ in 0..<CallGridViewController.maxItemsPerPage {
+        for _ in 0 ..< CallGridViewController.maxItemsPerPage {
             configuration.streams += [stubProvider.stream(videoState: .started)]
         }
 
         // Page 2 - First half with video disabled
         let half = CallGridViewController.maxItemsPerPage / 2
-        for _ in 0..<half {
+        for _ in 0 ..< half {
             configuration.streams += [stubProvider.stream(videoState: .stopped)]
         }
 
         // Page 2 - Second half with video enabled
         var expectedClients = [AVSClient]()
-        for _ in half..<CallGridViewController.maxItemsPerPage {
+        for _ in half ..< CallGridViewController.maxItemsPerPage {
             let client = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString())
             configuration.streams += [stubProvider.stream(client: client, videoState: .started)]
             expectedClients += [client]
@@ -307,7 +307,7 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         createSut(delegate: mockDelegate)
 
         // this will be one page's worth of streams
-        for _ in 0..<CallGridViewController.maxItemsPerPage {
+        for _ in 0 ..< CallGridViewController.maxItemsPerPage {
             configuration.streams += [stubProvider.stream(videoState: .started)]
         }
 

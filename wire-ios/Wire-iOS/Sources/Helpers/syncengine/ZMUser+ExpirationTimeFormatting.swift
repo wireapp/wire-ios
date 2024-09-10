@@ -52,9 +52,9 @@ final class WirelessExpirationTimeFormatter {
         }
 
         switch minutesLeft {
-        case 45...Double.greatestFiniteMagnitude: return localizedHours(1)
-        case 30..<45: return localizedMinutes(45)
-        case 15..<30: return localizedMinutes(30)
+        case 45 ... Double.greatestFiniteMagnitude: return localizedHours(1)
+        case 30 ..< 45: return localizedMinutes(45)
+        case 15 ..< 30: return localizedMinutes(30)
         default: return localizedMinutes(15)
         }
     }

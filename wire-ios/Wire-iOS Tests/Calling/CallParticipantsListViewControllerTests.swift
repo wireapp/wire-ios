@@ -27,7 +27,7 @@ enum CallParticipantsListHelper {
                              videoState: VideoState? = nil,
                              microphoneState: MicrophoneState? = nil,
                              mockUsers: [UserType]) -> CallParticipantsList {
-        let sortedParticipants = (0..<participantCount)
+        let sortedParticipants = (0 ..< participantCount)
             .lazy
             .map { mockUsers[$0] }
             .sortedAscendingPrependingNil(by: \.name)

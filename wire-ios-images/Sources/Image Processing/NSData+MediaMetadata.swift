@@ -70,7 +70,7 @@ extension NSData {
             throw MetadataError.cannotCreate
         }
 
-        for sourceIndex in 0..<count {
+        for sourceIndex in 0 ..< count {
             CGImageDestinationAddImageFromSource(imageDestination, imageSource, sourceIndex, NSData.nullMetadataProperties)
         }
 

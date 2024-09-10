@@ -69,7 +69,7 @@ final class SessionEstablisherTests: MessagingTestBase {
     func testThatPrekeysAreFetchedInBatches_whenEstablishingSession() async throws {
         // given
 
-        let clientIDs = (0..<29).map { index in
+        let clientIDs = (0 ..< 29).map { index in
             let clientID = Arrangement.Scaffolding.clientID
             return QualifiedClientID(userID: clientID.userID, domain: clientID.domain, clientID: "client\(index)")
         }

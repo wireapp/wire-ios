@@ -45,11 +45,11 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 2)
-        for i in 0..<self.addressBook.contacts.count {
+        for i in 0 ..< self.addressBook.contacts.count {
             XCTAssertEqual(contacts[i].emailAddresses, self.addressBook.contacts[i].rawEmails)
             XCTAssertEqual(contacts[i].phoneNumbers, self.addressBook.contacts[i].rawPhoneNumbers)
         }
@@ -63,11 +63,11 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 2)
-        for i in 0..<self.addressBook.contacts.count {
+        for i in 0 ..< self.addressBook.contacts.count {
             XCTAssertEqual(contacts[i].emailAddresses, self.addressBook.contacts[i].rawEmails)
             XCTAssertEqual(contacts[i].phoneNumbers, self.addressBook.contacts[i].rawPhoneNumbers)
         }
@@ -81,7 +81,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -99,7 +99,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 0)
@@ -112,7 +112,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -127,7 +127,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 0)
@@ -140,7 +140,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -155,7 +155,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -169,7 +169,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -183,7 +183,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0..<100))
+        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -211,7 +211,7 @@ extension AddressBookTests {
             // then
             if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
-                XCTAssertEqual(chunk.includedContacts, UInt(0)..<UInt(3))
+                XCTAssertEqual(chunk.includedContacts, UInt(0) ..< UInt(3))
                 let expected = [
                     self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
                                                                    "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
@@ -267,7 +267,7 @@ extension AddressBookTests {
             // then
             if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
-                XCTAssertEqual(chunk.includedContacts, UInt(0)..<UInt(2))
+                XCTAssertEqual(chunk.includedContacts, UInt(0) ..< UInt(2))
                 let expected = [
                     self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
                                                                    "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
@@ -304,7 +304,7 @@ extension AddressBookTests {
             // then
             if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 4)
-                XCTAssertEqual(chunk.includedContacts, UInt(1)..<UInt(3))
+                XCTAssertEqual(chunk.includedContacts, UInt(1) ..< UInt(3))
                 let expected = [
                     self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
                     self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
@@ -340,7 +340,7 @@ extension AddressBookTests {
             // then
             if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 4)
-                XCTAssertEqual(chunk.includedContacts, UInt(2)..<UInt(4))
+                XCTAssertEqual(chunk.includedContacts, UInt(2) ..< UInt(4))
                 let expected = [
                     self.addressBook.contacts[2].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
                     self.addressBook.contacts[3].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="]
@@ -375,7 +375,7 @@ extension AddressBookTests {
             // then
             if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
-                XCTAssertEqual(chunk.includedContacts, UInt(20)..<UInt(20))
+                XCTAssertEqual(chunk.includedContacts, UInt(20) ..< UInt(20))
                 XCTAssertEqual(chunk.otherContactsHashes.count, 0)
             } else {
                 XCTFail()

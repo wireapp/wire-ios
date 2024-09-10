@@ -68,7 +68,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
             self.setCurrentVersion(.none)
 
             // Given some patches
-            TestPatch.allCases = self.createTestPatches(forVersions: 1...3)
+            TestPatch.allCases = self.createTestPatches(forVersions: 1 ... 3)
 
             // When I apply some patches
             self.sut.applyPatches(in: self.syncMOC)
@@ -87,7 +87,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
             self.setCurrentVersion(2)
 
             // Given some patches of various versions
-            TestPatch.allCases = self.createTestPatches(forVersions: 1...5)
+            TestPatch.allCases = self.createTestPatches(forVersions: 1 ... 5)
 
             // When I apply some patches
             self.sut.applyPatches(in: self.syncMOC)
@@ -110,7 +110,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
             self.setCurrentVersion(0)
 
             // Given there exist a patch not yet run
-            TestPatch.allCases = self.createTestPatches(forVersions: 1...1)
+            TestPatch.allCases = self.createTestPatches(forVersions: 1 ... 1)
 
             // When I run all patches
             self.sut.applyPatches(in: self.syncMOC)
@@ -129,7 +129,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
             self.setCurrentVersion(0)
 
             // Given there exist a patch not yet run
-            TestPatch.allCases = self.createTestPatches(forVersions: 1...1)
+            TestPatch.allCases = self.createTestPatches(forVersions: 1 ... 1)
 
             // When I run all patches
             self.sut.applyPatches(in: self.syncMOC)

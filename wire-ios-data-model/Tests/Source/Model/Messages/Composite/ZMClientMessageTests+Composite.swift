@@ -97,7 +97,7 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
         // THEN
         XCTAssertEqual(buttonStates[0].state, WireDataModel.ButtonState.State.confirmed)
-        for buttonState in buttonStates[1...3] {
+        for buttonState in buttonStates[1 ... 3] {
             XCTAssertEqual(buttonState.state, WireDataModel.ButtonState.State.unselected)
         }
     }

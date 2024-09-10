@@ -23,7 +23,7 @@ extension ConversationRemoveParticipantError {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation
         case (404, "no-conversation"?): self = .conversationNotFound
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }

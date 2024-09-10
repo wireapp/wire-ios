@@ -26,7 +26,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
     private func createUsersWithClientsOnSyncMOC(count: Int) -> [ZMUser] {
         self.selfUser = ZMUser.selfUser(in: context)
-        return (0..<count).map { i in
+        return (0 ..< count).map { i in
             let user = ZMUser.insertNewObject(in: context)
             let userClient = UserClient.insertNewObject(in: context)
             let userConnection = ZMConnection.insertNewSentConnection(to: user)
@@ -914,7 +914,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func setupUnverifiedUsers(count: Int) -> Set<ZMUser> {
-        Set((0..<count).map { _ in
+        Set((0 ..< count).map { _ in
             let unverifiedUser = ZMUser.insertNewObject(in: self.uiMOC)
             let unverifiedUserConnection = ZMConnection.insertNewSentConnection(to: unverifiedUser)
             unverifiedUserConnection.status = .accepted

@@ -169,7 +169,7 @@ public struct ChangedIndexes<T: Hashable> {
             // (1) add a move from the index in the startState to the index in endState
             // (2) search for the position of the endValue in the intermediate state, move the item to the current index
             // (3) continue at next index
-            for idx in 0..<intermediateState.endIndex {
+            for idx in 0 ..< intermediateState.endIndex {
                 let intermediateValue = intermediateState[idx]
                 let endValue = end.array[idx]
                 if intermediateValue != endValue {
@@ -191,7 +191,7 @@ public struct ChangedIndexes<T: Hashable> {
             // (2) add a move from the index in the intermediate state to the index in endState
             // (3) continue at next index
 
-            for idx in 0..<intermediateState.endIndex {
+            for idx in 0 ..< intermediateState.endIndex {
                 let intermediateValue = intermediateState[idx]
                 let endValue = end.array[idx]
                 if intermediateValue != endValue {

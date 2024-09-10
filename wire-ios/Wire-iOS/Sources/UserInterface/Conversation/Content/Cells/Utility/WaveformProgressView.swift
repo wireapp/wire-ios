@@ -62,7 +62,7 @@ private final class WaveformBarsView: UIView {
         let stepSpacing = barWidth + barspacing
         let numbersOfBars = Int((rect.width + barspacing) / stepSpacing)
 
-        for i in 0..<numbersOfBars {
+        for i in 0 ..< numbersOfBars {
             let loudness = samples[Int((Float(i) / Float(numbersOfBars)) * Float(samples.count))]
             let rect = CGRect(x: CGFloat(i) * stepSpacing, y: rect.height / 2, width: barWidth, height: max(minHeight, rect.height * CGFloat(loudness) * 0.5))
             c.addRect(rect)

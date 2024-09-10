@@ -57,7 +57,7 @@ public final class VolatileData {
     /// Reset all bytes in the underlying storage to zero.
 
     public func resetBytes() {
-        _storage.resetBytes(in: (_storage.startIndex)..<(_storage.endIndex))
+        _storage.resetBytes(in: (_storage.startIndex) ..< (_storage.endIndex))
     }
 }
 

@@ -41,7 +41,7 @@ public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol 
         }
 
         switch httpResponse.statusCode {
-        case 200...299:
+        case 200 ... 299:
             return data
         default:
             throw NetworkError.invalidStatusCode(httpResponse.statusCode)

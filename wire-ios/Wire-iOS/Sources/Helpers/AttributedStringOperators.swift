@@ -22,7 +22,7 @@ import WireDataModel
 // MARK: - Operators
 
 // Concats the lhs and rhs and returns a NSAttributedString
-infix operator + : AdditionPrecedence
+infix operator +: AdditionPrecedence
 
 func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     let result = NSMutableAttributedString()
@@ -53,7 +53,7 @@ func + (left: NSAttributedString, right: String) -> NSAttributedString {
 }
 
 // Concats the lhs and rhs and assigns the result to the lhs
-infix operator += : AssignmentPrecedence
+infix operator +=: AssignmentPrecedence
 
 @discardableResult func += (left: inout NSMutableAttributedString, right: String) -> NSMutableAttributedString {
     left.append(right.attributedString)
@@ -76,7 +76,7 @@ infix operator += : AssignmentPrecedence
 }
 
 // Applies the attributes on the rhs to the string on the lhs
-infix operator && : LogicalConjunctionPrecedence
+infix operator &&: LogicalConjunctionPrecedence
 
 func && (left: String, right: [NSAttributedString.Key: Any]) -> NSAttributedString {
     let result = NSAttributedString(string: left, attributes: right)

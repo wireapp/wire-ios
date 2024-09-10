@@ -41,7 +41,7 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
     func testThatItPerformsMigrationFromOldVersionsBefore107_ToCurrentModelVersion() throws {
         // With version 107 and later we can not insert duplicated keys anymore!
 
-        let versions = [84...96, 98...106].joined().map {
+        let versions = [84 ... 96, 98 ... 106].joined().map {
             "2.\($0).0"
         }
 

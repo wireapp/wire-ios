@@ -414,7 +414,7 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     /// they will be replaced
     /// This method wraps the Swift only method generatePrekeys(range: Range<UInt16>) for objC interoparability
     @objc public func generatePrekeys(_ nsRange: NSRange) throws -> [[String: AnyObject]] {
-        let prekeys = try generatePrekeys(UInt16(nsRange.location)..<UInt16(nsRange.length))
+        let prekeys = try generatePrekeys(UInt16(nsRange.location) ..< UInt16(nsRange.length))
         return prekeys.map { ["id": NSNumber(value: $0.id as UInt16), "prekey": $0.prekey as AnyObject] }
     }
 

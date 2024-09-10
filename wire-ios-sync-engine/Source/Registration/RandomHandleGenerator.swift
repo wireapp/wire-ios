@@ -71,19 +71,19 @@ extension RandomHandleGenerator {
 extension String {
     /// Returns an array with self with digits from 1 to 9 appended
     func appendAllDigits() -> [String] {
-        (1..<10).map { self + "\($0)" }
+        (1 ..< 10).map { self + "\($0)" }
     }
 
     /// Return an array with self with random digits appended
     fileprivate func appendRandomDigits(numberOfDigits: Int, variations: Int) -> [String] {
-        (0..<variations).map { _ in
+        (0 ..< variations).map { _ in
             self + String.random(numberOfDigits: numberOfDigits)
         }
     }
 
     /// Returns a string composed of random digits
     fileprivate static func random(numberOfDigits: Int) -> String {
-        (0..<numberOfDigits).map { _ in "\(Int.random(in: 0..<10))" }
+        (0 ..< numberOfDigits).map { _ in "\(Int.random(in: 0 ..< 10))" }
             .joined(separator: "")
     }
 }
@@ -115,7 +115,7 @@ extension Array {
             return self.first
         }
 
-        let index = Int.random(in: 0..<self.count)
+        let index = Int.random(in: 0 ..< self.count)
         return self[index]
     }
 }

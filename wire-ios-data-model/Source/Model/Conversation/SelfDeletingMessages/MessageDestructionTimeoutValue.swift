@@ -135,23 +135,23 @@ extension MessageDestructionTimeoutValue {
     }
 
     public var isSeconds: Bool {
-        .zero..<(.oneMinute) ~= rawValue
+        .zero ..< .oneMinute ~= rawValue
     }
 
     public var isMinutes: Bool {
-        .oneMinute..<(.oneHour) ~= rawValue
+        .oneMinute ..< .oneHour ~= rawValue
     }
 
     public var isHours: Bool {
-        .oneHour..<(.oneDay) ~= rawValue
+        .oneHour ..< .oneDay ~= rawValue
     }
 
     public var isDays: Bool {
-        .oneDay..<(.oneWeek) ~= rawValue
+        .oneDay ..< .oneWeek ~= rawValue
     }
 
     public var isWeeks: Bool {
-        .oneWeek..<(.oneYearFromNow) ~= rawValue
+        .oneWeek ..< .oneYearFromNow ~= rawValue
     }
 
     public var isYears: Bool {

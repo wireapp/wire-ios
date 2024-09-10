@@ -411,7 +411,7 @@ final class CallGridViewController: UIViewController {
               endIndex > startIndex
         else { return }
 
-        let clients = dataSource[startIndex..<endIndex]
+        let clients = dataSource[startIndex ..< endIndex]
             .filter(\.isSharingVideo)
             .map(\.streamId)
 

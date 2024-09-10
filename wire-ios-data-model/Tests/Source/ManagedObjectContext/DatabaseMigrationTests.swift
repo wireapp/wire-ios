@@ -186,7 +186,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
         var processedVersions = Set<String>()
 
-        try fm.contentsOfDirectory(atPath: source.path).filter { URL(fileURLWithPath: $0).pathExtension == "mom" } .forEach { modelFileName in
+        try fm.contentsOfDirectory(atPath: source.path).filter { URL(fileURLWithPath: $0).pathExtension == "mom" }.forEach { modelFileName in
 
             let nameMatches = regex.matches(in: modelFileName, range: NSRange(modelFileName.startIndex..., in: modelFileName)).map {
                 String(modelFileName[Range($0.range, in: modelFileName)!])

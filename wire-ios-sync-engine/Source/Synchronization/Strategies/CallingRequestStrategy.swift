@@ -404,7 +404,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 return
             }
 
-            guard (200...299).contains(response.statusCode) else {
+            guard (200 ... 299).contains(response.statusCode) else {
                 completionHandler(.failure(SFTResponseError.server(status: response.statusCode)))
                 return
             }

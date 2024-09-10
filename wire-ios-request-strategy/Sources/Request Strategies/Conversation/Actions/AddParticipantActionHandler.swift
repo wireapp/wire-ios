@@ -27,7 +27,7 @@ extension ConversationAddParticipantsError {
         case (404, "no-conversation"?): self = .conversationNotFound
         case (403, "too-many-members"?): self = .tooManyMembers
         case (412, "missing-legalhold-consent"?): self = .missingLegalHoldConsent
-        case (400..<499, _): self = .unknown
+        case (400 ..< 499, _): self = .unknown
         default: return nil
         }
     }

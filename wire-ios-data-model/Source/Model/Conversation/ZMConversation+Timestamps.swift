@@ -288,7 +288,7 @@ extension ZMConversation {
         let lowerBound = previousLastReadServerTimestamp ?? lastReadServerTimeStamp ?? .distantPast
         guard lowerBound <= upperBound else { return }
 
-        performMarkAsReadUpdate(in: lowerBound...upperBound)
+        performMarkAsReadUpdate(in: lowerBound ... upperBound)
         pendingLastReadServerTimestamp = nil
         previousLastReadServerTimestamp = nil
         lastReadTimestampUpdateCounter = 0
@@ -380,7 +380,7 @@ extension ZMConversation {
     }
 
     func unreadMessagesIncludingInvisible(until timestamp: Date = .distantFuture) -> [ZMMessage] {
-        let range = (lastReadServerTimeStamp ?? .distantPast)...timestamp
+        let range = (lastReadServerTimeStamp ?? .distantPast) ... timestamp
         return unreadMessagesIncludingInvisible(in: range)
     }
 

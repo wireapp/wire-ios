@@ -30,7 +30,7 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
     override func setUp() {
         mockDateProvider = .init()
-        mockDateProvider.now = .now.addingTimeInterval(-.random(in: 1...10))
+        mockDateProvider.now = .now.addingTimeInterval(-.random(in: 1 ... 10))
         userDefaults = .temporary()
         sut = .init(
             currentDateProvider: mockDateProvider,

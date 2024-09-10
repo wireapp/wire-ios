@@ -99,7 +99,7 @@ class BatchDeleteTests: ZMTBaseTest {
         // given
         let entity = mom.entitiesByName["\(TestEntity.self)"]!
 
-        let ints = Array(0...10)
+        let ints = Array(0 ... 10)
         let objects: [TestEntity] = ints.map { (id: Int) in
             let object = TestEntity(entity: entity, insertInto: self.moc)
             object.identifier = "\(id)"

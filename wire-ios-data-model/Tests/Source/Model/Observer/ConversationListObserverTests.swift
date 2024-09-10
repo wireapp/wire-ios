@@ -1006,7 +1006,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {
-            XCTAssertEqual(first.insertedIndexes, IndexSet(integersIn: 0...1))
+            XCTAssertEqual(first.insertedIndexes, IndexSet(integersIn: 0 ... 1))
             XCTAssertEqual(first.deletedIndexes, IndexSet())
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])

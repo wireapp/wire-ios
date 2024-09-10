@@ -40,8 +40,8 @@ extension Array {
         }
 
         // split
-        let front = self[i..<endIndex]
-        let back = self[startIndex..<i]
+        let front = self[i ..< endIndex]
+        let back = self[startIndex ..< i]
 
         return Array(front + back)
     }
