@@ -185,7 +185,7 @@ extension ConversationListViewController.ViewModel {
     @MainActor
     private func updateAccountImage() {
         Task {
-            // accountImage.image = await AccountImage(userSession, account, miniatureAccountImageFactory) // TODO: fix
+            accountImage.image = await AccountImage(userSession, account, miniatureAccountImageFactory)
             accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
         }
     }

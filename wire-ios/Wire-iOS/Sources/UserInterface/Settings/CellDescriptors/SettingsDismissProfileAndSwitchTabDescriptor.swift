@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireUIBase
+import WireUIFoundation
 
 final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreenCellDescriptorType {
 
@@ -28,7 +28,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
     let title: String
     let identifier: String?
     let icon: StyleKitIcon?
-    let targetTab: MainTabBarController.Tab
+    let targetTab: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>.Tab
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -39,7 +39,7 @@ final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreen
         title: String,
         identifier: String?,
         icon: StyleKitIcon? = nil,
-        targetTab: MainTabBarController.Tab
+        targetTab: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>.Tab
     ) {
         self.title = title
         self.identifier = identifier
