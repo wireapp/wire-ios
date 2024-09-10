@@ -48,7 +48,7 @@ public extension String {
     }
 
     private static func randomHexadecimal() -> String {
-        let value = UInt.random(in: UInt.min...UInt.max)
+        let value = UInt32.random(in: UInt32.min...UInt32.max)
         return String(value, radix: 16)
     }
     #endif

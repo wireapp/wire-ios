@@ -68,7 +68,7 @@ final class StringRandomTests: XCTestCase {
             let string = String.randomClientIdentifier()
 
             // then
-            XCTAssertNotNil(UInt(string, radix: 16), "\(string) is not hexadecimal")
+            XCTAssertNotNil(UInt32(string, radix: 16), "\(string) is not hexadecimal")
         }
     }
 
@@ -95,7 +95,7 @@ final class StringRandomTests: XCTestCase {
     func test_randomRemoteIdentifier_withDefaultLength() {
         // given
         // when
-        let string = String.randomClientIdentifier()
+        let string = String.randomRemoteIdentifier()
 
         // then
         XCTAssertEqual(string.count, 16)
