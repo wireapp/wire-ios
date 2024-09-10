@@ -69,8 +69,9 @@ open class PushNotificationStatus: NSObject {
     /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
 
     public func fetch(eventId: UUID, completionHandler: @escaping FetchCompletion) {
+        let logAttributes: LogAttributes = [LogAttributesKey.eventId: eventId.safeForLoggingDescription].merging(.safePublic, uniquingKeysWith: { _, new in new })
         guard eventId.isType1UUID else {
-            zmLog.error("Attempt to fetch event id not conforming to UUID type1: \(eventId)")
+            WireLogger.eventProcessing.error("Attempt to fetch event id not conforming to UUID type1", attributes: logAttributes)
             completionHandler(.failure(.invalidEventID))
             return
         }
@@ -79,12 +80,12 @@ open class PushNotificationStatus: NSObject {
             lastEventId: lastEventIDRepository.fetchLastEventID(),
             eventId: eventId
         ) {
-            Logging.eventProcessing.info("Already fetched event with [\(eventId)]")
+            WireLogger.eventProcessing.info("Already fetched event", attributes: logAttributes)
             completionHandler(.failure(.alreadyFetchedEvent))
             return
         }
 
-        Logging.eventProcessing.info("Scheduling to fetch events notified by push [\(eventId)]")
+        WireLogger.eventProcessing.info("Scheduling to fetch events notified by push", attributes: logAttributes)
 
         eventIdRanking.add(eventId)
         completionHandlers[eventId] = completionHandler
@@ -107,7 +108,7 @@ open class PushNotificationStatus: NSObject {
         highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
-        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.uuidString), attributes: .safePublic)
+        WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.safeForLoggingDescription), attributes: .safePublic)
 
         guard finished else { return }
 

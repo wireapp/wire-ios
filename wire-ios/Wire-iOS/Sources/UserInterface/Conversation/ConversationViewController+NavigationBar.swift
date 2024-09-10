@@ -111,24 +111,34 @@ extension ConversationViewController {
         return UIBarButtonItem(customView: button)
     }
 
-    var backButton: UIBarButtonItem {
-        let hasUnreadInOtherConversations = self.conversation.hasUnreadMessagesInOtherConversations
-        let arrowIcon: StyleKitIcon = view.isRightToLeft
-        ? (hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow)
-        : (hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow)
+    func createBackButton(hasUnread: Bool) -> UIBarButtonItem {
+        typealias UnreadMessages = L10n.Localizable.ConversationList.Voiceover.UnreadMessages
 
-        let icon: StyleKitIcon = (self.parent?.wr_splitViewController?.layoutSize == .compact) ? arrowIcon : .hamburger
+        let icon = backButtonIcon(hasUnreadInOtherConversations: hasUnread)
         let action = #selector(ConversationViewController.onBackButtonPressed(_:))
+
         let button = UIBarButtonItem(icon: icon, target: self, action: action)
         button.accessibilityIdentifier = "ConversationBackButton"
         button.accessibilityLabel = L10n.Accessibility.Conversation.BackButton.description
-
-        if hasUnreadInOtherConversations {
-            button.tintColor = UIColor.accent()
-            button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
-        }
+        button.tintColor = hasUnread ? UIColor.accent() : nil
+        button.accessibilityValue = hasUnread ? UnreadMessages.hint : nil
 
         return button
+    }
+
+    private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
+        var arrowIcon: StyleKitIcon
+
+        if view.isRightToLeft {
+            arrowIcon = hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+        } else {
+            arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+        }
+
+        let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact
+        let icon: StyleKitIcon = isLayoutSizeCompact ? arrowIcon : .hamburger
+
+        return icon
     }
 
     var shouldShowCollectionsButton: Bool {
@@ -168,11 +178,11 @@ extension ConversationViewController {
         }
     }
 
-    func leftNavigationItems(forConversation conversation: ZMConversation) -> [UIBarButtonItem] {
+    func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
         if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
-            items.append(backButton)
+            items.append(createBackButton(hasUnread: hasUnread))
         }
 
         if shouldShowCollectionsButton {
@@ -188,12 +198,22 @@ extension ConversationViewController {
 
     /// Update left navigation bar items
     func updateLeftNavigationBarItems() {
-        navigationItem.leftBarButtonItems = leftNavigationItems(forConversation: conversation)
+        updateLeftNavigationBarItemsTask?.cancel()
+        updateLeftNavigationBarItemsTask = Task {
+            if Task.isCancelled { return }
+
+            let hasUnread = self.conversation.hasUnreadMessagesInOtherConversations
+            if Task.isCancelled { return }
+
+            await MainActor.run {
+                navigationItem.leftBarButtonItems = leftNavigationItems(hasUnread: hasUnread)
+            }
+        }
     }
 
     @objc
     func voiceCallItemTapped(_ sender: UIBarButtonItem) {
-        endEditing()
+        view.window?.endEditing(true)
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
             startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
         }
@@ -203,7 +223,7 @@ extension ConversationViewController {
 
     @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
         let checker = PrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
-            endEditing()
+            view.window?.endEditing(true)
             startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
         }
 
@@ -222,14 +242,10 @@ extension ConversationViewController {
 }
 
 extension ConversationViewController: CollectionsViewControllerDelegate {
+
     func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
+
         switch action {
-        case .forward:
-            viewController.dismissIfNeeded(animated: true) {
-                self.contentViewController.scroll(to: message) { cell in
-                    self.contentViewController.showForwardFor(message: message, from: cell)
-                }
-            }
 
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {

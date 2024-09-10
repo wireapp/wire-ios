@@ -16,18 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 class CallParticipantDetailsViewTests: XCTestCase {
 
-    var sut: CallParticipantDetailsView!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: CallParticipantDetailsView!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = .init()
         sut = CallParticipantDetailsView()
         sut.name = "John Doe"
         sut.frame = CGRect(x: 0, y: 0, width: 95, height: 24)
@@ -35,6 +36,7 @@ class CallParticipantDetailsViewTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -42,25 +44,25 @@ class CallParticipantDetailsViewTests: XCTestCase {
     func testUnmutedState() {
         sut.microphoneIconStyle = MicrophoneIconStyle(state: .unmuted, shouldPulse: false)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testMutedState() {
         sut.microphoneIconStyle = MicrophoneIconStyle(state: .muted, shouldPulse: false)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testPulsingState() {
         sut.microphoneIconStyle = MicrophoneIconStyle(state: .unmuted, shouldPulse: true)
 
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testConnectionIssue() {
         sut.callState = .unconnectedButMayConnect
         sut.name = "John Doe The Second"
         sut.frame = CGRect(x: 0, y: 0, width: 195, height: 24)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

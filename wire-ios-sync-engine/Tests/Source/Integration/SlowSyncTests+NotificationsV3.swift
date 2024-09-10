@@ -18,26 +18,20 @@
 
 import WireMockTransport
 import WireTesting
+import WireTransport
 import XCTest
 
 @testable import WireSyncEngine
 
 final class SlowSyncTests_NotificationsV3: IntegrationTest {
 
-    override func _setUp() {
-        setCurrentAPIVersion(.v3)
-        super._setUp()
-    }
-
     override func setUp() {
         super.setUp()
+
+        BackendInfo.apiVersion = .v3
+
         createSelfUserAndConversation()
         createExtraUsersAndConversations()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-        resetCurrentAPIVersion()
     }
 
     // MARK: - Slow sync with error

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,12 +25,14 @@ final class ConversationReactionMessageTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: MessageReactionsCell!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: MessageReactionsCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = MessageReactionsCell()
         sut.translatesAutoresizingMaskIntoConstraints = false
         sut.widthAnchor.constraint(equalToConstant: 375).isActive = true
@@ -41,6 +43,7 @@ final class ConversationReactionMessageTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -55,7 +58,7 @@ final class ConversationReactionMessageTests: XCTestCase {
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItConfiguresWithOtherReactions() {
@@ -102,7 +105,7 @@ final class ConversationReactionMessageTests: XCTestCase {
         sut.configure(with: configuration, animated: false)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

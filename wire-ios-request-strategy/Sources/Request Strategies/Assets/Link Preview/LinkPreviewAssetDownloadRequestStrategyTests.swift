@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
+import WireTransport
 import XCTest
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
@@ -29,7 +30,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -43,7 +44,6 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
             self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
         }
-
         apiVersion = .v0
     }
 
@@ -55,7 +55,6 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             try? syncMOC.zm_fileAssetCache.wipeCaches()
         }
         try? uiMOC.zm_fileAssetCache.wipeCaches()
-        apiVersion = nil
         super.tearDown()
     }
 

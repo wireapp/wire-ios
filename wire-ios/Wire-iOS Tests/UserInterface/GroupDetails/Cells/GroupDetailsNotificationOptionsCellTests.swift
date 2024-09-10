@@ -16,23 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
-    var cell: GroupDetailsNotificationOptionsCell!
-    var conversation: ZMConversation!
+    private var snapshotHelper: SnapshotHelper!
+    private var cell: GroupDetailsNotificationOptionsCell!
+    private var conversation: ZMConversation!
 
     override func setUp() {
         selfUserInTeam = true
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         cell = GroupDetailsNotificationOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         cell.overrideUserInterfaceStyle = .light
         conversation = self.createGroupConversation()
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         cell = nil
         conversation = nil
         super.tearDown()
@@ -40,23 +45,23 @@ final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysCell_NoMuted() {
         update(.none)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_NonMentionsMuted() {
         update(.regular)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_AllMuted() {
         update(.all)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     func testThatItDisplaysCell_Dark() {
         cell.overrideUserInterfaceStyle = .dark
         update(.all)
-        verify(matching: cell)
+        snapshotHelper.verify(matching: cell)
     }
 
     private func update(_ newValue: MutedMessageTypes) {

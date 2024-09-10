@@ -58,7 +58,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockMLSService.joinGroupWith_MockMethod = { _ in }
         mockFeatureRepository.fetchMLSMigration_MockValue = .init()
 
-        BackendInfo.storage = .temporary()
         DeveloperFlag.storage = .temporary()
     }
 
@@ -70,7 +69,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         mockFeatureRepository = nil
         mockActionsProvider = nil
         mockMLSService = nil
-        BackendInfo.storage = .standard
         DeveloperFlag.storage = .standard
         super.tearDown()
     }

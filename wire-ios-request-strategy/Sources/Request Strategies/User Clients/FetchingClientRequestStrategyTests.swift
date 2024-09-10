@@ -20,6 +20,7 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 import WireTesting
+import WireTransport
 
 @testable import WireRequestStrategy
 
@@ -30,7 +31,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -40,9 +41,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .online
         sut = FetchingClientRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus)
         NotificationCenter.default.addObserver(self, selector: #selector(FetchClientRequestStrategyTests.didReceiveAuthenticationNotification(_:)), name: NSNotification.Name(rawValue: "ZMUserSessionAuthenticationNotificationName"), object: nil)
-        apiVersion = .v0
 
-        BackendInfo.storage = UserDefaults(suiteName: UUID().uuidString)!
         BackendInfo.apiVersion = .v0
         BackendInfo.domain = "local.com"
     }
@@ -52,8 +51,6 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = nil
         sut = nil
         NotificationCenter.default.removeObserver(self)
-        apiVersion = nil
-        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -586,9 +583,8 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
-            // swiftlint:disable todo_requires_jira_link
+            // swiftlint:disable:next todo_requires_jira_link
             // TODO: [John] use flag here
-            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.syncMOC.zm_cryptKeyStore.lastPreKey()) // just a bogus key is OK
             }

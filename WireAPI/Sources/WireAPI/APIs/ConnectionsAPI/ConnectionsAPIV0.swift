@@ -24,9 +24,9 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
         static let batchSize = 500
     }
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -53,8 +53,8 @@ class ConnectionsAPIV0: ConnectionsAPI, VersionedAPI {
             let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: PaginatedConnectionListV0.self)
-                .failure(code: 400, error: ConnectionsAPIError.invalidBody)
+                .success(code: .ok, type: PaginatedConnectionListV0.self)
+                .failure(code: .badRequest, error: ConnectionsAPIError.invalidBody)
                 .parse(response)
         }
 

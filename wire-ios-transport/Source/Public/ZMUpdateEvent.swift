@@ -216,6 +216,10 @@ open class ZMUpdateEvent: NSObject {
     open var source: ZMUpdateEventSource
     open var uuid: UUID?
 
+    // A hash of the event content. This is used to keep track of events
+    // that we have already processed.
+    public var contentHash: Int64?
+
     var debugInformationArray: [String] = []
     /// True if the event will not appear in the notification stream
     open var isTransient: Bool
@@ -267,7 +271,7 @@ open class ZMUpdateEvent: NSObject {
     class func eventsArray(with uuid: UUID, payloadArray: [Any]?, transient: Bool, source: ZMUpdateEventSource, pushStartingAt sourceThreshold: UUID?) -> [ZMUpdateEvent] {
 
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
-            WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventId: uuid.transportString().readableHash])
+            WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventId: uuid.transportString().redactedAndTruncated()], .safePublic)
             return []
         }
 

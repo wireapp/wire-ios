@@ -31,7 +31,10 @@ class CallQualityController: NSObject {
     fileprivate var answeredCalls: [UUID: Date] = [:]
     fileprivate var token: Any?
 
-    override init() {
+    private let mainWindow: UIWindow
+
+    init(mainWindow: UIWindow) {
+        self.mainWindow = mainWindow
         super.init()
 
         if let userSession = ZMUserSession.shared() {
@@ -99,7 +102,7 @@ class CallQualityController: NSObject {
             // handled in CallController, ignore
             break
         default:
-            handleCallFailure()
+            router?.presentCallFailureDebugAlert(mainWindow: mainWindow)
         }
 
         answeredCalls[conversation.remoteIdentifier!] = nil
@@ -123,17 +126,6 @@ class CallQualityController: NSObject {
         router?.presentCallQualitySurvey(with: callDuration)
         #endif
     }
-
-    /// Presents the debug log prompt after a call failure.
-    private func handleCallFailure() {
-        router?.presentCallFailureDebugAlert()
-    }
-
-    /// Presents the debug log prompt after a user quality rejection.
-    private func handleCallQualityRejection() {
-        router?.presentCallQualityRejection()
-    }
-
 }
 
 // MARK: - Call State
@@ -163,10 +155,14 @@ extension CallQualityController: WireCallCenterCallStateObserver {
 extension CallQualityController: CallQualityViewControllerDelegate {
 
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {
-        router?.dismissCallQualitySurvey(completion: { [weak self] in
-            guard self?.callQualityRejectionRange.contains(score) ?? false else { return }
-            self?.handleCallQualityRejection()
-        })
+        router?.dismissCallQualitySurvey { [weak self] in
+            guard
+                self?.callQualityRejectionRange.contains(score) ?? false,
+                let mainWindow = self?.mainWindow
+            else { return }
+
+            self?.router?.presentCallQualityRejection(mainWindow: mainWindow)
+        }
 
         CallQualityController.updateLastSurveyDate(Date())
         Analytics.shared.tagCallQualityReview(.answered(score: score, duration: controller.callDuration))

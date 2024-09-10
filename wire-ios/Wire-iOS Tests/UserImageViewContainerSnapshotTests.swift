@@ -16,22 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class UserImageViewContainerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: UserImageViewContainer!
-    var mockUser: MockUserType!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: UserImageViewContainer!
+    private var mockUser: MockUserType!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         mockUser = SwiftMockLoader.mockUsers().first
         mockUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").imageData
         mockUser.mediumProfileImageCacheKey = "test"
@@ -40,6 +42,7 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockUser = nil
 
@@ -70,12 +73,15 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testForNoUserImageWithoutSession() {
+        // GIVEN && WHEN
         setupSut(userSession: nil)
 
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testForWithUserImage() {
+        // GIVEN && WHEN
         setupSut(userSession: UserSessionMock(mockUser: mockUser))
 
         XCTAssertTrue(
@@ -83,6 +89,8 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
                 [MediaAssetCache.defaultImageCache.dispatchGroup]
             )
         )
-        verify(matching: sut)
+
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 }

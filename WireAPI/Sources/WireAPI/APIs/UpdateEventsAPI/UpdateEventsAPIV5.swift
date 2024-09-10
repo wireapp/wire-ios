@@ -46,8 +46,8 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
 
         // Change: 400 error removed.
         return try ResponseParser()
-            .success(code: 200, type: UpdateEventEnvelopeV0.self)
-            .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
+            .success(code: .ok, type: UpdateEventEnvelopeV0.self)
+            .failure(code: .notFound, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
     }
 
@@ -81,8 +81,8 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
 
             // Change: 400 error removed.
             return try ResponseParser()
-                .success(code: 200, type: UpdateEventListResponseV0.self)
-                .failure(code: 404, error: UpdateEventsAPIError.notFound)
+                .success(code: .ok, type: UpdateEventListResponseV0.self)
+                .failure(code: .notFound, error: UpdateEventsAPIError.notFound)
                 .parse(response)
         }
     }

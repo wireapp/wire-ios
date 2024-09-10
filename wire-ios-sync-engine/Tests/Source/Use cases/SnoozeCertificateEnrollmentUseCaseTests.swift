@@ -17,10 +17,11 @@
 //
 
 import Foundation
+import WireTesting
+
 @testable import WireDataModelSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import WireTesting
 
 final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 

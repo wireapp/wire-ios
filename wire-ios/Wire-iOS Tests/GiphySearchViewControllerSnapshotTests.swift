@@ -16,40 +16,58 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDesign
+import WireTestingPackage
 import XCTest
 import Ziphy
 
 @testable import Wire
 
 final class GiphySearchViewControllerSnapshotTests: XCTestCase {
-    var sut: GiphySearchViewController!
 
-    var mockConversation: MockConversation!
-    var mockNavigationController: UINavigationController!
+    // MARK: - Properties
 
-    var client: ZiphyClient!
-    var requester: MockURLSession!
-    var resultsController: ZiphySearchResultsController!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: GiphySearchViewController!
+
+    private var mockConversation: MockConversation!
+    private var mockNavigationController: UINavigationController!
+
+    private var client: ZiphyClient!
+    private var requester: MockURLSession!
+    private var resultsController: ZiphySearchResultsController!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation.oneOnOneConversation()
         requester = MockURLSession(cache: nil)
-        client = ZiphyClient(host: "localhost", requester: requester, downloadSession: requester)
+        client = ZiphyClient(
+            host: "localhost",
+            requester: requester,
+            downloadSession: requester
+        )
         resultsController = ZiphySearchResultsController(client: client, pageSize: 5)
 
         let searchTerm: String = "apple"
-        sut = GiphySearchViewController(searchTerm: searchTerm, conversation: (mockConversation as Any) as! ZMConversation, searchResultsController: resultsController)
-        sut.searchBar.placeholderLabel.isHidden = true
-        mockNavigationController = sut.wrapInsideNavigationController()
+        sut = GiphySearchViewController(
+            searchTerm: searchTerm,
+            conversation: (mockConversation as Any) as! ZMConversation,
+            searchResultsController: resultsController
+        )
+
+        mockNavigationController = UINavigationController(rootViewController: sut)
+        mockNavigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         sut.collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         mockConversation = nil
         mockNavigationController = nil
@@ -60,7 +78,10 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testEmptySearchScreenWithKeyword() {
-        verify(matching: mockNavigationController.view)
+        snapshotHelper.verify(matching: mockNavigationController.view)
     }
+
 }

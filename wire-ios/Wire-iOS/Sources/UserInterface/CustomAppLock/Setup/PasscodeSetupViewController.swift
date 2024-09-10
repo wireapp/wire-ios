@@ -128,7 +128,7 @@ final class PasscodeSetupViewController: UIViewController {
         self.context = context
 
         self.useCompactLayout = useCompactLayout ??
-        (AppDelegate.shared.window!.frame.height <= CGFloat.iPhone4Inch.height)
+        (AppDelegate.shared.mainWindow.frame.height <= CGFloat.iPhone4Inch.height)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -190,8 +190,8 @@ final class PasscodeSetupViewController: UIViewController {
             // content view
             widthConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
-            contentView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+            contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             contentView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: contentPadding),
             contentView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -contentPadding),
@@ -250,21 +250,14 @@ final class PasscodeSetupViewController: UIViewController {
     // MARK: - close button
 
     lazy var closeItem: UIBarButtonItem = {
-        let closeItem = UIBarButtonItem.createCloseItem()
-        closeItem.accessibilityIdentifier = "closeButton"
 
-        closeItem.target = self
-        closeItem.action = #selector(PasscodeSetupViewController.closeTapped)
+        let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+            self?.appLockSetupViewControllerDismissed()
+        }, accessibilityLabel: L10n.Localizable.General.close)
 
         return closeItem
     }()
-
-    @objc
-    private func closeTapped() {
-        dismiss(animated: true)
-
-        appLockSetupViewControllerDismissed()
-    }
 
     private func appLockSetupViewControllerDismissed() {
         callback?(false)

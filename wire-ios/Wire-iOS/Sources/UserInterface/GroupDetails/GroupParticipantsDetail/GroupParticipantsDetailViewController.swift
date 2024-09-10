@@ -87,6 +87,12 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Participants.All.title)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
+
         collectionViewController.collectionView?.reloadData()
     }
 
@@ -109,9 +115,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
         collectionView.accessibilityIdentifier = "group_details.full_list"
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Participants.All.title.capitalized)
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
     }
 
     private func createConstraints() {

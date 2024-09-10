@@ -46,8 +46,6 @@ final class ShareContactsViewController: UIViewController {
 
     weak var delegate: ShareContactsViewControllerDelegate?
 
-    private var uploadAddressBookImmediately = false
-    private var backgroundBlurDisabled = false
     private var notNowButtonHidden = false
     private(set) var showingAddressBookAccessDeniedViewController = false
 
@@ -186,7 +184,7 @@ final class ShareContactsViewController: UIViewController {
     // MARK: - AddressBook Access Denied ViewController
 
     func displayContactsAccessDeniedMessage(animated: Bool) {
-        endEditing()
+        view.window?.endEditing(true)
 
         showingAddressBookAccessDeniedViewController = true
 

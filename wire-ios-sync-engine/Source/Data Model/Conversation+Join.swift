@@ -55,14 +55,14 @@ extension ZMConversation {
     ///   - key: stable conversation identifier
     ///   - code: conversation code
     ///   - transportSession: session to handle requests
-    ///   - eventProcessor: update event processor
+    ///   - eventProcessor: Conversation event processor
     ///   - contextProvider: context provider
     ///   - completion: called on the main thread when the user joins the conversation or when it fails. If the completion is a success, it is run in the main thread
     public static func join(key: String,
                             code: String,
                             password: String?,
                             transportSession: TransportSessionType,
-                            eventProcessor: UpdateEventProcessor,
+                            eventProcessor: ConversationEventProcessorProtocol,
                             contextProvider: ContextProvider,
                             completion: @escaping (Result<ZMConversation, Error>) -> Void) {
 
@@ -76,15 +76,14 @@ extension ZMConversation {
             switch response.httpStatus {
             case 200:
                 guard let payload = response.payload,
-                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil),
+                      // uuid set in order to pass the stored events and be processed
+                      let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID()),
                       let conversationString = event.payload["conversation"] as? String else {
                     return completion(.failure(ConversationJoinError.unknown))
                 }
 
                 Task {
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
-                    try? await eventProcessor.processEvents([event])
+                    await eventProcessor.processConversationEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),
                               let conversation = ZMConversation.fetch(with: conversationId, in: viewContext)
@@ -100,8 +99,8 @@ extension ZMConversation {
                 /// The user is already a participant in the conversation
             case 204:
                 // If we get to this case, then we need to re-sync local conversations
+                // swiftlint:disable:next todo_requires_jira_link
                 // TODO: implement re-syncing conversations
-                // swiftlint:enable todo_requires_jira_link
                 Logging.network.debug("Local conversations should be re-synced with remote ones")
                 return completion(.failure(ConversationJoinError.unknown))
 

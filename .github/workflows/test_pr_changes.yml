@@ -32,6 +32,9 @@ jobs:
             wire-reusable-ui-components:
               - 'WireUI/Sources/WireReusableUIComponents/**'
               - 'WireUI/Tests/WireReusableUIComponentsTests/**'
+            wire-ui-foundation:
+              - 'WireUI/Sources/WireUIFoundation/**'
+              - 'WireUI/Tests/WireUIFoundationTests/**'
             wire-design:
               - 'WireUI/Sources/WireDesign/**'
               - 'WireUI/Tests/WireDesignTests/**'
@@ -45,8 +48,18 @@ jobs:
               - 'wire-ios-request-strategy/**'
             wire-api:
               - 'WireAPI/**'
+            wire-analytics:
+              - 'WireAnalytics/Sources/WireAnalytics/**'
+            wire-datadog:
+              - 'WireAnalytics/Sources/WireDatadog/**'
+            wire-domain-project:
+              - 'WireDomain/Project/**'
+              - 'WireDomain/Sources/WireDomain/**'
+              - 'WireDomain/Sources/WireDomainSupport/**'
             wire-domain:
-              - 'WireDomain/**'
+              - 'WireDomain/*.*'
+              - 'WireDomain/Sources/Package/**'
+              - 'WireDomain/Sources/PackageSupport/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:
@@ -65,8 +78,12 @@ jobs:
               - 'wire-ios-utilities/**'
             wire-ios-testing:
               - 'wire-ios-testing/**'
+            wire-foundation:
+              - 'WireFoundation/**'
             wire-ios-system:
-              - 'wire-ios-system/**'  
+              - 'wire-ios-system/**'
+            scripts:
+              - 'scripts/**'
             carthage:
               - 'Cartfile.resolved'
 

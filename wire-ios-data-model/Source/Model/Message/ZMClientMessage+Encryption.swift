@@ -840,7 +840,7 @@ extension GenericMessage {
 
         guard await !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
-            let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
+            let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
             WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(await client.loggedId)")
             return await client.proteusClientEntry(with: data)
         }
@@ -851,7 +851,7 @@ extension GenericMessage {
             guard let data = encryptedData else { return nil }
             return await client.proteusClientEntry(with: data)
         } catch {
-            WireLogger.proteus.error("failed to encrypt payload for a client: \(String(describing: error))")
+            // this is handled by message sender, it's just that we don't throw the errors
             return nil
         }
     }
@@ -866,7 +866,7 @@ extension GenericMessage {
 
            guard !client.failedToEstablishSession else {
                // If the session is corrupted, we will send a special payload.
-               let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
+               let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
                WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: " + String(describing: client.remoteIdentifier))
                return Proteus_ClientEntry(withClientId: client.clientId, data: data)
            }

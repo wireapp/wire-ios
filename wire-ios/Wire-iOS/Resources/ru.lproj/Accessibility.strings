@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -164,8 +164,6 @@
 "supportSettings.backButton.description" = "Вернуться в раздел Поддержка";
 
 "aboutSettings.backButton.description" = "Вернуться в раздел О программе";
-"licenseInformationSettings.backButton.description" = "Вернуться в раздел Информация о лицензии";
-"licenseDetailsSettings.backButton.description" = "Вернуться в раздел Сведения о лицензии";
 
 "developerOptionsSettings.backButton.description" = "Вернуться в раздел Параметры разработчика";
 
@@ -262,14 +260,6 @@
 "calling.headerBar.description" = "Свернуть вид вызова";
 "calling.status.connecting" = "Подключение";
 
-"tabBar.contacts.description" = "Контакты";
-"tabBar.contacts.hint" = "Нажмите дважды, чтобы найти пользователей и открыть список контактов";
-"tabBar.conversations.description" = "Список недавних бесед";
-"tabBar.conversations.hint" = "Нажмите дважды, чтобы открыть список последних бесед";
-"tabBar.folders.description" = "Список бесед, организованных по папкам";
-"tabBar.folders.hint" = "Нажмите дважды, чтобы открыть список бесед, организованных по папкам";
-"tabBar.archived.description" = "Архивировать";
-"tabBar.archived.hint" = "Нажмите дважды, чтобы открыть список архивных бесед";
 "tabBar.item.value" = "Выбрано";
 
 "landing.loginEnterpriseButton.description" = "Войти при помощи SSO";
@@ -284,3 +274,28 @@
 // MARK: - Reactions
 "reactionPicker.dismissButton.description" = "Отключить клавиатуру смайликов";
 "reactionPicker.searchFieldPlaceholder.description" = "Поиск смайликов";
+
+// MARK: - Create Secure Guest Link with Password
+
+"createSecureGuestLink.closeButton.description" = "Аннулировать защищенную гостевую ссылку";
+
+"createSecureGuestLink.GeneratePasswordButton.description" = "Сгенерировать пароль";
+"createSecureGuestLink.GeneratePasswordButton.hint" = "Нажмите, чтобы сгенерировать случайный пароль";
+
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.description" = "Пароль гостевой ссылки";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.hint" = "Введите новый пароль для защищенной гостевой ссылки";
+"createSecureGuestLink.securedGuestLinkPasswordTextfield.announcement" = "Ошибка проверки пароля. Убедитесь, что пароль соответствует требованиям.";
+
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.description" = "Подтвердите пароль гостевой ссылки";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.hint" = "Повторите пароль для подтверждения";
+"createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Ошибка проверки пароля. Убедитесь, что пароль соответствует указанному выше";
+
+"createSecureGuestLink.CreateLinkButton.description" = "Создать гостевую ссылку";
+"createSecureGuestLink.CreateLinkButton.hint" = "Нажмите для создания защищенной гостевой ссылки";
+
+// MARK: - Search Gifs
+
+"searchGifs.searchBar.accessibilityLabel" = "Введите текст для поиска GIF";
+"searchGifs.norResultsLabel.description" = "GIF не найдены";
+"searchGifs.gifItem.accessibilityHint" = "Нажмите для выбора GIF";
+"searchGifs.gifItems_loaded.announcement" = "Загружено %@ новых GIF";

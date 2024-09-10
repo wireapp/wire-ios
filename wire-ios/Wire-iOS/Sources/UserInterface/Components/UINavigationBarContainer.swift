@@ -21,7 +21,6 @@ import WireDesign
 
 final class UINavigationBarContainer: UIViewController {
 
-    let landscapeTopMargin: CGFloat = 20.0
     let landscapeNavbarHeight: CGFloat = 30.0
     let portraitNavbarHeight: CGFloat = 44.0
 
@@ -50,7 +49,7 @@ final class UINavigationBarContainer: UIViewController {
           view.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor)
         ])
 
-        navigationBar.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
+        navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
     }
 
     override func viewDidLayoutSubviews() {

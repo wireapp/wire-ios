@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireTransport
 
 extension SearchTests: UserObserving {
 
@@ -32,6 +33,10 @@ final class SearchTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()
+
+        BackendInfo.domain = "example.com"
+        BackendInfo.apiVersion = .v0
+        BackendInfo.isFederationEnabled = false
 
         createSelfUserAndConversation()
         createExtraUsersAndConversations()

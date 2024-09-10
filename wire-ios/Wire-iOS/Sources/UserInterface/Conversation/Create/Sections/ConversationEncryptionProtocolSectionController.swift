@@ -22,7 +22,7 @@ final class ConversationEncryptionProtocolSectionController: ConversationCreateS
 
     typealias Cell = ConversationCreateEncryptionProtocolCell
 
-    var tapAction: (() -> Void)?
+    var tapAction: (_ sender: UIView) -> Void = { _ in }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
@@ -43,6 +43,7 @@ extension ConversationEncryptionProtocolSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        tapAction?()
+        let cell = collectionView.cellForItem(at: indexPath)!
+        tapAction(cell)
     }
 }

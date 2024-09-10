@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.118.0
+
+* added `shouldExpire` attribute on the Messaging entity
+
 ### 2.117.0
 
 * added `ciphersuite` attribute on the Conversation entity
@@ -11,6 +15,8 @@ As it is hard to spot changes from version to version of database models (.xcdat
 ### 2.116.0
 
 * added `isPendingInitialFetch` attribute on the Conversation entity
+
+PostAction to fill IsPendingInitialFetch attribute to false (in order to fix system messages - https://github.com/wireapp/wire-ios/pull/1266)
 
 ### 2.115.0
 
@@ -21,6 +27,8 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * added `mlsVerificationStatus` attribute of type Integer 16, default value 0
 * added `supportedProtocols` attribute of type `Transformable` with valueTransformerName `ExtendedSecureUnarchiveFromData` on `User`
 * added one-to-one relationship (optional nullify) `User.oneOnOneConversation` <-> `Conversation.oneOnOneUser` (optional nullify)
+
+PostAction to migrate oneOneOneConversations
 
 ### 2.113.0
 
@@ -41,7 +49,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * make `conversation` relationship of `ParticipantRole` optional 
 * make `user` relationship of `ParticipantRole` optional
 
-#### heavy weight migration MappingModel_2.110-2.111
+~~heavy weight migration MappingModel_2.110-2.111~~ - preAction to fill primaryKey
 
 * add custom policy TeamToTeam: `WireDataModel.DuplicateTeamsMigrationPolicy`
 * add custom policy ConversationToConversation: `WireDataModel.DuplicateObjectsMigrationPolicy` 
@@ -54,9 +62,13 @@ As it is hard to spot changes from version to version of database models (.xcdat
  
 ## ZMEventModel
 
-### 5.0
+### 6.0
 
 * add new `StoredUpdateEventEnvelope` entity to persist new `WireAPI.UpdateEventEnvelope` instances. This replaces `StoredUpdateEvent` which can be deleted after some time.
+
+### 5.0
+
+* add new eventHash attribute of type Int64 on `StoredUpdateEvent`
 
 ### 4.0
 

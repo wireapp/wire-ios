@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireSyncEngine
 import WireTesting
+import WireTransport
+import XCTest
+
+@testable import WireSyncEngine
 
 public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
@@ -42,7 +44,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
             userPropertyValidator: UserPropertyValidator()
         )
         sut.groupQueue.add(dispatchGroup)
-        setCurrentAPIVersion(.v0)
     }
 
     public override func tearDown() {
@@ -51,7 +52,6 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         transportSession = nil
         mockDelegate = nil
         reachability = nil
-        resetCurrentAPIVersion()
 
         super.tearDown()
     }
@@ -86,7 +86,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     func testThatItLookupReturnsNoAPiVersionError() {
         // given
-        setCurrentAPIVersion(nil)
+        BackendInfo.apiVersion = nil
         let domain = "example com"
 
         let expectation = self.customExpectation(description: "should get an error")

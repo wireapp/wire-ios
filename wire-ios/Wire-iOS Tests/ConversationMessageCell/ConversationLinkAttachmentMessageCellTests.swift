@@ -16,20 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    var mockThumbnail: MockImageResource!
-    var sut: ConversationLinkAttachmentCell!
+    private var snapshotHelper: SnapshotHelper!
+    private var mockThumbnail: MockImageResource!
+    private var sut: ConversationLinkAttachmentCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         let imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         mockThumbnail = MockImageResource()
         mockThumbnail.imageData = imageData.pngData()!
@@ -39,6 +43,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     override func tearDown() {
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
+        snapshotHelper = nil
         sut = nil
         mockThumbnail = nil
         super.tearDown()
@@ -58,9 +63,11 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     func testThatItRendersYouTubeLinkAttachment() {
         // GIVEN
-        let attachment = LinkAttachment(type: .youTubeVideo, title: "Lagar mat med Fernando Di Luca",
+        let attachment = LinkAttachment(type: .youTubeVideo,
+                                        title: "Lagar mat med Fernando Di Luca",
                                         permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
-                                        thumbnails: [], originalRange: NSRange(location: 0, length: 43))
+                                        thumbnails: [],
+                                        originalRange: NSRange(location: 0, length: 43))
 
         mockThumbnail.cacheIdentifier = #function
         let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
@@ -69,7 +76,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         sut = setUpCell(configuration: configuration)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersSoundCloudSongAttachment() {
@@ -85,7 +92,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         sut = setUpCell(configuration: configuration)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersSoundCloudPlaylistAttachment() {
@@ -101,7 +108,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         sut = setUpCell(configuration: configuration)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

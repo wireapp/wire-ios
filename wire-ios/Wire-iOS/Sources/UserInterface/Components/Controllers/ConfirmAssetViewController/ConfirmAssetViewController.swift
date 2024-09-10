@@ -290,7 +290,7 @@ final class ConfirmAssetViewController: UIViewController {
 
             // topPanel
             topPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            topPanel.topAnchor.constraint(equalTo: safeTopAnchor),
+            topPanel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             topPanel.heightAnchor.constraint(greaterThanOrEqualToConstant: 44),
 
@@ -303,7 +303,7 @@ final class ConfirmAssetViewController: UIViewController {
             // bottomPanel
             bottomPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: margin),
             bottomPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -margin),
-            bottomPanel.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -margin),
+            bottomPanel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -margin),
 
             // confirmButtonsStack
             confirmButtonsStack.leadingAnchor.constraint(equalTo: bottomPanel.leadingAnchor),

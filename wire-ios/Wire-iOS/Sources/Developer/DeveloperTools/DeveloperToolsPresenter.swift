@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 
 final class DeveloperToolsPresenter: NSObject {
@@ -36,13 +35,13 @@ final class DeveloperToolsPresenter: NSObject {
                         self?.displayedDeveloperTools = false
                     }
                 ))
-            }
+            }.navigationViewStyle(.stack)
         )
         developerTools.presentationController?.delegate = self
 
-        topMostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
+        topMostViewController()?.present(developerTools, animated: true) { [weak self] in
             self?.displayedDeveloperTools = true
-        })
+        }
     }
 }
 

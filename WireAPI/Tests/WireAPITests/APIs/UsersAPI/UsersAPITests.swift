@@ -23,7 +23,7 @@ import XCTest
 
 final class UsersAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<UsersAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any UsersAPI>!
 
     // MARK: - Setup
 
@@ -61,7 +61,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUserForID_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserSuccessResponseV0"
         )
 
@@ -80,7 +80,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUsersForIDs_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUsersSuccessResponseV0"
         )
         let sut = UsersAPIV0(httpClient: httpClient)
@@ -97,7 +97,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_FailureResponse_NotFound_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = UsersAPIV0(httpClient: httpClient)
 
         // Then
@@ -112,7 +112,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUserForID_SuccessResponse_200_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUserSuccessResponseV4"
         )
 
@@ -132,7 +132,7 @@ final class UsersAPITests: XCTestCase {
 
     func testGetUsersForIDs_FailureResponse_NotFound_V4() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = UsersAPIV4(httpClient: httpClient)
 
         // Then
@@ -145,7 +145,7 @@ final class UsersAPITests: XCTestCase {
     func testGetUsersForIDs_SuccessResponse_200_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetUsersSuccessResponseV4"
         )
         let sut = UsersAPIV4(httpClient: httpClient)

@@ -100,10 +100,6 @@ final class ParticipantsStringFormatter {
         return [.font: font, .foregroundColor: textColor]
     }
 
-    private var largeAttributes: Attributes {
-        return [.font: largeFont, .foregroundColor: textColor]
-    }
-
     private var linkAttributes: Attributes {
         return [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }
@@ -172,7 +168,7 @@ final class ParticipantsStringFormatter {
 
             let learnMore = NSAttributedString(string: L10n.Localizable.Content.System.MessageLegalHold.learnMore.uppercased(),
                                                attributes: [.font: font,
-                                                            .link: URL.wr_legalHoldLearnMore.absoluteString as AnyObject,
+                                                            .link: WireURLs.shared.legalHoldInfo.absoluteString as AnyObject,
                                                             .foregroundColor: SemanticColors.Label.textDefault])
             return result += " " + learnMore
 

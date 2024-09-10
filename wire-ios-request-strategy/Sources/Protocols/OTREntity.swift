@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
-@objc public protocol OTREntity {
+public protocol OTREntity: AnyObject {
 
     /// NSManagedObjectContext which the OTR entity is associated with.
     var context: NSManagedObjectContext { get }
@@ -149,13 +149,26 @@ extension OTREntity {
                 in: context
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
-            guard let payload = Payload.MessageSendingStatus(response) else {
+        case .v1, .v2, .v3:
+            guard let payload = Payload.MessageSendingStatusV1(
+                response,
+                decoder: .defaultDecoder
+            ) else {
                 return (missingClients: Set(), deletedClients: Set())
             }
 
             clientListByUser = processor.missingClientListByUser(
-                from: payload,
+                from: payload.toAPIModel(),
+                context: context
+            )
+
+        case .v4, .v5, .v6:
+            guard let payload = Payload.MessageSendingStatusV4(response) else {
+                return (missingClients: Set(), deletedClients: Set())
+            }
+
+            clientListByUser = processor.missingClientListByUser(
+                from: payload.toAPIModel(),
                 context: context
             )
         }

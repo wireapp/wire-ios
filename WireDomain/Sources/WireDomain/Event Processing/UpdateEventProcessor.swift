@@ -19,8 +19,8 @@
 import Foundation
 import WireAPI
 
+// sourcery: AutoMockable
 /// Process update events.
-
 protocol UpdateEventProcessorProtocol {
 
     /// Process an update event.
@@ -44,22 +44,22 @@ struct UpdateEventProcessor {
 
     func processEvent(_ event: UpdateEvent) async throws {
         switch event {
-        case let .conversation(event):
+        case .conversation(let event):
             try await conversationEventProcessor.processEvent(event)
 
-        case let .featureConfig(event):
+        case .featureConfig(let event):
             try await featureconfigEventProcessor.processEvent(event)
 
-        case let .federation(event):
+        case .federation(let event):
             try await federationEventProcessor.processEvent(event)
 
-        case let .user(event):
+        case .user(let event):
             try await userEventProcessor.processEvent(event)
 
-        case let .team(event):
+        case .team(let event):
             try await teamEventProcessor.processEvent(event)
 
-        case let .unknown(event):
+        case .unknown(let event):
             print("can not process unknown event: \(event)")
         }
     }

@@ -19,6 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 import WireDesign
+import WireReusableUIComponents
 import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
@@ -27,12 +28,9 @@ final class ClientListViewController: UIViewController,
                                 UITableViewDelegate,
                                 UITableViewDataSource,
                                 ClientUpdateObserver,
-                                ClientColorVariantProtocol,
-                                SpinnerCapable {
+                                ClientColorVariantProtocol {
 
     // MARK: SpinnerCapable
-
-    var dismissSpinner: SpinnerCompletion?
 
     var removalObserver: ClientRemovalObserver?
 
@@ -83,24 +81,7 @@ final class ClientListViewController: UIViewController,
     private var clientsObserverToken: NSObjectProtocol?
     private var userObserverToken: NSObjectProtocol?
 
-    private var leftBarButtonItem: UIBarButtonItem? {
-        if self.isIPadRegular() {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(ClientListViewController.backPressed(_:)))
-        }
-
-        if let rootViewController = self.navigationController?.viewControllers.first,
-            self.isEqual(rootViewController) {
-            return UIBarButtonItem.createNavigationRightBarButtonItem(
-                systemImage: true,
-                target: self,
-                action: #selector(ClientListViewController.backPressed(_:)))
-        }
-
-        return nil
-    }
+    private(set) lazy var activityIndicator = BlockingActivityIndicator(view: navigationController?.view ?? view)
 
     required init(
         clientsList: [UserClient]?,
@@ -128,7 +109,6 @@ final class ClientListViewController: UIViewController,
         }
 
         super.init(nibName: nil, bundle: nil)
-        setupControllerTitle()
 
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
@@ -138,7 +118,7 @@ final class ClientListViewController: UIViewController,
 
         if clientsList == nil {
             if clients.isEmpty {
-                (navigationController as? SpinnerCapableViewController ?? self).isLoadingViewVisible = true
+                activityIndicator.start()
             }
             userSession?.fetchAllClients()
         }
@@ -170,7 +150,6 @@ final class ClientListViewController: UIViewController,
         self.view.addSubview(self.topSeparator)
         self.createConstraints()
 
-        self.navigationItem.leftBarButtonItem = leftBarButtonItem
         self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton.description
         setColor()
     }
@@ -179,6 +158,7 @@ final class ClientListViewController: UIViewController,
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title)
         updateAllClients()
     }
 
@@ -191,8 +171,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func dismissLoadingView() {
-        (navigationController as? SpinnerCapableViewController)?.isLoadingViewVisible = false
-        isLoadingViewVisible = false
+        activityIndicator.stop()
     }
 
     func openDetailsOfClient(_ client: UserClient) {
@@ -282,10 +261,10 @@ final class ClientListViewController: UIViewController,
         clientsTableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            clientsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            clientsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            clientsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            clientsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
@@ -295,16 +274,6 @@ final class ClientListViewController: UIViewController,
         } else {
             return section + 1
         }
-    }
-
-    // MARK: - Actions
-
-    @objc func startEditing(_ sender: AnyObject!) {
-        self.editingList = true
-    }
-
-    @objc private func endEditing(_ sender: AnyObject!) {
-        self.editingList = false
     }
 
     @objc func backPressed(_ sender: AnyObject!) {
@@ -511,25 +480,21 @@ final class ClientListViewController: UIViewController,
 
     func createRightBarButtonItem() {
         if self.editingList {
-            let doneButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.done.capitalized,
-                                                                                      systemImage: false,
-                                                                                      target: self,
-                                                                                      action: #selector(ClientListViewController.endEditing(_:)))
+            let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.done,
+                action: UIAction { [weak self] _ in
+                    self?.editingList = false
+                })
             self.navigationItem.rightBarButtonItem = doneButtonItem
-
-            self.navigationItem.setLeftBarButton(nil, animated: true)
         } else {
-            let editButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: L10n.Localizable.General.edit.capitalized,
-                                                                                      systemImage: false,
-                                                                                      target: self,
-                                                                                      action: #selector(ClientListViewController.startEditing(_:)))
-            self.navigationItem.rightBarButtonItem = editButtonItem
-            self.navigationItem.setLeftBarButton(leftBarButtonItem, animated: true)
-        }
-    }
+            let editButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+                title: L10n.Localizable.General.edit,
+                action: UIAction { [weak self] _ in
+                    self?.editingList = true
+                })
 
-    private func setupControllerTitle() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Devices.title.capitalized)
+            self.navigationItem.rightBarButtonItem = editButtonItem
+        }
     }
 
     @MainActor
@@ -607,6 +572,19 @@ final class ClientListViewController: UIViewController,
     }
 }
 
+extension ClientListViewController: EditingStateControllable {
+
+    /// Sets the editing state of the ClientListViewController.
+    /// This method is primarily used for testing purposes to directly
+    /// control the editing state without user interaction.
+    ///
+    /// - Parameter isEditing: A boolean indicating whether to enter (true) or exit (false) editing mode.
+    func setEditingState(_ isEditing: Bool) {
+        editingList = isEditing
+    }
+
+}
+
 // MARK: - ClientRemovalObserverDelegate
 
 extension ClientListViewController: ClientRemovalObserverDelegate {
@@ -615,7 +593,7 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
             return
         }
 
-        isLoadingViewVisible = isVisible
+        activityIndicator.setIsActive(isVisible)
     }
 
     func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {

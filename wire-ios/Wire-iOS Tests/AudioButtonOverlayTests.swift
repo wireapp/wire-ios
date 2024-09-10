@@ -16,22 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class AudioButtonOverlayTests: XCTestCase {
 
     var sut: AudioButtonOverlay!
+    private var snapshotHelper: SnapshotHelper!
     var buttonTapHistory: [AudioButtonOverlay.AudioButtonOverlayButtonType]!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         buttonTapHistory = []
         sut = AudioButtonOverlay()
         sut.buttonHandler = { self.buttonTapHistory.append($0) }
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         buttonTapHistory = []
         sut = nil
         super.tearDown()
@@ -39,35 +44,35 @@ final class AudioButtonOverlayTests: XCTestCase {
 
     func testThatItRendersTheButtonOverlayCorrectInitially_Recording() {
         sut.setOverlayState(.default)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheButtonOverlayCorrectInitially_FinishedRecording() {
         sut.recordingState = .finishedRecording
         sut.setOverlayState(.default)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersTheButtonOverlayCorrectInitially_FinishedRecording_PlayingAudio() {
         sut.recordingState = .finishedRecording
         sut.playingState = .playing
         sut.setOverlayState(.default)
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItChangesItsSize_Expanded() {
         sut.setOverlayState(.expanded(0))
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItChangesItsSize_Expanded_Half() {
         sut.setOverlayState(.expanded(0.5))
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItChangesItsSize_Expanded_Full() {
         sut.setOverlayState(.expanded(1))
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItCallsTheButtonHandlerWithTheCorrectButtonType() {

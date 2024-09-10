@@ -16,30 +16,42 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
 
+@testable import Wire
+
 final class ValidatedTextFieldTests: XCTestCase {
-    var sut: ValidatedTextField!
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: ValidatedTextField!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         sut = ValidatedTextField(style: .default)
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 56)
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func testThatItShowsEmptyTextField() {
         // GIVEN
 
         // WHEN && THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsPlaceHolderText() {
@@ -49,7 +61,7 @@ final class ValidatedTextFieldTests: XCTestCase {
         sut.placeholder = "TEAM NAME"
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsTextInputedAndConfrimButtonIsEnabled() {
@@ -60,7 +72,7 @@ final class ValidatedTextFieldTests: XCTestCase {
         sut.textFieldDidChange(textField: sut)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItShowsPasswordInputedAndConfirmButtonIsEnabled() {
@@ -72,8 +84,10 @@ final class ValidatedTextFieldTests: XCTestCase {
         sut.textFieldDidChange(textField: sut)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
+
+    // MARK: - Unit Tests
 
     func test_ItValidatesInput_WhenTextIsSet() {
         // Given

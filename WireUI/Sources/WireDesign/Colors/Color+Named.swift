@@ -18,54 +18,61 @@
 
 import SwiftUI
 
-extension Color {
+public extension Color {
 
-    public static let primaryText = Color(uiColor: UIColor(
+    static let primaryText = Color(
+        uiColor: UIColor(
             light: .black,
             dark: .white
         )
     )
 
-    public static let secondaryText = Color(uiColor: UIColor(
+    static let secondaryText = Color(
+        uiColor: UIColor(
             light: .gray70,
             dark: .gray30
         )
     )
 
-    public static let primaryButtonBackground = Color(uiColor: UIColor(
+    static let primaryButtonBackground = Color(
+        uiColor: UIColor(
             light: .blue500Light,
             dark: .blue500Dark
         )
     )
 
-    public static let primaryButtonText = Color(uiColor: UIColor(
+    static let primaryButtonText = Color(
+        uiColor: UIColor(
             light: .white,
             dark: .black
         )
     )
 
-    public static let secondaryButtonBackground = Color(uiColor: UIColor(
+    static let secondaryButtonBackground = Color(
+        uiColor: UIColor(
             light: .white,
             dark: .gray95
         )
     )
 
-    public static let secondaryButtonBorder = Color(uiColor: UIColor(
+    static let secondaryButtonBorder = Color(
+        uiColor: UIColor(
             light: .gray40,
             dark: .gray80
         )
     )
 
-    public static let secondaryButtonText = Color(uiColor: UIColor(
+    static let secondaryButtonText = Color(
+        uiColor: UIColor(
             light: .black,
             dark: .white
         )
     )
 }
 
-extension UIColor {
+private extension UIColor {
 
-    fileprivate convenience init(light: ColorResource, dark: ColorResource) {
+    convenience init(light: ColorResource, dark: ColorResource) {
         self.init { traits in
             .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
         }

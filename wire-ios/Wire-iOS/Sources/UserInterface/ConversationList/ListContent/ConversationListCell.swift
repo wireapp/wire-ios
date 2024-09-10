@@ -50,7 +50,6 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     weak var delegate: ConversationListCellDelegate?
 
-    private var titleBottomMarginConstraint: NSLayoutConstraint?
     private var typingObserverToken: Any?
 
     // MARK: - SectionListCellType
@@ -220,7 +219,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         return cellSize
     }
 
-    class func invalidateCachedCellSize() {
+    static func invalidateCachedCellSize() {
         cachedSize = CGSize.zero
     }
 

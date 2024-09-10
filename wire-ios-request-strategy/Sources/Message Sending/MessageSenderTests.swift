@@ -20,9 +20,15 @@ import XCTest
 
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
+import WireTransport
 
 final class MessageSenderTests: MessagingTestBase {
 
+    override func setUp() {
+        super.setUp()
+
+        BackendInfo.apiVersion = .v0
+    }
     func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
         // given
         await syncMOC.perform { [self] in

@@ -16,26 +16,39 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
 
+@testable import Wire
+
 final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
-    var sut: PreBackendSwitchViewController!
+
+    // MARK: - Properties
+
+    private var sut: PreBackendSwitchViewController!
+    private var snapshotHelper: SnapshotHelper!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         sut = PreBackendSwitchViewController()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
+    // MARK: - Snapshot Tests
+
     func testForInitState() {
         let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
         navigationController.viewControllers = [sut]
-        verifyAllIPhoneSizes(matching: navigationController)
+        snapshotHelper.verifyInAllIPhoneSizes(matching: navigationController)
     }
 }

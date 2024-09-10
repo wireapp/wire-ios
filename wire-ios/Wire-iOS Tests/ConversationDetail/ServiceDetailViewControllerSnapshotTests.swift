@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
-    var sut: ServiceDetailViewController!
-    var serviceUser: MockServiceUserType!
-    var groupConversation: ZMConversation!
-    var mockSelfUser: MockUserType!
+    private var sut: ServiceDetailViewController!
+    private var serviceUser: MockServiceUserType!
+    private var groupConversation: ZMConversation!
+    private var mockSelfUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

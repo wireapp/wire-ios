@@ -81,7 +81,7 @@ final class MentionTextAttachment: NSTextAttachment {
         return image
     }
 
-    private class func attributedMentionString(user: UserType, font: UIFont, color: UIColor) -> NSAttributedString {
+    private static func attributedMentionString(user: UserType, font: UIFont, color: UIColor) -> NSAttributedString {
         // Replace all spaces with non-breaking space to avoid wrapping when displaying mention
         let nameWithNonBreakingSpaces = user.name?.replacingOccurrences(of: String.breakingSpace, with: String.nonBreakingSpace)
         return "@" + (nameWithNonBreakingSpaces ?? "") && font && color && [.paragraphStyle: paragraphStyle]
@@ -93,8 +93,4 @@ final class MentionTextAttachment: NSTextAttachment {
         return super.attachmentBounds(for: textContainer, proposedLineFragment: lineFrag, glyphPosition: position, characterIndex: charIndex)
     }
 
-}
-
-fileprivate extension CGSize {
-    static let max = CGSize(width: .max, height: .max)
 }

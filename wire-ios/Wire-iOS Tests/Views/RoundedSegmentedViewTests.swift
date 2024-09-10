@@ -16,18 +16,35 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
 
-class RoundedSegmentedViewTests: XCTestCase {
+@testable import Wire
 
-    var sut: RoundedSegmentedView!
+final class RoundedSegmentedViewTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: RoundedSegmentedView!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
+
+    // MARK: - Helper Method
 
     private func createView(with items: [String]) -> RoundedSegmentedView {
         let view = RoundedSegmentedView()
@@ -38,29 +55,32 @@ class RoundedSegmentedViewTests: XCTestCase {
         return view
     }
 
+    // MARK: - Snapshot Tests
+
     func testTwoItems_Unselected() {
-        // GIVEN / WHEN
+        // GIVEN && WHEN
         sut = createView(with: ["one", "two"])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testTwoItems_FirstSelected() {
-        // GIVEN / WHEN
+        // GIVEN && WHEN
         sut = createView(with: ["one", "two"])
         sut.setSelected(true, forItemAt: 0)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testTwoItems_SecondSelected_AfterFirst() {
-        // GIVEN / WHEN
+        // GIVEN && WHEN
         sut = createView(with: ["one", "two"])
         sut.setSelected(true, forItemAt: 0)
         sut.setSelected(true, forItemAt: 1)
+
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 }

@@ -21,8 +21,6 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "ProfileViewController")
-
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
     case devices
@@ -30,10 +28,6 @@ enum ProfileViewControllerTabBarIndex: Int {
 
 protocol ProfileViewControllerDelegate: AnyObject {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-}
-
-protocol BackButtonTitleDelegate: AnyObject {
-    func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String?
 }
 
 extension ZMConversationType {
@@ -102,8 +96,6 @@ final class ProfileViewController: UIViewController {
             viewModel: viewModel,
             mainCoordinator: mainCoordinator
         )
-
-        setupKeyboardFrameNotification()
 
         self.viewControllerDismisser = viewControllerDismisser
     }
@@ -175,8 +167,6 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Profile.Details.title)
-
         view.addSubview(profileFooterView)
         view.addSubview(incomingRequestFooter)
         view.addSubview(activityIndicator)
@@ -193,24 +183,9 @@ final class ProfileViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
         UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
-    }
-
-    // MARK: - Keyboard frame observer
-
-    private func setupKeyboardFrameNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardFrameDidChange(notification:)),
-            name: UIResponder.keyboardDidChangeFrameNotification,
-            object: nil
-        )
-    }
-
-    @objc
-    private func keyboardFrameDidChange(notification: Notification) {
-        updatePopoverFrame()
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -218,9 +193,8 @@ final class ProfileViewController: UIViewController {
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: Pass the whole view Model/stuct/context
-        // swiftlint:enable todo_requires_jira_link
         let profileDetailsViewController = ProfileDetailsViewController(
             user: viewModel.user,
             viewer: viewModel.viewer,
@@ -393,7 +367,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
         if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
+            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
         } else {
             leftViewControllerRevealed = true
         }
@@ -575,12 +549,13 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 
         if navigationController?.viewControllers.count == 1 {
-            navigationItem.rightBarButtonItem = navigationController?.closeItem()
+            navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Accessibility.Profile.CloseButton.description)
             navigationItem.leftBarButtonItem = legalHoldItem
         } else {
             navigationItem.rightBarButtonItem = legalHoldItem
         }
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.CloseButton.description
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.DeviceDetails.BackButton.description
     }
 

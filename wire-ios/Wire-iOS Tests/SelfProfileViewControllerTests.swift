@@ -18,22 +18,26 @@
 
 import WireDataModelSupport
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
-final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
+final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
-    var sut: SelfProfileViewController!
-    var selfUser: MockUserType!
-    var userSession: UserSessionMock!
+    private var sut: SelfProfileViewController!
+    private var selfUser: MockUserType!
+    private var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = .init()
         coreDataFixture = CoreDataFixture()
 
         SelfUser.provider = coreDataFixture.selfUserProvider
@@ -45,6 +49,7 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         coreDataFixture = nil
         SelfUser.provider = nil
@@ -57,12 +62,12 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
 
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     func testForAUserWithALongName() {
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
-        verify(matching: sut.view)
+        snapshotHelper.verify(matching: sut.view)
     }
 
     // MARK: - Unit Tests

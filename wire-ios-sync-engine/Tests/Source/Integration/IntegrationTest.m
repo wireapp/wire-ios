@@ -38,7 +38,11 @@
     self.appState = @"authenticated";
 
     self.currentUserIdentifier = [NSUUID createUUID];
-    [self configureDefaultAPIVersion];
+
+    [self setBackendInfoAPIVersion: APIVersionV0];
+    [self setBackendInfoDomain: @"wire.com"];
+    [self setBackendInfoIsFederationEnabled: YES];
+
     self.lastEventIDRepository = [[LastEventIDRepository alloc] initWithUserID:self.currentUserIdentifier
                                                             sharedUserDefaults:self.sharedUserDefaults];
     [self _setUp];
@@ -54,7 +58,7 @@
 
     WaitForAllGroupsToBeEmpty(0.5);
     [NSFileManager.defaultManager removeItemAtURL:[MockUserClient mockEncryptionSessionDirectory] error:nil];
-    [self resetCurrentAPIVersion];
+
     [self.lastEventIDRepository storeLastEventID:nil];
     [super tearDown];
 }

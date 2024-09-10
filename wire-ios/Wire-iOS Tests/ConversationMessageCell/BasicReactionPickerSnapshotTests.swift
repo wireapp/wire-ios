@@ -16,34 +16,56 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class BasicReactionPickerSnapshotTests: XCTestCase {
 
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var picker: BasicReactionPicker!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        picker = nil
+
+        super.tearDown()
+    }
+
     // MARK: - Snapshot Tests
 
     func test_BasicReactionPicker() {
         // GIVEN && WHEN
-        let sut = pickerWithReaction(nil)
+        picker = pickerWithReaction(nil)
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: picker)
     }
 
     func test_BasicReactionPicker_withSelectedReaction() {
         // GIVEN && WHEN
-        let sut = pickerWithReaction([Emoji.ID.thumbsUp])
+        picker = pickerWithReaction([Emoji.ID.thumbsUp])
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: picker)
     }
 
     // MARK: - Helper method
 
     private func pickerWithReaction(_ reaction: Set<Emoji.ID>?) -> BasicReactionPicker {
-        var picker = BasicReactionPicker(selectedReactions: reaction ?? [])
+        picker = BasicReactionPicker(selectedReactions: reaction ?? [])
         picker.sizeToFit()
         picker.backgroundColor = .white
         picker.frame = CGRect(origin: .zero, size: CGSize(width: 375, height: 84))

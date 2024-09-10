@@ -17,11 +17,13 @@
 //
 
 import WireDesign
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 struct MockStatusViewConfiguration: CallStatusViewInputType {
+
     var state: CallStatusViewState
     var isVideoCall: Bool
     var isConstantBitRate: Bool
@@ -34,9 +36,11 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
 final class CallStatusViewTests: XCTestCase {
 
     private var sut: CallStatusView!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         sut = CallStatusView(
             configuration: MockStatusViewConfiguration(
             state: .connecting,
@@ -56,12 +60,13 @@ final class CallStatusViewTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     func testLongTitleMargins() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .connecting,
             isVideoCall: false,
@@ -72,12 +77,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testConnectingAudioCallLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .connecting,
             isVideoCall: false,
@@ -88,14 +93,13 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testConnectingAudioCallDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .connecting,
             isVideoCall: false,
@@ -106,12 +110,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testIncomingAudioLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingIncoming(name: "Ulrike"),
             isVideoCall: false,
@@ -122,12 +128,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testIncomingAudioLightOneOnOne() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingIncoming(name: nil),
             isVideoCall: false,
@@ -138,13 +144,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testIncomingAudioDark() {
-        // When
-        sut.overrideUserInterfaceStyle = .dark
+        // WHEN
         sut.backgroundColor = SemanticColors.View.backgroundDefault
 
         sut.configuration = MockStatusViewConfiguration(
@@ -157,12 +162,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testIncomingVideoLight() {
-        // When
+        // WHEN
         sut.backgroundColor = SemanticColors.View.backgroundDefault
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingIncoming(name: "Ulrike"),
@@ -174,12 +181,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testIncomingVideoDark() {
-        // When
+        // WHEN
         sut.overrideUserInterfaceStyle = .dark
         sut.backgroundColor = SemanticColors.View.backgroundDefault
         sut.configuration = MockStatusViewConfiguration(
@@ -192,12 +199,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testOutgoingLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingOutgoing,
             isVideoCall: false,
@@ -208,13 +217,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testOutgoingDark() {
-        // When
-        sut.overrideUserInterfaceStyle = .dark
+        // WHEN
         sut.backgroundColor = SemanticColors.View.backgroundDefault
         sut.configuration = MockStatusViewConfiguration(
             state: .ringingOutgoing,
@@ -226,12 +234,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testEstablishedBriefLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 42),
             isVideoCall: false,
@@ -242,12 +252,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testEstablishedBriefDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
@@ -260,12 +270,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testEstablishedLongLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
             isVideoCall: false,
@@ -276,14 +288,13 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testEstablishedLongDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
             isVideoCall: true,
@@ -294,12 +305,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testConstantBitRateLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
             isVideoCall: false,
@@ -310,14 +323,13 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testConstantBitRateDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
-        sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
             isVideoCall: true,
@@ -328,12 +340,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testVariableBitRateLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .established(duration: 321),
             isVideoCall: false,
@@ -344,12 +358,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testVariableBitRateDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
@@ -362,12 +376,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testReconnectingLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .reconnecting,
             isVideoCall: false,
@@ -378,12 +394,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testReconnectingDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
@@ -396,12 +412,14 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     func testEndingLight() {
-        // When
+        // WHEN
         sut.configuration = MockStatusViewConfiguration(
             state: .terminating,
             isVideoCall: false,
@@ -412,12 +430,12 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper.verify(matching: sut)
     }
 
     func testEndingDark() {
-        // When
+        // WHEN
         sut.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark
         sut.configuration = MockStatusViewConfiguration(
@@ -430,8 +448,10 @@ final class CallStatusViewTests: XCTestCase {
             classification: .none
         )
 
-        // Then
-        verify(matching: sut)
+        // THEN
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
 }

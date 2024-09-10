@@ -12,10 +12,9 @@
 		5E13807D21A30A9D004A646C /* messages.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807B21A30A9D004A646C /* messages.pb.swift */; };
 		5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807C21A30A9D004A646C /* otr.pb.swift */; };
 		5E13808021A30AB7004A646C /* ProtosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807F21A30AB7004A646C /* ProtosTests.swift */; };
-		5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		638BBCF129150CEF007491FF /* mls.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF029150CEE007491FF /* mls.pb.swift */; };
+		CBF4FEAD2C806F9B00EA6E06 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = CBF4FEAC2C806F9B00EA6E06 /* SwiftProtobuf */; };
 		EE9AEC902BD1594600F7853F /* WireProtos.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8F2BD1594600F7853F /* WireProtos.docc */; };
-		EEE25B1D297199A90008B894 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */; };
 		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -28,19 +27,6 @@
 			remoteInfo = Protos;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		097A22971B8B1AD900D02243 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		016BDDED2A9F86E50054FB04 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
@@ -61,7 +47,6 @@
 		54B5E1F41F0A6B77001F43A6 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54B5E1F51F0A6B77001F43A6 /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		54B5E1F71F0A6B77001F43A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F81F0A6B77001F43A6 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5E13807B21A30A9D004A646C /* messages.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = messages.pb.swift; sourceTree = "<group>"; };
 		5E13807C21A30A9D004A646C /* otr.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = otr.pb.swift; sourceTree = "<group>"; };
@@ -69,7 +54,6 @@
 		638BBCF029150CEE007491FF /* mls.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mls.pb.swift; sourceTree = "<group>"; };
 		638BBCF229150D4C007491FF /* mls.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.protobuf; name = mls.proto; path = "../Carthage/Checkouts/generic-message-proto/proto/mls.proto"; sourceTree = SOURCE_ROOT; };
 		A9EF6A7323D76AC8002904B4 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = ../Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
 		EE9AEC8F2BD1594600F7853F /* WireProtos.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireProtos.docc; sourceTree = "<group>"; };
 		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -79,7 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEE25B1D297199A90008B894 /* SwiftProtobuf.xcframework in Frameworks */,
+				CBF4FEAD2C806F9B00EA6E06 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,7 +175,6 @@
 				54B5E1F41F0A6B77001F43A6 /* simulator.xcconfig */,
 				54B5E1F51F0A6B77001F43A6 /* test-host-ios.xcconfig */,
 				54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */,
-				54B5E1F71F0A6B77001F43A6 /* warnings-debug.xcconfig */,
 				54B5E1F81F0A6B77001F43A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
@@ -200,7 +183,6 @@
 		67FFDFDA66F3EEA3F9461130 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -233,6 +215,9 @@
 			dependencies = (
 			);
 			name = WireProtos;
+			packageProductDependencies = (
+				CBF4FEAC2C806F9B00EA6E06 /* SwiftProtobuf */,
+			);
 			productName = Protos;
 			productReference = 090837FE1B872DBF00629095 /* WireProtos.framework */;
 			productType = "com.apple.product-type.framework";
@@ -244,7 +229,6 @@
 				090838051B872DBF00629095 /* Sources */,
 				090838061B872DBF00629095 /* Frameworks */,
 				090838071B872DBF00629095 /* Resources */,
-				097A22971B8B1AD900D02243 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -286,6 +270,9 @@
 				Base,
 			);
 			mainGroup = 090837F41B872DBF00629095;
+			packageReferences = (
+				CBF4FEA92C806F5900EA6E06 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+			);
 			productRefGroup = 090837FF1B872DBF00629095 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -407,7 +394,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = ProtosTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -426,7 +412,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = ProtosTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -470,6 +455,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CBF4FEA92C806F5900EA6E06 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.28.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CBF4FEAC2C806F9B00EA6E06 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CBF4FEA92C806F5900EA6E06 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 090837F51B872DBF00629095 /* Project object */;
 }

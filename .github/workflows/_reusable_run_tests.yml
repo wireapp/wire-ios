@@ -78,6 +78,23 @@ jobs:
         run: |
           bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
 
+      # Scripts
+      - name: Test Scripts
+        if: ${{ contains(inputs.folders, "scripts") || inputs.all }}
+        run: |
+          echo "Scripts has changes"
+          echo "Testing Scripts..."
+          xcrun swift test --package-path ./scripts
+
+      - name: Upload Failed snapshots
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: Failed Snapshots and log
+          path: |
+            wire-ios/SnapshotResults/
+            xcodebuild*.log
+
       - name: Save cache with warning counts
         # This step should only run for the test_develop.yml workflow
         if: ${{ !cancelled() && github.event.action == 'push' }}
@@ -85,7 +102,7 @@ jobs:
         with:
           path: Danger.results
           key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
-  
+
       - name: Upload Test Reports as Artifacts
         uses: actions/upload-artifact@v3
         if: always()

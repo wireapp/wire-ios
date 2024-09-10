@@ -23,12 +23,12 @@
 
     override func setUp() {
         DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .temporary())
+        BackendInfo.domain = nil
         super.setUp()
     }
 
     override func tearDown() {
         super.tearDown()
-        BackendInfo.domain = nil
         DeveloperFlag.storage = UserDefaults.standard
     }
 
@@ -293,7 +293,6 @@ extension ClientMessageTests_OTR_Legacy {
 
     func testThatItCreatesPayloadForZMLastReadMessages() async throws {
         // Given
-        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.domain.com"
 
         let message = try await self.syncMOC.perform {
@@ -519,7 +518,7 @@ extension ClientMessageTests_OTR_Legacy {
     /// Returns a string large enough to have to be encoded in an external message
     fileprivate var stringLargeEnoughToRequireExternal: String {
         var text = "Hello"
-        while text.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
+        while text.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
             text.append(text)
         }
         return text
@@ -538,7 +537,7 @@ extension ClientMessageTests_OTR_Legacy {
     /// Returns a string that is big enough to require external message payload
     fileprivate func textMessageRequiringExternalMessage(_ numberOfClients: UInt) -> String {
         var string = "Exponential growth!"
-        while string.data(using: String.Encoding.utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
+        while string.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
             string += string
         }
         return string

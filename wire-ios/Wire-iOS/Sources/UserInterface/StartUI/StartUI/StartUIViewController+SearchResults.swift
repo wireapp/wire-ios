@@ -17,10 +17,9 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 import WireSystem
-
-final class StartUIView: UIView { }
 
 extension StartUIViewController {
     private func presentProfileViewController(for bareUser: UserType,
@@ -126,14 +125,13 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     }
 
     func createGuestRoom() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: avoid casting to `ZMUserSession` (expand `UserSession` API)
-        // swiftlint:enable todo_requires_jira_link
         guard let userSession = userSession as? ZMUserSession else {
             return WireLogger.conversation.error("failed to create guest room: no user session")
         }
 
-        isLoadingViewVisible = true
+        activityIndicator.start()
 
         let service = ConversationService(context: userSession.viewContext)
         service.createGroupConversation(
@@ -203,7 +201,7 @@ extension StartUIViewController: EmptySearchResultsViewDelegate {
         case .openManageServices:
             URL.manageTeam(source: .onboarding).openInApp(above: self)
         case .openSearchSupportPage:
-            URL.wr_searchSupport.open()
+            WireURLs.shared.searchSupport.open()
         }
     }
 }

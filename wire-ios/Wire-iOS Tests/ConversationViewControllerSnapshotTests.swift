@@ -18,7 +18,7 @@
 
 import SnapshotTesting
 import WireSyncEngineSupport
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -42,13 +42,12 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 
     override func setUp() {
         super.setUp()
-
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        userSession.contextProvider = coreDataStack
+        userSession.coreDataStack = coreDataStack
         userSession.mockConversationList = ConversationList(
             allConversations: [mockConversation!],
             filteringPredicate: NSPredicate(value: true),

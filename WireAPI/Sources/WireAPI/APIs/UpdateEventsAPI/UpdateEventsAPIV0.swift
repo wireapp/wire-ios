@@ -20,9 +20,9 @@ import Foundation
 
 class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -53,9 +53,9 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
         let response = try await httpClient.executeRequest(request)
 
         return try ResponseParser()
-            .success(code: 200, type: UpdateEventEnvelopeV0.self)
-            .failure(code: 400, error: UpdateEventsAPIError.invalidClient)
-            .failure(code: 404, label: "not-found", error: UpdateEventsAPIError.notFound)
+            .success(code: .ok, type: UpdateEventEnvelopeV0.self)
+            .failure(code: .badRequest, error: UpdateEventsAPIError.invalidClient)
+            .failure(code: .notFound, label: "not-found", error: UpdateEventsAPIError.notFound)
             .parse(response)
     }
 
@@ -88,9 +88,9 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
             let response = try await self.httpClient.executeRequest(request)
 
             return try ResponseParser()
-                .success(code: 200, type: UpdateEventListResponseV0.self)
-                .failure(code: 400, error: UpdateEventsAPIError.invalidParameters)
-                .failure(code: 404, error: UpdateEventsAPIError.notFound)
+                .success(code: .ok, type: UpdateEventListResponseV0.self)
+                .failure(code: .badRequest, error: UpdateEventsAPIError.invalidParameters)
+                .failure(code: .notFound, error: UpdateEventsAPIError.notFound)
                 .parse(response)
         }
     }

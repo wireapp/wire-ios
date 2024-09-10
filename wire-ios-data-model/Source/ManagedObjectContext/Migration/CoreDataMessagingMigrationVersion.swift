@@ -18,7 +18,7 @@
 
 import Foundation
 
-enum CoreDataMessagingMigrationVersion: String, CaseIterable {
+enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
 
     private enum Constant {
         static let dataModelPrefix = "zmessaging"
@@ -29,92 +29,94 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
     // MARK: -
 
     // Note: add new versions here in first position!
-    case version2_117 = "zmessaging2.117.0"
-    case version2_116 = "zmessaging2.116.0"
-    case version2_115 = "zmessaging2.115.0"
-    case version2_114 = "zmessaging2.114.0"
-    case version2_113 = "zmessaging2.113.0"
-    case version2_112 = "zmessaging2.112.0"
-    case version2_111 = "zmessaging2.111.0"
-    case version2_110 = "zmessaging2.110.0"
-    case version2_109 = "zmessaging2.109.0"
-    case version2_108 = "zmessaging2.108.0"
-    case version2_107 = "zmessaging2.107.0"
-    case version2_106 = "zmessaging2.106.0"
-    case version2_105 = "zmessaging2.105.0"
-    case version2_104 = "zmessaging2.104.0"
-    case version2_103 = "zmessaging2.103.0"
-    case version2_102 = "zmessaging2.102.0"
-    case version2_101 = "zmessaging2.101.0"
-    case version2_100 = "zmessaging2.100.0"
-    case version2_99 = "zmessaging2.99.0"
-    case version2_98 = "zmessaging2.98.0"
-    case version2_97 = "zmessaging2.97.0"
-    case version2_96 = "zmessaging2.96.0"
-    case version2_95 = "zmessaging2.95.0"
-    case version2_94 = "zmessaging2.94.0"
-    case version2_93 = "zmessaging2.93.0"
-    case version2_92 = "zmessaging2.92.0"
-    case version2_91 = "zmessaging2.91.0"
-    case version2_90 = "zmessaging2.90.0"
-    case version2_89 = "zmessaging2.89.0"
-    case version2_88 = "zmessaging2.88.0"
-    case version2_87 = "zmessaging2.87.0"
-    case version2_86 = "zmessaging2.86.0"
-    case version2_85 = "zmessaging2.85.0"
-    case version2_84 = "zmessaging2.84.0"
-    case version2_83 = "zmessaging2.83.0"
-    case version2_82 = "zmessaging2.82.0"
-    case version2_81 = "zmessaging2.81.0"
-    case version2_80 = "zmessaging2.80.0"
+    case v118 = "zmessaging2.118.0"
+    case v117 = "zmessaging2.117.0"
+    case v116 = "zmessaging2.116.0"
+    case v115 = "zmessaging2.115.0"
+    case v114 = "zmessaging2.114.0"
+    case v113 = "zmessaging2.113.0"
+    case v112 = "zmessaging2.112.0"
+    case v111 = "zmessaging2.111.0"
+    case v110 = "zmessaging2.110.0"
+    case v109 = "zmessaging2.109.0"
+    case v108 = "zmessaging2.108.0"
+    case v107 = "zmessaging2.107.0"
+    case v106 = "zmessaging2.106.0"
+    case v105 = "zmessaging2.105.0"
+    case v104 = "zmessaging2.104.0"
+    case v103 = "zmessaging2.103.0"
+    case v102 = "zmessaging2.102.0"
+    case v101 = "zmessaging2.101.0"
+    case v100 = "zmessaging2.100.0"
+    case v99 = "zmessaging2.99.0"
+    case v98 = "zmessaging2.98.0"
+    case v97 = "zmessaging2.97.0"
+    case v96 = "zmessaging2.96.0"
+    case v95 = "zmessaging2.95.0"
+    case v94 = "zmessaging2.94.0"
+    case v93 = "zmessaging2.93.0"
+    case v92 = "zmessaging2.92.0"
+    case v91 = "zmessaging2.91.0"
+    case v90 = "zmessaging2.90.0"
+    case v89 = "zmessaging2.89.0"
+    case v88 = "zmessaging2.88.0"
+    case v87 = "zmessaging2.87.0"
+    case v86 = "zmessaging2.86.0"
+    case v85 = "zmessaging2.85.0"
+    case v84 = "zmessaging2.84.0"
+    case v83 = "zmessaging2.83.0"
+    case v82 = "zmessaging2.82.0"
+    case v81 = "zmessaging2.81.0"
+    case v80 = "zmessaging2.80.0"
 
     var nextVersion: Self? {
         switch self {
-        case .version2_116,
-                .version2_117:
+        case .v118:
             return nil
-        case .version2_115,
-                .version2_114:
-            return .version2_116 // destination version runs custom migration actions
-        case .version2_111,
-                .version2_112,
-                .version2_113:
-            return .version2_114 // destination version runs custom migration actions
-        case .version2_110:
-            return .version2_111 // destination version runs custom migration actions
-        case .version2_107,
-                .version2_108,
-                .version2_109:
-            return .version2_110
-        case .version2_106:
-            return .version2_107 // destination version runs custom migration actions
-        case .version2_80,
-                .version2_81,
-                .version2_82,
-                .version2_83,
-                .version2_84,
-                .version2_85,
-                .version2_86,
-                .version2_87,
-                .version2_88,
-                .version2_89,
-                .version2_90,
-                .version2_91,
-                .version2_92,
-                .version2_93,
-                .version2_94,
-                .version2_95,
-                .version2_96,
-                .version2_97,
-                .version2_98,
-                .version2_99,
-                .version2_100,
-                .version2_101,
-                .version2_102,
-                .version2_103,
-                .version2_104,
-                .version2_105:
-            return .version2_106
+        case .v116, .v117:
+            return .v118
+        case .v115,
+                .v114:
+            return .v116 // destination version runs custom migration actions
+        case .v111,
+                .v112,
+                .v113:
+            return .v114 // destination version runs custom migration actions
+        case .v110:
+            return .v111 // destination version runs custom migration actions
+        case .v107,
+                .v108,
+                .v109:
+            return .v110
+        case .v106:
+            return .v107 // destination version runs custom migration actions
+        case .v80,
+                .v81,
+                .v82,
+                .v83,
+                .v84,
+                .v85,
+                .v86,
+                .v87,
+                .v88,
+                .v89,
+                .v90,
+                .v91,
+                .v92,
+                .v93,
+                .v94,
+                .v95,
+                .v96,
+                .v97,
+                .v98,
+                .v99,
+                .v100,
+                .v101,
+                .v102,
+                .v103,
+                .v104,
+                .v105:
+            return .v106
         }
     }
 

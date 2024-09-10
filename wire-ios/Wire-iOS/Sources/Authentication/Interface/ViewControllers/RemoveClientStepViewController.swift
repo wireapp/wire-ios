@@ -49,10 +49,14 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
         configureSubviews()
         configureConstraints()
         updateBackButton()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
     }
 
     private func configureSubviews() {
@@ -68,7 +72,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
         NSLayoutConstraint.activate([
             clientListController.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            clientListController.view.topAnchor.constraint(equalTo: safeTopAnchor),
+            clientListController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             clientListController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
 

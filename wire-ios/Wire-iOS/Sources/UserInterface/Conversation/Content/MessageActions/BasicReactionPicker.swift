@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 protocol ReactionPickerDelegate: AnyObject {
     func didPickReaction(reaction: Emoji)
@@ -86,10 +87,11 @@ private extension BasicReactionPicker {
     }
 
     func addButtons() {
+        let currentDevice = DeviceWrapper(device: .current)
         var constraints = [NSLayoutConstraint]()
         emojis.forEach { emoji in
             let button = UIButton()
-           button.titleLabel?.font = UIFont.systemFont(ofSize: UIDevice.current.type == .iPad ? 24 : 32)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: currentDevice.userInterfaceIdiom == .pad ? 24 : 32)
             button.setTitle(emoji.value, for: .normal)
             if selectedReactions.contains(emoji.value) {
                 button.layer.cornerRadius = 12.0

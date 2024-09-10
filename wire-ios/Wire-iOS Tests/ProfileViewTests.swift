@@ -19,20 +19,23 @@
 import WireDataModelSupport
 import WireDesign
 import WireSyncEngineSupport
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
 
 final class ProfileViewTests: XCTestCase {
 
-    var userSession: UserSessionMock!
+    // MARK: - Properties
 
-    var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
-    var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
+    private var snapshotHelper: SnapshotHelper!
+    private var userSession: UserSessionMock!
+    private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
+    private var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
-
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         isUserE2EICertifiedUseCase = .init()
         isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false
@@ -41,11 +44,14 @@ final class ProfileViewTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         isUserE2EICertifiedUseCase = nil
         userSession = nil
 
         super.tearDown()
     }
+
+    // MARK: - Snapshot Tests
 
     func test_DefaultOptions() {
         verifyProfile(options: [])
@@ -71,13 +77,13 @@ final class ProfileViewTests: XCTestCase {
         verifyProfile(options: [.hideAvailability])
     }
 
-    func test_notConnectedUser() {
+    func test_notConnectedUser_DarkMode() {
         // GIVEN
         let selfUser = MockUserType.createSelfUser(name: "selfUser", inTeam: UUID())
         let testUser = MockUserType.createUser(name: "Test")
         testUser.isConnected = false
 
-        // when
+        // WHEN
         let sut = ProfileHeaderViewController(
             user: testUser,
             viewer: selfUser,
@@ -90,10 +96,11 @@ final class ProfileViewTests: XCTestCase {
 
         sut.view.frame.size = sut.view.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
-        sut.overrideUserInterfaceStyle = .dark
 
         // THEN
-        verify(matching: sut.view)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut.view)
     }
 
     func verifyProfile(
@@ -110,8 +117,10 @@ final class ProfileViewTests: XCTestCase {
 
         let sut = setupProfileHeaderViewController(user: selfUser, viewer: selfUser, options: options)
 
-        verify(matching: sut.view, file: file, testName: testName, line: line)
+        snapshotHelper.verify(matching: sut.view, file: file, testName: testName, line: line)
     }
+
+    // MARK: - Helper Method
 
     func setupProfileHeaderViewController(
         user: UserType,

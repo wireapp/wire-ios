@@ -17,7 +17,7 @@
 //
 
 import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -152,17 +152,17 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     }
 
     func testReauthenticate_Email_TokenExpired() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: .none, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
     func testReauthenticate_Email_DuringLogin() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: .none, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
     }
 
     func testReauthenticate_CompanyLogin() {
-        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: .none, hasPassword: false, usesCompanyLogin: true)
+        let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 

@@ -16,15 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
 
+@testable import Wire
+
 final class UserClientCellTests: XCTestCase {
-    var sut: UserClientCell!
-    var container: UIView!
+
+    private var sut: UserClientCell!
+    private var container: UIView!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         let frame = CGRect(x: 0, y: 0, width: 390, height: 84)
         sut = UserClientCell(frame: frame)
         container = containerView(with: sut, snapshotBackgroundColor: nil)
@@ -32,110 +37,129 @@ final class UserClientCellTests: XCTestCase {
     }
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         container = nil
         super.tearDown()
     }
 
-    func prepareSut(shouldDisplayMLSInfo: Bool = false,
-                    isProteusVerified: Bool = false,
-                    e2EIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil,
-                    userInterfaceStyle: UIUserInterfaceStyle = .light) {
-        sut.viewModel = .mock(isProteusVerified: isProteusVerified,
-                              mlsThumbprint: shouldDisplayMLSInfo ? .mockMlsThumbprint : "", e2eIdentityCertificateStatus: e2EIdentityCertificateStatus)
-        sut.overrideUserInterfaceStyle = userInterfaceStyle
-        container.overrideUserInterfaceStyle = userInterfaceStyle
+    func prepareSut(
+        shouldDisplayMLSInfo: Bool = false,
+        isProteusVerified: Bool = false,
+        e2EIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil
+    ) {
+        sut.viewModel = .mock(
+            isProteusVerified: isProteusVerified,
+            mlsThumbprint: shouldDisplayMLSInfo ? .mockMlsThumbprint : "",
+            e2eIdentityCertificateStatus: e2EIdentityCertificateStatus
+        )
         sut.layoutIfNeeded()
     }
 
     func testThatMLSInfoIsShown_whenMlsInfoAvailable() {
         prepareSut(shouldDisplayMLSInfo: true)
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
     func testThatMLSInfoIsShown_whenMlsInfoIsAvailable_inDarkMode() {
-        prepareSut(shouldDisplayMLSInfo: true, userInterfaceStyle: .dark)
-        verify(matching: container)
+        prepareSut(shouldDisplayMLSInfo: true)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
     func testThatMLSInfoIsHidden_whenMlsInfoIsNotAvailable() {
         prepareSut(shouldDisplayMLSInfo: false)
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
     func testThatMLSInfoIsHidden_whenMlsInfoIsNotAvailable_inDarkMode() {
-        prepareSut(shouldDisplayMLSInfo: true, userInterfaceStyle: .dark)
-        verify(matching: container)
+        prepareSut(shouldDisplayMLSInfo: true)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
     func testThatProteusBadgeIsNotDisplayed_whenProteusIsNotVerified() {
         prepareSut(isProteusVerified: false)
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
     func testThatProteusBadgeIsNotDisplayed_whenProteusIsNotVerified_inDarkMode() {
-        prepareSut(isProteusVerified: false, userInterfaceStyle: .dark)
-        verify(matching: container)
+        prepareSut(isProteusVerified: false)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsValid() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
                    e2EIdentityCertificateStatus: .valid)
-        verify(matching: container)
+        snapshotHelper
+            .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsValid_inDarkMode() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .valid,
-                   userInterfaceStyle: .dark)
-        verify(matching: container)
+                   e2EIdentityCertificateStatus: .valid)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsExpired() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
                    e2EIdentityCertificateStatus: .expired)
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsExpired_inDarkMode() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .expired,
-                   userInterfaceStyle: .dark)
-        verify(matching: container)
+                   e2EIdentityCertificateStatus: .expired)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsRevoked() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
                    e2EIdentityCertificateStatus: .revoked)
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsRevoked_inDarkMode() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .revoked,
-                   userInterfaceStyle: .dark)
-        verify(matching: container)
+                   e2EIdentityCertificateStatus: .revoked)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsNotActivated() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
                    e2EIdentityCertificateStatus: .notActivated)
-        verify(matching: container)
+        snapshotHelper.verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsNotActivated_inDarkMode() {
         prepareSut(shouldDisplayMLSInfo: true,
                    isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .notActivated,
-                   userInterfaceStyle: .dark)
-        verify(matching: container)
+                   e2EIdentityCertificateStatus: .notActivated)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: container)
     }
 
 }

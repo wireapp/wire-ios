@@ -274,7 +274,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
         NSString *tpLabel = [NSString stringWithFormat:@"Saving context %@", self.zm_isSyncContext ? @"sync": @"ui"];
         ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:10 label:tpLabel];
         if (! [self save:&error]) {
-            ZMLogError(@"Failed to save: %@", error);
+            [WireLoggerObjc logSaveCoreDataError:error];
             [self reportSaveErrorWithError:error];
             [self rollbackWithOldMetadata:oldMetadata];
             [tp warnIfLongerThanInterval];

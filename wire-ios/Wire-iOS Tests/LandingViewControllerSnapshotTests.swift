@@ -16,27 +16,31 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import WireTransport
 import XCTest
+
+@testable import Wire
 
 final class LandingViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: LandingViewController!
+    private var sut: LandingViewController!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         sut = LandingViewController()
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
@@ -45,7 +49,7 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
 
     func testForInitState() {
         sut = LandingViewController()
-        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+        snapshotHelper.verifyInAllDeviceSizes(matching: sutInUiNavigationController())
     }
 
     func testForBackendWithCustomURL() {
@@ -57,7 +61,7 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
             customBackend
         })
 
-        verifyInAllDeviceSizes(matching: sutInUiNavigationController())
+        snapshotHelper.verifyInAllDeviceSizes(matching: sutInUiNavigationController())
     }
 
     // MARK: - Helper Method

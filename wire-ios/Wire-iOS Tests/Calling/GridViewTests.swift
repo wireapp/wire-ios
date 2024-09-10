@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 class OrientableViewMock: OrientableView {
     func layoutForOrientation() {}
@@ -35,11 +35,14 @@ class GridViewDelegateMock: GridViewDelegate {
     }
 }
 
-class GridViewTests: XCTestCase {
+final class GridViewTests: XCTestCase {
 
-    var sut: GridView!
-    var gridViewDelegateMock: GridViewDelegateMock!
-    var tiles = [OrientableView]()
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: GridView!
+    private var gridViewDelegateMock: GridViewDelegateMock!
+    private var tiles = [OrientableView]()
 
     let frame = CGRect(origin: CGPoint(x: 0, y: 0), size: XCTestCase.DeviceSizeIPhone5)
 
@@ -64,17 +67,25 @@ class GridViewTests: XCTestCase {
         .gray
     ]
 
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
+        snapshotHelper = .init()
         gridViewDelegateMock = GridViewDelegateMock()
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         gridViewDelegateMock = nil
         tiles.removeAll()
         super.tearDown()
     }
+
+    // MARK: - Helper Methods
 
     private func setupSut(maxItemsPerPage: Int = 8) {
         sut = GridView(maxItemsPerPage: maxItemsPerPage)
@@ -82,21 +93,28 @@ class GridViewTests: XCTestCase {
         sut.dataSource = self
     }
 
-    private func testGrid(withAmount amount: Int,
-                          maxItemsPerPage: Int = 8,
-                          file: StaticString = #file,
-                          testName: String = #function,
-                          line: UInt = #line) {
+    private func testGrid(
+        withAmount amount: Int,
+        maxItemsPerPage: Int = 8,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         // Given
         tiles = Array(views.prefix(amount))
         setupSut(maxItemsPerPage: maxItemsPerPage)
         sut.reloadData()
 
         // Then
-        verify(matching: sut, file: file, testName: testName, line: line)
+        snapshotHelper.verify(
+            matching: sut,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
-    // MARK: - Tests
+    // MARK: - Snapshot Tests
 
     func testOneView() {
         testGrid(withAmount: 1)
@@ -126,17 +144,19 @@ class GridViewTests: XCTestCase {
         testGrid(withAmount: 8, maxItemsPerPage: 4)
     }
 
+    // MARK: - Unit Tests
+
     func testThatItUpdatesDelegate_When_ThePageChanges() {
-        // Given
+        // GIVEN
         setupSut()
         sut.gridViewDelegate = gridViewDelegateMock
         let scrollView = UIScrollView(frame: frame)
         scrollView.contentOffset = CGPoint(x: 0, y: frame.size.height)
 
-        // When
+        // WHEN
         sut.scrollViewDidEndDecelerating(scrollView)
 
-        // Then
+        // THEN
         XCTAssertEqual(gridViewDelegateMock.page, 1)
     }
 }

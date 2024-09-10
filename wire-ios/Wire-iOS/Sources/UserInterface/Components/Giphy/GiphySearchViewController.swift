@@ -21,6 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 import Ziphy
 
@@ -34,28 +35,44 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     weak var delegate: GiphySearchViewControllerDelegate?
 
-    let searchResultsController: ZiphySearchResultsController
-    let searchBar: TextSearchInputView = TextSearchInputView()
-    let noResultsLabel = DynamicFontLabel(text: Giphy.Error.noResult.capitalizingFirstCharacterOnly,
-                                          fontSpec: .normalRegularFont,
-                                          color: SemanticColors.Label.textSettingsPasswordPlaceholder)
-    let conversation: ZMConversation
+    private let searchResultsController: ZiphySearchResultsController
 
-    var ziphs: [Ziph] = [] {
+    private lazy var searchController: UISearchController = {
+        let controller = UISearchController(searchResultsController: nil)
+        controller.searchBar.placeholder = Giphy.searchPlaceholder
+        controller.searchBar.isAccessibilityElement = true
+        controller.searchBar.accessibilityLabel = L10n.Accessibility.SearchGifs.SearchBar.accessibilityLabel
+        controller.searchBar.accessibilityIdentifier = "search input"
+        return controller
+    }()
+
+    private let noResultsLabel = DynamicFontLabel(
+        text: Giphy.Error.noResult,
+        style: .body1,
+        color: SemanticColors.Label.textSettingsPasswordPlaceholder
+    )
+
+    private let conversation: ZMConversation
+
+    private var ziphs: [Ziph] = [] {
         didSet {
             collectionView?.reloadData()
             noResultsLabel.isHidden = self.ziphs.count > 0
         }
     }
 
-    var searchTerm: String
-    var pendingTimer: Timer?
-    var pendingSearchtask: CancelableTask?
-    var pendingFetchTask: CancelableTask?
+    private var searchTerm: String
+    private var pendingTimer: Timer?
+    private var pendingSearchtask: CancelableTask?
+    private var pendingFetchTask: CancelableTask?
 
     // MARK: - Initialization
 
-    convenience init(searchTerm: String, conversation: ZMConversation, userSession: UserSession) {
+    convenience init(
+        searchTerm: String,
+        conversation: ZMConversation,
+        userSession: UserSession
+    ) {
         let searchResultsController = ZiphySearchResultsController(
             client: ZiphyClient(
                 host: "api.giphy.com",
@@ -65,18 +82,34 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             pageSize: 50,
             maxImageSize: 3
         )
-        self.init(searchTerm: searchTerm, conversation: conversation, searchResultsController: searchResultsController)
+        self.init(
+            searchTerm: searchTerm,
+            conversation: conversation,
+            searchResultsController: searchResultsController
+        )
     }
 
-    init(searchTerm: String, conversation: ZMConversation, searchResultsController: ZiphySearchResultsController) {
+    init(
+        searchTerm: String,
+        conversation: ZMConversation,
+        searchResultsController: ZiphySearchResultsController
+    ) {
         self.conversation = conversation
         self.searchTerm = searchTerm
         self.searchResultsController = searchResultsController
 
-        let columnCount = AdaptiveColumnCount(compact: 2, regular: 3, large: 4)
-        super.init(interItemSpacing: 1, interColumnSpacing: 1, columnCount: columnCount)
+        let columnCount = AdaptiveColumnCount(
+            compact: 2,
+            regular: 3,
+            large: 4
+        )
 
-        navigationItem.setDynamicFontLabel(title: conversation.displayNameWithFallback)
+        super.init(
+            interItemSpacing: 1,
+            interColumnSpacing: 1,
+            columnCount: columnCount
+        )
+
         performSearch()
     }
 
@@ -104,77 +137,60 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSearchController()
         setupNoResultLabel()
         setupCollectionView()
-        setupNavigationItem()
         createConstraints()
-        applyStyle()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBarTitle(conversation.displayNameWithFallback)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+            self?.presentingViewController?.dismiss(animated: true)
+        }, accessibilityLabel: L10n.Localizable.General.close)
+        searchController.searchBar.text = searchTerm
+    }
+
+    // MARK: - Setup UI
+
+    private func setupSearchController() {
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        definesPresentationContext = true
     }
 
     private func setupNoResultLabel() {
         extendedLayoutIncludesOpaqueBars = true
         noResultsLabel.isHidden = true
+        noResultsLabel.isAccessibilityElement = true
+        noResultsLabel.accessibilityTraits = .staticText
+        noResultsLabel.accessibilityLabel = L10n.Accessibility.SearchGifs.NorResultsLabel.description
         view.addSubview(noResultsLabel)
-        view.addSubview(searchBar)
     }
 
     private func setupCollectionView() {
         collectionView?.showsVerticalScrollIndicator = false
+        collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
         collectionView?.accessibilityIdentifier = "giphyCollectionView"
         collectionView?.register(GiphyCollectionViewCell.self, forCellWithReuseIdentifier: GiphyCollectionViewCell.CellIdentifier)
         edgesForExtendedLayout = []
     }
 
-    private func setupNavigationItem() {
-        searchBar.searchInput.text = searchTerm
-        searchBar.placeholderString = Giphy.searchPlaceholder.capitalizingFirstCharacterOnly
-        searchBar.delegate = self
-        let closeImage = StyleKitIcon.cross.makeImage(size: .tiny, color: .black)
-        let closeItem = UIBarButtonItem(image: closeImage, style: .plain, target: self, action: #selector(onDismiss))
-        closeItem.accessibilityLabel = L10n.Localizable.General.close
-
-        navigationItem.rightBarButtonItem = closeItem
-    }
-
     private func createConstraints() {
         noResultsLabel.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noResultsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             noResultsLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
-            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 56),
-
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    private func applyStyle() {
-        let searchBarIconColor = SemanticColors.SearchBar.backgroundButton
-        collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
-
-        searchBar.iconView.setTemplateIcon(.search, size: .tiny)
-        searchBar.iconView.tintColor = searchBarIconColor
-        searchBar.clearButton.setIconColor(searchBarIconColor, for: .normal)
-    }
-
-    // MARK: - Presentation
-
-    func wrapInsideNavigationController() -> UINavigationController {
-        let navigationController = self.wrapInNavigationController()
-
-        return navigationController
-    }
-
-    @objc func onDismiss() {
-        navigationController?.dismiss(animated: true, completion: nil)
     }
 
     // MARK: - Collection View
@@ -197,6 +213,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         cell.isAccessibilityElement = true
         cell.accessibilityTraits.insert(.image)
         cell.accessibilityLabel = ziph.title
+        cell.accessibilityHint = L10n.Accessibility.SearchGifs.GifItem.accessibilityHint
 
         searchResultsController.fetchImageData(for: ziph, imageType: .preview) { result in
             guard case let .success(imageData) = result else {
@@ -239,7 +256,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
             fetchMoreResults()
         }
 
-        searchBar.resignFirstResponder()
+        searchController.searchBar.resignFirstResponder()
     }
 
 }
@@ -306,6 +323,10 @@ extension GiphySearchViewController {
         }
 
         collectionView?.insertItems(at: updatedIndices)
+
+        let newItemsCount = results.count
+        let announcement = L10n.Accessibility.SearchGifs.GifItemsLoaded.announcement(newItemsCount)
+        UIAccessibility.post(notification: .announcement, argument: announcement)
     }
 
     @discardableResult
@@ -330,18 +351,16 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
 
 }
 
-// MARK: - TextSearchInputViewDelegate
-
-extension GiphySearchViewController: TextSearchInputViewDelegate {
-
-    func searchView(_ searchView: TextSearchInputView, didChangeQueryTo query: String) {
-
-        searchTerm = searchBar.query
+extension GiphySearchViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else { return }
+        searchTerm = searchText
         performSearchAfter(delay: 0.3)
     }
+}
 
-    func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool {
-        return TextSearchQuery.isValid(query: searchBar.query)
+extension GiphySearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        performSearch()
     }
-
 }

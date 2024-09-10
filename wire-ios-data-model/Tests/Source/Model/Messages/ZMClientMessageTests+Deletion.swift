@@ -99,7 +99,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 
     func testThatItDeletesAnAssetMessage_File() {
         // given
-        let data = "Hello World".data(using: String.Encoding.utf8)!
+        let data = Data("Hello World".utf8)
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let url = URL(fileURLWithPath: documents).appendingPathComponent("file.dat")
 
@@ -152,7 +152,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
     func testThatItDeletesAPreEndtoEndPlainTextMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let sut = ZMTextMessage(nonce: .create(), managedObjectContext: uiMOC) // Pre e2ee plain text message
+        let sut = TextMessage(nonce: .create(), managedObjectContext: uiMOC) // Pre e2ee plain text message
 
         sut.visibleInConversation = conversation
         sut.sender = selfUser

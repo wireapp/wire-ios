@@ -23,19 +23,51 @@ import WireCoreCrypto
 // sourcery: AutoMockable
 public protocol CommitSending {
 
+    /// Sends a commit bundle.
+    ///
+    /// - Parameters:
+    ///   - bundle: The commit bundle to send.
+    ///   - groupID: The group ID of the group to send the commit to.
+    /// - Returns: Any update events returned by the backend.
+    /// - Throws: `CommitError` if the operation fails.
+    ///
+    /// If the commit is sent successfully, it will be merged and the new epoch will be published.
+    /// New epochs can be observed with ``onEpochChanged()``.
+    ///
+    /// If the commit fails to send, the error will contain a recovery strategy to handle the failure.
+    /// The pending commit may be discarded based on the recovery strategy.
+
     func sendCommitBundle(
         _ bundle: CommitBundle,
         for groupID: MLSGroupID
     ) async throws -> [ZMUpdateEvent]
+
+    /// Sends an external commit bundle.
+    ///
+    /// -  Parameters:
+    ///   - bundle: The commit bundle to send.
+    ///   - groupID: The group ID of the group to send the commit to.
+    /// - Returns: Any update events returned by the backend.
+    /// - Throws: `ExternalCommitError` if the operation fails.
+    ///
+    /// If the commit is sent successfully, the pending group will be merged.
+    /// 
+    /// If the commit fails to send, the error will contain a recovery strategy to handle the failure.
+    /// If the recovery strategy is to give up, then the pending group will be cleared.
 
     func sendExternalCommitBundle(
         _ bundle: CommitBundle,
         for groupID: MLSGroupID
     ) async throws -> [ZMUpdateEvent]
 
+    /// Returns a publisher that emits the group ID of the group when the epoch changes.
+
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
 
 }
+
+/// An actor responsible for sending commits and external commits and handling the results.
+/// In case of failures, it will provide a recovery strategy to handle the failure.
 
 public actor CommitSender: CommitSending {
 

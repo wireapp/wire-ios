@@ -381,7 +381,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
-
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),
             let payload = response.payload
@@ -389,6 +388,9 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
+        // There is one case where you end up here:
+        // 1) selfUser edits the conversation name: a save will be enqueue when user is done editing
+        // Note: when another user edited the conversation name, ConversationEventProcessor is called directly as EventAsyncConsumer and a save will be done in EventProcessor
         conversationEventProcessor.processPayload(payload)
 
         return false

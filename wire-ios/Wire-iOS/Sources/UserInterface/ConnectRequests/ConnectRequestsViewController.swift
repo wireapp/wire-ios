@@ -74,7 +74,6 @@ final class ConnectRequestsViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         setupNavigationBar()
     }
 
@@ -100,7 +99,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     private func setupNavigationBar() {
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Inbox.title.capitalized)
+        setupNavigationBarTitle(L10n.Localizable.Inbox.title.capitalized)
         let button = AuthenticationNavigationBar.makeBackButton()
         button.addTarget(self, action: #selector(onBackButtonPressed), for: .touchUpInside)
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
@@ -124,7 +123,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         let inset: CGFloat = connectionRequests.count > 1 ? 48 : 0
 
-        return max(0, view.safeAreaLayoutGuideOrFallback.layoutFrame.size.height - inset)
+        return max(0, view.safeAreaLayoutGuide.layoutFrame.size.height - inset)
     }
 
     // MARK: - Helpers

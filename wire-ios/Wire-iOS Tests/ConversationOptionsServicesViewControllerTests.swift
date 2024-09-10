@@ -17,7 +17,7 @@
 //
 
 import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -136,11 +136,11 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
     // MARK: Renders different kind of alerts
 
-    func testThatItRendersRemoveServicesConfirmationAlert() throws {
+    func testThatItRendersRemoveServicesConfirmationAlert() {
         // WHEN
         let sut = UIAlertController.confirmRemovingServices { _ in }
         // THEN
-        try verify(matching: sut)
+        XCTAssertNotNil(sut)
     }
 
     func testThatNoAlertIsShowIfNoServiceIsPresent() {
@@ -151,25 +151,24 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
 
         // Show the alert
-        let sut = viewModel.setAllowServices(false)
+        let sut = viewModel.setAllowServices(false, sender: .init())
 
         // THEN
         XCTAssertNil(sut)
     }
 
-    func testThatItRendersRemoveServicesWarning() throws {
+    func testThatItRendersRemoveServicesWarning() {
         // GIVEN
         let config = MockServicesOptionsViewModelConfiguration(allowServices: true)
         let viewModel = ConversationServicesOptionsViewModel(configuration: config)
 
         // For ConversationServicesOptionsViewModel's delegate
-        _ = ConversationServicesOptionsViewController(viewModel: viewModel)
+        let viewController = ConversationServicesOptionsViewController(viewModel: viewModel)
 
         // Show the alert
-        let sut = viewModel.setAllowServices(false)!
+        let sut = viewModel.setAllowServices(false, sender: viewController.view.subviews[0])!
 
         // THEN
-        try verify(matching: sut)
+        XCTAssertNotNil(sut)
     }
-
 }

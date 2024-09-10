@@ -16,27 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireTestingPackage
 import XCTest
+
+@testable import Wire
 
 final class DestructionCountdownViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    var sut: DestructionCountdownView!
+    private var snapshotHelper: SnapshotHelper!
+    private var sut: DestructionCountdownView!
+
+    // MARK: - setUp
+
+    override func setUp() {
+        super.setUp()
+        snapshotHelper = SnapshotHelper()
+    }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        snapshotHelper = nil
         sut = nil
         super.tearDown()
     }
 
     // MARK: - Helper method
 
-    func prepareSut(uiInterfaceStyle: UIUserInterfaceStyle = .light) {
+    func prepareSut() {
         sut = DestructionCountdownView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        sut.overrideUserInterfaceStyle = uiInterfaceStyle
         sut.backgroundColor = UIColor.clear
     }
 
@@ -51,7 +61,7 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_80_Percent_Progress() {
@@ -64,7 +74,7 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_60_Percent_Progress() {
@@ -77,7 +87,7 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_50_Percent_Progress() {
@@ -90,7 +100,7 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_40_Percent_Progress() {
@@ -103,7 +113,7 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_20_Percent_Progress() {
@@ -116,7 +126,7 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_0_Percent_Progress() {
@@ -129,12 +139,12 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper.verify(matching: sut)
     }
 
     func testThatItRendersCorrectly_80_Percent_Progress_in_dark_theme() {
         // GIVEN
-        prepareSut(uiInterfaceStyle: .dark)
+        prepareSut()
 
         // WHEN
         sut.setProgress(0.8)
@@ -142,7 +152,9 @@ final class DestructionCountdownViewTests: XCTestCase {
         sut.layoutIfNeeded()
 
         // THEN
-        verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     // MARK: - Unit Test

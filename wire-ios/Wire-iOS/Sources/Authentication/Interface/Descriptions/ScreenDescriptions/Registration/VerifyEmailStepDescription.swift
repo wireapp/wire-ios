@@ -67,8 +67,4 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
         secondaryView = nil
         footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
     }
-
-    func shouldSkipFromNavigation() -> Bool {
-        return true
-    }
 }

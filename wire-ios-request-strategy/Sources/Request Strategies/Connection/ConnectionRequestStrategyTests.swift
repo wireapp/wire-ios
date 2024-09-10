@@ -19,6 +19,7 @@
 import WireDataModelSupport
 @testable import WireRequestStrategy
 import WireRequestStrategySupport
+import WireTransport
 import XCTest
 
 final class ConnectionRequestStrategyTests: MessagingTestBase {
@@ -30,7 +31,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     var apiVersion: APIVersion! {
         didSet {
-            setCurrentAPIVersion(apiVersion)
+            BackendInfo.apiVersion = apiVersion
         }
     }
 
@@ -59,7 +60,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
         sut = nil
         mockSyncProgress = nil
         mockApplicationStatus = nil
-        apiVersion = nil
         mockOneOnOneResolver = nil
         super.tearDown()
     }

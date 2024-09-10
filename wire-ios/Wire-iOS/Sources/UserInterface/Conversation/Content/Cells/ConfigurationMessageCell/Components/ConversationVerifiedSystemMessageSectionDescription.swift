@@ -24,7 +24,6 @@ import WireDesign
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
-    typealias LabelColors = SemanticColors.Label
 
     let configuration: View.Configuration
 
@@ -43,7 +42,7 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     let accessibilityLabel: String?
 
     init() {
-        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
+        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(WireURLs.shared.endToEndIdentityInfo), style: .systemMessage)
 
         configuration = View.Configuration(
             icon: .init(resource: .certificateValid),

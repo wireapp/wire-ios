@@ -16,20 +16,41 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
+
 final class ChangeHandleViewControllerTests: XCTestCase {
+
+    // MARK: - Properties
+
+    private var snapshotHelper: SnapshotHelper!
+    private var mockSelfUser: MockUserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
-        let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
+        mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil
         mockSelfUser.domain = "wire.com"
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
+
+    // MARK: - tearDown
+
+    override func tearDown() {
+        snapshotHelper = nil
+        mockSelfUser = nil
+        SelfUser.provider = nil
+
+        super.tearDown()
+    }
+
+    // MARK: - Snapshot Tests
 
     func testThatItRendersCorrectInitially() {
         verify(newHandle: nil, availability: .unknown)
@@ -51,17 +72,20 @@ final class ChangeHandleViewControllerTests: XCTestCase {
         verify(newHandle: "vanessa92", availability: .unknown)
     }
 
-    private func verify(currentHandle: String = "bruno",
-                        newHandle: String?,
-                        availability: HandleChangeState.HandleAvailability,
-                        federationEnabled: Bool = false,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    // MARK: - Helper methods
+
+    private func verify(
+        currentHandle: String = "bruno",
+        newHandle: String?,
+        availability: HandleChangeState.HandleAvailability,
+        federationEnabled: Bool = false,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let state = HandleChangeState(currentHandle: currentHandle, newHandle: newHandle, availability: availability)
         let sut = ChangeHandleViewController(state: state, federationEnabled: federationEnabled)
-        sut.overrideUserInterfaceStyle = .light
-        verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)
+        snapshotHelper.verify(matching: sut.prepareForSettingsSnapshots(), file: file, testName: testName, line: line)
     }
 }
 
@@ -78,5 +102,4 @@ fileprivate extension UIViewController {
 
         return navigationController.view
     }
-
 }

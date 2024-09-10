@@ -52,7 +52,7 @@ extension ConversationContentViewController {
             canvasViewController.sketchImage = UIImage(data: imageData)
         }
         canvasViewController.delegate = self
-        canvasViewController.navigationItem.setupNavigationBarTitle(title: message.conversationLike?.displayName ?? "")
+        canvasViewController.setupNavigationBarTitle(message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
         present(canvasViewController.wrapInNavigationController(), animated: true)
@@ -65,13 +65,27 @@ extension ConversationContentViewController {
     ) {
         switch actionId {
         case .cancel:
-            userSession.enqueue({
+            userSession.enqueue {
+                WireLogger.messaging.info(
+                    "cancel message",
+                    attributes: [
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ], .safePublic
+                )
+
                 message.fileMessageData?.cancelTransfer()
-            })
+            }
         case .resend:
-            userSession.enqueue({
+            userSession.enqueue {
+                WireLogger.messaging.info(
+                    "resend message",
+                    attributes: [
+                        LogAttributesKey.conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
+                    ], .safePublic
+                )
+
                 message.resend()
-            })
+            }
         case .delete:
             assert(message.canBeDeleted)
 
@@ -84,24 +98,22 @@ extension ConversationContentViewController {
         case .present:
             dataSource.selectedMessage = message
             presentDetails(for: message)
+
         case .save:
             if Message.isImage(message) {
                 saveImage(from: message, view: view)
-            } else {
+            } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
                 dataSource.selectedMessage = message
 
-                let targetView: UIView
-
-                if let selectableView = view as? SelectableView {
-                    targetView = selectableView.selectionView
-                } else {
-                    targetView = view
-                }
-
-                if let saveController = UIActivityViewController(message: message, from: targetView) {
-                    present(saveController, animated: true)
-                }
+                let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                activityViewController.configurePopoverPresentationController(
+                    using: .superviewAndFrame(of: (view as? SelectableView)?.selectionView ?? view)
+                )
+                present(activityViewController, animated: true)
+            } else {
+                WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
             }
+
         case .digitallySign:
             dataSource.selectedMessage = message
             if message.isFileDownloaded() {
@@ -117,8 +129,6 @@ extension ConversationContentViewController {
         case .sketchEmoji:
             openSketch(for: message, in: .emoji)
 
-        case .forward:
-            showForwardFor(message: message, from: view)
         case .showInConversation:
             scroll(to: message) { _ in
                 self.dataSource.highlight(message: message)
@@ -146,7 +156,7 @@ extension ConversationContentViewController {
             parent?.present(detailsViewController, animated: true)
         case .resetSession:
             guard let client = message.systemMessageData?.clients.first as? UserClient else { return }
-            isLoadingViewVisible = true
+            activityIndicator.start()
             userClientToken = UserClientChangeInfo.add(observer: self, for: client)
             client.resetSession()
         case .react(let reaction):
@@ -175,11 +185,8 @@ extension ConversationContentViewController {
 
     private func presentDownloadNecessaryAlert(for message: ZMConversationMessage) {
         let alertMessage = L10n.Localizable.DigitalSignature.Alert.downloadNecessary
-        let alertController = UIAlertController(title: "",
-                                                message: alertMessage,
-                                                preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.close,
-                                         style: .default)
+        let alertController = UIAlertController(title: "", message: alertMessage, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: L10n.Localizable.General.close, style: .default)
         alertController.addAction(cancelAction)
         present(alertController, animated: true)
     }
@@ -192,41 +199,42 @@ extension ConversationContentViewController: UserClientObserver {
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
         if changeInfo.sessionHasBeenReset {
             userClientToken = nil
-            isLoadingViewVisible = false
+            activityIndicator.stop()
         }
     }
-
 }
 
 // MARK: - SignatureObserver
 
 extension ConversationContentViewController: SignatureObserver {
+
     func willReceiveSignatureURL() {
-        isLoadingViewVisible = true
+        activityIndicator.start()
     }
 
     func didReceiveSignatureURL(_ url: URL) {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         presentDigitalSignatureVerification(with: url)
     }
 
     func didReceiveDigitalSignature(_ cmsFileMetadata: ZMFileMetadata) {
-        dismissDigitalSignatureVerification(completion: { [weak self] in
-            ZMUserSession.shared()?.perform({
+        dismissDigitalSignatureVerification { [weak self] in
+            ZMUserSession.shared()?.perform {
                 do {
                     try self?.conversation.appendFile(with: cmsFileMetadata)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
-            })
-        })
+            }
+        }
     }
 
     func didFailSignature(errorType: SignatureStatus.ErrorYpe) {
-        isLoadingViewVisible = false
+        activityIndicator.stop()
         if isDigitalSignatureVerificationShown {
-            dismissDigitalSignatureVerification(completion: { [weak self] in                  self?.presentDigitalSignatureErrorAlert(errorType: errorType)
-            })
+            dismissDigitalSignatureVerification { [weak self] in
+                self?.presentDigitalSignatureErrorAlert(errorType: errorType)
+            }
         } else {
             presentDigitalSignatureErrorAlert(errorType: errorType)
         }

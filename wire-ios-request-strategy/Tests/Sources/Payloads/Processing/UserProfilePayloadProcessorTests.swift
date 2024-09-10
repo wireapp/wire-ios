@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
+import WireFoundation
+import WireTransport
 import XCTest
+
+@testable import WireRequestStrategy
 
 final class UserProfilePayloadProcessorTests: MessagingTestBase {
 
@@ -31,11 +34,11 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             self.otherUser.remoteIdentifier = nil
             self.otherUser.domain = nil
         }
+        BackendInfo.isFederationEnabled = false
     }
 
     override func tearDown() {
         sut = nil
-        BackendInfo.isFederationEnabled = false
         super.tearDown()
     }
 

@@ -43,6 +43,8 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func commitPendingProposals(conversationId: Data) async throws -> WireCoreCrypto.CommitBundle?
 
+    func conversationCiphersuite(conversationId: Data) async throws -> WireCoreCrypto.Ciphersuite
+
     func conversationEpoch(conversationId: Data) async throws -> UInt64
 
     func conversationExists(conversationId: Data) async -> Bool
@@ -163,7 +165,7 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func restoreFromDisk() async throws
 
-    func setCallbacks(callbacks: WireCoreCrypto.CoreCryptoCallbacks) async throws
+    func setCallbacks(callbacks: any WireCoreCrypto.CoreCryptoCallbacks) async throws
 
     func unload() async throws
 

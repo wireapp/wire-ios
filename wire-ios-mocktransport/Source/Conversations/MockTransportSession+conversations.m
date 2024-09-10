@@ -25,16 +25,15 @@
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
-
+#import "NSManagedObjectContext+executeFetchRequestOrAssert.h"
 
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 
 @implementation MockTransportSession (Conversations)
 
-// swiftlint:disable todo_requires_jira_link
+// swiftlint:disable:next todo_requires_jira_link
 //TODO: filter requests using array of NSPredicates
-// swiftlint:enable todo_requires_jira_link
 
 // handles /conversations
 - (ZMTransportResponse *)processConversationsRequest:(ZMTransportRequest *)request;
@@ -278,7 +277,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 - (ZMTransportResponse *)processConversationsGetConversationsIDs:(NSString *)ids apiVersion:(APIVersion)apiVersion;
 {
     NSFetchRequest *request = [MockConversation sortedFetchRequest];
-    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     NSMutableArray *data = [NSMutableArray array];
     
     if (ids != nil) {
@@ -327,8 +326,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", id];
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequestWithPredicate:predicate];
         
-        NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
+        NSArray *results = [self.managedObjectContext executeFetchRequestOrAssert_mt:fetchRequest];
+
         if (results.count == 1) {
             MockUser *user = results[0];
             [otherUsers addObject:user];
@@ -396,7 +395,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 {
     NSFetchRequest *request = [MockConversation sortedFetchRequestWithPredicate:[NSPredicate predicateWithFormat:@"identifier == %@", identifier]];
     
-    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
     RequireString(conversations.count <= 1, "Too many conversations with one identifier");
     
     return conversations.count > 0 ? conversations[0] : nil;
@@ -424,7 +423,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     NSUUID *start = [query optionalUuidForKey:@"start"];
     
     NSFetchRequest *request = [MockConversation sortedFetchRequest];
-    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert_mt:request];
 
     NSArray *conversationIDs = [conversations mapWithBlock:^id(MockConversation *obj) {
         return obj.identifier;

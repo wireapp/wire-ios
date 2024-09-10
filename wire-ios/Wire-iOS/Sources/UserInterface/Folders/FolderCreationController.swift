@@ -20,10 +20,6 @@ import UIKit
 import WireDesign
 import WireSyncEngine
 
-protocol FolderCreationValuesConfigurable: AnyObject {
-    func configure(with name: String)
-}
-
 protocol FolderCreationControllerDelegate: AnyObject {
 
     func folderController(
@@ -34,7 +30,6 @@ protocol FolderCreationControllerDelegate: AnyObject {
 
 final class FolderCreationController: UIViewController {
 
-    static let mainViewHeight: CGFloat = 56
     private let collectionViewController = SectionCollectionViewController()
 
     private lazy var nameSection: FolderCreationNameSectionController = {
@@ -66,7 +61,6 @@ final class FolderCreationController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        setupNavigationBar()
         setupViews()
 
         // try to overtake the first responder from the other view
@@ -80,10 +74,14 @@ final class FolderCreationController: UIViewController {
         nameSection.becomeFirstResponder()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+    }
+
     private func setupViews() {
-        // swiftlint:disable todo_requires_jira_link
+        // swiftlint:disable:next todo_requires_jira_link
         // TODO: if keyboard is open, it should scroll.
-        // swiftlint:enable todo_requires_jira_link
         let collectionView = UICollectionView(forGroupedSections: ())
 
         collectionView.contentInsetAdjustmentBehavior = .never
@@ -91,10 +89,10 @@ final class FolderCreationController: UIViewController {
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
 
         collectionViewController.collectionView = collectionView
@@ -109,7 +107,7 @@ final class FolderCreationController: UIViewController {
             navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
+            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         ])
     }
 
@@ -119,20 +117,22 @@ final class FolderCreationController: UIViewController {
         self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
-            navigationItem.leftBarButtonItem = navigationController?.closeItem()
+            navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            }, accessibilityLabel: L10n.Localizable.General.close)
         }
 
-        let nextButtonItem: UIBarButtonItem = .createNavigationRightBarButtonItem(
-            title: FolderCreationName.Button.create.capitalized,
-            systemImage: false,
-            target: self,
-            action: #selector(tryToProceed)
-        )
+        let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
+            title: FolderCreationName.Button.create,
+            action: UIAction { [weak self] _ in
+                self?.tryToProceed()
+            })
+
         nextButtonItem.accessibilityIdentifier = "button.newfolder.create"
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
 
-        navigationItem.setupNavigationBarTitle(title: FolderCreationName.title.capitalized)
+        setupNavigationBarTitle(FolderCreationName.title)
         navigationItem.rightBarButtonItem = nextButtonItem
     }
 
@@ -151,7 +151,7 @@ final class FolderCreationController: UIViewController {
         }
     }
 
-    @objc fileprivate func tryToProceed() {
+    fileprivate func tryToProceed() {
         guard let value = nameSection.value else { return }
         proceedWith(value: value)
     }
