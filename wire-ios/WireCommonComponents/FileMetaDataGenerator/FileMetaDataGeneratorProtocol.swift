@@ -21,5 +21,20 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol FileMetaDataGeneratorProtocol {
+    
+    /// Determines the file type and name of the file and generates metadata including a thumbnail if possible.
+    /// If `overriddenName` is an empty string, the `url`'. last path component is used as name.
+    func metadataForFile(
+        at url: URL,
+        overriddenName: String
+    ) async -> ZMFileMetadata
+
     func metadataForFile(at url: URL) async -> ZMFileMetadata
+}
+
+public extension FileMetaDataGeneratorProtocol {
+
+    func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        await metadataForFile(at: url, overriddenName: "")
+    }
 }

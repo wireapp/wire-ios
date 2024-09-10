@@ -188,11 +188,9 @@ final class AudioEffectsPickerViewController: UIViewController {
 
     private func loadLevels() {
         let url = URL(fileURLWithPath: recordingPath)
-        fileMetadataGenerator.metadataForFile(
-            at: url,
-            name: url.lastPathComponent
-        ) { metadata in
-            DispatchQueue.main.async {
+        Task {
+            let metadata = await fileMetadataGenerator.metadataForFile(at: url)
+            await MainActor.run {
                 if let audioMetadata = metadata as? ZMAudioMetadata {
                     self.normalizedLoudness = audioMetadata.normalizedLoudness
                     self.progressView.samples = audioMetadata.normalizedLoudness

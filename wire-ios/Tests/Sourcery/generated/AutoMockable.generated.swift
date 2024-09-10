@@ -34,7 +34,6 @@ import AppKit
 import CoreLocation
 import WireDataModel
 import WireSyncEngine
-import UniformTypeIdentifiers
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -715,6 +714,24 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     public init() {}
 
+
+    // MARK: - metadataForFile
+
+    public var metadataForFileAtOverriddenName_Invocations: [(url: URL, overriddenName: String)] = []
+    public var metadataForFileAtOverriddenName_MockMethod: ((URL, String) async -> ZMFileMetadata)?
+    public var metadataForFileAtOverriddenName_MockValue: ZMFileMetadata?
+
+    public func metadataForFile(at url: URL, overriddenName: String) async -> ZMFileMetadata {
+        metadataForFileAtOverriddenName_Invocations.append((url: url, overriddenName: overriddenName))
+
+        if let mock = metadataForFileAtOverriddenName_MockMethod {
+            return await mock(url, overriddenName)
+        } else if let mock = metadataForFileAtOverriddenName_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `metadataForFileAtOverriddenName`")
+        }
+    }
 
     // MARK: - metadataForFile
 

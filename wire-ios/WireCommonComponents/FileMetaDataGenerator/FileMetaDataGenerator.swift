@@ -40,34 +40,30 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
         self.init(previewGenerator: SharedPreviewGenerator.generator)
     }
 
-    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
-        // TODO: replace non-async method
-        fatalError()
-    }
-    public func metadataForFile(
-        at url: URL,
-        name: String,
-        completion: @escaping (ZMFileMetadata) -> Void
-    ) {
-        let uniformType = url.uniformType ?? .item
-        previewGenerator.generatePreviewForFile(at: url, uniformType: uniformType) { preview in
+    public func metadataForFile(at url: URL, overriddenName: String) async -> ZMFileMetadata {
 
-            let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
+        let thumbnail: Data?
+        do {
+            thumbnail = try await previewGenerator.generatePreviewForFile(at: url)
+                .jpegData(compressionQuality: 0.9)
+        } catch {
+            thumbnail = nil
+            WireLogger.ui.error("Failed to generate preview for file: \(url)")
+        }
 
-            if AVURLAsset.wr_isAudioVisualUniformType(uniformType) {
-                let asset = AVURLAsset(url: url)
-
-                if let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first {
-                    completion(ZMVideoMetadata(fileURL: url, duration: asset.duration.seconds, dimensions: videoTrack.naturalSize, thumbnail: thumbnail))
-                } else {
-                    let loudness = asset.audioSamplesFromAsset(maxSamples: 100)
-                    completion(ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? []))
-                }
+        if let uniformType = url.uniformType, AVURLAsset.wr_isAudioVisualUniformType(uniformType) {
+            let asset = AVURLAsset(url: url)
+            if let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first {
+                return ZMVideoMetadata(fileURL: url, duration: asset.duration.seconds, dimensions: videoTrack.naturalSize, thumbnail: thumbnail)
             } else {
-                // swiftlint:disable:next todo_requires_jira_link
-                // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
-                completion(ZMFileMetadata(fileURL: url, thumbnail: thumbnail))
+                let loudness = asset.audioSamplesFromAsset(maxSamples: 100)
+                return ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? [])
             }
+
+        } else {
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
+            return ZMFileMetadata(fileURL: url, thumbnail: thumbnail)
         }
     }
 }

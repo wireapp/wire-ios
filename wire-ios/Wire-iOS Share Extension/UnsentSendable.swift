@@ -239,12 +239,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                     return completion()
                 }
 
-                prepareAsFileData(name: url?.lastPathComponent, completion: completion)
+                prepareAsFileData(name: url?.lastPathComponent ?? "", completion: completion)
             }
         } else if typePass {
-            prepareAsWalletPass(name: nil, completion: completion)
+            prepareAsWalletPass(name: "", completion: completion)
         } else if typeData {
-            prepareAsFileData(name: nil, completion: completion)
+            prepareAsFileData(name: "", completion: completion)
         }
     }
 
@@ -255,15 +255,15 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
         }
     }
 
-    private func prepareAsFileData(name: String?, completion: @escaping () -> Void) {
+    private func prepareAsFileData(name: String, completion: @escaping () -> Void) {
         self.prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
     }
 
-    private func prepareAsWalletPass(name: String?, completion: @escaping () -> Void) {
-        self.prepareAsFile(name: nil, typeIdentifier: UnsentFileSendable.passkitUTI, completion: completion)
+    private func prepareAsWalletPass(name: String, completion: @escaping () -> Void) {
+        self.prepareAsFile(name: "", typeIdentifier: UnsentFileSendable.passkitUTI, completion: completion)
     }
 
-    private func prepareAsFile(name: String?, typeIdentifier: String, completion: @escaping () -> Void) {
+    private func prepareAsFile(name: String, typeIdentifier: String, completion: @escaping () -> Void) {
         attachment.loadItem(forTypeIdentifier: typeIdentifier, options: [:]) { [weak self] data, error in
             guard let UTIString = self?.attachment.registeredTypeIdentifiers.first, error == nil else {
                 error?.log(message: "Unable to load file from attachment")
@@ -284,11 +284,8 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                 }
 
                 // Generate preview
-                self?.fileMetaDataGenerator.metadataForFile(
-                    at: url,
-                    name: name ?? url.lastPathComponent
-                ) { [weak self] metadata in
-                    self?.metadata = metadata
+                Task { [weak self] in
+                    self?.metadata = await self?.fileMetaDataGenerator.metadataForFile(at: url, overriddenName: name)
                     completion()
                 }
             }
