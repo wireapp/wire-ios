@@ -92,7 +92,7 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_MockMethod = { url, uti, name, completion in
 
             XCTAssertEqual(url, mockURL)
-            XCTAssertEqual(uti, mockURL.UTI())
+            XCTAssertEqual(uti, mockURL.uniformType?.identifier)
             XCTAssertEqual(name, mockURL.lastPathComponent)
 
             completion(mockMetadata)

@@ -278,16 +278,15 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
                 // Generating PDF previews can be expensive. To avoid hitting the Share Extension's
                 // memory budget we should avoid to generate previews if the file is a PDF.
-                guard let type = UTType(url.UTI()), type.conforms(to: UTType.pdf) else {
+                guard let uniformType = url.uniformType, uniformType.conforms(to: .pdf) else {
                     self?.metadata = ZMFileMetadata(fileURL: url)
-                    completion()
-                    return
+                    return completion()
                 }
 
                 // Generate preview
                 self?.fileMetaDataGenerator.metadataForFileAtURL(
                     url,
-                    UTI: url.UTI(),
+                    UTI: uniformType.identifier,
                     name: name ?? url.lastPathComponent
                 ) { [weak self] metadata in
                     self?.metadata = metadata

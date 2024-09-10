@@ -88,7 +88,7 @@ extension ConversationInputBarViewController {
 
         FileMetaDataGenerator.shared.metadataForFileAtURL(
             url,
-            UTI: url.UTI(),
+            UTI: (url.uniformType ?? .item).identifier,
             name: url.lastPathComponent
         ) { [weak self] metadata in
 
@@ -123,15 +123,15 @@ extension ConversationInputBarViewController {
     }
 
     func execute(videoPermissions toExecute: @escaping () -> Void) {
-        UIApplication.wr_requestOrWarnAboutVideoAccess({ granted in
+        UIApplication.wr_requestOrWarnAboutVideoAccess { granted in
             if granted {
-                UIApplication.wr_requestOrWarnAboutMicrophoneAccess({ granted in
+                UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
                     if granted {
                         toExecute()
                     }
-                })
+                }
             }
-        })
+        }
     }
 
     private func showAlertForFileTooBig() {

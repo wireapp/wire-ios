@@ -77,7 +77,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
             fileMetaDataGenerator.metadataForFileAtURL(
                 logsURL,
-                UTI: logsURL.UTI(),
+                UTI: (logsURL.uniformType ?? .item).identifier,
                 name: logsURL.lastPathComponent
             ) { [weak self] metadata in
 

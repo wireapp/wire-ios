@@ -21,19 +21,12 @@ import CoreGraphics
 import ImageIO
 import MobileCoreServices
 import UIKit
+import UniformTypeIdentifiers
 
 extension URL {
-    public func UTI() -> String {
-        guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, self.pathExtension as CFString, .none) else {
-            return kUTTypeItem as String
-        }
-        return UTI.takeRetainedValue() as String
-    }
-}
 
-extension NSURL {
-    var UTI: String {
-        return (self as URL).UTI()
+    public var uniformType: UTType? {
+        UTType(tag: pathExtension, tagClass: .filenameExtension, conformingTo: nil)
     }
 }
 
