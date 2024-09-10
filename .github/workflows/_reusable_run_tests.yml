@@ -41,13 +41,14 @@ jobs:
         uses: xom9ikk/dotenv@v2
         with:
             path: fastlane/
-            - name: Restore Carthage Cache
-            uses: actions/cache@v3
-            id: cache-carthage
-            with:
-              path: Carthage
-              key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
-    
+
+      - name: Restore Carthage Cache
+        uses: actions/cache@v3
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+
       - name: Restore Danger results
         id: restore-danger-results
         uses: actions/cache/restore@v4
@@ -63,6 +64,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+
       - name: Setup workspace
         run: |
           ./setup.sh
