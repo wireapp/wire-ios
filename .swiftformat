@@ -26,7 +26,8 @@
     indent, \
     initCoderUnavailable, \
     leadingDelimiters, \
-    linebreakAtEndOfFile
+    linebreakAtEndOfFile, \
+    linebreaks
 
 # Options
 
