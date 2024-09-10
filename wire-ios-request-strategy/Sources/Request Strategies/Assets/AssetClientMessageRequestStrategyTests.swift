@@ -253,7 +253,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let expectation = self.customExpectation(description: "Notification fired")
             token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
                                                       context: self.uiMOC.notificationContext,
-                                                      object: nil) {_ in
+                                                      object: nil) { _ in
                 expectation.fulfill()
             }
         }

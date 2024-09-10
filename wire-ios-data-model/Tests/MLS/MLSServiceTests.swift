@@ -2765,7 +2765,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             [ZMUpdateEvent()]
         }
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
-        mockCoreCrypto.conversationExistsConversationId_MockMethod = {_ in
+        mockCoreCrypto.conversationExistsConversationId_MockMethod = { _ in
             false
         }
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in

@@ -63,7 +63,8 @@
     spaceAroundComments, \
     spaceAroundGenerics, \
     spaceAroundOperators, \
-    spaceAroundParens
+    spaceAroundParens, \
+    spaceInsideBraces
 
 
 # Options

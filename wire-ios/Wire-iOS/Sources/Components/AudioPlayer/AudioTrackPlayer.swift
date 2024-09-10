@@ -95,7 +95,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var elapsedTime: TimeInterval {
-        guard let time = avPlayer?.currentTime() else { return 0}
+        guard let time = avPlayer?.currentTime() else { return 0 }
 
         if CMTIME_IS_VALID(time) {
             return TimeInterval(time.value) / TimeInterval(time.timescale)

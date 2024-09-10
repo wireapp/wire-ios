@@ -384,7 +384,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
                     with: userID,
                     domain: domain,
                     in: self.managedObjectContext
-                )}
+                ) }
 
                 await processor.createOrUpdateClients(
                     from: clientPayloads,

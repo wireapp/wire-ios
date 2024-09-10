@@ -49,7 +49,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         _ = sut.extractChangedKeysFromSnapshot(for: conv)
 
         // when
-        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
+        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot") }
 
         // then
         let expectedAttributes: [String: NSObject?] = ["userDefinedName": nil,
@@ -109,7 +109,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         _ = sut.extractChangedKeysFromSnapshot(for: conv)
 
         // when
-        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
+        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot") }
 
         // then
         let expectedAttributes: [String: NSObject?] = ["userDefinedName": conv.userDefinedName as NSObject?,
@@ -177,7 +177,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         _ = sut.extractChangedKeysFromSnapshot(for: conv)
 
         // then
-        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot")}
+        guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot") }
 
         // then
         XCTAssertEqual(snapshot.attributes["userDefinedName"] as? String, "foo")
@@ -218,7 +218,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         let changedKeys = sut.extractChangedKeysFromSnapshot(for: pr)
 
         // then
-        guard let snapshot = sut.snapshots[pr.objectID] else { return XCTFail("did not create snapshot")}
+        guard let snapshot = sut.snapshots[pr.objectID] else { return XCTFail("did not create snapshot") }
 
         // then
         XCTAssertEqual(snapshot.toOneRelationships["role"], role2.objectID)

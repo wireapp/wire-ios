@@ -224,7 +224,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         expectedError: Action.Failure
     ) {
         test_itDoesntGenerateARequest(action: action, apiVersion: apiVersion, validation: {
-            guard case let .failure(error) = $0 else { return false}
+            guard case let .failure(error) = $0 else { return false }
             return error == expectedError
         })
     }

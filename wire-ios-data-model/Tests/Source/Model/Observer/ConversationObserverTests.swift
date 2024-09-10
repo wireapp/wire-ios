@@ -419,7 +419,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(
             conversation,
 
-            modifier: {conversation, _ in
+            modifier: { conversation, _ in
                 conversation.addParticipantAndUpdateConversationState(
                     user: ZMUser.selfUser(in: self.uiMOC),
                     role: nil)
@@ -448,7 +448,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             conversation,
-            modifier: {conversation, _ in
+            modifier: { conversation, _ in
                 conversation.removeParticipantAndUpdateConversationState(
                     user: ZMUser.selfUser(in: self.uiMOC))
             },

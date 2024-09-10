@@ -24,7 +24,7 @@ import WireSyncEngine
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
-    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
+    var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
         traitEnvironment.traitCollection.horizontalSizeClass
     }
 

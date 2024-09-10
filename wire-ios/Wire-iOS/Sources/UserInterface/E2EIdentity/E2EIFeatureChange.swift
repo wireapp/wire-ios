@@ -52,11 +52,11 @@ extension UIAlertController {
             }
 
         let getCertificateAction = UIAlertAction(title: enrollButtonText,
-                                                 style: .default) {_ in
+                                                 style: .default) { _ in
             handler(.getCertificate)
         }
         let remindLaterAction = UIAlertAction(title: MLSE2EIStrings.Button.remindMeLater,
-                                              style: .cancel) {_ in
+                                              style: .cancel) { _ in
             handler(.remindLater)
         }
 

@@ -829,7 +829,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         // when
-        guard let changes1 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
+        guard let changes1 = testObserver.changes.last else { return XCTFail("Did not sent notification") }
         XCTAssertEqual(changes1.orderedSetState, OrderedSetState(array: [conversation1, conversation2]), file: file, line: line)
         XCTAssertEqual(conversationList.items.count, 2, file: file, line: line)
 
@@ -847,7 +847,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(conversationList.items.count, 3, file: file, line: line)
 
         // The set of the new notification contains the new state
-        guard let changes2 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
+        guard let changes2 = testObserver.changes.last else { return XCTFail("Did not sent notification") }
         XCTAssertEqual(changes2.orderedSetState, OrderedSetState(array: [conversation1, conversation2, conversation3]), file: file, line: line)
     }
 

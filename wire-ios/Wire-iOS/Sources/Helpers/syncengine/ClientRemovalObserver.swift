@@ -35,7 +35,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     private let completion: ((Error?) -> Void)?
     private var credentials: UserEmailCredentials?
     private lazy var requestPasswordController = RequestPasswordController(context: .removeDevice,
-                                                                           callback: {[weak self] password in
+                                                                           callback: { [weak self] password in
                                                                                guard let password,
                                                                                      !password.isEmpty else {
                                                                                    self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)

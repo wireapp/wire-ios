@@ -410,7 +410,7 @@ extension ZMClientMessageTests_Ephemeral {
                 false
             }
         }) as? ZMClientMessage
-        else { return XCTFail()}
+        else { return XCTFail() }
 
         let deleteMessage = clientMessage.underlyingMessage
 

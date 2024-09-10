@@ -241,7 +241,7 @@ public class AssetCollection: NSObject, ZMCollection {
         request.fetchLimit = fetchLimit
         request.returnsObjectsAsFaults = false
 
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else {return []}
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
         return result
     }
 }

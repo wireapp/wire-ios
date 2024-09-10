@@ -29,10 +29,10 @@ enum SettingsCellPreview {
 }
 
 protocol SettingsCellType: AnyObject {
-    var titleText: String {get set}
-    var preview: SettingsCellPreview {get set}
-    var descriptor: SettingsCellDescriptorType? {get set}
-    var icon: StyleKitIcon? {get set}
+    var titleText: String { get set }
+    var preview: SettingsCellPreview { get set }
+    var descriptor: SettingsCellDescriptorType? { get set }
+    var icon: StyleKitIcon? { get set }
 }
 
 typealias SettingsTableCellProtocol = SettingsCellType & UITableViewCell

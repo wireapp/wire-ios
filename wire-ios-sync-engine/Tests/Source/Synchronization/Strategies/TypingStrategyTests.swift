@@ -42,7 +42,7 @@ class MockTyping: WireSyncEngine.Typing {
     }
 
     func isUserTyping(user: ZMUser, in conversation: ZMConversation) -> Bool {
-        guard let users = typingUsers[conversation] else {return false}
+        guard let users = typingUsers[conversation] else { return false }
         return users.contains(user)
     }
 }

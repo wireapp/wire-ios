@@ -356,7 +356,7 @@ final class TokenField: UIView {
             self.layoutIfNeeded()
         }
 
-        let compeltionBlock: ((Bool) -> Void)? = {[weak self] _ in
+        let compeltionBlock: ((Bool) -> Void)? = { [weak self] _ in
 
             guard let self else { return }
 

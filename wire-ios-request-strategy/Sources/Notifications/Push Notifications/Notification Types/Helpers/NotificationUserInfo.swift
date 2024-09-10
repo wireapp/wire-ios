@@ -84,7 +84,7 @@ public class NotificationUserInfo: NSObject, NSCoding {
     }
 
     public var conversationID: UUID? {
-        get { uuid(for: .conversationID)}
+        get { uuid(for: .conversationID) }
         set { self[.conversationID] = newValue?.uuidString }
     }
 

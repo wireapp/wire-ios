@@ -24,7 +24,7 @@ import libPhoneNumberiOS
 /// without a valid email or phone
 protocol AddressBookAccessor {
     /// Number of contacts in the address book
-    var numberOfContacts: UInt {get}
+    var numberOfContacts: UInt { get }
 
     /// Enumerates the contacts whitout performing any normalization or validation, invoking the block for each contact.
     /// If the block returns false, it will stop enumerating them.

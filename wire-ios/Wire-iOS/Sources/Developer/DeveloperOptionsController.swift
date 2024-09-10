@@ -97,7 +97,7 @@ final class DeveloperOptionsController: UIViewController {
                 )
             })
 
-            alertController.addTextField {(textField: UITextField!) in
+            alertController.addTextField { (textField: UITextField!) in
                 textField.placeholder = "Please explain the problem"
             }
 

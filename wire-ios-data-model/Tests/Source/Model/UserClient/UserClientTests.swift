@@ -1051,10 +1051,10 @@ extension UserClientTests {
         var resultOfMethod = false
 
         let mockProteusService = MockProteusServiceInterface()
-        mockProteusService.establishSessionIdFromPrekey_MockMethod = {_, _ in
+        mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in
             mockMethodCalled = true
         }
-        mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
+        mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
             "test"
         }
 

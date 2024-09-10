@@ -184,7 +184,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         // given
         BackendInfo.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
-        e2eIAPI.getWireNonceClientId_MockMethod = {_ in
+        e2eIAPI.getWireNonceClientId_MockMethod = { _ in
             expectedNonce
         }
         mockApiProvider.e2eIAPIApiVersion_MockValue = e2eIAPI
@@ -219,7 +219,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         // given
         BackendInfo.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
-        e2eIAPI.getAccessTokenClientIdDpopToken_MockMethod = {_, _ in
+        e2eIAPI.getAccessTokenClientIdDpopToken_MockMethod = { _, _ in
             expectedAccessToken
         }
         mockApiProvider.e2eIAPIApiVersion_MockValue = e2eIAPI

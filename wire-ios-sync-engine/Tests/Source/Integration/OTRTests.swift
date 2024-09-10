@@ -31,7 +31,7 @@ class OTRTests: IntegrationTest {
     func testThatItSendsEncryptedTextMessage() {
         // given
         XCTAssert(login())
-        guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail()}
+        guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
 
         // when
         var message: ZMConversationMessage?

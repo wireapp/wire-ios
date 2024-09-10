@@ -43,7 +43,7 @@ final class ConversationCallController: NSObject {
         if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
             startCall()
         } else {
-            confirmGroupCall {[weak self] accepted in
+            confirmGroupCall { [weak self] accepted in
                 self?.target.setNeedsStatusBarAppearanceUpdate()
 
                 guard accepted else { return }
@@ -64,7 +64,7 @@ final class ConversationCallController: NSObject {
         if conversation.localParticipants.count <= confirmGroupCallParticipantsLimit {
             startVideoCall()
         } else {
-            confirmGroupCall {[weak self] accepted in
+            confirmGroupCall { [weak self] accepted in
                 self?.target.setNeedsStatusBarAppearanceUpdate()
 
                 guard accepted else { return }

@@ -103,7 +103,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
-        sut.logout(credentials: credentials, {result in
+        sut.logout(credentials: credentials, { result in
             switch result {
             case .success:
                 completionHandlerCalled.fulfill()
@@ -131,7 +131,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
-        sut.logout(credentials: credentials, {result in
+        sut.logout(credentials: credentials, { result in
             switch result {
             case .success:
                 XCTFail()

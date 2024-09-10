@@ -152,7 +152,7 @@ open class UserClientKeysStore: NSObject {
             var newPreKeys: [(id: UInt16, prekey: String)] = []
 
             let range = preKeysRange(count, start: start)
-            encryptionContext.perform({sessionsDirectory in
+            encryptionContext.perform({ sessionsDirectory in
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
                     if newPreKeys.count == 0 {

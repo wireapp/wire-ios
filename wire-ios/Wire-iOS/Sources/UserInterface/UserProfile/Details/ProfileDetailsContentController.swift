@@ -258,7 +258,7 @@ final class ProfileDetailsContentController: NSObject,
 
             cell.configure(with: CellConfiguration.groupAdminToogle(get: {
                 groupAdminEnabled
-            }, set: {_, _ in
+            }, set: { _, _ in
                 self.isAdminState.toggle()
                 self.delegate?.profileGroupRoleDidChange(isAdminRole: self.isAdminState)
                 self.updateConversationRole()

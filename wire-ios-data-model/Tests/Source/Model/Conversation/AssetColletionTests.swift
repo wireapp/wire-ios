@@ -119,7 +119,7 @@ final class AssetColletionTests: ModelObjectsTests {
 
         // then
         XCTAssertEqual(messages.count, 1)
-        guard let message = messages.first as? ZMMessage, let moc = message.managedObjectContext else {return XCTFail()}
+        guard let message = messages.first as? ZMMessage, let moc = message.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
 

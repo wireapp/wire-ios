@@ -750,7 +750,7 @@ extension UserClient {
     /// Ignore known clients
     @objc public func ignoreClients(_ clients: Set<UserClient>) {
         let notSelfClients = self.addIgnoredClients(clients)
-        guard notSelfClients.count > 0 else { return}
+        guard notSelfClients.count > 0 else { return }
         self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 

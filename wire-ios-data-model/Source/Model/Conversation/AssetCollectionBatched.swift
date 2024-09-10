@@ -216,7 +216,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [request.predicate!, excludedCategoryPredicate])
         request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
 
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request as! NSFetchRequest<T>) else {return []}
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request as! NSFetchRequest<T>) else { return [] }
         return result
     }
 
@@ -226,7 +226,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         let request: NSFetchRequest<T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
         request.fetchBatchSize = AssetCollectionBatched.defaultFetchCount
 
-        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else {return []}
+        guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else { return [] }
         return result
     }
 

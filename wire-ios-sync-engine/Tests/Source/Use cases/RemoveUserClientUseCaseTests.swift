@@ -51,7 +51,7 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         let clientId = "222"
         try await createSelfClient(clientId: clientId)
         let expectation = XCTestExpectation(description: "should call deleteUserClient")
-        userClientAPI.deleteUserClientClientIdPassword_MockMethod = {_, _ in
+        userClientAPI.deleteUserClientClientIdPassword_MockMethod = { _, _ in
             // Then
             expectation.fulfill()
         }

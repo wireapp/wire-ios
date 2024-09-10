@@ -25,7 +25,7 @@ public protocol StrategyDirectoryProtocol {
     var eventConsumers: [ZMEventConsumer] { get }
     var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
-    var contextChangeTrackers: [ZMContextChangeTracker] {get }
+    var contextChangeTrackers: [ZMContextChangeTracker] { get }
 }
 
 @objcMembers

@@ -37,11 +37,11 @@ import WireDesign
  * should be updated from the cell.
  */
 protocol SettingsCellDescriptorType: AnyObject {
-    static var cellType: SettingsTableCellProtocol.Type {get}
-    var visible: Bool {get}
-    var title: String {get}
-    var identifier: String? {get}
-    var group: SettingsGroupCellDescriptorType? {get}
+    static var cellType: SettingsTableCellProtocol.Type { get }
+    var visible: Bool { get }
+    var title: String { get }
+    var identifier: String? { get }
+    var group: SettingsGroupCellDescriptorType? { get }
     var copiableText: String? { get }
 
     func select(_ value: SettingsPropertyValue, sender: UIView)
@@ -66,15 +66,15 @@ func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) ->
 typealias PreviewGeneratorType = (SettingsCellDescriptorType) -> SettingsCellPreview
 
 protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
-    var viewController: UIViewController? {get set}
+    var viewController: UIViewController? { get set }
 }
 
 protocol SettingsSectionDescriptorType: AnyObject {
-    var cellDescriptors: [SettingsCellDescriptorType] {get}
-    var visibleCellDescriptors: [SettingsCellDescriptorType] {get}
-    var header: String? {get}
-    var footer: String? {get}
-    var visible: Bool {get}
+    var cellDescriptors: [SettingsCellDescriptorType] { get }
+    var visibleCellDescriptors: [SettingsCellDescriptorType] { get }
+    var header: String? { get }
+    var footer: String? { get }
+    var visible: Bool { get }
 }
 
 extension SettingsSectionDescriptorType {
@@ -89,10 +89,10 @@ enum InternalScreenStyle {
 }
 
 protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorType {
-    var items: [SettingsSectionDescriptorType] {get}
-    var visibleItems: [SettingsSectionDescriptorType] {get}
-    var style: InternalScreenStyle {get}
-    var accessibilityBackButtonText: String {get}
+    var items: [SettingsSectionDescriptorType] { get }
+    var visibleItems: [SettingsSectionDescriptorType] { get }
+    var style: InternalScreenStyle { get }
+    var accessibilityBackButtonText: String { get }
 }
 
 extension SettingsInternalGroupCellDescriptorType {
@@ -104,11 +104,11 @@ extension SettingsInternalGroupCellDescriptorType {
 }
 
 protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorType {
-    var presentationAction: () -> (UIViewController?) {get}
+    var presentationAction: () -> (UIViewController?) { get }
 }
 
 protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
-    var settingsProperty: SettingsProperty {get}
+    var settingsProperty: SettingsProperty { get }
 }
 
 protocol SettingsControllerGeneratorType {

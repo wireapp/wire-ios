@@ -43,7 +43,7 @@ extension ConversationList {
     public var deletedObjects: Set<AnyHashable> { setChangeInfo.deletedObjects }
     public var updatedIndexes: IndexSet { setChangeInfo.updatedIndexes }
     public var movedIndexPairs: [MovedIndex] { setChangeInfo.movedIndexPairs }
-    public var zm_movedIndexPairs: [ZMMovedIndex] { setChangeInfo.zm_movedIndexPairs}
+    public var zm_movedIndexPairs: [ZMMovedIndex] { setChangeInfo.zm_movedIndexPairs }
     public func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
         setChangeInfo.enumerateMovedIndexes(block)
     }

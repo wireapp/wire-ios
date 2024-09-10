@@ -33,7 +33,7 @@ final class ConnectRequestCell: UITableViewCell {
 
             let incomingConnectionViewController = IncomingConnectionViewController(userSession: ZMUserSession.shared(), user: user)
 
-            incomingConnectionViewController.onAction = {[weak self] action in
+            incomingConnectionViewController.onAction = { [weak self] action in
                 switch action {
                 case .accept:
                     self?.acceptBlock?()

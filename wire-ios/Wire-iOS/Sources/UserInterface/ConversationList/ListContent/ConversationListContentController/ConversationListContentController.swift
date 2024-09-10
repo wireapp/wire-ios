@@ -154,7 +154,7 @@ final class ConversationListContentController: UICollectionViewController {
 
                 header.collapsed = listViewModel.collapsed(at: section)
 
-                header.tapHandler = {[weak self] collapsed in
+                header.tapHandler = { [weak self] collapsed in
                     self?.listViewModel.setCollapsed(sectionIndex: section, collapsed: collapsed)
                 }
 

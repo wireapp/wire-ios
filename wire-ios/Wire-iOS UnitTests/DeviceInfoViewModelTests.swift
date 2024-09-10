@@ -68,7 +68,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
     func testThatItCallsDownloadCertificateMethodInDeviceActionsHandler_WhenDownloadCertificateIsCalled() {
         let expectation = expectation(description: "copy value should be called")
 
-        mockDeviceActionsHandler.downloadE2EIdentityCertificateCertificate_MockMethod = {[weak self] value in
+        mockDeviceActionsHandler.downloadE2EIdentityCertificateCertificate_MockMethod = { [weak self] value in
             XCTAssertEqual(self?.deviceInfoViewModel.e2eIdentityCertificate, value)
             expectation.fulfill()
         }

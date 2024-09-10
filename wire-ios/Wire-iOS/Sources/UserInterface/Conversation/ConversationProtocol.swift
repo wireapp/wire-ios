@@ -62,7 +62,7 @@ protocol InputBarConversation {
     var isReadOnly: Bool { get }
 
     var participants: [UserType] { get }
-    var domain: String? {get}
+    var domain: String? { get }
 }
 
 typealias InputBarConversationType = ConversationLike & InputBarConversation & TypingStatusProvider

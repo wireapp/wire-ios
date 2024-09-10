@@ -58,7 +58,7 @@ extension AppLockModule.View {
         private var contentLeadingConstraint: NSLayoutConstraint!
         private var contentTrailingConstraint: NSLayoutConstraint!
 
-        var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
+        var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = { traitEnvironment in
             traitEnvironment.traitCollection.horizontalSizeClass
         }
 

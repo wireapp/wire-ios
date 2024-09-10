@@ -20,7 +20,7 @@ import Foundation
 
 protocol ObserverType: NSObjectProtocol {
     associatedtype ChangeInfo: ObjectChangeInfo
-    var notifications: [ChangeInfo] {get set}
+    var notifications: [ChangeInfo] { get set }
 }
 
 extension ObserverType {

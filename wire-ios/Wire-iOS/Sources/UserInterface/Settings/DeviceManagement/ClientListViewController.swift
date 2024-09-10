@@ -187,7 +187,7 @@ final class ClientListViewController: UIViewController,
             userSession: userSession,
             contextProvider: contextProvider
         )
-        viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
+        viewModel.showCertificateUpdateSuccess = { [weak self] certificateChain in
             guard let self else {
                 return
             }

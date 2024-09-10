@@ -515,7 +515,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             XCTAssertEqual(changes.count, 1)
             guard let userChanges = changes[ZMUser.entityName()] as? [UserChangeInfo],
                   let change = userChanges.first
-            else { return XCTFail()}
+            else { return XCTFail() }
             XCTAssertTrue(change.nameChanged)
         }
     }

@@ -26,7 +26,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         var message: ZMConversationMessage! = nil
 
         userSession?.perform {
-            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else {return XCTFail()}
+            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
             message = try! conversation.appendText(content: "Hello")
         }
 
@@ -69,7 +69,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let conversation = self.conversation(for: selfToUser1Conversation) else {return XCTFail()}
+        guard let conversation = self.conversation(for: selfToUser1Conversation) else { return XCTFail() }
         XCTAssertEqual(conversation.allMessages.count, 1) // inserted message
 
         guard let message = conversation.lastMessage as? ZMClientMessage, message.textMessageData?.messageText == "Hello" else { return XCTFail() }
@@ -115,7 +115,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let conversation = self.conversation(for: self.groupConversation) else {return XCTFail()}
+        guard let conversation = self.conversation(for: self.groupConversation) else { return XCTFail() }
         XCTAssertEqual(conversation.allMessages.count, 2) // system message & inserted message
         guard let message = conversation.lastMessage, message.textMessageData?.messageText == "Hello" else { return XCTFail() }
 
@@ -143,7 +143,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         var message: ZMConversationMessage! = nil
 
         userSession?.perform {
-            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else {return XCTFail()}
+            guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
             message = try! conversation.appendText(content: "Hello")
         }
 
@@ -197,7 +197,7 @@ class DeleteMessagesTests: ConversationTestsBase {
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        guard let conversation = self.conversation(for: selfToUser1Conversation) else {return XCTFail()}
+        guard let conversation = self.conversation(for: selfToUser1Conversation) else { return XCTFail() }
 
         // then
         XCTAssertEqual(conversation.allMessages.count, 1) // inserted message

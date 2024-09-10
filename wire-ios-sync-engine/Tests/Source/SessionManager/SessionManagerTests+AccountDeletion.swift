@@ -185,7 +185,7 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
 
         // load additional account as a background session
         let sessionLoaded = customExpectation(description: "Background session loaded")
-        sessionManager?.withSession(for: additionalAccount, perform: {_ in
+        sessionManager?.withSession(for: additionalAccount, perform: { _ in
             sessionLoaded.fulfill()
         })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
