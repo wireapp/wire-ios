@@ -18,8 +18,10 @@
 
 import Foundation
 import WireAPI
+import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -30,6 +32,7 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
     var coreDataStack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
+    var teamRepository: TeamRepositoryProtocol!
     let modelHelper = ModelHelper()
 
     var context: NSManagedObjectContext {
@@ -38,7 +41,13 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
 
     override func setUp() async throws {
         coreDataStack = try await coreDataStackHelper.createStack()
-        sut = TeamMemberUpdateEventProcessor(context: context)
+        teamRepository = TeamRepository(
+            selfTeamID: UUID(),
+            userRepository: MockUserRepositoryProtocol(),
+            teamsAPI: MockTeamsAPI(),
+            context: context
+        )
+        sut = TeamMemberUpdateEventProcessor(repository: teamRepository)
         try await super.setUp()
     }
 
@@ -98,13 +107,11 @@ final class TeamMemberUpdateEventProcessorTests: XCTestCase {
     }
 
     func testProcessEvent_Throws_Error_When_Member_Was_Not_Found() async throws {
-
         // Then
-        await XCTAssertThrowsError(TeamMemberUpdateEventProcessor.Error.failedToFindMember(Scaffolding.membershipID)) { [self] in
+        await XCTAssertThrowsError { [self] in
             // When
             try await sut.processEvent(Scaffolding.event)
         }
-
     }
 
 }
