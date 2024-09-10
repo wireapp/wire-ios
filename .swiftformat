@@ -2,4 +2,5 @@
 
 --rules \
     andOperator, \
-    anyObjectProtocol
+    anyObjectProtocol, \
+    applicationMain
