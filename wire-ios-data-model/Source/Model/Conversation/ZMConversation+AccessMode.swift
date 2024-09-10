@@ -50,7 +50,7 @@ extension ConversationAccessMode {
     internal static let stringValues: [ConversationAccessMode: String] = [.invite: "invite",
                                                                           .code: "code",
                                                                           .link: "link",
-                                                                          .`private`: "private"]
+                                                                          .private: "private"]
 
     public var stringValue: [String] {
         return ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }

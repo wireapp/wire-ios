@@ -156,7 +156,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     let testSetAccessMode: [(ConversationAccessMode?, [String]?)] = [(nil, nil),
                                                                      (ConversationAccessMode.teamOnly, []),
                                                                      (ConversationAccessMode.code, ["code"]),
-                                                                     (ConversationAccessMode.`private`, ["private"]),
+                                                                     (ConversationAccessMode.private, ["private"]),
                                                                      (ConversationAccessMode.invite, ["invite"]),
                                                                      (ConversationAccessMode.legacy, ["invite"]),
                                                                      (ConversationAccessMode.allowGuests, ["code", "invite"])]

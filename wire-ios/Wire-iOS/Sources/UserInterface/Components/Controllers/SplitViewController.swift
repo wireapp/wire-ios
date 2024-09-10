@@ -238,7 +238,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     func setLeftViewController(_ newLeftViewController: UIViewController?,
                                animated: Bool = false,
-                               transition: SplitViewControllerTransition = .`default`,
+                               transition: SplitViewControllerTransition = .default,
                                completion: Completion? = nil) {
         guard leftViewController != newLeftViewController else {
             completion?()

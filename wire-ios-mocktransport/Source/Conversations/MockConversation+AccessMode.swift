@@ -78,7 +78,7 @@ public struct MockConversationAccessMode: OptionSet {
     internal static let stringValues: [MockConversationAccessMode: String] = [.invite: "invite",
                                                                               .code: "code",
                                                                               .link: "link",
-                                                                              .`private`: "private"]
+                                                                              .private: "private"]
 
     public var stringValue: [String] {
         return MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }

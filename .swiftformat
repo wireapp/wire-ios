@@ -32,7 +32,8 @@
     numberFormatting, \
     opaqueGenericParameters, \
     preferForLoop, \
-    preferKeyPath
+    preferKeyPath, \
+    redundantBackticks
 
 # Options
 

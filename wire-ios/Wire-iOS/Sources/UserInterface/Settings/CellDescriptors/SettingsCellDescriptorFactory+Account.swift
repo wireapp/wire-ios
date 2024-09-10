@@ -266,7 +266,7 @@ extension SettingsCellDescriptorFactory {
             return actionSheet
         }
         return SettingsAppearanceCellDescriptor(
-            text: L10n.Localizable.`Self`.Settings.AccountPictureGroup.picture.capitalized,
+            text: L10n.Localizable.Self.Settings.AccountPictureGroup.picture.capitalized,
             previewGenerator: previewGenerator,
             presentationStyle: .alert,
             presentationAction: presentationAction)
