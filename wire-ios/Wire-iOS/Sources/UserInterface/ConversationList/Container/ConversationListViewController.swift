@@ -249,7 +249,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
             onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),

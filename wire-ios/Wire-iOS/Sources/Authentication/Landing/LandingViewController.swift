@@ -370,7 +370,7 @@ final class LandingViewController: AuthenticationStepViewController {
         createAccountInfoLabelTopConstraint = createAccountInfoLabel.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor,
                                                                                           constant: 98)
 
-        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor,
+        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor,
                                                                                           constant: -35)
 
         NSLayoutConstraint.activate([

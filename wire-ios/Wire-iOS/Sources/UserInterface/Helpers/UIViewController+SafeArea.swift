@@ -21,11 +21,6 @@ import UIKit
 extension UIView {
 
     @available(*, deprecated, message: "Will be removed")
-    var safeBottomAnchor: NSLayoutYAxisAnchor {
-        return safeAreaLayoutGuide.bottomAnchor
-    }
-
-    @available(*, deprecated, message: "Will be removed")
     var safeTopAnchor: NSLayoutYAxisAnchor {
         return safeAreaLayoutGuide.topAnchor
     }

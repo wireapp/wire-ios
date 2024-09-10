@@ -172,7 +172,7 @@ final class CallGridViewController: UIViewController {
 
             NSLayoutConstraint.activate([
                 gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-                gridView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+                gridView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
                 gridView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
                 gridView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
             ])

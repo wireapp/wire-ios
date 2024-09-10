@@ -195,8 +195,8 @@ final class CallingActionsView: UIView {
             largeHangUpButton.centerXAnchor.constraint(equalTo: microphoneButton.centerXAnchor).withPriority(.required),
             largePickUpButton.centerXAnchor.constraint(equalTo: speakerButton.centerXAnchor).withPriority(.required),
 
-            largeHangUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34),
-            largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -34)
+            largeHangUpButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -34),
+            largePickUpButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -34)
         ]
 
         largeButtonsLandscapeConstraints = [

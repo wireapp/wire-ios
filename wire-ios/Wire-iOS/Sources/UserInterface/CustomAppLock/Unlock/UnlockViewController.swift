@@ -178,7 +178,7 @@ final class UnlockViewController: UIViewController {
             widthConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: CGFloat.iPhone4_7Inch.width),
             contentView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             contentView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: contentPadding),
             contentView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -contentPadding),

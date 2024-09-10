@@ -114,7 +114,7 @@ final class CompleteReactionPickerViewController: UIViewController {
             topBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             topBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
-            searchBar.topAnchor.constraint(equalTo: topBar.safeBottomAnchor),
+            searchBar.topAnchor.constraint(equalTo: topBar.safeAreaLayoutGuide.bottomAnchor),
             searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10.0),
             searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0),
 
@@ -123,7 +123,7 @@ final class CompleteReactionPickerViewController: UIViewController {
             sectionViewControllerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10.0),
             sectionViewControllerView.heightAnchor.constraint(equalToConstant: 44.0),
 
-            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeBottomAnchor, constant: 18.0),
+            collectionView.topAnchor.constraint(equalTo: sectionViewControllerView.safeAreaLayoutGuide.bottomAnchor, constant: 18.0),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)

@@ -191,7 +191,7 @@ final class PasscodeSetupViewController: UIViewController {
             widthConstraint,
             contentView.widthAnchor.constraint(lessThanOrEqualToConstant: 375),
             contentView.topAnchor.constraint(equalTo: view.safeTopAnchor),
-            contentView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             contentView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: contentPadding),
             contentView.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -contentPadding),

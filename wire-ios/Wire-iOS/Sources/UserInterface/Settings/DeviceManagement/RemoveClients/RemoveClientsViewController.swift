@@ -96,7 +96,7 @@ final class RemoveClientsViewController: UIViewController,
             clientsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             clientsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)
+            clientsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
