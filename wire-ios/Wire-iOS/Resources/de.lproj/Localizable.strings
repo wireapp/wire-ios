@@ -129,6 +129,13 @@
 "conversation_list.empty.all_archived.message" = "Alle Unterhaltungen archiviert";
 "conversation_list.empty.no_contacts.message" = "Eine Unterhaltung beginnen oder \neine Gruppe erstellen.";
 
+// Conversation List - Filter Conversations
+"conversation_list.filter.all_conversations.title" = "All Conversations";
+"conversation_list.filter.favorites.title" = "Favoriten";
+"conversation_list.filter.groups.title" = "Gruppen";
+"conversation_list.filter.oneOnOneConversations.title" = "1:1 Unterhaltungen";
+"conversation_list.filter_label.text" = "Filtered by %@";
+"conversation_list.filter.remove_button.title" = "Entfernen";
 
 // Conversation List Indicator
 "conversation_list.right_accessory.join_button.title" = "Beitreten";

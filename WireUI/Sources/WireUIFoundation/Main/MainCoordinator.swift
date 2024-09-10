@@ -68,11 +68,11 @@ public final class MainCoordinator<MainSplitViewController, MainTabBarController
 
     // MARK: - UISplitViewControllerDelegate
 
-    public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+    public func splitViewControllerDidCollapse(_: UISplitViewController) {
         fatalError("not implemented yet")
     }
 
-    public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+    public func splitViewControllerDidExpand(_: UISplitViewController) {
         fatalError("not implemented yet")
     }
 }

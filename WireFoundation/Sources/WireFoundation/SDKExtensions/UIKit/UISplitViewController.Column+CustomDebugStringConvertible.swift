@@ -16,22 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import UIKit
 
-struct AccountViewBuilder {
+extension UISplitViewController.Column: CustomDebugStringConvertible {
 
-    var account: Account
-    var user: ZMUser?
-    var displayContext: DisplayContext
-
-    func build() -> BaseAccountView {
-
-        // TODO: [WPB-7307] availability status must be shown on the avatar image (right-bottom)
-
-        if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
-            accountView
-        } else {
-            PersonalAccountView(account: account, user: user, displayContext: displayContext)
+    public var debugDescription: String {
+        switch self {
+        case .primary:
+            "primary"
+        case .supplementary:
+            "supplementary"
+        case .secondary:
+            "secondary"
+        case .compact:
+            "compact"
+        @unknown default:
+            "unknown"
         }
     }
 }

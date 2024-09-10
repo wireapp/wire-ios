@@ -31,16 +31,11 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
         case conversations, archive, settings
     }
 
-    // Navigation Overhaul mapping, is be removed in the epic branch
-    private let NO_conversations = Tab.contacts
-    private let NO_archive = Tab.conversations
-    private let NO_settings = Tab.folders
-
     // MARK: - Public Properties
 
     public var conversations: (conversationList: ConversationList, conversation: Conversation?)? {
         get {
-            let navigationController = viewControllers![NO_conversations.rawValue] as! UINavigationController
+            let navigationController = viewControllers![Tab.conversations.rawValue] as! UINavigationController
             guard !navigationController.viewControllers.isEmpty else { return nil }
 
             let conversationList = navigationController.viewControllers.removeFirst() as! ConversationList
@@ -48,7 +43,7 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
             return (conversationList, conversation)
         }
         set {
-            let navigationController = viewControllers![NO_conversations.rawValue] as! UINavigationController
+            let navigationController = viewControllers![Tab.conversations.rawValue] as! UINavigationController
             if let newValue {
                 navigationController.viewControllers = [newValue.conversationList, newValue.conversation].compactMap { $0 }
             } else {
@@ -59,22 +54,22 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
 
     public var archive: Archive? {
         get {
-            let navigationController = viewControllers![NO_archive.rawValue] as! UINavigationController
+            let navigationController = viewControllers![Tab.archive.rawValue] as! UINavigationController
             return navigationController.viewControllers.first.map { $0 as! Archive }
         }
         set {
-            let navigationController = viewControllers![NO_archive.rawValue] as! UINavigationController
+            let navigationController = viewControllers![Tab.archive.rawValue] as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
         }
     }
 
     public var settings: Settings? {
         get {
-            let navigationController = viewControllers![NO_settings.rawValue] as! UINavigationController
+            let navigationController = viewControllers![Tab.settings.rawValue] as! UINavigationController
             return navigationController.viewControllers.first.map { $0 as! Settings }
         }
         set {
-            let navigationController = viewControllers![NO_settings.rawValue] as! UINavigationController
+            let navigationController = viewControllers![Tab.settings.rawValue] as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
         }
     }
@@ -105,7 +100,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
     }
 
     private func setupAppearance() {
-
         let tabBarItemAppearance = UITabBarItemAppearance()
         tabBarItemAppearance.normal.iconColor = ColorTheme.Base.secondaryText
         tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
@@ -124,7 +118,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
         for tab in Tab.allCases {
             let tabBarItem: UITabBarItem
             switch tab {
-
             case .conversations:
                 tabBarItem = .init(
                     title: String(localized: "tabBar.conversations.title", bundle: .module),
@@ -155,7 +148,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
                 // TODO: missing strings
                 tabBarItem.accessibilityLabel = String(localized: "tabBar.settings.description", bundle: .module)
                 tabBarItem.accessibilityHint = String(localized: "tabBar.settings.hint", bundle: .module)
-
             }
             viewControllers?[tab.rawValue].tabBarItem = tabBarItem
         }
