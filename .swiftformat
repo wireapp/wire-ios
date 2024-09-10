@@ -65,7 +65,8 @@
     spaceAroundOperators, \
     spaceAroundParens, \
     spaceInsideBraces, \
-    spaceInsideBrackets
+    spaceInsideBrackets, \
+    spaceInsideComments
 
 
 # Options
