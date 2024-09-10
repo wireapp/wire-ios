@@ -18,8 +18,10 @@
 
 import Foundation
 import WireAPI
+import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -31,6 +33,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     var coreDataStack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
     let modelHelper = ModelHelper()
+    var repository: TeamRepositoryProtocol!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -38,15 +41,22 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
     override func setUp() async throws {
         coreDataStack = try await coreDataStackHelper.createStack()
-        sut = TeamMemberLeaveEventProcessor(
+
+        repository = TeamRepository(
+            selfTeamID: UUID(),
+            userRepository: UserRepository(context: context, usersAPI: MockUsersAPI()),
+            teamsAPI: MockTeamsAPI(),
             context: context
         )
+
+        sut = TeamMemberLeaveEventProcessor(repository: repository)
         try await super.setUp()
     }
 
     override func tearDown() async throws {
         coreDataStack = nil
         sut = nil
+        repository = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
@@ -120,14 +130,16 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
             XCTAssertNotNil(notification.userInfo?[notificationName] as? AccountDeletedNotification)
 
-            // Then
-
             expectation.fulfill()
         }
 
         // When
 
         try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        await fulfillment(of: [expectation], timeout: 1)
     }
 
     func testProcessEvent_It_Removes_A_Member_From_All_Group_Conversations_They_Were_Part_Of_When_Receiving_A_Member_Leave_Event_For_That_Member() async throws {

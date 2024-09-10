@@ -44,6 +44,17 @@ protocol TeamRepositoryProtocol {
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 
+    /// Deletes the member of a team.
+    /// - Parameter time: The time the member left the team.
+    /// - Parameter userID: The ID of the team member.
+    /// - Parameter teamID: The ID of the team.
+
+    func deleteTeamMember(
+        time: Date,
+        userID: UUID,
+        teamID: UUID
+    ) async throws
+
 }
 
 final class TeamRepository: TeamRepositoryProtocol {
@@ -70,6 +81,29 @@ final class TeamRepository: TeamRepositoryProtocol {
     func pullSelfTeam() async throws {
         let team = try await fetchSelfTeamRemotely()
         await storeTeamLocally(team)
+    }
+
+    func deleteTeamMember(
+        time: Date,
+        userID: UUID,
+        teamID: UUID
+    ) async throws {
+        let user = try await userRepository.fetchUser(with: userID)
+
+        try await context.perform { [context] in
+            guard let member = user.membership else {
+                throw TeamRepositoryError.userNotAMemberInTeam(user: userID, team: teamID)
+            }
+
+            if user.isSelfUser {
+                let notification = AccountDeletedNotification(context: context)
+                notification.post(in: context.notificationContext)
+            } else {
+                user.markAccountAsDeleted(at: time)
+            }
+
+            context.delete(member)
+        }
     }
 
     private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {

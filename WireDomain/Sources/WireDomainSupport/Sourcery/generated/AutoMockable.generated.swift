@@ -362,6 +362,29 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - fetchUser
+
+    public var fetchUserWith_Invocations: [UUID] = []
+    public var fetchUserWith_MockError: Error?
+    public var fetchUserWith_MockMethod: ((UUID) async throws -> ZMUser)?
+    public var fetchUserWith_MockValue: ZMUser?
+
+    public func fetchUser(with id: UUID) async throws -> ZMUser {
+        fetchUserWith_Invocations.append(id)
+
+        if let error = fetchUserWith_MockError {
+            throw error
+        }
+
+        if let mock = fetchUserWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchUserWith_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchUserWith`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name

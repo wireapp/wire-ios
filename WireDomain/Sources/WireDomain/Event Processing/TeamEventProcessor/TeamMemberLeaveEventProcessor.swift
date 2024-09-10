@@ -33,32 +33,14 @@ protocol TeamMemberLeaveEventProcessorProtocol {
 
 struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
 
-    enum Error: Swift.Error {
-        case failedToFetchUser(UUID)
-        case userNotAMemberInTeam(user: UUID, team: UUID)
-    }
-
-    let context: NSManagedObjectContext
+    let repository: any TeamRepositoryProtocol
 
     func processEvent(_ event: TeamMemberLeaveEvent) async throws {
-        try await context.perform {
-            guard let user = ZMUser.fetch(with: event.userID, in: context) else {
-                throw Error.failedToFetchUser(event.userID)
-            }
-
-            guard let member = user.membership else {
-                throw Error.userNotAMemberInTeam(user: event.userID, team: event.teamID)
-            }
-
-            if user.isSelfUser {
-                let notification = AccountDeletedNotification(context: context)
-                notification.post(in: context.notificationContext)
-            } else {
-                user.markAccountAsDeleted(at: event.time)
-            }
-
-            context.delete(member)
-        }
+        try await repository.deleteTeamMember(
+            time: event.time,
+            userID: event.userID,
+            teamID: event.teamID
+        )
     }
 
 }
