@@ -68,7 +68,8 @@
     spaceInsideBrackets, \
     spaceInsideComments, \
     spaceInsideGenerics, \
-    spaceInsideParens
+    spaceInsideParens, \
+    strongOutlets
 
 
 # Options
