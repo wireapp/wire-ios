@@ -52,6 +52,6 @@ class LoginFlowTests_PushToken: IntegrationTest {
         let registeredToken = registeredTokens[deviceTokenAsHex]
         XCTAssertEqual(registeredToken!["token"] as! String, deviceTokenAsHex)
         XCTAssertNotNil(registeredToken!["app"])
-        XCTAssertTrue((registeredToken!["app"]as! String).hasPrefix("com.wire."))
+        XCTAssertTrue((registeredToken!["app"] as! String).hasPrefix("com.wire."))
     }
 }

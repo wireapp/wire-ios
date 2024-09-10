@@ -57,7 +57,8 @@
     semicolons, \
     # sortDeclarations, \ TODO
     sortImports, \
-    sortTypealiases
+    sortTypealiases, \
+    spaceAroundBrackets
 
 
 # Options
