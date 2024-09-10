@@ -42,13 +42,6 @@ jobs:
         with:
             path: fastlane/
 
-      - name: Restore Carthage Cache
-        uses: actions/cache@v3
-        id: cache-carthage
-        with:
-          path: Carthage
-          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
-
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

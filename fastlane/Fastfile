@@ -35,7 +35,7 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :test_framework].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
