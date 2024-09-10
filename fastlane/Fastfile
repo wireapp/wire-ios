@@ -134,13 +134,12 @@ platform :ios do
         frameworks["WireDomain"].add_dependency(frameworks["wire-ios-transport"])
         frameworks["WireDomain"].add_dependency(frameworks["wire-ios-data-model"])
 
-        folders = options[:folders].split(',') || all_folders
+        folders = options[:folders].split(',')
         matching_frameworks = folders.map { |folder| frameworks[folder] }
 
         unique_schemes = matching_frameworks.map do |framework|
             framework.schemes
         end.flatten.uniq
-        puts unique_schemes.inspect
         unique_schemes
     end
 
