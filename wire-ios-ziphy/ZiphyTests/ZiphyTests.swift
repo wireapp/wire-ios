@@ -49,9 +49,9 @@ final class ZiphTests: XCTestCase {
         let url = URL(string: "http://localhost/media/image\(id).gif")!
 
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
-            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
-            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
+            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204_800),
+            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2_048_000),
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000)
         ]
 
         sut = ZiphHelper.createZiph(id: id, url: url, imagesList: imagesList)
@@ -67,7 +67,7 @@ final class ZiphTests: XCTestCase {
         let url = URL(string: "http://localhost/media/image\(id).gif")!
 
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
-            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000)
+            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2_048_000)
         ]
 
         sut = ZiphHelper.createZiph(id: id, url: url, imagesList: imagesList)

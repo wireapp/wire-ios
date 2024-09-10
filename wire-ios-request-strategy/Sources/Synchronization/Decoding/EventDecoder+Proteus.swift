@@ -270,7 +270,7 @@ extension ZMUpdateEvent {
         }
 
         // We need to check the size of the encrypted data payload for regular OTR and external messages.
-        let maxReceivingSize = Int(12_000 * 1.5)
+        let maxReceivingSize = Int(12000 * 1.5)
 
         guard
             string.count <= maxReceivingSize,

@@ -190,7 +190,7 @@ extension ZMMessageTests_Confirmation {
         conversation.remoteIdentifier = .create()
         conversation.conversationType = .oneOnOne
 
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1_234_567_890)
         conversation.lastModifiedDate = lastModified
 
         let remoteUser = ZMUser.insertNewObject(in: self.uiMOC)
@@ -475,7 +475,7 @@ extension ZMMessageTests_Confirmation {
         sender.remoteIdentifier = UUID.create()
         conversation.addParticipantAndUpdateConversationState(user: sender, role: nil)
         conversation.remoteIdentifier = .create()
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1_234_567_890)
         conversation.lastModifiedDate = lastModified
 
         let sut = try! conversation.appendText(content: "foo") as! ZMClientMessage

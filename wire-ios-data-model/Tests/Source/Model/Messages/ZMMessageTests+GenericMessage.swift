@@ -34,13 +34,13 @@ final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
             try msg.setUnderlyingMessage(textMessage)
 
             msg.visibleInConversation = conversation
-            msg.serverTimestamp = Date(timeIntervalSinceReferenceDate: 400000000)
+            msg.serverTimestamp = Date(timeIntervalSinceReferenceDate: 400_000_000)
 
             let data: NSDictionary = try [
                 "content": self.name,
                 "nonce": XCTUnwrap(msg.nonce?.transportString())
             ]
-            let payload = self.payloadForMessage(in: conversation, type: EventConversationAdd, data: data, time: Date(timeIntervalSinceReferenceDate: 450000000))
+            let payload = self.payloadForMessage(in: conversation, type: EventConversationAdd, data: data, time: Date(timeIntervalSinceReferenceDate: 450_000_000))
             let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
 
             XCTAssertNotNil(event)
@@ -49,7 +49,7 @@ final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
             msg.update(with: event!, for: conversation)
 
             // then
-            XCTAssertEqual(msg.serverTimestamp!.timeIntervalSinceReferenceDate, 400000000, accuracy: 1)
+            XCTAssertEqual(msg.serverTimestamp!.timeIntervalSinceReferenceDate, 400_000_000, accuracy: 1)
         }
     }
 }
@@ -71,7 +71,7 @@ extension ZMMessageTests_GenericMessage {
             "sender": senderClientID,
             "text": contentData.base64String()
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(timeIntervalSinceReferenceDate: 450000000))
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(timeIntervalSinceReferenceDate: 450_000_000))
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
 
         // when

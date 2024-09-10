@@ -1045,7 +1045,7 @@ extension ZMAssetClientMessageTests {
             let imageMetadata = WireProtos.Asset.ImageMetaData(width: 4235, height: 324)
             let asset = WireProtos.Asset(original: nil, preview: WireProtos.Asset.Preview(size: 256, mimeType: "video/mp4", remoteData: remoteData, imageMetadata: imageMetadata))
             let firstDate = Date(timeIntervalSince1970: 12334)
-            let secondDate = firstDate.addingTimeInterval(234444)
+            let secondDate = firstDate.addingTimeInterval(234_444)
 
             let genericMessage = GenericMessage(content: asset, nonce: nonce)
 

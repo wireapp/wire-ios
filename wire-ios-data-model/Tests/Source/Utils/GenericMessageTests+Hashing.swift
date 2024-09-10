@@ -26,7 +26,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForText1() {
         // given
         let textMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"))
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = textMessage.hashOfContent(with: timestamp)
@@ -38,7 +38,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForText2() {
         // given
         let textMessage = GenericMessage(content: Text(content: "https://www.youtube.com/watch?v=DLzxrzFCyOs"))
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = textMessage.hashOfContent(with: timestamp)
@@ -50,7 +50,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForText3() {
         // given
         let textMessage = GenericMessage(content: Text(content: "بغداد"))
-        let timestamp = Date(timeIntervalSince1970: 1540213965)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_965)
 
         // when
         let hash = textMessage.hashOfContent(with: timestamp)
@@ -68,7 +68,7 @@ class GenericMessageTests_Hashing: XCTestCase {
             $0.longitude = 13.4
         }
         let locationMessage = GenericMessage(content: location)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = locationMessage.hashOfContent(with: timestamp)
@@ -84,7 +84,7 @@ class GenericMessageTests_Hashing: XCTestCase {
             $0.longitude = -0.117277
         }
         let locationMessage = GenericMessage(content: location)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = locationMessage.hashOfContent(with: timestamp)
@@ -103,7 +103,7 @@ class GenericMessageTests_Hashing: XCTestCase {
         }
         var assetMessage = GenericMessage(content: asset)
         assetMessage.updateUploaded(assetId: "3-2-1-38d4f5b9", token: nil, domain: nil)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = assetMessage.hashOfContent(with: timestamp)
@@ -120,7 +120,7 @@ class GenericMessageTests_Hashing: XCTestCase {
         }
         var assetMessage = GenericMessage(content: asset)
         assetMessage.updateUploaded(assetId: "3-3-3-82a62735", token: nil, domain: nil)
-        let timestamp = Date(timeIntervalSince1970: 1540213965)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_965)
 
         // when
         let hash = assetMessage.hashOfContent(with: timestamp)
@@ -134,7 +134,7 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForEphemeral() {
         // given
         let ephemeralTextMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"), expiresAfter: .tenSeconds)
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = ephemeralTextMessage.hashOfContent(with: timestamp)
@@ -149,7 +149,7 @@ class GenericMessageTests_Hashing: XCTestCase {
         // given
 
         let editedTextMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID(), text: Text(content: "Hello 👩‍💻👨‍👩‍👧!")))
-        let timestamp = Date(timeIntervalSince1970: 1540213769)
+        let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when
         let hash = editedTextMessage.hashOfContent(with: timestamp)

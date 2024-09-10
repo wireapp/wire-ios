@@ -22,13 +22,13 @@ import XCTest
 class NSUUIDType1Tests: XCTestCase {
     /// type 1 sample UUID sorted by timestamp, and corresponding unix timestamp (with accuracy up to 0.01)
     static let sortedType1UUIDStrings: [(String, TimeInterval)] = [
-        ("a6526b00-000a-11e5-a837-0800200c9a66", 1432248144.48),
-        ("54ad3a24-be09-11e5-9912-ba0be0483c18", 1453138298.93),
-        ("54ad3f92-be09-11e5-9912-ba0be0483c18", 1453138298.93),
-        ("54ad415e-be09-11e5-9912-ba0be0483c18", 1453138298.93),
-        ("54ad4672-be09-11e5-9912-ba0be0483c18", 1453138298.93),
-        ("b892b180-be0a-11e5-a837-0800200c9a66", 1453138896.02),
-        ("c7527b10-be0a-11e5-a837-0800200c9a66", 1453138920.77)
+        ("a6526b00-000a-11e5-a837-0800200c9a66", 1_432_248_144.48),
+        ("54ad3a24-be09-11e5-9912-ba0be0483c18", 1_453_138_298.93),
+        ("54ad3f92-be09-11e5-9912-ba0be0483c18", 1_453_138_298.93),
+        ("54ad415e-be09-11e5-9912-ba0be0483c18", 1_453_138_298.93),
+        ("54ad4672-be09-11e5-9912-ba0be0483c18", 1_453_138_298.93),
+        ("b892b180-be0a-11e5-a837-0800200c9a66", 1_453_138_896.02),
+        ("c7527b10-be0a-11e5-a837-0800200c9a66", 1_453_138_920.77)
     ]
 
     func testThatItDetectsType1UUID() {

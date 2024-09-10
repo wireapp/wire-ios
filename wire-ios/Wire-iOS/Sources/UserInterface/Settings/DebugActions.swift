@@ -345,7 +345,7 @@ enum DebugActions {
 
     static func appendMessagesInBatches(count: Int) {
         var left = count
-        let step = 10_000
+        let step = 10000
 
         repeat {
             let toAppendInThisStep = left < step ? left : step
@@ -357,7 +357,7 @@ enum DebugActions {
     }
 
     static func appendMessages(count: Int) {
-        let batchSize = 5_000
+        let batchSize = 5000
 
         var currentCount = count
 

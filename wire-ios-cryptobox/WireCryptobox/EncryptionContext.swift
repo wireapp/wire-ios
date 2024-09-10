@@ -84,7 +84,7 @@ public final class EncryptionContext: NSObject {
 
     // The maximum size of the end-to-end encrypted payload is defined by ZMClientMessageByteSizeExternalThreshold
     // It's currently 128KB of data. NOTE that this cache is shared between all sessions in an encryption context.
-    fileprivate let cache = Cache<GenericHash, Data>(maxCost: 10_000_000, maxElementsCount: 100000)
+    fileprivate let cache = Cache<GenericHash, Data>(maxCost: 10_000_000, maxElementsCount: 100_000)
 
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error

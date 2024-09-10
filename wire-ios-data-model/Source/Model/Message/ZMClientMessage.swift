@@ -27,7 +27,7 @@ public class ZMClientMessage: ZMOTRMessage {
     //// From https://github.com/wearezeta/generic-message-proto:
     //// "If payload is smaller then 256KB then OM can be sent directly"
     //// Just to be sure we set the limit lower, to 128KB (base 10)
-    public static let byteSizeExternalThreshold: UInt = 128000
+    public static let byteSizeExternalThreshold: UInt = 128_000
 
     /// Link Preview state
     @NSManaged public var updatedTimestamp: Date?

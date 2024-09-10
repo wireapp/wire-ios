@@ -95,7 +95,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.deliveryState = .read
 
         let readReceipt = MockReadReceipt(user: otherUser)
-        readReceipt.serverTimestamp = Date(timeIntervalSince1970: 12345678564)
+        readReceipt.serverTimestamp = Date(timeIntervalSince1970: 12_345_678_564)
         message.readReceipts = [readReceipt]
 
         // WHEN

@@ -280,7 +280,7 @@ extension ZMClientMessageTests_Deletion {
     func testThatItDoesNotInsertASystemMessageIfTheMessageDoesNotExist() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.lastModifiedDate = Date(timeIntervalSince1970: 123456789)
+        conversation.lastModifiedDate = Date(timeIntervalSince1970: 123_456_789)
         conversation.remoteIdentifier = .create()
 
         // when
@@ -317,7 +317,7 @@ extension ZMClientMessageTests_Deletion {
     func testThatAMessageCanNotBeDeletedByAUserThatDidNotInitiallySentIt() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.lastModifiedDate = Date(timeIntervalSince1970: 123456789)
+        conversation.lastModifiedDate = Date(timeIntervalSince1970: 123_456_789)
         conversation.remoteIdentifier = .create()
         guard let sut = try? conversation.appendText(content: name) as? ZMMessage else { return XCTFail() }
 
@@ -340,7 +340,7 @@ extension ZMClientMessageTests_Deletion {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
         guard let sut = try? conversation.appendText(content: name) as? ZMMessage else { return XCTFail() }
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1_234_567_890)
         conversation.lastModifiedDate = lastModified
 
         // when
@@ -365,7 +365,7 @@ extension ZMClientMessageTests_Deletion {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
         guard let sut = try? conversation.appendText(content: name) as? ZMMessage else { return XCTFail() }
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1_234_567_890)
         conversation.lastModifiedDate = lastModified
         XCTAssertEqual(sut.cachedCategory, .text)
 
@@ -391,10 +391,10 @@ extension ZMClientMessageTests_Deletion {
         let message = ZMClientMessage(nonce: .create(), managedObjectContext: uiMOC)
         message.sender = otherUser
         message.visibleInConversation = conversation
-        let timestamp = Date(timeIntervalSince1970: 123456789)
+        let timestamp = Date(timeIntervalSince1970: 123_456_789)
         message.serverTimestamp = timestamp
 
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1_234_567_890)
         conversation.lastModifiedDate = lastModified
 
         // when
@@ -425,7 +425,7 @@ extension ZMClientMessageTests_Deletion {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
         guard let sut = try? conversation.appendText(content: name) as? ZMMessage else { return XCTFail() }
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
+        let lastModified = Date(timeIntervalSince1970: 1_234_567_890)
         conversation.lastModifiedDate = lastModified
         let nonce = sut.nonce!
 

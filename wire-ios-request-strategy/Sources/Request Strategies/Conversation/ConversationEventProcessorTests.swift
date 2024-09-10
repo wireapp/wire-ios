@@ -501,7 +501,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                                      senderID: self.otherUser.remoteIdentifier!,
                                      conversationID: self.groupConversation.remoteIdentifier!,
                                      timestamp: Date(),
-                                     dataPayload: ["message_timer": 31536000000])
+                                     dataPayload: ["message_timer": 31_536_000_000])
         }
 
         // WHEN
@@ -509,7 +509,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await self.syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31536000))
+            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31_536_000))
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
             guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
@@ -590,7 +590,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     func testThatItDiscardsDoubleSystemMessageWhenSyncedTimeoutChanges_Value() async {
         // Given
-        let messageTimerMillis = 31536000000
+        let messageTimerMillis = 31_536_000_000
         let messageTimer = MessageDestructionTimeoutValue(rawValue: TimeInterval(messageTimerMillis / 1000))
 
         var event: ZMUpdateEvent!
@@ -637,7 +637,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     func testThatItDiscardsDoubleSystemMessageWhenSyncedTimeoutChanges_NoValue() async {
         // Given
-        let valuedMessageTimerMillis = 31536000000
+        let valuedMessageTimerMillis = 31_536_000_000
         let valuedMessageTimer = MessageDestructionTimeoutValue(rawValue: TimeInterval(valuedMessageTimerMillis / 1000))
 
         var event: ZMUpdateEvent!

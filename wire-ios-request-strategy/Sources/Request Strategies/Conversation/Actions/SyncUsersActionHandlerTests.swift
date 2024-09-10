@@ -107,7 +107,7 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
             ],
             "found": [
                 [
-                    "accent_id": 2147483647,
+                    "accent_id": 2_147_483_647,
                     "assets": [
                         [
                             "key": "3-1-47de4580-ae51-4650-acbb-d10c028cb0ac",

@@ -166,7 +166,7 @@ final class UserCellTests: XCTestCase {
     func testGuestUser_Wireless() {
         // GIVEN && WHEN
         mockUser.isGuestInConversation = true
-        mockUser.expiresAfter = 5_200
+        mockUser.expiresAfter = 5200
         mockUser.handle = nil
 
         // THEN

@@ -545,7 +545,7 @@ extension AssetV3DownloadRequestStrategyTests {
                 "data": dict,
                 "from": self.selfClient.user!.remoteIdentifier!,
                 "conversation": self.conversation.remoteIdentifier!.transportString(),
-                "time": Date(timeIntervalSince1970: 555555).transportString()
+                "time": Date(timeIntervalSince1970: 555_555).transportString()
             ] as NSDictionary), uuid: nil)!
 
             message = ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil) as? ZMAssetClientMessage
@@ -620,7 +620,7 @@ extension AssetV3DownloadRequestStrategyTests {
                 "data": dict,
                 "from": self.selfClient.user!.remoteIdentifier!,
                 "conversation": self.conversation.remoteIdentifier!.transportString(),
-                "time": Date(timeIntervalSince1970: 555555).transportString()
+                "time": Date(timeIntervalSince1970: 555_555).transportString()
             ] as NSDictionary), uuid: nil)!
 
             message = ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil) as? ZMAssetClientMessage

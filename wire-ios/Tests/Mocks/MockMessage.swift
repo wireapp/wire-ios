@@ -227,7 +227,7 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     var fileURL: URL? = .none
     var thumbnailAssetID: String? = ""
     var imagePreviewDataIdentifier: String? = "preview-identifier-123"
-    var durationMilliseconds: UInt64 = 233000
+    var durationMilliseconds: UInt64 = 233_000
     var videoDimensions: CGSize = CGSize.zero
     var normalizedLoudness: [Float]? = []
     var previewData: Data?

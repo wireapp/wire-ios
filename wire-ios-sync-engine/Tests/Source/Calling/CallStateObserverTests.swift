@@ -417,7 +417,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func disabled_testThatSilencedUnarchivedConversationsGetUpdatedForIncomingCalls() {
         // given
         var otherConvo: ZMConversation?
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
 
         syncMOC.performGroupedBlock {
             self.conversation.mutedMessageTypes = .all

@@ -54,7 +54,7 @@ class PBMessageValidationTests: XCTestCase {
     func testThatItCreatesLastReadWithValidFields() {
         let lastRead = LastRead.with {
             $0.conversationID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
-            $0.lastReadTimestamp = 25_000
+            $0.lastReadTimestamp = 25000
         }
 
         XCTAssertNotNil(GenericMessage(content: lastRead).validatingFields())
@@ -63,7 +63,7 @@ class PBMessageValidationTests: XCTestCase {
     func testThatItDoesNotCreateLastReadWithInvalidFields() {
         let lastRead = LastRead.with {
             $0.conversationID = "null"
-            $0.lastReadTimestamp = 25_000
+            $0.lastReadTimestamp = 25000
         }
 
         XCTAssertNil(GenericMessage(content: lastRead).validatingFields())
@@ -74,7 +74,7 @@ class PBMessageValidationTests: XCTestCase {
     func testThatItCreatesClearedWithValidFields() {
         let cleared = Cleared.with {
             $0.conversationID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
-            $0.clearedTimestamp = 25_000
+            $0.clearedTimestamp = 25000
         }
 
         XCTAssertNotNil(GenericMessage(content: cleared).validatingFields())
@@ -83,7 +83,7 @@ class PBMessageValidationTests: XCTestCase {
     func testThatItDoesNotCreateClearedWithInvalidFields() {
         let cleared = Cleared.with {
             $0.conversationID = "wirewire"
-            $0.clearedTimestamp = 25_000
+            $0.clearedTimestamp = 25000
         }
 
         XCTAssertNil(GenericMessage(content: cleared).validatingFields())
@@ -337,7 +337,7 @@ class ModelValidationTests: XCTestCase {
             return
         }
         let conversationID = QualifiedID(uuid: uuid, domain: "")
-        let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: Date(timeIntervalSince1970: 25_000))
+        let lastRead = LastRead(conversationID: conversationID, lastReadTimestamp: Date(timeIntervalSince1970: 25000))
         let message = GenericMessage(content: lastRead).validatingFields()
 
         XCTAssertNotNil(message)

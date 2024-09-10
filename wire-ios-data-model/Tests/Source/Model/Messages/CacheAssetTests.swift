@@ -150,7 +150,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         // given
         let sut = gifAsset()
 
-        sut.updateWithPreprocessedData(data(forResource: "animated", extension: "gif"), imageProperties: ZMIImageProperties(size: CGSize(width: 640, height: 400), length: 185798, mimeType: "image/gif"))
+        sut.updateWithPreprocessedData(data(forResource: "animated", extension: "gif"), imageProperties: ZMIImageProperties(size: CGSize(width: 640, height: 400), length: 185_798, mimeType: "image/gif"))
 
         // when
         sut.encrypt()

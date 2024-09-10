@@ -96,7 +96,7 @@ extension ClientMessageRequestStrategyTests {
     func testThatItNotifiesAttachmentPrepocessorOfChanges() {
         self.syncMOC.performGroupedAndWait {
             // GIVEN
-            let text = String(repeating: "Hi", count: 100000)
+            let text = String(repeating: "Hi", count: 100_000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
 
             // WHEN

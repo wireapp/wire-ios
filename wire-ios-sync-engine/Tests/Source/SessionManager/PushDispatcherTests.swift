@@ -44,7 +44,7 @@ final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
 public final class PushDispatcherTests: ZMTBaseTest {
     var sut: PushDispatcher!
 
-    static let token = Data(bytes: [0xba, 0xdf, 0x00, 0xd0])
+    static let token = Data(bytes: [0xBA, 0xDF, 0x00, 0xD0])
     static let userID = UUID().transportString()
     static let payload: [AnyHashable: Any] = ["data": [
         "user": userID,

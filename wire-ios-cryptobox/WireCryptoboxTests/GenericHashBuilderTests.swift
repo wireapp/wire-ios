@@ -28,7 +28,7 @@ final class GenericHashBuilderTests: XCTestCase {
         builder.append(data)
         let hash = builder.build()
         // THEN
-        let genericHash = GenericHash(value: 108806884620190685)
+        let genericHash = GenericHash(value: 108_806_884_620_190_685)
         XCTAssertEqual(hash, genericHash)
         XCTAssertEqual(hash.hashValue, genericHash.hashValue)
     }

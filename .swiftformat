@@ -28,7 +28,8 @@
     leadingDelimiters, \
     linebreakAtEndOfFile, \
     linebreaks, \
-    modifierOrder
+    modifierOrder, \
+    numberFormatting
 
 # Options
 

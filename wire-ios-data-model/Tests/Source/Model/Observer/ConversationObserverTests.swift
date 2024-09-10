@@ -718,7 +718,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
     func addUnreadMissedCall(_ conversation: ZMConversation) {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: conversation.managedObjectContext!)
         systemMessage.systemMessageType = .missedCall
-        systemMessage.serverTimestamp = Date(timeIntervalSince1970: 1231234)
+        systemMessage.serverTimestamp = Date(timeIntervalSince1970: 1_231_234)
         systemMessage.visibleInConversation = conversation
         conversation.calculateLastUnreadMessages()
     }

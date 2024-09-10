@@ -149,7 +149,7 @@ extension ZMConversationTestsBase {
     @discardableResult
     @objc(insertConversationWithUnread:context:)
     func insertConversation(withUnread hasUnread: Bool, context: NSManagedObjectContext) -> ZMConversation {
-        let messageDate = Date(timeIntervalSince1970: 230000000)
+        let messageDate = Date(timeIntervalSince1970: 230_000_000)
         let conversation = ZMConversation.insertNewObject(in: context)
         conversation.conversationType = .oneOnOne
         conversation.lastServerTimeStamp = messageDate

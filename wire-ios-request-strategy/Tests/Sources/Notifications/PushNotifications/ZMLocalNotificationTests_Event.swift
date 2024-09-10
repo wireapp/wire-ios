@@ -232,7 +232,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86400000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86_400_000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
@@ -247,7 +247,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 2419200000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 2_419_200_000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
@@ -276,7 +276,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 300000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 300_000, timestamp: Date())
 
             // when
             let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)

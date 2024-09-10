@@ -309,7 +309,7 @@ extension CoreDataFixture {
         client.model = "Simulator"
         client.label = "Bill's MacBook Pro"
 
-        client.activationDate = Date(timeIntervalSince1970: 1664717723)
+        client.activationDate = Date(timeIntervalSince1970: 1_664_717_723)
         return client
     }
 }

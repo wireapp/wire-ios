@@ -406,7 +406,7 @@ final class FullscreenImageViewController: UIViewController {
         }
 
         let modifier = UIDynamicItemBehavior(items: [proxy])
-        modifier.density = 10000000
+        modifier.density = 10_000_000
         modifier.resistance = 1000
         modifier.elasticity = 0
         modifier.friction = 0

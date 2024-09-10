@@ -37,7 +37,7 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
     let proteusService: any ProteusServiceInterface
     let managedObjectContext: NSManagedObjectContext
 
-    private let maxCiphertextSize = Int(12_000 * 1.5)
+    private let maxCiphertextSize = Int(12000 * 1.5)
 
     typealias Context = (
         selfClient: WireDataModel.UserClient,

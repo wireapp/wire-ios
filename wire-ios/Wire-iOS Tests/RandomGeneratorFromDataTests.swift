@@ -27,7 +27,7 @@ final class RandomGeneratorFromDataTests: XCTestCase {
         // WHEN
         let random: Int = RandomGeneratorFromData(uuid: uuid).rand()
         // THEN
-        XCTAssertEqual(6505850725663318502, random)
+        XCTAssertEqual(6_505_850_725_663_318_502, random)
     }
 
     func testThatItGeneratesAStablePseudorandom() {

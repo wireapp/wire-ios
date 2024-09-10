@@ -292,7 +292,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(conversationList.items.count, 3, file: file, line: line)
 
         // when
-        conversation2.lastModifiedDate = Date(timeIntervalSince1970: 1000000)
+        conversation2.lastModifiedDate = Date(timeIntervalSince1970: 1_000_000)
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         // then

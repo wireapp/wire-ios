@@ -23,9 +23,9 @@ enum ZiphHelper {
     static func createZiph(id: String, url: URL) -> Ziph {
         let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
             .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51200),
-            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
-            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
-            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000)
+            .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204_800),
+            .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2_048_000),
+            .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5_000_000)
         ]
 
         return createZiph(id: id, url: url, imagesList: imagesList)

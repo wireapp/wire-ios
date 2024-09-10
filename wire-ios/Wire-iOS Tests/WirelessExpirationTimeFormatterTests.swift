@@ -21,59 +21,59 @@ import XCTest
 
 class WirelessExpirationTimeFormatterTests: XCTestCase {
     func testExpirationTimeFormatting_LargerThan2Hours() {
-        assert(remainingTime: 12_000, expected: "4h left")
+        assert(remainingTime: 12000, expected: "4h left")
     }
 
     func testExpirationTimeFormatting_2Hours() {
-        assert(remainingTime: 7_200, expected: "3h left")
+        assert(remainingTime: 7200, expected: "3h left")
     }
 
     func testExpirationTimeFormatting_91Minutes() {
-        assert(remainingTime: 5_460, expected: "2h left")
+        assert(remainingTime: 5460, expected: "2h left")
     }
 
     func testExpirationTimeFormatting_90Minutes() {
-        assert(remainingTime: 5_400, expected: "1.5h left")
+        assert(remainingTime: 5400, expected: "1.5h left")
     }
 
     func testExpirationTimeFormatting_89Minutes() {
-        assert(remainingTime: 5_340, expected: "1.5h left")
+        assert(remainingTime: 5340, expected: "1.5h left")
     }
 
     func testExpirationTimeFormatting_61Minutes() {
-        assert(remainingTime: 3_660, expected: "1.5h left")
+        assert(remainingTime: 3660, expected: "1.5h left")
     }
 
     func testExpirationTimeFormatting_60Minutes() {
-        assert(remainingTime: 3_600, expected: "1h left")
+        assert(remainingTime: 3600, expected: "1h left")
     }
 
     func testExpirationTimeFormatting_59Minutes() {
-        assert(remainingTime: 3_540, expected: "1h left")
+        assert(remainingTime: 3540, expected: "1h left")
     }
 
     func testExpirationTimeFormatting_46Minutes() {
-        assert(remainingTime: 2_760, expected: "1h left")
+        assert(remainingTime: 2760, expected: "1h left")
     }
 
     func testExpirationTimeFormatting_45Minutes() {
-        assert(remainingTime: 2_700, expected: "1h left")
+        assert(remainingTime: 2700, expected: "1h left")
     }
 
     func testExpirationTimeFormatting_44Minutes() {
-        assert(remainingTime: 2_640, expected: "Less than 45m left")
+        assert(remainingTime: 2640, expected: "Less than 45m left")
     }
 
     func testExpirationTimeFormatting_31Minutes() {
-        assert(remainingTime: 1_860, expected: "Less than 45m left")
+        assert(remainingTime: 1860, expected: "Less than 45m left")
     }
 
     func testExpirationTimeFormatting_30Minutes() {
-        assert(remainingTime: 1_800, expected: "Less than 45m left")
+        assert(remainingTime: 1800, expected: "Less than 45m left")
     }
 
     func testExpirationTimeFormatting_29Minutes() {
-        assert(remainingTime: 1_740, expected: "Less than 30m left")
+        assert(remainingTime: 1740, expected: "Less than 30m left")
     }
 
     func testExpirationTimeFormatting_16Minutes() {

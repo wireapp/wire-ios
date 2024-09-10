@@ -22,7 +22,7 @@ import WireReusableUIComponents
 
 extension UIColor {
     enum AlarmButton {
-        static let alarmRed = UIColor(rgb: 0xfb0807)
+        static let alarmRed = UIColor(rgb: 0xFB0807)
     }
 }
 

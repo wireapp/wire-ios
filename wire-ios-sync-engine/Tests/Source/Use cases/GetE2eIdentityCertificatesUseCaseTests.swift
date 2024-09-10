@@ -71,8 +71,8 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
                 domain: "local.com",
                 certificate: mockCertificate,
                 serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
-                notBefore: 1709112038,
-                notAfter: 1716888038
+                notBefore: 1_709_112_038,
+                notAfter: 1_716_888_038
             )
         )
     }

@@ -30,7 +30,7 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
     var selfUser: MockUserType!
 
     /// "Saturday, February 14, 2009 at 12:20:30 AM Central European Standard Time"
-    static let dummyServerTimestamp = Date(timeIntervalSince1970: 1234567230)
+    static let dummyServerTimestamp = Date(timeIntervalSince1970: 1_234_567_230)
 
     // MARK: - setUp
 

@@ -76,7 +76,7 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
         from user: ZMUser,
         inGroup: Bool
     ) -> ZMSystemMessage {
-        let date = Date(timeIntervalSince1970: 123456879)
+        let date = Date(timeIntervalSince1970: 123_456_879)
 
         if inGroup {
             conversation.conversationType = .group

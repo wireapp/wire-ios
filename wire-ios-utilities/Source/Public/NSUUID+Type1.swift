@@ -22,7 +22,7 @@ extension NSUUID {
     /// Returns whether this UUID is of Type 1
     @objc public var isType1UUID: Bool {
         // looking at most significant bits of #7, as defined in: https://tools.ietf.org/html/rfc4122
-        let type = ((self as UUID).uuid.6 & 0xf0) >> 4
+        let type = ((self as UUID).uuid.6 & 0xF0) >> 4
         return type == 1
     }
 
@@ -60,15 +60,15 @@ extension NSUUID {
         let time_low = self.readOctectsReverted(0, len: 4)
         let time_mid = self.readOctectsReverted(4, len: 2)
         let time_high_and_variant = self.readOctectsReverted(4 + 2, len: 2)
-        let time_high = (time_high_and_variant & 0x0fff)
+        let time_high = (time_high_and_variant & 0x0FFF)
 
         // calculting time
         let time: UInt64 = time_low |
             time_mid << 32 |
             time_high << 48
-        let referenceDate: UInt64 = 0x01b21dd213814000 // 15 Oct 1582, 00:00:00
+        let referenceDate: UInt64 = 0x01B2_1DD2_1381_4000 // 15 Oct 1582, 00:00:00
         let nanoseconds100SinceUnixTimestamp = time - referenceDate
-        let nanoseconds100ToSeconds = Double(10000000)
+        let nanoseconds100ToSeconds = Double(10_000_000)
         let unixTimestamp = Double(nanoseconds100SinceUnixTimestamp) / nanoseconds100ToSeconds
         return Date(timeIntervalSince1970: unixTimestamp)
     }

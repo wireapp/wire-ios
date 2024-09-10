@@ -39,6 +39,6 @@ private func pascal(_ amplitude: Double) -> Double {
 
 private let minAmplitude = Double(Int16.min)
 private let maxAmplitude = Double(Int16.max)
-private let minPascal = 2.0E-5 // hearing threshold
+private let minPascal = 2.0e-5 // hearing threshold
 private let maxPascal = 0.632455532 // ca. 90 dB SPL
 private let maxScalar = scalar(spl(maxAmplitude))

@@ -101,7 +101,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         // given
         let clientId = "94766bd92f56923d"
         let clientLabel = "iPhone 23sd Plus Air Pro C"
-        let clientTime = Date(timeIntervalSince1970: 1234555)
+        let clientTime = Date(timeIntervalSince1970: 1_234_555)
         var selfUser: ZMUser! = nil
         var selfClient: UserClient! = nil
 

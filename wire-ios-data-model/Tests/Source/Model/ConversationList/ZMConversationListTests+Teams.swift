@@ -123,7 +123,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItReturnsTeamConversationsSorted() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
         let conversation2 = createGroupConversation(in: team)
@@ -141,7 +141,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItRecreatesListsAndTokensForTeamConversations() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
         uiMOC.saveOrRollback()
@@ -181,7 +181,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesWhenANewTeamConversationIsInserted() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
@@ -200,7 +200,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatDoesUpdateWhenAConversationInADifferentTeamIsInserted() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
@@ -222,7 +222,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItUpdatesWhenNewConversationLastModifiedChangesThroughTheNotificationDispatcher() {
         // given
-        let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
+        let startDate = Date(timeIntervalSinceReferenceDate: 12_345_678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
         let conversation2 = createGroupConversation(in: team)

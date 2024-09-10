@@ -38,7 +38,7 @@ final class AccessTokenTests: ZMTBaseTest {
 
     func testThatItCalculatesExpirationDate() {
         // given
-        let expiresIn: UInt = 15162342
+        let expiresIn: UInt = 15_162_342
 
         // when
         let accessToken = AccessToken(token: "foo", type: "bar", expiresInSeconds: expiresIn)

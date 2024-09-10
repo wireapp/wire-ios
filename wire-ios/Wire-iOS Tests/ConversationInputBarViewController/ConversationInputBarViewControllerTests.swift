@@ -174,7 +174,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             // WHEN
             sut.mode = .timeoutConfguration
-            self.setMessageDestructionTimeout(timeInterval: 259200)
+            self.setMessageDestructionTimeout(timeInterval: 259_200)
 
             sut.inputBar.setInputBarState(.writing(ephemeral: .message), animated: false)
 
@@ -190,7 +190,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             // WHEN
             sut.mode = .timeoutConfguration
-            self.setMessageDestructionTimeout(timeInterval: 2419200)
+            self.setMessageDestructionTimeout(timeInterval: 2_419_200)
 
             sut.inputBar.setInputBarState(.writing(ephemeral: .message), animated: false)
 
@@ -206,7 +206,7 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
             // WHEN
             sut.mode = .timeoutConfguration
-            self.setMessageDestructionTimeout(timeInterval: 2419200)
+            self.setMessageDestructionTimeout(timeInterval: 2_419_200)
 
             sut.inputBar.setInputBarState(.writing(ephemeral: .message), animated: false)
             let shortText = "Lorem ipsum dolor"

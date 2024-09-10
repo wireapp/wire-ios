@@ -113,7 +113,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
                 "data": dict,
                 "from": selfUser.remoteIdentifier!,
                 "conversation": ZMConversation.selfConversation(in: syncMOC).remoteIdentifier!.transportString(),
-                "time": Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)!
+                "time": Date(timeIntervalSince1970: 555_555).transportString()] as NSDictionary), uuid: nil)!
 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)

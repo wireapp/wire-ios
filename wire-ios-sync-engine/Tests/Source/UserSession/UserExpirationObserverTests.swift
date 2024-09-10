@@ -128,7 +128,7 @@ public class UserExpirationObserverTests: MessagingTest {
             user.name = "User"
             user.remoteIdentifier = UUID()
             user.needsToBeUpdatedFromBackend = false
-            user.mockSetExpires(at: Date(timeIntervalSinceNow: 100000))
+            user.mockSetExpires(at: Date(timeIntervalSinceNow: 100_000))
             // when
             localSut.check(users: Set([user]))
             sut = localSut

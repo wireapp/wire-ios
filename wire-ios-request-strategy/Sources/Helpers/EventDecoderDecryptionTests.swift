@@ -131,8 +131,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
-        let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
-        XCTAssertGreaterThan(text.count, 18_000)
+        let text = "https://wir\("".padding(toLength: crlf.count * 20000, withPad: crlf, startingAt: 0))e.com/"
+        XCTAssertGreaterThan(text.count, 18000)
         let message = GenericMessage(content: Text(content: text))
 
         let wrapper = await self.syncMOC.perform {
@@ -181,8 +181,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
         let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
-        let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
-        XCTAssertGreaterThan(text.count, 18_000)
+        let text = "https://wir\("".padding(toLength: crlf.count * 20000, withPad: crlf, startingAt: 0))e.com/"
+        XCTAssertGreaterThan(text.count, 18000)
 
         let wrapper = await self.syncMOC.perform {
             NSDictionary(dictionary: [

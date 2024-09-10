@@ -48,7 +48,7 @@ class ProtosTests: XCTestCase {
         let nonce = UUID()
         let format = ZMImageFormat.preview
 
-        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200000, mimeType: "fancy image")!
+        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200_000, mimeType: "fancy image")!
         let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
 
         // when
@@ -79,7 +79,7 @@ class ProtosTests: XCTestCase {
         let macKey = "MAC KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let mac = "MAC".data(using: String.Encoding.utf8, allowLossyConversion: true)!
 
-        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200000, mimeType: "fancy image")!
+        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200_000, mimeType: "fancy image")!
         let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
         _ = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         let format = ZMImageFormat.preview
