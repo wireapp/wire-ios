@@ -253,7 +253,7 @@ final class CallViewController: UIViewController {
 
     private func createConstraints() {
         NSLayoutConstraint.activate([
-            callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            callGridViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)

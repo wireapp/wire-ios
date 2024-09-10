@@ -348,7 +348,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     private func createAndAddConstraints() {
 
-        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeTopAnchor,
+        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor,
                                                               constant: topStackTopConstraintConstant)
 
         contentViewWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 375)

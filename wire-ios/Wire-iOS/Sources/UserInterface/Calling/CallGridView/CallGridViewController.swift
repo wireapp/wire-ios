@@ -171,7 +171,7 @@ final class CallGridViewController: UIViewController {
             }
 
             NSLayoutConstraint.activate([
-                gridView.topAnchor.constraint(equalTo: view.safeTopAnchor),
+                gridView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
                 gridView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
                 gridView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
                 gridView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
@@ -180,7 +180,7 @@ final class CallGridViewController: UIViewController {
         let topStackTopDistance = 6.0
         NSLayoutConstraint.activate([
             topStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            topStack.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: topStackTopDistance),
+            topStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topStackTopDistance),
             topStack.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 20),
             topStack.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20),
             pageIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),

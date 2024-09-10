@@ -90,7 +90,7 @@ final class FolderCreationController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
@@ -107,7 +107,7 @@ final class FolderCreationController: UIViewController {
             navBarBackgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navBarBackgroundView.topAnchor.constraint(equalTo: view.topAnchor),
             navBarBackgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeTopAnchor)
+            navBarBackgroundView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         ])
     }
 
