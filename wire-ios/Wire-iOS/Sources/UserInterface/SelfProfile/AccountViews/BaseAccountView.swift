@@ -36,7 +36,7 @@ class BaseAccountView: UIView {
         didSet { updateAppearance() }
     }
 
-    var selected: Bool = true {
+    var selected = true {
         didSet { updateAppearance() }
     }
 
@@ -93,7 +93,7 @@ class BaseAccountView: UIView {
 
         let containerInset: CGFloat = 6
 
-        let iconWidth: CGFloat = switch displayContext {
+        let iconWidth = switch displayContext {
         case .conversationListHeader:
             CGFloat.ConversationListHeader.avatarSize
         case .accountSelector:

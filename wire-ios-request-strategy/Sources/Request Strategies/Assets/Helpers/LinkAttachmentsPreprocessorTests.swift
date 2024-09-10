@@ -25,7 +25,7 @@ import XCTest
 
 final class MockAttachmentDetector: LinkAttachmentDetectorType {
     var nextResult = [LinkAttachment]()
-    var downloadCount: Int = 0
+    var downloadCount = 0
     var excludedRanges: [NSRange] = []
 
     func downloadLinkAttachments(inText text: String, excluding: [NSRange], completion: @escaping ([LinkAttachment]) -> Void) {

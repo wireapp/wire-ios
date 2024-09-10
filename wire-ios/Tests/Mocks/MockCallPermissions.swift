@@ -27,11 +27,11 @@ extension MediaState.SpeakerState {
 }
 
 final class MockCallPermissions: CallPermissionsConfiguration {
-    var isPendingAudioPermissionRequest: Bool = true
-    var isPendingVideoPermissionRequest: Bool = true
+    var isPendingAudioPermissionRequest = true
+    var isPendingVideoPermissionRequest = true
 
-    var canAcceptVideoCalls: Bool = false
-    var canAcceptAudioCalls: Bool = false
+    var canAcceptVideoCalls = false
+    var canAcceptAudioCalls = false
 
     func requestOrWarnAboutVideoPermission(resultHandler: @escaping (Bool) -> Void) {
         resultHandler(canAcceptVideoCalls)

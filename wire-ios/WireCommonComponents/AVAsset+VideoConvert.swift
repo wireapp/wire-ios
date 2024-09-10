@@ -83,7 +83,7 @@ extension AVURLAsset {
         completion: @escaping ConvertVideoCompletion
     ) {
         let filename = url.deletingPathExtension().lastPathComponent + ".mp4"
-        let asset: AVURLAsset = AVURLAsset(url: url, options: nil)
+        let asset = AVURLAsset(url: url, options: nil)
 
         guard let track = AVAsset(url: url as URL).tracks(withMediaType: AVMediaType.video).first else {
             completion(nil, nil, ConversionFailure.missingVideoTrack)

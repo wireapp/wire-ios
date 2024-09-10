@@ -21,7 +21,7 @@ import Foundation
 
 final class CallParticipantTests: MessagingTest {
     var otherUser: ZMUser!
-    let otherUserID: UUID = UUID()
+    let otherUserID = UUID()
     let otherUserClientID = UUID().transportString()
 
     override func setUp() {

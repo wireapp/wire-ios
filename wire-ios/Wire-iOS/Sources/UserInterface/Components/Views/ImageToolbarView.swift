@@ -54,7 +54,7 @@ final class ImageToolbarView: UIView {
         }
     }
 
-    var isPlacedOnImage: Bool = false {
+    var isPlacedOnImage = false {
         didSet {
             backgroundColor = isPlacedOnImage ? UIColor(white: 0, alpha: 0.40) : UIColor.clear
             updateButtonStyle()

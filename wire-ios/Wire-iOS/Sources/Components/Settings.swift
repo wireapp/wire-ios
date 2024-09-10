@@ -142,7 +142,7 @@ class Settings {
     // Max audio recording duration in seconds
     var maxRecordingDurationDebug: TimeInterval = 0.0
 
-    static var shared: Settings = Settings()
+    static var shared = Settings()
 
     init() {
         ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled

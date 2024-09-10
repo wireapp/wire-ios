@@ -48,7 +48,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     var containerColor: UIColor? = SemanticColors.View.backgroundCollectionCell
     var containerHeightConstraint: NSLayoutConstraint!
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     var selectionView: UIView? {
         containerView
@@ -186,12 +186,12 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = false
-    let supportsActions: Bool = true
-    let containsHighlightableContent: Bool = true
+    let isFullWidth = false
+    let supportsActions = true
+    let containsHighlightableContent = true
 
     var accessibilityIdentifier: String? {
         configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"

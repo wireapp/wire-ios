@@ -134,9 +134,9 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     }
 
     var topMargin: Float = 0
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = true
-    let containsHighlightableContent: Bool = false
+    let isFullWidth = true
+    let supportsActions = true
+    let containsHighlightableContent = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

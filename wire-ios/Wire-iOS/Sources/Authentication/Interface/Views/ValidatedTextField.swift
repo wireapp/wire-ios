@@ -63,7 +63,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
 
     private var style: TextFieldStyle?
 
-    private var isEditingTextField: Bool = false {
+    private var isEditingTextField = false {
         didSet {
             guard let style else {
                 return
@@ -93,7 +93,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     }
 
     /// Whether to display the confirm button.
-    var showConfirmButton: Bool = true {
+    var showConfirmButton = true {
         didSet {
             confirmButton.isHidden = !showConfirmButton
         }

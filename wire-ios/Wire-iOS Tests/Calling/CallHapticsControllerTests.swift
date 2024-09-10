@@ -37,9 +37,9 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
     private var firstUser: ZMUser!
     private var secondUser: ZMUser!
     private var thirdUser: ZMUser!
-    private var clientId1: String = "ClientId1"
-    private var clientId2: String = "ClientId2"
-    private var clientId3: String = "ClientId3"
+    private var clientId1 = "ClientId1"
+    private var clientId2 = "ClientId2"
+    private var clientId3 = "ClientId3"
 
     override func setUp() {
         super.setUp()

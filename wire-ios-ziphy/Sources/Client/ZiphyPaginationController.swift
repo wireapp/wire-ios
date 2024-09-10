@@ -28,7 +28,7 @@ typealias ZiphyPaginatedFetchBlock = (_ offset: Int) -> CancelableTask?
 final class ZiphyPaginationController {
     var ziphs: [Ziph] = []
     var offset = 0
-    var isAtEnd: Bool = false
+    var isAtEnd = false
 
     /// The block that fetches the paginated resource when needed.
     var fetchBlock: ZiphyPaginatedFetchBlock?

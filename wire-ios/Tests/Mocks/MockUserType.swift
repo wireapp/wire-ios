@@ -43,7 +43,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - MockHelpers
 
-    var isTrusted: Bool = true
+    var isTrusted = true
 
     let legalHoldDataSource = MockLegalHoldDataSource()
 
@@ -75,7 +75,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var name: String?
 
-    var displayName: String = ""
+    var displayName = ""
 
     var initials: String?
 
@@ -106,7 +106,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var richProfile: [UserRichProfileField] = []
 
-    var readReceiptsEnabled: Bool = false
+    var readReceiptsEnabled = false
 
     // MARK: - Conversations
 
@@ -116,16 +116,16 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - Querying
 
-    var isFederated: Bool = false
+    var isFederated = false
 
-    var isSelfUser: Bool = false
+    var isSelfUser = false
 
-    var mockedIsServiceUser: Bool = false
+    var mockedIsServiceUser = false
     var isServiceUser: Bool {
         mockedIsServiceUser
     }
 
-    var isVerified: Bool = false
+    var isVerified = false
 
     // MARK: - Team
 
@@ -135,9 +135,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         teamIdentifier != nil
     }
 
-    var hasTeam: Bool = false
+    var hasTeam = false
 
-    var hasDigitalSignatureEnabled: Bool = false
+    var hasDigitalSignatureEnabled = false
 
     var teamName: String?
 
@@ -145,19 +145,19 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - Connections
 
-    var canBeConnected: Bool = false
+    var canBeConnected = false
 
-    var isConnected: Bool = false
+    var isConnected = false
 
-    var isBlocked: Bool = false
+    var isBlocked = false
 
     var blockState: ZMBlockState = .none
 
-    var isIgnored: Bool = false
+    var isIgnored = false
 
-    var isPendingApprovalBySelfUser: Bool = false
+    var isPendingApprovalBySelfUser = false
 
-    var isPendingApprovalByOtherUser: Bool = false
+    var isPendingApprovalByOtherUser = false
 
     func accept(completion: @escaping (Error?) -> Void) {
         isBlocked = false
@@ -173,29 +173,29 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - Wireless
 
-    var isWirelessUser: Bool = false
+    var isWirelessUser = false
 
-    var isExpired: Bool = false
+    var isExpired = false
 
     var expiresAfter: TimeInterval = 0
 
     // MARK: Misc
 
-    var usesCompanyLogin: Bool = false
+    var usesCompanyLogin = false
 
-    var managedByWire: Bool = false
+    var managedByWire = false
 
-    var isAccountDeleted: Bool = false
+    var isAccountDeleted = false
 
-    var isUnderLegalHold: Bool = false
+    var isUnderLegalHold = false
 
-    var needsRichProfileUpdate: Bool = false
+    var needsRichProfileUpdate = false
 
     // MARK: - Capabilities
 
-    var canCreateService: Bool = false
+    var canCreateService = false
 
-    var canManageTeam: Bool = false
+    var canManageTeam = false
 
     func canLeave(_ conversation: ZMConversation) -> Bool {
         canLeaveConversation
@@ -263,7 +263,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         isGroupAdminInConversation
     }
 
-    var canCreateMLSGroups: Bool = false
+    var canCreateMLSGroups = false
 
     // MARK: - Methods
 

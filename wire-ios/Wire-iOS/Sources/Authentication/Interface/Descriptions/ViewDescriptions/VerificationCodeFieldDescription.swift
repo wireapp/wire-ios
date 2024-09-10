@@ -21,7 +21,7 @@ import UIKit
 final class VerificationCodeFieldDescription: NSObject, ValueSubmission {
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
-    var acceptsInput: Bool = true
+    var acceptsInput = true
     var constraints: [NSLayoutConstraint] = []
 }
 

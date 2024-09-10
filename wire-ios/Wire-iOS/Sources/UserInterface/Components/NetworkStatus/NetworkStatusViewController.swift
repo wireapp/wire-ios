@@ -43,7 +43,7 @@ final class NetworkStatusViewController: UIViewController {
     private var networkStatusObserverToken: Any?
     private var pendingState: NetworkStatusViewState?
     private var state: NetworkStatusViewState = .online
-    private var finishedViewWillAppear: Bool = false
+    private var finishedViewWillAppear = false
 
     private var device: DeviceAbstraction
     private var application: ApplicationProtocol

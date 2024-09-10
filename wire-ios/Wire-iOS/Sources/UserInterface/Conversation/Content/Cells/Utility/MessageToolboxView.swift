@@ -107,7 +107,7 @@ final class MessageToolboxView: UIView {
 
     fileprivate let separatorView = UIView()
     fileprivate var heightConstraint: NSLayoutConstraint!
-    fileprivate var previousLayoutBounds: CGRect = CGRect.zero
+    fileprivate var previousLayoutBounds = CGRect.zero
 
     // MARK: - Initialization
 

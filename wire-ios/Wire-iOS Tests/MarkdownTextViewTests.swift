@@ -220,7 +220,7 @@ final class MarkdownTextViewTests: XCTestCase {
         sut.updateTextColor(base: .red)
 
         // THEN: the color of the text changes in the attributes
-        var attributedRange: NSRange = NSRange(location: 0, length: 0)
+        var attributedRange = NSRange(location: 0, length: 0)
         let attributedColor = sut.attributedText.attribute(.foregroundColor, at: 0, effectiveRange: &attributedRange) as? UIColor
         XCTAssertEqual(attributedColor, .red)
         XCTAssertEqual(attributedRange, NSRange(location: 0, length: 6))

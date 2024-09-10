@@ -23,12 +23,12 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     var mockCallState: CallState = .incoming(video: false, shouldRing: true, degraded: false)
     var mockCallDuration: TimeInterval?
     var mockParticipants: [CallParticipant] = []
-    var mockIsConstantBitRateAudioActive: Bool = false
+    var mockIsConstantBitRateAudioActive = false
     var mockInitiator: UserType?
-    var mockIsVideoCall: Bool = false
+    var mockIsVideoCall = false
     var mockVideoState: VideoState = .stopped
     var mockNetworkQuality: NetworkQuality = .normal
-    var mockIsConferenceCall: Bool = false
+    var mockIsConferenceCall = false
     var mockFirstDegradedUser: UserType?
 
     required init(conversation: ZMConversation?) {

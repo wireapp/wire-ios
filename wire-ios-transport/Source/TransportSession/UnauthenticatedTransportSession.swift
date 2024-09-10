@@ -52,7 +52,7 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 /// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
 /// to create a regular transport session with it.
 public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
-    private let maximumNumberOfRequests: Int = 3
+    private let maximumNumberOfRequests = 3
     private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
     private let baseURL: URL
     private var session: SessionProtocol!

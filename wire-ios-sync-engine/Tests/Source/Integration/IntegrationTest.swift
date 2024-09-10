@@ -798,45 +798,45 @@ extension IntegrationTest: SessionManagerDelegate {
 public class MockLoginDelegate: NSObject, LoginDelegate {
     public var currentError: NSError?
 
-    public var didCallLoginCodeRequestDidFail: Bool = false
+    public var didCallLoginCodeRequestDidFail = false
     public func loginCodeRequestDidFail(_ error: NSError) {
         currentError = error
         didCallLoginCodeRequestDidFail = true
     }
 
-    public var didCallLoginCodeRequestDidSucceed: Bool = false
+    public var didCallLoginCodeRequestDidSucceed = false
     public func loginCodeRequestDidSucceed() {
         didCallLoginCodeRequestDidSucceed = true
     }
 
-    public var didCallAuthenticationDidFail: Bool = false
+    public var didCallAuthenticationDidFail = false
     public func authenticationDidFail(_ error: NSError) {
         currentError = error
         didCallAuthenticationDidFail = true
     }
 
-    public var didCallAuthenticationInvalidated: Bool = false
+    public var didCallAuthenticationInvalidated = false
     public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
         currentError = error
         didCallAuthenticationInvalidated = true
     }
 
-    public var didCallAuthenticationDidSucceed: Bool = false
+    public var didCallAuthenticationDidSucceed = false
     public func authenticationDidSucceed() {
         didCallAuthenticationDidSucceed = true
     }
 
-    public var didCallAuthenticationReadyToImportBackup: Bool = false
+    public var didCallAuthenticationReadyToImportBackup = false
     public func authenticationReadyToImportBackup(existingAccount: Bool) {
         didCallAuthenticationReadyToImportBackup = true
     }
 
-    public var didCallClientRegistrationDidSucceed: Bool = false
+    public var didCallClientRegistrationDidSucceed = false
     public func clientRegistrationDidSucceed(accountId: UUID) {
         didCallClientRegistrationDidSucceed = true
     }
 
-    public var didCallClientRegistrationDidFail: Bool = false
+    public var didCallClientRegistrationDidFail = false
     public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
         currentError = error
         didCallClientRegistrationDidFail = true

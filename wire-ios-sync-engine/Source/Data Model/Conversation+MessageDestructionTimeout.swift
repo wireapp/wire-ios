@@ -90,7 +90,7 @@ private enum MessageDestructionTimeoutRequestFactory {
             payload = ["message_timer": nil]
         } else {
             // Backend expects the timer to be in miliseconds, we store it in seconds.
-            let timeoutInMS: Int64 = Int64(timeout) * 1000
+            let timeoutInMS = Int64(timeout) * 1000
             payload = ["message_timer": timeoutInMS]
         }
         return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)

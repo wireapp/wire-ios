@@ -46,7 +46,7 @@ public final class NetworkStatus: NetworkStatusObservable {
     private let reachabilityRef: SCNetworkReachability
 
     init() {
-        var zeroAddress: sockaddr_in = sockaddr_in()
+        var zeroAddress = sockaddr_in()
         bzero(&zeroAddress, MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_family = sa_family_t(AF_INET)
@@ -90,12 +90,12 @@ public final class NetworkStatus: NetworkStatusObservable {
     // MARK: - Public API
 
     /// The shared network status object (status of 0.0.0.0)
-    public static var shared: NetworkStatus = NetworkStatus()
+    public static var shared = NetworkStatus()
 
     /// Current state of the network.
     public var reachability: ServerReachability {
         var returnValue: ServerReachability = .unreachable
-        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags()
+        var flags = SCNetworkReachabilityFlags()
 
         if SCNetworkReachabilityGetFlags(reachabilityRef, &flags) {
             let reachable: Bool = flags.contains(.reachable)

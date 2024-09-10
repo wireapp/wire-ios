@@ -29,7 +29,7 @@ final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
             return .none
         }
 
-        var newAttributes: [UICollectionViewLayoutAttributes] = [UICollectionViewLayoutAttributes]()
+        var newAttributes = [UICollectionViewLayoutAttributes]()
         let maxCellWidth = self.collectionView!.bounds.size.width - self.sectionInset.left - self.sectionInset.right
 
         for attributes: UICollectionViewLayoutAttributes in oldAttributes {

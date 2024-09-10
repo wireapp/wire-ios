@@ -40,7 +40,7 @@ final class WipeDatabaseViewController: UIViewController {
 
     var confirmController: RequestPasswordController?
 
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let stackView = UIStackView.verticalStackView()
 
     typealias WipeDatabase = L10n.Localizable.WipeDatabase
 

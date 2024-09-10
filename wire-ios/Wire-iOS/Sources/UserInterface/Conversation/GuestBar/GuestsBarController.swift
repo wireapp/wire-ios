@@ -39,7 +39,7 @@ final class GuestsBarController: UIViewController {
     private static let expandedHeight: CGFloat = 20
 
     private var _state: State = .hidden
-    var shouldIgnoreUpdates: Bool = false
+    var shouldIgnoreUpdates = false
 
     var state: State {
         get {

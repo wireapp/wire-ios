@@ -36,7 +36,7 @@ extension UIView {
 
         let userInfo = notification?.userInfo
         let animationLength: TimeInterval = (userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
-        let animationCurve: AnimationCurve = AnimationCurve(rawValue: (userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as AnyObject).intValue ?? 0) ?? .easeInOut
+        let animationCurve = AnimationCurve(rawValue: (userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as AnyObject).intValue ?? 0) ?? .easeInOut
 
         var animationOptions: UIView.AnimationOptions = .beginFromCurrentState
 

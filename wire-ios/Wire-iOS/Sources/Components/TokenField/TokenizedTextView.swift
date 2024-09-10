@@ -31,7 +31,7 @@ protocol TokenizedTextViewDelegate: AnyObject {
 class TokenizedTextView: TextView {
     weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
 
-    private lazy var tapSelectionGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapText(_:)))
+    private lazy var tapSelectionGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapText(_:)))
 
     convenience init() {
         self.init(frame: .zero)
@@ -73,7 +73,7 @@ class TokenizedTextView: TextView {
         location.y -= textContainerInset.top
 
         // Find the character that's been tapped on
-        var characterIndex: Int = 0
+        var characterIndex = 0
         var fraction: CGFloat = 0
 
         withUnsafePointer(to: &fraction) {

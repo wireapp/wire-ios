@@ -304,7 +304,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             self.otherUser.domain = "example.com"
             self.otherUser.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(Set([self.otherUser]))
-            let failedUser: QualifiedID = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: self.otherUser.domain ?? "")
+            let failedUser = QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: self.otherUser.domain ?? "")
             guard let request = self.sut.nextRequest(for: self.apiVersion) else {
                 return XCTFail("No request generated")
             }

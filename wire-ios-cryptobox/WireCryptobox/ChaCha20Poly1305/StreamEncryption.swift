@@ -85,8 +85,8 @@ extension ChaCha20Poly1305 {
             let uuidHash: [UInt8]
 
             init(buffer: [UInt8]) throws {
-                var salt: [UInt8] = [UInt8](repeating: 0, count: Field.salt.rawValue)
-                var hash: [UInt8] = [UInt8](repeating: 0, count: Field.uuidHash.rawValue)
+                var salt = [UInt8](repeating: 0, count: Field.salt.rawValue)
+                var hash = [UInt8](repeating: 0, count: Field.uuidHash.rawValue)
 
                 try Field.partition(buffer: buffer) { partition, field in
                     switch field {
@@ -273,7 +273,7 @@ extension ChaCha20Poly1305 {
 
                 guard bytesRead > 0 else { break }
 
-                let messageLength: UInt64 = UInt64(bytesRead)
+                let messageLength = UInt64(bytesRead)
                 var cipherLength: UInt64 = 0
                 let tag: UInt8 = input.hasBytesAvailable ? 0 : UInt8(crypto_secretstream_xchacha20poly1305_TAG_FINAL)
 
@@ -353,7 +353,7 @@ extension ChaCha20Poly1305 {
                 guard bytesRead > 0 else { continue }
 
                 var messageLength: UInt64 = 0
-                let cipherLength: UInt64 = UInt64(bytesRead)
+                let cipherLength = UInt64(bytesRead)
 
                 guard crypto_secretstream_xchacha20poly1305_pull(&state, &messageBuffer, &messageLength, &tag, cipherBuffer, cipherLength, nil, 0) == 0 else {
                     throw EncryptionError.decryptionFailed

@@ -35,7 +35,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         color: SemanticColors.Label.textSectionHeader
     )
     private(set) var actionsViewHeightConstraint: NSLayoutConstraint!
-    var isIncomingCall: Bool = false
+    var isIncomingCall = false
 
     let actionsView = CallingActionsView()
 

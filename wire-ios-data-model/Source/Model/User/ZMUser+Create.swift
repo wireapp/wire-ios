@@ -28,7 +28,7 @@ extension ZMUser {
     @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
                                            domain: String?,
                                            in context: NSManagedObjectContext) -> ZMUser {
-        var created: Bool = false
+        var created = false
         return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created)
     }
 

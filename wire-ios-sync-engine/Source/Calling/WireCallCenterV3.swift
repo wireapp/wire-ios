@@ -70,9 +70,9 @@ public class WireCallCenterV3: NSObject {
      * - note: Changing this property after the call has started has no effect.
      */
 
-    var useConstantBitRateAudio: Bool = false
+    var useConstantBitRateAudio = false
 
-    var usePackagingFeatureConfig: Bool = false
+    var usePackagingFeatureConfig = false
 
     var isMuted: Bool {
         get { avsWrapper.isMuted }
@@ -86,7 +86,7 @@ public class WireCallCenterV3: NSObject {
     var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
 
     /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to AVS.
-    var isReady: Bool = false {
+    var isReady = false {
         didSet {
             VoIPPushHelper.isAVSReady = isReady
 

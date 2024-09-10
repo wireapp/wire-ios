@@ -50,7 +50,8 @@
     redundantRawValues, \
     redundantReturn, \
     # redundantSelf, \ TODO
-    redundantStaticSelf
+    redundantStaticSelf, \
+    redundantType
 
 # Options
 
@@ -67,3 +68,4 @@
 --indent 4 # indent
 --anonymousforeach ignore # preferForLoop
 # --self init-only # redundantSelf TODO
+--redundanttype inferred

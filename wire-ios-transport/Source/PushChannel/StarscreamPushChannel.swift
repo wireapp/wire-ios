@@ -43,7 +43,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         }
     }
 
-    var keepOpen: Bool = false {
+    var keepOpen = false {
         didSet {
             if keepOpen {
                 scheduleOpen()

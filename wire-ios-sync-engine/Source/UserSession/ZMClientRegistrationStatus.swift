@@ -107,15 +107,15 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     private let managedObjectContext: NSManagedObjectContext
     private let cookieProvider: CookieProvider
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var needsRefreshSelfUser: Bool = false
-    private var needsToCheckCredentials: Bool = false
-    private var needsToFetchFeatureConfigs: Bool = false
-    private var needsToVerifySelfClient: Bool = false
-    private var isWaitingForE2EIEnrollment: Bool = false
-    private var isWaitingForUserClients: Bool = false
-    private var isWaitingForMLSClientToBeRegistered: Bool = false
-    private var isWaitingForClientsToBeDeleted: Bool = false
-    private var isGeneratingPrekeys: Bool = false
+    private var needsRefreshSelfUser = false
+    private var needsToCheckCredentials = false
+    private var needsToFetchFeatureConfigs = false
+    private var needsToVerifySelfClient = false
+    private var isWaitingForE2EIEnrollment = false
+    private var isWaitingForUserClients = false
+    private var isWaitingForMLSClientToBeRegistered = false
+    private var isWaitingForClientsToBeDeleted = false
+    private var isGeneratingPrekeys = false
 
     private var userProfileObserverToken: Any?
     private var clientUpdateObserverToken: Any?

@@ -72,7 +72,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
         }
     }
 
-    var recordingMuted: Bool = false
+    var recordingMuted = false
 
     init(
         name: String?,

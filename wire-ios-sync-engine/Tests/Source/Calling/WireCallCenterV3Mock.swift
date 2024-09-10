@@ -22,7 +22,7 @@ import Foundation
 
 @objcMembers
 public class MockAVSWrapper: AVSWrapperType {
-    public var isMuted: Bool = false
+    public var isMuted = false
 
     public var startCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool)?
     public var answerCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, useCBR: Bool)?
@@ -137,13 +137,13 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     // MARK: AVS Integration
 
-    public var startCallShouldFail: Bool = false {
+    public var startCallShouldFail = false {
         didSet {
             (avsWrapper as! MockAVSWrapper).startCallShouldFail = startCallShouldFail
         }
     }
 
-    public var answerCallShouldFail: Bool = false {
+    public var answerCallShouldFail = false {
         didSet {
             (avsWrapper as! MockAVSWrapper).answerCallShouldFail = answerCallShouldFail
         }

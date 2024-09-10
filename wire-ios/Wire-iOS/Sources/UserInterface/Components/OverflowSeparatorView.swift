@@ -20,7 +20,7 @@ import UIKit
 import WireDesign
 
 final class OverflowSeparatorView: UIView {
-    var inverse: Bool = false
+    var inverse = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)

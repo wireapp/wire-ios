@@ -144,11 +144,11 @@ final class SearchResultsViewController: UIViewController {
     let userSelection: UserSelection
     let userSession: UserSession
 
-    let sectionController: SectionCollectionViewController = SectionCollectionViewController()
-    let contactsSection: ContactsSectionController = ContactsSectionController()
-    let teamMemberAndContactsSection: ContactsSectionController = ContactsSectionController()
+    let sectionController = SectionCollectionViewController()
+    let contactsSection = ContactsSectionController()
+    let teamMemberAndContactsSection = ContactsSectionController()
     let directorySection = DirectorySectionController()
-    let conversationsSection: GroupConversationsSectionController = GroupConversationsSectionController()
+    let conversationsSection = GroupConversationsSectionController()
     let federationSection = FederationSectionController()
 
     lazy var topPeopleSection: TopPeopleSectionController = {
@@ -308,7 +308,7 @@ final class SearchResultsViewController: UIViewController {
         searchForLocalUsers(withQuery: "")
     }
 
-    var isResultEmpty: Bool = true {
+    var isResultEmpty = true {
         didSet {
             searchResultsView.emptyResultContainer.isHidden = !isResultEmpty
         }

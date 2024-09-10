@@ -27,10 +27,10 @@ enum MockPaginatedResponse {
 final class MockPaginatedRequester: ZiphyURLRequester {
     private let networkQueue = DispatchQueue(label: "MockZiphyRequester.Network")
     private var completionHandler: MockZiphyRequesterCompletionHandler?
-    private var cancellations: Int = 0
+    private var cancellations = 0
 
-    private var offset: Int = 0
-    private var limit: Int = 0
+    private var offset = 0
+    private var limit = 0
     private var url: URL?
 
     var response: MockPaginatedResponse?

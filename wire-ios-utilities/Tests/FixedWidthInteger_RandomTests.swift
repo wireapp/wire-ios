@@ -29,7 +29,7 @@ class FixedWidthInteger_RandomTests: XCTestCase {
     }
 
     func testThatTheGeneratedNumberIsInRangeWithInt() {
-        let upperBound: Int = 100
+        let upperBound = 100
         let range = -upperBound..<upperBound
 
         for _ in 0..<100 {

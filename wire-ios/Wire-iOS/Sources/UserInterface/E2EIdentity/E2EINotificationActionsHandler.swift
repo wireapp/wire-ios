@@ -41,7 +41,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private var isUpdateMode: Bool = false
+    private var isUpdateMode = false
 
     private let targetVC: () -> UIViewController
     private var observer: NSObjectProtocol?

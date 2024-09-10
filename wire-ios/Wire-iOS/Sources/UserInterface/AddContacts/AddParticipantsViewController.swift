@@ -107,7 +107,7 @@ final class AddParticipantsViewController: UIViewController {
     private let searchResultsViewController: SearchResultsViewController
     private let searchGroupSelector: SearchGroupSelector
     private let searchHeaderViewController: SearchHeaderViewController
-    let userSelection: UserSelection = UserSelection()
+    let userSelection = UserSelection()
     private let collectionView: UICollectionView
     private let collectionViewLayout: UICollectionViewFlowLayout
     private let confirmButtonHeight: CGFloat = 56.0

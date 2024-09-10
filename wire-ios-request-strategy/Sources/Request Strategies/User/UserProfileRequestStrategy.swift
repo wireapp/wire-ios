@@ -24,7 +24,7 @@ import Foundation
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
 public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
-    var isFetchingAllConnectedUsers: Bool = false
+    var isFetchingAllConnectedUsers = false
     let syncProgress: SyncProgress
 
     let userProfileByID: IdentifierObjectSync<UserProfileByIDTranscoder>
@@ -219,7 +219,7 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
 class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
-    var fetchLimit: Int = 1600 / 25 // UUID as string is 24 + 1 for the comma
+    var fetchLimit = 1600 / 25 // UUID as string is 24 + 1 for the comma
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -276,7 +276,7 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
 class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
 
-    var fetchLimit: Int = 500
+    var fetchLimit = 500
 
     weak var contextChangedTracker: ZMContextChangeTracker?
     let context: NSManagedObjectContext

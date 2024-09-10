@@ -22,7 +22,7 @@ import XCTest
 let someTextToEncrypt = "ENCRYPT THIS!"
 
 class DebugEncryptor: Encryptor {
-    var index: Int = 0
+    var index = 0
     func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         var result = plainText
         result.append(recipientIdentifier.rawValue.data(using: .utf8)!)

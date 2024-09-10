@@ -135,7 +135,7 @@ final class ConversationTitleViewTests: XCTestCase {
         // GIVEN
         sut = ConversationTitleView(conversation: conversation, interactive: true)
 
-        var callCount: Int = 0
+        var callCount = 0
         sut.tapHandler = { _ in
             callCount += 1
         }

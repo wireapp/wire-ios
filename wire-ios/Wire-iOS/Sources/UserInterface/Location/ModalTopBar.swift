@@ -87,7 +87,7 @@ final class ModalTopBar: UIView {
 
     private var sepeatorHeight: NSLayoutConstraint!
 
-    var needsSeparator: Bool = true {
+    var needsSeparator = true {
         didSet {
             sepeatorHeight.constant = needsSeparator ? 1 : 0
         }

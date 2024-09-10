@@ -23,12 +23,12 @@ import XCTest
 @testable import Wire
 
 private class MockPulsingIconImageView: PulsingIconImageView {
-    var didStartPulsing: Bool = false
+    var didStartPulsing = false
     override func startPulsing() {
         didStartPulsing = true
     }
 
-    var didStopPulsing: Bool = false
+    var didStopPulsing = false
     override func stopPulsing() {
         didStopPulsing = true
     }

@@ -49,7 +49,7 @@ enum PasscodeError: CaseIterable {
                                                              verticalCorrection: -1,
                                                              insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8))
 
-        let attributedString: NSAttributedString = NSAttributedString(string: message) && font
+        let attributedString = NSAttributedString(string: message) && font
 
         return NSAttributedString(attachment: textAttachment) + attributedString
     }

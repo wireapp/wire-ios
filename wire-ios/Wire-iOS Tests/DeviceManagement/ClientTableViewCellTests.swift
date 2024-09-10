@@ -242,11 +242,11 @@ final class ClientTableViewCellTests: XCTestCase {
 extension ClientTableViewCellModel {
     typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
-    private static let mockProteusId: String = "abcdefghijklmnop"
+    private static let mockProteusId = "abcdefghijklmnop"
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
 
-    private static let mockFingerPrint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+    private static let mockFingerPrint = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
 

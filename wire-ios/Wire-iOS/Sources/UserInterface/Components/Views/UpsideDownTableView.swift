@@ -49,7 +49,7 @@ final class UpsideDownTableView: UITableView {
         }
     }
 
-    var lockContentOffset: Bool = false
+    var lockContentOffset = false
 
     override var contentOffset: CGPoint {
         get {

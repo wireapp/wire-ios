@@ -157,8 +157,8 @@ open class ZMCallState: NSObject, Sequence {
 
 /// This is the call state for a specific conversation.
 open class ZMConversationCallState: NSObject {
-    open var isCallDeviceActive: Bool = false
-    open var isIgnoringCall: Bool = false
+    open var isCallDeviceActive = false
+    open var isIgnoringCall = false
 
     /// returns true if the merge changed the current state
     open func mergeChangesFromState(_ other: ZMConversationCallState) {

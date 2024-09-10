@@ -23,7 +23,7 @@ import WireDesign
 
 final class ConversationTitleView: TitleView {
     var conversation: GroupDetailsConversationType
-    var interactive: Bool = true
+    var interactive = true
 
     init(conversation: GroupDetailsConversationType, interactive: Bool = true) {
         self.conversation = conversation

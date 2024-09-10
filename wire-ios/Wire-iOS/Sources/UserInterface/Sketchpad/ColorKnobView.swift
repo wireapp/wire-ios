@@ -40,9 +40,9 @@ final class ColorKnobView: UIView {
     var knobDiameter: CGFloat = 12
 
     /// The actual circle knob, filled with the color
-    private var innerCircleLayer: CALayer = CALayer()
+    private var innerCircleLayer = CALayer()
     /// Just a layer, used for the thin border around the selected knob
-    private var borderCircleLayer: CALayer = CALayer()
+    private var borderCircleLayer = CALayer()
 
     // MARK: - Init
 

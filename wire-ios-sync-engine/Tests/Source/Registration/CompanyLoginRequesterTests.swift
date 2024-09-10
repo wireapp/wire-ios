@@ -23,7 +23,7 @@ final class CompanyLoginRequesterTests: XCTestCase {
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN
         let defaults = UserDefaults(suiteName: name)!
-        let requester: CompanyLoginRequester = CompanyLoginRequester(
+        let requester = CompanyLoginRequester(
             callbackScheme: "wire",
             defaults: defaults
         )

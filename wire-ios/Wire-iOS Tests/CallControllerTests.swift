@@ -185,33 +185,33 @@ extension CallControllerTests {
 // MARK: - ActiveCallRouterMock
 
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
-    var dismissSecurityDegradedAlertIfNeededIsCalled: Bool = false
+    var dismissSecurityDegradedAlertIfNeededIsCalled = false
     func dismissSecurityDegradedAlertIfNeeded() {
         dismissSecurityDegradedAlertIfNeededIsCalled = true
     }
 
-    var presentActiveCallIsCalled: Bool = false
+    var presentActiveCallIsCalled = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         presentActiveCallIsCalled = true
     }
 
-    var dismissActiveCallIsCalled: Bool = false
+    var dismissActiveCallIsCalled = false
     func dismissActiveCall(animated: Bool, completion: Completion?) {
         dismissActiveCallIsCalled = true
         hideCallTopOverlay()
     }
 
-    var minimizeCallIsCalled: Bool = false
+    var minimizeCallIsCalled = false
     func minimizeCall(animated: Bool, completion: (() -> Void)?) {
         minimizeCallIsCalled = true
     }
 
-    var showCallTopOverlayIsCalled: Bool = false
+    var showCallTopOverlayIsCalled = false
     func showCallTopOverlay(for conversation: ZMConversation) {
         showCallTopOverlayIsCalled = true
     }
 
-    var hideCallTopOverlayIsCalled: Bool = false
+    var hideCallTopOverlayIsCalled = false
     func hideCallTopOverlay() {
         hideCallTopOverlayIsCalled = true
     }
@@ -234,7 +234,7 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         }
     }
 
-    var presentUnsupportedVersionAlertIsCalled: Bool = false
+    var presentUnsupportedVersionAlertIsCalled = false
     func presentUnsupportedVersionAlert() {
         presentUnsupportedVersionAlertIsCalled = true
     }

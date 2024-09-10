@@ -30,12 +30,12 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 5
 
-    var isFullWidth: Bool = true
-    var supportsActions: Bool = false
-    var containsHighlightableContent: Bool = false
+    var isFullWidth = true
+    var supportsActions = false
+    var containsHighlightableContent = false
 
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?

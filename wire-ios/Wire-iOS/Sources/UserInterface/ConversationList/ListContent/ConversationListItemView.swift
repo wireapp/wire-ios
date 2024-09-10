@@ -48,9 +48,9 @@ final class ConversationListItemView: UIView {
         }
     }
 
-    let titleField: UILabel = UILabel()
-    let avatarView: ConversationAvatarView = ConversationAvatarView()
-    lazy var rightAccessory: ConversationListAccessoryView = ConversationListAccessoryView()
+    let titleField = UILabel()
+    let avatarView = ConversationAvatarView()
+    lazy var rightAccessory = ConversationListAccessoryView()
 
     var selected = false {
         didSet {
@@ -66,9 +66,9 @@ final class ConversationListItemView: UIView {
         }
     }
 
-    let labelsStack: UIStackView = UIStackView()
-    let contentStack: UIStackView = UIStackView()
-    private let subtitleField: UILabel = UILabel()
+    let labelsStack = UIStackView()
+    let contentStack = UIStackView()
+    private let subtitleField = UILabel()
 
     init() {
         super.init(frame: .zero)

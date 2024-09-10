@@ -52,7 +52,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
 
     // MARK: ClientRegistrationDelegate
 
-    public var deletionCalls: Int = 0
+    public var deletionCalls = 0
 
     /// Notify that the current client was deleted remotely
     public func didDetectCurrentClientDeletion() {
@@ -90,7 +90,7 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 @objcMembers
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockPhase: ClientRegistrationPhase?
-    var mockReadiness: Bool = true
+    var mockReadiness = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
         self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
@@ -120,12 +120,12 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
         mockReadiness
     }
 
-    var isWaitingForLoginValue: Bool = false
+    var isWaitingForLoginValue = false
     override var isWaitingForLogin: Bool {
         isWaitingForLoginValue
     }
 
-    var isAddingEmailNecessaryValue: Bool = false
+    var isAddingEmailNecessaryValue = false
     override var isAddingEmailNecessary: Bool {
         isAddingEmailNecessaryValue
     }
@@ -134,9 +134,9 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var fetchedClients: [UserClient?] = []
     var mockPhase: ClientUpdatePhase?
-    var deleteCallCount: Int = 0
-    var fetchCallCount: Int = 0
-    var mockCredentials: UserEmailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
+    var deleteCallCount = 0
+    var fetchCallCount = 0
+    var mockCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
 
     override var credentials: UserEmailCredentials? {
         mockCredentials
@@ -252,27 +252,27 @@ public class MockSyncStatus: SyncStatus {
 @objcMembers
 public class MockEventConsumer: NSObject, ZMEventConsumer {
     public var eventsProcessed: [ZMUpdateEvent] = []
-    public var processEventsCalled: Bool = false
+    public var processEventsCalled = false
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         processEventsCalled = true
         eventsProcessed.append(contentsOf: events)
     }
 
     public var eventsProcessedWhileInBackground: [ZMUpdateEvent] = []
-    public var processEventsWhileInBackgroundCalled: Bool = false
+    public var processEventsWhileInBackgroundCalled = false
     public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
         processEventsWhileInBackgroundCalled = true
         eventsProcessedWhileInBackground.append(contentsOf: events)
     }
 
-    public var messageNoncesToPrefetchCalled: Bool = false
+    public var messageNoncesToPrefetchCalled = false
     public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
         messageNoncesToPrefetchCalled = true
 
         return Set(events.compactMap(\.messageNonce))
     }
 
-    public var conversationRemoteIdentifiersToPrefetchCalled: Bool = false
+    public var conversationRemoteIdentifiersToPrefetchCalled = false
     public func conversationRemoteIdentifiersToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
         conversationRemoteIdentifiersToPrefetchCalled = true
 
@@ -281,13 +281,13 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 }
 
 @objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
-    public var objectsDidChangeCalled: Bool = false
+    public var objectsDidChangeCalled = false
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         objectsDidChangeCalled = true
     }
 
     public var fetchRequest: NSFetchRequest<NSFetchRequestResult>?
-    public var fetchRequestForTrackedObjectsCalled: Bool = false
+    public var fetchRequestForTrackedObjectsCalled = false
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         fetchRequestForTrackedObjectsCalled = true
         return fetchRequest
@@ -302,7 +302,7 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 @objcMembers
 public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
     public var eventsProcessed: [ZMUpdateEvent] = []
-    public var processEventsCalled: Bool = false
+    public var processEventsCalled = false
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
         processEventsCalled = true
         eventsProcessed.append(contentsOf: events)

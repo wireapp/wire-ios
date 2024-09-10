@@ -63,7 +63,7 @@ final class AssetCell: UICollectionViewCell {
     }
 
     static let imageFetchOptions: PHImageRequestOptions = {
-        let options: PHImageRequestOptions = PHImageRequestOptions()
+        let options = PHImageRequestOptions()
         options.deliveryMode = .opportunistic
         options.resizeMode = .fast
         options.isSynchronous = false

@@ -24,7 +24,7 @@ import WireUtilities
     case unknown, encryptionFailed, decryptionFailed
 
     var userInfo: [String: AnyObject] {
-        var info: String = switch self {
+        var info = switch self {
         case .unknown:
             "Unknown EncryptionSessionError"
         case .encryptionFailed:

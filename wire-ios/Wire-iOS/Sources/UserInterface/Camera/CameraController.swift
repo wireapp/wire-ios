@@ -37,7 +37,7 @@ final class CameraController {
     private var backCameraDeviceInput: AVCaptureDeviceInput?
 
     private var isSwitching = false
-    private var canSwitchInputs: Bool = false
+    private var canSwitchInputs = false
 
     private let photoOutput = AVCapturePhotoOutput()
     private var captureDelegates = [Int64: PhotoCaptureDelegate]()

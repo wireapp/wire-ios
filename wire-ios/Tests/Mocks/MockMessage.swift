@@ -29,7 +29,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
     var messageText: String? = ""
     var backingLinkPreview: LinkMetadata?
     var imageData: Data?
-    var linkPreviewHasImage: Bool = false
+    var linkPreviewHasImage = false
     var linkPreviewImageCacheKey: String?
     var mentions = [Mention]()
 
@@ -45,8 +45,8 @@ final class MockTextMessageData: NSObject, TextMessageData {
     }
 
     var quoteMessage: ZMConversationMessage?
-    var isQuotingSelf: Bool = false
-    var hasQuote: Bool = false
+    var isQuotingSelf = false
+    var hasQuote = false
 
     var linkPreview: LinkMetadata? {
         guard let linkPreview = self.backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
@@ -107,10 +107,10 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
 
     var removedUserTypes: Set<AnyHashable> = Set()
     var text: String? = ""
-    var needsUpdatingUsers: Bool = false
-    var userIsTheSender: Bool = false
+    var needsUpdatingUsers = false
+    var userIsTheSender = false
     var decryptionErrorCode: NSNumber?
-    var isDecryptionErrorRecoverable: Bool = true
+    var isDecryptionErrorRecoverable = true
     var senderClientID: String? = "452367891023123"
 
     var duration: TimeInterval = 0
@@ -160,7 +160,7 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
     var thumbnailAssetID: String? = ""
     var imagePreviewDataIdentifier: String? = "preview-identifier-123"
     var durationMilliseconds: UInt64 = 0
-    var videoDimensions: CGSize = CGSize.zero
+    var videoDimensions = CGSize.zero
     var normalizedLoudness: [Float]? = []
     var previewData: Data?
 
@@ -228,7 +228,7 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
     var thumbnailAssetID: String? = ""
     var imagePreviewDataIdentifier: String? = "preview-identifier-123"
     var durationMilliseconds: UInt64 = 233_000
-    var videoDimensions: CGSize = CGSize.zero
+    var videoDimensions = CGSize.zero
     var normalizedLoudness: [Float]? = []
     var previewData: Data?
 
@@ -296,8 +296,8 @@ final class MockImageMessageData: NSObject, ZMImageMessageData {
     var previewData: Data! = Data()
     var imagePreviewDataIdentifier: String! = String()
 
-    var isDownloaded: Bool = true
-    var isAnimatedGIF: Bool = false
+    var isDownloaded = true
+    var isAnimatedGIF = false
     var imageType: String? = String()
 
     var imageData: Data? { mockImageData }
@@ -330,8 +330,8 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     // MARK: - ZMConversationMessage
 
     var nonce: UUID? = UUID()
-    var isEncrypted: Bool = false
-    var isPlainText: Bool = true
+    var isEncrypted = false
+    var isPlainText = true
     var sender: ZMUser? {
         get {
             XCTFail("This property should not be used in tests")
@@ -365,13 +365,13 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var imageMessageData: ZMImageMessageData? = .none
     var knockMessageData: ZMKnockMessageData? = .none
 
-    var causedSecurityLevelDegradation: Bool = false
-    var needsReadConfirmation: Bool = false
+    var causedSecurityLevelDegradation = false
+    var needsReadConfirmation = false
     let objectIdentifier: String = UUID().uuidString
     var linkAttachments: [LinkAttachment]?
-    var needsLinkAttachmentsUpdate: Bool = false
-    var isSilenced: Bool = false
-    var backingIsRestricted: Bool = false
+    var needsLinkAttachmentsUpdate = false
+    var isSilenced = false
+    var backingIsRestricted = false
     var isRestricted: Bool {
         backingIsRestricted
     }
@@ -423,8 +423,8 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var backingLocationMessageData: MockLocationMessageData! = .none
     var backingSystemMessageData: MockSystemMessageData! = .none
 
-    var isEphemeral: Bool = false
-    var isObfuscated: Bool = false
+    var isEphemeral = false
+    var isObfuscated = false
 
     var deletionTimeout: TimeInterval = -1
     var destructionDate: Date?
@@ -451,7 +451,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var hasBeenDeleted = false
 
-    var systemMessageType: ZMSystemMessageType = ZMSystemMessageType.invalid
+    var systemMessageType = ZMSystemMessageType.invalid
 
     override required init() {}
 }

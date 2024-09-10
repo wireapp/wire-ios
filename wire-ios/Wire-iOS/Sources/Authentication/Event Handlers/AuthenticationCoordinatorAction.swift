@@ -88,8 +88,8 @@ struct AuthenticationCoordinatorAlertAction {
 }
 
 extension AuthenticationCoordinatorAlertAction {
-    static let ok: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.ok, coordinatorActions: [])
-    static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
+    static let ok = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.ok, coordinatorActions: [])
+    static let cancel = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
 }
 
 /// A customizable alert to display inside the coordinator's presenter.

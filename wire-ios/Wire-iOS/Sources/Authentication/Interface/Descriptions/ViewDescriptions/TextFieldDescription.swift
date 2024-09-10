@@ -24,13 +24,13 @@ final class TextFieldDescription: NSObject, ValueSubmission {
     let kind: ValidatedTextField.Kind
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
-    var acceptsInput: Bool = true
+    var acceptsInput = true
     var validationError: TextFieldValidator.ValidationError?
-    var showConfirmButton: Bool = true
+    var showConfirmButton = true
     var canSubmit: (() -> Bool)?
     var textField: ValidatedTextField?
-    var useDeferredValidation: Bool = false
-    var acceptInvalidInput: Bool = true
+    var useDeferredValidation = false
+    var acceptInvalidInput = true
 
     init(placeholder: String, actionDescription: String, kind: ValidatedTextField.Kind) {
         self.placeholder = placeholder

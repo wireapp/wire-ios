@@ -90,7 +90,7 @@ struct VerticalColumnPositioning {
     }
 
     private var nextColumn: Int {
-        var smallestColumn: Int = 0
+        var smallestColumn = 0
 
         for i in 0 ..< context.numberOfColumns {
             let currentValue = columnHeights[smallestColumn]

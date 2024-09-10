@@ -71,7 +71,7 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
     // MARK: - Behavior
 
-    var isEnabled: Bool = true {
+    var isEnabled = true {
         didSet {
             if isEnabled {
                 for fieldBehavior in fieldBehaviors {

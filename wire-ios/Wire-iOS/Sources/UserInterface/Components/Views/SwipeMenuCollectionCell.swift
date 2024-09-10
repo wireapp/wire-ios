@@ -48,10 +48,10 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     var mutuallyExclusiveSwipeIdentifier: String?
 
     /// Main view to add subviews to
-    let swipeView: UIView = UIView()
+    let swipeView = UIView()
 
     /// View to add menu items to
-    let menuView: UIView = UIView()
+    let menuView = UIView()
     // @m called when cell's content is overscrolled by user to the side. General use case for dismissing the cell off the screen.
     var overscrollAction: ((_ cell: SwipeMenuCollectionCell?) -> Void)?
 
@@ -59,7 +59,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     private var swipeViewHorizontalConstraint: NSLayoutConstraint?
     private var menuViewToSwipeViewLeftConstraint: NSLayoutConstraint?
     private var maxMenuViewToSwipeViewLeftConstraint: NSLayoutConstraint?
-    private let separatorLine: UIView = UIView()
+    private let separatorLine = UIView()
 
     private var initialDrawerWidth: CGFloat = 0
     private var initialDrawerOffset: CGFloat = 0
@@ -127,7 +127,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     }
 
     private var revealDrawerGestureRecognizer: UIPanGestureRecognizer!
-    private let openedFeedbackGenerator: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private let openedFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     override init(frame: CGRect) {
         super.init(frame: frame)

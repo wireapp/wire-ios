@@ -38,7 +38,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
-    var hidesSubtitle: Bool = false
+    var hidesSubtitle = false
     let avatarSpacer = UIView()
     let avatarImageView = BadgeUserImageView()
     let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,

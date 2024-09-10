@@ -260,7 +260,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsSSOCodeCaseIfInputIsSSO() {
         // GIVEN
         let code = "wire-81DD91BA-B3D0-46F0-BC29-E491938F0A54"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: code)
@@ -275,7 +275,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsDomainCaseIfInputIsEmail() {
         // GIVEN
         let email = "bob@wire.com"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
         var resultDomain: String?
 
         // WHEN
@@ -294,7 +294,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
     func testThatParseReturnsUnknownCaseIfInputIsInvalid() {
         // GIVEN
         let input = "123pho567"
-        var valuesEqual: Bool = false
+        var valuesEqual = false
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: input)

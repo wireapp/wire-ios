@@ -48,7 +48,7 @@ final class GiphySearchViewControllerTests: XCTestCase {
     func testGiphySearchViewControllerIsNotRetainedAfterTimerIsScheduled() {
         autoreleasepool {
             // GIVEN
-            let searchTerm: String = "apple"
+            let searchTerm = "apple"
 
             var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(searchTerm: searchTerm, conversation: (mockConversation as Any) as! ZMConversation, searchResultsController: resultsController)
             sut = giphySearchViewController

@@ -35,9 +35,9 @@ final class SettingsClientViewController: UIViewController,
     UITableViewDataSource,
     UserClientObserver,
     ClientColorVariantProtocol {
-    private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
-    private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
-    private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
+    private static let deleteCellReuseIdentifier = "DeleteCellReuseIdentifier"
+    private static let resetCellReuseIdentifier = "ResetCellReuseIdentifier"
+    private static let verifiedCellReuseIdentifier = "VerifiedCellReuseIdentifier"
 
     let userSession: UserSession
     let viewModel: ProfileClientViewModel
@@ -51,7 +51,7 @@ final class SettingsClientViewController: UIViewController,
     var tableView: UITableView!
     let topSeparator = OverflowSeparatorView()
 
-    var fromConversation: Bool = false
+    var fromConversation = false
 
     var removalObserver: ClientRemovalObserver?
 

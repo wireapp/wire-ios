@@ -46,7 +46,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         }
     }
 
-    let itemView: ConversationListItemView = ConversationListItemView()
+    let itemView = ConversationListItemView()
 
     weak var delegate: ConversationListCellDelegate?
 
@@ -59,7 +59,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     var cellIdentifier: String?
 
     private var hasCreatedInitialConstraints = false
-    let menuDotsView: AnimatedListMenuView = AnimatedListMenuView()
+    let menuDotsView = AnimatedListMenuView()
     private var overscrollStartDate: Date?
     private var conversationObserverToken: Any?
 

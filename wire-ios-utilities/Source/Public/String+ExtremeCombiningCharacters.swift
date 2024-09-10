@@ -47,8 +47,8 @@ extension UnicodeScalar {
     }
 }
 
-private let extremeDiacriticsViewWindowSize: Int = 10
-private let extremeDiacriticsViewMinWindowSize: Int = 3
+private let extremeDiacriticsViewWindowSize = 10
+private let extremeDiacriticsViewMinWindowSize = 3
 private let diacriticsPerCharMaxRatio: Float = 0.5
 
 extension String {

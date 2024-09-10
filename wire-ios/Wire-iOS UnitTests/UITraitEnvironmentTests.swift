@@ -66,7 +66,7 @@ final class UITraitEnvironmentTests: XCTestCase {
 }
 
 final class MockRegularView: NSObject, UITraitEnvironment {
-    var traitCollection: UITraitCollection = UITraitCollection(horizontalSizeClass: .regular)
+    var traitCollection = UITraitCollection(horizontalSizeClass: .regular)
 
     func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         // no-op

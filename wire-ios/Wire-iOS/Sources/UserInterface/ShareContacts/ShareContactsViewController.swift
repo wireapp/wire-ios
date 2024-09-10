@@ -24,7 +24,7 @@ import WireDesign
 
 extension String {
     func withCustomParagraphSpacing() -> NSMutableAttributedString {
-        let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
+        let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 10
 
         return .init(

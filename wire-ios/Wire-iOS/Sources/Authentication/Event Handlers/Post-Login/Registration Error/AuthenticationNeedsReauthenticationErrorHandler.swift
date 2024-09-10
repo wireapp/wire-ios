@@ -36,7 +36,7 @@ final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEvent
             return nil
         }
 
-        var isSignedOut: Bool = true
+        var isSignedOut = true
 
         // If the error comes from the "no history" step, it means that we show
         // the "password needed" screen, and that we should hide the "your session

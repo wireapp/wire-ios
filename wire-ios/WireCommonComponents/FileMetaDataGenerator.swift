@@ -95,13 +95,13 @@ extension AVAsset {
                                              AVLinearPCMIsFloatKey: false,
                                              AVLinearPCMIsNonInterleaved: false]
 
-        let output: AVAssetReaderTrackOutput = AVAssetReaderTrackOutput(track: assetTrack,
-                                                                        outputSettings: outputSettings)
+        let output = AVAssetReaderTrackOutput(track: assetTrack,
+                                              outputSettings: outputSettings)
         output.alwaysCopiesSampleData = false
         reader.add(output)
         var sampleCount: UInt64 = 0
 
-        let ratio: Float64 = Float64(duration.value) / Float64(duration.timescale)
+        let ratio = Float64(duration.value) / Float64(duration.timescale)
 
         for item in assetTrack.formatDescriptions {
             let formatDescription: CMFormatDescription = item as! CMFormatDescription
@@ -110,9 +110,9 @@ extension AVAsset {
             }
         }
 
-        let stride: Int = Int(max(sampleCount / maxSamples, 1))
+        let stride = Int(max(sampleCount / maxSamples, 1))
         var sampleData: [Float] = []
-        var sampleSkipCounter: Int = 0
+        var sampleSkipCounter = 0
 
         reader.startReading()
 
@@ -120,7 +120,7 @@ extension AVAsset {
             if let sampleBuffer: CMSampleBuffer = output.copyNextSampleBuffer() {
                 var audioBufferList = AudioBufferList(mNumberBuffers: 1, mBuffers: AudioBuffer(mNumberChannels: 0, mDataByteSize: 0, mData: nil))
                 var buffer: CMBlockBuffer?
-                var bufferSize: Int = 0
+                var bufferSize = 0
                 CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(
                     sampleBuffer,
                     bufferListSizeNeededOut: &bufferSize,

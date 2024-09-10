@@ -66,7 +66,7 @@ public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {
 }
 
 public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-    public var deletionCalls: Int = 0
+    public var deletionCalls = 0
 
     /// Notify that the current client was deleted remotely
     public func didDetectCurrentClientDeletion() {

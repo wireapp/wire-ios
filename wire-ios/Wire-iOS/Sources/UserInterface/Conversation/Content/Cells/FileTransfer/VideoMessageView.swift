@@ -25,7 +25,7 @@ final class VideoMessageView: UIView, TransferView {
     var fileMessage: ZMConversationMessage?
     weak var delegate: TransferViewDelegate?
 
-    var timeLabelHidden: Bool = false {
+    var timeLabelHidden = false {
         didSet {
             self.timeLabel.isHidden = timeLabelHidden
         }

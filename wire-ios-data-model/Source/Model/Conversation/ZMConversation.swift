@@ -41,7 +41,7 @@ extension ZMConversation {
 
     // MARK: - CoreData unique constraint
 
-    static let domainKey: String = "domain"
+    static let domainKey = "domain"
     @NSManaged private var primitiveDomain: String?
     public var domain: String? {
         get {
@@ -59,7 +59,7 @@ extension ZMConversation {
         }
     }
 
-    static let remoteIdentifierKey: String = "remoteIdentifier"
+    static let remoteIdentifierKey = "remoteIdentifier"
     @NSManaged private var primitiveRemoteIdentifier: String?
     // keep the same as objc non_specified for now
     @objc

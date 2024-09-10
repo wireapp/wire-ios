@@ -33,7 +33,7 @@ public final class ZMUserSession: NSObject {
 
     private let appVersion: String
     private var tokens: [Any] = []
-    private var tornDown: Bool = false
+    private var tornDown = false
 
     private(set) var isNetworkOnline = true
 
@@ -57,7 +57,7 @@ public final class ZMUserSession: NSObject {
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
     private(set) var urlActionProcessors: [URLActionProcessor]?
     let debugCommands: [String: DebugCommand]
-    let eventProcessingTracker: EventProcessingTracker = EventProcessingTracker()
+    let eventProcessingTracker = EventProcessingTracker()
     let legacyHotFix: ZMHotFix
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
@@ -85,7 +85,7 @@ public final class ZMUserSession: NSObject {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
-    public var hasCompletedInitialSync: Bool = false
+    public var hasCompletedInitialSync = false
 
     public var topConversationsDirectory: TopConversationsDirectory
 

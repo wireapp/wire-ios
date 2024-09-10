@@ -21,7 +21,7 @@ import WireDataModel
 
 final class GroupConversationsSectionController: SearchSectionController {
     var groupConversations: [ZMConversation] = []
-    var title: String = ""
+    var title = ""
     weak var delegate: SearchSectionControllerDelegate?
 
     override var isHidden: Bool {

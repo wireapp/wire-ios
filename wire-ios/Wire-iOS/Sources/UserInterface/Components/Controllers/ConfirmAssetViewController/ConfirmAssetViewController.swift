@@ -61,11 +61,11 @@ final class ConfirmAssetViewController: UIViewController {
     private var imageToolbarViewInsideImage: ImageToolbarView?
     private var imageToolbarView: ImageToolbarView?
 
-    private let topPanel: UIView = UIView()
-    private let titleLabel: DynamicFontLabel = DynamicFontLabel(fontSpec: .headerSemiboldFont,
-                                                                color: SemanticColors.Label.textDefault)
-    private let bottomPanel: UIView = UIView()
-    private let confirmButtonsStack: UIStackView = UIStackView()
+    private let topPanel = UIView()
+    private let titleLabel = DynamicFontLabel(fontSpec: .headerSemiboldFont,
+                                              color: SemanticColors.Label.textDefault)
+    private let bottomPanel = UIView()
+    private let confirmButtonsStack = UIStackView()
     private let acceptImageButton = ZMButton(
         style: .accentColorTextButtonStyle,
         cornerRadius: 16,
@@ -76,8 +76,8 @@ final class ConfirmAssetViewController: UIViewController {
         cornerRadius: 16,
         fontSpec: .buttonBigSemibold
     )
-    private let contentLayoutGuide: UILayoutGuide = UILayoutGuide()
-    private let imageToolbarSeparatorView: UIView = UIView()
+    private let contentLayoutGuide = UILayoutGuide()
+    private let imageToolbarSeparatorView = UIView()
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations

@@ -22,7 +22,7 @@ import WireSyncEngine
 
 final class ConversationInputBarSendController: NSObject {
     let conversation: InputBarConversationType
-    private let feedbackGenerator: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private let feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
 
     init(conversation: InputBarConversationType) {
         self.conversation = conversation

@@ -41,7 +41,7 @@ import WireUtilities
 @objc public final class BackgroundActivityFactory: NSObject {
     /// Get the shared instance.
     @objc(sharedFactory)
-    public static let shared: BackgroundActivityFactory = BackgroundActivityFactory()
+    public static let shared = BackgroundActivityFactory()
 
     // MARK: - Configuration
 

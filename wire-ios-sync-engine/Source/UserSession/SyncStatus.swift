@@ -45,9 +45,9 @@ extension Notification.Name {
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     fileprivate var resyncResourcesToken: Any?
 
-    public internal(set) var isFetchingNotificationStream: Bool = false
-    public internal(set) var isInBackground: Bool = false
-    public internal(set) var needsToRestartQuickSync: Bool = false
+    public internal(set) var isFetchingNotificationStream = false
+    public internal(set) var isInBackground = false
+    public internal(set) var needsToRestartQuickSync = false
     public internal(set) var pushChannelEstablishedDate: Date?
 
     var quickSyncContinuation: CheckedContinuation<Void, Never>?

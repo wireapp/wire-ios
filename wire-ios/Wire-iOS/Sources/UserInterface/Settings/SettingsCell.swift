@@ -96,7 +96,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
     private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 24)
 
-    var titleText: String = "" {
+    var titleText = "" {
         didSet {
             cellNameLabel.text = titleText
         }

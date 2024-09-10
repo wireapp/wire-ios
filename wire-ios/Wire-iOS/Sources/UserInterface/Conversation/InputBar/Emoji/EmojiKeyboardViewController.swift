@@ -180,7 +180,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    var isCurrent: Bool = false {
+    var isCurrent = false {
         didSet {
             guard isCurrent else {
                 layer.borderColor = UIColor.clear.cgColor

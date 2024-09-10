@@ -33,7 +33,7 @@ final class AppLockChangeWarningViewController: UIViewController {
     private var isAppLockActive: Bool
     private let userSession: UserSession
 
-    private let contentView: UIView = UIView()
+    private let contentView = UIView()
 
     private lazy var confirmButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)

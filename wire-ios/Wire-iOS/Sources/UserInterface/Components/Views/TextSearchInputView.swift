@@ -38,20 +38,20 @@ final class TextSearchInputView: UIView {
     private let spinner = ProgressSpinner()
 
     weak var delegate: TextSearchInputViewDelegate?
-    var query: String = "" {
+    var query = "" {
         didSet {
             self.updateForSearchQuery()
             self.delegate?.searchView(self, didChangeQueryTo: self.query)
         }
     }
 
-    var placeholderString: String = "" {
+    var placeholderString = "" {
         didSet {
             self.placeholderLabel.text = placeholderString
         }
     }
 
-    var isLoading: Bool = false {
+    var isLoading = false {
         didSet {
             spinner.isAnimating = isLoading
         }

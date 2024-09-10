@@ -27,7 +27,7 @@ class OrientableViewMock: OrientableView {
 }
 
 class GridViewDelegateMock: GridViewDelegate {
-    var page: Int = 0
+    var page = 0
 
     func gridView(_ gridView: GridView, didChangePageTo page: Int) {
         self.page = page

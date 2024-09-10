@@ -67,7 +67,7 @@ public class CircularProgressView: UIView {
         }
     }
 
-    public var deterministic: Bool = true {
+    public var deterministic = true {
         didSet {
             updateSpinningAnimation()
         }

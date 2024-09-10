@@ -144,8 +144,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
-        var executed: Bool = false
-        var contextSaved: Bool = false
+        var executed = false
+        var contextSaved = false
 
         // expect
         NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in

@@ -162,7 +162,7 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    static let contactRequestsItem: ConversationListConnectRequestsItem = ConversationListConnectRequestsItem()
+    static let contactRequestsItem = ConversationListConnectRequestsItem()
 
     /// current selected ZMConversaton or ConversationListConnectRequestsItem object
     private(set) var selectedItem: ConversationListItem? {

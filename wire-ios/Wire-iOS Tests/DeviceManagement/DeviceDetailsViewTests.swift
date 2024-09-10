@@ -24,11 +24,11 @@ import XCTest
 @testable import Wire
 
 final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
-    private let mockProteusId: String = "abcdefghijklmnop"
+    private let mockProteusId = "abcdefghijklmnop"
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
 
-    private let mockFingerPrint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+    private let mockFingerPrint = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
 

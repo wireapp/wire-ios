@@ -128,7 +128,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
 
     // MARK: - String shortening
 
-    static let appendixString: String = "…"
+    static let appendixString = "…"
 
     func shortenedText(forText text: String, withAttributes attributes: [NSAttributedString.Key: Any]?, toFitMaxWidth maxWidth: CGFloat) -> String {
         if size(for: text, attributes: attributes).width < maxWidth {

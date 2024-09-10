@@ -21,8 +21,8 @@ import UIKit
 final class ZMProgressView: UIView {
     fileprivate var deterministic: Bool? = .none
     fileprivate var progress: Float = 0
-    fileprivate var progressView: UIView = UIView()
-    fileprivate var spinner: BreathLoadingBar = BreathLoadingBar(animationDuration: 3.0)
+    fileprivate var progressView = UIView()
+    fileprivate var spinner = BreathLoadingBar(animationDuration: 3.0)
 
     override init(frame: CGRect) {
         super.init(frame: frame)

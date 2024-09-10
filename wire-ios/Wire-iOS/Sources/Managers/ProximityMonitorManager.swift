@@ -28,7 +28,7 @@ final class ProximityMonitorManager: NSObject {
 
     var callStateObserverToken: Any?
 
-    fileprivate(set) var raisedToEar: Bool = false {
+    fileprivate(set) var raisedToEar = false {
         didSet {
             if oldValue != self.raisedToEar {
                 self.stateChanged?(self.raisedToEar)
@@ -37,7 +37,7 @@ final class ProximityMonitorManager: NSObject {
     }
 
     var stateChanged: RaisedToEarHandler?
-    var listening: Bool = false
+    var listening = false
 
     deinit {
         AVSMediaManagerClientChangeNotification.remove(self)

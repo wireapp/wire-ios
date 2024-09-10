@@ -25,7 +25,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     typealias BackgroundColors = SemanticColors.View
 
-    var showCheckmark: Bool = false {
+    var showCheckmark = false {
         didSet {
             updateCheckmark()
 

@@ -48,9 +48,9 @@ extension ModelObjectsTests {
         self.uiMOC.refreshAllObjects()
 
         let selfClient: UserClient? = ZMUser.selfUser(in: self.uiMOC).selfClient()
-        let user: ZMUser = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
         for _ in [0...count] {
-            let client: UserClient = UserClient.insertNewObject(in: self.uiMOC)
+            let client = UserClient.insertNewObject(in: self.uiMOC)
             client.user = user
             if trusted {
                 selfClient?.trustClient(client)

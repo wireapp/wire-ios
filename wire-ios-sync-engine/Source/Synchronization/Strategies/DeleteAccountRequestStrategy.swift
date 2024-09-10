@@ -21,8 +21,8 @@ import WireTransport
 
 /// Requests the account deletion
 public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-    fileprivate static let path: String = "/self"
-    public static let userDeletionInitiatedKey: String = "ZMUserDeletionInitiatedKey"
+    fileprivate static let path = "/self"
+    public static let userDeletionInitiatedKey = "ZMUserDeletionInitiatedKey"
     fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
     let cookieStorage: ZMPersistentCookieStorage
 

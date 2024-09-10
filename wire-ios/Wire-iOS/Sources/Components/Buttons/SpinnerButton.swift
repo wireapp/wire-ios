@@ -49,7 +49,7 @@ final class SpinnerButton: LegacyButton {
         return spinner
     }()
 
-    var isLoading: Bool = false {
+    var isLoading = false {
         didSet {
             guard oldValue != isLoading else {
                 return

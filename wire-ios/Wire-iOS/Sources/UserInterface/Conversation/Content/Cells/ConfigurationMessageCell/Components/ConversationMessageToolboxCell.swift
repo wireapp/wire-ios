@@ -36,7 +36,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     weak var message: ZMConversationMessage?
 
     var observerToken: Any?
-    var isSelected: Bool = false
+    var isSelected = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -97,11 +97,11 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 2
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
 
     let accessibilityIdentifier: String? = "MessageToolbox"
     let accessibilityLabel: String? = nil

@@ -138,9 +138,9 @@ private class VerifyClientsParser: OTREntity {
 
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
 
-    var isExpired: Bool = false
+    var isExpired = false
 
-    var shouldIgnoreTheSecurityLevelCheck: Bool = false
+    var shouldIgnoreTheSecurityLevelCheck = false
 
     var expirationDate: Date?
 

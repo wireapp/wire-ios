@@ -27,7 +27,7 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         settingsProperty.propertyName.settingsPropertyLabelText
     }
 
-    var visible: Bool = true
+    var visible = true
     let identifier: String?
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty

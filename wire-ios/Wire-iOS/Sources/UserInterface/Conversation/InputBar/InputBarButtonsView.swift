@@ -63,7 +63,7 @@ private enum InputBarRowConstants {
 final class InputBarButtonsView: UIView {
     typealias RowIndex = UInt
 
-    private(set) var multilineLayout: Bool = false
+    private(set) var multilineLayout = false
     private(set) var currentRow: RowIndex = 0
 
     private lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor)
@@ -181,7 +181,7 @@ final class InputBarButtonsView: UIView {
     private var customButtonCount: Int {
         let minButtonWidth: CGFloat = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
         let ratio = floorf(Float(bounds.width / minButtonWidth))
-        let numberOfButtons: Int = Int(ratio)
+        let numberOfButtons = Int(ratio)
         return numberOfButtons >= 1 ? numberOfButtons - 1 : 0
     }
 

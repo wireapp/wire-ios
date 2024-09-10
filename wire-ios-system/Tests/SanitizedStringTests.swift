@@ -101,7 +101,7 @@ extension SanitizedStringTests {
     }
 
     func testDouble() {
-        let sut: Double = 12.1
+        let sut = 12.1
         let value = SafeValueForLogging(sut)
         let result: SanitizedString = "\(value)"
         XCTAssertEqual(String(sut), result.value)

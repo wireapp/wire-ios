@@ -35,12 +35,12 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
@@ -136,7 +136,7 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
 
     // MARK: - Cell
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     func configure(with object: BurstTimestampSenderMessageCellConfiguration, animated: Bool) {
         configuration = object

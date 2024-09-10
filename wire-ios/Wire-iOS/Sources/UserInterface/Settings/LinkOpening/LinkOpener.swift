@@ -59,7 +59,7 @@ protocol LinkOpeningOption {
 extension LinkOpeningOption {
     static var storedPreference: ApplicationOptionEnum {
         if let openingRawValue: ApplicationOptionEnum.RawValue = Settings.shared[settingKey],
-           let openingOption: ApplicationOptionEnum = ApplicationOptionEnum(rawValue: openingRawValue) {
+           let openingOption = ApplicationOptionEnum(rawValue: openingRawValue) {
             return openingOption
         }
 

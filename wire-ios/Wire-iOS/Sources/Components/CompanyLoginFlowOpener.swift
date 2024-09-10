@@ -35,10 +35,10 @@ final class CompanyLoginFlowHandler {
     weak var delegate: CompanyLoginFlowHandlerDelegate?
 
     /// Whether we allow the in-app browser. Defaults to `true`.
-    var enableInAppBrowser: Bool = true
+    var enableInAppBrowser = true
 
     /// Whether we allow the system authentication session. Defaults to `false`.
-    var enableAuthenticationSession: Bool = false
+    var enableAuthenticationSession = false
 
     private let callbackScheme: String
     private var currentAuthenticationSession: NSObject?

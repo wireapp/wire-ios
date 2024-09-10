@@ -33,7 +33,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     weak var delegate: VerticalColumnCollectionViewLayoutDelegate?
 
     /// The number of columns to use to organize the content.
-    var numberOfColumns: Int = 1 {
+    var numberOfColumns = 1 {
         didSet { invalidateLayout() }
     }
 

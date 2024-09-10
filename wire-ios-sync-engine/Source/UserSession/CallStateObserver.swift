@@ -47,7 +47,7 @@ public final class CallStateObserver: NSObject {
         self.missedCalltoken = WireCallCenterV3.addMissedCallObserver(observer: self, context: uiContext)
     }
 
-    fileprivate var callInProgress: Bool = false {
+    fileprivate var callInProgress = false {
         didSet {
             if callInProgress != oldValue {
                 syncContext.performGroupedBlock {

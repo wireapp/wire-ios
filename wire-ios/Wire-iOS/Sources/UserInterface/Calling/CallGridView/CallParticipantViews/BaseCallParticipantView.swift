@@ -48,7 +48,7 @@ class BaseCallParticipantView: OrientableView {
     }
 
     /// indicates wether or not the view is shown in full in the grid
-    var isMaximized: Bool = false {
+    var isMaximized = false {
         didSet {
             updateBorderStyle()
             updateFillMode()
@@ -70,7 +70,7 @@ class BaseCallParticipantView: OrientableView {
 
     // MARK: - Private Properties
 
-    private var delta: OrientationDelta = OrientationDelta()
+    private var delta = OrientationDelta()
     private var detailsConstraints: UserDetailsConstraints?
     private var isCovered: Bool
 

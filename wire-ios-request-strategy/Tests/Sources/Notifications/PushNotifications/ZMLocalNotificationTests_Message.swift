@@ -601,7 +601,7 @@ extension ZMLocalNotificationTests_Message {
     // MARK: Helpers
 
     func assetNote(_ fileType: FileType, conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> ZMLocalNotification? {
-        var asset: WireProtos.Asset = switch fileType {
+        var asset = switch fileType {
         case .video:
             WireProtos.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
         case .audio:

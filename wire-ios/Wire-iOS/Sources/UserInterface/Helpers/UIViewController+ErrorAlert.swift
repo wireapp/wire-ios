@@ -41,7 +41,7 @@ extension UIViewController {
         var message = ""
 
         if nsError.domain == ZMObjectValidationErrorDomain,
-           let code: ZMManagedObjectValidationErrorCode = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
+           let code = ZMManagedObjectValidationErrorCode(rawValue: nsError.code) {
             switch code {
             case .tooLong:
                 message = L10n.Localizable.Error.Input.tooLong

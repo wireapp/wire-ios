@@ -38,7 +38,7 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
         return label
     }()
 
-    var titleText: String = "" {
+    var titleText = "" {
         didSet {
             cellNameLabel.text = titleText
         }

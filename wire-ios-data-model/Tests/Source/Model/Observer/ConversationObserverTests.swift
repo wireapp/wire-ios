@@ -479,7 +479,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfChangedUnreadCount() {
         // given
-        let uiConversation: ZMConversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let uiConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         uiConversation.lastReadServerTimeStamp = Date()
         uiConversation.userDefinedName = "foo"
         uiMOC.saveOrRollback()
@@ -725,7 +725,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfAChangedListIndicatorBecauseOfAnUnreadMissedCall() {
         // given
-        let uiConversation: ZMConversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let uiConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         uiConversation.userDefinedName = "foo"
         uiMOC.saveOrRollback()
 

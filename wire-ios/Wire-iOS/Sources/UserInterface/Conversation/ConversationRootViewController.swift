@@ -39,7 +39,7 @@ final class ConversationRootViewController: UIViewController {
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
 
-    fileprivate let networkStatusViewController: NetworkStatusViewController = NetworkStatusViewController()
+    fileprivate let networkStatusViewController = NetworkStatusViewController()
 
     fileprivate(set) weak var conversationViewController: ConversationViewController?
 

@@ -25,7 +25,7 @@ public protocol RandomGenerator {
 /// @param data the source of random values.
 final class RandomGeneratorFromData: RandomGenerator {
     public let source: Data
-    private var step: Int = 0
+    private var step = 0
 
     init(data: Data) {
         source = data
@@ -125,7 +125,7 @@ public final class ConversationListAvatarView: UIView {
             self.accessibilityLabel = "Avatar for \(self.conversation?.displayName)"
             self.mode = Mode(conversation: conversation)
 
-            var index: Int = 0
+            var index = 0
             for userImage in self.userImages() {
                 userImage.userSession = ZMUserSession.shared()
                 userImage.size = .tiny
@@ -167,11 +167,11 @@ public final class ConversationListAvatarView: UIView {
 
     let clippingView = UIView()
     let imageViewLeftTop = UserImageView()
-    lazy var imageViewRightTop: UserImageView = UserImageView()
+    lazy var imageViewRightTop = UserImageView()
 
-    lazy var imageViewLeftBottom: UserImageView = UserImageView()
+    lazy var imageViewLeftBottom = UserImageView()
 
-    lazy var imageViewRightBottom: UserImageView = UserImageView()
+    lazy var imageViewRightBottom = UserImageView()
 
     init() {
         super.init(frame: .zero)

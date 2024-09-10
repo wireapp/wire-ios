@@ -33,7 +33,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     let conversation: ZMConversation
     let conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
-    private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
+    private lazy var viewModel = CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
 
     // MARK: - Initializer
 

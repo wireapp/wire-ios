@@ -100,7 +100,7 @@ public final class Canvas: UIView {
     private var selectionView: UIView?
     private var stroke: Stroke?
     private var referenceObject: Image?
-    private var flattenIndex: Int = 0
+    private var flattenIndex = 0
 
     fileprivate var sceneExcludingReferenceObject: [Renderable] {
         scene.filter({ $0 !== referenceObject })
@@ -130,7 +130,7 @@ public final class Canvas: UIView {
         }
     }
 
-    fileprivate var initialOrienation: Orientation = Orientation.standard
+    fileprivate var initialOrienation = Orientation.standard
 
     override public init(frame: CGRect) {
         super.init(frame: frame)

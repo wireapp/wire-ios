@@ -22,8 +22,8 @@ import WireDataModel
 
 // used by tests to fake errors on genrating pre keys
 public class SpyUserClientKeyStore: UserClientKeysStore {
-    public var failToGeneratePreKeys: Bool = false
-    public var failToGenerateLastPreKey: Bool = false
+    public var failToGeneratePreKeys = false
+    public var failToGenerateLastPreKey = false
 
     public var lastGeneratedKeys: [(id: UInt16, prekey: String)] = []
     public var lastGeneratedLastPrekey: String?

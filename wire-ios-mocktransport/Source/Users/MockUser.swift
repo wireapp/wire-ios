@@ -91,7 +91,7 @@ extension MockUser {
 
 extension MockUser {
     public func appendRichInfo(type: String, value: String) {
-        let updatedValues: NSMutableArray = if let values = self.richProfile {
+        let updatedValues = if let values = self.richProfile {
             NSMutableArray(array: values)
         } else {
             NSMutableArray()

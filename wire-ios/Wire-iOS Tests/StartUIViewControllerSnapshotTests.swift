@@ -23,9 +23,9 @@ import XCTest
 @testable import Wire
 
 final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
-    var isAddressBookAccessDisabled: Bool = false
+    var isAddressBookAccessDisabled = false
 
-    var accessStatusDidChangeToGranted: Bool = true
+    var accessStatusDidChangeToGranted = true
 
     static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
 

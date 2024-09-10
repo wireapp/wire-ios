@@ -23,7 +23,7 @@ import XCTest
 class MockTranscoder: IdentifierObjectSyncTranscoder {
     typealias T = UUID
 
-    var fetchLimit: Int = 1
+    var fetchLimit = 1
 
     var lastRequestedIdentifiers: Set<UUID> = Set()
     func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {

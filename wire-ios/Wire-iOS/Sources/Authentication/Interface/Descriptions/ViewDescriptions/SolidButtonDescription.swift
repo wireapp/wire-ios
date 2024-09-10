@@ -29,7 +29,7 @@ final class SolidButtonDescription: ValueSubmission {
 
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
-    var acceptsInput: Bool = true
+    var acceptsInput = true
 
     init(title: String, accessibilityIdentifier: String) {
         self.title = title

@@ -26,7 +26,7 @@ final class CollectionsView: UIView {
 
     static let useAutolayout = false
 
-    var noItemsInLibrary: Bool = false {
+    var noItemsInLibrary = false {
         didSet {
             noResultsView.isHidden = !noItemsInLibrary
         }

@@ -68,7 +68,7 @@ public final class AssetRequestFactory: NSObject {
             return nil
         }
 
-        let path: String = switch apiVersion {
+        let path = switch apiVersion {
         case .v0, .v1:
             "/assets/v3"
 
@@ -89,7 +89,7 @@ public final class AssetRequestFactory: NSObject {
     public func upstreamRequestForAsset(withData data: Data, shareable: Bool = true, retention: Retention, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
 
-        let path: String = switch apiVersion {
+        let path = switch apiVersion {
         case .v0, .v1:
             "/assets/v3"
 

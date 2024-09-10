@@ -72,7 +72,7 @@ final class CallingActionsView: UIView {
     private var largeButtonsPortraitConstraints: [NSLayoutConstraint] = []
     private var largeButtonsLandscapeConstraints: [NSLayoutConstraint] = []
 
-    var isIncomingCall: Bool = false {
+    var isIncomingCall = false {
         didSet {
             guard oldValue != isIncomingCall else { return }
             topStackView.removeSubviews()
@@ -310,7 +310,7 @@ final class CallingActionsView: UIView {
 extension CallingActionsView: UILargeContentViewerInteractionDelegate {
     func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
         let itemWidth = self.frame.width / CGFloat(establishedCallButtons.count)
-        let position: Int = Int(itemAt.x / itemWidth)
+        let position = Int(itemAt.x / itemWidth)
         largeContentTitle = establishedCallButtons[position].subtitleTransformLabel.text
         largeContentImage = establishedCallButtons[position].iconButton.imageView?.image
 

@@ -33,7 +33,7 @@ import Foundation
 
 @objcMembers
 public final class DataBuffer: NSObject {
-    fileprivate var data: DispatchData = DispatchData.empty
+    fileprivate var data = DispatchData.empty
 
     public var objcData: __DispatchData {
         data as __DispatchData
@@ -214,8 +214,8 @@ public final class DataBuffer: NSObject {
 
     fileprivate var state: State = .readyToConnect
 
-    fileprivate var didCheckTrust: Bool = false
-    fileprivate var trusted: Bool = false
+    fileprivate var didCheckTrust = false
+    fileprivate var trusted = false
 
     fileprivate var inputStream: InputStream?
     fileprivate var outputStream: OutputStream?

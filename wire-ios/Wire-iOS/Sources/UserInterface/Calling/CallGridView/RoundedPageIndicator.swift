@@ -53,7 +53,7 @@ class RoundedPageIndicator: RoundedBlurView {
         ])
     }
 
-    var numberOfPages: Int = 0 {
+    var numberOfPages = 0 {
         didSet {
             pageControl.numberOfPages = numberOfPages
             isHidden = numberOfPages <= 1
@@ -61,7 +61,7 @@ class RoundedPageIndicator: RoundedBlurView {
         }
     }
 
-    var currentPage: Int = 0 {
+    var currentPage = 0 {
         didSet {
             pageControl.currentPage = currentPage
             guard numberOfPages > 0 else { return }

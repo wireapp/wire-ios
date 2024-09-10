@@ -42,7 +42,7 @@ class TextView: UITextView {
 
     var attributedPlaceholder: NSAttributedString? {
         didSet {
-            let mutableCopy: NSMutableAttributedString = if let attributedPlaceholder {
+            let mutableCopy = if let attributedPlaceholder {
                 NSMutableAttributedString(attributedString: attributedPlaceholder)
             } else {
                 NSMutableAttributedString()
@@ -72,7 +72,7 @@ class TextView: UITextView {
         }
     }
 
-    var placeholderTextAlignment: NSTextAlignment = NSTextAlignment.natural {
+    var placeholderTextAlignment = NSTextAlignment.natural {
         didSet {
             placeholderLabel.textAlignment = placeholderTextAlignment
         }
@@ -80,7 +80,7 @@ class TextView: UITextView {
 
     var language: String?
 
-    private let placeholderLabel: TransformLabel = TransformLabel()
+    private let placeholderLabel = TransformLabel()
     private var placeholderLabelLeftConstraint: NSLayoutConstraint?
     private var placeholderLabelRightConstraint: NSLayoutConstraint?
 

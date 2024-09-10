@@ -30,7 +30,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     typealias SelectActionType = (SettingsPropertySelectValueCellDescriptor) -> Void
     let selectAction: SelectActionType?
     let backgroundColor: UIColor?
-    var visible: Bool = true
+    var visible = true
 
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty

@@ -49,7 +49,7 @@ class MockPreprocessor: NSObject, ZMAssetsPreprocessorProtocol {
     var operations = [Operation]()
 
     var imageOwner: ZMImageOwner?
-    var operationsCalled: Bool = false
+    var operationsCalled = false
 
     func operations(forPreprocessingImageOwner imageOwner: ZMImageOwner) -> [Operation]? {
         operationsCalled = true

@@ -317,7 +317,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        let expectedPath: String = switch apiVersion {
+        let expectedPath = switch apiVersion {
         case .v0:
             "/assets/v3/\(assetId)"
         case .v1:

@@ -33,7 +33,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
     }
 
     let identifier: String?
-    var visible: Bool = true
+    var visible = true
     weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty
 

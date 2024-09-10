@@ -29,7 +29,7 @@ class MarkdownTextStorage: NSTextStorage {
     override var string: String { storage.string }
 
     var currentMarkdown: Markdown = .none
-    private var needsCheck: Bool = false
+    private var needsCheck = false
 
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [NSAttributedString.Key: Any] {
         storage.attributes(at: location, effectiveRange: range)

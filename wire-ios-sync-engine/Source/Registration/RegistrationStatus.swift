@@ -71,7 +71,7 @@ public class RegistrationStatus: RegistrationStatusProtocol {
     public var phase: RegistrationPhase? = .none
 
     /// Whether registration completed.
-    public internal(set) var completedRegistration: Bool = false
+    public internal(set) var completedRegistration = false
 
     /// The object to send notifications when the status changes.
     public weak var delegate: RegistrationStatusDelegate?

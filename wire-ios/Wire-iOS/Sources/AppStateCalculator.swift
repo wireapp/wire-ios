@@ -141,7 +141,7 @@ final class AppStateCalculator {
     // MARK: - Public Property
 
     weak var delegate: AppStateCalculatorDelegate?
-    var wasUnauthenticated: Bool = false
+    var wasUnauthenticated = false
 
     // MARK: - Private Set Property
 
@@ -159,7 +159,7 @@ final class AppStateCalculator {
     // MARK: - Private Property
 
     private var observerTokens: [NSObjectProtocol] = []
-    private var hasEnteredForeground: Bool = false
+    private var hasEnteredForeground = false
 
     // MARK: - Private Implementation
 

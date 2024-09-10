@@ -103,7 +103,7 @@ class TypingEventQueue {
 public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
     fileprivate var typing: Typing!
     fileprivate let typingEventQueue = TypingEventQueue()
-    fileprivate var tornDown: Bool = false
+    fileprivate var tornDown = false
     fileprivate var observers: [Any] = []
 
     @available (*, unavailable)

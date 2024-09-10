@@ -27,7 +27,7 @@ class ContactsSectionController: SearchSectionController {
         }
     }
 
-    var allowsSelection: Bool = false
+    var allowsSelection = false
     weak var delegate: SearchSectionControllerDelegate?
     weak var collectionView: UICollectionView?
 
@@ -47,7 +47,7 @@ class ContactsSectionController: SearchSectionController {
         contacts.isEmpty
     }
 
-    var title: String = ""
+    var title = ""
 
     override var sectionTitle: String {
         title

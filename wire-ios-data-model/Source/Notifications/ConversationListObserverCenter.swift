@@ -44,7 +44,7 @@ extension NSManagedObjectContext {
 public class ConversationListObserverCenter: NSObject, ZMConversationObserver, ChangeInfoConsumer {
     fileprivate var listSnapshots: [String: ConversationListSnapshot] = [:]
 
-    var isTornDown: Bool = false
+    var isTornDown = false
     var insertedConversations = [ZMConversation]()
     var deletedConversations = [ZMConversation]()
     var insertedLabels = [Label]()

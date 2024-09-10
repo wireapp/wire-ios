@@ -24,9 +24,9 @@ import XCTest
 @testable import Wire
 
 struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
-    var isConnected: Bool = true
+    var isConnected = true
 
-    var shouldShowActiveSpeakerFrame: Bool = true
+    var shouldShowActiveSpeakerFrame = true
 
     var floatingStream: Wire.Stream?
 
@@ -36,9 +36,9 @@ struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
 
     var presentationMode: VideoGridPresentationMode = .allVideoStreams
 
-    var callHasTwoParticipants: Bool = false
+    var callHasTwoParticipants = false
 
-    var isGroupCall: Bool = false
+    var isGroupCall = false
 }
 
 final class CallGridViewControllerSnapshotTests: XCTestCase {

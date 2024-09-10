@@ -40,7 +40,7 @@ extension FileManager {
         return sharedContainerURL!
     }
 
-    @objc public static let cachesFolderPrefix: String = "wire-account"
+    @objc public static let cachesFolderPrefix = "wire-account"
 
     /// Returns the URL for caches appending the accountIdentifier if specified
     @objc public func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {

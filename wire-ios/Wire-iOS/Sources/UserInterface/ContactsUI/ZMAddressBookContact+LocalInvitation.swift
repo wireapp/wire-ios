@@ -21,7 +21,7 @@ import MessageUI
 import WireSyncEngine
 
 final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
-    static let sharedInstance: EmailInvitePresenter = EmailInvitePresenter()
+    static let sharedInstance = EmailInvitePresenter()
 
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: .none)

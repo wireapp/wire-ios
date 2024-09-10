@@ -21,7 +21,7 @@ import Foundation
 import WireTesting
 
 class DatabaseBaseTest: ZMTBaseTest {
-    var accountID: UUID = UUID.create()
+    var accountID = UUID.create()
 
     public static var applicationContainer: URL {
         FileManager.default

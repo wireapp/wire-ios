@@ -24,7 +24,7 @@ final class EmailPasswordFieldDescription: ValueSubmission {
     var forRegistration: Bool
     var prefilledEmail: String?
     var usePasswordDeferredValidation: Bool
-    var acceptsInput: Bool = true
+    var acceptsInput = true
 
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?

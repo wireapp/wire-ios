@@ -53,7 +53,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - UI constants
 
-    var textInsets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 8)
+    var textInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 8)
     var placeholderInsets: UIEdgeInsets
 
     // MARK: Initialization

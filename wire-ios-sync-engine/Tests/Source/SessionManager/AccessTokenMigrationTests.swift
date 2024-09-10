@@ -32,7 +32,7 @@ class AccessTokenRenewerMock: AccessTokenRenewing {
         calls.setAccessTokenRenewalObserver.append(observer)
     }
 
-    var shoudFail: Bool = false
+    var shoudFail = false
     func renewAccessToken(with clientID: String) {
         calls.renewAccessToken.append(clientID)
 

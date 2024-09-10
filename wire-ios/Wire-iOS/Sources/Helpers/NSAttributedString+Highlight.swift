@@ -36,7 +36,7 @@ extension String {
         }.sorted { $0.lowerBound < $1.lowerBound }.first
     }
 
-    static let ellipsis: String = "…"
+    static let ellipsis = "…"
 }
 
 extension NSString {
@@ -46,7 +46,7 @@ extension NSString {
 
         for query in strings {
             var queryRange = initialQueryRange
-            var currentRange: NSRange = NSRange(location: NSNotFound, length: 0)
+            var currentRange = NSRange(location: NSNotFound, length: 0)
 
             var queryResult = [NSRange]()
 

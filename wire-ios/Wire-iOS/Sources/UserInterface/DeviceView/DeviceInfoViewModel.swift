@@ -79,10 +79,10 @@ final class DeviceInfoViewModel: ObservableObject {
     var showCertificateUpdateSuccess: ((String) -> Void)?
 
     @Published var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published var shouldDismiss: Bool = false
-    @Published var isProteusVerificationEnabled: Bool = false
-    @Published var isActionInProgress: Bool = false
-    @Published var proteusKeyFingerprint: String = ""
+    @Published var shouldDismiss = false
+    @Published var isProteusVerificationEnabled = false
+    @Published var isActionInProgress = false
+    @Published var proteusKeyFingerprint = ""
     @Published var showEnrollmentCertificateError = false
 
     var actionsHandler: DeviceDetailsViewActions

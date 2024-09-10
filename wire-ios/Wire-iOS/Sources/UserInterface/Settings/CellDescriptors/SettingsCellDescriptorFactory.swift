@@ -22,7 +22,7 @@ import SafariServices
 import WireSyncEngine
 
 struct SettingsCellDescriptorFactory {
-    static let settingsDevicesCellIdentifier: String = "devices"
+    static let settingsDevicesCellIdentifier = "devices"
 
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
@@ -146,7 +146,7 @@ struct SettingsCellDescriptorFactory {
 
     func soundGroupForSetting(_ settingsProperty: SettingsProperty, title: String, customSounds: [ZMSound], defaultSound: ZMSound) -> SettingsCellDescriptorType {
         let items: [ZMSound] = [ZMSound.None, defaultSound] + customSounds
-        let previewPlayer: SoundPreviewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
+        let previewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
 
         let cells: [SettingsPropertySelectValueCellDescriptor] = items.map { item in
             let playSoundAction: SettingsPropertySelectValueCellDescriptor.SelectActionType = { _ in

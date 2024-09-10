@@ -25,7 +25,7 @@ private final class WaveformBarsView: UIView {
         }
     }
 
-    var barColor: UIColor = UIColor.gray {
+    var barColor = UIColor.gray {
         didSet {
             setNeedsDisplay()
         }
@@ -91,13 +91,13 @@ final class WaveformProgressView: UIView {
         }
     }
 
-    var barColor: UIColor = UIColor.gray {
+    var barColor = UIColor.gray {
         didSet {
             backgroundWaveform.barColor = barColor
         }
     }
 
-    var highlightedBarColor: UIColor = UIColor.accent() {
+    var highlightedBarColor = UIColor.accent() {
         didSet {
             foregroundWaveform.barColor = highlightedBarColor
         }

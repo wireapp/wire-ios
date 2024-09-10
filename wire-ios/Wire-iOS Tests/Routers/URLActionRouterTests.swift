@@ -145,12 +145,12 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 }
 
 final class MockURLActionRouterDelegate: URLActionRouterDelegate {
-    var didCallWillShowCompanyLoginError: Bool = false
+    var didCallWillShowCompanyLoginError = false
     func urlActionRouterWillShowCompanyLoginError() {
         didCallWillShowCompanyLoginError = true
     }
 
-    var canDisplayAlerts: Bool = true
+    var canDisplayAlerts = true
     func urlActionRouterCanDisplayAlerts() -> Bool {
         canDisplayAlerts
     }

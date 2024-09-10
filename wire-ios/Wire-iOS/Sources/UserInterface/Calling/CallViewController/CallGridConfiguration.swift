@@ -20,7 +20,7 @@ import WireCommonComponents
 import WireSyncEngine
 
 struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
-    fileprivate static let maxActiveSpeakers: Int = 4
+    fileprivate static let maxActiveSpeakers = 4
 
     let floatingStream: Stream?
     let streams: [Stream]

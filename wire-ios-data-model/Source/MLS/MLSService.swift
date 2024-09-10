@@ -532,7 +532,7 @@ public final class MLSService: MLSServiceInterface {
 
     // The number of days to wait until refreshing the key material for a group.
 
-    private static let epochChangeBufferSize: Int = 1000
+    private static let epochChangeBufferSize = 1000
 
     weak var delegate: MLSServiceDelegate?
 

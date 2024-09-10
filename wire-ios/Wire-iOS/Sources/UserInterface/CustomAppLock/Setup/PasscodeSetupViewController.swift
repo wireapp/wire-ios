@@ -44,11 +44,11 @@ final class PasscodeSetupViewController: UIViewController {
 
     weak var passcodeSetupViewControllerDelegate: PasscodeSetupViewControllerDelegate?
 
-    private lazy var presenter: PasscodeSetupPresenter = PasscodeSetupPresenter(userInterface: self)
+    private lazy var presenter = PasscodeSetupPresenter(userInterface: self)
 
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let stackView = UIStackView.verticalStackView()
 
-    private let contentView: UIView = UIView()
+    private let contentView = UIView()
 
     private lazy var createButton: LegacyButton = {
         let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)

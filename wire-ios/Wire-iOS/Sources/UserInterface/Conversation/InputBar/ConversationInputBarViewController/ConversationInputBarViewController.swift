@@ -61,7 +61,7 @@ final class ConversationInputBarViewController: UIViewController,
 
             let inputViewSize = UIView.lastKeyboardSize
 
-            let inputViewFrame: CGRect = CGRect(origin: .zero, size: inputViewSize)
+            let inputViewFrame = CGRect(origin: .zero, size: inputViewSize)
             let inputView = UIInputView(frame: inputViewFrame, inputViewStyle: .keyboard)
             inputView.allowsSelfSizing = true
 
@@ -127,7 +127,7 @@ final class ConversationInputBarViewController: UIViewController,
         return button
     }()
 
-    let mentionButton: IconButton = IconButton()
+    let mentionButton = IconButton()
     lazy var audioButton: IconButton = {
         let button = IconButton()
         button.setIconColor(UIColor.accent(), for: .selected)
@@ -143,11 +143,11 @@ final class ConversationInputBarViewController: UIViewController,
         return button
     }()
 
-    let uploadFileButton: IconButton = IconButton()
-    let sketchButton: IconButton = IconButton()
-    let pingButton: IconButton = IconButton()
-    let locationButton: IconButton = IconButton()
-    let gifButton: IconButton = IconButton()
+    let uploadFileButton = IconButton()
+    let sketchButton = IconButton()
+    let pingButton = IconButton()
+    let locationButton = IconButton()
+    let gifButton = IconButton()
     let sendButton: IconButton = {
         let button = IconButton.sendButton()
         button.hitAreaPadding = CGSize(width: 30, height: 30)
@@ -155,7 +155,7 @@ final class ConversationInputBarViewController: UIViewController,
         return button
     }()
 
-    let videoButton: IconButton = IconButton()
+    let videoButton = IconButton()
 
     // MARK: subviews
 
@@ -191,7 +191,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: text input
 
-    lazy var sendController: ConversationInputBarSendController = ConversationInputBarSendController(conversation: conversation)
+    lazy var sendController = ConversationInputBarSendController(conversation: conversation)
 
     var editingMessage: ZMConversationMessage?
     var quotedMessage: ZMConversationMessage?
@@ -199,18 +199,18 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: feedback
 
-    lazy var impactFeedbackGenerator: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
-    private lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator = UINotificationFeedbackGenerator()
+    lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
+    private lazy var notificationFeedbackGenerator = UINotificationFeedbackGenerator()
 
     var shouldRefocusKeyboardAfterImagePickerDismiss = false
     // Counter keeping track of calls being made when the audio keyboard ewas visible before.
     var callCountWhileCameraKeyboardWasVisible = 0
     var callStateObserverToken: Any?
     var wasRecordingBeforeCall = false
-    let sendButtonState: ConversationInputBarButtonState = ConversationInputBarButtonState()
+    let sendButtonState = ConversationInputBarButtonState()
     var inRotation = false
 
-    private var singleTapGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer()
+    private var singleTapGestureRecognizer = UITapGestureRecognizer()
     private var conversationObserverToken: Any?
     private var userObserverToken: Any?
     private var typingObserverToken: Any?

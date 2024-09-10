@@ -30,7 +30,7 @@ import WireTransport
     var applicationState: UIApplication.State = .active
 
     /// Whether the activity is expiring.
-    @objc private(set) var isExpiring: Bool = false
+    @objc private(set) var isExpiring = false
 
     /// A hook to intercept when a task is started.
     @objc var startTaskHandler: ((String?) -> Void)?
@@ -39,7 +39,7 @@ import WireTransport
     @objc var endTaskHandler: ((String?) -> Void)?
 
     /// The number of tasks that can be active at the same time. Defaults to 1.
-    @objc var limit: Int = 1
+    @objc var limit = 1
 
     /// The number of active tasks.
     @objc var numberOfTasks: Int {
@@ -48,7 +48,7 @@ import WireTransport
 
     // MARK: - Data
 
-    private var lastIdentifier: ZMAtomicInteger = ZMAtomicInteger(integer: 1)
+    private var lastIdentifier = ZMAtomicInteger(integer: 1)
 
     private struct Task {
         let name: String?

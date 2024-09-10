@@ -39,7 +39,7 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
 final class EmailLinkVerificationMainView: NSObject, ViewDescriptor, ValueSubmission {
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
-    var acceptsInput: Bool = true
+    var acceptsInput = true
     var constraints: [NSLayoutConstraint] = []
 
     func create() -> UIView {

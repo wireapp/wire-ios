@@ -21,7 +21,7 @@ import WireDataModel
 
 final class MockLegalHoldDataSource: NSObject {
     var legalHoldRequest: LegalHoldRequest?
-    var needsToAcknowledgeLegalHoldStatus: Bool = false
+    var needsToAcknowledgeLegalHoldStatus = false
 }
 
 extension MockUser: SelfLegalHoldSubject {

@@ -19,7 +19,7 @@
 @testable import Wire
 
 class MockAuthenticationFeatureProvider: AuthenticationFeatureProvider {
-    var allowOnlyEmailLogin: Bool = false
-    var allowCompanyLogin: Bool = true
-    var allowDirectCompanyLogin: Bool = true
+    var allowOnlyEmailLogin = false
+    var allowCompanyLogin = true
+    var allowDirectCompanyLogin = true
 }

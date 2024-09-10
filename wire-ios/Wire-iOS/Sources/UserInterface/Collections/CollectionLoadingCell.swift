@@ -43,7 +43,7 @@ final class CollectionLoadingCell: UICollectionViewCell {
     }
 
     var containerWidth: CGFloat = 320
-    var collapsed: Bool = false {
+    var collapsed = false {
         didSet {
             loadingView.isHidden = collapsed
         }

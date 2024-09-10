@@ -27,7 +27,7 @@ final class SearchResultsView: UIView {
     let collectionView: UICollectionView
     let collectionViewLayout: UICollectionViewFlowLayout
     let accessoryContainer = UIView()
-    var lastLayoutBounds: CGRect = CGRect.zero
+    var lastLayoutBounds = CGRect.zero
     var accessoryContainerHeightConstraint: NSLayoutConstraint?
     var accessoryViewBottomOffsetConstraint: NSLayoutConstraint?
     weak var parentViewController: UIViewController?

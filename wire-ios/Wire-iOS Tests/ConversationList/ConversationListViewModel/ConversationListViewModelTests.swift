@@ -63,8 +63,8 @@ final class ConversationListViewModelTests: XCTestCase {
     var coreDataFixture: CoreDataFixture!
 
     /// constants
-    let sectionGroups: Int = 2
-    let sectionContacts: Int = 3
+    let sectionGroups = 2
+    let sectionContacts = 3
 
     override func setUp() {
         super.setUp()

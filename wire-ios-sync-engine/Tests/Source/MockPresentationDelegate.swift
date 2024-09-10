@@ -21,7 +21,7 @@ import Foundation
 class MockPresentationDelegate: PresentationDelegate {
     var completedURLActionCallsCompletion: () -> Void = {}
     var showConversationCalls: [ZMConversation] = []
-    var showConversationListCalls: Int = 0
+    var showConversationListCalls = 0
     var showUserProfileCalls: [UserType] = []
     var showConnectionRequestCalls: [UUID] = []
     var failedToPerformActionCalls: [(URLAction, Error)] = []

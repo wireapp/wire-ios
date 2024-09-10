@@ -61,7 +61,7 @@ extension ZMConnection {
                               domain: String?,
                               searchingLocalDomain: Bool,
                               in context: NSManagedObjectContext) -> ZMConnection? {
-        let predicate: NSPredicate = if searchingLocalDomain {
+        let predicate = if searchingLocalDomain {
             if let domain {
                 NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
             } else {

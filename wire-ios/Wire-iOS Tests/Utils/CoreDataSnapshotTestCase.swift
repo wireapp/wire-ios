@@ -21,7 +21,7 @@ import XCTest
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
 class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
-    var selfUserInTeam: Bool = false
+    var selfUserInTeam = false
     var selfUser: ZMUser!
     var otherUser: ZMUser!
     var otherUserConversation: ZMConversation!

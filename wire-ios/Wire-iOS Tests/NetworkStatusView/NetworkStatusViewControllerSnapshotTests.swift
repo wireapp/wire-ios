@@ -28,7 +28,7 @@ final class MockContainerViewController: UIViewController, NetworkStatusBarDeleg
         true
     }
 
-    var shouldAnimateNetworkStatusView: Bool = true
+    var shouldAnimateNetworkStatusView = true
 }
 
 /// Snapshot tests for differnt margin and size of NetworkStatusViewController.view for all value of NetworkState with other UIView at the bottom.

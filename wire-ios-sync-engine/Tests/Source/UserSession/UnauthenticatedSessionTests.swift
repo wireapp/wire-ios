@@ -40,9 +40,9 @@ final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransp
 
 @objcMembers
 final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDelegate {
-    public var authenticationDidSucceedEvents: Int = 0
+    public var authenticationDidSucceedEvents = 0
     public var authenticationDidFailEvents: [Error] = []
-    public var authenticationWasRequestedEvents: Int = 0
+    public var authenticationWasRequestedEvents = 0
     public var receivedSSOCode: UUID?
 
     func authenticationDidFail(_ error: Error!) {
@@ -83,7 +83,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
     }
 
     var createdAccounts = [Account]()
-    var didUpdateCredentials: Bool = false
+    var didUpdateCredentials = false
     var willAcceptUpdatedCredentials = false
     var isAllowedToCreatingNewAccounts = true
 

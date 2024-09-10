@@ -114,7 +114,7 @@ extension AssetDeletionRequestStrategyTests {
         let request = sut.nextRequest(for: apiVersion)
 
         // Then
-        let expectedPath: String = switch apiVersion {
+        let expectedPath = switch apiVersion {
         case .v0:
             "/assets/v3/\(identifier)"
         case .v1:

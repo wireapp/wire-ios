@@ -68,8 +68,8 @@ final class ConversationContentViewController: UIViewController {
         return button
     }()
 
-    let tableView: UpsideDownTableView = UpsideDownTableView(frame: .zero, style: .plain)
-    let bottomContainer: UIView = UIView(frame: .zero)
+    let tableView = UpsideDownTableView(frame: .zero, style: .plain)
+    let bottomContainer = UIView(frame: .zero)
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
@@ -79,9 +79,9 @@ final class ConversationContentViewController: UIViewController {
         }
     }
 
-    let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
+    let mentionsSearchResultsViewController = UserSearchResultsViewController()
 
-    lazy var dataSource: ConversationTableViewDataSource = ConversationTableViewDataSource(
+    lazy var dataSource = ConversationTableViewDataSource(
         conversation: conversation,
         tableView: tableView,
         actionResponder: self,
@@ -96,7 +96,7 @@ final class ConversationContentViewController: UIViewController {
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
-    var isDigitalSignatureVerificationShown: Bool = false
+    var isDigitalSignatureVerificationShown = false
 
     private var mediaPlaybackManager: MediaPlaybackManager?
     private var cachedRowHeights: [IndexPath: CGFloat] = [:]

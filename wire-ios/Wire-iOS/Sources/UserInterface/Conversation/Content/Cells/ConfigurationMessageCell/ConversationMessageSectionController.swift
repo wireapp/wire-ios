@@ -20,14 +20,14 @@ import Foundation
 import WireSyncEngine
 
 struct ConversationMessageContext: Equatable {
-    var isSameSenderAsPrevious: Bool = false
-    var isTimeIntervalSinceLastMessageSignificant: Bool = false
-    var isTimestampInSameMinuteAsPreviousMessage: Bool = false
-    var isFirstMessageOfTheDay: Bool = false
-    var isFirstUnreadMessage: Bool = false
-    var isLastMessage: Bool = false
+    var isSameSenderAsPrevious = false
+    var isTimeIntervalSinceLastMessageSignificant = false
+    var isTimestampInSameMinuteAsPreviousMessage = false
+    var isFirstMessageOfTheDay = false
+    var isFirstUnreadMessage = false
+    var isLastMessage = false
     var searchQueries: [String] = []
-    var previousMessageIsKnock: Bool = false
+    var previousMessageIsKnock = false
     var spacing: Float = 0
 }
 
@@ -88,7 +88,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     /// The index of the first cell that is displaying the message
-    var messageCellIndex: Int = 0
+    var messageCellIndex = 0
 
     /// The object that receives informations from the section.
     weak var sectionDelegate: ConversationMessageSectionControllerDelegate?

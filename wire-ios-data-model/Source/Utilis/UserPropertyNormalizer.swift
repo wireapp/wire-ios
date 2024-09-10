@@ -44,7 +44,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
     public func normalizeEmailAddress(_ emailAddress: String) -> UserPropertyNormalizationResult<String> {
         var emailAddress: String? = emailAddress
         var outError: Error?
-        var result: Bool = false
+        var result = false
 
         do {
             result = try userPropertyValidator.validate(emailAddress: &emailAddress)
@@ -58,7 +58,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
     public func normalizePassword(_ password: String) -> UserPropertyNormalizationResult<String> {
         var password: String? = password
         var outError: Error?
-        var result: Bool = false
+        var result = false
 
         do {
             result = try userPropertyValidator.validate(password: &password)
@@ -72,7 +72,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
     public func normalizeVerificationCode(_ verificationCode: String) -> UserPropertyNormalizationResult<String> {
         var verificationCode: String? = verificationCode
         var outError: Error?
-        var result: Bool = false
+        var result = false
 
         do {
             result = try userPropertyValidator.validate(phoneVerificationCode: &verificationCode)
@@ -86,7 +86,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
     public func normalizePhoneNumber(_ phoneNumber: String) -> UserPropertyNormalizationResult<String> {
         var phoneNumber: String? = phoneNumber
         var outError: Error?
-        var result: Bool = false
+        var result = false
 
         do {
             result = try userPropertyValidator.validate(phoneNumber: &phoneNumber)

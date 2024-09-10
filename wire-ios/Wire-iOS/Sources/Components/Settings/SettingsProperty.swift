@@ -124,7 +124,7 @@ func << (value: inout Any?, property: SettingsProperty) {
 
 /// Generic user defaults property
 final class SettingsUserDefaultsProperty: SettingsProperty {
-    var enabled: Bool = true
+    var enabled = true
 
     func set(newValue: SettingsPropertyValue) throws {
         self.userDefaults.set(newValue.value(), forKey: self.userDefaultsKey)
@@ -164,7 +164,7 @@ typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue) throws -> V
 
 /// Genetic block property
 final class SettingsBlockProperty: SettingsProperty {
-    var enabled: Bool = true
+    var enabled = true
 
     let propertyName: SettingsPropertyName
     func value() -> SettingsPropertyValue {

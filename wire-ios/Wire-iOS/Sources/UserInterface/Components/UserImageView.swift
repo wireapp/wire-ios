@@ -33,7 +33,7 @@ class UserImageView: AvatarImageView, UserObserving {
     }
 
     /// Whether the badge indicator is enabled.
-    var indicatorEnabled: Bool = false {
+    var indicatorEnabled = false {
         didSet { badgeIndicator.isHidden = !indicatorEnabled }
     }
 

@@ -24,7 +24,7 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     fileprivate var sut: DeleteAccountRequestStrategy!
     fileprivate var mockApplicationStatus: MockApplicationStatus!
     fileprivate let cookieStorage = ZMPersistentCookieStorage()
-    private var accountDeleted: Bool = false
+    private var accountDeleted = false
     var observers: [Any] = []
 
     override func setUp() {

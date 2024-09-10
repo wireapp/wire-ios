@@ -96,7 +96,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var teamIdentifier: UUID?
     @objc public var contact: ZMAddressBookContact?
     @objc public var user: ZMUser?
-    public private(set) var hasDownloadedFullUserProfile: Bool = false
+    public private(set) var hasDownloadedFullUserProfile = false
 
     fileprivate weak var contextProvider: ContextProvider?
     private let searchUsersCache: SearchUsersCache?
@@ -105,12 +105,12 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalName: String
     fileprivate var internalInitials: String?
     fileprivate var internalHandle: String?
-    fileprivate var internalIsConnected: Bool = false
-    fileprivate var internalIsTeamMember: Bool = false
+    fileprivate var internalIsConnected = false
+    fileprivate var internalIsTeamMember = false
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
     fileprivate var internalAccentColorValue: ZMAccentColorRawValue
-    fileprivate var internalPendingApprovalByOtherUser: Bool = false
+    fileprivate var internalPendingApprovalByOtherUser = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
     fileprivate var internalCompleteImageData: Data?

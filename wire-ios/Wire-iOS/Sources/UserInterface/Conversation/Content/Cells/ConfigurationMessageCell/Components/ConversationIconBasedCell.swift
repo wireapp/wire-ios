@@ -38,7 +38,7 @@ class ConversationIconBasedCell: UIView {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     var selectionView: UIView? {
         textLabel

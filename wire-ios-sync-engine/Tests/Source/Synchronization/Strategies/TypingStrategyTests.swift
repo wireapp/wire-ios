@@ -20,9 +20,9 @@
 import XCTest
 
 class MockTyping: WireSyncEngine.Typing {
-    var didTearDown: Bool = false
+    var didTearDown = false
     var typingUsers: [ZMConversation: Set<ZMUser>] = [:]
-    var didSetTypingUsers: Bool = false
+    var didSetTypingUsers = false
 
     override func tearDown() {
         didTearDown = true

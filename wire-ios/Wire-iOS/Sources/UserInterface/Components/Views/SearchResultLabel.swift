@@ -34,7 +34,7 @@ final class SearchResultLabel: UILabel, Copyable {
 
     private let redactedFont = UIFont(name: "RedactedScript-Regular", size: 16)!
 
-    var isObfuscated: Bool = false {
+    var isObfuscated = false {
         didSet {
             self.updateText()
         }
@@ -52,7 +52,7 @@ final class SearchResultLabel: UILabel, Copyable {
         }
     }
 
-    var estimatedMatchesCount: Int = 0
+    var estimatedMatchesCount = 0
 
     fileprivate var previousLayoutBounds: CGRect = .zero
 

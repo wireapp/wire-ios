@@ -23,7 +23,7 @@ import WireSyncEngine
 
 final class ConversationCellBurstTimestampView: UIView {
     let unreadDot = UIView()
-    private let label: UILabel = UILabel()
+    private let label = UILabel()
 
     private let unreadDotContainer = UIView()
     private let leftSeparator = UIView()
@@ -35,14 +35,14 @@ final class ConversationCellBurstTimestampView: UIView {
     private let burstBoldFont = FontSpec.mediumSemiboldFont.font!
     private let color = SemanticColors.View.backgroundSeparatorConversationView
 
-    private var isShowingUnreadDot: Bool = true {
+    private var isShowingUnreadDot = true {
         didSet {
             leftSeparator.isHidden = isShowingUnreadDot
             unreadDot.isHidden = !isShowingUnreadDot
         }
     }
 
-    private var isSeparatorHidden: Bool = false {
+    private var isSeparatorHidden = false {
         didSet {
             leftSeparator.isHidden = isSeparatorHidden || isShowingUnreadDot
             rightSeparator.isHidden = isSeparatorHidden

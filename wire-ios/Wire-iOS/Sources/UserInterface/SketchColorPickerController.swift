@@ -61,7 +61,7 @@ final class SketchColorPickerController: UIViewController {
         }
     }
 
-    var selectedColorIndex: Int = 0 {
+    var selectedColorIndex = 0 {
         didSet {
             guard canSelectColor(atIndex: selectedColorIndex) else { return }
 
@@ -87,7 +87,7 @@ final class SketchColorPickerController: UIViewController {
     }
 
     private var colorToBrushWidthMapper: [UIColor: CGFloat]?
-    lazy var colorsCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorsCollectionViewLayout)
+    lazy var colorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorsCollectionViewLayout)
 
     private var colorsCollectionViewLayout: UICollectionViewFlowLayout {
         let flowLayout = UICollectionViewFlowLayout()

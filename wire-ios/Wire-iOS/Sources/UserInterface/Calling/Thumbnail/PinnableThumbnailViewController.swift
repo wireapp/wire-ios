@@ -31,9 +31,9 @@ final class PinnableThumbnailViewController: UIViewController {
     private var hasDoneInitialLayout = false
     private var hasEnabledPinningBehavior = false
 
-    private lazy var pinningBehavior: ThumbnailCornerPinningBehavior = ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
+    private lazy var pinningBehavior = ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
 
-    private lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: self.thumbnailContainerView)
+    private lazy var animator = UIDynamicAnimator(referenceView: self.thumbnailContainerView)
 
     // MARK: - Changing the Previewed Content
 
@@ -200,7 +200,7 @@ final class PinnableThumbnailViewController: UIViewController {
             return center
         }
 
-        let frame: CGRect = if UIApplication.isLeftToRightLayout {
+        let frame = if UIApplication.isLeftToRightLayout {
             CGRect(x: parentSize.width - size.width - edgeInsets.x, y: edgeInsets.y,
                    width: size.width, height: size.height)
         } else {

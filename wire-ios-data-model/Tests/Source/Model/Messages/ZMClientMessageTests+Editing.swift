@@ -238,7 +238,7 @@ extension ZMClientMessageTests_Editing {
         let oldText = "Hallo"
         let newText = "Hello"
         let originalDate = Date(timeIntervalSinceNow: -50)
-        let updateDate: Date = Date(timeIntervalSinceNow: -20)
+        let updateDate = Date(timeIntervalSinceNow: -20)
 
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -329,7 +329,7 @@ extension ZMClientMessageTests_Editing {
     }
 
     private func createMessageEditUpdateEvent(oldNonce: UUID, newNonce: UUID, conversationID: UUID, senderID: UUID, newText: String) -> ZMUpdateEvent? {
-        let genericMessage: GenericMessage = GenericMessage(content: MessageEdit(replacingMessageID: oldNonce, text: Text(content: newText, mentions: [], linkPreviews: [], replyingTo: nil)), nonce: newNonce)
+        let genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: oldNonce, text: Text(content: newText, mentions: [], linkPreviews: [], replyingTo: nil)), nonce: newNonce)
 
         let data = try? genericMessage.serializedData().base64String()
         let payload: NSMutableDictionary = [
@@ -346,7 +346,7 @@ extension ZMClientMessageTests_Editing {
     }
 
     private func createTextAddedEvent(nonce: UUID, conversationID: UUID, senderID: UUID) -> ZMUpdateEvent? {
-        let genericMessage: GenericMessage = GenericMessage(content: Text(content: "Yeah!", mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let genericMessage = GenericMessage(content: Text(content: "Yeah!", mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
         let data = try? genericMessage.serializedData().base64String()
         let payload: NSMutableDictionary = [

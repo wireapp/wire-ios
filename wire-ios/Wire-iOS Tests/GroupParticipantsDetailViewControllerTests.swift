@@ -25,9 +25,9 @@ import XCTest
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
     var userDefinedName: String?
 
-    var hasReadReceiptsEnabled: Bool = false
+    var hasReadReceiptsEnabled = false
 
-    var freeParticipantSlots: Int = 1
+    var freeParticipantSlots = 1
 
     var syncedMessageDestructionTimeout: TimeInterval = 0
 

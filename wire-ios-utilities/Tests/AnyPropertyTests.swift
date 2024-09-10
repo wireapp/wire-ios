@@ -31,7 +31,7 @@ protocol Message: AnyObject {
 class TextMessage: Message {
     var content: String
     let sender: String
-    var numberOfLikes: Int = 0
+    var numberOfLikes = 0
 
     init(content: String, sender: String) {
         self.content = content
@@ -42,7 +42,7 @@ class TextMessage: Message {
 class ImageMessage: Message {
     var content: UIImage
     let sender: String
-    var numberOfLikes: Int = 0
+    var numberOfLikes = 0
 
     init(content: UIImage, sender: String) {
         self.content = content

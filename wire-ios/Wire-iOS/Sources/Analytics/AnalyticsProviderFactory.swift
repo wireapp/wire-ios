@@ -29,7 +29,7 @@ final class AnalyticsProviderFactory: NSObject {
     static let shared = AnalyticsProviderFactory(userDefaults: .shared()!)
     static let ZMConsoleAnalyticsArgumentKey = "-ConsoleAnalytics"
 
-    var useConsoleAnalytics: Bool = false
+    var useConsoleAnalytics = false
 
     private let userDefaults: UserDefaults
 

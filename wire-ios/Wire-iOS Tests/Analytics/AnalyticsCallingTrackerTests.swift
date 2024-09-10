@@ -26,8 +26,8 @@ final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper 
     var coreDataFixture: CoreDataFixture!
     var mockConversation: ZMConversation!
 
-    let clientId1: String = "ClientId1"
-    let clientId2: String = "ClientId2"
+    let clientId1 = "ClientId1"
+    let clientId2 = "ClientId2"
 
     func callParticipant(clientId: String, videoState: VideoState) -> CallParticipant {
         CallParticipant(user: otherUser, clientId: clientId, state: .connected(videoState: videoState, microphoneState: .unmuted), activeSpeakerState: .inactive)

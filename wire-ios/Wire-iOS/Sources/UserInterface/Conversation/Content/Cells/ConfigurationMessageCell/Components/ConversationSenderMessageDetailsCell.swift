@@ -52,7 +52,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
     private var trailingDateLabelConstraint: NSLayoutConstraint?
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     private lazy var avatar: UserImageView = {
         let view = UserImageView()
@@ -277,12 +277,12 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 16
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
 
     let accessibilityIdentifier: String? = nil
     var accessibilityLabel: String?

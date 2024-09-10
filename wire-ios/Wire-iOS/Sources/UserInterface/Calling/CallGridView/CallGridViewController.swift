@@ -89,7 +89,7 @@ final class CallGridViewController: UIViewController {
     }
 
     /// Update view visibility when this view controller is covered or not
-    var isCovered: Bool = false {
+    var isCovered = false {
         didSet {
             guard isCovered != oldValue else { return }
             notifyVisibilityChanged()

@@ -23,7 +23,7 @@ import UIKit
 final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
     var processingQueue = DispatchQueue(label: "ImageCacheQueue", qos: .background, attributes: [.concurrent])
-    var dispatchGroup: DispatchGroup = DispatchGroup()
+    var dispatchGroup = DispatchGroup()
 }
 
 extension UIImage {

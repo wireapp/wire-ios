@@ -42,7 +42,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     }
 
     private func createConversationToDownload() -> ZMConversation {
-        let convoToDownload: ZMConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        let convoToDownload = ZMConversation.insertNewObject(in: self.syncMOC)
         convoToDownload.conversationType = .group
         convoToDownload.remoteIdentifier = .create()
         convoToDownload.needsToDownloadRoles = true

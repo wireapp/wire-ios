@@ -65,13 +65,13 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
         set { updateStatus(newValue) }
     }
 
-    var allowMultilineStatus: Bool = false {
+    var allowMultilineStatus = false {
         didSet {
             statusLabel.numberOfLines = allowMultilineStatus ? 0 : 1
         }
     }
 
-    var disabled: Bool = false {
+    var disabled = false {
         didSet {}
     }
 

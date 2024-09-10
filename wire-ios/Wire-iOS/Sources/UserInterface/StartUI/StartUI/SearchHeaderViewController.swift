@@ -31,7 +31,7 @@ final class SearchHeaderViewController: UIViewController {
     let searchIcon = UIImageView()
     let clearButton: IconButton
     let userSelection: UserSelection
-    var allowsMultipleSelection: Bool = true
+    var allowsMultipleSelection = true
 
     weak var delegate: SearchHeaderViewControllerDelegate?
     var query: String {

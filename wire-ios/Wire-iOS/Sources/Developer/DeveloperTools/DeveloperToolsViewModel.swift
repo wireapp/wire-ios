@@ -29,7 +29,7 @@ struct DeveloperToolsContext {
 }
 
 final class DeveloperToolsViewModel: ObservableObject {
-    static var context: DeveloperToolsContext = DeveloperToolsContext()
+    static var context = DeveloperToolsContext()
 
     // MARK: - Models
 

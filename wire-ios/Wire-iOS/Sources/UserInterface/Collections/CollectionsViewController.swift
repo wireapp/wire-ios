@@ -57,7 +57,7 @@ final class CollectionsViewController: UIViewController {
     let userSession: UserSession
     let mainCoordinator: MainCoordinating
 
-    private var fetchingDone: Bool = false {
+    private var fetchingDone = false {
         didSet {
             if isViewLoaded {
                 updateNoElementsState()
@@ -421,7 +421,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func elementsPerLine(in section: CollectionsSectionSet) -> Int {
-        var count: Int = 1
+        var count = 1
         let sectionHorizontalInset = horizontalInset(in: section)
 
         repeat {

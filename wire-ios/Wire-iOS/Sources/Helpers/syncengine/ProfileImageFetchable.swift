@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 
 extension CIContext {
-    static var shared: CIContext = CIContext(options: nil)
+    static var shared = CIContext(options: nil)
 }
 
 typealias ProfileImageFetchableUser = UserType & ProfileImageFetchable

@@ -25,8 +25,8 @@ final class DispatchQueueSerialAsyncTests: XCTestCase {
 
         let doneExpectation = self.expectation(description: "Done with jobs")
 
-        var done1: Bool = false
-        var done2: Bool = false
+        var done1 = false
+        var done2 = false
 
         sut.serialAsync { finally in
             let time = DispatchTime.now() + DispatchTimeInterval.milliseconds(200)

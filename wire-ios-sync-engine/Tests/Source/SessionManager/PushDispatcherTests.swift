@@ -25,7 +25,7 @@ final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
     var canHandlePayloads: [[AnyHashable: Any]] = []
     var receivedPayloads: [[AnyHashable: Any]] = []
 
-    var canHandleNext: Bool = true
+    var canHandleNext = true
 
     func updatedPushToken(to token: PushToken?) {
         pushTokens.append(token)

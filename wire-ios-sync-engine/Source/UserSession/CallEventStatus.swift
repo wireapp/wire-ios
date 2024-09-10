@@ -30,7 +30,7 @@ public class CallEventStatus: NSObject, ZMTimerClient {
     fileprivate var observers: [() -> Void] = []
     fileprivate var eventProcessingTimer: ZMTimer?
 
-    fileprivate var callEventsWaitingToBeProcessed: Int = 0 {
+    fileprivate var callEventsWaitingToBeProcessed = 0 {
         didSet {
             if callEventsWaitingToBeProcessed == 0 {
                 zmLog.debug("CallEventStatus: all events processed, starting timer")

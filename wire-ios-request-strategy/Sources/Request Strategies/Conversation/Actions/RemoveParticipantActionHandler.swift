@@ -67,7 +67,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             apiVersion > .v0,
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.qualifiedID,
-            let user: ZMUser = ZMUser.existingObject(for: action.userID, in: context),
+            let user = ZMUser.existingObject(for: action.userID, in: context),
             let qualifiedUserID = user.qualifiedID
         else {
             action.notifyResult(.failure(.unknown))

@@ -21,7 +21,7 @@ import Foundation
 
 /// Logger to write logs to fileSystem via CocoaLumberjack
 final class CocoaLumberjackLogger: LoggerProtocol {
-    private let fileLogger: DDFileLogger = DDFileLogger() // File Logger
+    private let fileLogger = DDFileLogger() // File Logger
 
     init() {
         fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours

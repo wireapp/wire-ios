@@ -29,13 +29,13 @@ import WireDataModel
     public var pushTokenService: PushTokenServiceInterface?
 
     /// Records calls to `registerForRemoteNotification`
-    public var registerForRemoteNotificationCount: Int = 0
+    public var registerForRemoteNotificationCount = 0
 
     /// The current badge icon number
-    public var applicationIconBadgeNumber: Int = 0
+    public var applicationIconBadgeNumber = 0
 
     // Returns YES if the application is currently registered for remote notifications
-    public var isRegisteredForRemoteNotifications: Bool = false
+    public var isRegisteredForRemoteNotifications = false
 
     /// Records calls to `setMinimumBackgroundFetchInterval`
     public var minimumBackgroundFetchInverval: TimeInterval = UIApplication.backgroundFetchIntervalNever

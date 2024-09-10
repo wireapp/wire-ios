@@ -36,9 +36,9 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
-    var isSelected: Bool = true
+    var isSelected = true
 
-    private var isCollapsed: Bool = true
+    private var isCollapsed = true
     private var buttonAction: Completion?
 
     private let contentStackView = UIStackView(axis: .vertical)

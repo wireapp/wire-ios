@@ -115,7 +115,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         audioPlayerController = .none
     }
 
-    private let collectionViewLayout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+    private let collectionViewLayout = UICollectionViewFlowLayout()
     private var collectionView: UICollectionView!
     private let statusBoxView = UIView()
     let progressView = WaveformProgressView()
@@ -238,7 +238,7 @@ final class AudioEffectsPickerViewController: UIViewController {
             subtitleLabel.text = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.filterTip.localizedUppercase
             subtitleLabel.textColor = SemanticColors.Label.textDefault
         case .time:
-            let duration: Int = if let player = audioPlayerController?.player {
+            let duration = if let player = audioPlayerController?.player {
                 Int(ceil(player.duration))
             } else {
                 Int(ceil(self.duration))

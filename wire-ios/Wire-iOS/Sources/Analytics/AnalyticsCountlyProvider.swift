@@ -48,7 +48,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
     /// Whether a recording session is in progress.
 
-    private var isRecording: Bool = false {
+    private var isRecording = false {
         didSet {
             guard isRecording != oldValue else { return }
 
@@ -63,7 +63,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
     /// Whether the Countly instance has been configured and started.
 
-    private var didInitializeCountly: Bool = false
+    private var didInitializeCountly = false
 
     /// Events that have been tracked before Countly has begun.
 
@@ -122,7 +122,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
             return
         }
 
-        let config: CountlyConfig = CountlyConfig()
+        let config = CountlyConfig()
         config.appKey = appKey
         config.host = serverURL.absoluteString
         config.manualSessionHandling = true
@@ -305,7 +305,7 @@ extension Dictionary<String, Any> {
     }
 
     var countlyStringValueDictionary: [String: String] {
-        let convertedAttributes: [String: String] = [String: String](uniqueKeysWithValues:
+        let convertedAttributes = [String: String](uniqueKeysWithValues:
             map { key, value in (key, countlyValue(rawValue: value)) })
 
         return convertedAttributes

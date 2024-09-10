@@ -70,7 +70,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
-    private(set) var isKeyboardCollapsed: Bool = true {
+    private(set) var isKeyboardCollapsed = true {
         didSet {
             guard oldValue != isKeyboardCollapsed || isKeyboardCollapsedFirstCalled else { return }
             collectionView.reloadData()

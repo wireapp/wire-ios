@@ -67,9 +67,9 @@ final class ConversationViewController: UIViewController {
 
     var collectionController: CollectionsViewController?
     var outgoingConnectionViewController: OutgoingConnectionViewController!
-    let conversationBarController: BarController = BarController()
-    let guestsBarController: GuestsBarController = GuestsBarController()
-    let invisibleInputAccessoryView: InvisibleInputAccessoryView = InvisibleInputAccessoryView()
+    let conversationBarController = BarController()
+    let guestsBarController = GuestsBarController()
+    let invisibleInputAccessoryView = InvisibleInputAccessoryView()
     let mediaBarViewController: MediaBarViewController
     private let titleView: ConversationTitleView
 

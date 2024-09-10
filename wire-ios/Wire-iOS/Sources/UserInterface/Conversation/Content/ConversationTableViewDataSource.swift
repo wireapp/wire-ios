@@ -51,7 +51,7 @@ final class ConversationTableViewDataSource: NSObject {
     static let defaultBatchSize = 30 // Magic number: amount of messages per screen (upper bound).
 
     private var fetchController: NSFetchedResultsController<ZMMessage>?
-    private var lastFetchedObjectCount: Int = 0
+    private var lastFetchedObjectCount = 0
 
     var registeredCells: [AnyClass] = []
     var sectionControllers: [String: ConversationMessageSectionController] = [:]

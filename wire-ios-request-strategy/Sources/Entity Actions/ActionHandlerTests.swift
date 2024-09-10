@@ -32,13 +32,13 @@ private class MockAction: EntityAction, Equatable {
 }
 
 private class TestActionHandler: ActionHandler<MockAction> {
-    var calledRequestForAction: Bool = false
+    var calledRequestForAction = false
     override func request(for action: ActionHandler<MockAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         calledRequestForAction = true
         return ZMTransportRequest(getFromPath: "/mock/request", apiVersion: APIVersion.v0.rawValue)
     }
 
-    var calledHandleResponse: Bool = false
+    var calledHandleResponse = false
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<MockAction>.Action) {
         calledHandleResponse = true
     }

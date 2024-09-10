@@ -407,12 +407,12 @@ private class MockAPIVersionResolverDelegate: APIVersionResolverDelegate {
         blacklistReason = reason
     }
 
-    var didReportFederationHasBeenEnabled: Bool = false
+    var didReportFederationHasBeenEnabled = false
     func apiVersionResolverDetectedFederationHasBeenEnabled() {
         didReportFederationHasBeenEnabled = true
     }
 
-    var didReportAPIVersionHasBeenResolved: Bool = false
+    var didReportAPIVersionHasBeenResolved = false
     func apiVersionResolverDidResolve(apiVersion: APIVersion) {
         didReportAPIVersionHasBeenResolved = true
     }

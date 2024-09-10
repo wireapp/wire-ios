@@ -26,19 +26,19 @@ extension AppLockModule.View {
 
         var actionRequested: Completion?
 
-        var message: String = "" {
+        var message = "" {
             didSet {
                 messageLabel.text = message
             }
         }
 
-        var buttonTitle: String = "" {
+        var buttonTitle = "" {
             didSet {
                 actionButton.setTitle(buttonTitle, for: .normal)
             }
         }
 
-        var showReauth: Bool = false {
+        var showReauth = false {
             didSet {
                 self.messageLabel.isHidden = !showReauth
                 self.actionButton.isHidden = !showReauth

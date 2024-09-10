@@ -20,8 +20,8 @@ import Foundation
 import WireSyncEngine
 
 final class TextSearchViewController: NSObject {
-    let resultsView: TextSearchResultsView = TextSearchResultsView()
-    let searchBar: TextSearchInputView = TextSearchInputView()
+    let resultsView = TextSearchResultsView()
+    let searchBar = TextSearchInputView()
 
     weak var delegate: MessageActionResponder? = .none
     let conversation: ConversationLike

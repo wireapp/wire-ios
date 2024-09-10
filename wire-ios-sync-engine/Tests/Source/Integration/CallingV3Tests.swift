@@ -143,7 +143,7 @@ final class CallingV3Tests: IntegrationTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    var useGroupConversation: Bool = false
+    var useGroupConversation = false
     var mockConversationUnderTest: MockConversation {
         useGroupConversation ? groupConversation : selfToUser2Conversation
     }

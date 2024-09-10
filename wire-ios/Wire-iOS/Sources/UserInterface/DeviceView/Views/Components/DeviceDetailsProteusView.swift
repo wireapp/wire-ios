@@ -23,7 +23,7 @@ import WireDesign
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isVerified: Bool
-    var shouldShowActivatedDate: Bool = true
+    var shouldShowActivatedDate = true
 
     var body: some View {
         VStack(alignment: .leading) {

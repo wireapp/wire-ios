@@ -23,9 +23,9 @@ import XCTest
 @testable import WireCommonComponents
 
 final class MockZMEditableUser: MockUser, EditableUserType {
-    var needsRichProfileUpdate: Bool = false
+    var needsRichProfileUpdate = false
 
-    var enableReadReceipts: Bool = false
+    var enableReadReceipts = false
     var originalProfileImageData: Data!
 
     func deleteProfileImage() {
@@ -38,7 +38,7 @@ final class MockZMEditableUser: MockUser, EditableUserType {
 }
 
 final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
-    var isMicrophoneMuted: Bool = false
+    var isMicrophoneMuted = false
 
     var intensityLevel: AVSIntensityLevel = .none
 
@@ -46,9 +46,9 @@ final class ZMMockAVSMediaManager: AVSMediaManagerInterface {
 }
 
 final class ZMMockTracking: TrackingInterface {
-    var disableCrashSharing: Bool = false
-    var disableAnalyticsSharing: Bool = false
-    var disableCrashAndAnalyticsSharing: Bool = false
+    var disableCrashSharing = false
+    var disableAnalyticsSharing = false
+    var disableCrashAndAnalyticsSharing = false
 }
 
 final class SettingsPropertyTests: XCTestCase {
@@ -233,7 +233,7 @@ final class SettingsPropertyTests: XCTestCase {
         let settings = Settings()
         let account = Account(userName: "bob", userIdentifier: UUID())
         let key = SettingKey.blackListDownloadInterval
-        let value: Int = 42
+        let value = 42
         settings[key] = value
 
         // when & then

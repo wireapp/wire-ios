@@ -47,9 +47,9 @@ final class AnimatedListMenuView: UIView {
         }
     }
 
-    private let leftDotView: MenuDotView = MenuDotView()
-    private let centerDotView: MenuDotView = MenuDotView()
-    private let rightDotView: MenuDotView = MenuDotView()
+    private let leftDotView = MenuDotView()
+    private let centerDotView = MenuDotView()
+    private let rightDotView = MenuDotView()
 
     private var initialConstraintsCreated = false
     private var centerToRightDistanceConstraint: NSLayoutConstraint?

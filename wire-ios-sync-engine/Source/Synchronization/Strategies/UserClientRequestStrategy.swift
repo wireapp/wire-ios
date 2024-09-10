@@ -42,8 +42,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     fileprivate(set) var deleteSync: ZMUpstreamModifiedObjectSync! = nil
     fileprivate(set) var insertSync: ZMUpstreamInsertedObjectSync! = nil
     fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
-    fileprivate var didRetryRegisteringSignalingKeys: Bool = false
-    fileprivate var didRetryUpdatingCapabilities: Bool = false
+    fileprivate var didRetryRegisteringSignalingKeys = false
+    fileprivate var didRetryUpdatingCapabilities = false
     let prekeyGenerator: PrekeyGenerator
 
     public var requestsFactory: UserClientRequestFactory

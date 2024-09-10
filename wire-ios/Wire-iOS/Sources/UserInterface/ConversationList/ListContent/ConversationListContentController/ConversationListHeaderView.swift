@@ -31,7 +31,7 @@ typealias TapHandler = (_ collapsed: Bool) -> Void
 final class ConversationListHeaderView: UICollectionReusableView {
     private let spacing: CGFloat = 8
 
-    var folderBadge: Int = 0 {
+    var folderBadge = 0 {
         didSet {
             let isHidden = folderBadge <= 0
 

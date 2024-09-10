@@ -154,7 +154,7 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
-    var visible: Bool = true
+    var visible = true
     let title: String
     let accessibilityBackButtonText: String
     let style: InternalScreenStyle

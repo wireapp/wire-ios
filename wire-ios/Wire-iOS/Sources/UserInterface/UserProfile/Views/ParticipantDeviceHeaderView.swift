@@ -27,7 +27,7 @@ final class ParticipantDeviceHeaderView: UIView {
     private var font: UIFont = .normalLightFont
     private var textColor: UIColor = SemanticColors.Label.textSectionHeader
     private var linkAttributeColor: UIColor = .accent()
-    private var textView: WebLinkTextView = WebLinkTextView()
+    private var textView = WebLinkTextView()
     let userName: String
 
     weak var delegate: ParticipantDeviceHeaderViewDelegate?

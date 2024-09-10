@@ -88,20 +88,20 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 }
 
 private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
-    var didCallDidPerformFederationMigration: Bool = false
+    var didCallDidPerformFederationMigration = false
     var expectation: XCTestExpectation?
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
         didCallDidPerformFederationMigration = true
         expectation?.fulfill()
     }
 
-    var didCallWillMigrateAccount: Bool = false
+    var didCallWillMigrateAccount = false
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
         didCallWillMigrateAccount = true
         userSessionCanBeTornDown()
     }
 
-    var didCallDidChangeActiveUserSession: Bool = false
+    var didCallDidChangeActiveUserSession = false
     var session: ZMUserSession?
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
         didCallDidChangeActiveUserSession = true

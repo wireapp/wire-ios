@@ -25,7 +25,7 @@ extension Analytics {
             $0.isGuest(in: conversation)
         }).count
 
-        let userType: String = if let user = SelfUser.provider?.providedSelfUser, !user.isGuest(in: conversation) {
+        let userType = if let user = SelfUser.provider?.providedSelfUser, !user.isGuest(in: conversation) {
             "user"
         } else {
             "guest"

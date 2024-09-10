@@ -31,7 +31,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
     var selfUser: ZMUser!
     var conversation: ZMConversation!
     var user: ZMUser!
-    var addAttempts: Int = 0
+    var addAttempts = 0
 
     // MARK: - Life cycle
 

@@ -143,7 +143,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesAnExpectedV3RequestToTheV3EndpointIfTheProtobufContainsAnAssetID() {
-        var expectedAssetId: String = ""
+        var expectedAssetId = ""
         syncMOC.performGroupedAndWait {
             // Given
             guard let (message, assetId, token, domain) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
@@ -172,7 +172,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesAnExpectedV3RequestToTheV3EndpointITheProtobufContainsAnAssetID_EphemeralConversation() {
-        var expectedAssetId: String = ""
+        var expectedAssetId = ""
         syncMOC.performGroupedAndWait {
             // Given
             self.conversation.setMessageDestructionTimeoutValue(.custom(5), for: .selfUser)
@@ -207,7 +207,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     func testThatItGeneratesAnExpectedV4RequestToTheV3EndpointIfTheProtobufContainsAnAssetID() {
         apiVersion = .v1
 
-        var expectedAssetId: String = ""
+        var expectedAssetId = ""
         var expectedDomain: String! = ""
         syncMOC.performGroupedAndWait {
             // Given
@@ -239,7 +239,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     func testThatItGeneratesAnExpectedV4RequestToTheV3EndpointITheProtobufContainsAnAssetID_EphemeralConversation_whenFederationIsEnabled() {
         apiVersion = .v1
 
-        var expectedAssetId: String = ""
+        var expectedAssetId = ""
         var expectedDomain: String! = ""
         syncMOC.performGroupedAndWait {
             // Given

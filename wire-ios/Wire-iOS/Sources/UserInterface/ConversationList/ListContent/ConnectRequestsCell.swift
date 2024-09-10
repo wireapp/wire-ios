@@ -40,7 +40,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
     let itemView = ConversationListItemView()
 
     private var hasCreatedInitialConstraints = false
-    private var currentConnectionRequestsCount: Int = 0
+    private var currentConnectionRequestsCount = 0
     private var conversationListObserverToken: Any?
 
     override init(frame: CGRect) {

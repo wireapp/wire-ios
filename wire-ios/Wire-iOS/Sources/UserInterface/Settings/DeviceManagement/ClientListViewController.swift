@@ -37,7 +37,7 @@ final class ClientListViewController: UIViewController,
     private let topSeparator = OverflowSeparatorView()
     private weak var delegate: ClientListViewControllerDelegate?
 
-    private var editingList: Bool = false {
+    private var editingList = false {
         didSet {
             guard !clients.isEmpty else {
                 navigationItem.rightBarButtonItem = nil

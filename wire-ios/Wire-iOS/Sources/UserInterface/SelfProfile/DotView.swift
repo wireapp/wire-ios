@@ -25,7 +25,7 @@ final class DotView: UIView {
     private var userObserver: NSObjectProtocol!
     private var clientsObserverTokens: [NSObjectProtocol] = []
     private let user: ZMUser?
-    var hasUnreadMessages: Bool = false {
+    var hasUnreadMessages = false {
         didSet { self.updateIndicator() }
     }
 

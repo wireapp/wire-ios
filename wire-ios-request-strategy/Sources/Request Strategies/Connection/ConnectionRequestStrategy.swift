@@ -23,7 +23,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         .userConnection
     ]
 
-    var isFetchingAllConnections: Bool = false
+    var isFetchingAllConnections = false
     let syncProgress: SyncProgress
     let connectionByIDSync: IdentifierObjectSync<ConnectionByIDTranscoder>
     let connectionByIDTranscoder: ConnectionByIDTranscoder
@@ -252,7 +252,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
 class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
-    var fetchLimit: Int = 1
+    var fetchLimit = 1
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -305,7 +305,7 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
 class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
 
-    var fetchLimit: Int = 1
+    var fetchLimit = 1
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder

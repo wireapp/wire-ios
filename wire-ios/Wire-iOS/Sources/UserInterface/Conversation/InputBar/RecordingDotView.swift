@@ -22,7 +22,7 @@ import WireDesign
 final class RecordingDotView: UIView {
     // MARK: - Properties
 
-    var animating: Bool = false {
+    var animating = false {
         didSet {
             if oldValue == animating {
                 return

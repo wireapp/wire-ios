@@ -24,7 +24,7 @@ class MockMediaManager: NSObject, MediaManagerType {
         // no-op
     }
 
-    var didStartAudio: Bool = false
+    var didStartAudio = false
     func startAudio() {
         didStartAudio = true
     }

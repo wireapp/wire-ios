@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMConversation {
-    fileprivate static var predicateForObjectsNeedingToDownloadRoles: NSPredicate = NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(ZMConversation.needsToDownloadRoles), ZMConversation.remoteIdentifierDataKey())
+    fileprivate static var predicateForObjectsNeedingToDownloadRoles = NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(ZMConversation.needsToDownloadRoles), ZMConversation.remoteIdentifierDataKey())
 
     fileprivate func updateRoles(with response: ZMTransportResponse) {
         guard let rolesPayload = response.payload?.asDictionary()?["conversation_roles"] as? [[String: Any]] else { return }

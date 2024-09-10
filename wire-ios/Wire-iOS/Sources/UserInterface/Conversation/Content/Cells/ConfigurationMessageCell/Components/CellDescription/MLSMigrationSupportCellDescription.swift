@@ -26,12 +26,12 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
 
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 0
 
-    let isFullWidth: Bool = true
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
+    let isFullWidth = true
+    let supportsActions = false
+    let containsHighlightableContent = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?

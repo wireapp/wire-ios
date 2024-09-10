@@ -108,7 +108,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(conversationSet)
 
             // THEN
-            var expectedPath: String = switch apiVersion {
+            var expectedPath = switch apiVersion {
             case .v0:
                 "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
             case .v1, .v2, .v3, .v4, .v5, .v6:

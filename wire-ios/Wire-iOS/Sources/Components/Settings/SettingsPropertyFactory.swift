@@ -170,7 +170,7 @@ final class SettingsPropertyFactory {
         case .darkMode:
             let getAction: GetAction = { [unowned self] _ in
 
-                let settingsColorScheme: SettingsColorScheme = SettingsColorScheme(from: self.userDefaults.string(forKey: SettingKey.colorScheme.rawValue))
+                let settingsColorScheme = SettingsColorScheme(from: self.userDefaults.string(forKey: SettingKey.colorScheme.rawValue))
 
                 return SettingsPropertyValue(settingsColorScheme.rawValue)
             }

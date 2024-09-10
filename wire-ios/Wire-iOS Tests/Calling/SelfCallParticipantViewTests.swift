@@ -23,7 +23,7 @@ import XCTest
 @testable import Wire
 
 private class MockAVSVideoPreview: AVSVideoPreview {
-    var isCapturing: Bool = false
+    var isCapturing = false
 
     override func startVideoCapture() {
         isCapturing = true

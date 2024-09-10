@@ -40,7 +40,7 @@ extension Notification.Name {
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - Private Property
 
-    private lazy var voIPPushManager: VoIPPushManager = VoIPPushManager(
+    private lazy var voIPPushManager = VoIPPushManager(
         application: UIApplication.shared,
         requiredPushTokenType: requiredPushTokenType,
         pushTokenService: pushTokenService

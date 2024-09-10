@@ -82,7 +82,7 @@ extension PKPushRegistry: PushRegistry {}
             return
         }
 
-        var foundSession: Bool = false
+        var foundSession = false
         for (accountId, backgroundSession) in self.backgroundUserSessions {
             if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
                 self.select(account, completion: { _ in

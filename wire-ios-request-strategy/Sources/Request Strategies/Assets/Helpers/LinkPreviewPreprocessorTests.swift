@@ -25,7 +25,7 @@ import XCTest
 
 final class MockLinkDetector: LinkPreviewDetectorType {
     var nextResult = [LinkMetadata]()
-    var downloadLinkPreviewsCallCount: Int = 0
+    var downloadLinkPreviewsCallCount = 0
     var excludedRanges: [NSRange] = []
 
     func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {

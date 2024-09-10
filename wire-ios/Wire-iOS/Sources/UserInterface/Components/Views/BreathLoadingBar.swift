@@ -29,7 +29,7 @@ final class BreathLoadingBar: UIView {
 
     private(set) lazy var heightConstraint = heightAnchor.constraint(equalToConstant: 0)
 
-    var animating: Bool = false {
+    var animating = false {
         didSet {
             guard animating != oldValue else { return}
 
@@ -49,7 +49,7 @@ final class BreathLoadingBar: UIView {
         }
     }
 
-    private let BreathLoadingAnimationKey: String = "breathLoadingAnimation"
+    private let BreathLoadingAnimationKey = "breathLoadingAnimation"
 
     var animationDuration: TimeInterval = 0.0
 

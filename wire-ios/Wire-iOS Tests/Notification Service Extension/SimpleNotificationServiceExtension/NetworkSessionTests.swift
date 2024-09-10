@@ -180,7 +180,7 @@ final class NetworkSessionTests: XCTestCase {
 }
 
 final class MockCookieStorage: CookieProvider {
-    var isAuthenticated: Bool = true
+    var isAuthenticated = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 

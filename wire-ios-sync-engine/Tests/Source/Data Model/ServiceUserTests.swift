@@ -35,45 +35,45 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var remoteIdentifier: UUID?
 
-    var isIgnored: Bool = false
+    var isIgnored = false
 
     var membership: Member?
 
-    var hasTeam: Bool = false
+    var hasTeam = false
 
-    var isTrusted: Bool = false
+    var isTrusted = false
 
-    var hasLegalHoldRequest: Bool = false
+    var hasLegalHoldRequest = false
 
-    var needsRichProfileUpdate: Bool = false
+    var needsRichProfileUpdate = false
 
     var availability: Availability = .none
 
     var teamName: String?
 
-    var isBlocked: Bool = false
+    var isBlocked = false
 
     var blockState: ZMBlockState = .none
 
-    var isExpired: Bool = false
+    var isExpired = false
 
-    var isPendingApprovalBySelfUser: Bool = false
+    var isPendingApprovalBySelfUser = false
 
-    var isPendingApprovalByOtherUser: Bool = false
+    var isPendingApprovalByOtherUser = false
 
-    var isWirelessUser: Bool = false
+    var isWirelessUser = false
 
-    var isUnderLegalHold: Bool = false
+    var isUnderLegalHold = false
 
     var allClients: [UserClientType] = []
 
     var expiresAfter: TimeInterval = 0
 
-    var readReceiptsEnabled: Bool = true
+    var readReceiptsEnabled = true
 
-    var isVerified: Bool = false
+    var isVerified = false
 
-    var isPendingMetadataRefresh: Bool = false
+    var isPendingMetadataRefresh = false
 
     var richProfile: [UserRichProfileField] = []
 
@@ -83,9 +83,9 @@ final class DummyServiceUser: NSObject, ServiceUser {
         true
     }
 
-    var canCreateService: Bool = false
+    var canCreateService = false
 
-    var canManageTeam: Bool = false
+    var canManageTeam = false
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         false
@@ -151,7 +151,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var name: String? = "Service user"
 
-    var displayName: String = "Service"
+    var displayName = "Service"
 
     var initials: String? = "S"
 
@@ -161,13 +161,13 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var phoneNumber: String?
 
-    var isSelfUser: Bool = false
+    var isSelfUser = false
 
     var smallProfileImageCacheKey: String? = ""
 
     var mediumProfileImageCacheKey: String? = ""
 
-    var isConnected: Bool = false
+    var isConnected = false
 
     var oneToOneConversation: ZMConversation?
 
@@ -185,23 +185,23 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var imageMediumIdentifier: String! = ""
 
-    var isTeamMember: Bool = false
+    var isTeamMember = false
 
-    var hasDigitalSignatureEnabled: Bool = false
+    var hasDigitalSignatureEnabled = false
 
     var teamRole: TeamRole = .member
 
-    var canBeConnected: Bool = false
+    var canBeConnected = false
 
-    var isServiceUser: Bool = true
+    var isServiceUser = true
 
-    var isFederated: Bool = false
+    var isFederated = false
 
-    var usesCompanyLogin: Bool = false
+    var usesCompanyLogin = false
 
-    var isAccountDeleted: Bool = false
+    var isAccountDeleted = false
 
-    var managedByWire: Bool = true
+    var managedByWire = true
 
     var extendedMetadata: [[String: String]]?
 

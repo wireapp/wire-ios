@@ -112,7 +112,7 @@ public class ZMLocalNotification: NSObject {
     }()
 
     /// Returns a configured concrete `UNNotificationRequest`.
-    public lazy var request: UNNotificationRequest = UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
+    public lazy var request = UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
 
     public var contentHashValue: Int {
         var hash = Hasher()

@@ -51,7 +51,7 @@ final class CollectionImageCell: CollectionCell {
         self.loadView()
     }
 
-    var isHeightCalculated: Bool = false
+    var isHeightCalculated = false
 
     func loadView() {
         containerView.translatesAutoresizingMaskIntoConstraints = false

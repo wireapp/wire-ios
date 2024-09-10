@@ -52,7 +52,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    var isFullWidth: Bool = false {
+    var isFullWidth = false {
         didSet {
             configureConstraints(fullWidth: isFullWidth)
         }

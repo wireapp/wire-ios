@@ -39,9 +39,9 @@ final class MockZMUserSession: NSObject, UserSessionInterface {
         mockConversationDirectory
     }
 
-    var isNotificationContentHidden: Bool = false
+    var isNotificationContentHidden = false
 
-    var encryptMessagesAtRest: Bool = false
+    var encryptMessagesAtRest = false
 
     var appLockController: AppLockType = AppLockModule.MockAppLockController()
 

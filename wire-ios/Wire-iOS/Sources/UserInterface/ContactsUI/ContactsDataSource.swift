@@ -54,7 +54,7 @@ final class ContactsDataSource: NSObject {
         }
     }
 
-    var searchQuery: String = "" {
+    var searchQuery = "" {
         didSet {
             performSearch()
         }

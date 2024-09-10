@@ -34,20 +34,20 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     private weak var delegate: ClientRemovalObserverDelegate?
     private let completion: ((Error?) -> Void)?
     private var credentials: UserEmailCredentials?
-    private lazy var requestPasswordController: RequestPasswordController = RequestPasswordController(context: .removeDevice,
-                                                                                                      callback: {[weak self] password in
-                                                                                                          guard let password,
-                                                                                                                !password.isEmpty else {
-                                                                                                              self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)
-                                                                                                              return
-                                                                                                          }
+    private lazy var requestPasswordController = RequestPasswordController(context: .removeDevice,
+                                                                           callback: {[weak self] password in
+                                                                               guard let password,
+                                                                                     !password.isEmpty else {
+                                                                                   self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)
+                                                                                   return
+                                                                               }
 
-                                                                                                          self?.credentials = UserEmailCredentials(email: "", password: password)
-                                                                                                          self?.startRemoval()
-                                                                                                          self?.passwordIsNecessaryForDelete = true
-                                                                                                      })
+                                                                               self?.credentials = UserEmailCredentials(email: "", password: password)
+                                                                               self?.startRemoval()
+                                                                               self?.passwordIsNecessaryForDelete = true
+                                                                           })
 
-    private var passwordIsNecessaryForDelete: Bool = false
+    private var passwordIsNecessaryForDelete = false
     private var observerToken: Any?
 
     init(userClientToDelete: UserClient,

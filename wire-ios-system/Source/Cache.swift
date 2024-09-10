@@ -22,7 +22,7 @@ public final class Cache<Key: Hashable, Value> {
     private var cacheBuffer: CircularArray<Key>
     private let maxCost: Int
     private let maxElementsCount: Int
-    private var currentCost: Int = 0
+    private var currentCost = 0
 
     private struct EntryMetadata {
         let value: Value
@@ -100,7 +100,7 @@ public final class Cache<Key: Hashable, Value> {
             return false
         }
 
-        var elementsToDiscard: Int = 0
+        var elementsToDiscard = 0
 
         // Get the objects from the current cache buffer
         let currentCacheBuffer = cacheBuffer.content

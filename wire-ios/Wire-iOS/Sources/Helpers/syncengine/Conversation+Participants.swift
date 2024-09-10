@@ -30,9 +30,9 @@ extension ZMConversation {
         case invalidOperation
     }
 
-    static let legacyGroupVideoParticipantLimit: Int = 4
+    static let legacyGroupVideoParticipantLimit = 4
 
-    static let maxParticipants: Int = 500
+    static let maxParticipants = 500
 
     static var maxParticipantsExcludingSelf: Int {
         maxParticipants - 1

@@ -36,7 +36,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -138,11 +138,11 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     let configuration: View.Configuration
 
     var topMargin: Float = 8
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
 
-    let isFullWidth: Bool = false
-    let supportsActions: Bool = true
-    let containsHighlightableContent: Bool = true
+    let isFullWidth = false
+    let supportsActions = true
+    let containsHighlightableContent = true
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?

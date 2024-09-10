@@ -95,7 +95,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private let networkStatusObservable: any NetworkStatusObservable = NetworkStatus.shared
     private weak var progressViewController: SendingProgressViewController?
 
-    var dispatchQueue: DispatchQueue = DispatchQueue.main
+    var dispatchQueue = DispatchQueue.main
     let stateAccessoryView = ConversationStateAccessoryView()
 
     lazy var unlockViewController = UnlockViewController()

@@ -76,8 +76,8 @@ final class URLRequestPromise: CancelableTask {
         }
     }
 
-    private var isCancelled: Bool = false
-    private var isResolved: Bool = false
+    private var isCancelled = false
+    private var isResolved = false
     private var result: (Data?, URLResponse?, Error?)?
     private var failureError: ZiphyError?
 

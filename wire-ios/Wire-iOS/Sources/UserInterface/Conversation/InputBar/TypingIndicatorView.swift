@@ -25,7 +25,7 @@ final class AnimatedPenView: UIView {
     private let dots = UIImageView()
     private let pen = UIImageView()
 
-    var isAnimating: Bool = false {
+    var isAnimating = false {
         didSet {
             pen.layer.speed = isAnimating ? 1 : 0
             pen.layer.beginTime = pen.layer.convertTime(CACurrentMediaTime(), from: nil)

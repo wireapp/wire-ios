@@ -73,7 +73,7 @@ public protocol ConferenceCallingUnavailableObserver: AnyObject {
 }
 
 struct WireCallCenterConferenceCallingUnavailableNotification: SelfPostingNotification {
-    static let notificationName: Notification.Name = Notification.Name("WireCallCenterConferenceCallingUnavailableNotification")
+    static let notificationName = Notification.Name("WireCallCenterConferenceCallingUnavailableNotification")
 }
 
 // MARK: - Active speakers observer

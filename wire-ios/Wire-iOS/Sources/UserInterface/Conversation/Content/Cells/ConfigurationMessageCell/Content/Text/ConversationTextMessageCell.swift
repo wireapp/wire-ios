@@ -50,7 +50,7 @@ final class ConversationTextMessageCell: UIView,
         return view
     }()
 
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -150,12 +150,12 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 8
 
-    let isFullWidth: Bool = false
-    let supportsActions: Bool = true
-    let containsHighlightableContent: Bool = true
+    let isFullWidth = false
+    let supportsActions = true
+    let containsHighlightableContent = true
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil

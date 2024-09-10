@@ -43,7 +43,7 @@ final class GridView: UICollectionView {
     weak var gridViewDelegate: GridViewDelegate?
 
     let maxItemsPerPage: Int
-    private(set) var currentPage: Int = 0
+    private(set) var currentPage = 0
     private var firstVisibleIndexPath: IndexPath?
 
     // MARK: - Private Properties

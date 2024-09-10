@@ -23,11 +23,11 @@ import XCTest
 @testable import WireSyncEngine
 
 final class MockCookieStorage: CookieProvider {
-    var isAuthenticated: Bool = true
+    var isAuthenticated = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 
-    var didCallDeleteKeychainItems: Bool = false
+    var didCallDeleteKeychainItems = false
     func deleteKeychainItems() {
         didCallDeleteKeychainItems = true
     }

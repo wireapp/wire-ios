@@ -20,7 +20,7 @@ import Foundation
 
 public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
-    fileprivate let requestFactory: ClientMessageRequestFactory = ClientMessageRequestFactory()
+    fileprivate let requestFactory = ClientMessageRequestFactory()
     private var token: Any?
 
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {

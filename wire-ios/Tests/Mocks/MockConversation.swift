@@ -23,8 +23,8 @@ import WireRequestStrategy
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
-    var isMLSConversationDegraded: Bool = false
-    var isProteusConversationDegraded: Bool = false
+    var isMLSConversationDegraded = false
+    var isProteusConversationDegraded = false
 
     var relatedConnectionState: ZMConnectionStatus = .invalid
 
@@ -37,13 +37,13 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var sortedActiveParticipantsUserTypes: [UserType] = []
 
-    var isSelfAnActiveMember: Bool = true
+    var isSelfAnActiveMember = true
 
     var conversationType: ZMConversationType = .group
 
     var teamRemoteIdentifier: UUID?
 
-    var mockLocalParticipantsContain: Bool = false
+    var mockLocalParticipantsContain = false
     func localParticipantsContain(user: UserType) -> Bool {
         mockLocalParticipantsContain
     }
@@ -52,9 +52,9 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var connectedUserType: UserType?
 
-    var allowGuests: Bool = false
+    var allowGuests = false
 
-    var allowServices: Bool = false
+    var allowServices = false
 
     var teamType: TeamType?
 
@@ -64,17 +64,17 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var accessRoles: Set<ConversationAccessRoleV2> = [.teamMember]
 
-    var isUnderLegalHold: Bool = false
-    var isE2EIEnabled: Bool = false
+    var isUnderLegalHold = false
+    var isE2EIEnabled = false
     var securityLevel: ZMConversationSecurityLevel = .notSecure
 
     var mutedMessageTypes: MutedMessageTypes = .none
 
-    var localParticipantsCount: Int = 0
+    var localParticipantsCount = 0
     var lastMessage: ZMConversationMessage?
     var firstUnreadMessage: ZMConversationMessage?
 
-    var areServicesPresent: Bool = false
+    var areServicesPresent = false
 
     var domain: String?
 
@@ -84,9 +84,9 @@ class SwiftMockConversation: NSObject, Conversation {
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
     var userDefinedName: String?
 
-    var freeParticipantSlots: Int = 1
+    var freeParticipantSlots = 1
 
-    var hasReadReceiptsEnabled: Bool = false
+    var hasReadReceiptsEnabled = false
 
     var syncedMessageDestructionTimeout: TimeInterval = 0
 
@@ -100,7 +100,7 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {
     var typingUsers: [UserType] = []
 
-    var hasDraftMessage: Bool = false
+    var hasDraftMessage = false
 
     var draftMessage: DraftMessage?
 
@@ -108,7 +108,7 @@ final class MockInputBarConversationType: SwiftMockConversation, InputBarConvers
         // no-op
     }
 
-    var isReadOnly: Bool = false
+    var isReadOnly = false
 
     var participants: [UserType] = []
 

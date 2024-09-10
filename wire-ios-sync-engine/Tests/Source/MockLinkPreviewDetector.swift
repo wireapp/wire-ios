@@ -21,7 +21,7 @@ import WireLinkPreview
 
 class MockLinkPreviewDetector: LinkPreviewDetectorType {
     fileprivate let mockImageURL = URL(string: "http://reallifepic.com/s0m3cHucKN0rR1sp1C.jpg")!
-    fileprivate let mockImageData: Data = Data(repeating: 0x41, count: 10)
+    fileprivate let mockImageData = Data(repeating: 0x41, count: 10)
 
     enum LinkPreviewURL: String {
         case article = "http://someurl.com/nopicture"

@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
@@ -151,15 +151,15 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 final class ConversationButtonMessageCellDescription: ConversationMessageCellDescription {
     typealias View = ConversationButtonMessageCell
 
-    var topMargin: Float = Float.ConversationButtonMessageCell.verticalInset
+    var topMargin = Float.ConversationButtonMessageCell.verticalInset
 
-    var isFullWidth: Bool = false
+    var isFullWidth = false
 
-    var supportsActions: Bool = false
+    var supportsActions = false
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
 
-    var containsHighlightableContent: Bool = false
+    var containsHighlightableContent = false
 
     var message: ZMConversationMessage?
 

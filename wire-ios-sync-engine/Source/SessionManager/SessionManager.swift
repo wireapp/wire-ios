@@ -190,7 +190,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public let maxNumberAccounts: Int
 
     /// Default Maximum number of accounts which can be logged in simultanously
-    public static let defaultMaxNumberAccounts: Int = 3
+    public static let defaultMaxNumberAccounts = 3
 
     public let appVersion: String
     var isAppVersionBlacklisted = false
@@ -244,7 +244,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     var authenticatedSessionFactory: AuthenticatedSessionFactory
     let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
-    private let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
+    private let sessionLoadingQueue = DispatchQueue(label: "sessionLoadingQueue")
 
     private(set) var reachability: ReachabilityWrapper
 
@@ -267,7 +267,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens: [UUID: [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
-    fileprivate var isSelectingAccount: Bool = false
+    fileprivate var isSelectingAccount = false
 
     var proxyCredentials: ProxyCredentials?
 
@@ -1164,13 +1164,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    public var useConstantBitRateAudio: Bool = false {
+    public var useConstantBitRateAudio = false {
         didSet {
             activeUserSession?.useConstantBitRateAudio = useConstantBitRateAudio
         }
     }
 
-    public var usePackagingFeatureConfig: Bool = false {
+    public var usePackagingFeatureConfig = false {
         didSet {
             activeUserSession?.usePackagingFeatureConfig = usePackagingFeatureConfig
         }

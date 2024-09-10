@@ -36,11 +36,11 @@ final class MockUserClient: NSObject, UserClientType {
 
     var fingerprint: Data?
 
-    var verified: Bool = false
+    var verified = false
 
     var user: ZMUser?
 
-    var needsToNotifyUser: Bool = false
+    var needsToNotifyUser = false
 
     var deviceClass: DeviceClass? = .phone
 

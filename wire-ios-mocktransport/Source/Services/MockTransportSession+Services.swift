@@ -163,7 +163,7 @@ extension MockTransportSession {
 
     @objc(insertServiceWithName:identifier:provider:)
     public func insertService(name: String, identifier: String, provider: String) -> MockService {
-        let mockService: MockService = MockService.insert(in: managedObjectContext)
+        let mockService = MockService.insert(in: managedObjectContext)
         mockService.name = name
         mockService.handle = ""
         mockService.accentID = 5

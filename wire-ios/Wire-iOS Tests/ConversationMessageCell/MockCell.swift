@@ -29,8 +29,8 @@ final class MockCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
-    var isConfigured: Bool = false
-    var isSelected: Bool = false
+    var isConfigured = false
+    var isSelected = false
 
     func configure(with object: Configuration, animated: Bool) {
         isConfigured = true
@@ -42,11 +42,11 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     typealias View = MockCell
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 0
-    var isFullWidth: Bool = false
-    var supportsActions: Bool = true
-    var containsHighlightableContent: Bool = true
+    var isFullWidth = false
+    var supportsActions = true
+    var containsHighlightableContent = true
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?

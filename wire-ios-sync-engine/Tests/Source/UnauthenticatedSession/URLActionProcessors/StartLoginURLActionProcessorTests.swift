@@ -20,7 +20,7 @@ import Foundation
 @testable import WireSyncEngine
 
 class StartLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStatusDelegate {
-    var isAllowedToCreateNewAccount: Bool = true
+    var isAllowedToCreateNewAccount = true
     var sut: WireSyncEngine.StartLoginURLActionProcessor!
     var authenticationStatus: ZMAuthenticationStatus!
     var delegate: MockAuthenticationStatusDelegate!

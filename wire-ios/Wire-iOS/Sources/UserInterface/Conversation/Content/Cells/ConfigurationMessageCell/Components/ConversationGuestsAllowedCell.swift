@@ -31,12 +31,12 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 16
 
-    let isFullWidth: Bool = false
-    let supportsActions: Bool = false
-    let containsHighlightableContent: Bool = false
+    let isFullWidth = false
+    let supportsActions = false
+    let containsHighlightableContent = false
 
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
@@ -68,7 +68,7 @@ final class GuestsAllowedCell: UIView, ConversationMessageCell {
     private let stackView = UIStackView()
     private let titleLabel = UILabel()
     let inviteButton = SecondaryTextButton()
-    var isSelected: Bool = false
+    var isSelected = false
 
     // MARK: initialization
 

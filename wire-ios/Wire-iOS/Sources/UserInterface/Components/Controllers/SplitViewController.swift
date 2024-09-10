@@ -95,7 +95,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
     }
 
-    var leftView: UIView = UIView(frame: UIScreen.main.bounds)
+    var leftView = UIView(frame: UIScreen.main.bounds)
     var rightView: UIView = {
         let view = PlaceholderConversationView(frame: UIScreen.main.bounds)
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -110,7 +110,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     private var sideBySideConstraint: NSLayoutConstraint!
     private var pinLeftViewOffsetConstraint: NSLayoutConstraint!
 
-    private var horizontalPanner: UIPanGestureRecognizer = UIPanGestureRecognizer()
+    private var horizontalPanner = UIPanGestureRecognizer()
 
     private var futureTraitCollection: UITraitCollection?
 

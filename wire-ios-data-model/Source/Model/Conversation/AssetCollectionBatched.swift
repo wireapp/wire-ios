@@ -38,10 +38,10 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     private var assets: [CategoryMatch: [ZMMessage]]?
     private let conversation: ZMConversation?
     private let matchingCategories: [CategoryMatch]
-    private var assetMessageOffset: Int = 0
-    private var clientMessageOffset: Int = 0
-    private var assetMessagesDone: Bool = false
-    private var clientMessagesDone: Bool = false
+    private var assetMessageOffset = 0
+    private var clientMessageOffset = 0
+    private var assetMessagesDone = false
+    private var clientMessagesDone = false
 
     enum MessagesToFetch {
         case client, asset

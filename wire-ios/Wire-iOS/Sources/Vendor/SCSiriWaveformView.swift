@@ -152,8 +152,8 @@ final class SCSiriWaveformView: UIView {
         // We draw multiple sinus waves, with equal phases but altered amplitudes, multiplied by a parable function.
         let sinConst: Float = 2 * Float.pi * frequency
 
-        let halfHeight: Float = Float(bounds.height) / 2
-        let width: Float = Float(bounds.width)
+        let halfHeight = Float(bounds.height) / 2
+        let width = Float(bounds.width)
         let maxAmplitude: Float = halfHeight - 4 // 4 corresponds to twice the stroke width
         let mid: Float = width / 2
 

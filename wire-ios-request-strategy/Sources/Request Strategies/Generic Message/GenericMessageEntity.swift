@@ -29,7 +29,7 @@ import Foundation
     public var message: GenericMessage
     public var conversation: ZMConversation?
     public var completionHandler: ((_ response: ZMTransportResponse) -> Void)?
-    public var isExpired: Bool = false
+    public var isExpired = false
     public var expirationDate: Date?
     public var expirationReasonCode: NSNumber?
 
@@ -49,7 +49,7 @@ import Foundation
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
 
-    public var shouldIgnoreTheSecurityLevelCheck: Bool = false
+    public var shouldIgnoreTheSecurityLevelCheck = false
 
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op

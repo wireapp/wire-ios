@@ -36,6 +36,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let conversationByQualifiedIDListTranscoder: ConversationByQualifiedIDListTranscoder
     let conversationByQualifiedIDListSync: IdentifierObjectSync<ConversationByQualifiedIDListTranscoder>
 
+    // swiftformat:disable:next redundantType
+    // swiftformat:disable:next redundantType
     lazy var modifiedSync: ZMUpstreamModifiedObjectSync = ZMUpstreamModifiedObjectSync(transcoder: self,
                                                                                        entityName: ZMConversation.entityName(),
                                                                                        keysToSync: keysToSync,
@@ -50,7 +52,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let updateSync: KeyPathObjectSync<ConversationRequestStrategy>
     let actionSync: EntityActionSync
 
-    var isFetchingAllConversations: Bool = false
+    var isFetchingAllConversations = false
 
     var keysToSync: [String] = [
         ZMConversationUserDefinedNameKey,
@@ -493,7 +495,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
-    var fetchLimit: Int = 1
+    var fetchLimit = 1
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -611,7 +613,7 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
 class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
 
-    var fetchLimit: Int = 1
+    var fetchLimit = 1
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -740,7 +742,7 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = UUID
 
-    var fetchLimit: Int = 32
+    var fetchLimit = 32
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder
@@ -798,7 +800,7 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     public typealias T = QualifiedID
 
-    var fetchLimit: Int = 100
+    var fetchLimit = 100
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder

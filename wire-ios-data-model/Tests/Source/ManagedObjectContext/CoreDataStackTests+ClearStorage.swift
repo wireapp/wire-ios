@@ -20,7 +20,7 @@ import Foundation
 @testable import WireDataModel
 
 class CoreDataStackTests_ClearStorage: ZMTBaseTest {
-    let account: Account = Account(userName: "", userIdentifier: UUID())
+    let account = Account(userName: "", userIdentifier: UUID())
 
     var applicationContainer: URL {
         FileManager.default

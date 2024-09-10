@@ -25,7 +25,7 @@ import UIKit
 final class EmptyViewDescription: NSObject, ValueSubmission, ViewDescriptor {
     var valueSubmitted: ValueSubmitted?
     var valueValidated: ValueValidated?
-    var acceptsInput: Bool = true
+    var acceptsInput = true
     var constraints: [NSLayoutConstraint] = []
 
     func create() -> UIView {

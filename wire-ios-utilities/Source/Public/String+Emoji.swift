@@ -25,7 +25,7 @@ extension CharacterSet {
 }
 
 extension Unicode.Scalar {
-    static let cancelTag: Unicode.Scalar = Unicode.Scalar(0xE007F)!
+    static let cancelTag = Unicode.Scalar(0xE007F)!
 
     var isEmojiComponentOrMiscSymbol: Bool {
         switch self.value {

@@ -24,7 +24,7 @@ final class SearchTextView: TokenizedTextView {
 
     private var style: SearchBarStyle?
 
-    private var isEditing: Bool = false {
+    private var isEditing = false {
         didSet {
             guard let style else {
                 return

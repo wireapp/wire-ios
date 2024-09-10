@@ -97,7 +97,7 @@ extension VoiceChannel {
 }
 
 struct CallInfoConfiguration: CallInfoViewControllerInput {
-    static let maxActiveSpeakers: Int = 4
+    static let maxActiveSpeakers = 4
 
     let permissions: CallPermissionsConfiguration
     let isConstantBitRate: Bool

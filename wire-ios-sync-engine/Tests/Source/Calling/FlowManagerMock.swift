@@ -23,10 +23,10 @@ import Foundation
 @objcMembers
 public class FlowManagerMock: NSObject, FlowManagerType {
     public var callConfigContext: UnsafeRawPointer?
-    public var callConfigHttpStatus: Int = 0
+    public var callConfigHttpStatus = 0
     public var callConfig: Data?
-    public var didReportCallConfig: Bool = false
-    public var didSetVideoCaptureDevice: Bool = false
+    public var didReportCallConfig = false
+    public var didSetVideoCaptureDevice = false
 
     override init() {
         super.init()

@@ -61,7 +61,7 @@ extension IntegrationTest {
         // this makes sure the client has remote identifier
         await context.perform { _ = self.encryptionContext(for: client) }
 
-        var hasSessionWithSelfClient: Bool = false
+        var hasSessionWithSelfClient = false
         userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
             hasSessionWithSelfClient = sessionsDirectory.hasSession(for: client.sessionIdentifier!)
         }
@@ -127,7 +127,7 @@ extension IntegrationTest {
             return (localClient, lastPrekey)
         }
 
-        var hasSessionWithLocalClient: Bool = false
+        var hasSessionWithLocalClient = false
         let syncContext = userSession!.syncContext
 
         await syncContext.perform {

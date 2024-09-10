@@ -35,7 +35,7 @@ public final class Account: NSObject, Codable {
     public var teamImageData: Data?
     public var loginCredentials: LoginCredentials?
 
-    public var unreadConversationCount: Int = 0 {
+    public var unreadConversationCount = 0 {
         didSet {
             if oldValue != self.unreadConversationCount {
                 NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()

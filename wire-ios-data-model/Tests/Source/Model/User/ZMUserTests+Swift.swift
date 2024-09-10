@@ -447,7 +447,7 @@ extension ZMUserTests_Swift {
         let user = ZMUser.insert(in: self.uiMOC, name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge")
 
         // When
-        let suffix: String = "-Jellyfish"
+        let suffix = "-Jellyfish"
         let filename = user.filename(suffix: suffix)
 
         // Then
@@ -1003,7 +1003,7 @@ extension ZMUserTests_Swift {
         let selfClient: UserClient? = selfUser.selfClient()
 
         // WHEN
-        let newClient: UserClient = UserClient.insertNewObject(in: self.uiMOC)
+        let newClient = UserClient.insertNewObject(in: self.uiMOC)
         newClient.user = selfUser
         selfClient?.ignoreClient(newClient)
 

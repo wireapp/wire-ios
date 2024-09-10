@@ -30,7 +30,7 @@ extension ZMConversation {
     @objc public static func fetchOrCreate(with remoteIdentifier: UUID,
                                            domain: String?,
                                            in context: NSManagedObjectContext) -> ZMConversation {
-        var created: Bool = false
+        var created = false
         return fetchOrCreate(with: remoteIdentifier, domain: domain, in: context, created: &created)
     }
 

@@ -119,7 +119,7 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     func testThatItNotifiesObserverWhenInitialIsSyncCompleted() {
         // given
-        var didNotify: Bool = false
+        var didNotify = false
 
         let token = NotificationInContext.addObserver(
             name: .initialSync,

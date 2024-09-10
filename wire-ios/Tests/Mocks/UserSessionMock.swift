@@ -122,13 +122,13 @@ final class UserSessionMock: UserSession {
 
     var isLocked = false
     var requiresScreenCurtain = false
-    var isAppLockActive: Bool = false
-    var isAppLockAvailable: Bool = false
-    var isAppLockForced: Bool = false
+    var isAppLockActive = false
+    var isAppLockAvailable = false
+    var isAppLockForced = false
     var appLockTimeout: UInt = 60
-    var requireCustomAppLockPasscode: Bool = false
-    var isCustomAppLockPasscodeSet: Bool = false
-    var needsToNotifyUserOfAppLockConfiguration: Bool = false
+    var requireCustomAppLockPasscode = false
+    var isCustomAppLockPasscodeSet = false
+    var needsToNotifyUserOfAppLockConfiguration = false
 
     func openAppLock() throws {
         openApp.append(())
@@ -315,9 +315,9 @@ final class UserSessionMock: UserSession {
         MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
-    var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
+    var e2eiFeature = Feature.E2EI(status: .enabled)
 
-    var mlsFeature: Feature.MLS = Feature.MLS(
+    var mlsFeature = Feature.MLS(
         status: .enabled,
         config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
     )

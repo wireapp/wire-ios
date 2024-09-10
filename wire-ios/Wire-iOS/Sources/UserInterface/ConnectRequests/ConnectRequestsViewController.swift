@@ -28,7 +28,7 @@ final class ConnectRequestsViewController: UIViewController,
 
     private var userObserverToken: Any?
     private var pendingConnectionsListObserverToken: Any?
-    private let tableView: UITableView = UITableView(frame: .zero)
+    private let tableView = UITableView(frame: .zero)
     private var lastLayoutBounds = CGRect.zero
     private var isAccepting = false
     private var isIgnoring = false

@@ -25,22 +25,22 @@ import WireDataModel
 @testable import WireSyncEngine
 
 class MockCallKitProvider: CXProvider {
-    public var timesSetDelegateCalled: Int = 0
+    public var timesSetDelegateCalled = 0
     override func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?) {
         timesSetDelegateCalled += 1
     }
 
-    public var timesReportNewIncomingCallCalled: Int = 0
+    public var timesReportNewIncomingCallCalled = 0
     override public func reportNewIncomingCall(with UUID: UUID, update: CXCallUpdate, completion: @escaping (Error?) -> Void) {
         timesReportNewIncomingCallCalled += 1
     }
 
-    public var timesReportCallUpdatedCalled: Int = 0
+    public var timesReportCallUpdatedCalled = 0
     override public func reportCall(with UUID: UUID, updated update: CXCallUpdate) {
         timesReportCallUpdatedCalled += 1
     }
 
-    public var timesReportCallEndedAtCalled: Int = 0
+    public var timesReportCallEndedAtCalled = 0
     public var lastEndedReason: CXCallEndedReason = .answeredElsewhere
     public var lastEndedDate: Date?
     override func reportCall(with UUID: UUID, endedAt dateEnded: Date?, reason endedReason: CXCallEndedReason) {
@@ -49,17 +49,17 @@ class MockCallKitProvider: CXProvider {
         lastEndedDate = dateEnded
     }
 
-    public var timesReportOutgoingCallConnectedAtCalled: Int = 0
+    public var timesReportOutgoingCallConnectedAtCalled = 0
     override func reportOutgoingCall(with UUID: UUID, connectedAt dateConnected: Date?) {
         timesReportOutgoingCallConnectedAtCalled += 1
     }
 
-    public var timesReportOutgoingCallStartedConnectingCalled: Int = 0
+    public var timesReportOutgoingCallStartedConnectingCalled = 0
     override func reportOutgoingCall(with UUID: UUID, startedConnectingAt dateStartedConnecting: Date?) {
         timesReportOutgoingCallStartedConnectingCalled += 1
     }
 
-    public var isInvalidated: Bool = false
+    public var isInvalidated = false
     override func invalidate() {
         isInvalidated = true
     }
@@ -79,8 +79,8 @@ class MockCallKitCallController: CXCallController {
     }
 
     public var mockTransactionErrorCode: CXErrorCodeRequestTransactionError?
-    public var mockErrorCount: Int = 0
-    public var timesRequestTransactionCalled: Int = 0
+    public var mockErrorCount = 0
+    public var timesRequestTransactionCalled = 0
     public var requestedTransactions: [CXTransaction] = []
     public let mockCallObserver = MockCallObserver()
 
@@ -97,8 +97,8 @@ class MockCallKitCallController: CXCallController {
 }
 
 class MockCallAnswerAction: CXAnswerCallAction {
-    var isFulfilled: Bool = false
-    var hasFailed: Bool = false
+    var isFulfilled = false
+    var hasFailed = false
 
     override func fulfill(withDateConnected dateConnected: Date) {
         isFulfilled = true
@@ -110,8 +110,8 @@ class MockCallAnswerAction: CXAnswerCallAction {
 }
 
 class MockStartCallAction: CXStartCallAction {
-    var isFulfilled: Bool = false
-    var hasFailed: Bool = false
+    var isFulfilled = false
+    var hasFailed = false
 
     override func fulfill() {
         isFulfilled = true
@@ -123,8 +123,8 @@ class MockStartCallAction: CXStartCallAction {
 }
 
 class MockEndCallAction: CXEndCallAction {
-    var isFulfilled: Bool = false
-    var hasFailed: Bool = false
+    var isFulfilled = false
+    var hasFailed = false
 
     override func fulfill() {
         isFulfilled = true
@@ -171,7 +171,7 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
         lookupConversation(by: handle, completionHandler: completionHandler)
     }
 
-    var hasEndedAllCalls: Bool = false
+    var hasEndedAllCalls = false
     func endAllCalls() {
         hasEndedAllCalls = true
     }

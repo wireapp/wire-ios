@@ -31,7 +31,7 @@ final class StartUIViewController: UIViewController {
 
     let searchHeaderViewController = SearchHeaderViewController(userSelection: UserSelection())
 
-    let groupSelector: SearchGroupSelector = SearchGroupSelector()
+    let groupSelector = SearchGroupSelector()
 
     let searchResultsViewController: SearchResultsViewController
 

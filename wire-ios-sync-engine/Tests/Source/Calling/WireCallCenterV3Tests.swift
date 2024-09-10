@@ -692,7 +692,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         // given
         // Make sure group conversation has at least 5 participants (including self)
         for _ in 0..<4 {
-            let user: ZMUser = ZMUser.insertNewObject(in: uiMOC)
+            let user = ZMUser.insertNewObject(in: uiMOC)
             user.remoteIdentifier = UUID()
             groupConversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         }

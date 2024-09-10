@@ -36,7 +36,7 @@ final class AVURLAsset_conversionTests: XCTestCase {
     func testThatVideoIsConvertedToUploadFormat() {
         // GIVEN
         let videoURL = urlForResource(inTestBundleNamed: "video.mp4")
-        let originalAsset: AVURLAsset = AVURLAsset(url: videoURL, options: nil)
+        let originalAsset = AVURLAsset(url: videoURL, options: nil)
 
         // WHEN
         let expectation = self.expectation(description: "Video converted")

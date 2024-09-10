@@ -47,13 +47,13 @@ final class MessageReactionsCellDescription: ConversationMessageCellDescription 
 
     var topMargin: Float = 0
 
-    var isFullWidth: Bool = true
+    var isFullWidth = true
 
-    var supportsActions: Bool = false
+    var supportsActions = false
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
 
-    var containsHighlightableContent: Bool = false
+    var containsHighlightableContent = false
 
     var message: WireDataModel.ZMConversationMessage?
 

@@ -29,10 +29,10 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     var actionController: ConversationMessageActionController?
 
     var topMargin: Float = 0
-    var isFullWidth: Bool = true
-    var supportsActions: Bool = false
-    var showEphemeralTimer: Bool = false
-    var containsHighlightableContent: Bool = false
+    var isFullWidth = true
+    var supportsActions = false
+    var showEphemeralTimer = false
+    var containsHighlightableContent = false
     var accessibilityIdentifier: String?
     var accessibilityLabel: String?
 

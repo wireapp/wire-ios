@@ -22,7 +22,7 @@ public struct ConversationCreationOptions {
     var participants: [ZMUser] = []
     var name: String?
     var team: Team?
-    var allowGuests: Bool = true
+    var allowGuests = true
 
     public init(participants: [ZMUser] = [], name: String? = nil, team: Team? = nil, allowGuests: Bool = true) {
         self.participants = participants

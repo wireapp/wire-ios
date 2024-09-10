@@ -36,7 +36,7 @@ enum MockZiphyRequesterError: Error {
 final class MockZiphyRequester: ZiphyURLRequester {
     private let networkQueue = DispatchQueue(label: "MockZiphyRequester.Network")
     private var completionHandler: MockZiphyRequesterCompletionHandler?
-    private var cancellations: Int = 0
+    private var cancellations = 0
 
     var response: MockZiphyResponse?
 

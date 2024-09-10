@@ -154,7 +154,7 @@ final class E2ETests: XCTestCase {
 
         // when
 
-        var resolvedURL: URL = if let version = mockData.urlVersion {
+        var resolvedURL = if let version = mockData.urlVersion {
             URL(string: "http://web.archive.org/web/\(version)/\(mockData.urlString)")!
         } else {
             URL(string: mockData.urlString)!

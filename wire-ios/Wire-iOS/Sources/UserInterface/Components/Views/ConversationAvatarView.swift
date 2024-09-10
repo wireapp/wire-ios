@@ -27,7 +27,7 @@ protocol RandomGenerator {
 /// @param data the source of random values.
 final class RandomGeneratorFromData: RandomGenerator {
     let source: Data
-    private var step: Int = 0
+    private var step = 0
 
     init(data: Data) {
         source = data
@@ -192,7 +192,7 @@ final class ConversationAvatarView: UIView {
                 backgroundColor = UIColor(white: 0, alpha: 0.16)
             }
 
-            var index: Int = 0
+            var index = 0
             for userImage in self.userImages() {
                 userImage.userSession = ZMUserSession.shared()
                 userImage.shouldDesaturate = false
@@ -244,11 +244,11 @@ final class ConversationAvatarView: UIView {
         return userImageView
     }()
 
-    lazy var imageViewRightTop: UserImageView = UserImageView()
+    lazy var imageViewRightTop = UserImageView()
 
-    lazy var imageViewLeftBottom: UserImageView = UserImageView()
+    lazy var imageViewLeftBottom = UserImageView()
 
-    lazy var imageViewRightBottom: UserImageView = UserImageView()
+    lazy var imageViewRightBottom = UserImageView()
 
     init() {
         super.init(frame: .zero)

@@ -29,7 +29,7 @@ final class TokenField: UIView {
     weak var delegate: TokenFieldDelegate?
 
     let textView = SearchTextView(style: .default)
-    let accessoryButton: IconButton = IconButton()
+    let accessoryButton = IconButton()
 
     var hasAccessoryButton = false {
         didSet {
@@ -40,7 +40,7 @@ final class TokenField: UIView {
         }
     }
 
-    private(set) var filterText: String = ""
+    private(set) var filterText = ""
 
     // MARK: - Appearance
 
@@ -69,7 +69,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenSelectedTitleColor: UIColor = UIColor(red: 0.103, green: 0.382, blue: 0.691, alpha: 1) {
+    var tokenSelectedTitleColor = UIColor(red: 0.103, green: 0.382, blue: 0.691, alpha: 1) {
         didSet {
             guard oldValue != tokenSelectedTitleColor else { return }
 
@@ -77,7 +77,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenBackgroundColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
+    var tokenBackgroundColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenBackgroundColor else { return }
 
@@ -85,7 +85,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenSelectedBackgroundColor: UIColor = UIColor.white {
+    var tokenSelectedBackgroundColor = UIColor.white {
         didSet {
             guard oldValue != tokenSelectedBackgroundColor else { return }
 
@@ -93,7 +93,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenBorderColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
+    var tokenBorderColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenBorderColor else { return }
 
@@ -101,7 +101,7 @@ final class TokenField: UIView {
         }
     }
 
-    var tokenSelectedBorderColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
+    var tokenSelectedBorderColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenSelectedBorderColor else { return }
 
@@ -147,7 +147,7 @@ final class TokenField: UIView {
     private var accessoryButtonTopMargin: NSLayoutConstraint!
     private var accessoryButtonRightMargin: NSLayoutConstraint!
 
-    private var toLabel: UILabel = UILabel()
+    private var toLabel = UILabel()
     private var toLabelLeftMargin: NSLayoutConstraint!
     private var toLabelTopMargin: NSLayoutConstraint!
 
@@ -336,7 +336,7 @@ final class TokenField: UIView {
         }
     }
 
-    var numberOfLines: Int = Int.max {
+    var numberOfLines = Int.max {
         didSet {
             if oldValue != numberOfLines {
                 invalidateIntrinsicContentSize()

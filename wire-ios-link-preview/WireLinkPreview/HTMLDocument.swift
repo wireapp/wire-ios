@@ -135,7 +135,7 @@ final class HTMLStringBuffer {
 
     /// Returns the value of the string, with unescaped HTML entities.
     func stringValue(removingEntities removeEntities: Bool) -> String {
-        let stringValue: String = switch storage {
+        let stringValue = switch storage {
         case let .retained(ptr):
             String(cString: ptr)
         case let .unowned(ptr):

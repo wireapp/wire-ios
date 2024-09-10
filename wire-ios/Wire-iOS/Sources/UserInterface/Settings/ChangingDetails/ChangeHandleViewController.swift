@@ -140,7 +140,7 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
 }
 
 enum HandleValidation {
-    static var allowedCharacters: CharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
+    static var allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
 
     static var allowedLength: CountableClosedRange<Int> {
         2...256

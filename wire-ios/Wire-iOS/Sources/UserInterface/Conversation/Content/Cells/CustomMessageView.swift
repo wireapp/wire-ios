@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 
 final class CustomMessageView: UIView {
-    var isSelected: Bool = false
+    var isSelected = false
 
     weak var delegate: ConversationMessageCellDelegate?
     weak var message: ZMConversationMessage?

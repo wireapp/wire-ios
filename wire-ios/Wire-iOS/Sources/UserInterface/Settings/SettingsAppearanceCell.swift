@@ -62,7 +62,7 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
 
     private lazy var titleLabelToIconInset: NSLayoutConstraint = titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 22)
 
-    var isAccessoryIconHidden: Bool = true {
+    var isAccessoryIconHidden = true {
         didSet {
             accessoryIconView.isHidden = isAccessoryIconHidden
         }

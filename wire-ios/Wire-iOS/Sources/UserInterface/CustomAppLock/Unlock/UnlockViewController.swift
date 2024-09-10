@@ -37,10 +37,10 @@ final class UnlockViewController: UIViewController {
     private let selfUser: UserType
     private var userSession: UserSession?
 
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let stackView = UIStackView.verticalStackView()
     private let upperStackView = UIStackView.verticalStackView()
 
-    private let contentView: UIView = UIView()
+    private let contentView = UIView()
 
     private static let errorFont = FontSpec.smallLightFont.font!
 

@@ -25,7 +25,7 @@ import WireDesign
 final class ConversationReplyContentView: UIView {
     typealias FileSharingRestrictions = L10n.Localizable.FeatureConfig.FileSharingRestrictions
     typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
-    let numberOfLinesLimit: Int = 4
+    let numberOfLinesLimit = 4
 
     struct Configuration {
         enum Content {
@@ -261,7 +261,7 @@ final class ConversationReplyContentView: UIView {
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
     typealias Configuration = ConversationReplyContentView.Configuration
-    var isSelected: Bool = false
+    var isSelected = false
 
     let contentView: ConversationReplyContentView
     var container: ReplyRoundCornersView
@@ -305,11 +305,11 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     typealias View = ConversationReplyCell
     let configuration: View.Configuration
 
-    var showEphemeralTimer: Bool = false
+    var showEphemeralTimer = false
     var topMargin: Float = 8
     let isFullWidth = false
     let supportsActions = false
-    let containsHighlightableContent: Bool = true
+    let containsHighlightableContent = true
 
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?

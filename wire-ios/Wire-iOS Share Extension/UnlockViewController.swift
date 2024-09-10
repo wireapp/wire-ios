@@ -28,8 +28,8 @@ final class UnlockViewController: UIViewController {
 
     var callback: Callback?
 
-    private let contentView: UIView = UIView()
-    private let stackView: UIStackView = UIStackView.verticalStackView()
+    private let contentView = UIView()
+    private let stackView = UIStackView.verticalStackView()
 
     private lazy var unlockButton: UIButton = {
         var button = UIButton()

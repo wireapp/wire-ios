@@ -98,7 +98,7 @@ public enum UserClientKeyStoreError: Error {
 @objc(UserClientKeysStore) @objcMembers
 open class UserClientKeysStore: NSObject {
     /// Maximum possible ID for prekey
-    public static let MaxPreKeyID: UInt16 = UInt16.max - 1
+    public static let MaxPreKeyID = UInt16.max - 1
 
     open var encryptionContext: EncryptionContext
 

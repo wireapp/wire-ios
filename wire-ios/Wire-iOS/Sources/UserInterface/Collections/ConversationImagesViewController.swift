@@ -27,9 +27,9 @@ final class ConversationImagesViewController: UIViewController {
 
     let collection: AssetCollectionWrapper
 
-    var pageViewController: UIPageViewController = UIPageViewController(transitionStyle: .scroll,
-                                                                        navigationOrientation: .horizontal,
-                                                                        options: [:])
+    var pageViewController = UIPageViewController(transitionStyle: .scroll,
+                                                  navigationOrientation: .horizontal,
+                                                  options: [:])
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
     let overlay = FeedbackOverlayView()
@@ -61,13 +61,13 @@ final class ConversationImagesViewController: UIViewController {
         }
     }
 
-    var isPreviewing: Bool = false {
+    var isPreviewing = false {
         didSet {
             updateBarsForPreview()
         }
     }
 
-    var swipeToDismiss: Bool = false {
+    var swipeToDismiss = false {
         didSet {
             if let currentController = self.currentController {
                 currentController.swipeToDismiss = self.swipeToDismiss

@@ -24,7 +24,7 @@ struct OtherUserDeviceDetailsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State private var isCertificateViewPresented: Bool = false
+    @State private var isCertificateViewPresented = false
 
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {

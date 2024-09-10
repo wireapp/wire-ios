@@ -24,7 +24,7 @@ import XCTest
 final class MockConversationRootViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
 
-    var shouldAnimateNetworkStatusView: Bool = true
+    var shouldAnimateNetworkStatusView = true
 
     var networkStatusViewController: NetworkStatusViewController!
 
@@ -36,7 +36,7 @@ final class MockConversationRootViewController: UIViewController, NetworkStatusB
 final class MockConversationListViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin: CGFloat = 0
 
-    var shouldAnimateNetworkStatusView: Bool = true
+    var shouldAnimateNetworkStatusView = true
 
     var networkStatusViewController: NetworkStatusViewController!
 

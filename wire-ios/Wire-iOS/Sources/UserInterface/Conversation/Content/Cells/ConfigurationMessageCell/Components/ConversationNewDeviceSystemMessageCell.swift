@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 
 final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-    static let userClientURL: URL = URL(string: "settings://user-client")!
+    static let userClientURL = URL(string: "settings://user-client")!
 
     var linkTarget: LinkTarget?
 

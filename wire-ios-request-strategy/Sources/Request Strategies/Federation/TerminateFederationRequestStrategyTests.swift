@@ -92,8 +92,8 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
 }
 
 class MockFederationTerminationManager: FederationTerminationManagerInterface {
-    var didCallHandleFederationTerminationWith: Bool = false
-    var didCallhandleFederationTerminationBetween: Bool = false
+    var didCallHandleFederationTerminationWith = false
+    var didCallhandleFederationTerminationBetween = false
 
     func handleFederationTerminationWith(_ domain: String) {
         didCallHandleFederationTerminationWith = true

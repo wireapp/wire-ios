@@ -85,8 +85,8 @@ class MapKeyPathTests: XCTestCase {
 
     func testSequenceKeyPath() {
         // GIVEN
-        let personWithAge: Person = Person(name: "Human", age: 20)
-        let personWithoutAge: Person = Person(name: "Bot", age: nil)
+        let personWithAge = Person(name: "Human", age: 20)
+        let personWithoutAge = Person(name: "Bot", age: nil)
 
         let alice = SocialPerson(name: "Alice", friends: ["@bob"])
         let bob = SocialPerson(name: "Bob", friends: ["@alice"])

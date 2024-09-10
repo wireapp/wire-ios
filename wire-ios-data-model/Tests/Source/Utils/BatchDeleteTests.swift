@@ -133,7 +133,7 @@ class BatchDeleteTests: ZMTBaseTest {
 
     func testThatItNotifiesAboutDelete() throws {
         class FetchRequestObserver: NSObject, NSFetchedResultsControllerDelegate {
-            var deletedCount: Int = 0
+            var deletedCount = 0
 
             public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
                                    didChange anObject: Any,

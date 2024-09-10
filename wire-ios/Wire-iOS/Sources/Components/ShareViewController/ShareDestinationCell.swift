@@ -63,7 +63,7 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
         return imageView
     }()
 
-    var allowsMultipleSelection: Bool = true {
+    var allowsMultipleSelection = true {
         didSet {
             checkImageView.isHidden = !allowsMultipleSelection
         }

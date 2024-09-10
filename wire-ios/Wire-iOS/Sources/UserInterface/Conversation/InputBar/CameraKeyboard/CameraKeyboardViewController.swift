@@ -47,9 +47,9 @@ class CameraKeyboardViewController: UIViewController {
     private var lastLayoutSize = CGSize.zero
     private let collectionViewLayout = UICollectionViewFlowLayout()
     private let sideMargin: CGFloat = 14
-    private var viewWasHidden: Bool = false
+    private var viewWasHidden = false
     private var callStateObserverToken: Any?
-    private var goBackButtonRevealed: Bool = false {
+    private var goBackButtonRevealed = false {
         didSet {
             if goBackButtonRevealed {
                 UIView.animate(withDuration: 0.35, animations: {
@@ -600,7 +600,7 @@ extension PHAsset {
             return
         }
 
-        let options: PHVideoRequestOptions = PHVideoRequestOptions()
+        let options = PHVideoRequestOptions()
         options.version = .current
         options.deliveryMode = .highQualityFormat
         options.isNetworkAccessAllowed = true

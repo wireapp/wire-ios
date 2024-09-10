@@ -55,7 +55,7 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
-    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
 
     // MARK: - Initialization
 
