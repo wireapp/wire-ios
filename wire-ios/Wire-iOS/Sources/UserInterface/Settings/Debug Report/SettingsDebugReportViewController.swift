@@ -123,11 +123,11 @@ class SettingsDebugReportViewController: UIViewController {
     // MARK: - Actions
 
     @objc private func didTapSendReport(sender: UIView) {
-        viewModel.sendReport(sender: sender)
+        Task { viewModel.sendReport(sender: sender) }
     }
 
     @objc private func didTapShareReport() {
-        viewModel.shareReport()
+        Task { await viewModel.shareReport() }
     }
 
     // MARK: - Helpers

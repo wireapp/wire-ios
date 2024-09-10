@@ -344,6 +344,7 @@
 		594211CB2C9058DF00576053 /* MovieFilePreviewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211CA2C9058DF00576053 /* MovieFilePreviewGenerator.swift */; };
 		594211CD2C90591700576053 /* PDFFilePreviewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211CC2C90591700576053 /* PDFFilePreviewGenerator.swift */; };
 		594211D02C90700200576053 /* FileMetaDataGeneratorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */; };
+		594211D32C90778E00576053 /* SettingsDebugReportViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */; };
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
 		5950467D2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
@@ -2344,6 +2345,7 @@
 		594211CA2C9058DF00576053 /* MovieFilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieFilePreviewGenerator.swift; sourceTree = "<group>"; };
 		594211CC2C90591700576053 /* PDFFilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFFilePreviewGenerator.swift; sourceTree = "<group>"; };
 		594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMetaDataGeneratorProtocol.swift; sourceTree = "<group>"; };
+		594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugReportViewModelProtocol.swift; sourceTree = "<group>"; };
 		5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusViewSnapshotTests.swift; sourceTree = "<group>"; };
 		5952693E2BE8C93B001C1E8B /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
@@ -5324,12 +5326,13 @@
 		6328BBAB2C2EFE80007A3288 /* Debug Report */ = {
 			isa = PBXGroup;
 			children = (
+				637505F12C3462F20048EF08 /* LogFilesProvider.swift */,
+				6328BBAE2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift */,
 				63A5083D2C2C17EB00A65E17 /* SettingsDebugReportViewController.swift */,
 				6328BBAC2C2EFEA2007A3288 /* SettingsDebugReportViewModel.swift */,
-				6328BBAE2C2EFEB6007A3288 /* SettingsDebugReportRouter.swift */,
+				594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */,
 				6328BBB02C2F03E8007A3288 /* ShareableDebugReport.swift */,
 				6328BBB22C2F0411007A3288 /* ShareableDebugReportView.swift */,
-				637505F12C3462F20048EF08 /* LogFilesProvider.swift */,
 			);
 			path = "Debug Report";
 			sourceTree = "<group>";
@@ -10009,6 +10012,7 @@
 				40C69D702A8627C900376B1C /* TemporaryFileService.swift in Sources */,
 				87071CC01CB68BDA0039388A /* ZMProgressView.swift in Sources */,
 				EF17B0E2223AB371006252A8 /* ConnectRequestCell.swift in Sources */,
+				594211D32C90778E00576053 /* SettingsDebugReportViewModelProtocol.swift in Sources */,
 				BFA25DC91D9A8D0B0086DEBD /* EmojiKeyboardViewController.swift in Sources */,
 				EF15A7B020BC08C000A045C7 /* ConversationContentViewController+SaveImage.swift in Sources */,
 				637505F22C3462F20048EF08 /* LogFilesProvider.swift in Sources */,

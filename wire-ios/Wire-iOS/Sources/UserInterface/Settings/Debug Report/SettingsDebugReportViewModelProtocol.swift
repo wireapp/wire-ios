@@ -16,10 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+import UIKit
 
 // sourcery: AutoMockable
-public protocol FileMetaDataGeneratorProtocol {
-    func metadataForFile(at url: URL) async -> ZMFileMetadata
+@MainActor
+protocol SettingsDebugReportViewModelProtocol {
+
+    /// Send a debug report via email or shows fallback alert if email is not available
+    func sendReport(sender: UIView)
+
+    /// Presents a list of conversation for the user to share the debug report with
+    func shareReport() async
 }

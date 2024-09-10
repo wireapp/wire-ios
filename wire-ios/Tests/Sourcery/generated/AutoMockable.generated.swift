@@ -734,21 +734,6 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
         }
     }
 
-    // MARK: - metadataForFile
-
-    public var metadataForFileAtNameCompletion_Invocations: [(url: URL, name: String, completion: (ZMFileMetadata) -> Void)] = []
-    public var metadataForFileAtNameCompletion_MockMethod: ((URL, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
-
-    public func metadataForFile(at url: URL, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        metadataForFileAtNameCompletion_Invocations.append((url: url, name: name, completion: completion))
-
-        guard let mock = metadataForFileAtNameCompletion_MockMethod else {
-            fatalError("no mock for `metadataForFileAtNameCompletion`")
-        }
-
-        mock(url, name, completion)
-    }
-
 }
 
 class MockImageTransformer: ImageTransformer {
@@ -1460,16 +1445,16 @@ class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProt
     // MARK: - shareReport
 
     var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() -> Void)?
+    var shareReport_MockMethod: (() async -> Void)?
 
-    func shareReport() {
+    func shareReport() async {
         shareReport_Invocations.append(())
 
         guard let mock = shareReport_MockMethod else {
             fatalError("no mock for `shareReport`")
         }
 
-        mock()
+        await mock()
     }
 
 }
