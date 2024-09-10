@@ -288,7 +288,7 @@ extension ConversationTests {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            let fileMetadata = ZMFileMetadata.init(fileURL: fileURL, thumbnail: nil)
+            let fileMetadata = ZMFileMetadata(fileURL: fileURL, thumbnail: nil)
             let message = try! conversation.appendFile(with: fileMetadata, nonce: messageID)
 
             // store asset data

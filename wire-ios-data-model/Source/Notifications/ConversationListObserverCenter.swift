@@ -89,7 +89,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         managedObjectContext.conversationListDirectory().deleteFolders(deletedLabels.filter({ $0.kind == .folder }))
 
         if !insertedLabels.isEmpty || !deletedLabels.isEmpty {
-            NotificationInContext.init(name: .conversationListDidChangeFolders, context: managedObjectContext.notificationContext).post()
+            NotificationInContext(name: .conversationListDidChangeFolders, context: managedObjectContext.notificationContext).post()
         }
 
         if let convChanges = changes[ZMConversation.classIdentifier] as? [ConversationChangeInfo] {
@@ -210,7 +210,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
         managedObjectContext.conversationListDirectory().refetchAllLists(in: managedObjectContext)
 
-        NotificationInContext.init(name: .conversationListsDidReload, context: managedObjectContext.notificationContext).post()
+        NotificationInContext(name: .conversationListsDidReload, context: managedObjectContext.notificationContext).post()
     }
 }
 

@@ -34,7 +34,7 @@ public class CallEventStatus: NSObject, ZMTimerClient {
         didSet {
             if callEventsWaitingToBeProcessed == 0 {
                 zmLog.debug("CallEventStatus: all events processed, starting timer")
-                eventProcessingTimer = ZMTimer.init(target: self, operationQueue: .main)
+                eventProcessingTimer = ZMTimer(target: self, operationQueue: .main)
                 eventProcessingTimer?.fire(afterTimeInterval: eventProcessingTimoutInterval)
             }
         }

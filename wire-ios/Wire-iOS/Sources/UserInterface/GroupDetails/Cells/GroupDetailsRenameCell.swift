@@ -52,7 +52,7 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
         accessoryIconView.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
 
         titleTextField.translatesAutoresizingMaskIntoConstraints = false
-        titleTextField.font = FontSpec.init(.normal, .light).font!
+        titleTextField.font = FontSpec(.normal, .light).font!
         titleTextField.returnKeyType = .done
         titleTextField.backgroundColor = .clear
         titleTextField.textInsets = UIEdgeInsets.zero

@@ -68,7 +68,7 @@ extension ZMConnection {
                 NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
             }
         } else {
-            NSPredicate(format: "to.remoteIdentifier_data == %@ AND to.domain == %@", userID.uuidData as NSData, domain ?? NSNull.init())
+            NSPredicate(format: "to.remoteIdentifier_data == %@ AND to.domain == %@", userID.uuidData as NSData, domain ?? NSNull())
         }
 
         let fetchRequest = ZMConnection.sortedFetchRequest(with: predicate)

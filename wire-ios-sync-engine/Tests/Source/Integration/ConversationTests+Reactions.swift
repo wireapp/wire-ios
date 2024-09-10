@@ -80,7 +80,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
             ZMMessage.addReaction(reactionEmoji, to: message!)
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let observer = MessageChangeObserver.init(message: message)
+        let observer = MessageChangeObserver(message: message)
         let reactionMessage = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: [reactionEmoji], messageID: message!.nonce!) as MessageCapable, nonce: UUID.create())
 
         let fromClient = self.user1.clients.anyObject() as! MockUserClient

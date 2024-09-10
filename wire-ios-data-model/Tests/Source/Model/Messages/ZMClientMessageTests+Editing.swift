@@ -128,7 +128,7 @@ extension ZMClientMessageTests_Editing {
         let message = try! conversation.appendText(content: oldText) as! ZMClientMessage
         message.sender = sender
         message.markAsSent()
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        message.serverTimestamp = Date(timeIntervalSinceNow: -20)
         let originalNonce = message.nonce
 
         XCTAssertEqual(message.visibleInConversation, conversation)
@@ -180,7 +180,7 @@ extension ZMClientMessageTests_Editing {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         let message = try! conversation.appendText(content: oldText) as! ZMClientMessage
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        message.serverTimestamp = Date(timeIntervalSinceNow: -20)
         message.linkPreviewState = ZMLinkPreviewState.done
         message.markAsSent()
 
@@ -202,7 +202,7 @@ extension ZMClientMessageTests_Editing {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         let message = try! conversation.appendText(content: oldText, mentions: [], fetchLinkPreview: fetchLinkPreview, nonce: UUID.create()) as! ZMClientMessage
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        message.serverTimestamp = Date(timeIntervalSinceNow: -20)
         message.markAsSent()
 
         XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.done)
@@ -222,7 +222,7 @@ extension ZMClientMessageTests_Editing {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         let message: ZMMessage = try! conversation.appendText(content: oldText) as! ZMMessage
-        message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        message.serverTimestamp = Date(timeIntervalSinceNow: -20)
         message.expire()
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
 
@@ -237,8 +237,8 @@ extension ZMClientMessageTests_Editing {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
-        let originalDate = Date.init(timeIntervalSinceNow: -50)
-        let updateDate: Date = Date.init(timeIntervalSinceNow: -20)
+        let originalDate = Date(timeIntervalSinceNow: -50)
+        let updateDate: Date = Date(timeIntervalSinceNow: -20)
 
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -268,7 +268,7 @@ extension ZMClientMessageTests_Editing {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
-        let originalDate = Date.init(timeIntervalSinceNow: -50)
+        let originalDate = Date(timeIntervalSinceNow: -50)
 
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -297,7 +297,7 @@ extension ZMClientMessageTests_Editing {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
-        let originalDate = Date.init(timeIntervalSinceNow: -50)
+        let originalDate = Date(timeIntervalSinceNow: -50)
 
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -499,7 +499,7 @@ extension ZMClientMessageTests_Editing {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
-        let oldDate = Date.init(timeIntervalSinceNow: -20)
+        let oldDate = Date(timeIntervalSinceNow: -20)
         let sender = ZMUser.insertNewObject(in: self.uiMOC)
         sender.remoteIdentifier = UUID.create()
 
@@ -535,7 +535,7 @@ extension ZMClientMessageTests_Editing {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
-        let oldDate = Date.init(timeIntervalSinceNow: -20)
+        let oldDate = Date(timeIntervalSinceNow: -20)
         let sender = ZMUser.insertNewObject(in: self.uiMOC)
         sender.remoteIdentifier = UUID.create()
 

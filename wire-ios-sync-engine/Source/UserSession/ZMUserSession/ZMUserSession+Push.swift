@@ -62,7 +62,7 @@ struct PushTokenMetadata {
 
     static func current(for tokenType: PushToken.TokenType) -> PushTokenMetadata {
         let appId = Bundle.main.bundleIdentifier ?? ""
-        let buildType = BuildType.init(bundleID: appId)
+        let buildType = BuildType(bundleID: appId)
 
         let isSandbox = ZMMobileProvisionParser().apsEnvironment == .sandbox
         let appIdentifier = buildType.certificateName

@@ -26,7 +26,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         super.setUp()
 
         message = try? conversation.appendText(content: "Hallo") as? ZMOTRMessage
-        message?.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
+        message?.serverTimestamp = Date(timeIntervalSinceNow: -20)
     }
 
     override func tearDown() {

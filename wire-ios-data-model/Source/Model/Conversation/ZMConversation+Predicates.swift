@@ -20,7 +20,7 @@ import Foundation
 
 extension ZMConversation {
     override open class func predicateForFilteringResults() -> NSPredicate {
-        let selfType = ZMConversationType.init(rawValue: 1)!
+        let selfType = ZMConversationType(rawValue: 1)!
         return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue) && \(#keyPath(ZMConversation.isDeletedRemotely)) == NO")
     }
 

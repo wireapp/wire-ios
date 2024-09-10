@@ -586,10 +586,10 @@ extension NotificationSession {
                 return nil
             }
 
-            note = ZMLocalNotification.init(callState: callState, conversation: conversation, caller: caller, moc: context)
+            note = ZMLocalNotification(callState: callState, conversation: conversation, caller: caller, moc: context)
 
         } else {
-            note = ZMLocalNotification.init(event: event, conversation: conversation, managedObjectContext: context)
+            note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: context)
         }
 
         note?.increaseEstimatedUnreadCount(on: conversation)

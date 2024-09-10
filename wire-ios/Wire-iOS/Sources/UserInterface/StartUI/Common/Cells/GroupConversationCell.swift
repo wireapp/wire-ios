@@ -50,11 +50,11 @@ final class GroupConversationCell: UICollectionViewCell {
 
     private func setup() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = FontSpec.init(.normal, .light).font!
+        titleLabel.font = FontSpec(.normal, .light).font!
         titleLabel.accessibilityIdentifier = "user_cell.name"
 
         subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.font = FontSpec.init(.small, .regular).font!
+        subtitleLabel.font = FontSpec(.small, .regular).font!
         subtitleLabel.accessibilityIdentifier = "user_cell.username"
 
         avatarView.translatesAutoresizingMaskIntoConstraints = false

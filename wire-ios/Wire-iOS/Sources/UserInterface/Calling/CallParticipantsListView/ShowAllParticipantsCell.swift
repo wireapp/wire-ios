@@ -74,7 +74,7 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
         // titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.font = FontSpec.init(.normal, .light).font!
+        titleLabel.font = FontSpec(.normal, .light).font!
 
         // avatarSpacer
         let avatarSpacer = UIView()

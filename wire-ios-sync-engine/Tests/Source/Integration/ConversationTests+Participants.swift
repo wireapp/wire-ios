@@ -130,7 +130,7 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         XCTAssertEqual(conversationList.items.count, 5)
 
-        let observer = ConversationListChangeObserver.init(conversationList: conversationList)
+        let observer = ConversationListChangeObserver(conversationList: conversationList)
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
@@ -143,6 +143,6 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // then
         let note1 = observer?.notifications.lastObject as! ConversationListChangeInfo
-        XCTAssertEqual(note1.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex), to: 0))
+        XCTAssertEqual(note1.zm_movedIndexPairs.first, ZMMovedIndex(from: UInt(previousIndex), to: 0))
     }
 }

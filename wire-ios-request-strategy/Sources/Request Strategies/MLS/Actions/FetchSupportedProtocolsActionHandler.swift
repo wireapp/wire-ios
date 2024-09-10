@@ -64,7 +64,7 @@ final class FetchSupportedProtocolsActionHandler: ActionHandler<FetchSupportedPr
         case 200:
             guard
                 let data = response.rawData,
-                let payload = [String].init(data)
+                let payload = [String](data)
             else {
                 action.fail(with: .invalidResponse)
                 return

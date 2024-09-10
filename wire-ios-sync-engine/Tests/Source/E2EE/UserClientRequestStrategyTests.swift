@@ -542,7 +542,7 @@ extension UserClientRequestStrategyTests {
             // given
             selfClient = UserClient.insertNewObject(in: self.sut.managedObjectContext!)
             selfClient.remoteIdentifier = UUID.create().transportString()
-            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys.init(ed25519: "key")
+            selfClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "key")
             self.sut.managedObjectContext!.saveOrRollback()
             self.clientRegistrationStatus.mockPhase = .registeringMLSClient
             self.sut.notifyChangeTrackers(selfClient)

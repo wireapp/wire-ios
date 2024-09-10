@@ -49,7 +49,7 @@ class NSUUIDType1Tests: XCTestCase {
 
     func testThatItGetsTheRightTimestamps() {
         for (string, timestamp) in NSUUIDType1Tests.sortedType1UUIDStrings {
-            let uuid = UUID.init(uuidString: string)!
+            let uuid = UUID(uuidString: string)!
             let date = Date(timeIntervalSince1970: timestamp)
 
             // the timestamps in the sample data have some rounding errors
@@ -61,9 +61,9 @@ class NSUUIDType1Tests: XCTestCase {
 
     func testThatItComparesTwoUUIDsByTime() {
         // given
-        let earlierUUID = UUID.init(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[1].0)!
-        let laterUUID = UUID.init(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[3].0)!
-        let sameUUID = UUID.init(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[1].0)!
+        let earlierUUID = UUID(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[1].0)!
+        let laterUUID = UUID(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[3].0)!
+        let sameUUID = UUID(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[1].0)!
 
         // then
         XCTAssertEqual(earlierUUID.compare(withType1UUID: laterUUID as NSUUID), ComparisonResult.orderedAscending)

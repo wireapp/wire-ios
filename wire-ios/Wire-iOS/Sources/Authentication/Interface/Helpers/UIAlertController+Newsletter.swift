@@ -82,17 +82,17 @@ extension UIAlertController {
 
 extension AuthenticationCoordinatorAlertAction {
     fileprivate static var privacyPolicy: Self {
-        Self.init(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
-                  coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])
+        Self(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
+             coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])
     }
 
     fileprivate static var decline: Self {
-        Self.init(title: L10n.Localizable.General.decline,
-                  coordinatorActions: [.setMarketingConsent(false)])
+        Self(title: L10n.Localizable.General.decline,
+             coordinatorActions: [.setMarketingConsent(false)])
     }
 
     fileprivate static var accept: Self {
-        Self.init(title: L10n.Localizable.General.accept,
-                  coordinatorActions: [.setMarketingConsent(true)])
+        Self(title: L10n.Localizable.General.accept,
+             coordinatorActions: [.setMarketingConsent(true)])
     }
 }

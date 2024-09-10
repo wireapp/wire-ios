@@ -30,7 +30,7 @@ final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
             let nonce = UUID.create()
 
             let textMessage = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-            let msg = ZMClientMessage.init(nonce: nonce, managedObjectContext: syncMOC)
+            let msg = ZMClientMessage(nonce: nonce, managedObjectContext: syncMOC)
             try msg.setUnderlyingMessage(textMessage)
 
             msg.visibleInConversation = conversation
@@ -92,7 +92,7 @@ extension ZMMessageTests_GenericMessage {
     func testThatAClientMessageHasKnockMessageData() throws {
         // given
         let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
-        let message = ZMClientMessage.init(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         try message.setUnderlyingMessage(knock)
 
         // then

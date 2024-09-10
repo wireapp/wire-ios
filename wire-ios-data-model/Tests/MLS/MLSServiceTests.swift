@@ -475,8 +475,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Given
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
-        let users = [MLSUser.init(id: UUID(), domain: "example.com"),
-                     MLSUser.init(id: UUID(), domain: "example.com")]
+        let users = [MLSUser(id: UUID(), domain: "example.com"),
+                     MLSUser(id: UUID(), domain: "example.com")]
 
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
             removal: .init(ed25519: removalKey)
@@ -532,8 +532,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let mlsSelfUser = await uiMOC.perform {
             return MLSUser(from: self.selfUser)
         }
-        let users = [MLSUser.init(id: UUID(), domain: "example.com"),
-                     MLSUser.init(id: UUID(), domain: "example.com")]
+        let users = [MLSUser(id: UUID(), domain: "example.com"),
+                     MLSUser(id: UUID(), domain: "example.com")]
         let usersIncludingSelf = users + [mlsSelfUser]
 
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
@@ -2699,7 +2699,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { _, _, _, _, _ in
-            return [KeyPackage.init(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
+            return [KeyPackage(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
         }
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in

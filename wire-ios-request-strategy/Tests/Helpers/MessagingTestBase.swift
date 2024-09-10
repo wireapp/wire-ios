@@ -301,7 +301,7 @@ extension MessagingTestBase {
             return nil
         }
 
-        let receivedMessage = try? GenericMessage.init(serializedData: plaintext)
+        let receivedMessage = try? GenericMessage(serializedData: plaintext)
         return receivedMessage
     }
 }

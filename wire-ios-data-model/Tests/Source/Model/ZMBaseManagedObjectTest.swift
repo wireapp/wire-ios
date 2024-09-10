@@ -32,7 +32,7 @@ extension ZMBaseManagedObjectTest {
 
     func createClientTextMessage(withText text: String, in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {
         let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: context ?? self.uiMOC)
+        let message = ZMClientMessage(nonce: nonce, managedObjectContext: context ?? self.uiMOC)
         let textMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
             try message.setUnderlyingMessage(textMessage)

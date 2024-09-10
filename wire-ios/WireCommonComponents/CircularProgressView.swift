@@ -130,7 +130,7 @@ public class CircularProgressView: UIView {
     }
 
     private func startSpinningAnimation() {
-        let rotate = CABasicAnimation.init(keyPath: "transform.rotation.z")
+        let rotate = CABasicAnimation(keyPath: "transform.rotation.z")
         rotate.fillMode = .forwards
         rotate.toValue = 2 * CGFloat.pi
         rotate.repeatCount = .infinity

@@ -60,8 +60,8 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
 
 extension AuthenticationCoordinatorAlertAction {
     fileprivate static var changeEmail: Self {
-        Self.init(title: AlertStrings.changeEmailAction,
-                  coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])
+        Self(title: AlertStrings.changeEmailAction,
+             coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])
     }
 
     fileprivate static func login(email: String) -> Self {
@@ -74,7 +74,7 @@ extension AuthenticationCoordinatorAlertAction {
             credentials: credentials,
             isExpired: false
         )
-        return Self.init(
+        return Self(
             title: AlertStrings.changeSigninAction,
             coordinatorActions: [.transition(.provideCredentials(prefilledCredentials), mode: .replace)]
         )

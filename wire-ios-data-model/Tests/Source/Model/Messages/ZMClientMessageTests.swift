@@ -398,7 +398,7 @@ extension ClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -460,7 +460,7 @@ extension ClientMessageTests {
 
         let selfClient = self.createSelfClient()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -501,7 +501,7 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
         let unknownSender: String = .randomClientIdentifier()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -543,7 +543,7 @@ extension ClientMessageTests {
 
         let selfClient = self.createSelfClient()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -586,7 +586,7 @@ extension ClientMessageTests {
 
         let selfClient = self.createSelfClient()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -638,7 +638,7 @@ extension ClientMessageTests {
 
         let selfClient = self.createSelfClient()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -691,7 +691,7 @@ extension ClientMessageTests {
 
         let selfClient = self.createSelfClient()
 
-        let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: .oneHour)
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation

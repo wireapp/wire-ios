@@ -184,7 +184,7 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
             userName = self.user1.name
         }
 
@@ -206,7 +206,7 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
 
@@ -335,7 +335,7 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
             userName = self.user1.name
         }
 
@@ -364,7 +364,7 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
 
@@ -408,7 +408,7 @@ final class SearchTests: IntegrationTest {
                 self.user4.removeLegacyPictures()
             }
 
-            completeProfileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
+            completeProfileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
 
@@ -443,7 +443,7 @@ final class SearchTests: IntegrationTest {
             changes.addV3ProfilePicture(to: self.user4)
             self.user4.removeLegacyPictures()
 
-            completeProfileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
+            completeProfileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
 

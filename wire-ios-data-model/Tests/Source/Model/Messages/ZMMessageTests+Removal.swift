@@ -155,7 +155,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAClientMessageIsRemovedWhenAskForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMClientMessage.init(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+            return ZMClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         }
         // then
         XCTAssertTrue(removed)

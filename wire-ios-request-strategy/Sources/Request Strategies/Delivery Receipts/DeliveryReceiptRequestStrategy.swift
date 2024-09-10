@@ -69,8 +69,8 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     }
 
     func sendDeliveryReceipt(_ deliveryReceipt: DeliveryReceipt) {
-        guard let confirmation = Confirmation.init(messageIds: deliveryReceipt.messageIDs,
-                                                   type: .delivered) else { return }
+        guard let confirmation = Confirmation(messageIds: deliveryReceipt.messageIDs,
+                                              type: .delivered) else { return }
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
         WaitingGroupTask(context: managedObjectContext) { [self] in

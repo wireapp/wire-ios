@@ -180,7 +180,7 @@ extension ZMConversation {
         guard
             URL.isFileURL,
             ZMImagePreprocessor.sizeOfPrerotatedImage(at: URL) != .zero,
-            let imageData = try? Data.init(contentsOf: URL, options: [])
+            let imageData = try? Data(contentsOf: URL, options: [])
         else {
             throw AppendMessageError.invalidImageUrl
         }
