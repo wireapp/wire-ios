@@ -104,7 +104,7 @@ extension EventDecoder {
 
         let decryptedEvents: [ZMUpdateEvent] = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return try await self.decryptAndStoreEvents(
+                try await self.decryptAndStoreEvents(
                     events,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,
@@ -112,7 +112,7 @@ extension EventDecoder {
                 )
             },
             withKeyStore: { keyStore in
-                return await self.legacyDecryptAndStoreEvents(
+                await self.legacyDecryptAndStoreEvents(
                     events,
                     startingAtIndex: lastIndex,
                     publicKeys: publicKeys,

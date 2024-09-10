@@ -39,6 +39,6 @@ extension URLSession: SessionProtocol {
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?
         ) -> Void) -> DataTaskProtocol {
-        return dataTask(with: request, completionHandler: completionHandler) as DataTaskProtocol
+        dataTask(with: request, completionHandler: completionHandler) as DataTaskProtocol
     }
 }

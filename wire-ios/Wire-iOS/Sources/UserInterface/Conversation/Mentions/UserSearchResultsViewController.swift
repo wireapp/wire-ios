@@ -59,7 +59,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private var _collectionViewSelectedIndex: Int? = .none
     private var collectionViewSelectedIndex: Int? {
         get {
-            return _collectionViewSelectedIndex
+            _collectionViewSelectedIndex
         }
         set {
             if let newValue {
@@ -252,7 +252,7 @@ extension UserSearchResultsViewController: UserList {
 
     var users: [UserType] {
         get {
-            return searchResults.reversed()
+            searchResults.reversed()
         }
 
         set {
@@ -263,17 +263,17 @@ extension UserSearchResultsViewController: UserList {
 
 extension UserSearchResultsViewController: UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return searchResults.count
+        searchResults.count
     }
 }
 
 extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: rowHeight)
+        CGSize(width: collectionView.bounds.size.width, height: rowHeight)
     }
 }
 

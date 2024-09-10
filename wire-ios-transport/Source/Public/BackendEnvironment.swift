@@ -34,27 +34,27 @@ public enum EnvironmentType: Equatable {
     var stringValue: String {
         switch self {
         case .production:
-            return "production"
+            "production"
         case .staging:
-            return "staging"
+            "staging"
         case .qaDemo:
-            return "qa-demo"
+            "qa-demo"
         case .qaDemo2:
-            return "qa-demo-2"
+            "qa-demo-2"
         case .anta:
-            return "anta"
+            "anta"
         case .bella:
-            return "bella"
+            "bella"
         case .chala:
-            return "chala"
+            "chala"
         case .diya:
-            return "diya"
+            "diya"
         case .elna:
-            return "elna"
+            "elna"
         case .foma:
-            return "foma"
+            "foma"
         case let .custom(url: url):
-            return "custom-\(url.absoluteString)"
+            "custom-\(url.absoluteString)"
         }
     }
 
@@ -159,42 +159,42 @@ public final class BackendEnvironment: NSObject {
 
 extension BackendEnvironment: BackendEnvironmentProvider {
     public var environmentType: EnvironmentTypeProvider {
-        return EnvironmentTypeProvider(environmentType: type)
+        EnvironmentTypeProvider(environmentType: type)
     }
 
     public var backendURL: URL {
-        return endpoints.backendURL
+        endpoints.backendURL
     }
 
     public var backendWSURL: URL {
-        return endpoints.backendWSURL
+        endpoints.backendWSURL
     }
 
     public var blackListURL: URL {
-        return endpoints.blackListURL
+        endpoints.blackListURL
     }
 
     public var teamsURL: URL {
-        return endpoints.teamsURL
+        endpoints.teamsURL
     }
 
     public var accountsURL: URL {
-        return endpoints.accountsURL
+        endpoints.accountsURL
     }
 
     public var websiteURL: URL {
-        return endpoints.websiteURL
+        endpoints.websiteURL
     }
 
     public var countlyURL: URL? {
-        return endpoints.countlyURL
+        endpoints.countlyURL
     }
 
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return certificateTrust.verifyServerTrust(trust: trust, host: host)
+        certificateTrust.verifyServerTrust(trust: trust, host: host)
     }
 
     public var proxy: ProxySettingsProvider? {
-        return proxySettings
+        proxySettings
     }
 }

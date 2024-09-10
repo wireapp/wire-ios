@@ -72,7 +72,7 @@ final class CollectionLinkCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .link
+        .link
     }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {

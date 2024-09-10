@@ -59,15 +59,15 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return downstreamSync.nextRequest(for: apiVersion)
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 
     static let requestPath = "/conversations"

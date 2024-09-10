@@ -81,7 +81,7 @@ extension NSManagedObjectContext {
     /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
 
     func findDuplicated<T: ZMManagedObject, ValueForKey>(by keyPath: String) -> [ValueForKey: [T]] {
-        return findDuplicated(entityName: T.entityName(), by: keyPath)
+        findDuplicated(entityName: T.entityName(), by: keyPath)
     }
 
     /// Locates the entities of type `T` that have the same value for `keyPath`.

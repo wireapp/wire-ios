@@ -128,19 +128,19 @@ extension ZMUpdateEvent {
     public func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
         if let qualifiedUserIDs {
             if createIfNeeded {
-                return qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,
-                                                                   domain: $0.domain,
-                                                                   in: context) }
+                qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,
+                                                            domain: $0.domain,
+                                                            in: context) }
             } else {
-                return qualifiedUserIDs.compactMap { ZMUser.fetch(with: $0.uuid,
-                                                                  domain: $0.domain,
-                                                                  in: context) }
+                qualifiedUserIDs.compactMap { ZMUser.fetch(with: $0.uuid,
+                                                           domain: $0.domain,
+                                                           in: context) }
             }
         } else {
             if createIfNeeded {
-                return userIDs.map { ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }
+                userIDs.map { ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }
             } else {
-                return userIDs.compactMap { ZMUser.fetch(with: $0, domain: nil, in: context) }
+                userIDs.compactMap { ZMUser.fetch(with: $0, domain: nil, in: context) }
             }
         }
     }

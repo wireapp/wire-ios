@@ -60,7 +60,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     // MARK: - Methods
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return nextRequest(for: apiVersion)
+        nextRequest(for: apiVersion)
     }
 
     override public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -75,7 +75,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     }
 
     public var isFetchingStreamForAPNS: Bool {
-        return self.pushNotificationStatus.hasEventsToFetch
+        self.pushNotificationStatus.hasEventsToFetch
     }
 }
 

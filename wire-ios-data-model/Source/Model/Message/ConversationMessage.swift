@@ -189,19 +189,19 @@ extension ZMConversationMessage {
 extension Equatable where Self: ZMConversationMessage {}
 
 public func == (lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
-    return lhs.isEqual(rhs)
+    lhs.isEqual(rhs)
 }
 
 public func == (lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Bool {
     switch (lhs, rhs) {
     case (nil, nil):
-        return true
+        true
     case (_, nil):
-        return false
+        false
     case (nil, _):
-        return false
+        false
     case (_, _):
-        return lhs!.isEqual(rhs!)
+        lhs!.isEqual(rhs!)
     }
 }
 
@@ -212,7 +212,7 @@ extension ZMMessage {
     @NSManaged public var hiddenInConversation: ZMConversation?
 
     public var conversation: ZMConversation? {
-        return self.visibleInConversation ?? self.hiddenInConversation
+        self.visibleInConversation ?? self.hiddenInConversation
     }
 }
 
@@ -220,11 +220,11 @@ extension ZMMessage {
 
 extension ZMMessage: ZMConversationMessage {
     public var conversationLike: ConversationLike? {
-        return conversation
+        conversation
     }
 
     public var senderUser: UserType? {
-        return sender
+        sender
     }
 
     @NSManaged public var linkAttachments: [LinkAttachment]?
@@ -238,11 +238,11 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var objectIdentifier: String {
-        return nonpersistedObjectIdentifer
+        nonpersistedObjectIdentifer
     }
 
     public var causedSecurityLevelDegradation: Bool {
-        return false
+        false
     }
 
     public var canBeMarkedUnread: Bool {
@@ -283,7 +283,7 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var isSilenced: Bool {
-        return conversation?.isMessageSilenced(nil, senderID: sender?.remoteIdentifier) ?? true
+        conversation?.isMessageSilenced(nil, senderID: sender?.remoteIdentifier) ?? true
     }
 
     public var isRestricted: Bool {
@@ -304,35 +304,35 @@ extension ZMMessage {
     @NSManaged public var serverTimestamp: Date?
 
     @objc public var textMessageData: TextMessageData? {
-        return nil
+        nil
     }
 
     @objc public var imageMessageData: ZMImageMessageData? {
-        return nil
+        nil
     }
 
     @objc public var knockMessageData: ZMKnockMessageData? {
-        return nil
+        nil
     }
 
     @objc public var systemMessageData: ZMSystemMessageData? {
-        return nil
+        nil
     }
 
     @objc public var fileMessageData: ZMFileMessageData? {
-        return nil
+        nil
     }
 
     @objc public var locationMessageData: LocationMessageData? {
-        return nil
+        nil
     }
 
     @objc public var isSent: Bool {
-        return true
+        true
     }
 
     @objc public var deliveryState: ZMDeliveryState {
-        return .delivered
+        .delivered
     }
 
     @objc public var reactionData: Set<ReactionData> {
@@ -350,27 +350,27 @@ extension ZMMessage {
     }
 
     @objc public var usersReaction: [String: [UserType]] {
-        return Array(reactionData)
+        Array(reactionData)
             .partition(by: \.reactionString)
             .mapValues { $0.flatMap(\.users) }
     }
 
     @objc public func reactionsSortedByCreationDate() -> [ReactionData] {
-        return self.reactionData.sorted {
-            return $0.creationDate < $1.creationDate
+        self.reactionData.sorted {
+            $0.creationDate < $1.creationDate
         }
     }
 
     @objc public var canBeDeleted: Bool {
-        return deliveryState != .pending
+        deliveryState != .pending
     }
 
     @objc public var hasBeenDeleted: Bool {
-        return isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
+        isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
     }
 
     @objc public var updatedAt: Date? {
-        return nil
+        nil
     }
 
     @objc public func startSelfDestructionIfNeeded() -> Bool {
@@ -381,11 +381,11 @@ extension ZMMessage {
     }
 
     @objc public var isEphemeral: Bool {
-        return false
+        false
     }
 
     @objc public var deletionTimeout: TimeInterval {
-        return -1
+        -1
     }
 }
 

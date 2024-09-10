@@ -25,7 +25,7 @@ class RemovePushTokenActionHandlerTests: MessagingTestBase {
     let deviceToken = "deviceToken"
 
     func responseWithStatus(_ status: Int) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: nil,
             httpStatus: status,
             transportSessionError: nil,

@@ -39,13 +39,13 @@ class AvatarImageView: UIView {
 
     /// The font to use of the initials label.
     var initialsFont: UIFont {
-        get { return initialsLabel.font }
+        get { initialsLabel.font }
         set { initialsLabel.font = newValue }
     }
 
     /// The color to use for the initials label.
     var initialsColor: UIColor {
-        get { return initialsLabel.textColor }
+        get { initialsLabel.textColor }
         set { initialsLabel.textColor = newValue }
     }
 

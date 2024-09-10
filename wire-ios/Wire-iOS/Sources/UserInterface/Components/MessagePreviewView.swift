@@ -32,9 +32,9 @@ extension ZMConversationMessage {
 
     func preparePreviewView(shouldDisplaySender: Bool = true) -> UIView {
         if self.isImage || self.isVideo {
-            return MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
+            MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
         } else {
-            return MessagePreviewView(message: self, displaySender: shouldDisplaySender)
+            MessagePreviewView(message: self, displaySender: shouldDisplaySender)
         }
     }
 }
@@ -145,7 +145,7 @@ final class MessageThumbnailPreviewView: UIView {
 
     private func editIcon() -> NSAttributedString {
         if message.updatedAt != nil {
-            return NSAttributedString(
+            NSAttributedString(
                 attachment: NSTextAttachment.textAttachment(
                     for: .pencil,
                     with: iconColor,
@@ -159,7 +159,7 @@ final class MessageThumbnailPreviewView: UIView {
                 )
             )
         } else {
-            return NSAttributedString()
+            NSAttributedString()
         }
     }
 
@@ -283,7 +283,7 @@ final class MessagePreviewView: UIView {
 
     private func editIcon() -> NSAttributedString {
         if message.updatedAt != nil {
-            return NSAttributedString(
+            NSAttributedString(
                 attachment: NSTextAttachment.textAttachment(
                     for: .pencil,
                     with: iconColor,
@@ -297,7 +297,7 @@ final class MessagePreviewView: UIView {
                 )
             )
         } else {
-            return NSAttributedString()
+            NSAttributedString()
         }
     }
 

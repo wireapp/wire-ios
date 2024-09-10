@@ -110,11 +110,11 @@ extension ZMUser {
     var mutedMessagesTypes: MutedMessageTypes {
         switch availability {
         case .available, .none:
-            return .none
+            .none
         case .busy:
-            return .regular
+            .regular
         case .away:
-            return .all
+            .all
         }
     }
 }

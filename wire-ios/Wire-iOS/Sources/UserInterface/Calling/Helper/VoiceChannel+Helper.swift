@@ -34,6 +34,6 @@ extension VoiceChannel {
     }
 
     var isGroupCall: Bool {
-        return conversation?.conversationType == .group
+        conversation?.conversationType == .group
     }
 }

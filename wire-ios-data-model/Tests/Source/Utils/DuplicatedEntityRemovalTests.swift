@@ -69,7 +69,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
     }
 
     func messages(conversation: ZMConversation) -> [ZMMessage] {
-        return (0..<5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
+        (0..<5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
     }
 }
 
@@ -122,6 +122,6 @@ extension DuplicatedEntityRemovalTests {
 
 extension Array where Element: ZMManagedObject {
     fileprivate var nonZombies: [Element] {
-        return self.filter { !($0.isZombieObject || $0.isDeleted) }
+        self.filter { !($0.isZombieObject || $0.isDeleted) }
     }
 }

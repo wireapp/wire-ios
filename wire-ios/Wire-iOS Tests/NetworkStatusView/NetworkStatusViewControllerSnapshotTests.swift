@@ -25,7 +25,7 @@ final class MockContainerViewController: UIViewController, NetworkStatusBarDeleg
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
     func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
-        return true
+        true
     }
 
     var shouldAnimateNetworkStatusView: Bool = true

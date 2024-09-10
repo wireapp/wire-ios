@@ -33,11 +33,11 @@ final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
     }
 
     override func location(in view: UIView?) -> CGPoint {
-        return mockLocation ?? super.location(in: view)
+        mockLocation ?? super.location(in: view)
     }
 
     override var view: UIView? {
-        return mockView ?? super.view
+        mockView ?? super.view
     }
 
     override var state: UIGestureRecognizer.State {

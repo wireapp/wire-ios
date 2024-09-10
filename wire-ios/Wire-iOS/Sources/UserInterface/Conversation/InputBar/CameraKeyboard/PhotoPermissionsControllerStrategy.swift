@@ -25,23 +25,23 @@ final class PhotoPermissionsControllerStrategy: PhotoPermissionsController {
 
     var isCameraAuthorized: Bool {
         switch AVCaptureDevice.authorizationStatus(for: AVMediaType.video) {
-        case .authorized: return true
-        default: return false
+        case .authorized: true
+        default: false
         }
     }
 
     var isPhotoLibraryAuthorized: Bool {
         switch PHPhotoLibrary.authorizationStatus() {
-        case .authorized: return true
-        default: return false
+        case .authorized: true
+        default: false
         }
     }
 
     var areCameraOrPhotoLibraryAuthorized: Bool {
-        return isCameraAuthorized || isPhotoLibraryAuthorized
+        isCameraAuthorized || isPhotoLibraryAuthorized
     }
 
     var areCameraAndPhotoLibraryAuthorized: Bool {
-        return isCameraAuthorized && isPhotoLibraryAuthorized
+        isCameraAuthorized && isPhotoLibraryAuthorized
     }
 }

@@ -57,7 +57,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
     }
 
     var accountDirectory: URL {
-        return FileManager.default
+        FileManager.default
             .temporaryDirectory
             .appendingPathComponent("CryptoBoxMigrationManagerTests")
     }

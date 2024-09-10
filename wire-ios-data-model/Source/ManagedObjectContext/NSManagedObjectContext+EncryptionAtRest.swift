@@ -66,9 +66,9 @@ extension NSManagedObjectContext {
         var errorDescription: String? {
             switch self {
             case .missingDatabaseKey:
-                return "A database key is required to migrate."
+                "A database key is required to migrate."
             case let .failedToMigrateInstances(type, reason):
-                return "Failed to migrate all instances of \(type). Reason: \(reason)"
+                "Failed to migrate all instances of \(type). Reason: \(reason)"
             }
         }
     }
@@ -196,13 +196,13 @@ extension NSManagedObjectContext {
         var errorDescription: String? {
             switch self {
             case .missingDatabaseKey:
-                return "Database key not found. Perhaps the database is locked."
+                "Database key not found. Perhaps the database is locked."
 
             case .missingContextData:
-                return "Couldn't obtain context data."
+                "Couldn't obtain context data."
 
             case let .cryptobox(error):
-                return error.errorDescription
+                error.errorDescription
             }
         }
     }

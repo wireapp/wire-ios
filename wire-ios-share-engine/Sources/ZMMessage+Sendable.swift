@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ZMMessage {
     private var reportsProgress: Bool {
-        return fileMessageData != nil || imageMessageData != nil
+        fileMessageData != nil || imageMessageData != nil
     }
 }
 

@@ -23,7 +23,7 @@ extension Notification {
         for (key, value) in info {
             guard let set = value as? NSSet else { continue }
             changes[key] = set.compactMap {
-                return ($0 as? NSManagedObject)?.objectID.uriRepresentation()
+                ($0 as? NSManagedObject)?.objectID.uriRepresentation()
             } as AnyObject
         }
 
@@ -41,7 +41,7 @@ extension Notification {
     }
 
     @discardableResult public func add(_ note: Notification) -> Bool {
-        return objectStore.store(note.contextDidSaveData)
+        objectStore.store(note.contextDidSaveData)
     }
 
     public func clear() {
@@ -49,7 +49,7 @@ extension Notification {
     }
 
     public var storedNotifications: [[AnyHashable: AnyObject]] {
-        return objectStore.load()
+        objectStore.load()
     }
 }
 
@@ -73,7 +73,7 @@ extension Notification {
     }
 
     public func dictionaryRepresentation() -> [String: Any] {
-        return [
+        [
             StorableTrackingEvent.eventNameKey: name,
             StorableTrackingEvent.eventAttributesKey: attributes
         ]
@@ -88,7 +88,7 @@ extension Notification {
     }
 
     @discardableResult public func add(_ storableEvent: StorableTrackingEvent) -> Bool {
-        return objectStore.store(storableEvent.dictionaryRepresentation())
+        objectStore.store(storableEvent.dictionaryRepresentation())
     }
 
     public func clear() {
@@ -96,7 +96,7 @@ extension Notification {
     }
 
     public var storedTrackingEvents: [StorableTrackingEvent] {
-        return objectStore.load().compactMap(StorableTrackingEvent.init)
+        objectStore.load().compactMap(StorableTrackingEvent.init)
     }
 }
 

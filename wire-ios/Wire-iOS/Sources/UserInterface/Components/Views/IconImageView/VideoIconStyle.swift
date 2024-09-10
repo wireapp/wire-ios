@@ -29,20 +29,20 @@ enum VideoIconStyle: String, IconImageStyle {
     var icon: StyleKitIcon? {
         switch self {
         case .hidden:
-            return .none
+            .none
         case .screenshare:
-            return .screenshare
+            .screenshare
         case .video:
-            return .camera
+            .camera
         }
     }
 
     var accessibilitySuffix: String {
-        return rawValue
+        rawValue
     }
 
     var accessibilityLabel: String {
-        return rawValue
+        rawValue
     }
 }
 

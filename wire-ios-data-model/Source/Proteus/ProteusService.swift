@@ -126,13 +126,13 @@ public final class ProteusService: ProteusServiceInterface {
         static func == (lhs: ProteusService.EncryptionError, rhs: ProteusService.EncryptionError) -> Bool {
             switch (lhs, rhs) {
             case let (failedToEncryptData(lhsError), failedToEncryptData(rhsError)):
-                return lhsError as NSError == rhsError as NSError
+                lhsError as NSError == rhsError as NSError
 
             case let (failedToEncryptDataBatch(lhsError), failedToEncryptDataBatch(rhsError)):
-                return lhsError as NSError == rhsError as NSError
+                lhsError as NSError == rhsError as NSError
 
             default:
-                return false
+                false
             }
         }
     }
@@ -186,10 +186,10 @@ public final class ProteusService: ProteusServiceInterface {
         public var proteusError: ProteusError {
             switch self {
             case let .failedToDecryptData(proteusError):
-                return proteusError
+                proteusError
 
             case let .failedToEstablishSessionFromMessage(proteusError):
-                return proteusError
+                proteusError
             }
         }
     }
@@ -349,6 +349,6 @@ public final class ProteusService: ProteusServiceInterface {
 
 extension CoreCryptoProtocol {
     fileprivate var lastProteusError: ProteusError {
-        return ProteusError(proteusCode: proteusLastErrorCode())
+        ProteusError(proteusCode: proteusLastErrorCode())
     }
 }

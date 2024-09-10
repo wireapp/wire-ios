@@ -27,13 +27,13 @@ final class DeviceConfigurationEventHandler: AuthenticationEventHandler {
         switch currentStep {
         case .configureDevice, .deleteClient:
             if statusProvider?.sharedUserSession?.hasCompletedInitialSync == true {
-                return [.hideLoadingView, .completeLoginFlow]
+                [.hideLoadingView, .completeLoginFlow]
             } else {
-                return [.transition(.pendingInitialSync, mode: .normal)]
+                [.transition(.pendingInitialSync, mode: .normal)]
             }
 
         default:
-            return nil
+            nil
         }
     }
 }

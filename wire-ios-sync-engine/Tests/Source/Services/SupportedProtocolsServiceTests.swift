@@ -94,7 +94,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     }
 
     private func randomMLSPublicKeys() -> UserClient.MLSPublicKeys {
-        return UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
+        UserClient.MLSPublicKeys(ed25519: Data.random().base64EncodedString())
     }
 
     private func mock(remoteSupportedProtocols: Set<Feature.MLS.Config.MessageProtocol>) {

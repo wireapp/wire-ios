@@ -21,13 +21,13 @@ import Foundation
 extension ZMMessage {
     @objc(usersFromUpdateEvent:context:)
     static func users(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> [ZMUser] {
-        return updateEvent.users(in: context, createIfNeeded: true)
+        updateEvent.users(in: context, createIfNeeded: true)
     }
 }
 
 extension ZMMessage {
     var isSenderInConversation: Bool {
-        return conversation?.has(participantWithId: sender?.userId) ?? false
+        conversation?.has(participantWithId: sender?.userId) ?? false
     }
 }
 

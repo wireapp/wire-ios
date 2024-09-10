@@ -26,9 +26,9 @@ extension UIViewController {
         case (.pad, .regular),
              // Notice: for iPad with iOS9 in landscape mode, horizontalSizeClass is .unspecified (it is .regular in iOS11).
              (.pad, .unspecified):
-            return .all
+            .all
         default:
-            return .portrait
+            .portrait
         }
     }
 }

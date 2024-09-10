@@ -41,7 +41,7 @@ import WireDataModel
         case savesPerformed
 
         var identifier: String {
-            return "event_" + rawValue
+            "event_" + rawValue
         }
     }
 
@@ -109,7 +109,7 @@ import WireDataModel
     }
 
     public func persistedAttributes(for event: String) -> [String: NSObject] {
-        return eventAttributes[event] ?? [:]
+        eventAttributes[event] ?? [:]
     }
 
     override public var debugDescription: String {

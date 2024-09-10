@@ -25,7 +25,7 @@ extension ZMUser: UserType {
     @objc
     public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
-        return nil != team || nil != teamIdentifier
+        nil != team || nil != teamIdentifier
     }
 
     /// Whether all user's devices are verified by the selfUser
@@ -38,11 +38,11 @@ extension ZMUser: UserType {
     }
 
     public func isGuest(in conversation: ConversationLike) -> Bool {
-        return _isGuest(in: conversation)
+        _isGuest(in: conversation)
     }
 
     public var teamName: String? {
-        return team?.name
+        team?.name
     }
 
     public var hasDigitalSignatureEnabled: Bool {
@@ -62,15 +62,15 @@ extension ZMUser: UserType {
     }
 
     public var previewImageData: Data? {
-        return imageSmallProfileData
+        imageSmallProfileData
     }
 
     public var completeImageData: Data? {
-        return imageMediumData
+        imageMediumData
     }
 
     public var activeConversations: Set<ZMConversation> {
-        return Set(self.participantRoles.compactMap(\.conversation))
+        Set(self.participantRoles.compactMap(\.conversation))
     }
 
     public var isVerified: Bool {
@@ -103,29 +103,29 @@ extension ZMUser: UserType {
     }
 
     public func isGroupAdmin(in conversation: ConversationLike) -> Bool {
-        return role(in: conversation)?.name == ZMConversation.defaultAdminRoleName
+        role(in: conversation)?.name == ZMConversation.defaultAdminRoleName
     }
 
     public func role(in conversation: ConversationLike) -> Role? {
-        return participantRole(in: conversation)?.role
+        participantRole(in: conversation)?.role
     }
 
     public func participantRole(in conversation: ConversationLike) -> ParticipantRole? {
-        return participantRoles.first { $0.conversation === conversation }
+        participantRoles.first { $0.conversation === conversation }
     }
 
     // MARK: Legal Hold
 
     @objc public var isUnderLegalHold: Bool {
-        return clients.any(\.isLegalHoldDevice)
+        clients.any(\.isLegalHoldDevice)
     }
 
     @objc class func keyPathsForValuesAffectingIsUnderLegalHold() -> Set<String> {
-        return [UserClientsKey, "clients.deviceClass"]
+        [UserClientsKey, "clients.deviceClass"]
     }
 
     public var allClients: [UserClientType] {
-        return Array(clients)
+        Array(clients)
     }
 
     // MARK: - Data refresh requests
@@ -174,7 +174,7 @@ public struct AssetKey {
     let stringValue: String
 
     fileprivate static func validate(string: String) -> Bool {
-        return CharacterSet(charactersIn: string).isSubset(of: legalCharacterSet)
+        CharacterSet(charactersIn: string).isSubset(of: legalCharacterSet)
     }
 }
 
@@ -185,9 +185,9 @@ public struct AssetKey {
     public var imageFormat: ZMImageFormat {
         switch self {
         case .preview:
-            return .profile
+            .profile
         case .complete:
-            return .medium
+            .medium
         }
     }
 
@@ -201,13 +201,13 @@ public struct AssetKey {
 
     var stringValue: String {
         switch self {
-        case .preview: return "preview"
-        case .complete: return "complete"
+        case .preview: "preview"
+        case .complete: "complete"
         }
     }
 
     public static var allSizes: [ProfileImageSize] {
-        return [.preview, .complete]
+        [.preview, .complete]
     }
 }
 
@@ -215,9 +215,9 @@ extension ProfileImageSize: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .preview:
-            return "ProfileImageSize.preview"
+            "ProfileImageSize.preview"
         case .complete:
-            return "ProfileImageSize.complete"
+            "ProfileImageSize.complete"
         }
     }
 }
@@ -459,7 +459,7 @@ extension NSManagedObject: SafeForLoggingStringConvertible {
 extension ZMUser {
     /// The initials e.g. "JS" for "John Smith"
     @objc public var initials: String? {
-        return PersonName.person(withName: self.name ?? "", schemeTagger: nil).initials
+        PersonName.person(withName: self.name ?? "", schemeTagger: nil).initials
     }
 }
 

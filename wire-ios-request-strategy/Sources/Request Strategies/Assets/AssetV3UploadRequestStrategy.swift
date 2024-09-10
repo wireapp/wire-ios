@@ -45,19 +45,19 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [preprocessor, upstreamSync, self]
+        [preprocessor, upstreamSync, self]
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return upstreamSync.nextRequest(for: apiVersion)
+        upstreamSync.nextRequest(for: apiVersion)
     }
 
     private static var updatePredicate: NSPredicate {
-        return NSPredicate(format: "version >= 3 && delivered == NO && transferState == \(AssetTransferState.uploading.rawValue)")
+        NSPredicate(format: "version >= 3 && delivered == NO && transferState == \(AssetTransferState.uploading.rawValue)")
     }
 
     private static var filterPredicate: NSPredicate {
-        return NSPredicate(format: "processingState == \(AssetProcessingState.uploading.rawValue)")
+        NSPredicate(format: "processingState == \(AssetProcessingState.uploading.rawValue)")
     }
 }
 
@@ -78,7 +78,7 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return nil
+        nil
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -94,11 +94,11 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
 
 extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
-        return nil // no-op
+        nil // no-op
     }
 
     public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
-        return (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
+        (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
     }
 
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
@@ -223,14 +223,13 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
         message.expire()
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
-        return
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
+        nil
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        false
     }
 }

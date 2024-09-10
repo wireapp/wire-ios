@@ -26,15 +26,15 @@ extension AnyConversationMessageCellDescription: Differentiable {
     typealias DifferenceIdentifier = String
 
     var differenceIdentifier: String {
-        return message!.objectIdentifier + String(describing: baseType)
+        message!.objectIdentifier + String(describing: baseType)
     }
 
     override var debugDescription: String {
-        return differenceIdentifier
+        differenceIdentifier
     }
 
     func isContentEqual(to source: AnyConversationMessageCellDescription) -> Bool {
-        return isConfigurationEqual(with: source)
+        isConfigurationEqual(with: source)
     }
 }
 
@@ -92,9 +92,9 @@ final class ConversationTableViewDataSource: NSObject {
         // we want when new message arrive but not when fetchOffset > 0.
 
         if let fetchOffset = fetchController?.fetchRequest.fetchOffset, fetchOffset > 0 {
-            return Array(fetchController?.fetchedObjects?.suffix(lastFetchedObjectCount) ?? [])
+            Array(fetchController?.fetchedObjects?.suffix(lastFetchedObjectCount) ?? [])
         } else {
-            return fetchController?.fetchedObjects ?? []
+            fetchController?.fetchedObjects ?? []
         }
     }
 
@@ -107,7 +107,7 @@ final class ConversationTableViewDataSource: NSObject {
     /// - Returns: arraySection of cell desctiptions
     @discardableResult
     func calculateSections(forceRecalculate: Bool = false) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
-        return messages.enumerated().map { tuple in
+        messages.enumerated().map { tuple in
             let sectionIdentifier = tuple.element.objectIdentifier
             let context = self.context(for: tuple.element, at: tuple.offset, firstUnreadMessage: firstUnreadMessage, searchQueries: searchQueries)
             let sectionController = self.sectionController(for: tuple.element, at: tuple.offset)
@@ -161,7 +161,7 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     func section(for message: ZMConversationMessage) -> Int? {
-        return currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
+        currentSections.firstIndex(where: { $0.model == message.objectIdentifier })
     }
 
     func actionController(for message: ZMConversationMessage) -> ConversationMessageActionController {
@@ -289,9 +289,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     func index(of message: ZMConversationMessage) -> Int? {
         if let indexPath = fetchController?.indexPath(forObject: message as! ZMMessage) {
-            return indexPath.row
+            indexPath.row
         } else {
-            return nil
+            nil
         }
     }
 
@@ -390,7 +390,7 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 
 extension ConversationTableViewDataSource: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return currentSections.count
+        currentSections.count
     }
 
     func select(indexPath: IndexPath) {

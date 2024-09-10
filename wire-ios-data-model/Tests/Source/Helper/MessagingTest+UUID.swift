@@ -21,6 +21,6 @@ import WireTesting
 
 extension Data {
     public static func secureRandomData(ofLength length: UInt) -> Data {
-        return NSData.secureRandomData(ofLength: length)!
+        NSData.secureRandomData(ofLength: length)!
     }
 }

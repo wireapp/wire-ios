@@ -66,15 +66,15 @@ public class AssetCollection: NSObject, ZMCollection {
     }
 
     public var fetchingDone: Bool {
-        return doneFetchingTexts && doneFetchingAssets
+        doneFetchingTexts && doneFetchingAssets
     }
 
     private var syncMOC: NSManagedObjectContext? {
-        return conversation?.managedObjectContext?.zm_sync
+        conversation?.managedObjectContext?.zm_sync
     }
 
     private var uiMOC: NSManagedObjectContext? {
-        return conversation?.managedObjectContext
+        conversation?.managedObjectContext
     }
 
     /// Returns a collection that automatically fetches the assets in batches

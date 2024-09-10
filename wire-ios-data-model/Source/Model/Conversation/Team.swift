@@ -58,15 +58,15 @@ public class Team: ZMManagedObject, TeamType {
     }
 
     override public static func entityName() -> String {
-        return "Team"
+        "Team"
     }
 
     override public static func sortKey() -> String {
-        return #keyPath(Team.name)
+        #keyPath(Team.name)
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     @objc(fetchOrCreateTeamWithRemoteIdentifier:inContext:)

@@ -21,18 +21,18 @@ import Foundation
 
 class BaseCompositeMessageTests: BaseZMMessageTests {
     func compositeItemButton(buttonID: String = "1") -> Composite.Item {
-        return Composite.Item.with { $0.button = Button.with {
+        Composite.Item.with { $0.button = Button.with {
             $0.text = "Button text"
             $0.id = buttonID
         }}
     }
 
     func compositeItemText() -> Composite.Item {
-        return Composite.Item.with { $0.text = Text.with { $0.content = "Text" } }
+        Composite.Item.with { $0.text = Text.with { $0.content = "Text" } }
     }
 
     func compositeProto(items: Composite.Item...) -> Composite {
-        return Composite.with { $0.items = items }
+        Composite.with { $0.items = items }
     }
 
     func compositeMessage(with proto: Composite, nonce: UUID = UUID()) -> ZMClientMessage {

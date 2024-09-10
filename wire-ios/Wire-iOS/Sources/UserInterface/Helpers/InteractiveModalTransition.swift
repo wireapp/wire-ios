@@ -93,11 +93,11 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return viewController
+        viewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return viewController
+        viewController
     }
 
     private func setupViews(with viewController: UIViewController, enableDismissOnPan: Bool) {
@@ -136,14 +136,14 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     }
 
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return nil
+        nil
     }
 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return nil
+        nil
     }
 
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return interactionController.interactionInProgress ? interactionController : nil
+        interactionController.interactionInProgress ? interactionController : nil
     }
 }

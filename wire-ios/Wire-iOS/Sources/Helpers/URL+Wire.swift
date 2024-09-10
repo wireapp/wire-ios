@@ -30,8 +30,8 @@ enum TeamSource: Int {
 
     var parameterValue: String {
         switch self {
-        case .onboarding: return "client_landing"
-        case .settings: return "client_settings"
+        case .onboarding: "client_landing"
+        case .settings: "client_settings"
         }
     }
 }

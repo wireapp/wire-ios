@@ -32,14 +32,14 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
     var notificationCenter: UserNotificationCenterMock!
 
     var scheduledRequests: [UNNotificationRequest] {
-        return self.notificationCenter.scheduledRequests
+        self.notificationCenter.scheduledRequests
     }
 
     var user1: ZMUser!
     var user2: ZMUser!
 
     var selfUser: ZMUser {
-        return ZMUser.selfUser(in: self.syncMOC)
+        ZMUser.selfUser(in: self.syncMOC)
     }
 
     override func setUp() {
@@ -491,7 +491,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func payloadForOTRAsset(with message: GenericMessage) -> [String: Any] {
-        return [
+        [
             "data": [
                 "info": try? message.serializedData().base64String()
             ],
@@ -502,7 +502,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func payloadForOTRMessage(with message: GenericMessage) -> [String: Any] {
-        return [
+        [
             "data": [
                 "text": try? message.serializedData().base64String()
             ],
@@ -532,5 +532,5 @@ extension LocalNotificationDispatcherTests {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUNNotificationSoundName(_ input: String) -> UNNotificationSoundName {
-    return UNNotificationSoundName(rawValue: input)
+    UNNotificationSoundName(rawValue: input)
 }

@@ -24,7 +24,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -105,7 +105,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     }
 
     var selectionRect: CGRect {
-        return transferView.bounds
+        transferView.bounds
     }
 }
 
@@ -133,7 +133,7 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
+        configuration.isObfuscated ? "ObfuscatedAudioCell" : "AudioCell"
     }
 
     let accessibilityLabel: String?

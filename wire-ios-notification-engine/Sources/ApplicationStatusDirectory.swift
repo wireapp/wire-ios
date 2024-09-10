@@ -79,22 +79,22 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
-            return .online
+            .online
         } else {
-            return .unauthenticated
+            .unauthenticated
         }
     }
 
     public var operationState: OperationState {
-        return .background
+        .background
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return self.clientRegistrationStatus
+        self.clientRegistrationStatus
     }
 
     public var requestCancellation: ZMRequestCancellation {
-        return transportSession
+        transportSession
     }
 
     func requestResyncResources() {

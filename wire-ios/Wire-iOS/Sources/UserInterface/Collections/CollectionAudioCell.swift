@@ -83,7 +83,7 @@ final class CollectionAudioCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .microphone
+        .microphone
     }
 
     private func setup(_ view: UIView) {

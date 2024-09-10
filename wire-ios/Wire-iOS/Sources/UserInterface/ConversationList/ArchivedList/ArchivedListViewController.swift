@@ -175,11 +175,11 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.count
+        viewModel.count
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(
@@ -187,7 +187,7 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
+        layoutCell.size(inCollectionViewSize: collectionView.bounds.size)
     }
 }
 

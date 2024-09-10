@@ -32,7 +32,7 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
     private let queue: GroupQueue
 
     private var remainingIdentifiersToDelete: Set<String> {
-        return provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
+        provider.assetIdentifiersToBeDeleted.subtracting(identifiersInProgress)
     }
 
     @objc(initWithProvider:queue:)

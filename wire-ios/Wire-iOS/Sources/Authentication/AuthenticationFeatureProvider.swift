@@ -47,10 +47,10 @@ final class BuildSettingAuthenticationFeatureProvider: AuthenticationFeatureProv
     }
 
     var allowCompanyLogin: Bool {
-        return CompanyLoginController.isCompanyLoginEnabled
+        CompanyLoginController.isCompanyLoginEnabled
     }
 
     var allowDirectCompanyLogin: Bool {
-        return allowCompanyLogin && !allowOnlyEmailLogin
+        allowCompanyLogin && !allowOnlyEmailLogin
     }
 }

@@ -216,7 +216,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     private typealias GroupIDConversationTuple = (groupID: MLSGroupID, conversation: ZMConversation)
 
     private func fetchMixedConversations() async throws -> [GroupIDConversationTuple] {
-        return try await context.perform { [self] in
+        try await context.perform { [self] in
 
             let conversations = try ZMConversation.fetchAllTeamGroupConversations(
                 messageProtocol: .mixed,

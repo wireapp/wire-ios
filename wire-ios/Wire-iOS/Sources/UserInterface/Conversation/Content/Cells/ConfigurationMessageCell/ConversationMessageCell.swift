@@ -74,15 +74,15 @@ protocol ConversationMessageCell: AnyObject {
 
 extension ConversationMessageCell {
     var selectionView: UIView? {
-        return nil
+        nil
     }
 
     var selectionRect: CGRect {
-        return selectionView?.bounds ?? .zero
+        selectionView?.bounds ?? .zero
     }
 
     var ephemeralTimerTopInset: CGFloat {
-        return 8
+        8
     }
 
     func willDisplay() {
@@ -211,7 +211,7 @@ extension ConversationMessageCellDescription {
     /// - Parameter other: other object to compare
     /// - Returns: true if both self and other having same type
     func isConfigurationEqual(with other: Any) -> Bool {
-        return type(of: self) == type(of: other)
+        type(of: self) == type(of: other)
     }
 }
 
@@ -259,19 +259,19 @@ final class AnyConversationMessageCellDescription: NSObject {
         }
 
         viewGenerator = {
-            return description.makeView()
+            description.makeView()
         }
 
         cellGenerator = { tableView, indexPath in
-            return description.makeCell(for: tableView, at: indexPath)
+            description.makeCell(for: tableView, at: indexPath)
         }
 
         baseTypeGetter = {
-            return T.self
+            T.self
         }
 
         instanceGetter = {
-            return description
+            description
         }
 
         isConfigurationEqualBlock = { otherDescription in
@@ -289,50 +289,50 @@ final class AnyConversationMessageCellDescription: NSObject {
     }
 
     var instance: AnyObject {
-        return instanceGetter()
+        instanceGetter()
     }
 
     var baseType: AnyClass {
-        return baseTypeGetter()
+        baseTypeGetter()
     }
 
     var delegate: ConversationMessageCellDelegate? {
-        get { return _delegate.getter() }
+        get { _delegate.getter() }
         set { _delegate.setter(newValue) }
     }
 
     var message: ZMConversationMessage? {
-        get { return _message.getter() }
+        get { _message.getter() }
         set { _message.setter(newValue) }
     }
 
     var actionController: ConversationMessageActionController? {
-        get { return _actionController.getter() }
+        get { _actionController.getter() }
         set { _actionController.setter(newValue) }
     }
 
     var topMargin: Float {
-        get { return _topMargin.getter() }
+        get { _topMargin.getter() }
         set { _topMargin.setter(newValue) }
     }
 
     var containsHighlightableContent: Bool {
-        return _containsHighlightableContent.getter()
+        _containsHighlightableContent.getter()
     }
 
     var showEphemeralTimer: Bool {
-        get { return _showEphemeralTimer.getter() }
+        get { _showEphemeralTimer.getter() }
         set { _showEphemeralTimer.setter(newValue) }
     }
 
     /// The accessibility identifier of the cell.
     var cellAccessibilityIdentifier: String? {
-        return _axIdentifier.getter()
+        _axIdentifier.getter()
     }
 
     /// The accessibility label of the cell.
     var cellAccessibilityLabel: String? {
-        return _axLabel.getter()
+        _axLabel.getter()
     }
 
     func configure(cell: UITableViewCell, animated: Bool = false) {
@@ -344,14 +344,14 @@ final class AnyConversationMessageCellDescription: NSObject {
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        return cellGenerator(tableView, indexPath)
+        cellGenerator(tableView, indexPath)
     }
 
     func makeView() -> UIView {
-        return viewGenerator()
+        viewGenerator()
     }
 
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
-        return isConfigurationEqualBlock(description)
+        isConfigurationEqualBlock(description)
     }
 }

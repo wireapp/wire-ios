@@ -70,7 +70,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
-        return try await getCoreCrypto()
+        try await getCoreCrypto()
     }
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {

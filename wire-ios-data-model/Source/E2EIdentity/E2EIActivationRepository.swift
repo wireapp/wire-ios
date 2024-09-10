@@ -54,7 +54,7 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
     // MARK: - Public
 
     public var e2eiActivatedAt: Date? {
-        return storage.date(forKey: .e2eiActivatedAt)
+        storage.date(forKey: .e2eiActivatedAt)
     }
 
     public func storeE2EIActivationDate(_ date: Date) {

@@ -30,7 +30,7 @@ enum PreviewDisplayMode {
 
     /// The size of the preview, in points.
     static var size: CGSize {
-        return CGSize(width: 70, height: 70)
+        CGSize(width: 70, height: 70)
     }
 
     /// The maximum size of a preview, adjusted for the device scale.
@@ -159,6 +159,6 @@ final class PreviewImageView: UIImageView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return PreviewDisplayMode.size
+        PreviewDisplayMode.size
     }
 }

@@ -29,6 +29,6 @@ final class EmptyViewDescription: NSObject, ValueSubmission, ViewDescriptor {
     var constraints: [NSLayoutConstraint] = []
 
     func create() -> UIView {
-        return UIView()
+        UIView()
     }
 }

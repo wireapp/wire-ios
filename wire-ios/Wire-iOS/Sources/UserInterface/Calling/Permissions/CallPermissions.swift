@@ -29,7 +29,7 @@ final class CallPermissions: CallPermissionsConfiguration {
     }
 
     var isPendingVideoPermissionRequest: Bool {
-        return AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .notDetermined
+        AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .notDetermined
     }
 
     var canAcceptAudioCalls: Bool {
@@ -42,7 +42,7 @@ final class CallPermissions: CallPermissionsConfiguration {
     }
 
     var canAcceptVideoCalls: Bool {
-        return AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
+        AVCaptureDevice.authorizationStatus(for: AVMediaType.video) == .authorized
     }
 
     func requestVideoPermissionWithoutWarning(resultHandler: @escaping (Bool) -> Void) {

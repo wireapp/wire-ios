@@ -23,12 +23,12 @@ final class ZMMockURLSession: ZMURLSession {
     @objc var cancellationHandler: (() -> Void)?
 
     @objc static func createMockSession() -> ZMMockURLSession {
-        return ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: ZMMockURLSessionDelegate(), delegateQueue: OperationQueue(), identifier: "ZMMockURLSession", userAgent: "Test UserAgent")
+        ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: ZMMockURLSessionDelegate(), delegateQueue: OperationQueue(), identifier: "ZMMockURLSession", userAgent: "Test UserAgent")
     }
 
     @objc(createMockSessionWithDelegate:)
     static func createMockSession(delegate: ZMURLSessionDelegate) -> ZMMockURLSession {
-        return ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: delegate, delegateQueue: OperationQueue(), identifier: "ZMMockURLSession", userAgent: "Test UserAgent")
+        ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: delegate, delegateQueue: OperationQueue(), identifier: "ZMMockURLSession", userAgent: "Test UserAgent")
     }
 
     override func cancelAllTasks(completionHandler handler: @escaping () -> Void) {

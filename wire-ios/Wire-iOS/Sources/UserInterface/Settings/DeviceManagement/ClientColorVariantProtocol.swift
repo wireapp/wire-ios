@@ -30,7 +30,7 @@ protocol ClientColorVariantProtocol {
 
 extension ClientColorVariantProtocol where Self: UIViewController {
     var headerFooterViewTextColor: UIColor {
-        return SemanticColors.Label.textSectionFooter
+        SemanticColors.Label.textSectionFooter
     }
 
     func setColor() {

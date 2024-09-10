@@ -76,7 +76,7 @@ import Foundation
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     func handleResponse(
@@ -125,7 +125,7 @@ import Foundation
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [assetDownstreamObjectSync]
+        [assetDownstreamObjectSync]
     }
 }
 

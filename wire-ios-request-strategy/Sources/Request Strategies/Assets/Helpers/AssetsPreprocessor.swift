@@ -129,7 +129,7 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     }
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
-        return BlockOperation { [weak self] in
+        BlockOperation { [weak self] in
             self?.processingGroup.leave()
         }
     }
@@ -146,10 +146,10 @@ class AssetImageOwnerAdapter: NSObject, ZMImageOwner {
     }
 
     func requiredImageFormats() -> NSOrderedSet {
-        return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
+        NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
     }
 
     func originalImageData() -> Data? {
-        return asset.original
+        asset.original
     }
 }

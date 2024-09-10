@@ -25,7 +25,7 @@ private let zoomLevelKey = "LastLocationZoomLevelKey"
 
 extension LocationData {
     func toDictionary() -> [String: Any] {
-        return [
+        [
             latitudeKey: latitude,
             longitudeKey: longitude,
             zoomLevelKey: Int(zoomLevel)

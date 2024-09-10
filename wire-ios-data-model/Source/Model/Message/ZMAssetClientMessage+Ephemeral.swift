@@ -20,13 +20,13 @@ import Foundation
 
 extension ZMAssetClientMessage {
     @objc override public var isEphemeral: Bool {
-        return destructionDate != nil
+        destructionDate != nil
             || ephemeral != nil
             || isObfuscated
     }
 
     var ephemeral: Ephemeral? {
-        return dataSet.lazy
+        dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
             .first(where: { message -> Bool in
                 guard case .ephemeral? = message.content else {

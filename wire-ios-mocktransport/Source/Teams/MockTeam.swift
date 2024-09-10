@@ -43,7 +43,7 @@ import Foundation
 
 extension MockTeam {
     public static func predicateWithIdentifier(identifier: String) -> NSPredicate {
-        return NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
+        NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
     }
 
     @objc(containsUser:)
@@ -68,7 +68,7 @@ extension MockTeam {
     }
 
     var payloadValues: [String: Any?] {
-        return [
+        [
             "id": identifier,
             "name": name,
             "icon_key": pictureAssetKey,
@@ -79,24 +79,24 @@ extension MockTeam {
     }
 
     var payload: ZMTransportData {
-        return payloadValues as NSDictionary
+        payloadValues as NSDictionary
     }
 
     @objc
     public static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
-        return  Set(["add_conversation_member",
-                     "remove_conversation_member",
-                     "modify_conversation_name",
-                     "modify_conversation_message_timer",
-                     "modify_conversation_receipt_mode",
-                     "modify_conversation_access",
-                     "modify_other_conversation_member",
-                     "leave_conversation",
-                     "delete_conversation"].map { MockAction.insert(in: context, name: $0) })
+        Set(["add_conversation_member",
+             "remove_conversation_member",
+             "modify_conversation_name",
+             "modify_conversation_message_timer",
+             "modify_conversation_receipt_mode",
+             "modify_conversation_access",
+             "modify_other_conversation_member",
+             "leave_conversation",
+             "delete_conversation"].map { MockAction.insert(in: context, name: $0) })
     }
 
     @objc
     public static func createMemberActions(context: NSManagedObjectContext) -> Set<MockAction> {
-        return  Set(["leave_conversation"].map { MockAction.insert(in: context, name: $0) })
+        Set(["leave_conversation"].map { MockAction.insert(in: context, name: $0) })
     }
 }

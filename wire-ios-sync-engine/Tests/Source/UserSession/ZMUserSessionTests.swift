@@ -434,7 +434,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let conversationsRange: CountableClosedRange = 1...10
 
         let conversations: [ZMConversation] = conversationsRange.map { _ in
-            return self.sut.insertConversationWithUnreadMessage()
+            self.sut.insertConversationWithUnreadMessage()
         }
 
         try self.uiMOC.save()

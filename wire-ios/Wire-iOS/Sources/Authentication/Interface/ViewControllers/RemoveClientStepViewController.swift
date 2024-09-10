@@ -25,7 +25,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
-        return traitEnvironment.traitCollection.horizontalSizeClass
+        traitEnvironment.traitCollection.horizontalSizeClass
     }
 
     private var contentViewWidthRegular: NSLayoutConstraint!

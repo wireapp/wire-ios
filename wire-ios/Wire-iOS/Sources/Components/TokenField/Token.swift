@@ -39,6 +39,6 @@ final class Token<T: NSObjectProtocol>: Hashable {
     }
 
     static func == (lhs: Token<T>, rhs: Token<T>) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        lhs.hashValue == rhs.hashValue
     }
 }

@@ -51,7 +51,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     private var factory: BackgroundActivityFactory!
 
     private var account: Account {
-        return coreDataStack.account
+        coreDataStack.account
     }
 
     override func setUp() {

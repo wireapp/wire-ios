@@ -117,7 +117,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
     }
 
     private func createAction(messageProtocol: MessageProtocol = .proteus) -> CreateGroupConversationAction {
-        return CreateGroupConversationAction(
+        CreateGroupConversationAction(
             messageProtocol: messageProtocol,
             creatorClientID: "creatorClientID",
             qualifiedUserIDs: [user1ID, user2ID],

@@ -37,9 +37,9 @@ enum CallHapticsEvent: String {
 
     var feedbackType: FeedbackType {
         switch self {
-        case .start, .reconnect, .join: return .success
-        case .leave, .end: return .warning
-        case .toggleVideo: return .impact
+        case .start, .reconnect, .join: .success
+        case .leave, .end: .warning
+        case .toggleVideo: .impact
         }
     }
 }

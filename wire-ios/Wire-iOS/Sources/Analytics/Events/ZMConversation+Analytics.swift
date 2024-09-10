@@ -27,26 +27,26 @@ enum ConversationType: Int {
 extension ConversationType {
     var analyticsTypeString: String {
         switch  self {
-        case .oneToOne:     return "one_to_one"
-        case .group:        return "group"
+        case .oneToOne:     "one_to_one"
+        case .group:        "group"
         }
     }
 
     static func type(_ conversation: ZMConversation) -> ConversationType? {
         switch conversation.conversationType {
         case .oneOnOne:
-            return .oneToOne
+            .oneToOne
         case .group:
-            return .group
+            .group
         default:
-            return nil
+            nil
         }
     }
 }
 
 extension ZMConversation {
     var analyticsTypeString: String? {
-        return ConversationType.type(self)?.analyticsTypeString
+        ConversationType.type(self)?.analyticsTypeString
     }
 
     // swiftlint:disable:next todo_requires_jira_link

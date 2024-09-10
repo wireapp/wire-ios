@@ -339,28 +339,28 @@ extension URLActionRouter {
         }
 
         var errorDescription: String? {
-            return AlertStrings.title
+            AlertStrings.title
         }
 
         var failureReason: String? {
             switch self {
             case .conversationIsFull:
-                return AlertStrings.ConverationIsFull.message
+                AlertStrings.ConverationIsFull.message
 
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
-                return AlertStrings.LinkIsInvalid.message
+                AlertStrings.LinkIsInvalid.message
 
             case .invalidConversationPassword:
-                return AlertStrings.InvalidPassword.message
+                AlertStrings.InvalidPassword.message
 
             case .unknown:
-                return L10n.Localizable.Error.User.unkownError
+                L10n.Localizable.Error.User.unkownError
             }
         }
     }
 
     private func mapToLocalizedError(_ error: Error) -> LocalizedError {
-        return (error as? LocalizedError) ?? URLActionError(from: error)
+        (error as? LocalizedError) ?? URLActionError(from: error)
     }
 
     private func presentLocalizedErrorAlert(_ error: LocalizedError) {

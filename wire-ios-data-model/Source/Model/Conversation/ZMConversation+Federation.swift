@@ -49,11 +49,11 @@ extension ZMConversation {
 
 extension NSPredicate {
     fileprivate static var isGroupConversation: NSPredicate {
-        return hasConversationType(.group)
+        hasConversationType(.group)
     }
 
     fileprivate static func hasConversationType(_ type: ZMConversationType) -> NSPredicate {
-        return NSPredicate(
+        NSPredicate(
             format: "%K == %d",
             ZMConversationConversationTypeKey,
             type.rawValue
@@ -61,7 +61,7 @@ extension NSPredicate {
     }
 
     fileprivate static func isHostedOnDomain(_ domain: String) -> NSPredicate {
-        return NSPredicate(
+        NSPredicate(
             format: "%K == %@",
             ZMConversationDomainKey,
             domain
@@ -69,11 +69,11 @@ extension NSPredicate {
     }
 
     fileprivate static func isNotHostedOnDomains(_ domains: [String]) -> NSPredicate {
-        return isHostedOnAnyDomain(domains).inverse
+        isHostedOnAnyDomain(domains).inverse
     }
 
     fileprivate static func isHostedOnAnyDomain(_ domains: [String]) -> NSPredicate {
-        return NSPredicate(
+        NSPredicate(
             format: "%K IN %@",
             ZMConversationDomainKey,
             domains

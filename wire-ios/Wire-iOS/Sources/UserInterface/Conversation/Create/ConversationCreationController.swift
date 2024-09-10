@@ -171,7 +171,7 @@ final class ConversationCreationController: UIViewController {
     // MARK: - Methods
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

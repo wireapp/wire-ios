@@ -31,7 +31,7 @@ extension ZMLocalNotification {
         let managedObjectContext: NSManagedObjectContext
 
         var notificationType: LocalNotificationType {
-            return .calling(callState)
+            .calling(callState)
         }
 
         init?(callState: CallState, caller: ZMUser, conversation: ZMConversation) {
@@ -66,11 +66,11 @@ extension ZMLocalNotification {
         }
 
         func titleText() -> String? {
-            return notificationType.titleText(selfUser: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
+            notificationType.titleText(selfUser: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
         }
 
         func bodyText() -> String {
-            return notificationType.messageBodyText(sender: caller, conversation: conversation)
+            notificationType.messageBodyText(sender: caller, conversation: conversation)
         }
 
         func userInfo() -> NotificationUserInfo? {

@@ -37,6 +37,6 @@ extension CBoxResult: Error {
 
 extension CBoxResult: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return String(describing: self)
+        String(describing: self)
     }
 }

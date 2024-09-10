@@ -35,7 +35,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
     }
 
     var conversationInfoKeys: Set<String> {
-        return [
+        [
             "messagesChanged",
             "participantsChanged",
             "activeParticipantsChanged",

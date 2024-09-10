@@ -47,15 +47,15 @@ extension ZMConversationType: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
         case .group:
-            return "group"
+            "group"
         case .oneOnOne:
-            return "oneOnOne"
+            "oneOnOne"
         case .connection:
-            return "connection"
+            "connection"
         case .`self`:
-            return "self"
+            "self"
         case .invalid:
-            return "invalid"
+            "invalid"
         }
     }
 }

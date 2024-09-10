@@ -117,7 +117,7 @@ final class SettingsPropertyFactory {
         // Profile
         case .profileName:
             let getAction: GetAction = { [unowned self] _ in
-                return SettingsPropertyValue.string(value: self.selfUser?.name ?? "")
+                SettingsPropertyValue.string(value: self.selfUser?.name ?? "")
             }
 
             let setAction: SetAction = { [unowned self] _, value in
@@ -243,7 +243,7 @@ final class SettingsPropertyFactory {
         case .receiveNewsAndOffers:
 
             let getAction: GetAction = { [unowned self] _ in
-                return self.marketingConsent
+                self.marketingConsent
             }
 
             let setAction: SetAction = { [unowned self] _, value in
@@ -311,7 +311,7 @@ final class SettingsPropertyFactory {
             return SettingsBlockProperty(
                 propertyName: propertyName,
                 getAction: { _ in
-                    return SettingsPropertyValue(self.isAppLockActive)
+                    SettingsPropertyValue(self.isAppLockActive)
                 },
                 setAction: { _, value in
                     switch value {
@@ -345,7 +345,7 @@ final class SettingsPropertyFactory {
         case .disableLinkPreviews:
             return SettingsBlockProperty(
                 propertyName: propertyName,
-                getAction: { _ in return SettingsPropertyValue(Settings.disableLinkPreviews) },
+                getAction: { _ in SettingsPropertyValue(Settings.disableLinkPreviews) },
                 setAction: { _, value in
                     switch value {
                     case let .number(value: number):

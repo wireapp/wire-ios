@@ -37,7 +37,7 @@ import WireUtilities
     }
 
     var error: NSError {
-        return NSError(domain: "EncryptionSessionsDirectoryDomain", code: rawValue, userInfo: userInfo)
+        NSError(domain: "EncryptionSessionsDirectoryDomain", code: rawValue, userInfo: userInfo)
     }
 }
 
@@ -91,7 +91,7 @@ public final class EncryptionSessionsDirectory: NSObject {
 
     /// The underlying implementation of the box
     var box: _CBox {
-        return self.generatingContext!.implementation
+        self.generatingContext!.implementation
     }
 
     /// Checks whether self is in a valid state, i.e. the generating context is still open and
@@ -327,7 +327,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     }
 
     public func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool {
-        return clientSession(for: identifier) != nil
+        clientSession(for: identifier) != nil
     }
 
     public func discardCache() {
@@ -398,13 +398,13 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     /// Generates the last prekey. If the prekey exists already,
     /// it will replace that prekey
     public func generateLastPrekey() throws -> String {
-        return try generatePrekey(CBOX_LAST_PREKEY_ID)
+        try generatePrekey(CBOX_LAST_PREKEY_ID)
     }
 
     /// Generates prekeys from a range of IDs. If prekeys with those IDs exist already,
     /// they will be replaced
     public func generatePrekeys(_ range: CountableRange<UInt16>) throws -> [(id: UInt16, prekey: String)] {
-        return try range.map {
+        try range.map {
             let prekey = try self.generatePrekey($0)
             return (id: $0, prekey: prekey)
         }
@@ -423,7 +423,7 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     /// - returns: HEX encoded fingerprint
     @objc(fingerprintFromPrekey:)
     public static func fingerprint(fromPrekey prekey: Data) -> Data? {
-        return prekey.withUnsafeBytes({
+        prekey.withUnsafeBytes({
             let bytes = $0.baseAddress?.assumingMemoryBound(to: UInt8.self)
             var vectorBacking: OpaquePointer?
             let result = cbox_fingerprint_prekey(bytes, $0.count, &vectorBacking)
@@ -674,19 +674,19 @@ extension _CBoxSession {
 extension EncryptionSession {
     /// Returns the expected path of the session file, given the root folder
     fileprivate static func expectedPath(root: URL, for identifier: EncryptionSessionIdentifier) -> URL {
-        return root.appendingPathComponent("sessions").appendingPathComponent(identifier.rawValue)
+        root.appendingPathComponent("sessions").appendingPathComponent(identifier.rawValue)
     }
 
     /// Returns the expected path of this session
     var path: URL {
-        return EncryptionSession.expectedPath(root: self.cryptoboxPath, for: self.id)
+        EncryptionSession.expectedPath(root: self.cryptoboxPath, for: self.id)
     }
 }
 
 extension EncryptionSessionsDirectory {
     /// Returns the file path where the session with the given identifier would be saved
     private func filePath(for identifier: EncryptionSessionIdentifier) -> URL {
-        return EncryptionSession.expectedPath(root: self.generatingContext.path, for: identifier)
+        EncryptionSession.expectedPath(root: self.generatingContext.path, for: identifier)
     }
 }
 
@@ -727,11 +727,11 @@ public struct EncryptionSessionIdentifier: Hashable, Equatable {
 }
 
 public func == (lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifier) -> Bool {
-    return lhs.rawValue == rhs.rawValue
+    lhs.rawValue == rhs.rawValue
 }
 
 extension EncryptionSessionIdentifier: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return "<\(domain.readableHash)>_<\(userId.readableHash)>_<\(clientId.readableHash)>"
+        "<\(domain.readableHash)>_<\(userId.readableHash)>_<\(clientId.readableHash)>"
     }
 }

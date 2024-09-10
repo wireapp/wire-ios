@@ -23,7 +23,7 @@ extension ZMConversation {
     @objc public static let defaultMemberRoleName = "wire_member"
 
     static func predicateSecureWithIgnored() -> NSPredicate {
-        return NSPredicate(format: "%K == %d", #keyPath(ZMConversation.securityLevel), ZMConversationSecurityLevel.secureWithIgnored.rawValue)
+        NSPredicate(format: "%K == %d", #keyPath(ZMConversation.securityLevel), ZMConversationSecurityLevel.secureWithIgnored.rawValue)
     }
 
     /// After changes to conversation security degradation logic we need

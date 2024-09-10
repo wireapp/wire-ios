@@ -39,7 +39,7 @@ extension AppLockModule {
         var encryptMessagesAtRest = false
 
         var isDatabaseLocked: Bool {
-            return lock == .database
+            lock == .database
         }
 
         // MARK: - Methods

@@ -30,11 +30,11 @@ extension UIColor {
     }
 
     public var components: Components {
-        return Components(color: self)
+        Components(color: self)
     }
 
     public static func == (lhs: UIColor, rhs: UIColor) -> Bool {
-        return lhs.components == rhs.components
+        lhs.components == rhs.components
     }
 
     /// Create a color with a tuple rgba. The range of each component is 0 to 255 and alpha is 0 to 1

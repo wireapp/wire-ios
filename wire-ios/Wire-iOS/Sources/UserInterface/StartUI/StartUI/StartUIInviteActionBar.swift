@@ -59,7 +59,7 @@ final class StartUIInviteActionBar: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: isHidden ? 0 : 56.0)
+        CGSize(width: UIView.noIntrinsicMetric, height: isHidden ? 0 : 56.0)
     }
 
     private func createConstraints() {

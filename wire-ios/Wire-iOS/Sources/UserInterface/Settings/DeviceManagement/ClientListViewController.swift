@@ -139,7 +139,7 @@ final class ClientListViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     override func viewDidLoad() {
@@ -269,9 +269,9 @@ final class ClientListViewController: UIViewController,
 
     private func convertSection(_ section: Int) -> Int {
         if self.selfClient != nil {
-            return section
+            section
         } else {
-            return section + 1
+            section + 1
         }
     }
 
@@ -336,9 +336,9 @@ final class ClientListViewController: UIViewController,
 
     func numberOfSections(in tableView: UITableView) -> Int {
         if self.selfClient != nil, self.sortedClients.count > 0 {
-            return 2
+            2
         } else {
-            return 1
+            1
         }
     }
 
@@ -346,14 +346,14 @@ final class ClientListViewController: UIViewController,
         switch self.convertSection(section) {
         case 0:
             if self.selfClient != nil {
-                return 1
+                1
             } else {
-                return 0
+                0
             }
         case 1:
-            return self.sortedClients.count
+            self.sortedClients.count
         default:
-            return 0
+            0
         }
     }
 
@@ -361,25 +361,25 @@ final class ClientListViewController: UIViewController,
         switch self.convertSection(section) {
         case 0:
             if self.selfClient != nil {
-                return L10n.Localizable.Registration.Devices.currentListHeader
+                L10n.Localizable.Registration.Devices.currentListHeader
             } else {
-                return nil
+                nil
             }
         case 1:
-            return L10n.Localizable.Registration.Devices.activeListHeader
+            L10n.Localizable.Registration.Devices.activeListHeader
         default:
-            return nil
+            nil
         }
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         switch self.convertSection(section) {
         case 0:
-            return nil
+            nil
         case 1:
-            return L10n.Localizable.Registration.Devices.activeListSubtitle
+            L10n.Localizable.Registration.Devices.activeListSubtitle
         default:
-            return nil
+            nil
         }
     }
 
@@ -436,11 +436,11 @@ final class ClientListViewController: UIViewController,
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
         switch self.convertSection((indexPath as NSIndexPath).section) {
         case 0:
-            return .none
+            .none
         case 1:
-            return sortedClients[indexPath.row].type == .legalHold ? .none : .delete
+            sortedClients[indexPath.row].type == .legalHold ? .none : .delete
         default:
-            return .none
+            .none
         }
     }
 

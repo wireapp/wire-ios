@@ -66,6 +66,6 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
+        CGSize(width: UIView.noIntrinsicMetric, height: ContactsSectionHeaderView.height)
     }
 }

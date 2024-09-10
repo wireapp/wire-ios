@@ -20,7 +20,7 @@ import UIKit
 
 extension ContactsViewController: UITableViewDelegate {
     func headerTitle(section: Int) -> String? {
-        return dataSource.tableView(tableView, titleForHeaderInSection: section)
+        dataSource.tableView(tableView, titleForHeaderInSection: section)
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -36,6 +36,6 @@ extension ContactsViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return CGFloat.StartUI.CellHeight
+        CGFloat.StartUI.CellHeight
     }
 }

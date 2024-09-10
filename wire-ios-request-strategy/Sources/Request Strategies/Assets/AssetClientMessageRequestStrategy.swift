@@ -39,7 +39,7 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [insertedObjectSync]
+        [insertedObjectSync]
     }
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {

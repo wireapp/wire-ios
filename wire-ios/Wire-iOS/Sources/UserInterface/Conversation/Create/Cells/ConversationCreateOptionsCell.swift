@@ -29,7 +29,7 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
 
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {
@@ -39,7 +39,7 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
 
     override var accessibilityValue: String? {
         get {
-            return status
+            status
         }
 
         set {
@@ -111,6 +111,6 @@ extension ConversationCreateOptionsCell: ConversationCreationValuesConfigurable 
 
 extension Bool {
     fileprivate var localized: String {
-        return self ? L10n.Localizable.General.on : L10n.Localizable.General.off
+        self ? L10n.Localizable.General.on : L10n.Localizable.General.off
     }
 }

@@ -30,7 +30,7 @@ extension Item: SafeForLoggingStringConvertible {
     static var redacted = "<redacted>"
 
     var safeForLoggingDescription: String {
-        return Item.redacted
+        Item.redacted
     }
 }
 

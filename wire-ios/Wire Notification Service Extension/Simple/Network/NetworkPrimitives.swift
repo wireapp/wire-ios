@@ -45,10 +45,10 @@ enum NetworkResponse: CustomStringConvertible {
     var description: String {
         switch self {
         case let .success(response):
-            return response.description
+            response.description
 
         case let .failure(response):
-            return response.description
+            response.description
         }
     }
 }
@@ -58,7 +58,7 @@ struct SuccessResponse: CustomStringConvertible {
     let data: Data
 
     var description: String {
-        return "status: \(status), data: \(data)"
+        "status: \(status), data: \(data)"
     }
 }
 
@@ -68,6 +68,6 @@ struct ErrorResponse: Codable, Equatable, CustomStringConvertible {
     let message: String
 
     var description: String {
-        return "code: \(code), label: \(label), message: \(message)"
+        "code: \(code), label: \(label), message: \(message)"
     }
 }

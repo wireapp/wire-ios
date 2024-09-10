@@ -27,7 +27,7 @@ private let zmLog = ZMSLog(tag: "UI")
 
 final class StatusBarVideoEditorController: UIVideoEditorController {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
+        traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }
 

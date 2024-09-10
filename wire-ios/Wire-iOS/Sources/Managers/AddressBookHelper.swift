@@ -44,15 +44,15 @@ final class AddressBookHelper: AddressBookHelperProtocol {
     // MARK: - Permissions
 
     var isAddressBookAccessUnknown: Bool {
-        return CNContactStore.authorizationStatus(for: .contacts) == .notDetermined
+        CNContactStore.authorizationStatus(for: .contacts) == .notDetermined
     }
 
     var isAddressBookAccessGranted: Bool {
-        return CNContactStore.authorizationStatus(for: .contacts) == .authorized
+        CNContactStore.authorizationStatus(for: .contacts) == .authorized
     }
 
     var isAddressBookAccessDisabled: Bool {
-        return CNContactStore.authorizationStatus(for: .contacts) == .denied
+        CNContactStore.authorizationStatus(for: .contacts) == .denied
     }
 
     /// Request access to the user. Will asynchronously invoke the callback passing as argument

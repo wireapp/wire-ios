@@ -31,19 +31,19 @@ extension ConversationList {
     public typealias ChangeInfoContent = ZMConversation
     public var setChangeInfo: SetChangeInfo<ZMConversation>
 
-    public var conversationList: ConversationList { return setChangeInfo.observedObject as! ConversationList }
+    public var conversationList: ConversationList { setChangeInfo.observedObject as! ConversationList }
 
     init(setChangeInfo: SetChangeInfo<ZMConversation>) {
         self.setChangeInfo = setChangeInfo
     }
 
-    public var orderedSetState: OrderedSetState<ChangeInfoContent> { return setChangeInfo.orderedSetState }
-    public var insertedIndexes: IndexSet { return setChangeInfo.insertedIndexes }
-    public var deletedIndexes: IndexSet { return setChangeInfo.deletedIndexes }
-    public var deletedObjects: Set<AnyHashable> { return setChangeInfo.deletedObjects }
-    public var updatedIndexes: IndexSet { return setChangeInfo.updatedIndexes }
-    public var movedIndexPairs: [MovedIndex] { return setChangeInfo.movedIndexPairs }
-    public var zm_movedIndexPairs: [ZMMovedIndex] { return setChangeInfo.zm_movedIndexPairs}
+    public var orderedSetState: OrderedSetState<ChangeInfoContent> { setChangeInfo.orderedSetState }
+    public var insertedIndexes: IndexSet { setChangeInfo.insertedIndexes }
+    public var deletedIndexes: IndexSet { setChangeInfo.deletedIndexes }
+    public var deletedObjects: Set<AnyHashable> { setChangeInfo.deletedObjects }
+    public var updatedIndexes: IndexSet { setChangeInfo.updatedIndexes }
+    public var movedIndexPairs: [MovedIndex] { setChangeInfo.movedIndexPairs }
+    public var zm_movedIndexPairs: [ZMMovedIndex] { setChangeInfo.zm_movedIndexPairs}
     public func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
         setChangeInfo.enumerateMovedIndexes(block)
     }
@@ -91,14 +91,14 @@ extension ConversationListChangeInfo {
 
     @objc(addConversationListReloadObserver:managedObjectcontext:)
     public static func addReloadObserver(_ observer: ZMConversationListReloadObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .conversationListsDidReload, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
+        ManagedObjectObserverToken(name: .conversationListsDidReload, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
             observer?.conversationListsDidReload()
         })
     }
 
     @objc(addConversationListFolderObserver:managedObjectcontext:)
     public static func addFolderObserver(_ observer: ZMConversationListFolderObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .conversationListDidChangeFolders, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
+        ManagedObjectObserverToken(name: .conversationListDidChangeFolders, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
             observer?.conversationListsDidChangeFolders()
         })
     }

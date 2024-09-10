@@ -26,12 +26,12 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
     func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {
         // This check is performed by the backend.
-        return true
+        true
     }
 
     func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool {
         // This check is performed by the backend.
-        return true
+        true
     }
 
     func clientIsExistingGroupUser(
@@ -41,6 +41,6 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         parentConversationClients: [ClientId]?
     ) -> Bool {
         // This check is performed by the backend.
-        return true
+        true
     }
 }

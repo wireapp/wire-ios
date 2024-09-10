@@ -39,7 +39,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     }
 
     var contentHeight: CGFloat {
-        return collectionView.contentSize.height
+        collectionView.contentSize.height
     }
 
     // MARK: - Lifecycle
@@ -78,7 +78,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     // MARK: - UICollectionView Delegates
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return reactions.count
+        reactions.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -96,10 +96,10 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 43, height: 24)
+        CGSize(width: 43, height: 24)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 4
+        4
     }
 }

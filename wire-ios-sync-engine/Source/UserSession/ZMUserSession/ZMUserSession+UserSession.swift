@@ -25,20 +25,20 @@ extension ZMUserSession: UserSession {
 
     public var lock: SessionLock? {
         if isDatabaseLocked {
-            return .database
+            .database
         } else if appLockController.isLocked {
-            return .screen
+            .screen
         } else {
-            return nil
+            nil
         }
     }
 
     public var isLocked: Bool {
-        return isDatabaseLocked || appLockController.isLocked
+        isDatabaseLocked || appLockController.isLocked
     }
 
     public var requiresScreenCurtain: Bool {
-        return appLockController.isActive || encryptMessagesAtRest
+        appLockController.isActive || encryptMessagesAtRest
     }
 
     public var isAppLockActive: Bool {
@@ -47,15 +47,15 @@ extension ZMUserSession: UserSession {
     }
 
     public var isAppLockAvailable: Bool {
-        return appLockController.isAvailable
+        appLockController.isAvailable
     }
 
     public var isAppLockForced: Bool {
-        return appLockController.isForced
+        appLockController.isForced
     }
 
     public var appLockTimeout: UInt {
-        return appLockController.timeout
+        appLockController.timeout
     }
 
     public var requireCustomAppLockPasscode: Bool {
@@ -96,7 +96,7 @@ extension ZMUserSession: UserSession {
         description: String,
         callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
-        return appLockController.evaluateAuthentication(
+        appLockController.evaluateAuthentication(
             passcodePreference: passcodePreference,
             description: description,
             callback: callback
@@ -135,7 +135,7 @@ extension ZMUserSession: UserSession {
         _ observer: UserObserving,
         for user: UserType
     ) -> NSObjectProtocol? {
-        return UserChangeInfo.add(
+        UserChangeInfo.add(
             observer: observer,
             for: user,
             in: self
@@ -145,7 +145,7 @@ extension ZMUserSession: UserSession {
     public func addUserObserver(
         _ observer: UserObserving
     ) -> NSObjectProtocol {
-        return UserChangeInfo.add(
+        UserChangeInfo.add(
             userObserver: observer,
             in: self
         )
@@ -155,7 +155,7 @@ extension ZMUserSession: UserSession {
         _ observer: ZMMessageObserver,
         for message: ZMConversationMessage
     ) -> NSObjectProtocol {
-        return MessageChangeInfo.add(
+        MessageChangeInfo.add(
             observer: observer,
             for: message,
             userSession: self
@@ -165,7 +165,7 @@ extension ZMUserSession: UserSession {
     public func addConferenceCallingUnavailableObserver(
         _ observer: ConferenceCallingUnavailableObserver
     ) -> Any {
-        return WireCallCenterV3.addConferenceCallingUnavailableObserver(
+        WireCallCenterV3.addConferenceCallingUnavailableObserver(
             observer: observer,
             userSession: self
         )
@@ -174,7 +174,7 @@ extension ZMUserSession: UserSession {
     public func addConferenceCallStateObserver(
         _ observer: WireCallCenterCallStateObserver
     ) -> Any {
-        return WireCallCenterV3.addCallStateObserver(
+        WireCallCenterV3.addCallStateObserver(
             observer: observer,
             userSession: self
         )
@@ -183,7 +183,7 @@ extension ZMUserSession: UserSession {
     public func addConferenceCallErrorObserver(
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any {
-        return WireCallCenterV3.addCallErrorObserver(
+        WireCallCenterV3.addCallErrorObserver(
             observer: observer,
             userSession: self
         )
@@ -193,7 +193,7 @@ extension ZMUserSession: UserSession {
         _ observer: ZMConversationListObserver,
         for list: ConversationList
     ) -> NSObjectProtocol {
-        return ConversationListChangeInfo.add(
+        ConversationListChangeInfo.add(
             observer: observer,
             for: list,
             userSession: self
@@ -240,19 +240,19 @@ extension ZMUserSession: UserSession {
     private static let MaxTeamVideoLength: TimeInterval = 960 // 16 minutes (16.0 * 60.0)
 
     private var selfUserHasTeam: Bool {
-        return selfUser.hasTeam
+        selfUser.hasTeam
     }
 
     public var maxUploadFileSize: UInt64 {
-        return UInt64.uploadFileSizeLimit(hasTeam: selfUserHasTeam)
+        UInt64.uploadFileSizeLimit(hasTeam: selfUserHasTeam)
     }
 
     public var maxAudioMessageLength: TimeInterval {
-        return selfUserHasTeam ? ZMUserSession.MaxTeamAudioLength : ZMUserSession.MaxAudioLength
+        selfUserHasTeam ? ZMUserSession.MaxTeamAudioLength : ZMUserSession.MaxAudioLength
     }
 
     public var maxVideoLength: TimeInterval {
-        return selfUserHasTeam ? ZMUserSession.MaxTeamVideoLength : ZMUserSession.MaxVideoLength
+        selfUserHasTeam ? ZMUserSession.MaxTeamVideoLength : ZMUserSession.MaxVideoLength
     }
 
     public func acknowledgeFeatureChange(for feature: Feature.Name) {
@@ -285,7 +285,7 @@ extension ZMUserSession: UserSession {
     // MARK: Context provider
 
     public var contextProvider: any ContextProvider {
-        return self
+        self
     }
 
     // MARK: Use Cases
@@ -321,17 +321,17 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        return CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
+        CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
     }
 
     public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        return SetAllowGuestAndServicesUseCase()
+        SetAllowGuestAndServicesUseCase()
     }
 
     @MainActor
     public func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
-        return await syncContext.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
+        await syncContext.perform {
+            ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
         }
     }
 
@@ -359,6 +359,6 @@ extension UInt64 {
     private static let MaxTeamFileSize: UInt64 = 104_857_600 // 100 megabytes (100 * 1024 * 1024)
 
     public static func uploadFileSizeLimit(hasTeam: Bool) -> UInt64 {
-        return hasTeam ? MaxTeamFileSize : MaxFileSize
+        hasTeam ? MaxTeamFileSize : MaxFileSize
     }
 }

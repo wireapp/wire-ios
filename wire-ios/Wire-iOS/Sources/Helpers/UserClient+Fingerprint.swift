@@ -78,13 +78,13 @@ extension DeviceType {
     var localizedDescription: String {
         switch self {
         case .permanent:
-            return DeviceTypeLocale.permanent
+            DeviceTypeLocale.permanent
         case .temporary:
-            return DeviceTypeLocale.temporary
+            DeviceTypeLocale.temporary
         case .legalHold:
-            return DeviceTypeLocale.legalhold
+            DeviceTypeLocale.legalhold
         default:
-            return DeviceTypeLocale.unknown
+            DeviceTypeLocale.unknown
         }
     }
 }
@@ -95,15 +95,15 @@ extension DeviceClass {
     var localizedDescription: String {
         switch self {
         case .phone:
-            return DeviceClassLocale.phone
+            DeviceClassLocale.phone
         case .desktop:
-            return DeviceClassLocale.desktop
+            DeviceClassLocale.desktop
         case .tablet:
-            return DeviceClassLocale.tablet
+            DeviceClassLocale.tablet
         case .legalHold:
-            return DeviceClassLocale.legalhold
+            DeviceClassLocale.legalhold
         default:
-            return DeviceClassLocale.unknown
+            DeviceClassLocale.unknown
         }
     }
 }

@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
     var mediaShareRestrictionManager: MediaShareRestrictionManager {
-        return MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+        MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
     }
 
     /// Whether the message can be digitally signed in.
@@ -163,6 +163,6 @@ extension ZMConversationMessage {
 
     /// Whether the message can be sent or received.
     var canBeShared: Bool {
-        return !isRestricted
+        !isRestricted
     }
 }

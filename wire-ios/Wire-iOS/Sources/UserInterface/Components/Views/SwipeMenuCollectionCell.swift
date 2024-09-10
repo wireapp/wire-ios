@@ -223,7 +223,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     }
 
     private var drawerWidth: CGFloat {
-        return initialDrawerWidth
+        initialDrawerWidth
     }
 
     /// Apply the apple-style rubber banding on the offset
@@ -234,7 +234,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     ///   - coef: Coefficient (from very hard (<0.1) to very easy (>0.9))
     /// - Returns: New offset
     private class func rubberBandOffset(_ offset: CGFloat, viewWidth: CGFloat, coefficient coef: CGFloat) -> CGFloat {
-        return (1.0 - (1.0 / ((offset * coef / viewWidth) + 1.0))) * viewWidth
+        (1.0 - (1.0 / ((offset * coef / viewWidth) + 1.0))) * viewWidth
     }
 
     private class func calculateViewOffset(forUserOffset offsetX: CGFloat, initialOffset initialDrawerOffset: CGFloat, drawerWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
@@ -367,7 +367,7 @@ extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return gestureRecognizer is UILongPressGestureRecognizer
+        gestureRecognizer is UILongPressGestureRecognizer
     }
 
     /// NOTE:
@@ -384,11 +384,11 @@ extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
     /// - Returns: true if need to require failure of otherGestureRecognizer
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return false
+        false
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        true
     }
 }

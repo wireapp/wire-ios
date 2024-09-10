@@ -27,7 +27,7 @@ final class ConversationImageMessageCell: UIView,
         let image: ZMImageMessageData
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -54,7 +54,7 @@ final class ConversationImageMessageCell: UIView,
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return containerView
+        containerView
     }
 
     override init(frame: CGRect) {
@@ -178,7 +178,7 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
+        configuration.isObfuscated ? "ObfuscatedImageCell" : "ImageCell"
     }
 
     let accessibilityLabel: String?

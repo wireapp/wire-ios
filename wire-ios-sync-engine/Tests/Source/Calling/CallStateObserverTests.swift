@@ -247,7 +247,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // expect
         customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { _ -> Bool in
-            return true
+            true
         }
 
         // when
@@ -264,7 +264,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // expect
         customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { _ -> Bool in
-            return true
+            true
         }
 
         // when

@@ -24,18 +24,18 @@ final class SenderNameCellComponent: UIView {
     private var indicatorImageViewTrailing: NSLayoutConstraint!
 
     var senderName: String? {
-        get { return label.text }
+        get { label.text }
         set { label.text = newValue }
     }
 
     var indicatorIcon: UIImage? {
-        get { return indicatorView.image }
+        get { indicatorView.image }
         set { indicatorView.image = newValue }
     }
 
     var indicatorLabel: String? {
         get {
-            return indicatorView.accessibilityLabel
+            indicatorView.accessibilityLabel
         }
         set {
             indicatorView.accessibilityLabel = newValue

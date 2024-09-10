@@ -27,7 +27,7 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
 
     let mockReachability = MockReachability()
     var reachability: ReachabilityProvider & TearDownCapable {
-        return mockReachability
+        mockReachability
     }
 
     init(cookieStorage: ZMPersistentCookieStorage, pushChannel: ZMPushChannel) {

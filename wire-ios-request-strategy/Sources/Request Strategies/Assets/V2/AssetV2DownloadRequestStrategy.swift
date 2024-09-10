@@ -85,7 +85,7 @@ import WireTransport
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
@@ -135,7 +135,7 @@ import WireTransport
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.assetDownstreamObjectSync]
+        [self.assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder

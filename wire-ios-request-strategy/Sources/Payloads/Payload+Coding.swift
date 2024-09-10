@@ -129,7 +129,7 @@ extension Encodable {
     ///   - encoder: JSONEncoder to use
 
     func payloadString(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> String? {
-        return payloadData(apiVersion: apiVersion, encoder: encoder).flatMap {
+        payloadData(apiVersion: apiVersion, encoder: encoder).flatMap {
             String(decoding: $0, as: UTF8.self)
         }
     }
@@ -197,12 +197,12 @@ extension CodingUserInfoKey {
 
 extension Decoder {
     var apiVersion: APIVersion? {
-        return userInfo[.apiVersion] as? APIVersion
+        userInfo[.apiVersion] as? APIVersion
     }
 }
 
 extension Encoder {
     var apiVersion: APIVersion? {
-        return userInfo[.apiVersion] as? APIVersion
+        userInfo[.apiVersion] as? APIVersion
     }
 }

@@ -23,7 +23,7 @@ import XCTest
 
 final class SessionManagerBackupTests: IntegrationTest {
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     private var backupURL: URL!
@@ -54,7 +54,7 @@ final class SessionManagerBackupTests: IntegrationTest {
     }
 
     private func createTemporaryURL() -> URL {
-        return backupURL.appendingPathComponent(UUID().uuidString)
+        backupURL.appendingPathComponent(UUID().uuidString)
     }
 
     func testThatItReturnsAnErrorWhenThereIsNoSelectedAccount() {

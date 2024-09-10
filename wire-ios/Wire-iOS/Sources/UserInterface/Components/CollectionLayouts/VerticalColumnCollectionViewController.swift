@@ -92,7 +92,7 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
      */
 
     var isRegularLayout: Bool {
-        return view.traitCollection.horizontalSizeClass == .regular
+        view.traitCollection.horizontalSizeClass == .regular
     }
 
     /**

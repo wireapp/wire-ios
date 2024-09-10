@@ -35,15 +35,15 @@ extension Unicode.Scalar {
              0x2600...0x27BF,   // Misc symbols, Dingbats
              0xE007F,           // cancelTag
              0xFE00...0xFE0F:   // Variation Selectors
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var isEmoji: Bool {
         // Unicode General Category S* contains Sc, Sk, Sm & So, we just interest on So(5855 items)
-        return (CharacterSet.symbols.contains(self) && !CharacterSet.asciiPrintableSet.contains(self)) ||
+        (CharacterSet.symbols.contains(self) && !CharacterSet.asciiPrintableSet.contains(self)) ||
             self.isEmojiComponentOrMiscSymbol
     }
 }
@@ -64,7 +64,7 @@ extension String {
     }
 
     public var containsOnlyEmojiWithSpaces: Bool {
-        return components(separatedBy: .whitespaces).joined().containsOnlyEmoji
+        components(separatedBy: .whitespaces).joined().containsOnlyEmoji
     }
 
     var containsOnlyEmoji: Bool {

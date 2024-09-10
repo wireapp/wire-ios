@@ -39,9 +39,9 @@ public class MockProteusProvider: ProteusProviding {
         withKeyStore keyStoreBlock: (UserClientKeysStore) throws -> T)
         rethrows -> T {
         if useProteusService {
-            return try proteusServiceBlock(mockProteusService)
+            try proteusServiceBlock(mockProteusService)
         } else {
-            return try keyStoreBlock(mockKeyStore)
+            try keyStoreBlock(mockKeyStore)
         }
     }
 
@@ -50,15 +50,15 @@ public class MockProteusProvider: ProteusProviding {
         withKeyStore keyStoreBlock: (UserClientKeysStore) async throws -> T)
         async rethrows -> T {
         if useProteusService {
-            return try await proteusServiceBlock(mockProteusService)
+            try await proteusServiceBlock(mockProteusService)
         } else {
-            return try await keyStoreBlock(mockKeyStore)
+            try await keyStoreBlock(mockKeyStore)
         }
     }
 
     public var mockCanPerform = true
     public var canPerform: Bool {
-        return mockCanPerform
+        mockCanPerform
     }
 
     public static func spyForTests() -> SpyUserClientKeyStore {

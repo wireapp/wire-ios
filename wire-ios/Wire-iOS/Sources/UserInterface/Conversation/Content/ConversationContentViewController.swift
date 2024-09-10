@@ -285,7 +285,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     func setupMentionsResultsView() {
@@ -305,7 +305,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override func didReceiveMemoryWarning() {
@@ -358,7 +358,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     var isScrolledToBottom: Bool {
-        return !dataSource.hasNewerMessagesToLoad &&
+        !dataSource.hasNewerMessagesToLoad &&
             tableView.contentOffset.y + tableView.correctedContentInset.bottom <= 0
     }
 
@@ -470,11 +470,11 @@ extension ConversationContentViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return cachedRowHeights[indexPath] ?? UITableView.automaticDimension
+        cachedRowHeights[indexPath] ?? UITableView.automaticDimension
     }
 
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        return willSelectRow(at: indexPath, tableView: tableView)
+        willSelectRow(at: indexPath, tableView: tableView)
     }
 }
 

@@ -41,11 +41,11 @@ class ConversationIconBasedCell: UIView {
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return textLabel
+        textLabel
     }
 
     var selectionRect: CGRect {
-        return textLabel.bounds
+        textLabel.bounds
     }
 
     var attributedText: NSAttributedString? {
@@ -62,7 +62,7 @@ class ConversationIconBasedCell: UIView {
     }
 
     private var trailingTextMargin: CGFloat {
-        return -conversationHorizontalMargins.right * 2
+        -conversationHorizontalMargins.right * 2
     }
 
     override init(frame: CGRect) {

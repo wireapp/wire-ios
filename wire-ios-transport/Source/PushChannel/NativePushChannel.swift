@@ -44,7 +44,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        return keepOpen && websocketURL != nil && consumer != nil
+        keepOpen && websocketURL != nil && consumer != nil
     }
 
     let environment: BackendEnvironmentProvider

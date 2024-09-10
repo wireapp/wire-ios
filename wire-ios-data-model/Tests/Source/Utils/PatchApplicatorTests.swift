@@ -49,11 +49,11 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     var previousVersion: Int? {
-        return syncMOC.persistentStoreMetadata(forKey: self.sut.lastRunVersionKey) as? Int
+        syncMOC.persistentStoreMetadata(forKey: self.sut.lastRunVersionKey) as? Int
     }
 
     func createTestPatches(forVersions versions: ClosedRange<Int>) -> [TestPatch] {
-        return versions.map { version in
+        versions.map { version in
             TestPatch(version: version) { _ in
                 self.patchCountByVersion[version, default: 0] += 1
             }
@@ -159,6 +159,6 @@ struct TestPatch: DataPatchInterface {
     let block: (NSManagedObjectContext) -> Void
 
     func execute(in context: NSManagedObjectContext) {
-        return block(context)
+        block(context)
     }
 }

@@ -34,7 +34,7 @@ final class AnalyticsConsoleProvider: NSObject {
 extension AnalyticsConsoleProvider: AnalyticsProvider {
     var isOptedOut: Bool {
         get {
-            return optedOut
+            optedOut
         }
 
         set {
@@ -47,7 +47,7 @@ extension AnalyticsConsoleProvider: AnalyticsProvider {
     var selfUser: UserType? {
         get {
             // no-op
-            return nil
+            nil
         }
 
         set {
@@ -72,7 +72,7 @@ extension AnalyticsConsoleProvider: AnalyticsProvider {
         if !printableAttributes.isEmpty {
             var localAttributes = [String: String]()
             printableAttributes.map({ key, value -> (String, String) in
-                return (key, (value as AnyObject).description!)
+                (key, (value as AnyObject).description!)
             }).forEach({ key, value in
                 localAttributes[key] = value
             })

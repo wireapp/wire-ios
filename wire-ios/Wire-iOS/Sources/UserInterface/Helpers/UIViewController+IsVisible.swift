@@ -31,6 +31,6 @@ extension UIViewController {
 
 extension UIView {
     var isVisible: Bool {
-        return convert(bounds, to: nil).intersects(UIScreen.main.bounds)
+        convert(bounds, to: nil).intersects(UIScreen.main.bounds)
     }
 }

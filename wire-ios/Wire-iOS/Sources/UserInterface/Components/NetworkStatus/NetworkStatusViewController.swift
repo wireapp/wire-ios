@@ -137,11 +137,11 @@ final class NetworkStatusViewController: UIViewController {
     private func viewState(from networkState: NetworkState) -> NetworkStatusViewState {
         switch networkState {
         case .offline:
-            return .offlineExpanded
+            .offlineExpanded
         case .online:
-            return .online
+            .online
         case .onlineSynchronizing:
-            return .onlineSynchronizing
+            .onlineSynchronizing
         }
     }
 

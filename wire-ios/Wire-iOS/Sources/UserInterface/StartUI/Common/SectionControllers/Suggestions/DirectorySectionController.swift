@@ -27,11 +27,11 @@ final class DirectorySectionController: SearchSectionController {
     weak var collectionView: UICollectionView?
 
     override var isHidden: Bool {
-        return self.suggestions.isEmpty
+        self.suggestions.isEmpty
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Peoplepicker.Header.directory
+        L10n.Localizable.Peoplepicker.Header.directory
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -45,7 +45,7 @@ final class DirectorySectionController: SearchSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return suggestions.count
+        suggestions.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

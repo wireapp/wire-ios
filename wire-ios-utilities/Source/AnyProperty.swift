@@ -40,7 +40,7 @@ public struct AnyConstantProperty<Value> {
 
     public init<Base>(_ base: Base, keyPath: Swift.KeyPath<Base, Value>) {
         getter = {
-            return base[keyPath: keyPath]
+            base[keyPath: keyPath]
         }
     }
 }
@@ -71,7 +71,7 @@ public struct AnyMutableProperty<Value> {
 
     public init<Base>(_ base: Base, keyPath: ReferenceWritableKeyPath<Base, Value>) {
         getter = {
-            return base[keyPath: keyPath]
+            base[keyPath: keyPath]
         }
 
         setter = { newValue in

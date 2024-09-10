@@ -53,7 +53,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
 
     override var accessibilityValue: String? {
         get {
-            return toggle.accessibilityValue
+            toggle.accessibilityValue
         }
 
         set {
@@ -63,7 +63,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
 
     override var accessibilityTraits: UIAccessibilityTraits {
         get {
-            return toggle.accessibilityTraits
+            toggle.accessibilityTraits
         }
         set {
             super.accessibilityTraits = newValue

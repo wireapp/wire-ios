@@ -78,7 +78,7 @@ import Foundation
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     public func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
-        return self.method == method && self.matches(path: path)
+        self.method == method && self.matches(path: path)
     }
 }
 
@@ -95,11 +95,11 @@ extension ZMTransportRequest {
         }
 
         return zip(expectedComponents, pathComponents).first(where: { expected, actual -> Bool in
-            return expected != "*" && expected != actual
+            expected != "*" && expected != actual
         }) == nil
     }
 
     public static func ~= (path: String, request: ZMTransportRequest) -> Bool {
-        return request.matches(path: path)
+        request.matches(path: path)
     }
 }

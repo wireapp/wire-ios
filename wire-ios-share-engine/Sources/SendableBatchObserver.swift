@@ -43,7 +43,7 @@ public final class SendableBatchObserver {
     }
 
     public var allSendablesSent: Bool {
-        return !sendables.contains { !$0.isSent }
+        !sendables.contains { !$0.isSent }
     }
 
     public func onDeliveryChanged() {

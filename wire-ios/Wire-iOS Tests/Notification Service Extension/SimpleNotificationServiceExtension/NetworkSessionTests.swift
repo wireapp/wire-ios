@@ -45,7 +45,7 @@ final class NetworkSessionTests: XCTestCase {
     // MARK: - Send request
 
     var invalidResponse: (Data, URLResponse) {
-        return (Data(), URLResponse())
+        (Data(), URLResponse())
     }
 
     var failureResponse: (Data, URLResponse) {

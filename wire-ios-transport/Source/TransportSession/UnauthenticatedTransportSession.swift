@@ -169,7 +169,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// Increments the number of running requests.
     /// - returns: The value after the increment.
     private func increment() -> Int {
-        return numberOfRunningRequests.increment()
+        numberOfRunningRequests.increment()
     }
 
     public func tearDown() {

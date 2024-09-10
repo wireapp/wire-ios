@@ -21,7 +21,7 @@ import WireSyncEngine
 import XCTest
 
 func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> Bool {
-    return lhs.isEqual(toConfiguration: rhs)
+    lhs.isEqual(toConfiguration: rhs)
 }
 
 final class CallInfoConfigurationTests: ZMSnapshotTestCase {
@@ -74,7 +74,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
     }
 
     private func mockCallParticipants(mockUsers: [MockUserType], count: Int, state: CallParticipantState) -> [CallParticipant] {
-        return mockUsers[0..<count].map({
+        mockUsers[0..<count].map({
             CallParticipant(user: $0,
                             userId: AVSIdentifier.stub,
                             clientId: "123",

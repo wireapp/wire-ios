@@ -160,13 +160,13 @@ public actor CommitSender: CommitSending {
 
     public nonisolated
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        return onEpochChangedSubject.eraseToAnyPublisher()
+        onEpochChangedSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Helpers
 
     private func sendCommitBundle(_ bundle: CommitBundle) async throws -> [ZMUpdateEvent] {
-        return try await actionsProvider.sendCommitBundle(
+        try await actionsProvider.sendCommitBundle(
             bundle.transportData(),
             in: notificationContext
         )

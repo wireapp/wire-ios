@@ -100,7 +100,7 @@ protocol FileManagerInterface {
 
 extension FileManager: FileManagerInterface {
     func cryptoboxDirectory(in accountDirectory: URL) -> URL {
-        return FileManager.keyStoreURL(
+        FileManager.keyStoreURL(
             accountDirectory: accountDirectory,
             createParentIfNeeded: false
         )

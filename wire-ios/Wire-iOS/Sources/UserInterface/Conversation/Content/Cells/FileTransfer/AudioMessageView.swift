@@ -76,7 +76,7 @@ final class AudioMessageView: UIView, TransferView {
     private var expectingDownload: Bool = false
 
     private var proximityMonitorManager: ProximityMonitorManager? {
-        return ZClientViewController.shared?.proximityMonitorManager
+        ZClientViewController.shared?.proximityMonitorManager
     }
 
     private var callStateObserverToken: Any?
@@ -121,7 +121,7 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 56)
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
     private func createConstraints() {

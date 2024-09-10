@@ -92,6 +92,6 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
     }
 
     fileprivate func randomAsset() -> WireProtos.Asset {
-        return WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
+        WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
     }
 }

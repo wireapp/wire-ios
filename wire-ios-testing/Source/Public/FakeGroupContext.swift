@@ -25,11 +25,11 @@ public class FakeGroupContext: NSObject, GroupQueue {
     fileprivate let queue: DispatchQueue!
 
     public static var main: FakeGroupContext {
-        return FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
+        FakeGroupContext(queue: DispatchQueue.main, group: ZMSDispatchGroup(label: "FakeGroupContext mainContext"))
     }
 
     public static var sync: FakeGroupContext {
-        return FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+        FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
     }
 
     public init(queue: DispatchQueue, group: ZMSDispatchGroup) {

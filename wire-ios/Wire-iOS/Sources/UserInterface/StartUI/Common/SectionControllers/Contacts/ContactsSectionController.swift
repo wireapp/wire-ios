@@ -44,21 +44,21 @@ class ContactsSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        return contacts.isEmpty
+        contacts.isEmpty
     }
 
     var title: String = ""
 
     override var sectionTitle: String {
-        return title
+        title
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return "label.search.participants"
+        "label.search.participants"
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return contacts.count
+        contacts.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -93,7 +93,7 @@ class ContactsSectionController: SearchSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return !(selection?.hasReachedLimit ?? false)
+        !(selection?.hasReachedLimit ?? false)
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

@@ -243,7 +243,7 @@ extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
 
 extension BottomSheetContainerViewController: BottomSheetScrollingDelegate {
     var isBottomSheetExpanded: Bool {
-        return state == .full
+        state == .full
     }
 
     func toggleBottomSheetVisibility() {

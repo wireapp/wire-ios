@@ -134,6 +134,6 @@ final class LocationPreviewController: UIViewController {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     override var previewActionItems: [UIPreviewActionItem] {
-        return actionController.previewActionItems
+        actionController.previewActionItems
     }
 }

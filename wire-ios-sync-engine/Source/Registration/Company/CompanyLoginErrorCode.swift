@@ -79,20 +79,20 @@ public enum CompanyLoginError: Error, Equatable {
     /// The code to display to the user inside alerts.
     public var displayCode: String {
         switch self {
-        case .unknownLabel: return "0"
-        case .missingRequiredParameter: return "-2063"
-        case .invalidCookie: return "-67700"
-        case .tokenNotFound: return "-25346"
-        case .serverErrorUnsupportedSAML: return "1"
-        case .badSuccessRedirect: return "2"
-        case .badFailureRedirect: return "3"
-        case .badUsername: return "4"
-        case .badUpstream: return "5"
-        case .serverError: return "6"
-        case .notFound: return "7"
-        case .forbidden: return "8"
-        case .noMatchingAuthReq: return "9"
-        case .insufficientPermissions: return "10"
+        case .unknownLabel: "0"
+        case .missingRequiredParameter: "-2063"
+        case .invalidCookie: "-67700"
+        case .tokenNotFound: "-25346"
+        case .serverErrorUnsupportedSAML: "1"
+        case .badSuccessRedirect: "2"
+        case .badFailureRedirect: "3"
+        case .badUsername: "4"
+        case .badUpstream: "5"
+        case .serverError: "6"
+        case .notFound: "7"
+        case .forbidden: "8"
+        case .noMatchingAuthReq: "9"
+        case .insufficientPermissions: "10"
         }
     }
 }

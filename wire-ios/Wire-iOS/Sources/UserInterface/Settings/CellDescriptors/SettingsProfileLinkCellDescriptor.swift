@@ -33,15 +33,15 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
     // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return L10n.Localizable.Self.Settings.AccountSection.ProfileLink.title
+        L10n.Localizable.Self.Settings.AccountSection.ProfileLink.title
     }
 
     private var link: String {
-        return URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
+        URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
     }
 
     var identifier: String?

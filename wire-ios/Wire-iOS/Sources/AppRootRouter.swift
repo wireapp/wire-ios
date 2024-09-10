@@ -107,7 +107,7 @@ final class AppRootRouter {
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
-        return urlActionRouter.open(url: deepLinkURL)
+        urlActionRouter.open(url: deepLinkURL)
     }
 
     func performQuickAction(
@@ -561,9 +561,9 @@ extension AppRootRouter: URLActionRouterDelegate {
     func urlActionRouterCanDisplayAlerts() -> Bool {
         switch appStateCalculator.appState {
         case .authenticated, .unauthenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

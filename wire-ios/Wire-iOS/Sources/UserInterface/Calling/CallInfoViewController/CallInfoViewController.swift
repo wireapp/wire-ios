@@ -38,7 +38,7 @@ protocol CallInfoViewControllerInput: CallActionsViewInputType, CallStatusViewIn
 // `Equatable` which we want to avoid.
 extension CallInfoViewControllerInput {
     func isEqual(toConfiguration other: CallInfoViewControllerInput) -> Bool {
-        return accessoryType == other.accessoryType &&
+        accessoryType == other.accessoryType &&
             degradationState == other.degradationState &&
             videoPlaceholderState == other.videoPlaceholderState &&
             permissions == other.permissions &&

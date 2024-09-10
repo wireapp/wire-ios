@@ -23,7 +23,7 @@ public final class PushTokenService: PushTokenServiceInterface {
     // MARK: - Properties
 
     public var localToken: PushToken? {
-        return PushTokenStorage.pushToken
+        PushTokenStorage.pushToken
     }
 
     public var onTokenChange: ((PushToken?) -> Void)?
@@ -148,10 +148,10 @@ extension PushToken.TokenType: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         switch self {
         case .standard:
-            return "standard"
+            "standard"
 
         case .voip:
-            return "voip"
+            "voip"
         }
     }
 }

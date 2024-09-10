@@ -27,7 +27,7 @@ public typealias TeamMembership = Member
 
     public var permissions: Permissions {
         get {
-            return Permissions(rawValue: permissionsRawValue)
+            Permissions(rawValue: permissionsRawValue)
         }
         set {
             permissionsRawValue = newValue.rawValue
@@ -35,15 +35,15 @@ public typealias TeamMembership = Member
     }
 
     override public static func entityName() -> String {
-        return "Member"
+        "Member"
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     override public static func defaultSortDescriptors() -> [NSSortDescriptor] {
-        return []
+        []
     }
 
     public var remoteIdentifier: UUID? {

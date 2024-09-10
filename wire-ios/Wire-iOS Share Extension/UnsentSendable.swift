@@ -400,6 +400,6 @@ extension AccountManager {
     }
 
     static var fileSizeLimitInBytes: UInt64 {
-        return UInt64.uploadFileSizeLimit(hasTeam: AccountManager.sharedAccountManager?.selectedAccount?.teamName != nil)
+        UInt64.uploadFileSizeLimit(hasTeam: AccountManager.sharedAccountManager?.selectedAccount?.teamName != nil)
     }
 }

@@ -89,30 +89,30 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
 
     private var titleColor: UIColor? {
         if isSelected {
-            return tokenField.tokenSelectedTitleColor
+            tokenField.tokenSelectedTitleColor
         } else {
-            return tokenField.tokenTitleColor
+            tokenField.tokenTitleColor
         }
     }
 
     private var backgroundColor: UIColor? {
         if isSelected {
-            return tokenField.tokenSelectedBackgroundColor
+            tokenField.tokenSelectedBackgroundColor
         } else {
-            return tokenField.tokenBackgroundColor
+            tokenField.tokenBackgroundColor
         }
     }
 
     private var borderColor: UIColor? {
         if isSelected {
-            return tokenField.tokenSelectedBorderColor
+            tokenField.tokenSelectedBorderColor
         } else {
-            return tokenField.tokenBorderColor
+            tokenField.tokenBorderColor
         }
     }
 
     private var dotColor: UIColor? {
-        return tokenField.dotColor
+        tokenField.dotColor
     }
 
     private var titleAttributes: [NSAttributedString.Key: Any] {
@@ -173,12 +173,12 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     }
 
     func size(for string: String, attributes: [NSAttributedString.Key: Any]?) -> CGSize {
-        return NSAttributedString(string: string, attributes: attributes).size()
+        NSAttributedString(string: string, attributes: attributes).size()
     }
 
     // MARK: - Description
 
     override var description: String {
-        return String(format: "<\(type(of: self)): \(self), name \(token.title)>")
+        String(format: "<\(type(of: self)): \(self), name \(token.title)>")
     }
 }

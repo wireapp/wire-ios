@@ -28,17 +28,17 @@ final class CollectionsViewController: UIViewController {
     let sections: CollectionsSectionSet
     weak var delegate: CollectionsViewControllerDelegate?
     var isShowingSearchResults: Bool {
-        return !textSearchController.resultsView.isHidden
+        !textSearchController.resultsView.isHidden
     }
 
     var shouldTrackOnNextOpen = false
 
     var currentTextSearchQuery: [String] {
-        return textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
+        textSearchController.searchQuery?.components(separatedBy: .whitespacesAndNewlines) ?? []
     }
 
     private var contentView: CollectionsView! {
-        return view as? CollectionsView
+        view as? CollectionsView
     }
 
     private let messagePresenter = MessagePresenter()
@@ -69,7 +69,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     private var inOverviewMode: Bool {
-        return sections == .all
+        sections == .all
     }
 
     private lazy var textSearchController = TextSearchViewController(conversation: collection.conversation, userSession: userSession)
@@ -196,20 +196,20 @@ final class CollectionsViewController: UIViewController {
 
     /// Notice: for iPad with iOS9 in landscape mode, horizontalSizeClass is .unspecified (.regular in iOS11).
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     override var shouldAutorotate: Bool {
         switch traitCollection.horizontalSizeClass {
         case .compact:
-            return false
+            false
         default:
-            return true
+            true
         }
     }
 
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return .portrait
+        .portrait
     }
 
     private func flushLayout() {
@@ -275,7 +275,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     private func updateNoElementsState() {
@@ -359,13 +359,13 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     private func elements(for section: CollectionsSectionSet) -> [ZMConversationMessage] {
         switch section {
         case CollectionsSectionSet.images:
-            return imageMessages
+            imageMessages
         case CollectionsSectionSet.filesAndAudio:
-            return fileAndAudioMessages
+            fileAndAudioMessages
         case CollectionsSectionSet.videos:
-            return videoMessages
+            videoMessages
         case CollectionsSectionSet.links:
-            return linkMessages
+            linkMessages
         default: fatal("Unknown section")
         }
     }
@@ -397,11 +397,11 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
     private func totalNumberOfElements() -> Int {
         // Empty collection contains one element (loading cell)
-        return CollectionsSectionSet.visible.map { numberOfElements(for: $0) }.reduce(0, +) - 1
+        CollectionsSectionSet.visible.map { numberOfElements(for: $0) }.reduce(0, +) - 1
     }
 
     private func moreElementsToSee(in section: CollectionsSectionSet) -> Bool {
-        return elements(for: section).count > numberOfElements(for: section)
+        elements(for: section).count > numberOfElements(for: section)
     }
 
     private func message(for indexPath: IndexPath) -> ZMConversationMessage {
@@ -432,11 +432,11 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     private func maxOverviewElementsInGrid(in section: CollectionsSectionSet) -> Int {
-        return elementsPerLine(in: section) * 2 // 2 lines of elements
+        elementsPerLine(in: section) * 2 // 2 lines of elements
     }
 
     private var maxOverviewElementsInTable: Int {
-        return 3
+        3
     }
 
     private func sizeForCell(at indexPath: IndexPath) -> (CGFloat?, CGFloat?) {
@@ -494,7 +494,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     // MARK: - Data Source
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return CollectionsSectionSet.visible.count
+        CollectionsSectionSet.visible.count
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -607,7 +607,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return .zero
+        .zero
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -671,12 +671,12 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if navigationController?.interactivePopGestureRecognizer == gestureRecognizer {
             if let count = navigationController?.viewControllers.count, count > 1 {
-                return true
+                true
             } else {
-                return false
+                false
             }
         } else {
-            return true
+            true
         }
     }
 }

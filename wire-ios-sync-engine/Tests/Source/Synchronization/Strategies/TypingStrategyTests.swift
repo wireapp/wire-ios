@@ -50,7 +50,7 @@ class MockTyping: WireSyncEngine.Typing {
 class MockClientRegistrationDelegate: NSObject, ClientRegistrationDelegate {
     var mockReadiness = true
     var clientIsReadyForRequests: Bool {
-        return mockReadiness
+        mockReadiness
     }
 
     public func didDetectCurrentClientDeletion() {}

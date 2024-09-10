@@ -145,6 +145,6 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
     }
 
     public func isJailbroken() -> Bool {
-        return jailbroken
+        jailbroken
     }
 }

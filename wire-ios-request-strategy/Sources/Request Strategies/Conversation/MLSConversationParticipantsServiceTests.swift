@@ -178,7 +178,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         let clientIDs = [MLSClientID.random()]
 
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
-            return clientIDs
+            clientIDs
         }
 
         // WHEN
@@ -222,7 +222,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_RemoveParticipant_RethrowsErrors() async {
         // GIVEN
         mockClientIDsProvider.fetchUserClientsForIn_MockMethod = { _, _ in
-            return [MLSClientID.random()]
+            [MLSClientID.random()]
         }
 
         mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in

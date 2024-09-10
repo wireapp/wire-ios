@@ -58,7 +58,7 @@ import Foundation
     }
 
     public var payload: ZMTransportData {
-        return [
+        [
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
@@ -67,6 +67,6 @@ import Foundation
     }
 
     override public var debugDescription: String {
-        return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
     }
 }

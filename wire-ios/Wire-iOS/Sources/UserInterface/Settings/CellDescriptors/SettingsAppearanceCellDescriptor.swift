@@ -34,11 +34,11 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     var previewGenerator: PreviewGeneratorType?
 
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return text
+        text
     }
 
     init(text: String,

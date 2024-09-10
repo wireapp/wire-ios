@@ -48,25 +48,25 @@ extension ZMClientMessage: LocationMessageData {
     }
 
     @objc public var latitude: Float {
-        return self.underlyingMessage?.locationData?.latitude ?? 0
+        self.underlyingMessage?.locationData?.latitude ?? 0
     }
 
     @objc public var longitude: Float {
-        return self.underlyingMessage?.locationData?.longitude ?? 0
+        self.underlyingMessage?.locationData?.longitude ?? 0
     }
 
     @objc public var name: String? {
-        return self.underlyingMessage?.locationData?.name
+        self.underlyingMessage?.locationData?.name
     }
 
     @objc public var zoomLevel: Int32 {
-        return self.underlyingMessage?.locationData?.zoom ?? 0
+        self.underlyingMessage?.locationData?.zoom ?? 0
     }
 }
 
 extension LocationMessageData {
     public var coordinate: CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(
+        CLLocationCoordinate2D(
             latitude: CLLocationDegrees(latitude),
             longitude: CLLocationDegrees(longitude)
         )

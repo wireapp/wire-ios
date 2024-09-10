@@ -61,18 +61,18 @@ final class MediaPlayerController: NSObject {
 
 extension MediaPlayerController: MediaPlayer {
     var title: String? {
-        return message.fileMessageData?.filename
+        message.fileMessageData?.filename
     }
 
     var sourceMessage: ZMConversationMessage? {
-        return message
+        message
     }
 
     var state: MediaPlayerState? {
         if player.rate > 0 {
-            return MediaPlayerState.playing
+            MediaPlayerState.playing
         } else {
-            return MediaPlayerState.paused
+            MediaPlayerState.paused
         }
     }
 

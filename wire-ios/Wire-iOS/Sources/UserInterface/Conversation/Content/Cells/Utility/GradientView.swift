@@ -20,7 +20,7 @@ import UIKit
 
 final class GradientView: UIView {
     override static var layerClass: AnyClass {
-        return CAGradientLayer.self
+        CAGradientLayer.self
     }
 
     var gradientLayer: CAGradientLayer {

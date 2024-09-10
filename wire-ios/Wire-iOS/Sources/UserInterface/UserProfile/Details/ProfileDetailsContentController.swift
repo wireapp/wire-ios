@@ -118,7 +118,7 @@ final class ProfileDetailsContentController: NSObject,
 
     /// Whether the viewer can access the rich profile data of the displayed user.
     private var viewerCanAccessRichProfile: Bool {
-        return viewer.canAccessCompanyInformation(of: user)
+        viewer.canAccessCompanyInformation(of: user)
     }
 
     /// Starts observing changes in the user profile.
@@ -205,21 +205,21 @@ final class ProfileDetailsContentController: NSObject,
     // MARK: - Table View
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return contents.count
+        contents.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch contents[section] {
         case let .richProfile(fields):
-            return fields.count
+            fields.count
         case .readReceiptsStatus:
-            return 0
+            0
         case .groupAdminStatus:
-            return 1
+            1
         case .blockingReason:
-            return 1
+            1
         case .messageProtocol:
-            return 1
+            1
         }
     }
 
@@ -257,7 +257,7 @@ final class ProfileDetailsContentController: NSObject,
             let cell = tableView.dequeueReusableCell(withIdentifier: IconToggleSubtitleCell.zm_reuseIdentifier, for: indexPath) as! IconToggleSubtitleCell
 
             cell.configure(with: CellConfiguration.groupAdminToogle(get: {
-                return groupAdminEnabled
+                groupAdminEnabled
             }, set: {_, _ in
                 self.isAdminState.toggle()
                 self.delegate?.profileGroupRoleDidChange(isAdminRole: self.isAdminState)
@@ -315,7 +315,7 @@ final class ProfileDetailsContentController: NSObject,
     }
 
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

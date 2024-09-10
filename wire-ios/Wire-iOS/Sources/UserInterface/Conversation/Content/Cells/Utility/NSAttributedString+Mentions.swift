@@ -35,7 +35,7 @@ struct TextMarker<A> {
 
 extension TextMarker {
     func range(in string: String) -> Range<Int>? {
-        return Range((string as NSString).range(of: token))
+        Range((string as NSString).range(of: token))
     }
 }
 
@@ -43,17 +43,17 @@ extension Mention {
     static let mentionScheme = "wire-mention"
 
     var link: URL {
-        return URL(string: "\(Mention.mentionScheme)://location/\(range.location)")!
+        URL(string: "\(Mention.mentionScheme)://location/\(range.location)")!
     }
 
     var location: Int {
-        return range.location
+        range.location
     }
 }
 
 extension URL {
     var isMention: Bool {
-        return scheme == Mention.mentionScheme
+        scheme == Mention.mentionScheme
     }
 
     var mentionLocation: Int {

@@ -27,7 +27,7 @@ extension ZMBaseManagedObjectTest {
     }
 
     func createClientTextMessage(in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {
-        return createClientTextMessage(withText: self.name, in: context)
+        createClientTextMessage(withText: self.name, in: context)
     }
 
     func createClientTextMessage(withText text: String, in context: NSManagedObjectContext? = nil) -> ZMClientMessage? {

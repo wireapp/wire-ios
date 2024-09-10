@@ -31,22 +31,22 @@ extension ConversationViewController {
         var localizedTitle: String {
             switch self {
             case .verifyDevices:
-                return L10n.Localizable.Meta.Degraded.verifyDevicesButton
+                L10n.Localizable.Meta.Degraded.verifyDevicesButton
             case .sendAnyway, .sendAnywayWithAction:
-                return L10n.Localizable.Meta.Degraded.sendAnywayButton
+                L10n.Localizable.Meta.Degraded.sendAnywayButton
             case .legalHoldDetails:
-                return L10n.Localizable.Meta.Legalhold.infoButton
+                L10n.Localizable.Meta.Legalhold.infoButton
             case .cancel, .cancelWithAction:
-                return L10n.Localizable.General.cancel
+                L10n.Localizable.General.cancel
             }
         }
 
         var preferredStyle: UIAlertAction.Style {
             switch self {
             case .cancel, .cancelWithAction:
-                return .cancel
+                .cancel
             default:
-                return .default
+                .default
             }
         }
     }

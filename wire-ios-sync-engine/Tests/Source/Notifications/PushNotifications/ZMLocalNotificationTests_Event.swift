@@ -23,7 +23,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: Helpers
 
     func payloadForConnectionRequest(to remoteID: UUID, status: String) -> [AnyHashable: Any] {
-        return [
+        [
             "connection": [
                 "conversation": oneOnOneConversation.remoteIdentifier!.transportString(),
                 "message": "Please add me",

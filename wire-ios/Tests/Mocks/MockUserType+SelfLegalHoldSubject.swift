@@ -22,16 +22,16 @@ import WireCryptobox
 extension MockUserType: SelfLegalHoldSubject {
     var legalHoldStatus: UserLegalHoldStatus {
         if isUnderLegalHold {
-            return .enabled
+            .enabled
         } else if let request = legalHoldDataSource.legalHoldRequest {
-            return .pending(request)
+            .pending(request)
         } else {
-            return .disabled
+            .disabled
         }
     }
 
     var needsToAcknowledgeLegalHoldStatus: Bool {
-        return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
+        legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
     var fingerprint: String? {

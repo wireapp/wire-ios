@@ -229,13 +229,13 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     }
 
     private var buttonIcon: StyleKitIcon {
-        return isLoading
+        isLoading
             ? .spinner
             : overrideButtonIcon ?? (UIApplication.isLeftToRightLayout ? .forwardArrow : .backArrow)
     }
 
     private var iconSize: StyleKitIcon.Size {
-        return isLoading ? .medium : .tiny
+        isLoading ? .medium : .tiny
     }
 
     private func updateButtonIcon() {
@@ -282,11 +282,11 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
 
     /// Whether the input is valid.
     var isInputValid: Bool {
-        return enableConfirmButton?() ?? !input.isEmpty
+        enableConfirmButton?() ?? !input.isEmpty
     }
 
     var isValid: Bool {
-        return textFieldValidator.validate(text: text, kind: kind) == nil
+        textFieldValidator.validate(text: text, kind: kind) == nil
     }
 
     func updateText(_ text: String) {
@@ -316,6 +316,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     }
 
     func validateText(text: String) -> TextFieldValidator.ValidationError? {
-        return textFieldValidator.validate(text: text, kind: kind)
+        textFieldValidator.validate(text: text, kind: kind)
     }
 }

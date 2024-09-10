@@ -33,9 +33,9 @@ extension ZMUser {
     @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {
         switch size {
         case .preview:
-            return cacheIdentifier(suffix: previewProfileAssetIdentifier)
+            cacheIdentifier(suffix: previewProfileAssetIdentifier)
         case .complete:
-            return cacheIdentifier(suffix: completeProfileAssetIdentifier)
+            cacheIdentifier(suffix: completeProfileAssetIdentifier)
         }
     }
 }
@@ -46,7 +46,7 @@ let NSManagedObjectContextUserImageCacheKey = "zm_userImageCacheKey"
 extension NSManagedObjectContext {
     @objc public var zm_userImageCache: UserImageLocalCache! {
         get {
-            return self.userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
+            self.userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
         }
 
         set {

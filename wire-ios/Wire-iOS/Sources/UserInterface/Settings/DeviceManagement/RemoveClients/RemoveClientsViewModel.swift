@@ -47,7 +47,7 @@ extension RemoveClientsViewController {
 
         func removeUserClient(_ userClient: UserClient, password: String) async throws {
             let clientId = await userClient.managedObjectContext?.perform {
-                return userClient.remoteIdentifier
+                userClient.remoteIdentifier
             }
             guard let clientId else {
                 throw RemoveUserClientError.clientDoesNotExistLocally

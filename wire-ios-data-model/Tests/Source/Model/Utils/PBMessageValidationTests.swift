@@ -297,7 +297,7 @@ class PBMessageValidationTests: XCTestCase {
     }
 
     private func assetRemoteData(id: String, token: String, domain: String) -> WireProtos.Asset.RemoteData {
-        return WireProtos.Asset.RemoteData.with {
+        WireProtos.Asset.RemoteData.with {
             $0.assetID = id
             $0.assetToken = token
             $0.assetDomain = domain

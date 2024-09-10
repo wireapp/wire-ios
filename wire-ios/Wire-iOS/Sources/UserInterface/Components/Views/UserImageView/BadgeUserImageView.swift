@@ -177,7 +177,7 @@ final class BadgeUserImageView: UserImageView {
 extension BadgeUserImageView {
     var wr_badgeIconSize: CGFloat {
         get {
-            return badgeIconSize.rawValue
+            badgeIconSize.rawValue
         }
         set {
             badgeIconSize = .custom(newValue)

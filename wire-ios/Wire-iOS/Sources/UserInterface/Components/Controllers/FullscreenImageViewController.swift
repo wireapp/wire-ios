@@ -149,19 +149,19 @@ final class FullscreenImageViewController: UIViewController {
     // MARK: - Overrides
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .all
+        .all
     }
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     // MARK: - Dismiss
@@ -713,11 +713,11 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
     // MARK: - Actions
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return actionController.canPerformAction(action)
+        actionController.canPerformAction(action)
     }
 
     override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        return actionController
+        actionController
     }
 
     @objc
@@ -792,7 +792,7 @@ extension FullscreenImageViewController: UIScrollViewDelegate {
     }
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
+        imageView
     }
 
     private func centerScrollViewContent() {

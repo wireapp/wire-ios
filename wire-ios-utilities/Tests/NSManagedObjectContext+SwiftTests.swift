@@ -47,7 +47,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
     func testThatItReturnsNonOptionalValue() {
         // given
         let closure: () -> Int = {
-            return 42
+            42
         }
 
         // when
@@ -62,7 +62,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
     func testThatItReturnsOptionalValue() {
         // given
         let closure: () -> Int? = {
-            return nil
+            nil
         }
 
         // when

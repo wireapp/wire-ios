@@ -42,39 +42,39 @@ class CompositeMessageItemContent: NSObject {
 
 extension CompositeMessageItemContent: TextMessageData {
     var messageText: String? {
-        return text?.content.removingExtremeCombiningCharacters
+        text?.content.removingExtremeCombiningCharacters
     }
 
     var linkPreview: LinkMetadata? {
-        return nil
+        nil
     }
 
     var mentions: [Mention] {
-        return Mention.mentions(from: text?.mentions, messageText: messageText, moc: parentMessage.managedObjectContext)
+        Mention.mentions(from: text?.mentions, messageText: messageText, moc: parentMessage.managedObjectContext)
     }
 
     var quote: ZMMessage? {
-        return nil
+        nil
     }
 
     var quoteMessage: ZMConversationMessage? {
-        return quote
+        quote
     }
 
     var linkPreviewHasImage: Bool {
-        return false
+        false
     }
 
     var linkPreviewImageCacheKey: String? {
-        return nil
+        nil
     }
 
     var isQuotingSelf: Bool {
-        return false
+        false
     }
 
     var hasQuote: Bool {
-        return false
+        false
     }
 
     func fetchLinkPreviewImageData(
@@ -97,15 +97,15 @@ extension CompositeMessageItemContent: TextMessageData {
 
 extension CompositeMessageItemContent: ButtonMessageData {
     var title: String? {
-        return button?.text
+        button?.text
     }
 
     var state: ButtonMessageState {
-        return ButtonMessageState(from: buttonState?.state)
+        ButtonMessageState(from: buttonState?.state)
     }
 
     var isExpired: Bool {
-        return buttonState?.isExpired ?? false
+        buttonState?.isExpired ?? false
     }
 
     func touchAction() {
@@ -141,7 +141,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
 
 extension CompositeMessageItemContent {
     private var hasSelectedButton: Bool {
-        return parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
+        parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false
     }
 
     private var buttonState: ButtonState? {

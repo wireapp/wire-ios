@@ -143,7 +143,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         }
 
         override var intrinsicContentSize: CGSize {
-            return CGSize(width: parentSize.width > CGFloat.iPhone4Inch.width ? 50 : 44, height: parentSize.height)
+            CGSize(width: parentSize.width > CGFloat.iPhone4Inch.width ? 50 : 44, height: parentSize.height)
         }
     }
 
@@ -207,11 +207,11 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override var canBecomeFocused: Bool {
-        return true
+        true
     }
 
     @discardableResult override func becomeFirstResponder() -> Bool {
@@ -233,7 +233,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     }
 
     override func accessibilityActivate() -> Bool {
-        return self.becomeFirstResponder()
+        self.becomeFirstResponder()
     }
 
     // MARK: - Paste support
@@ -255,21 +255,21 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         switch action {
         case #selector(paste(_:)):
-            return UIPasteboard.general.string != nil
+            UIPasteboard.general.string != nil
         default:
-            return false
+            false
         }
     }
 
     // MARK: - Public API
 
     var isFilled: Bool {
-        return storage.count >= maxLength
+        storage.count >= maxLength
     }
 
     var text: String? {
         get {
-            return storage
+            storage
         }
 
         set {
@@ -319,6 +319,6 @@ extension CharacterInputField: UIKeyInput {
     }
 
     var hasText: Bool {
-        return !storage.isEmpty
+        !storage.isEmpty
     }
 }

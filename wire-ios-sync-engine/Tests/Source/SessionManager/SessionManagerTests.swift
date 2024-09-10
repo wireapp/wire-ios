@@ -615,7 +615,7 @@ final class SessionManagerTests: IntegrationTest {
 
 extension IntegrationTest {
     func createAccount() -> Account {
-        return createAccount(with: currentUserIdentifier)
+        createAccount(with: currentUserIdentifier)
     }
 
     func createAccount(with id: UUID) -> Account {

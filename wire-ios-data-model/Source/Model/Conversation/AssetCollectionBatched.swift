@@ -27,7 +27,7 @@ public struct CategoryMatch: Hashable {
 }
 
 public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
-    return (lhs.excluding == rhs.excluding) && (lhs.including == rhs.including)
+    (lhs.excluding == rhs.excluding) && (lhs.including == rhs.including)
 }
 
 /// This class fetches messages and groups them by `MessageCategory` (e.g. files, images, videos etc.)
@@ -52,16 +52,16 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     private var tornDown = false
 
     private var syncMOC: NSManagedObjectContext? {
-        return conversation?.managedObjectContext?.zm_sync
+        conversation?.managedObjectContext?.zm_sync
     }
 
     private var uiMOC: NSManagedObjectContext? {
-        return conversation?.managedObjectContext
+        conversation?.managedObjectContext
     }
 
     /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been tornDown
     public var fetchingDone: Bool {
-        return tornDown || (assetMessagesDone && clientMessagesDone)
+        tornDown || (assetMessagesDone && clientMessagesDone)
     }
 
     /// Returns a collection that automatically fetches the assets in batches

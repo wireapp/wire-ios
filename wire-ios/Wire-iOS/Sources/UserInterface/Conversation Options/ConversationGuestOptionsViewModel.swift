@@ -158,7 +158,7 @@ final class ConversationGuestOptionsViewModel {
     // TODO: copy?
     private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
-            get: { [unowned self] in return self.configuration.allowGuests },
+            get: { [unowned self] in self.configuration.allowGuests },
             set: { [unowned self] in self.setAllowGuests($0, view: $1) },
             isEnabled: configuration.isConversationFromSelfTeam
         )]

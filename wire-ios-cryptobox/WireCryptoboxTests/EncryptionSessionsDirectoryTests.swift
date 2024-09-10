@@ -699,18 +699,18 @@ extension EncryptionSessionsDirectoryTests {
         var identifier: EncryptionSessionIdentifier {
             switch self {
             case .Alice:
-                return EncryptionSessionIdentifier(domain: "example.com", userId: "234ab2e4", clientId: "c45-a11c30")
+                EncryptionSessionIdentifier(domain: "example.com", userId: "234ab2e4", clientId: "c45-a11c30")
             case .Bob:
-                return EncryptionSessionIdentifier(fromLegacyV1Identifier: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
+                EncryptionSessionIdentifier(fromLegacyV1Identifier: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
             }
         }
 
         var other: Person {
             switch self {
             case .Alice:
-                return .Bob
+                .Bob
             case .Bob:
-                return .Alice
+                .Alice
             }
         }
     }

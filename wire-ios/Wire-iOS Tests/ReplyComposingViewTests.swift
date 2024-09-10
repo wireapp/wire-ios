@@ -35,7 +35,7 @@ final class ReplyComposingViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         self.verifyDeallocation {
-            return ReplyComposingView(message: message)
+            ReplyComposingView(message: message)
         }
     }
 

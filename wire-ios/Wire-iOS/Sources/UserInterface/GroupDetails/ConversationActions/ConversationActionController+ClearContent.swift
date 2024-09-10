@@ -24,9 +24,9 @@ enum ClearContentResult {
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.General.cancel
-        case .delete(leave: true): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDeleteAndLeave
-        case .delete(leave: false): return L10n.Localizable.Meta.Menu.DeleteContent.buttonDelete
+        case .cancel: L10n.Localizable.General.cancel
+        case .delete(leave: true): L10n.Localizable.Meta.Menu.DeleteContent.buttonDeleteAndLeave
+        case .delete(leave: false): L10n.Localizable.Meta.Menu.DeleteContent.buttonDelete
         }
     }
 
@@ -36,18 +36,18 @@ enum ClearContentResult {
     }
 
     func action(_ handler: @escaping (ClearContentResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        .init(title: title, style: style) { _ in handler(self) }
     }
 
     static var title: String {
-        return L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
+        L10n.Localizable.Meta.Menu.DeleteContent.dialogMessage
     }
 
     static func options(for conversation: ZMConversation) -> [ClearContentResult] {
         if conversation.conversationType == .oneOnOne || !conversation.isSelfAnActiveMember {
-            return [.delete(leave: false), .cancel]
+            [.delete(leave: false), .cancel]
         } else {
-            return [.delete(leave: true), .delete(leave: false), .cancel]
+            [.delete(leave: true), .delete(leave: false), .cancel]
         }
     }
 }

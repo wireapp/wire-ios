@@ -28,12 +28,12 @@ struct Observable {
 
     /// Keys that we want to report changes for
     var observableKeys: Set<String> {
-        return affectingKeyStore.observableKeys[classIdentifier] ?? Set()
+        affectingKeyStore.observableKeys[classIdentifier] ?? Set()
     }
 
     /// Union of observable keys and their affecting keys
     var allKeys: Set<String> {
-        return affectingKeyStore.allKeys[classIdentifier] ?? Set()
+        affectingKeyStore.allKeys[classIdentifier] ?? Set()
     }
 
     init(classIdentifier: String, affectingKeyStore: DependencyKeyStore) {
@@ -44,7 +44,7 @@ struct Observable {
     }
 
     func keyPathsForValuesAffectingValue(for key: String) -> Set<String> {
-        return affectingKeys[key] ?? Set()
+        affectingKeys[key] ?? Set()
     }
 
     func observableKeysAffectedByValue(for key: String) -> Set<String> {
@@ -187,7 +187,7 @@ class DependencyKeyStore {
 
     /// Returns keyPathsForValuesAffectingValueForKey for specified `key`
     func keyPathsForValuesAffectingValue(_ classIdentifier: String, key: String) -> Set<String> {
-        return affectingKeys[classIdentifier]?[key] ?? Set()
+        affectingKeys[classIdentifier]?[key] ?? Set()
     }
 
     /// Returns the inverse of keyPathsForValuesAffectingValueForKey, all observable keys that are affected by `key`
@@ -208,9 +208,9 @@ class DependencyKeyStore {
     func requiredKeysForIncludingRawChanges(classIdentifier: String, for object: ZMManagedObject) -> Set<String> {
         switch (classIdentifier, object) {
         case (ZMUser.entityName(), is UserClient):
-            return Set([ZMUserClientTrustedKey, ZMUserClientTrusted_ByKey])
+            Set([ZMUserClientTrustedKey, ZMUserClientTrusted_ByKey])
         default:
-            return Set()
+            Set()
         }
     }
 }

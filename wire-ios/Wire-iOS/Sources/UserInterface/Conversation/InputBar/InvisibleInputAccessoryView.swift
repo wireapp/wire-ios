@@ -36,7 +36,7 @@ final class InvisibleInputAccessoryView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return overriddenIntrinsicContentSize
+        overriddenIntrinsicContentSize
     }
 
     override func didMoveToWindow() {

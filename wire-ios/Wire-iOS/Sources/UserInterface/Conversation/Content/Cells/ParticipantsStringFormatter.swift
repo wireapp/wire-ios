@@ -25,14 +25,14 @@ private typealias Attributes = [NSAttributedString.Key: AnyObject]
 extension ConversationActionType {
     fileprivate func formatKey(senderIsSelfUser: Bool) -> String {
         switch self {
-        case .left: return localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
-        case .added(herself: true): return "content.system.conversation.guest.joined"
-        case .added(herself: false): return localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
-        case .removed(reason: .legalHoldPolicyConflict): return localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold"
-        case .removed: return localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
-        case .started(withName: .none), .none: return localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
-        case .started(withName: .some): return "content.system.conversation.with_name.participants"
-        case .teamMemberLeave: return "content.system.conversation.team.member-leave"
+        case .left: localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
+        case .added(herself: true): "content.system.conversation.guest.joined"
+        case .added(herself: false): localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
+        case .removed(reason: .legalHoldPolicyConflict): localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold"
+        case .removed: localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
+        case .started(withName: .none), .none: localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
+        case .started(withName: .some): "content.system.conversation.with_name.participants"
+        case .teamMemberLeave: "content.system.conversation.team.member-leave"
         }
     }
 
@@ -82,7 +82,7 @@ final class ParticipantsStringFormatter {
         let selfIncluded: Bool
 
         var totalUsers: Int {
-            return names.count + collapsed
+            names.count + collapsed
         }
     }
 
@@ -91,15 +91,15 @@ final class ParticipantsStringFormatter {
     private let textColor: UIColor
 
     private var normalAttributes: Attributes {
-        return [.font: font, .foregroundColor: textColor]
+        [.font: font, .foregroundColor: textColor]
     }
 
     private var boldAttributes: Attributes {
-        return [.font: font, .foregroundColor: textColor]
+        [.font: font, .foregroundColor: textColor]
     }
 
     private var linkAttributes: Attributes {
-        return [.link: ParticipantsCellViewModel.showMoreLinkURL]
+        [.link: ParticipantsCellViewModel.showMoreLinkURL]
     }
 
     init(

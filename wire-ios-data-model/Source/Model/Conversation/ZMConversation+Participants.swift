@@ -28,7 +28,7 @@ extension ZMConversation {
     }
 
     @objc public var sortedActiveParticipants: [ZMUser] {
-        return sortedUsers(localParticipants)
+        sortedUsers(localParticipants)
     }
 
     /// Whether the roles defined for this conversation should be re-downloaded
@@ -36,7 +36,7 @@ extension ZMConversation {
 
     @objc
     public var isSelfAnActiveMember: Bool {
-        return self.participantRoles.contains(where: { role -> Bool in
+        self.participantRoles.contains(where: { role -> Bool in
             role.user?.isSelfUser == true
         })
     }
@@ -44,22 +44,22 @@ extension ZMConversation {
     // MARK: - keyPathsForValuesAffecting
 
     static var participantRolesKeys: [String] {
-        return [#keyPath(ZMConversation.participantRoles)]
+        [#keyPath(ZMConversation.participantRoles)]
     }
 
     @objc
     public class func keyPathsForValuesAffectingActiveParticipants() -> Set<String> {
-        return Set(participantRolesKeys)
+        Set(participantRolesKeys)
     }
 
     @objc
     public class func keyPathsForValuesAffectingLocalParticipants() -> Set<String> {
-        return Set(participantRolesKeys)
+        Set(participantRolesKeys)
     }
 
     @objc
     public class func keyPathsForValuesAffectingLocalParticipantRoles() -> Set<String> {
-        return Set(participantRolesKeys + [#keyPath(ZMConversation.participantRoles.role)])
+        Set(participantRolesKeys + [#keyPath(ZMConversation.participantRoles.role)])
     }
 
     @objc
@@ -75,7 +75,7 @@ extension ZMConversation {
 
     @objc
     public class func keyPathsForValuesAffectingLocalParticipantsExcludingSelf() -> Set<String> {
-        return Set(ZMConversation.participantRolesKeys)
+        Set(ZMConversation.participantRolesKeys)
     }
 
     // MARK: - Participants methods
@@ -84,14 +84,14 @@ extension ZMConversation {
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipantRoles: Set<ParticipantRole> {
-        return participantRoles
+        participantRoles
     }
 
     /// Participants that are in the conversation, according to the local state
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipants: Set<ZMUser> {
-        return Set(localParticipantRoles.compactMap(\.user))
+        Set(localParticipantRoles.compactMap(\.user))
     }
 
     /// Participants that are in the conversation, according to the local state
@@ -99,7 +99,7 @@ extension ZMConversation {
 
     @objc
     public var localParticipantsExcludingSelf: Set<ZMUser> {
-        return self.localParticipants.filter { !$0.isSelfUser }
+        self.localParticipants.filter { !$0.isSelfUser }
     }
 
     // MARK: - Participant operations

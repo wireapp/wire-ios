@@ -30,7 +30,7 @@ public struct GenericHash: Hashable {
 
 extension GenericHash: CustomStringConvertible {
     public var description: String {
-        return "GenericHash \(hashValue)"
+        "GenericHash \(hashValue)"
     }
 }
 

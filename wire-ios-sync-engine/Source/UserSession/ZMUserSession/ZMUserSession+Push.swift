@@ -57,7 +57,7 @@ struct PushTokenMetadata {
     var tokenType: PushToken.TokenType
 
     var transportType: String {
-        return isSandbox ? (tokenType.transportType + "_SANDBOX") : tokenType.transportType
+        isSandbox ? (tokenType.transportType + "_SANDBOX") : tokenType.transportType
     }
 
     static func current(for tokenType: PushToken.TokenType) -> PushTokenMetadata {
@@ -211,7 +211,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
 
 extension UNNotificationContent {
     override open var description: String {
-        return "<\(type(of: self)); threadIdentifier: \(self.threadIdentifier); content: redacted>"
+        "<\(type(of: self)); threadIdentifier: \(self.threadIdentifier); content: redacted>"
     }
 }
 
@@ -225,10 +225,10 @@ extension PushToken {
     }
 
     public static func createVOIPToken(from deviceToken: Data) -> PushToken {
-        return PushToken(deviceToken: deviceToken, pushTokenType: .voip)
+        PushToken(deviceToken: deviceToken, pushTokenType: .voip)
     }
 
     public static func createAPNSToken(from deviceToken: Data) -> PushToken {
-        return PushToken(deviceToken: deviceToken, pushTokenType: .standard)
+        PushToken(deviceToken: deviceToken, pushTokenType: .standard)
     }
 }

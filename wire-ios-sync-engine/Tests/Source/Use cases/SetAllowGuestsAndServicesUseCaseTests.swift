@@ -32,7 +32,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     private var sut: SetAllowGuestAndServicesUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp

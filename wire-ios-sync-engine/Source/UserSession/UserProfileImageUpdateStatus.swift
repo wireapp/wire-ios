@@ -65,16 +65,16 @@ public final class UserProfileImageUpdateStatus: NSObject {
                  (.upload, .uploading),
                  (.uploading, .uploaded),
                  (.ready, .upload): // When re-uploading a preprocessed v2 to v3
-                return true
+                true
             case (.uploaded, .ready),
                  (.failed, .ready):
-                return true
+                true
             case (.failed, .failed):
-                return false
+                false
             case (_, .failed):
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }
@@ -90,16 +90,16 @@ public final class UserProfileImageUpdateStatus: NSObject {
             case (.ready, .preprocess),
                  (.preprocess, .update),
                  (.ready, .update): // When re-uploading a preprocessed v2 to v3
-                return true
+                true
             case (.update, .ready),
                  (.failed, .ready):
-                return true
+                true
             case (.failed, .failed):
-                return false
+                false
             case (_, .failed):
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }
@@ -193,7 +193,7 @@ extension UserProfileImageUpdateStatus {
 
 extension UserProfileImageUpdateStatus {
     func imageState(for imageSize: ProfileImageSize) -> ImageState {
-        return imageState[imageSize] ?? .ready
+        imageState[imageSize] ?? .ready
     }
 
     func setState(state newState: ImageState, for imageSize: ProfileImageSize) {
@@ -285,14 +285,14 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     ///
     /// - Returns: true if there are assets that needs to be deleted
     func hasAssetToDelete() -> Bool {
-        return !assetsToDelete.isEmpty
+        !assetsToDelete.isEmpty
     }
 
     /// Takes an asset ID that needs to be deleted and removes from the internal list
     ///
     /// - Returns: Asset ID or nil if nothing needs to be deleted
     func consumeAssetToDelete() -> String? {
-        return assetsToDelete.removeFirst()
+        assetsToDelete.removeFirst()
     }
 
     /// Checks if there is an image to upload
@@ -303,9 +303,9 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     func hasImageToUpload(for size: ProfileImageSize) -> Bool {
         switch imageState(for: size) {
         case .upload:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

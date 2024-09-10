@@ -36,7 +36,7 @@ public final class DataBuffer: NSObject {
     fileprivate var data: DispatchData = DispatchData.empty
 
     public var objcData: __DispatchData {
-        return data as __DispatchData
+        data as __DispatchData
     }
 
     fileprivate func append(data: DispatchData) {
@@ -55,7 +55,7 @@ public final class DataBuffer: NSObject {
     }
 
     func isEmpty() -> Bool {
-        return data.isEmpty
+        data.isEmpty
     }
 }
 
@@ -227,7 +227,7 @@ public final class DataBuffer: NSObject {
     }
 
     fileprivate func isOnQueue() -> Bool {
-        return DispatchQueue.getSpecific(key: queueMarkerKey) != nil
+        DispatchQueue.getSpecific(key: queueMarkerKey) != nil
     }
 
     fileprivate func checkTrust(for stream: Stream) -> Bool {
@@ -320,7 +320,7 @@ public final class DataBuffer: NSObject {
         let data = dataBuffer.data
 
         let bytesWritten = data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> Int in
-            return outputStream.write(bytes, maxLength: data.count)
+            outputStream.write(bytes, maxLength: data.count)
         }
 
         if bytesWritten > 0 {

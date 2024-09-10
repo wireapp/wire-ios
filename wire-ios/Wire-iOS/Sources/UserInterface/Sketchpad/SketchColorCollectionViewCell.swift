@@ -48,82 +48,82 @@ enum SketchColors: CaseIterable {
     var name: String {
         switch self {
         case .black:
-            return SketchColorName.black
+            SketchColorName.black
         case .white:
-            return SketchColorName.white
+            SketchColorName.white
         case .blue:
-            return SketchColorName.blue
+            SketchColorName.blue
         case .green:
-            return SketchColorName.green
+            SketchColorName.green
         case .yellow:
-            return SketchColorName.yellow
+            SketchColorName.yellow
         case .red:
-            return SketchColorName.red
+            SketchColorName.red
         case .orange:
-            return SketchColorName.orange
+            SketchColorName.orange
         case .purple:
-            return SketchColorName.purple
+            SketchColorName.purple
         case .brown:
-            return SketchColorName.brown
+            SketchColorName.brown
         case .turquoise:
-            return SketchColorName.turquoise
+            SketchColorName.turquoise
         case .sky:
-            return SketchColorName.sky
+            SketchColorName.sky
         case .lime:
-            return SketchColorName.lime
+            SketchColorName.lime
         case .cyan:
-            return SketchColorName.cyan
+            SketchColorName.cyan
         case .lilac:
-            return SketchColorName.lilac
+            SketchColorName.lilac
         case .coral:
-            return SketchColorName.coral
+            SketchColorName.coral
         case .pink:
-            return SketchColorName.pink
+            SketchColorName.pink
         case .chocolate:
-            return SketchColorName.chocolate
+            SketchColorName.chocolate
         case .gray:
-            return SketchColorName.gray
+            SketchColorName.gray
         }
     }
 
     var color: UIColor {
         switch self {
         case .black:
-            return SketchColorValues.black
+            SketchColorValues.black
         case .white:
-            return SketchColorValues.white
+            SketchColorValues.white
         case .blue:
-            return SketchColorValues.blue
+            SketchColorValues.blue
         case .green:
-            return SketchColorValues.green
+            SketchColorValues.green
         case .yellow:
-            return SketchColorValues.yellow
+            SketchColorValues.yellow
         case .red:
-            return SketchColorValues.red
+            SketchColorValues.red
         case .orange:
-            return SketchColorValues.orange
+            SketchColorValues.orange
         case .purple:
-            return SketchColorValues.purple
+            SketchColorValues.purple
         case .brown:
-            return SketchColorValues.brown
+            SketchColorValues.brown
         case .turquoise:
-            return SketchColorValues.turquoise
+            SketchColorValues.turquoise
         case .sky:
-            return SketchColorValues.sky
+            SketchColorValues.sky
         case .lime:
-            return SketchColorValues.lime
+            SketchColorValues.lime
         case .cyan:
-            return SketchColorValues.cyan
+            SketchColorValues.cyan
         case .lilac:
-            return SketchColorValues.lilac
+            SketchColorValues.lilac
         case .coral:
-            return SketchColorValues.coral
+            SketchColorValues.coral
         case .pink:
-            return SketchColorValues.pink
+            SketchColorValues.pink
         case .chocolate:
-            return SketchColorValues.chocolate
+            SketchColorValues.chocolate
         case .gray:
-            return SketchColorValues.gray
+            SketchColorValues.gray
         }
     }
 }
@@ -135,7 +135,7 @@ struct SketchColor: Equatable {
     var color: UIColor
 
     static func getAllColors() -> [SketchColor] {
-        return SketchColors.allCases.map { SketchColor(name: $0.name, color: $0.color) }
+        SketchColors.allCases.map { SketchColor(name: $0.name, color: $0.color) }
     }
 }
 

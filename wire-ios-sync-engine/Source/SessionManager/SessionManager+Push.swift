@@ -127,6 +127,6 @@ extension SessionManager {
 
 extension SessionManager {
     var shouldProcessLegacyPushes: Bool {
-        return requiredPushTokenType == .voip
+        requiredPushTokenType == .voip
     }
 }

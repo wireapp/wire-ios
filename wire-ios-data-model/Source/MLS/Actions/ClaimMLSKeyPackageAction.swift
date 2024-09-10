@@ -36,19 +36,19 @@ public class ClaimMLSKeyPackageAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .missingDomain:
-                return "Missing domain."
+                "Missing domain."
             case .endpointUnavailable:
-                return "Endpoint unavailable."
+                "Endpoint unavailable."
             case .malformedResponse:
-                return "Malformed response."
+                "Malformed response."
             case .invalidSelfClientId:
-                return "Invalid self client id for parameter: skip own."
+                "Invalid self client id for parameter: skip own."
             case .userOrDomainNotFound:
-                return "User domain or user not found."
+                "User domain or user not found."
             case .emptyKeyPackages:
-                return "The list of key packages is empty"
+                "The list of key packages is empty"
             case let .unknown(status):
-                return "Unknown error (response status: \(status))"
+                "Unknown error (response status: \(status))"
             }
         }
     }

@@ -30,7 +30,7 @@ public final class PatchApplicator<T: DataPatchInterface> {
     public let name: String
 
     var lastRunVersionKey: String {
-        return "\(name)_LastRunVersion"
+        "\(name)_LastRunVersion"
     }
 
     private lazy var logger = WireLogger(tag: "patch applicator - \(name)")

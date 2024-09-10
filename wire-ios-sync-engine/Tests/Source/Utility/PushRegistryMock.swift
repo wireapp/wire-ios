@@ -31,7 +31,7 @@ final class PushPayloadMock: PKPushPayload {
     }
 
     override var dictionaryPayload: [AnyHashable: Any] {
-        return mockDictionaryPayload
+        mockDictionaryPayload
     }
 }
 
@@ -47,11 +47,11 @@ final class PushCredentialsMock: PKPushCredentials {
     }
 
     override var token: Data {
-        return mockToken
+        mockToken
     }
 
     override var type: PKPushType {
-        return mockType
+        mockType
     }
 }
 
@@ -76,6 +76,6 @@ final class PushRegistryMock: PKPushRegistry {
     }
 
     override func pushToken(for type: PKPushType) -> Data? {
-        return mockPushToken
+        mockPushToken
     }
 }

@@ -21,6 +21,6 @@ import WireSyncEngine
 extension ZMUserSession {
     @available(*, deprecated, message: "This shared instance has been deprecated. Don't use it.")
     static func shared() -> ZMUserSession? {
-        return SessionManager.shared?.activeUserSession
+        SessionManager.shared?.activeUserSession
     }
 }

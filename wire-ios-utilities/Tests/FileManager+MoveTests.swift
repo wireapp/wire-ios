@@ -212,11 +212,11 @@ extension FileManagerMoveTests {
 
 extension FileManagerMoveTests {
     var tempFolder1: URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/1")
+        URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/1")
     }
 
     var tempFolder2: URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/2")
+        URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/2")
     }
 
     func wipeDirectories() {

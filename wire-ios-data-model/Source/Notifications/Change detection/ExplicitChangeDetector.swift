@@ -169,7 +169,7 @@ final class ExplicitChangeDetector: ChangeDetector {
     }
 
     private func combine(lhs: ObservableChangesByObject, rhs: ObservableChangesByObject) -> ObservableChangesByObject {
-        return lhs.merged(with: rhs)
+        lhs.merged(with: rhs)
     }
 }
 
@@ -181,7 +181,7 @@ extension ExplicitChangeDetector {
         let changedKeys: Set<String>
 
         var hasChanges: Bool {
-            return !changedKeys.isEmpty
+            !changedKeys.isEmpty
         }
     }
 }
@@ -194,13 +194,13 @@ extension Sequence where Element: SetAlgebra {
 
 extension LazySequence {
     private func collect() -> [Self.Element] {
-        return Array(self)
+        Array(self)
     }
 }
 
 extension NSManagedObject {
     fileprivate var changedKeys: Set<String> {
-        return Set(changedValues().keys)
+        Set(changedValues().keys)
     }
 }
 

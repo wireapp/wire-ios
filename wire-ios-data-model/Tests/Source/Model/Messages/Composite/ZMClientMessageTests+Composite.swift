@@ -73,7 +73,7 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
         uiMOC.performAndWait { [uiMOC] in
             buttonStates = buttonItems.map { buttonItem in
-                return WireDataModel.ButtonState.insert(with: buttonItem.button.id, message: message, inContext: uiMOC)
+                WireDataModel.ButtonState.insert(with: buttonItem.button.id, message: message, inContext: uiMOC)
             }
 
             buttonStates[0].state = .selected

@@ -45,8 +45,8 @@ public enum URLAction: Equatable {
 
     public var causesLogout: Bool {
         switch self {
-        case .startCompanyLogin: return true
-        default: return false
+        case .startCompanyLogin: true
+        default: false
         }
     }
 
@@ -56,8 +56,8 @@ public enum URLAction: Equatable {
              .openConversation,
              .openUserProfile,
              .connectBot:
-            return true
-        default: return false
+            true
+        default: false
         }
     }
 
@@ -66,15 +66,15 @@ public enum URLAction: Equatable {
         case .joinConversation,
              .openConversation,
              .openUserProfile:
-            return true
-        default: return false
+            true
+        default: false
         }
     }
 }
 
 extension URLComponents {
     func query(for key: String) -> String? {
-        return self.queryItems?.first(where: { $0.name == key })?.value
+        self.queryItems?.first(where: { $0.name == key })?.value
     }
 }
 

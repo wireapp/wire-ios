@@ -34,7 +34,7 @@ import Foundation
     }
 
     override public var debugDescription: String {
-        return "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\thasPassword: \(hasPassword)\n\tusesCompanyLogin: \(usesCompanyLogin)"
+        "<LoginCredentials>:\n\temailAddress: \(String(describing: emailAddress))\n\thasPassword: \(hasPassword)\n\tusesCompanyLogin: \(usesCompanyLogin)"
     }
 
     override public func isEqual(_ object: Any?) -> Bool {

@@ -63,10 +63,10 @@ extension CommitError.RecoveryStrategy {
     var shouldDiscardCommit: Bool {
         switch self {
         case .commitPendingProposalsAfterQuickSync:
-            return false
+            false
 
         case .retryAfterQuickSync, .giveUp, .retryAfterRepairingGroup:
-            return true
+            true
         }
     }
 }

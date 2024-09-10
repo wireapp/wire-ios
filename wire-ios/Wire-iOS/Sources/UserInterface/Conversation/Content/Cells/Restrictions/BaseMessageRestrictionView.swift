@@ -53,7 +53,7 @@ class BaseMessageRestrictionView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 56)
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
     // MARK: - Helpers
@@ -106,22 +106,22 @@ enum RestrictedMessageType: String {
     var icon: StyleKitIcon {
         switch self {
         case .audio:
-            return .microphone
+            .microphone
         case .video:
-            return .play
+            .play
         case .image:
-            return .photo
+            .photo
         case .file:
-            return .document
+            .document
         }
     }
 
     var iconSize: StyleKitIcon.Size {
         switch self {
         case .audio, .file:
-            return .small
+            .small
         case .video, .image:
-            return .tiny
+            .tiny
         }
     }
 

@@ -37,7 +37,7 @@ protocol ConversationMessageSectionControllerDelegate: AnyObject {
 
 extension ZMConversationMessage {
     var isComposite: Bool {
-        return (self as? ConversationCompositeMessage)?.isComposite == true
+        (self as? ConversationCompositeMessage)?.isComposite == true
     }
 }
 
@@ -58,7 +58,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     /// The view descriptors in the order in which the tableview displays them.
     var tableViewCellDescriptions: [AnyConversationMessageCellDescription] {
-        return useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
+        useInvertedIndices ? cellDescriptions.reversed() : cellDescriptions
     }
 
     var context: ConversationMessageContext
@@ -284,7 +284,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        return context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
+        context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {

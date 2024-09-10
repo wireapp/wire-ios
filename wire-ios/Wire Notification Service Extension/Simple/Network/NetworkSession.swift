@@ -72,7 +72,7 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
     // MARK: - Methods
 
     var isAuthenticated: Bool {
-        return cookieProvider.isAuthenticated
+        cookieProvider.isAuthenticated
     }
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result {
@@ -135,6 +135,6 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
 
 extension AccessToken {
     var headerValue: String {
-        return "\(type) \(token)"
+        "\(type) \(token)"
     }
 }

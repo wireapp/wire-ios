@@ -36,9 +36,9 @@ extension NetworkQuality {
     var isNormal: Bool {
         switch self {
         case .normal:
-            return true
+            true
         case .medium, .poor, .problem:
-            return false
+            false
         }
     }
 }

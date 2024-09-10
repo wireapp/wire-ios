@@ -24,7 +24,7 @@ import WireDesign
 
 extension UIFont {
     class var avatarInitial: UIFont {
-        return UIFont.systemFont(ofSize: 11, weight: .light)
+        UIFont.systemFont(ofSize: 11, weight: .light)
     }
 }
 
@@ -33,80 +33,80 @@ extension UIFont {
     // MARK: - Small
 
     class var smallFont: UIFont {
-        return FontSpec(.small, .none).font!
+        FontSpec(.small, .none).font!
     }
 
     class var smallLightFont: UIFont {
-        return FontSpec(.small, .light).font!
+        FontSpec(.small, .light).font!
     }
 
     class var smallRegularFont: UIFont {
-        return FontSpec(.small, .regular).font!
+        FontSpec(.small, .regular).font!
     }
 
     class var smallMediumFont: UIFont {
-        return FontSpec(.small, .medium).font!
+        FontSpec(.small, .medium).font!
     }
 
     class var smallSemiboldFont: UIFont {
-        return FontSpec(.small, .semibold).font!
+        FontSpec(.small, .semibold).font!
     }
 
     // MARK: - Normal
 
     class var normalFont: UIFont {
-        return FontSpec(.normal, .none).font!
+        FontSpec(.normal, .none).font!
     }
 
     class var normalLightFont: UIFont {
-        return FontSpec(.normal, .light).font!
+        FontSpec(.normal, .light).font!
     }
 
     class var normalRegularFont: UIFont {
-        return FontSpec(.normal, .regular).font!
+        FontSpec(.normal, .regular).font!
     }
 
     class var normalMediumFont: UIFont {
-        return FontSpec(.normal, .medium).font!
+        FontSpec(.normal, .medium).font!
     }
 
     class var normalSemiboldFont: UIFont {
-        return FontSpec(.normal, .semibold).font!
+        FontSpec(.normal, .semibold).font!
     }
 
     // MARK: - Medium
 
     class var mediumFont: UIFont {
-        return FontSpec(.medium, .none).font!
+        FontSpec(.medium, .none).font!
     }
 
     class var mediumSemiboldFont: UIFont {
-        return FontSpec(.medium, .semibold).font!
+        FontSpec(.medium, .semibold).font!
     }
 
     class var mediumLightLargeTitleFont: UIFont {
-        return FontSpec(.medium, .light, .largeTitle).font!
+        FontSpec(.medium, .light, .largeTitle).font!
     }
 
     // MARK: - Large
 
     class var largeThinFont: UIFont {
-        return FontSpec(.large, .thin).font!
+        FontSpec(.large, .thin).font!
     }
 
     class var largeLightFont: UIFont {
-        return FontSpec(.large, .light).font!
+        FontSpec(.large, .light).font!
     }
 
     class var largeRegularFont: UIFont {
-        return FontSpec(.large, .regular).font!
+        FontSpec(.large, .regular).font!
     }
 
     class var largeMediumFont: UIFont {
-        return FontSpec(.large, .medium).font!
+        FontSpec(.large, .medium).font!
     }
 
     class var largeSemiboldFont: UIFont {
-        return FontSpec(.large, .semibold).font!
+        FontSpec(.large, .semibold).font!
     }
 }

@@ -24,7 +24,7 @@ final class ConversationCreateErrorSectionController: NSObject, CollectionViewSe
     weak var errorCell: Cell?
 
     var isHidden: Bool {
-        return false
+        false
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
@@ -42,7 +42,7 @@ final class ConversationCreateErrorSectionController: NSObject, CollectionViewSe
 
 extension ConversationCreateErrorSectionController {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -52,6 +52,6 @@ extension ConversationCreateErrorSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 }

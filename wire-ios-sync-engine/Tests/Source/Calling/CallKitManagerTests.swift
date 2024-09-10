@@ -69,13 +69,13 @@ class MockCallObserver: CXCallObserver {
     public var mockCalls: [CXCall] = []
 
     override var calls: [CXCall] {
-        return mockCalls
+        mockCalls
     }
 }
 
 class MockCallKitCallController: CXCallController {
     override public var callObserver: CXCallObserver {
-        return mockCallObserver
+        mockCallObserver
     }
 
     public var mockTransactionErrorCode: CXErrorCodeRequestTransactionError?

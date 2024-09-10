@@ -123,9 +123,9 @@ extension String {
         switch strategy {
         case .doNotIgnoreAnyMissingClient,
              .ignoreAllMissingClientsNotFromUsers:
-            return self
+            self
         case .ignoreAllMissingClients:
-            return self + "?ignore_missing=true"
+            self + "?ignore_missing=true"
         }
     }
 }

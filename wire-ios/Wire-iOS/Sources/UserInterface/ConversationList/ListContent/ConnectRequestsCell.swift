@@ -26,7 +26,7 @@ protocol SectionListCellType: AnyObject {
 
 extension SectionListCellType {
     var identifier: String {
-        return [obfuscatedSectionName ?? sectionName, cellIdentifier]
+        [obfuscatedSectionName ?? sectionName, cellIdentifier]
             .compactMap { $0 }
             .joined(separator: " - ")
     }
@@ -67,7 +67,7 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
 
     override var accessibilityIdentifier: String? {
         get {
-            return identifier
+            identifier
         }
         set {
             // no op

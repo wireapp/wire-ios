@@ -25,7 +25,7 @@ extension IconButton {
     static let height: CGFloat = 64
 
     static func acceptCall() -> IconButton {
-        return .init(
+        .init(
             icon: .phone,
             accessibilityId: "AcceptButton",
             backgroundColor: [UIControl.State.normal.rawValue: SemanticColors.Button.backgroundPickUp],
@@ -35,7 +35,7 @@ extension IconButton {
     }
 
     static func endCall() -> IconButton {
-        return .init(
+        .init(
             icon: .endCall,
             size: .small,
             accessibilityId: "LeaveCallButton",

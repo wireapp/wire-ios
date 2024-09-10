@@ -18,10 +18,10 @@
 
 extension Equatable {
     public func isOne(of others: Self...) -> Bool {
-        return isOne(of: others)
+        isOne(of: others)
     }
 
     public func isOne(of others: some Collection<Self>) -> Bool {
-        return others.contains(self)
+        others.contains(self)
     }
 }

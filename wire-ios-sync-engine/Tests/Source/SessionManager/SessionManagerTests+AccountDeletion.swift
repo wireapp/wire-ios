@@ -96,7 +96,7 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
     }
 
     override var sessionManagerConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration(failedPasswordThresholdBeforeWipe: threshold)
+        SessionManagerConfiguration(failedPasswordThresholdBeforeWipe: threshold)
     }
 
     func testThatItDeletesAccount_IfLimitIsReached() {
@@ -138,7 +138,7 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
     }
 
     override var sessionManagerConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration(wipeOnCookieInvalid: true)
+        SessionManagerConfiguration(wipeOnCookieInvalid: true)
     }
 
     func testThatItDeletesTheAccount_OnLaunchIfAccessTokenHasExpired() {

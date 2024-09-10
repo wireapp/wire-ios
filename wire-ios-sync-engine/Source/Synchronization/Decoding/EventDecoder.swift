@@ -200,7 +200,7 @@ extension EventDecoder {
 
     /// List of already received event IDs as strings
     private var alreadyReceivedPushEventIDsStrings: Set<String> {
-        return Set(self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String])
+        Set(self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String])
     }
 
     /// Store received event IDs 

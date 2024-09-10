@@ -26,7 +26,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationReceiptModeUpdate
+            .conversationReceiptModeUpdate
         }
 
         let readReceiptMode: Int

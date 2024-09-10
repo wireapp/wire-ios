@@ -77,7 +77,7 @@ extension UIAlertController {
                                             actionsHandler: E2EINotificationActions) -> UIAlertController? {
         switch change {
         case .e2eIEnabled:
-            return alertForE2EIChangeWithActions { action in
+            alertForE2EIChangeWithActions { action in
                 acknowledger.acknowledgeChange(for: .e2ei)
                 switch action {
                 case .getCertificate:
@@ -95,7 +95,7 @@ extension UIAlertController {
 
         default:
             // Handled elsewhere.
-            return nil
+            nil
         }
     }
 

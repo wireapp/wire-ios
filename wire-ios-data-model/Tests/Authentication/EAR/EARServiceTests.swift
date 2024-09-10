@@ -938,7 +938,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
 extension ZMGenericMessageData {
     fileprivate var unencryptedContent: String? {
-        return underlyingMessage?.text.content
+        underlyingMessage?.text.content
     }
 }
 
@@ -952,10 +952,10 @@ extension NSManagedObjectContext {
 
 extension ZMConversation {
     fileprivate var hasEncryptedDraftMessageData: Bool {
-        return draftMessageData != nil && draftMessageNonce != nil
+        draftMessageData != nil && draftMessageNonce != nil
     }
 
     fileprivate var unencryptedDraftMessageContent: String? {
-        return draftMessage?.text
+        draftMessage?.text
     }
 }

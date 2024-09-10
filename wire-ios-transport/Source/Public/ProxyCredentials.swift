@@ -99,7 +99,7 @@ struct GenericPasswordKeychainItem: KeychainItem {
     }
 
     func queryForSetting(value: Data) -> [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: itemIdentifier,
             kSecValueData: value

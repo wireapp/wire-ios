@@ -84,20 +84,20 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
+        gestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return true
+        true
     }
 
     func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
+        otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
 }

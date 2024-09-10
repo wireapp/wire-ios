@@ -308,14 +308,14 @@ final class ConversationInputBarViewController: UIViewController,
             case .camera:
                 clearTextInputAssistentItemIfNeeded()
                 config(viewController: cameraKeyboardViewController) {
-                    return self.createCameraKeyboardViewController()
+                    self.createCameraKeyboardViewController()
                 }
                 singleTapGestureRecognizerEnabled = true
                 selectedButton = photoButton
             case .timeoutConfguration:
                 clearTextInputAssistentItemIfNeeded()
                 config(viewController: ephemeralKeyboardViewController) {
-                    return self.createEphemeralKeyboardViewController()
+                    self.createEphemeralKeyboardViewController()
                 }
                 singleTapGestureRecognizerEnabled = true
                 selectedButton = hourglassButton
@@ -795,7 +795,7 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - Keyboard Shortcuts
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 }
 
@@ -959,7 +959,7 @@ extension ConversationInputBarViewController: ZMConversationObserver {
 
 extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return singleTapGestureRecognizer == gestureRecognizer || singleTapGestureRecognizer == otherGestureRecognizer
+        singleTapGestureRecognizer == gestureRecognizer || singleTapGestureRecognizer == otherGestureRecognizer
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
@@ -971,7 +971,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return otherGestureRecognizer is UIPanGestureRecognizer
+        otherGestureRecognizer is UIPanGestureRecognizer
     }
 
     // MARK: setup views

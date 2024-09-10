@@ -43,7 +43,7 @@ extension CharacterSet {
 
 extension UnicodeScalar {
     public var isDiacritics: Bool {
-        return CharacterSet.diacriticsCombining.contains(self)
+        CharacterSet.diacriticsCombining.contains(self)
     }
 }
 

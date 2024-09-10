@@ -22,7 +22,7 @@ import MobileCoreServices
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
     public var isDownloaded: Bool {
-        return hasDownloadedFile
+        hasDownloadedFile
     }
 
     public func fetchImageData(
@@ -129,11 +129,11 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
     }
 
     public var previewData: Data? {
@@ -157,7 +157,7 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageType: String? {
-        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
+        assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
     }
 
     public var originalSize: CGSize {
@@ -184,7 +184,7 @@ extension V2Asset: AssetProxyType {
     }
 
     public var hasDownloadedPreview: Bool {
-        return assetClientMessage.fileMessageData != nil && hasImageData
+        assetClientMessage.fileMessageData != nil && hasImageData
     }
 
     public var hasDownloadedFile: Bool {

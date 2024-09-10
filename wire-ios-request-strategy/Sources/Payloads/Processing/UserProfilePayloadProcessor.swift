@@ -179,10 +179,10 @@ extension Payload.UserProfile.MessageProtocol {
     fileprivate var dataModelMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:
-            return .proteus
+            .proteus
 
         case .mls:
-            return .mls
+            .mls
         }
     }
 }

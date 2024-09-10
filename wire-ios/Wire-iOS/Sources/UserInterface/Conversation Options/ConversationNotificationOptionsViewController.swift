@@ -57,7 +57,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -93,11 +93,11 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 
 extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -157,11 +157,11 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
     // MARK: Layout
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 32)
+        CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 }
 
@@ -175,10 +175,10 @@ extension ConversationNotificationOptionsViewController: ZMConversationObserver 
 extension MutedMessageTypes {
     var localizationKey: String? {
         switch self {
-        case .none:         return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
-        case .regular:      return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
-        case .all:          return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
-        default:            return nil
+        case .none:         L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
+        case .regular:      L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
+        case .all:          L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
+        default:            nil
         }
     }
 }

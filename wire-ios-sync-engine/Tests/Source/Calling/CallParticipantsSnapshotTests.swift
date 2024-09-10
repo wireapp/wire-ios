@@ -68,7 +68,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
     }
 
     private func createSut(members: [AVSCallMember]) -> Sut {
-        return Sut(conversationId: conversationId, members: members, callCenter: mockWireCallCenterV3)
+        Sut(conversationId: conversationId, members: members, callCenter: mockWireCallCenterV3)
     }
 
     // MARK: - Duplicates
@@ -253,23 +253,23 @@ final class CallParticipantsSnapshotTests: MessagingTest {
 
 extension AVSCallMember {
     fileprivate func with(audioState: AudioState) -> AVSCallMember {
-        return AVSCallMember(client: client,
-                             audioState: audioState,
-                             videoState: videoState,
-                             microphoneState: microphoneState)
+        AVSCallMember(client: client,
+                      audioState: audioState,
+                      videoState: videoState,
+                      microphoneState: microphoneState)
     }
 
     fileprivate func with(videoState: VideoState) -> AVSCallMember {
-        return AVSCallMember(client: client,
-                             audioState: audioState,
-                             videoState: videoState,
-                             microphoneState: microphoneState)
+        AVSCallMember(client: client,
+                      audioState: audioState,
+                      videoState: videoState,
+                      microphoneState: microphoneState)
     }
 
     fileprivate func with(microphoneState: MicrophoneState) -> AVSCallMember {
-        return AVSCallMember(client: client,
-                             audioState: audioState,
-                             videoState: videoState,
-                             microphoneState: microphoneState)
+        AVSCallMember(client: client,
+                      audioState: audioState,
+                      videoState: videoState,
+                      microphoneState: microphoneState)
     }
 }

@@ -324,7 +324,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return [mockUpdateEvent]
+            [mockUpdateEvent]
         }
 
         // When
@@ -355,7 +355,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock adding clients returns new distribution point
         mockCoreCrypto.addClientsToConversationConversationIdKeyPackages_MockMethod = { _, _ in
-            return .init(
+            .init(
                 welcome: .random(),
                 commit: .random(),
                 groupInfo: .init(
@@ -369,7 +369,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock commit sending
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // Set up expectation to receive the new distribution points
@@ -421,7 +421,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return [mockUpdateEvent]
+            [mockUpdateEvent]
         }
 
         // When
@@ -466,7 +466,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // When
@@ -517,7 +517,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle.
         mockCommitSender.sendCommitBundleFor_MockMethod = { _, _ in
-            return [mockUpdateEvent]
+            [mockUpdateEvent]
         }
 
         // When
@@ -577,7 +577,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock send commit bundle
         mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
-            return mockUpdateEvents
+            mockUpdateEvents
         }
 
         // When
@@ -602,7 +602,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock joining by external commit
         mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { _, _, _ in
 
-            return .init(
+            .init(
                 conversationId: .random(),
                 commit: .random(),
                 groupInfo: .init(
@@ -616,7 +616,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Mock external commit sending
         mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // Mock MLS feature config
@@ -658,7 +658,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
-            return decryptedMessage
+            decryptedMessage
         }
 
         // When

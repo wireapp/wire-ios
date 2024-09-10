@@ -61,19 +61,19 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
     public var description: String {
         switch self {
         case .background:
-            return "background"
+            "background"
 
         case .backgroundCall:
-            return "backgroundCall"
+            "backgroundCall"
 
         case .backgroundFetch:
-            return "backgroundFetch"
+            "backgroundFetch"
 
         case .backgroundTask:
-            return "backgroundTask"
+            "backgroundTask"
 
         case .foreground:
-            return "foreground"
+            "foreground"
         }
     }
 }

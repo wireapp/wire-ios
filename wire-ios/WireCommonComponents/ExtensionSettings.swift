@@ -28,11 +28,11 @@ private enum ExtensionSettingsKey: String, CaseIterable {
         switch self {
         // Always disable analytics by default.
         case .disableCrashSharing:
-            return true
+            true
         case .disableAnalyticsSharing:
-            return false
+            false
         case .disableLinkPreviews:
-            return false
+            false
         }
     }
 

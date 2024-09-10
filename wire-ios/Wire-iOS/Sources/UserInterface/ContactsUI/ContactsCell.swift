@@ -232,9 +232,9 @@ extension ContactsCell {
         var localizedDescription: String {
             switch self {
             case .open:
-                return ContactsUIActionButton.open.capitalized
+                ContactsUIActionButton.open.capitalized
             case .invite:
-                return ContactsUIActionButton.invite.capitalized
+                ContactsUIActionButton.invite.capitalized
             }
         }
     }

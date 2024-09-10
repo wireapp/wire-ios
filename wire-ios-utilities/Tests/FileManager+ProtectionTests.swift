@@ -120,7 +120,7 @@ extension FileManagerProtectionTests {
     }
 
     var testFolder: URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory() + name)
+        URL(fileURLWithPath: NSTemporaryDirectory() + name)
     }
 
     func wipeTestFolder() {
@@ -146,6 +146,6 @@ final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
     }
 
     func isFileProtectedUntilFirstUnlock(_ url: URL) -> Bool {
-        return self.recordedAttributes[url.path] == FileProtectionType.completeUntilFirstUserAuthentication
+        self.recordedAttributes[url.path] == FileProtectionType.completeUntilFirstUserAuthentication
     }
 }

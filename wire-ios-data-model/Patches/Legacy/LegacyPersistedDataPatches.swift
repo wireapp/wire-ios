@@ -70,17 +70,17 @@ public struct FrameworkVersion: Comparable, Equatable {
 
     /// Major component, *10*.3.4
     public var major: Int {
-        return components[0]
+        components[0]
     }
 
     /// Minor component, 10.*3*.4
     public var minor: Int {
-        return components[1]
+        components[1]
     }
 
     /// Patch component, 10.3.*4*
     public var patch: Int {
-        return components[2]
+        components[2]
     }
 
     /// Version in string form
@@ -116,5 +116,5 @@ public struct FrameworkVersion: Comparable, Equatable {
 }
 
 public func == (lhs: FrameworkVersion, rhs: FrameworkVersion) -> Bool {
-    return lhs.components == rhs.components
+    lhs.components == rhs.components
 }

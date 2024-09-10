@@ -38,7 +38,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -404,18 +404,18 @@ extension GroupDetailsViewController {
     private var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return .init(resource: .verifiedShield)
+            .init(resource: .verifiedShield)
         case .mls:
-            return .init(resource: .certificateValid)
+            .init(resource: .certificateValid)
         }
     }
 
     private var verificationStatusColor: UIColor {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return SemanticColors.Label.textCertificateVerified
+            SemanticColors.Label.textCertificateVerified
         case .mls:
-            return SemanticColors.Label.textCertificateValid
+            SemanticColors.Label.textCertificateValid
         }
     }
 

@@ -25,7 +25,7 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 
 extension ZMOTRMessage: OTREntity {
     public var context: NSManagedObjectContext {
-        return managedObjectContext!
+        managedObjectContext!
     }
 
     /// Which object this message depends on when sending
@@ -119,6 +119,6 @@ extension ZMMessage {
 
 extension ZMMessage: BlockingMessage {
     var shouldBlockFurtherMessages: Bool {
-        return self.deliveryState == .pending && !self.isExpired
+        self.deliveryState == .pending && !self.isExpired
     }
 }

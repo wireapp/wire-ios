@@ -28,11 +28,11 @@ public struct Brush {
     let color: UIColor
 
     public func change(toColor color: UIColor) -> Brush {
-        return Brush(size: size, color: color)
+        Brush(size: size, color: color)
     }
 
     public func change(toSize size: Float) -> Brush {
-        return Brush(size: size, color: color)
+        Brush(size: size, color: color)
     }
 }
 
@@ -42,7 +42,7 @@ final class Stroke: Renderable {
     private let brush: Brush
 
     var bounds: CGRect {
-        return bounds(from: 0)
+        bounds(from: 0)
     }
 
     public init(at position: CGPoint, brush: Brush) {

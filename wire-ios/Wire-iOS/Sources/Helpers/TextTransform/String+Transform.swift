@@ -25,10 +25,10 @@ extension String {
     /// - Returns: the transformed string
     func applying(transform: TextTransform) -> String {
         switch transform {
-        case .none: return self
-        case .capitalize: return localizedCapitalized
-        case .lower: return localizedLowercase
-        case .upper: return localizedUppercase
+        case .none: self
+        case .capitalize: localizedCapitalized
+        case .lower: localizedLowercase
+        case .upper: localizedUppercase
         }
     }
 }
@@ -49,6 +49,6 @@ extension NSAttributedString {
 
 extension String {
     func trim() -> String {
-        return self.trimmingCharacters(in: .whitespaces)
+        self.trimmingCharacters(in: .whitespaces)
     }
 }

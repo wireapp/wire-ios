@@ -30,9 +30,9 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
     func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
         if featureProvider.allowOnlyEmailLogin {
             // Hide the landing screen if account creation is disabled.
-            return [.transition(.provideCredentials(nil), mode: .reset)]
+            [.transition(.provideCredentials(nil), mode: .reset)]
         } else {
-            return [.transition(.landingScreen, mode: .reset)]
+            [.transition(.landingScreen, mode: .reset)]
         }
     }
 }

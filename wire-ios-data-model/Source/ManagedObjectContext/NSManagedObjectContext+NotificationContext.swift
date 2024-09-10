@@ -27,6 +27,6 @@ extension NSManagedObjectContext {
     /// Prefer `UserSession.notificationContext` over this property.
     @objc
     public var notificationContext: NotificationContext {
-        return persistentStoreCoordinator!
+        persistentStoreCoordinator!
     }
 }

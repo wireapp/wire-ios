@@ -34,7 +34,7 @@ public struct APIProvider: APIProviderInterface {
     }
 
     public func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0: PrekeyAPIV0(httpClient: httpClient)
         case .v1: PrekeyAPIV1(httpClient: httpClient)
         case .v2: PrekeyAPIV2(httpClient: httpClient)
@@ -46,7 +46,7 @@ public struct APIProvider: APIProviderInterface {
     }
 
     public func messageAPI(apiVersion: APIVersion) -> MessageAPI {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0: MessageAPIV0(httpClient: httpClient)
         case .v1: MessageAPIV1(httpClient: httpClient)
         case .v2: MessageAPIV2(httpClient: httpClient)
@@ -58,7 +58,7 @@ public struct APIProvider: APIProviderInterface {
     }
 
     public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0, .v1, .v2, .v3, .v4: nil
         case .v5: E2eIAPIV5(httpClient: httpClient)
         case .v6: E2eIAPIV6(httpClient: httpClient)
@@ -66,7 +66,7 @@ public struct APIProvider: APIProviderInterface {
     }
 
     public func userClientAPI(apiVersion: APIVersion) -> UserClientAPI {
-        return switch apiVersion {
+        switch apiVersion {
         case .v0: UserClientAPIV0(httpClient: httpClient)
         case .v1: UserClientAPIV1(httpClient: httpClient)
         case .v2: UserClientAPIV2(httpClient: httpClient)

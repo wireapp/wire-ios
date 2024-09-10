@@ -22,11 +22,11 @@ import WireTransport
 
 extension MockTransportSession {
     private func selfUserPartOfTeam(_ team: MockTeam) -> Bool {
-        return team.contains(user: selfUser)
+        team.contains(user: selfUser)
     }
 
     private func ascendingCreationDate(first: MockTeam, second: MockTeam) -> Bool {
-        return first.createdAt < second.createdAt
+        first.createdAt < second.createdAt
     }
 
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
@@ -71,7 +71,7 @@ extension MockTransportSession {
 
 extension MockTransportSession {
     func relevant(conversations: Set<NSManagedObject>) -> [MockConversation] {
-        return conversations
+        conversations
             .compactMap { object -> MockConversation? in
                 object as? MockConversation
             }.filter { conversation -> Bool in
@@ -138,7 +138,7 @@ extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
     }
 
     public var environment: BackendEnvironmentProvider {
-        return MockEnvironment()
+        MockEnvironment()
     }
 }
 
@@ -146,13 +146,13 @@ extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
 
 extension MockTransportSession {
     @objc public var emailActivationCode: String {
-        return "123456"
+        "123456"
     }
 }
 
 extension MockTransportSession: TransportSessionType {
     public func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             request.add(ZMCompletionHandler(on: queue, block: { response in
                 continuation.resume(returning: response)
             }))
@@ -162,7 +162,7 @@ extension MockTransportSession: TransportSessionType {
     }
 
     public var requestLoopDetectionCallback: ((String) -> Void)? {
-        get { return nil }
+        get { nil }
         set {}
     }
 
@@ -171,11 +171,11 @@ extension MockTransportSession: TransportSessionType {
 
 extension MockTransportSession {
     @objc public var invalidSinceParameter400: UUID {
-        return UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
+        UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
     }
 
     @objc public var unknownSinceParameter404: UUID {
-        return UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
+        UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
     }
 }
 

@@ -29,14 +29,14 @@ final class ContactAddressBook: AddressBook {
 extension ContactAddressBook: AddressBookAccessor {
     /// Gets a specific address book user by the local address book indentifier
     func contact(identifier: String) -> ContactRecord? {
-        return try? store.unifiedContact(withIdentifier: identifier, keysToFetch: ContactAddressBook.keysToFetch)
+        try? store.unifiedContact(withIdentifier: identifier, keysToFetch: ContactAddressBook.keysToFetch)
     }
 
     static var keysToFetch: [CNKeyDescriptor] {
-        return  [CNContactPhoneNumbersKey as CNKeyDescriptor,
-                 CNContactEmailAddressesKey as CNKeyDescriptor,
-                 CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-                 CNContactOrganizationNameKey as CNKeyDescriptor]
+        [CNContactPhoneNumbersKey as CNKeyDescriptor,
+         CNContactEmailAddressesKey as CNKeyDescriptor,
+         CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+         CNContactOrganizationNameKey as CNKeyDescriptor]
     }
 
     func rawContacts(matchingQuery query: String) -> [ContactRecord] {
@@ -72,33 +72,33 @@ extension ContactAddressBook: AddressBookAccessor {
 
     /// Number of contacts in the address book
     var numberOfContacts: UInt {
-        return 0
+        0
     }
 }
 
 extension CNContact: ContactRecord {
     var rawEmails: [String] {
-        return self.emailAddresses.map { $0.value as String }
+        self.emailAddresses.map { $0.value as String }
     }
 
     var rawPhoneNumbers: [String] {
-        return self.phoneNumbers.map(\.value.stringValue)
+        self.phoneNumbers.map(\.value.stringValue)
     }
 
     var firstName: String {
-        return self.givenName
+        self.givenName
     }
 
     var lastName: String {
-        return self.familyName
+        self.familyName
     }
 
     var organization: String {
-        return self.organizationName
+        self.organizationName
     }
 
     var localIdentifier: String {
-        return self.identifier
+        self.identifier
     }
 }
 

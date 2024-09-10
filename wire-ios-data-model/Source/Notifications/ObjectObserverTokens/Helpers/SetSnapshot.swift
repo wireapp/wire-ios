@@ -46,13 +46,13 @@ open class SetChangeInfo<T: Hashable>: NSObject {
     public let orderedSetState: OrderedSetState<T>
 
     public let observedObject: NSObject
-    open var insertedIndexes: IndexSet { return changeSet.insertedIndexes }
-    open var deletedIndexes: IndexSet { return changeSet.deletedIndexes }
-    open var deletedObjects: Set<AnyHashable> { return changeSet.deletedObjects }
-    open var updatedIndexes: IndexSet { return changeSet.updatedIndexes }
-    open var movedIndexPairs: [MovedIndex] { return changeSet.movedIndexes }
+    open var insertedIndexes: IndexSet { changeSet.insertedIndexes }
+    open var deletedIndexes: IndexSet { changeSet.deletedIndexes }
+    open var deletedObjects: Set<AnyHashable> { changeSet.deletedObjects }
+    open var updatedIndexes: IndexSet { changeSet.updatedIndexes }
+    open var movedIndexPairs: [MovedIndex] { changeSet.movedIndexes }
     // for temporary objC-compatibility
-    open var zm_movedIndexPairs: [ZMMovedIndex] { return changeSet.movedIndexes.map { ZMMovedIndex(from: UInt($0.from), to: UInt($0.to)) } }
+    open var zm_movedIndexPairs: [ZMMovedIndex] { changeSet.movedIndexes.map { ZMMovedIndex(from: UInt($0.from), to: UInt($0.to)) } }
     convenience init(observedObject: NSObject) {
         let orderSetState = OrderedSetState<T>(array: [])
         self.init(observedObject: observedObject,
@@ -70,9 +70,9 @@ open class SetChangeInfo<T: Hashable>: NSObject {
         self.changeSet.enumerateMovedIndexes(block: block)
     }
 
-    override open var description: String { return self.debugDescription }
+    override open var description: String { self.debugDescription }
     override open var debugDescription: String {
-        return "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
+        "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
             "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
     }
 }

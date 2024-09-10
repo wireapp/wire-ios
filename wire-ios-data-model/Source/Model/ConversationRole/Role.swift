@@ -24,7 +24,7 @@ public enum TeamOrConversation {
 
     /// Creates a team if the conversation belongs to a team, or a conversation otherwise
     public static func matching(_ conversation: ZMConversation) -> TeamOrConversation {
-        return self.fromTeamOrConversation(team: conversation.team, conversation: conversation)
+        self.fromTeamOrConversation(team: conversation.team, conversation: conversation)
     }
 
     /// Creates a team or a conversation
@@ -56,29 +56,29 @@ public final class Role: ZMManagedObject {
     @NSManaged public var conversation: ZMConversation?
 
     override public static func entityName() -> String {
-        return String(describing: Role.self)
+        String(describing: Role.self)
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     @discardableResult
     public static func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               conversation: ZMConversation) -> Role {
-        return create(managedObjectContext: managedObjectContext,
-                      name: name,
-                      teamOrConversation: .conversation(conversation))
+        create(managedObjectContext: managedObjectContext,
+               name: name,
+               teamOrConversation: .conversation(conversation))
     }
 
     @discardableResult
     public static func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               team: Team) -> Role {
-        return create(managedObjectContext: managedObjectContext,
-                      name: name,
-                      teamOrConversation: .team(team))
+        create(managedObjectContext: managedObjectContext,
+               name: name,
+               teamOrConversation: .team(team))
     }
 
     public static func create(managedObjectContext: NSManagedObjectContext,

@@ -41,19 +41,19 @@ extension ZMImageFormat {
     public var stringValue: String {
         switch self {
         case .invalid:
-            return "invalid"
+            "invalid"
 
         case .preview:
-            return "preview"
+            "preview"
 
         case .medium:
-            return "medium"
+            "medium"
 
         case .original:
-            return "original"
+            "original"
 
         case .profile:
-            return "smallProfile"
+            "smallProfile"
         }
     }
 }

@@ -26,9 +26,9 @@ public enum CaptureDevice: Int {
     var deviceIdentifier: String {
         switch  self {
         case .front:
-            return "com.apple.avfoundation.avcapturedevice.built-in_video:1"
+            "com.apple.avfoundation.avcapturedevice.built-in_video:1"
         case .back:
-            return "com.apple.avfoundation.avcapturedevice.built-in_video:0"
+            "com.apple.avfoundation.avcapturedevice.built-in_video:0"
         }
     }
 }

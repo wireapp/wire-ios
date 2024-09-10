@@ -37,7 +37,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     weak var delegate: GroupDetailsUserDetailPresenter?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -182,7 +182,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return viewModel.participants[indexPath.row].isSelfUser == false
+        viewModel.participants[indexPath.row].isSelfUser == false
     }
 }
 

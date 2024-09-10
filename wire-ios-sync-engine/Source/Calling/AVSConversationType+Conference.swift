@@ -22,10 +22,10 @@ extension AVSConversationType {
     var isConference: Bool {
         switch self {
         case .conference, .mlsConference:
-            return true
+            true
 
         default:
-            return false
+            false
         }
     }
 }

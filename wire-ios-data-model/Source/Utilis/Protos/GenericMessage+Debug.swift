@@ -37,14 +37,14 @@ extension Text {
 
 extension LinkPreview {
     fileprivate func sanitize() -> LinkPreview {
-        return LinkPreview(withOriginalURL: redactedValue,
-                           permanentURL: redactedValue,
-                           offset: urlOffset,
-                           title: redactedValue,
-                           summary: redactedValue,
-                           imageAsset: image,
-                           article: article.sanitize(),
-                           tweet: nil)
+        LinkPreview(withOriginalURL: redactedValue,
+                    permanentURL: redactedValue,
+                    offset: urlOffset,
+                    title: redactedValue,
+                    summary: redactedValue,
+                    imageAsset: image,
+                    article: article.sanitize(),
+                    tweet: nil)
     }
 }
 
@@ -52,7 +52,7 @@ extension LinkPreview {
 
 extension Article {
     fileprivate func sanitize() -> Article {
-        return Article.with {
+        Article.with {
             $0.title = redactedValue
             $0.permanentURL = redactedValue
             $0.summary = redactedValue
@@ -84,7 +84,7 @@ extension GenericMessage: CustomStringConvertible {
 
 extension GenericMessage: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
+        "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
     }
 
     public var safeIdForLoggingDescription: String {
@@ -92,7 +92,7 @@ extension GenericMessage: SafeForLoggingStringConvertible {
     }
 
     public var safeTypeForLoggingDescription: String {
-        return content?.safeForLoggingDescription ?? "unknown"
+        content?.safeForLoggingDescription ?? "unknown"
     }
 }
 
@@ -100,67 +100,67 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         switch self {
         case .text:
-            return "text"
+            "text"
 
         case .image:
-            return "image"
+            "image"
 
         case .knock:
-            return "knock"
+            "knock"
 
         case .lastRead:
-            return "lastRead"
+            "lastRead"
 
         case .cleared:
-            return "cleared"
+            "cleared"
 
         case .external:
-            return "external"
+            "external"
 
         case .clientAction:
-            return "clientAction"
+            "clientAction"
 
         case .calling:
-            return "calling"
+            "calling"
 
         case .asset:
-            return "asset"
+            "asset"
 
         case .hidden:
-            return "hidden"
+            "hidden"
 
         case .location:
-            return "location"
+            "location"
 
         case .deleted:
-            return "deleted"
+            "deleted"
 
         case .edited:
-            return "edited"
+            "edited"
 
         case .confirmation:
-            return "confirmation"
+            "confirmation"
 
         case .reaction:
-            return "reaction"
+            "reaction"
 
         case .ephemeral:
-            return "ephemeral"
+            "ephemeral"
 
         case .availability:
-            return "availability"
+            "availability"
 
         case .composite:
-            return "composite"
+            "composite"
 
         case .buttonAction:
-            return "buttonAction"
+            "buttonAction"
 
         case .buttonActionConfirmation:
-            return "buttonActionConfirmation"
+            "buttonActionConfirmation"
 
         case .dataTransfer:
-            return "dataTransfer"
+            "dataTransfer"
         }
     }
 }

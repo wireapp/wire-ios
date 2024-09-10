@@ -109,15 +109,15 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 
     fileprivate var expectedSyncPhase: SyncPhase {
-        return .fetchingTeams
+        .fetchingTeams
     }
 
     fileprivate var isSyncing: Bool {
-        return syncStatus.currentSyncPhase == expectedSyncPhase
+        syncStatus.currentSyncPhase == expectedSyncPhase
     }
 
     // MARK: - ZMEventConsumer
@@ -263,7 +263,7 @@ extension ZMUpdateEvent {
     }
 
     fileprivate var dataPayload: [String: Any]? {
-        return payload[TeamEventPayloadKey.data.rawValue] as? [String: Any]
+        payload[TeamEventPayloadKey.data.rawValue] as? [String: Any]
     }
 }
 

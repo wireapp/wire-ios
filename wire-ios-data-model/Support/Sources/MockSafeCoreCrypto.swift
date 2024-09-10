@@ -41,7 +41,7 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 
     var performAsyncCount = 0
     public func perform<T>(_ block: (WireCoreCrypto.CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        return try await block(coreCrypto)
+        try await block(coreCrypto)
     }
 
     var mockMlsInit: ((String) throws -> Void)?

@@ -681,7 +681,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func arrange() -> (Arrangement, MessageSender) {
-            return (self, MessageSender(
+            (self, MessageSender(
                 apiProvider: apiProvider,
                 clientRegistrationDelegate: clientRegistrationDelegate,
                 sessionEstablisher: sessionEstablisher,

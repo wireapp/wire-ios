@@ -73,7 +73,7 @@ public struct WireLogger: LoggerProtocol {
     // MARK: - Private Helpers
 
     private func shouldLogMessage(_ message: LogConvertible) -> Bool {
-        return !message.logDescription.isEmpty
+        !message.logDescription.isEmpty
     }
 
     private func finalizedAttributes(_ attributes: [LogAttributes]) -> LogAttributes {

@@ -69,23 +69,23 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
-        return dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()))
+        dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()))
     }
 
     func dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager) -> UIDropProposal {
-        return mediaShareRestrictionManager.canUseClipboard
+        mediaShareRestrictionManager.canUseClipboard
             ? UIDropProposal(operation: .copy)
             : UIDropProposal(operation: .forbidden)
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
-        return true
+        true
     }
 }
 
 extension NSItemProvider {
     fileprivate func hasText() -> Bool {
         // Image dragged from browser can be both NSString and UIImage
-        return canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
+        canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
     }
 }

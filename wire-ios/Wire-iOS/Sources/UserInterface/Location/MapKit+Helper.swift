@@ -21,7 +21,7 @@ import WireDataModel
 
 extension CLLocationCoordinate2D {
     var location: CLLocation {
-        return CLLocation(latitude: latitude, longitude: longitude)
+        CLLocation(latitude: latitude, longitude: longitude)
     }
 }
 
@@ -64,13 +64,13 @@ extension MKCoordinateSpan {
 
 extension LocationData {
     var coordinate: CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
+        CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
     }
 }
 
 extension MKMapView {
     func locationData(name: String?) -> LocationData {
-        return .locationData(
+        .locationData(
             withLatitude: Float(centerCoordinate.latitude),
             longitude: Float(centerCoordinate.longitude),
             name: name,

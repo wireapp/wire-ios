@@ -161,22 +161,22 @@ extension UIAlertController {
     // MARK: - Private
 
     private static func degradedCallTitle(forCallEnded callEnded: Bool) -> String {
-        return callEnded ? DegradedCallLocale.Ended.Alert.title : DegradedCallLocale.Alert.title
+        callEnded ? DegradedCallLocale.Ended.Alert.title : DegradedCallLocale.Alert.title
     }
 
     private static func degradedCallMessage(forUser degradedUser: UserType?, callEnded: Bool) -> String {
         if let user = degradedUser {
             if callEnded {
-                return user.isSelfUser ?
+                user.isSelfUser ?
                     DegradedCallLocale.Ended.Alert.Message.`self` :
                     DegradedCallLocale.Ended.Alert.Message.user(user.name ?? "")
             } else {
-                return user.isSelfUser ?
+                user.isSelfUser ?
                     DegradedCallLocale.Alert.Message.`self` :
                     DegradedCallLocale.Alert.Message.user(user.name ?? "")
             }
         } else {
-            return callEnded ?
+            callEnded ?
                 DegradedCallLocale.Ended.Alert.Message.unknown :
                 DegradedCallLocale.Alert.Message.unknown
         }

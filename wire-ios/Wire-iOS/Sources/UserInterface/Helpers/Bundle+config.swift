@@ -23,7 +23,7 @@ private let zmLog = ZMSLog(tag: "Bundle")
 
 extension Bundle {
     static var developerModeEnabled: Bool {
-        return Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
+        Bundle.appMainBundle.infoForKey("EnableDeveloperMenu") == "1"
     }
 
     static func fileURL(for resource: String, with fileExtension: String) -> URL? {

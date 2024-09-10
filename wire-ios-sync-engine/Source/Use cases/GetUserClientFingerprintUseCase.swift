@@ -156,6 +156,6 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         withProteusService proteusServiceBlock: @escaping ProteusServicePerformAsyncBlock<T>,
         withKeyStore keyStoreBlock: @escaping KeyStorePerformAsyncBlock<T>
     ) async rethrows -> T {
-        return try await self.proteusProvider.performAsync(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
+        try await self.proteusProvider.performAsync(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
     }
 }

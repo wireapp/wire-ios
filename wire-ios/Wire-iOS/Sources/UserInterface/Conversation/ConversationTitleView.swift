@@ -74,9 +74,9 @@ final class ConversationTitleView: TitleView {
     private var verifiedShield: NSTextAttachment {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return .proteusVerifiedShield()
+            .proteusVerifiedShield()
         case .mls:
-            return .e2eiVerifiedShield()
+            .e2eiVerifiedShield()
         }
     }
 

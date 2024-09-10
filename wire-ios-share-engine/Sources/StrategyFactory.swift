@@ -67,7 +67,7 @@ final class StrategyFactory {
     }
 
     private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
-        return [
+        [
             // Clients
             createFetchingClientsStrategy(),
             createVerifyLegalHoldStrategy(),
@@ -86,15 +86,15 @@ final class StrategyFactory {
     }
 
     private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
-        return VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
-        return FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
-        return ClientMessageRequestStrategy(
+        ClientMessageRequestStrategy(
             context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
             applicationStatus: applicationStatus,
@@ -105,7 +105,7 @@ final class StrategyFactory {
     // MARK: – Link Previews
 
     private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> LinkPreviewAssetUploadRequestStrategy {
-        return LinkPreviewAssetUploadRequestStrategy(
+        LinkPreviewAssetUploadRequestStrategy(
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,
             linkPreviewPreprocessor: linkPreviewPreprocessor,
@@ -114,7 +114,7 @@ final class StrategyFactory {
     }
 
     private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
-        return LinkPreviewUpdateRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        LinkPreviewUpdateRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
     }
 
     // MARK: - Asset V3
@@ -140,6 +140,6 @@ final class StrategyFactory {
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
-        return AssetClientMessageRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
+        AssetClientMessageRequestStrategy(managedObjectContext: syncContext, messageSender: messageSender)
     }
 }

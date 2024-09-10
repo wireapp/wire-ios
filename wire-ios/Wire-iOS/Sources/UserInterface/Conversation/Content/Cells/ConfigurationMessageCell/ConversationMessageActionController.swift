@@ -43,7 +43,7 @@ final class ConversationMessageActionController {
     // MARK: - List of Actions
 
     private var allPerformableMessageAction: [MessageAction] {
-        return MessageAction.allCases
+        MessageAction.allCases
             .filter(canPerformAction)
     }
 
@@ -74,7 +74,7 @@ final class ConversationMessageActionController {
     // MARK: - UI menu
 
     static var allMessageActions: [UIMenuItem] {
-        return MessageAction.allCases.compactMap {
+        MessageAction.allCases.compactMap {
             guard let selector = $0.selector,
                   let title = $0.title else { return nil }
             return UIMenuItem(title: title, action: selector)
@@ -84,38 +84,38 @@ final class ConversationMessageActionController {
     func canPerformAction(action: MessageAction) -> Bool {
         switch action {
         case .copy:
-            return message.canBeCopied
+            message.canBeCopied
         case .digitallySign:
-            return message.canBeDigitallySigned
+            message.canBeDigitallySigned
         case .reply:
-            return message.canBeQuoted
+            message.canBeQuoted
         case .openDetails:
-            return message.areMessageDetailsAvailable
+            message.areMessageDetailsAvailable
         case .edit:
-            return message.canBeEdited
+            message.canBeEdited
         case .delete:
-            return message.canBeDeleted
+            message.canBeDeleted
         case .save:
-            return message.canBeSaved
+            message.canBeSaved
         case .cancel:
-            return message.canCancelDownload
+            message.canCancelDownload
         case .download:
-            return message.canBeDownloaded
+            message.canBeDownloaded
         case .resend:
-            return message.canBeResent
+            message.canBeResent
         case .showInConversation:
-            return context == .collection
+            context == .collection
         case .sketchDraw,
              .sketchEmoji:
-            return message.isImage
+            message.isImage
         case .react:
-            return message.canAddReaction
+            message.canAddReaction
         case .visitLink:
-            return message.canVisitLink
+            message.canVisitLink
         case .present,
              .openQuote,
              .resetSession:
-            return false
+            false
         }
     }
 
@@ -128,7 +128,7 @@ final class ConversationMessageActionController {
     }
 
     func makeAccessibilityActions() -> [UIAccessibilityCustomAction] {
-        return ConversationMessageActionController.allMessageActions
+        ConversationMessageActionController.allMessageActions
             .filter { self.canPerformAction($0.action) }
             .map { menuItem in
                 UIAccessibilityCustomAction(name: menuItem.title, target: self, selector: menuItem.action)
@@ -137,7 +137,7 @@ final class ConversationMessageActionController {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     var previewActionItems: [UIPreviewAction] {
-        return allPerformableMessageAction.compactMap { messageAction in
+        allPerformableMessageAction.compactMap { messageAction in
             guard let title = messageAction.title else { return nil }
 
             return UIPreviewAction(title: title,
@@ -178,7 +178,7 @@ final class ConversationMessageActionController {
     }
 
     var doubleTapAction: MessageAction? {
-        return message.canAddReaction ? .react("❤️") : nil
+        message.canAddReaction ? .react("❤️") : nil
     }
 
     // MARK: - Handler

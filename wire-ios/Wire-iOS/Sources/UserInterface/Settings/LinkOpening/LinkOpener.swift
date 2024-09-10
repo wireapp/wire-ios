@@ -67,16 +67,16 @@ extension LinkOpeningOption {
     }
 
     static var availableOptions: [Self] {
-        return allOptions.filter(\.isAvailable)
+        allOptions.filter(\.isAvailable)
     }
 
     static var optionsAvailable: Bool {
-        return availableOptions.count > 1
+        availableOptions.count > 1
     }
 }
 
 extension UIApplication {
     func canHandleScheme(_ scheme: String) -> Bool {
-        return URL(string: scheme).map(canOpenURL) ?? false
+        URL(string: scheme).map(canOpenURL) ?? false
     }
 }

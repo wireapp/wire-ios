@@ -119,7 +119,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     override var accessibilityValue: String? {
         get {
-            return delegate?.indexPath(for: self)?.description
+            delegate?.indexPath(for: self)?.description
         }
 
         set {
@@ -129,7 +129,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     override var accessibilityIdentifier: String? {
         get {
-            return identifier
+            identifier
         }
 
         set {

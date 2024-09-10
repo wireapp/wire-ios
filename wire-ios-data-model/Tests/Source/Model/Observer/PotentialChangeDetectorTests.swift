@@ -26,7 +26,7 @@ final class PotentialChangeDetectorTests: BaseZMMessageTests {
     // MARK: - Helpers
 
     func createObject() -> ZMManagedObject {
-        return ZMConversation.insertNewObject(in: uiMOC)
+        ZMConversation.insertNewObject(in: uiMOC)
     }
 
     // MARK: - Tests

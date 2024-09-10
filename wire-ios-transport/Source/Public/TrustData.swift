@@ -64,9 +64,9 @@ extension TrustData.Host {
     func matches(host: String) -> Bool {
         switch rule {
         case .endsWith:
-            return host.hasSuffix(value)
+            host.hasSuffix(value)
         case .equals:
-            return host == value
+            host == value
         }
     }
 }

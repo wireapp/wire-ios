@@ -64,7 +64,7 @@ final class DeveloperOptionsController: UIViewController {
 
     /// Creates a cell to switch a specific log tag on or off
     func logSwitchCell(tag: String) -> UITableViewCell {
-        return createCellWithSwitch(labelText: tag, isOn: ZMSLog.getLevel(tag: tag) == .debug) { isOn in
+        createCellWithSwitch(labelText: tag, isOn: ZMSLog.getLevel(tag: tag) == .debug) { isOn in
             Settings.shared.set(logTag: tag, enabled: isOn)
         }
     }
@@ -186,10 +186,10 @@ final class DeveloperOptionsController: UIViewController {
 
 extension DeveloperOptionsController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableCells.count
+        tableCells.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableCells[indexPath.row]
+        tableCells[indexPath.row]
     }
 }

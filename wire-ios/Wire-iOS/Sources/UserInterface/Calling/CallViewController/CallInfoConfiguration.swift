@@ -49,8 +49,8 @@ extension VoiceChannel {
 
     var internalIsVideoCall: Bool {
         switch state {
-        case .established, .terminating: return isAnyParticipantSendingVideo
-        default: return isVideoCall
+        case .established, .terminating: isAnyParticipantSendingVideo
+        default: isVideoCall
         }
     }
 
@@ -90,8 +90,8 @@ extension VoiceChannel {
 
     var disableIdleTimer: Bool {
         switch state {
-        case .none: return false
-        default: return internalIsVideoCall && !state.isTerminating
+        case .none: false
+        default: internalIsVideoCall && !state.isTerminating
         }
     }
 }
@@ -157,12 +157,12 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
     // This property has to be computed in order to return the correct call duration
     var state: CallStatusViewState {
         switch voiceChannelSnapshot.state {
-        case .incoming(_, shouldRing: true, _): return .ringingIncoming(name: voiceChannelSnapshot.callerName)
-        case .outgoing: return .ringingOutgoing
-        case .answered, .establishedDataChannel: return .connecting
-        case .established: return .established(duration: -voiceChannelSnapshot.callStartDate.timeIntervalSinceNow.rounded())
-        case .terminating, .mediaStopped, .incoming(_, shouldRing: false, _): return .terminating
-        case .none, .unknown: return .none
+        case .incoming(_, shouldRing: true, _): .ringingIncoming(name: voiceChannelSnapshot.callerName)
+        case .outgoing: .ringingOutgoing
+        case .answered, .establishedDataChannel: .connecting
+        case .established: .established(duration: -voiceChannelSnapshot.callStartDate.timeIntervalSinceNow.rounded())
+        case .terminating, .mediaStopped, .incoming(_, shouldRing: false, _): .terminating
+        case .none, .unknown: .none
         }
     }
 }
@@ -192,26 +192,26 @@ extension CallParticipantState {
 
     var isSendingVideo: Bool {
         switch self {
-        case let .connected(videoState: state, _) where state.isSending: return true
-        default: return false
+        case let .connected(videoState: state, _) where state.isSending: true
+        default: false
         }
     }
 
     var videoState: VideoState? {
         switch self {
         case let .connected(videoState: state, _):
-            return state
+            state
         default:
-            return nil
+            nil
         }
     }
 
     var microphoneState: MicrophoneState? {
         switch self {
         case let .connected(_, microphoneState: state):
-            return state
+            state
         default:
-            return nil
+            nil
         }
     }
 }
@@ -234,7 +234,7 @@ extension VoiceChannel {
     }
 
     private var isAnyParticipantSendingVideo: Bool {
-        return videoState.isSending                                  // Current user is sending video and can toggle off
+        videoState.isSending                                  // Current user is sending video and can toggle off
             || participants.any { $0.state.isSendingVideo } // Other participants are sending video
             || isIncomingVideoCall                                   // This is an incoming video call
     }
@@ -245,19 +245,19 @@ extension VoiceChannel {
 
     private var isIncomingVideoCall: Bool {
         switch state {
-        case .incoming(video: true, shouldRing: true, degraded: _): return true
-        default: return false
+        case .incoming(video: true, shouldRing: true, degraded: _): true
+        default: false
         }
     }
 
     fileprivate var allowPresentationModeUpdates: Bool {
-        return participants.count > 2
+        participants.count > 2
     }
 }
 
 extension VoiceChannel {
     var participants: [CallParticipant] {
-        return participants(ofKind: .all, activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers)
+        participants(ofKind: .all, activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers)
     }
 
     var degradationState: CallDegradationState {

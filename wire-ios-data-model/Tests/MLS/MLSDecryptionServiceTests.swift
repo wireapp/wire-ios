@@ -275,7 +275,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
 
         self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            return DecryptedMessage(
+            DecryptedMessage(
                 message: messageData,
                 proposals: [],
                 isActive: false,
@@ -314,7 +314,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 
         // Mock message decryption
         self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            return DecryptedMessage(
+            DecryptedMessage(
                 message: messageData,
                 proposals: [],
                 isActive: false,

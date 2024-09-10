@@ -28,7 +28,7 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
     private let lock = NSRecursiveLock()
 
     public var didPerformAction: Bool {
-        return results.isEmpty
+        results.isEmpty
     }
 
     public var performedActions: [Action] = []

@@ -35,7 +35,7 @@ final class SearchHeaderViewController: UIViewController {
 
     weak var delegate: SearchHeaderViewControllerDelegate?
     var query: String {
-        return tokenField.filterText
+        tokenField.filterText
     }
 
     @available(*, unavailable)

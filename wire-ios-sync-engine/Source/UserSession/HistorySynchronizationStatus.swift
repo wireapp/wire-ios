@@ -78,6 +78,6 @@ import Foundation
 
     /// Returns whether history should be downloaded now
     public var shouldDownloadFullHistory: Bool {
-        return !self.isSyncing && !self.isInBackground
+        !self.isSyncing && !self.isInBackground
     }
 }

@@ -24,7 +24,7 @@ final class WipeDatabasePresenter {
     var wireframe: WipeDatabaseWireframe!
 
     func confirmAlertCallback() -> RequestPasswordController.Callback {
-        return { [weak self] confirmText in
+        { [weak self] confirmText in
             guard confirmText == L10n.Localizable.WipeDatabase.Alert.confirmInput else {
                 return
             }
@@ -34,8 +34,8 @@ final class WipeDatabasePresenter {
     }
 
     func confirmAlertInputValidation() -> RequestPasswordController.InputValidation {
-        return { confirmText in
-            return confirmText == L10n.Localizable.WipeDatabase.Alert.confirmInput
+        { confirmText in
+            confirmText == L10n.Localizable.WipeDatabase.Alert.confirmInput
         }
     }
 }

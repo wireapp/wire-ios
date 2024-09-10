@@ -131,7 +131,7 @@ final class ArticleView: UIView {
     }
 
     private var authorHighlightAttributes: [NSAttributedString.Key: AnyObject] {
-        return [.font: authorHighlightFont, .foregroundColor: authorHighlightTextColor]
+        [.font: authorHighlightFont, .foregroundColor: authorHighlightTextColor]
     }
 
     private func formatURL(_ URL: Foundation.URL) -> NSAttributedString {
@@ -221,7 +221,7 @@ final class ArticleView: UIView {
 
 extension ArticleView: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        return delegate?.linkPreviewContextMenu(view: self)
+        delegate?.linkPreviewContextMenu(view: self)
     }
 
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction,

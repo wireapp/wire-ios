@@ -22,7 +22,7 @@ extension ZMConversation {
     @objc
     public var isFavorite: Bool {
         get {
-            return labels.any({ $0.kind == .favorite })
+            labels.any({ $0.kind == .favorite })
         }
         set {
             guard let managedObjectContext else { return }
@@ -39,7 +39,7 @@ extension ZMConversation {
 
     @objc
     public var folder: LabelType? {
-        return labels.first(where: { $0.kind == .folder })
+        labels.first(where: { $0.kind == .folder })
     }
 
     @objc

@@ -137,7 +137,7 @@ private class MockIdentifierProvider: AssetDeletionIdentifierProviderType {
     var failedToDeleteIdentifiers = [String]()
 
     func nextIdentifierToDelete() -> String? {
-        return nextIdentifier
+        nextIdentifier
     }
 
     func didDelete(identifier: String) {

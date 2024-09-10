@@ -43,15 +43,15 @@ final class Image: Editable {
     var imageView = UIImageView()
 
     var size: CGSize {
-        return image.size
+        image.size
     }
 
     var bounds: CGRect {
-        return CGRect(x: 0, y: 0, width: size.width, height: size.height).applying(transform)
+        CGRect(x: 0, y: 0, width: size.width, height: size.height).applying(transform)
     }
 
     var selectedView: UIView {
-        return imageView
+        imageView
     }
 
     public init(image: UIImage, at position: CGPoint) {

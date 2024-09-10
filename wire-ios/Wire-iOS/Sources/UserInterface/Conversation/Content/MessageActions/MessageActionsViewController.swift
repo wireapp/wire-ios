@@ -106,7 +106,6 @@ extension MessageActionsViewController: EmojiPickerViewControllerDelegate {
     func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
         actionController?.perform(action: .react(emoji.value))
         dismiss(animated: true)
-        return
     }
 
     func emojiPickerDeleteTapped() {}

@@ -73,13 +73,13 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
                 guard let missingClient = await context.perform({
                     if let userID = UUID(uuidString: userID),
                        let user = ZMUser.fetch(with: userID, domain: domain, in: context) {
-                        return UserClient.fetchUserClient(
+                        UserClient.fetchUserClient(
                             withRemoteId: clientID,
                             forUser: user,
                             createIfNeeded: true
                         )
                     } else {
-                        return nil
+                        nil
                     }
                 }) else {
                     continue
@@ -140,8 +140,8 @@ extension UserClient {
 
 extension Payload.ClientListByQualifiedUserID {
     func fetchUsers(in context: NSManagedObjectContext) -> [ZMUser] {
-        return flatMap { domain, userClientsByUserID in
-            return userClientsByUserID.compactMap { userID, _ -> ZMUser? in
+        flatMap { domain, userClientsByUserID in
+            userClientsByUserID.compactMap { userID, _ -> ZMUser? in
                 guard
                     let userID = UUID(uuidString: userID),
                     let user = ZMUser.fetch(with: userID, domain: domain, in: context)
@@ -156,7 +156,7 @@ extension Payload.ClientListByQualifiedUserID {
 
     func fetchClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
         let userClientsByUserTuples = flatMap { domain, userClientsByUserID in
-            return userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
+            userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
                 guard
                     let userID = UUID(uuidString: userID),
                     let user = ZMUser.fetch(with: userID, domain: domain, in: context)
@@ -178,7 +178,7 @@ extension Payload.ClientListByQualifiedUserID {
 
     func fetchOrCreateClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
         let userClientsByUserTuples = flatMap { domain, userClientsByUserID in
-            return userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
+            userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
                 guard
                     let userID = UUID(uuidString: userID)
                 else {

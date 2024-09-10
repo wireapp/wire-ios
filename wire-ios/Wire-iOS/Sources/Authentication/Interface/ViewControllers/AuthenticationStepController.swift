@@ -71,7 +71,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
     private var rightItemAction: AuthenticationCoordinatorAction?
 
     var contentCenterYAnchor: NSLayoutYAxisAnchor {
-        return contentStack.centerYAnchor
+        contentStack.centerYAnchor
     }
 
     // MARK: - Initialization
@@ -128,7 +128,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     /// Override this method to provide a different main view.
     func createMainView() -> UIView {
-        return stepDescription.mainView.create()
+        stepDescription.mainView.create()
     }
 
     private func createViews() {
@@ -372,7 +372,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
     }
 
     override func accessibilityPerformMagicTap() -> Bool {
-        return (mainView as? MagicTappable)?.performMagicTap() == true
+        (mainView as? MagicTappable)?.performMagicTap() == true
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -404,7 +404,7 @@ extension AuthenticationStepController {
     }
 
     var initialValidation: ValueValidation? {
-        return (stepDescription as? DefaultValidatingStepDescription)?.initialValidation
+        (stepDescription as? DefaultValidatingStepDescription)?.initialValidation
     }
 
     func valueValidated(_ validation: ValueValidation?) {

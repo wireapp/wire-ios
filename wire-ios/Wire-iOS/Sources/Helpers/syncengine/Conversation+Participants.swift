@@ -20,7 +20,7 @@ import WireSyncEngine
 
 extension GroupDetailsConversation where Self: ZMConversation {
     var freeParticipantSlots: Int {
-        return ZMConversation.maxParticipants - localParticipants.count
+        ZMConversation.maxParticipants - localParticipants.count
     }
 }
 
@@ -35,7 +35,7 @@ extension ZMConversation {
     static let maxParticipants: Int = 500
 
     static var maxParticipantsExcludingSelf: Int {
-        return maxParticipants - 1
+        maxParticipants - 1
     }
 
     func addOrShowError(participants: [UserType]) {
@@ -61,7 +61,7 @@ extension ZMConversation {
                 }
 
                 let conversation = try await syncContext.perform { [self] in
-                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                    try ZMConversation.existingObject(for: self.objectID, in: syncContext)
                 }
 
                 try await service.addParticipants(users, to: conversation)
@@ -98,11 +98,11 @@ extension ZMConversation {
         Task {
             do {
                 let user = try await syncContext.perform {
-                    return try ZMUser.existingObject(for: user.objectID, in: syncContext)
+                    try ZMUser.existingObject(for: user.objectID, in: syncContext)
                 }
 
                 let conversation = try await syncContext.perform { [self] in
-                    return try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                    try ZMConversation.existingObject(for: self.objectID, in: syncContext)
                 }
 
                 try await service.removeParticipant(user, from: conversation)

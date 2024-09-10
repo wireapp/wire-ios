@@ -28,7 +28,7 @@ final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
 
     override var selectedTextRange: UITextRange? {
-        get { return nil }
+        get { nil }
         set { /* no-op */ }
     }
 
@@ -80,7 +80,7 @@ final class LinkInteractionTextView: UITextView {
     }
 
     private func isMarkdownLink(in range: NSRange) -> Bool {
-        return attributedText.ranges(containing: .link, inRange: range) == [range]
+        attributedText.ranges(containing: .link, inRange: range) == [range]
     }
 
     /// An alert is shown (asking the user if they wish to open the url) if the
@@ -153,7 +153,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
 extension LinkInteractionTextView: UITextDragDelegate {
     func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
         func isMentionLink(_ attributeTuple: (NSAttributedString.Key, Any)) -> Bool {
-            return attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention.mentionScheme
+            attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention.mentionScheme
         }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {

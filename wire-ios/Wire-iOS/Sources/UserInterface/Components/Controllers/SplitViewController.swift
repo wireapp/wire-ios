@@ -58,7 +58,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     var leftViewControllerWidth: CGFloat {
-        return leftViewWidthConstraint?.constant ?? 0
+        leftViewWidthConstraint?.constant ?? 0
     }
 
     var openPercentage: CGFloat = 0 {
@@ -72,7 +72,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     private var internalLeftViewController: UIViewController?
     var leftViewController: UIViewController? {
         get {
-            return internalLeftViewController
+            internalLeftViewController
         }
 
         set {
@@ -85,7 +85,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     private var internalLeftViewControllerRevealed = true
     var isLeftViewControllerRevealed: Bool {
         get {
-            return internalLeftViewControllerRevealed
+            internalLeftViewControllerRevealed
         }
 
         set {
@@ -178,15 +178,15 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     // MARK: - status bar
 
     private var childViewController: UIViewController? {
-        return openPercentage > 0 ? leftViewController : rightViewController
+        openPercentage > 0 ? leftViewController : rightViewController
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return childViewController
+        childViewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return childViewController
+        childViewController
     }
 
     // MARK: - animator
@@ -269,7 +269,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     var isConversationViewVisible: Bool {
-        return layoutSize == .regularLandscape ||
+        layoutSize == .regularLandscape ||
             !isLeftViewControllerRevealed
     }
 
@@ -321,14 +321,14 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     var isRightViewControllerRevealed: Bool {
         switch self.layoutSize {
         case .compact, .regularPortrait:
-            return !isLeftViewControllerRevealed
+            !isLeftViewControllerRevealed
         case .regularLandscape:
-            return true
+            true
         }
     }
 
     private var isiOSAppOnMac: Bool {
-        return ProcessInfo.processInfo.isiOSAppOnMac
+        ProcessInfo.processInfo.isiOSAppOnMac
     }
 
     /// Update layoutSize for the change of traitCollection and the current orientation
@@ -474,7 +474,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     private func leftViewMinWidth(size: CGSize) -> CGFloat {
-        return min(size.width * 0.43, CGFloat.SplitView.LeftViewWidth)
+        min(size.width * 0.43, CGFloat.SplitView.LeftViewWidth)
     }
 
     private func updateConstraints(for size: CGSize, willMoveToEmptyView toEmptyView: Bool = false) {

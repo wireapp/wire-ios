@@ -44,7 +44,7 @@ extension UIAlertController {
     static func confirmRemovingGuests(
         _ completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
-        return confirmController(
+        confirmController(
             title: GuestRoom.RemoveGuests.message,
             confirmTitle: GuestRoom.RemoveGuests.action,
             completion: completion
@@ -52,7 +52,7 @@ extension UIAlertController {
     }
 
     static func confirmRevokingLink(_ completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return confirmController(
+        confirmController(
             title: GuestRoom.RevokeLink.message,
             confirmTitle: GuestRoom.RevokeLink.action,
             completion: completion

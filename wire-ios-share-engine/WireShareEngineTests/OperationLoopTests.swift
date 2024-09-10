@@ -29,11 +29,11 @@ final class OperationLoopTests: ZMTBaseTest {
     var sut: OperationLoop! = nil
 
     var uiMoc: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     var syncMoc: NSManagedObjectContext {
-        return coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     override func setUp() {

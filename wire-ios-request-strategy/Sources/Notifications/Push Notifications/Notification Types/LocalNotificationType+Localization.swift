@@ -84,67 +84,67 @@ extension LocalNotificationType {
         case let .message(contentType):
             switch contentType {
             case .image:
-                return ZMPushStringImageAdd
+                ZMPushStringImageAdd
             case .video:
-                return ZMPushStringVideoAdd
+                ZMPushStringVideoAdd
             case .audio:
-                return ZMPushStringAudioAdd
+                ZMPushStringAudioAdd
             case .location:
-                return ZMPushStringLocationAdd
+                ZMPushStringLocationAdd
             case .fileUpload:
-                return ZMPushStringFileAdd
+                ZMPushStringFileAdd
             case .text:
-                return ZMPushStringMessageAdd
+                ZMPushStringMessageAdd
             case .knock:
-                return ZMPushStringKnock
+                ZMPushStringKnock
             case .reaction:
-                return ZMPushStringReaction
+                ZMPushStringReaction
             case .ephemeral:
-                return ZMPushStringEphemeral
+                ZMPushStringEphemeral
             case .hidden:
-                return ZMPushStringDefault
+                ZMPushStringDefault
             case .participantsAdded:
-                return ZMPushStringMemberJoin
+                ZMPushStringMemberJoin
             case .participantsRemoved:
-                return ZMPushStringMemberLeave
+                ZMPushStringMemberLeave
             case .messageTimerUpdate(nil):
-                return ZMPushStringMessageTimerOff
+                ZMPushStringMessageTimerOff
             case .messageTimerUpdate:
-                return ZMPushStringMessageTimerUpdate
+                ZMPushStringMessageTimerUpdate
             }
 
         case let .calling(callState):
             switch callState {
             case .incomingCall(video: true):
-                return ZMPushStringVideoCallStarts
+                ZMPushStringVideoCallStarts
             case .incomingCall(video: false):
-                return ZMPushStringCallStarts
+                ZMPushStringCallStarts
             case .missedCall:
-                return ZMPushStringCallMissed
+                ZMPushStringCallMissed
             }
 
         case let .event(eventType):
             switch eventType {
             case .conversationCreated:
-                return ZMPushStringConversationCreate
+                ZMPushStringConversationCreate
             case .conversationDeleted:
-                return ZMPushStringConversationDelete
+                ZMPushStringConversationDelete
             case .connectionRequestPending:
-                return ZMPushStringConnectionRequest
+                ZMPushStringConnectionRequest
             case .connectionRequestAccepted:
-                return ZMPushStringConnectionAccepted
+                ZMPushStringConnectionAccepted
             case .newConnection:
-                return ZMPushStringNewConnection
+                ZMPushStringNewConnection
             }
 
         case .failedMessage:
-            return ZMPushStringFailedToSend
+            ZMPushStringFailedToSend
 
         case .availabilityBehaviourChangeAlert:
-            return ZMPushStringAlertAvailability
+            ZMPushStringAlertAvailability
 
         case .bundledMessages:
-            return ZMPushStringBundledMessages
+            ZMPushStringBundledMessages
         }
     }
 
@@ -231,9 +231,9 @@ extension LocalNotificationType {
 
     func messageBodyText(senderName: String?) -> String {
         if case let LocalNotificationType.event(eventType) = self {
-            return messageBodyText(eventType: eventType, senderName: senderName)
+            messageBodyText(eventType: eventType, senderName: senderName)
         } else {
-            return messageBodyText(sender: nil, conversation: nil)
+            messageBodyText(sender: nil, conversation: nil)
         }
     }
 
@@ -311,25 +311,25 @@ extension LocalNotificationType {
 
 extension String {
     public var pushFormatString: String {
-        return Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
+        Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
     }
 
     public var pushActionString: String {
-        return Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
+        Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
     }
 
     fileprivate static func localizedStringWithFormat(_ format: String, arguments: [CVarArg]) -> String {
         switch arguments.count {
         case 1:
-            return String.localizedStringWithFormat(format, arguments[0])
+            String.localizedStringWithFormat(format, arguments[0])
         case 2:
-            return String.localizedStringWithFormat(format, arguments[0], arguments[1])
+            String.localizedStringWithFormat(format, arguments[0], arguments[1])
         case 3:
-            return String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2])
+            String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2])
         case 4:
-            return String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2], arguments[3])
+            String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2], arguments[3])
         default:
-            return NSLocalizedString(format, comment: "")
+            NSLocalizedString(format, comment: "")
         }
     }
 }

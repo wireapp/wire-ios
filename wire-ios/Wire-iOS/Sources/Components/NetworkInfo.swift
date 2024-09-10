@@ -58,7 +58,7 @@ struct NetworkInfo {
         case CTRadioAccessTechnologyGPRS,
              CTRadioAccessTechnologyEdge,
              CTRadioAccessTechnologyCDMA1x:
-            return .type2G
+            .type2G
 
         case CTRadioAccessTechnologyWCDMA,
              CTRadioAccessTechnologyHSDPA,
@@ -67,13 +67,13 @@ struct NetworkInfo {
              CTRadioAccessTechnologyCDMAEVDORevA,
              CTRadioAccessTechnologyCDMAEVDORevB,
              CTRadioAccessTechnologyeHRPD:
-            return .type3G
+            .type3G
 
         case CTRadioAccessTechnologyLTE:
-            return .type4G
+            .type4G
 
         default:
-            return .unknown
+            .unknown
         }
     }
 }

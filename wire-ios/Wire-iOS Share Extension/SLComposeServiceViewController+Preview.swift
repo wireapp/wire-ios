@@ -144,20 +144,20 @@ extension SLComposeServiceViewController {
     private func fallbackIcon(forAttachment item: NSItemProvider, ofType type: AttachmentType) -> StyleKitIcon {
         switch type {
         case .video:
-            return .movie
+            .movie
         case .image:
-            return .photo
+            .photo
         case .walletPass,
              .fileUrl:
-            return .document
+            .document
         case .rawFile:
             if item.hasItemConformingToTypeIdentifier(UTType.audio.identifier) {
-                return .microphone
+                .microphone
             } else {
-                return .document
+                .document
             }
         case .url:
-            return .paperclip
+            .paperclip
         }
     }
 }

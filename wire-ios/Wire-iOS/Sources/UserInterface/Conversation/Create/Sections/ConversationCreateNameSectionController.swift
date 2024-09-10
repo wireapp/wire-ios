@@ -23,11 +23,11 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     typealias Cell = ConversationCreateNameCell
 
     var isHidden: Bool {
-        return false
+        false
     }
 
     var value: SimpleTextField.Value? {
-        return nameCell?.textField.value
+        nameCell?.textField.value
     }
 
     private weak var nameCell: Cell?
@@ -59,7 +59,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     // MARK: - collectionView
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -76,7 +76,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {

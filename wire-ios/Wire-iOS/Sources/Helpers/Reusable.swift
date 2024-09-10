@@ -30,7 +30,7 @@ extension Reusable {
     }
 
     var reuseIdentifier: String? {
-        return type(of: self).reuseIdentifier
+        type(of: self).reuseIdentifier
     }
 }
 

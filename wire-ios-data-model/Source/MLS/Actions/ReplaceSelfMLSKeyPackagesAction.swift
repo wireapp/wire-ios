@@ -34,17 +34,17 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "Endpoint not available"
+                "Endpoint not available"
             case .invalidParameters:
-                return "Invalid client ID or key packages"
+                "Invalid client ID or key packages"
             case .invalidBodyOrCiphersuites:
-                return "Invalid body or ciphersuites"
+                "Invalid body or ciphersuites"
             case .mlsProtocolError:
-                return "MLS protocol error"
+                "MLS protocol error"
             case .mlsIdentityMismatch:
-                return "Key package credential does not match qualified client ID"
+                "Key package credential does not match qualified client ID"
             case let .unknown(status):
-                return "Unknown error (response status: \(status))"
+                "Unknown error (response status: \(status))"
             }
         }
     }

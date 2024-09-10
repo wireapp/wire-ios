@@ -162,6 +162,6 @@ public enum ProteusError: Int, Error, Equatable {
 
 extension ProteusError: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return String(describing: self)
+        String(describing: self)
     }
 }

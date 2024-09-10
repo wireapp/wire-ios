@@ -62,9 +62,9 @@ private final class StorableDraftMessage: NSObject, Codable {
     /// Converts this storable version into a regular `DraftMessage`.
     /// The passed in `context` is needed to fetch the user objects.
     fileprivate func draftMessage(in context: NSManagedObjectContext, for conversation: ZMConversation) -> DraftMessage {
-        return .init(text: text,
-                     mentions: mentions.compactMap { $0.mention(in: context) },
-                     quote: quote?.quote(in: context, for: conversation))
+        .init(text: text,
+              mentions: mentions.compactMap { $0.mention(in: context) },
+              quote: quote?.quote(in: context, for: conversation))
     }
 }
 
@@ -178,7 +178,7 @@ extension UserType {
 extension Mention {
     /// The storable version of the object.
     fileprivate var storable: StorableMention? {
-        return user.userIdentifier.map {
+        user.userIdentifier.map {
             StorableMention(range: range, userIdentifier: $0)
         }
     }
@@ -187,8 +187,8 @@ extension Mention {
 extension DraftMessage {
     /// The storable version of the object.
     fileprivate var storable: StorableDraftMessage {
-        return .init(text: text,
-                     mentions: mentions.compactMap(\.storable),
-                     quote: StorableQuote(nonce: quote?.nonce))
+        .init(text: text,
+              mentions: mentions.compactMap(\.storable),
+              quote: StorableQuote(nonce: quote?.nonce))
     }
 }

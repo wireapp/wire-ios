@@ -74,7 +74,7 @@ final class ZMUserTests_Swift: ModelObjectsTests {
 
 extension ZMUserTests_Swift {
     func assetPayload(previewId: String, completeId: String) -> NSArray {
-        return [
+        [
             ["size": "preview", "type": "image", "key": previewId],
             ["size": "complete", "type": "image", "key": completeId]
         ] as NSArray

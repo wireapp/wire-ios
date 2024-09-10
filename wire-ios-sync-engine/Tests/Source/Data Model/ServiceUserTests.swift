@@ -80,7 +80,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
     /// Whether the user can create conversations.
     @objc
     func canCreateConversation(type: ZMConversationType) -> Bool {
-        return true
+        true
     }
 
     var canCreateService: Bool = false
@@ -88,59 +88,59 @@ final class DummyServiceUser: NSObject, ServiceUser {
     var canManageTeam: Bool = false
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
-        return false
+        false
     }
 
     func canAddUser(to conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     func canRemoveUser(from conversation: ZMConversation) -> Bool {
-        return false
+        false
     }
 
     func canAddService(to conversation: ZMConversation) -> Bool {
-        return false
+        false
     }
 
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
-        return false
+        false
     }
 
     func canRemoveService(from conversation: ZMConversation) -> Bool {
-        return false
+        false
     }
 
     func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     func canModifyTitle(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
-        return false
+        false
     }
 
     func canLeave(_ conversation: ZMConversation) -> Bool {
-        return false
+        false
     }
 
     func isGroupAdmin(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     var domain: String?
@@ -228,7 +228,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
     func refreshTeamData() {}
 
     func isGuest(in conversation: ConversationLike) -> Bool {
-        return false
+        false
     }
 
     var canCreateMLSGroups = false

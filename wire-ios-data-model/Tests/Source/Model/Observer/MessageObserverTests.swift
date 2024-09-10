@@ -347,7 +347,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { _ in
-                return message.linkAttachments = [attachment]
+                message.linkAttachments = [attachment]
             },
             expectedChangedFields: [#keyPath(MessageChangeInfo.linkAttachmentsChanged)]
         )

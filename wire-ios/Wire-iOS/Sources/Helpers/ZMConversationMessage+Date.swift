@@ -38,18 +38,18 @@ extension ZMConversationMessage {
     }
 
     func formattedReceivedDate() -> String? {
-        return serverTimestamp.map(formattedDate)
+        serverTimestamp.map(formattedDate)
     }
 
     func formattedEditedDate() -> String? {
-        return updatedAt.map(formattedDate)
+        updatedAt.map(formattedDate)
     }
 
     func formattedDate(_ date: Date) -> String {
         if Calendar.current.isDateInToday(date) {
-            return Message.shortTimeFormatter.string(from: date)
+            Message.shortTimeFormatter.string(from: date)
         } else {
-            return Message.shortDateTimeFormatter.string(from: date)
+            Message.shortDateTimeFormatter.string(from: date)
         }
     }
 

@@ -35,7 +35,7 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [keyPathSync]
+        [keyPathSync]
     }
 }
 

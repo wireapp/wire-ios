@@ -36,6 +36,6 @@ protocol ImageManagerProtocol {
 
 extension PHImageManager: ImageManagerProtocol {
     static var defaultInstance: ImageManagerProtocol {
-        return PHImageManager.default()
+        PHImageManager.default()
     }
 }

@@ -105,7 +105,7 @@ extension OTREntity {
     /// Which objects this message depends on when sending it to a list recipients
     public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: Set<ZMUser>) -> ZMManagedObject? {
         let recipientClients = recipients.flatMap {
-            return Array($0.clients)
+            Array($0.clients)
         }
 
         // If we discovered a new client we need fetch the client details before retrying
@@ -231,9 +231,9 @@ extension OTREntity {
            let payload = response.payload as? [String: AnyObject],
            let label = payload[ErrorLabel] as? String,
            label == UnknownClientLabel {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 

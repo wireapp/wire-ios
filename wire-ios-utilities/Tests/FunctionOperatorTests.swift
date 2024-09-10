@@ -21,7 +21,7 @@ import XCTest
 final class FunctionOperatorTests: XCTestCase {
     func testThaItNegatesABooleanTestFunction() {
         // given
-        let foo: (Bool) -> Bool = { return $0 }
+        let foo: (Bool) -> Bool = { $0 }
 
         // when
         let negated = !foo

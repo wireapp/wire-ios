@@ -65,7 +65,7 @@ extension AppLockModule {
         }
 
         private var needsToNotifyUser: Bool {
-            return userSession.needsToNotifyUserOfAppLockConfiguration
+            userSession.needsToNotifyUserOfAppLockConfiguration
         }
 
         private var needsToCreateCustomPasscode: Bool {
@@ -75,7 +75,7 @@ extension AppLockModule {
         }
 
         private var isAuthenticationNeeded: Bool {
-            return passcodePreference != nil
+            passcodePreference != nil
         }
 
         private var applicationState: UIApplication.State {

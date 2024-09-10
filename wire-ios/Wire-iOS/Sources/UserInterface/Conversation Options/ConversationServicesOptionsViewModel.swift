@@ -71,7 +71,7 @@ final class ConversationServicesOptionsViewModel {
 
     private func updateRows() {
         state.rows = [.allowServicesToggle(
-            get: { [unowned self] in return self.configuration.allowServices },
+            get: { [unowned self] in self.configuration.allowServices },
             set: { [unowned self] in self.setAllowServices($0, sender: $1) }
         )]
     }

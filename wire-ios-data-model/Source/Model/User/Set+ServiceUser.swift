@@ -20,7 +20,7 @@ import Foundation
 
 extension Set<ZMUser> {
     var serviceUsers: Set<ZMUser> {
-        return self.filter(\.isServiceUser)
+        self.filter(\.isServiceUser)
     }
 
     func categorizeServicesAndUser() -> (services: Set<ZMUser>, users: Set<ZMUser>) {

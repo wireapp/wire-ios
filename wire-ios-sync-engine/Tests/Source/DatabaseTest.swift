@@ -24,19 +24,19 @@ class DatabaseTest: ZMTBaseTest {
     var coreDataStack: CoreDataStack?
 
     var useInMemoryDatabase: Bool {
-        return true
+        true
     }
 
     var uiMOC: NSManagedObjectContext {
-        return self.coreDataStack!.viewContext
+        self.coreDataStack!.viewContext
     }
 
     var syncMOC: NSManagedObjectContext {
-        return self.coreDataStack!.syncContext
+        self.coreDataStack!.syncContext
     }
 
     var searchMOC: NSManagedObjectContext {
-        return self.coreDataStack!.searchContext
+        self.coreDataStack!.searchContext
     }
 
     var sharedContainerURL: URL? {
@@ -46,7 +46,7 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var cacheURL: URL {
-        return FileManager.default.randomCacheURL!
+        FileManager.default.randomCacheURL!
     }
 
     private func cleanUp() {
@@ -111,7 +111,7 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     func event(withPayload payload: [AnyHashable: Any]?, type: ZMUpdateEventType, in conversation: ZMConversation, user: ZMUser) -> ZMUpdateEvent {
-        return ZMUpdateEvent(uuid: nil, payload: eventPayload(content: payload, type: type, in: conversation, from: user), transient: false, decrypted: true, source: .download)!
+        ZMUpdateEvent(uuid: nil, payload: eventPayload(content: payload, type: type, in: conversation, from: user), transient: false, decrypted: true, source: .download)!
     }
 
     private func eventPayload(content: [AnyHashable: Any]?,
@@ -119,11 +119,11 @@ class DatabaseTest: ZMTBaseTest {
                               in conversation: ZMConversation,
                               from user: ZMUser,
                               timestamp: Date = Date()) -> [AnyHashable: Any] {
-        return [ "conversation": conversation.remoteIdentifier!.transportString(),
-                 "data": conversation,
-                 "from": user.remoteIdentifier!.transportString(),
-                 "time": timestamp.transportString(),
-                 "type": ZMUpdateEvent.eventTypeString(for: type)!
+        [ "conversation": conversation.remoteIdentifier!.transportString(),
+          "data": conversation,
+          "from": user.remoteIdentifier!.transportString(),
+          "time": timestamp.transportString(),
+          "type": ZMUpdateEvent.eventTypeString(for: type)!
         ]
     }
 }

@@ -85,7 +85,7 @@ final class CollectionFileCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .document
+        .document
     }
 
     private func setup(_ view: UIView) {

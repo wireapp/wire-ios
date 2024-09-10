@@ -35,7 +35,7 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return modifiedSync.nextRequest(for: apiVersion)
+        modifiedSync.nextRequest(for: apiVersion)
     }
 }
 
@@ -76,6 +76,6 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
 
 extension UserRichProfileRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedSync]
+        [modifiedSync]
     }
 }

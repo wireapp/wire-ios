@@ -145,7 +145,7 @@ extension ConversationInputBarViewController {
 
     #if targetEnvironment(simulator)
         private func uploadTestAlertAction(size: UInt, title: String, fileName: String) -> UIAlertAction {
-            return UIAlertAction(title: title, style: .default, handler: {_ in
+            UIAlertAction(title: title, style: .default, handler: {_ in
                 self.userSession.enqueue({
                     let randomData = Data.secureRandomData(length: UInt(size))
 

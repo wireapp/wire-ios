@@ -60,7 +60,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override var accessibilityIdentifier: String? {
         get {
-            return cellDescription?.accessibilityIdentifier
+            cellDescription?.accessibilityIdentifier
         }
 
         set {
@@ -70,7 +70,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override var accessibilityLabel: String? {
         get {
-            return cellDescription?.accessibilityLabel
+            cellDescription?.accessibilityLabel
         }
 
         set {
@@ -228,19 +228,19 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     // MARK: - SelectableView
 
     var selectionView: UIView! {
-        return cellView.selectionView ?? self
+        cellView.selectionView ?? self
     }
 
     var selectionRect: CGRect {
         if cellView.selectionView != nil {
-            return cellView.selectionRect
+            cellView.selectionRect
         } else {
-            return self.bounds
+            self.bounds
         }
     }
 
     var highlightContainer: UIView {
-        return self
+        self
     }
 
     override func willDisplayCell() {

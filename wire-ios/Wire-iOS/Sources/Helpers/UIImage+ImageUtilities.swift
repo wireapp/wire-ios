@@ -64,7 +64,7 @@ extension UIImage {
     }
 
     class func deviceOptimizedImage(from imageData: Data) -> UIImage? {
-        return UIImage(from: imageData, withMaxSize: UIScreen.main.nativeBounds.size.height)
+        UIImage(from: imageData, withMaxSize: UIScreen.main.nativeBounds.size.height)
     }
 
     convenience init?(from imageData: Data, withMaxSize maxSize: CGFloat) {

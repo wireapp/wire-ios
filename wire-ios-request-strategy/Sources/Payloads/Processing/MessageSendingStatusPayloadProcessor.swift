@@ -108,7 +108,7 @@ final class MessageSendingStatusPayloadProcessor {
         withDomain domain: String?,
         in context: NSManagedObjectContext
     ) -> [ZMUser: Payload.ClientList] {
-        return clientsListByUserID.reduce(into: Payload.ClientListByUser()) { result, next in
+        clientsListByUserID.reduce(into: Payload.ClientListByUser()) { result, next in
             guard let userID = UUID(uuidString: next.key) else {
                 return
             }

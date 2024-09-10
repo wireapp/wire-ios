@@ -30,15 +30,15 @@ enum PasscodeError: CaseIterable {
     var message: String {
         switch self {
         case .tooShort:
-            return L10n.Localizable.CreatePasscode.Validation.tooShort
+            L10n.Localizable.CreatePasscode.Validation.tooShort
         case .noLowercaseChar:
-            return L10n.Localizable.CreatePasscode.Validation.noLowercaseChar
+            L10n.Localizable.CreatePasscode.Validation.noLowercaseChar
         case .noUppercaseChar:
-            return L10n.Localizable.CreatePasscode.Validation.noUppercaseChar
+            L10n.Localizable.CreatePasscode.Validation.noUppercaseChar
         case .noSpecialChar:
-            return L10n.Localizable.CreatePasscode.Validation.noSpecialChar
+            L10n.Localizable.CreatePasscode.Validation.noSpecialChar
         case .noNumber:
-            return L10n.Localizable.CreatePasscode.Validation.noNumber
+            L10n.Localizable.CreatePasscode.Validation.noNumber
         }
     }
 
@@ -55,10 +55,10 @@ enum PasscodeError: CaseIterable {
     }
 
     var descriptionWithInvalidIcon: NSAttributedString {
-        return description(icon: .circleCross, color: SemanticColors.Icon.backgroundPasswordRuleCheck, font: .smallRegularFont)
+        description(icon: .circleCross, color: SemanticColors.Icon.backgroundPasswordRuleCheck, font: .smallRegularFont)
     }
 
     var descriptionWithPassedIcon: NSAttributedString {
-        return description(icon: .circleTick, color: SemanticColors.Icon.backgroundJoinCall, font: .smallSemiboldFont)
+        description(icon: .circleTick, color: SemanticColors.Icon.backgroundJoinCall, font: .smallSemiboldFont)
     }
 }

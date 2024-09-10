@@ -27,7 +27,7 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Push
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     override func setUp() async throws {

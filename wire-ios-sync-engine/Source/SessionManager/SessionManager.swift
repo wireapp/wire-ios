@@ -30,7 +30,7 @@ public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
 
 extension Bundle {
     @objc public var appGroupIdentifier: String? {
-        return bundleIdentifier.map { "group." + $0 }
+        bundleIdentifier.map { "group." + $0 }
     }
 }
 
@@ -282,7 +282,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public var activeUnauthenticatedSession: UnauthenticatedSession {
-        return unauthenticatedSession ?? createUnauthenticatedSession()
+        unauthenticatedSession ?? createUnauthenticatedSession()
     }
 
     private static var avsLogObserver: AVSLogObserver?
@@ -1131,7 +1131,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public var isUserSessionActive: Bool {
-        return activeUserSession != nil
+        activeUserSession != nil
     }
 
     func updateProfileImage(imageData: Data) {
@@ -1294,15 +1294,15 @@ extension SessionManager {
 
 extension SessionManager: UnauthenticatedSessionDelegate {
     public func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
-        return accountManager.accounts.count < maxNumberAccounts
+        accountManager.accounts.count < maxNumberAccounts
     }
 
     public func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool {
-        return accountManager.accounts.contains(account)
+        accountManager.accounts.contains(account)
     }
 
     public func session(session: UnauthenticatedSession, updatedCredentials credentials: UserCredentials) -> Bool {
-        return update(credentials: credentials)
+        update(credentials: credentials)
     }
 
     public func session(session: UnauthenticatedSession, updatedProfileImage imageData: Data) {
@@ -1442,12 +1442,12 @@ extension SessionManager: WireCallCenterCallStateObserver {
 extension SessionManager {
     /// The SSO code provided by the user when clicking their company link. Points to a UUID object.
     public static var companyLoginCodeKey: String {
-        return "WireCompanyLoginCode"
+        "WireCompanyLoginCode"
     }
 
     /// The timestamp when the user initiated the request.
     public static var companyLoginRequestTimestampKey: String {
-        return "WireCompanyLoginTimesta;p"
+        "WireCompanyLoginTimesta;p"
     }
 }
 
@@ -1496,19 +1496,19 @@ private let sessionManagerDestroyedSessionNotificationName = Notification.Name(r
 
 extension SessionManager: NotificationContext {
     public func addUnauthenticatedSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
             context: self) { [weak observer] note in observer?.sessionManagerCreated(unauthenticatedSession: note.object as! UnauthenticatedSession) }
     }
 
     public func addSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: sessionManagerCreatedSessionNotificationName,
             context: self) { [weak observer] note in observer?.sessionManagerCreated(userSession: note.object as! ZMUserSession) }
     }
 
     public func addSessionManagerDestroyedSessionObserver(_ observer: SessionManagerDestroyedSessionObserver) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: sessionManagerDestroyedSessionNotificationName,
             context: self) { [weak observer] note in observer?.sessionManagerDestroyedUserSession(for: note.object as! UUID) }
     }

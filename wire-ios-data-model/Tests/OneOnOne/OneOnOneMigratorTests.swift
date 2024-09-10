@@ -115,7 +115,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         mockMLSService.conversationExistsGroupID_MockValue = false
         mockMLSService.establishGroupForWith_MockMethod = { _, _ in
-            return ciphersuite
+            ciphersuite
         }
 
         // When
@@ -208,7 +208,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         mockMLSService.conversationExistsGroupID_MockValue = false
         mockMLSService.establishGroupForWith_MockMethod = { _, _ in
-            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         // required to add be able to add images

@@ -29,26 +29,26 @@ enum LabelIndicatorContext {
     var icon: StyleKitIcon {
         switch self {
         case .guest:
-            return .guest
+            .guest
         case .groupRole:
-            return .groupAdmin
+            .groupAdmin
         case .external:
-            return .externalPartner
+            .externalPartner
         case .federated:
-            return .federated
+            .federated
         }
     }
 
     var title: String {
         switch self {
         case .guest:
-            return L10n.Localizable.Profile.Details.guest
+            L10n.Localizable.Profile.Details.guest
         case .groupRole:
-            return L10n.Localizable.Profile.Details.groupAdmin
+            L10n.Localizable.Profile.Details.groupAdmin
         case .external:
-            return L10n.Localizable.Profile.Details.partner
+            L10n.Localizable.Profile.Details.partner
         case .federated:
-            return L10n.Localizable.Profile.Details.federated
+            L10n.Localizable.Profile.Details.federated
         }
     }
 }

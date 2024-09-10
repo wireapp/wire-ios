@@ -26,11 +26,11 @@ final class SessionManagerEncryptionAtRestDefaultsTests: IntegrationTest {
     }
 
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     override var sessionManagerConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration(encryptionAtRestIsEnabledByDefault: true)
+        SessionManagerConfiguration(encryptionAtRestIsEnabledByDefault: true)
     }
 
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2

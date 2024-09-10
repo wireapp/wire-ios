@@ -21,7 +21,7 @@ import XCTest
 
 final class MockSplitViewControllerDelegate: NSObject, SplitViewControllerDelegate {
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-        return true
+        true
     }
 }
 

@@ -22,7 +22,7 @@ extension ZMClientMessage: TextMessageData {
     @NSManaged public var quote: ZMMessage?
 
     public var quoteMessage: ZMConversationMessage? {
-        return quote
+        quote
     }
 
     override public var textMessageData: TextMessageData? {
@@ -33,19 +33,19 @@ extension ZMClientMessage: TextMessageData {
     }
 
     public var isQuotingSelf: Bool {
-        return quote?.sender?.isSelfUser ?? false
+        quote?.sender?.isSelfUser ?? false
     }
 
     public var hasQuote: Bool {
-        return underlyingMessage?.textData?.hasQuote ?? false
+        underlyingMessage?.textData?.hasQuote ?? false
     }
 
     public var messageText: String? {
-        return underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
+        underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
     }
 
     public var mentions: [Mention] {
-        return Mention.mentions(from: underlyingMessage?.textData?.mentions, messageText: messageText, moc: managedObjectContext)
+        Mention.mentions(from: underlyingMessage?.textData?.mentions, messageText: messageText, moc: managedObjectContext)
     }
 
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {

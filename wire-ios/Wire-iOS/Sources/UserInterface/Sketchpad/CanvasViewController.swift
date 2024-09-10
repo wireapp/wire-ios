@@ -67,9 +67,9 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     override var shouldAutorotate: Bool {
         switch UIDevice.current.userInterfaceIdiom {
         case .pad:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

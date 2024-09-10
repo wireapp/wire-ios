@@ -49,12 +49,12 @@ extension UIView {
     }
 
     func fitInConstraints(view: UIView, inset: CGFloat) -> [NSLayoutConstraint] {
-        return fitInConstraints(view: view, insets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
+        fitInConstraints(view: view, insets: UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset))
     }
 
     func fitInConstraints(view: UIView,
                           insets: UIEdgeInsets = .zero) -> [NSLayoutConstraint] {
-        return [
+        [
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insets.leading),
             trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -insets.trailing),
             topAnchor.constraint(equalTo: view.topAnchor, constant: insets.top),

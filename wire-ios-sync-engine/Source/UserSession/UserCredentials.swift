@@ -63,12 +63,12 @@ public class UserCredentials: NSObject {
 
 
     public var credentialWithEmail: Bool {
-        return email != nil
+        email != nil
     }
 
 
     public var credentialWithPhone: Bool {
-        return phoneNumber != nil
+        phoneNumber != nil
     }
 }
 
@@ -85,11 +85,11 @@ public class UserPhoneCredentials: UserCredentials {
 public class UserEmailCredentials: UserCredentials {
     @objc(credentialsWithEmail:password:)
     public static func credentials(email: String, password: String) -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
+        UserEmailCredentials(email: email, password: password, emailVerificationCode: nil)
     }
 
     @objc(credentialsWithEmail:password:emailVerificationCode:)
     public static func credentials(email: String, password: String, emailVerificationCode: String?) -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
+        UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
     }
 }

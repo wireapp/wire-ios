@@ -59,7 +59,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
             mlsGroupVerification: mockMLSGroupVerification,
             selfClientCertificateProvider: mockSelfClientCertificateProvider,
             fetchE2EIFeatureConfig: { [weak self] in
-                return self?.mockFeatureRepository.fetchE2EI_MockValue?.config
+                self?.mockFeatureRepository.fetchE2EI_MockValue?.config
             },
             coreCryptoProvider: provider,
             context: mockCoreDataStack.syncContext
@@ -259,7 +259,7 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
     private func mockDummies() {
         // Mock getting the CRL from distribution point
         mockCRLAPI.getRevocationListFrom_MockMethod = { _ in
-            return .random()
+            .random()
         }
 
         // Mock storing the expiration date
@@ -269,14 +269,14 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
         mockMLSGroupVerification.updateAllConversations_MockMethod = {}
 
         // Mock getting a certificate for a self client
-        mockSelfClientCertificateProvider.getCertificate_MockMethod = { return nil }
+        mockSelfClientCertificateProvider.getCertificate_MockMethod = { nil }
     }
 
     private func mockCRLExpirationDateExists(for distributionPoints: [String]) {
         // Mock wether or not there is an expiraiton date for the CRL associated to a given distribution point
         // If there is no expiration date, the distribution point is considered to be unknown/new
         mockCRLExpirationDatesRepository.crlExpirationDateExistsFor_MockMethod = { distributionPoint in
-            return distributionPoints.contains(distributionPoint.absoluteString)
+            distributionPoints.contains(distributionPoint.absoluteString)
         }
     }
 }

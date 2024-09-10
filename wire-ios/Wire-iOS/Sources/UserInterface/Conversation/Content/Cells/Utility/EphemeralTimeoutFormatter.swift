@@ -98,7 +98,7 @@ final class EphemeralTimeoutFormatter {
     private let dayFormatter = DayFormatter()
 
     func string(from interval: TimeInterval) -> String? {
-        return timeString(from: interval).map {
+        timeString(from: interval).map {
             L10n.Localizable.Content.System.ephemeralTimeRemaining($0)
         }
     }

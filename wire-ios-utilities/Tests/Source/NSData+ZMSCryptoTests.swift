@@ -22,7 +22,7 @@ import XCTest
 class NSData_ZMSCryptoTests: XCTestCase {
     /// Key to use to read the test data
     var sampleKey: Data {
-        return Data(base64Encoded: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSData.Base64DecodingOptions())!
+        Data(base64Encoded: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSData.Base64DecodingOptions())!
     }
 
     var sampleEncryptedImageData: Data {
@@ -36,11 +36,11 @@ class NSData_ZMSCryptoTests: XCTestCase {
     }
 
     var sampleSHADigestOfImageData: Data {
-        return Data(base64Encoded: "yeElK+949uC/WdbLxx61b1+JWx2uyk07YEVU/7KeeV8=", options: NSData.Base64DecodingOptions())!
+        Data(base64Encoded: "yeElK+949uC/WdbLxx61b1+JWx2uyk07YEVU/7KeeV8=", options: NSData.Base64DecodingOptions())!
     }
 
     var sampleSHAKeyOfImageData: Data {
-        return Data(base64Encoded: "UnxAVuKFdWs53VwIihrfPbvUNwk5nqCbM1tb+Row8ng=", options: NSData.Base64DecodingOptions())!
+        Data(base64Encoded: "UnxAVuKFdWs53VwIihrfPbvUNwk5nqCbM1tb+Row8ng=", options: NSData.Base64DecodingOptions())!
     }
 }
 

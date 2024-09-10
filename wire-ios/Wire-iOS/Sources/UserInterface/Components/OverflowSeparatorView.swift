@@ -38,7 +38,7 @@ final class OverflowSeparatorView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
+        CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {

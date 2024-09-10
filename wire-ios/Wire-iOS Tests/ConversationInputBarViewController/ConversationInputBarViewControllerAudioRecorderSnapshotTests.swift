@@ -35,12 +35,12 @@ final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
     }
 
     override func location(in view: UIView?) -> CGPoint {
-        return mockLocation ?? super.location(in: view)
+        mockLocation ?? super.location(in: view)
     }
 
     override var state: UIGestureRecognizer.State {
         get {
-            return mockState
+            mockState
         }
         set {}
     }

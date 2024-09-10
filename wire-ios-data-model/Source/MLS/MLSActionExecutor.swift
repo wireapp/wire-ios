@@ -404,19 +404,19 @@ extension MLSActionExecutor.Action: CustomDebugStringConvertible {
     var debugDescription: String {
         switch self {
         case .addMembers:
-            return "addMembers"
+            "addMembers"
 
         case .removeClients:
-            return "removeClients"
+            "removeClients"
 
         case .updateKeyMaterial:
-            return "updateKeyMaterial"
+            "updateKeyMaterial"
 
         case .proposal:
-            return "proposal"
+            "proposal"
 
         case .joinGroup:
-            return "joinGroup"
+            "joinGroup"
         }
     }
 }

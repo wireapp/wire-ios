@@ -43,11 +43,11 @@ class BaseAccountView: UIView {
     var hasUnreadMessages: Bool {
         switch unreadCountStyle {
         case .none:
-            return false
+            false
         case .current:
-            return account.unreadConversationCount > 0
+            account.unreadConversationCount > 0
         case .others:
-            return ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
+            ((SessionManager.shared?.accountManager.totalUnreadCount ?? 0) - account.unreadConversationCount) > 0
         }
     }
 
@@ -203,7 +203,7 @@ extension BaseAccountView: UserObserving {
 
 extension TeamType {
     var teamImageViewContent: TeamImageView.Content? {
-        return TeamImageView.Content(imageData: imageData, name: name)
+        TeamImageView.Content(imageData: imageData, name: name)
     }
 }
 
@@ -211,6 +211,6 @@ extension TeamType {
 
 extension Account {
     var teamImageViewContent: TeamImageView.Content? {
-        return TeamImageView.Content(imageData: teamImageData, name: teamName)
+        TeamImageView.Content(imageData: teamImageData, name: teamName)
     }
 }

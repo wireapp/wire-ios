@@ -53,7 +53,7 @@ final class UpsideDownTableView: UITableView {
 
     override var contentOffset: CGPoint {
         get {
-            return super.contentOffset
+            super.contentOffset
         }
 
         set {
@@ -73,7 +73,7 @@ final class UpsideDownTableView: UITableView {
 
     override var tableHeaderView: UIView? {
         get {
-            return super.tableFooterView
+            super.tableFooterView
         }
 
         set(tableHeaderView) {
@@ -84,7 +84,7 @@ final class UpsideDownTableView: UITableView {
 
     override var tableFooterView: UIView? {
         get {
-            return super.tableHeaderView
+            super.tableHeaderView
         }
 
         set(tableFooterView) {
@@ -119,11 +119,11 @@ final class UpsideDownTableView: UITableView {
 
     func inverseScrollPosition(_ scrollPosition: UITableView.ScrollPosition) -> UITableView.ScrollPosition {
         if scrollPosition == .top {
-            return .bottom
+            .bottom
         } else if scrollPosition == .bottom {
-            return .top
+            .top
         } else {
-            return scrollPosition
+            scrollPosition
         }
     }
 }

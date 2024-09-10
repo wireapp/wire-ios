@@ -34,9 +34,9 @@ extension ZMConversationType {
     var profileViewControllerContext: ProfileViewControllerContext {
         switch self {
         case .group:
-            return .groupConversation
+            .groupConversation
         default:
-            return .oneToOneConversation
+            .oneToOneConversation
         }
     }
 }
@@ -188,7 +188,7 @@ final class ProfileViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func setupProfileDetailsViewController() -> ProfileDetailsViewController {
@@ -317,8 +317,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
     private func buildProfileAction(_ action: ProfileAction,
                                     footerView: ProfileFooterView) -> UIAlertAction {
-        return UIAlertAction(title: action.buttonText,
-                             style: .default) { _ in
+        UIAlertAction(title: action.buttonText,
+                      style: .default) { _ in
             self.performAction(action, targetView: footerView)
         }
     }

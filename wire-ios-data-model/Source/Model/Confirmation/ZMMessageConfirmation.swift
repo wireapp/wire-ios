@@ -25,9 +25,9 @@ import Foundation
     static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
         switch zmConfirmationType {
         case .delivered:
-            return .delivered
+            .delivered
         case .read:
-            return .read
+            .read
         }
     }
 }
@@ -40,16 +40,16 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     @NSManaged open var user: ZMUser
 
     public var userType: UserType {
-        return user
+        user
     }
 
     override open class func entityName() -> String {
-        return "MessageConfirmation"
+        "MessageConfirmation"
     }
 
     override open var modifiedKeys: Set<AnyHashable>? {
         get {
-            return Set()
+            Set()
         } set {
             // do nothing
         }

@@ -30,9 +30,9 @@ extension CoreDataStackError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .simulateDatabaseLoadingFailure:
-            return "simulateDatabaseLoadingFailure"
+            "simulateDatabaseLoadingFailure"
         case .noDatabaseActivity:
-            return "Could not create a background activity for database setup"
+            "Could not create a background activity for database setup"
         }
     }
 }
@@ -56,25 +56,25 @@ extension URL {
 
     /// Appends the name of the store to the path
     func appendingStoreFile() -> URL {
-        return self.appendingPathComponent("store.wiredatabase")
+        self.appendingPathComponent("store.wiredatabase")
     }
 
     func appendingEventStoreFile() -> URL {
-        return self.appendingPathComponent("ZMEventModel.sqlite")
+        self.appendingPathComponent("ZMEventModel.sqlite")
     }
 
     /// Returns the location of the persistent store file in the given account folder
     func appendingPersistentStoreLocation() -> URL {
-        return self.appendingPathComponent("store").appendingStoreFile()
+        self.appendingPathComponent("store").appendingStoreFile()
     }
 
     /// Returns the location of the persistent store file in the given account folder
     func appendingEventStoreLocation() -> URL {
-        return self.appendingPathComponent("events").appendingEventStoreFile()
+        self.appendingPathComponent("events").appendingEventStoreFile()
     }
 
     func appendingSessionStoreFolder() -> URL {
-        return self.appendingPathComponent("otr")
+        self.appendingPathComponent("otr")
     }
 
     func appendingStoreSupportFolder() -> URL {
@@ -89,7 +89,7 @@ extension URL {
 extension NSURL {
     /// Returns the location of the persistent store file in the given account folder
     @objc public func URLByAppendingPersistentStoreLocation() -> URL {
-        return (self as URL).appendingPersistentStoreLocation()
+        (self as URL).appendingPersistentStoreLocation()
     }
 }
 
@@ -370,7 +370,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public var storesExists: Bool {
-        return messagesContainer.storeExists && eventsContainer.storeExists
+        messagesContainer.storeExists && eventsContainer.storeExists
     }
 
     // MARK: - Configure Contexts
@@ -452,7 +452,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     // MARK: - Static Helpers
 
     public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
-        return applicationContainer
+        applicationContainer
             .appendingPathComponent("AccountData")
             .appendingPathComponent(accountIdentifier.uuidString)
     }
@@ -514,7 +514,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
 class PersistentContainer: NSPersistentContainer {
     var storeURL: URL? {
-        return persistentStoreDescriptions.first?.url
+        persistentStoreDescriptions.first?.url
     }
 
     var storeExists: Bool {
@@ -551,7 +551,7 @@ class PersistentContainer: NSPersistentContainer {
 extension NSPersistentStoreCoordinator {
     /// Returns the set of options that need to be passed to the persistent sotre
     static func persistentStoreOptions(supportsMigration: Bool) -> [String: Any] {
-        return [
+        [
             // https://www.sqlite.org/pragma.html
             NSSQLitePragmasOption: [
                 "journal_mode": "WAL",

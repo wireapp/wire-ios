@@ -86,18 +86,18 @@ public struct SearchRequest {
         var isHandleQuery: Bool {
             switch self {
             case .exactHandle:
-                return true
+                true
             case .fullTextSearch:
-                return false
+                false
             }
         }
 
         var string: String {
             switch self {
             case let .exactHandle(handle):
-                return handle
+                handle
             case let .fullTextSearch(text):
-                return text
+                text
             }
         }
     }

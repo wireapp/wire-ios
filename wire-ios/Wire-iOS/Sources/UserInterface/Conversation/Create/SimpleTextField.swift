@@ -119,7 +119,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     // MARK: - Placeholder
 
     func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
-        return placeholder && attribute
+        placeholder && attribute
     }
 
     func updatePlaceholderAttributedText(attributes: [NSAttributedString.Key: Any]) {
@@ -128,7 +128,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     override var placeholder: String? {
         get {
-            return super.placeholder
+            super.placeholder
         }
 
         set {

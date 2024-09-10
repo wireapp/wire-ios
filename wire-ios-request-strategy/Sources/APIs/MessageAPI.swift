@@ -29,7 +29,7 @@ public protocol MessageAPI {
 
 extension Payload.ClientListByUserID {
     func toClientListByQualifiedUserID(domain: String) -> Payload.ClientListByQualifiedUserID {
-        return [domain: self]
+        [domain: self]
     }
 }
 

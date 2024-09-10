@@ -53,13 +53,13 @@ extension GenericMessage {
 
 extension MessageEdit: BigEndianDataConvertible {
     var asBigEndianData: Data {
-        return text.asBigEndianData
+        text.asBigEndianData
     }
 }
 
 extension WireProtos.Text: BigEndianDataConvertible {
     var asBigEndianData: Data {
-        return content.asBigEndianData
+        content.asBigEndianData
     }
 }
 
@@ -73,13 +73,13 @@ extension Location: BigEndianDataConvertible {
 
 extension WireProtos.Asset: BigEndianDataConvertible {
     var asBigEndianData: Data {
-        return uploaded.assetID.asBigEndianData
+        uploaded.assetID.asBigEndianData
     }
 }
 
 extension Float {
     fileprivate var times1000: Int {
-        return Int(roundf(self * 1000.0))
+        Int(roundf(self * 1000.0))
     }
 }
 
@@ -93,7 +93,7 @@ extension String: BigEndianDataConvertible {
 
 extension Int: BigEndianDataConvertible {
     public var asBigEndianData: Data {
-        return withUnsafePointer(to: self.bigEndian) {
+        withUnsafePointer(to: self.bigEndian) {
             Data(bytes: $0, count: MemoryLayout.size(ofValue: self))
         }
     }
@@ -103,7 +103,7 @@ extension TimeInterval: BigEndianDataConvertible {
     public var asBigEndianData: Data {
         let long = Int64(self).bigEndian
         return withUnsafePointer(to: long) {
-            return Data(bytes: $0, count: MemoryLayout.size(ofValue: long))
+            Data(bytes: $0, count: MemoryLayout.size(ofValue: long))
         }
     }
 }
@@ -116,6 +116,6 @@ extension BigEndianDataConvertible {
     }
 
     public func hashWithTimestamp(timestamp: TimeInterval) -> Data {
-        return dataWithTimestamp(timestamp: timestamp).zmSHA256Digest()
+        dataWithTimestamp(timestamp: timestamp).zmSHA256Digest()
     }
 }

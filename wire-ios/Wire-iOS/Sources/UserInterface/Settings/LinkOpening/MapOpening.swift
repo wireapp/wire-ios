@@ -29,20 +29,20 @@ enum MapsOpeningOption: Int, LinkOpeningOption {
     static var defaultPreference: ApplicationOptionEnum = .apple
 
     static var allOptions: [MapsOpeningOption] {
-        return [.apple, .google]
+        [.apple, .google]
     }
 
     var displayString: String {
         switch self {
-        case .apple: return L10n.Localizable.OpenLink.Maps.Option.apple
-        case .google: return L10n.Localizable.OpenLink.Maps.Option.google
+        case .apple: L10n.Localizable.OpenLink.Maps.Option.apple
+        case .google: L10n.Localizable.OpenLink.Maps.Option.google
         }
     }
 
     var isAvailable: Bool {
         switch self {
-        case .apple: return true
-        case .google: return UIApplication.shared.googleMapsInstalled
+        case .apple: true
+        case .google: UIApplication.shared.googleMapsInstalled
         }
     }
 }
@@ -67,6 +67,6 @@ extension URL {
 
 extension UIApplication {
     fileprivate var googleMapsInstalled: Bool {
-        return canHandleScheme("comgooglemaps://")
+        canHandleScheme("comgooglemaps://")
     }
 }

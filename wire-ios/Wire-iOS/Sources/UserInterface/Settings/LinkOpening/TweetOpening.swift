@@ -30,21 +30,21 @@ enum TweetOpeningOption: Int, LinkOpeningOption {
 
     var displayString: String {
         switch self {
-        case .none: return L10n.Localizable.OpenLink.Twitter.Option.default
-        case .tweetbot: return L10n.Localizable.OpenLink.Twitter.Option.tweetbot
-        case .twitterrific: return L10n.Localizable.OpenLink.Twitter.Option.twitterrific
+        case .none: L10n.Localizable.OpenLink.Twitter.Option.default
+        case .tweetbot: L10n.Localizable.OpenLink.Twitter.Option.tweetbot
+        case .twitterrific: L10n.Localizable.OpenLink.Twitter.Option.twitterrific
         }
     }
 
     static var allOptions: [TweetOpeningOption] {
-        return [.none, .tweetbot, .twitterrific]
+        [.none, .tweetbot, .twitterrific]
     }
 
     var isAvailable: Bool {
         switch self {
-        case .none: return true
-        case .tweetbot: return UIApplication.shared.tweetbotInstalled
-        case .twitterrific: return UIApplication.shared.twitterrificInstalled
+        case .none: true
+        case .tweetbot: UIApplication.shared.tweetbotInstalled
+        case .twitterrific: UIApplication.shared.twitterrificInstalled
         }
     }
 }
@@ -77,17 +77,17 @@ extension URL {
 
 extension UIApplication {
     fileprivate var tweetbotInstalled: Bool {
-        return canHandleScheme("tweetbot://")
+        canHandleScheme("tweetbot://")
     }
 
     fileprivate var twitterrificInstalled: Bool {
-        return canHandleScheme("twitterrific://")
+        canHandleScheme("twitterrific://")
     }
 }
 
 extension URL {
     var isTweet: Bool {
-        return absoluteString.contains("twitter.com") && absoluteString.contains("status")
+        absoluteString.contains("twitter.com") && absoluteString.contains("status")
     }
 }
 
@@ -103,14 +103,14 @@ extension URL {
         ]
 
         let tweetbot = components.reduce(absoluteString) { result, current in
-            return result.replacingWithTweetbotURLScheme(current)
+            result.replacingWithTweetbotURLScheme(current)
         }
 
         return URL(string: tweetbot)
     }
 
     private var twitterrificURL: URL? {
-        return tweetID.flatMap { URL(string: "twitterrific://current/tweet?id=\($0)") }
+        tweetID.flatMap { URL(string: "twitterrific://current/tweet?id=\($0)") }
     }
 
     private var tweetID: String? {
@@ -121,6 +121,6 @@ extension URL {
 
 extension String {
     fileprivate func replacingWithTweetbotURLScheme(_ string: String) -> String {
-        return replacingOccurrences(of: string, with: "tweetbot://")
+        replacingOccurrences(of: string, with: "tweetbot://")
     }
 }

@@ -31,12 +31,12 @@ enum CallEvent {
 extension CallEvent {
     var eventName: String {
         switch self {
-        case .initiated: return "calling.initiated_call"
-        case .received: return "calling.received_call"
-        case .answered: return "calling.joined_call"
-        case .established: return "calling.established_call"
-        case .ended: return "calling.ended_call"
-        case .screenSharing: return "calling.screen_share"
+        case .initiated: "calling.initiated_call"
+        case .received: "calling.received_call"
+        case .answered: "calling.joined_call"
+        case .established: "calling.established_call"
+        case .ended: "calling.ended_call"
+        case .screenSharing: "calling.screen_share"
         }
     }
 }
@@ -99,23 +99,23 @@ extension Analytics {
     }
 
     private func attributesForVideoToogle(with callInfo: CallInfo) -> [String: Any] {
-        return ["AV_switch_toggled": callInfo.toggledVideo ? true : false]
+        ["AV_switch_toggled": callInfo.toggledVideo ? true : false]
     }
 
     private func attributesForVideo(with callInfo: CallInfo) -> [String: Any] {
-        return ["call_video": callInfo.video]
+        ["call_video": callInfo.video]
     }
 
     private func attributesForDirection(with callInfo: CallInfo) -> [String: Any] {
-        return ["direction": callInfo.outgoing ? "outgoing" : "incoming"]
+        ["direction": callInfo.outgoing ? "outgoing" : "incoming"]
     }
 
     private func attributesForParticipants(in conversation: ZMConversation) -> [String: Any] {
-        return ["conversation_participants": conversation.localParticipants.count]
+        ["conversation_participants": conversation.localParticipants.count]
     }
 
     private func attributesForCallParticipants(with callInfo: CallInfo) -> [String: Any] {
-        return ["conversation_participants_in_call_max": callInfo.maximumCallParticipants]
+        ["conversation_participants_in_call_max": callInfo.maximumCallParticipants]
     }
 
     private func attributesForSetupTime(with callInfo: CallInfo) -> [String: Any] {

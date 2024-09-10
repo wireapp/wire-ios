@@ -118,11 +118,11 @@ final class AuthenticationInterfaceBuilder {
     private func makeRegistrationStepViewController(for step: IntermediateRegistrationStep, user: UnregisteredUser) -> AuthenticationStepViewController? {
         switch step {
         case .start:
-            return nil
+            nil
         case .provideMarketingConsent:
-            return nil
+            nil
         case .setName:
-            return NameStepViewController()
+            NameStepViewController()
         }
     }
 

@@ -21,9 +21,9 @@ import Foundation
 extension FixedWidthInteger {
     private var abs: Self {
         if self < 0 {
-            return 0 - self
+            0 - self
         } else {
-            return self
+            self
         }
     }
 
@@ -48,7 +48,7 @@ extension FixedWidthInteger {
 
             // extract the UInt
             random = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> Self in
-                return pointer.bindMemory(to: Self.self).baseAddress!.pointee
+                pointer.bindMemory(to: Self.self).baseAddress!.pointee
             }
 
         } while random.abs < min
@@ -60,6 +60,6 @@ extension FixedWidthInteger {
 /// Extension for NSNumber so we can support ObjC
 extension NSNumber {
     @objc public static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
-        return UInt32.secureRandomNumber(upperBound: upperBound)
+        UInt32.secureRandomNumber(upperBound: upperBound)
     }
 }

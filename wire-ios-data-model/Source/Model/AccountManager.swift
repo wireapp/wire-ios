@@ -43,7 +43,7 @@ public final class AccountManager: NSObject {
 
     /// Returns the sum of unread conversations in all accounts.
     public var totalUnreadCount: Int {
-        return accounts.reduce(0) { return $0 + $1.unreadConversationCount }
+        accounts.reduce(0) { $0 + $1.unreadConversationCount }
     }
 
     /// Creates a new `AccountManager`.
@@ -129,13 +129,13 @@ public final class AccountManager: NSObject {
     }
 
     public func account(with id: UUID) -> Account? {
-        return accounts.first(where: { return $0.userIdentifier == id })
+        accounts.first(where: { $0.userIdentifier == id })
     }
 
     /// Loads and computes the locally selected account if any
     /// - returns: The currently selected account or `nil` if there is none.
     private func computeSelectedAccount() -> Account? {
-        return defaults?.selectedAccountIdentifier.flatMap(store.load)
+        defaults?.selectedAccountIdentifier.flatMap(store.load)
     }
 
     /// Loads and sorts the stored accounts.
@@ -143,7 +143,7 @@ public final class AccountManager: NSObject {
     /// be first, sorted by their user name. Accounts with team will be last,
     /// sorted by their team name.
     private func computeSortedAccounts() -> [Account] {
-        return store.load().sorted { lhs, rhs in
+        store.load().sorted { lhs, rhs in
             switch (lhs.teamName, rhs.teamName) {
             case (.some, .none): return false
             case (.none, .some): return true

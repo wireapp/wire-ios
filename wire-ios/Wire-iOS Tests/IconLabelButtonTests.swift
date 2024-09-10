@@ -81,37 +81,37 @@ struct IconLabelButtonTestCase {
 
         var callActionAppearance: CallActionAppearance {
             switch self {
-            case let .dark(blurState, _, _): return .dark(blurred: blurState.isBlurred)
-            case .light: return .light
+            case let .dark(blurState, _, _): .dark(blurred: blurState.isBlurred)
+            case .light: .light
             }
         }
 
         var isSelected: Bool {
-            return selectionState.isSelected
+            selectionState.isSelected
         }
 
         var isEnabled: Bool {
-            return interactionState.isEnabled
+            interactionState.isEnabled
         }
 
         var description: String {
             switch self {
             case let .dark(blurState, selectionState, interactionState):
-                return "dark_\(blurState.rawValue)_\(selectionState.rawValue)_\(interactionState.rawValue)"
+                "dark_\(blurState.rawValue)_\(selectionState.rawValue)_\(interactionState.rawValue)"
             case let .light(selectionState, interactionState):
-                return "light_\(selectionState.rawValue)_\(interactionState.rawValue)"
+                "light_\(selectionState.rawValue)_\(interactionState.rawValue)"
             }
         }
 
         private var selectionState: SelectionState {
             switch self {
-            case let .dark(_, selectionState, _), let .light(selectionState, _): return selectionState
+            case let .dark(_, selectionState, _), let .light(selectionState, _): selectionState
             }
         }
 
         private var interactionState: InteractionState {
             switch self {
-            case let .dark(_, _, interactionState), let .light(_, interactionState): return interactionState
+            case let .dark(_, _, interactionState), let .light(_, interactionState): interactionState
             }
         }
     }

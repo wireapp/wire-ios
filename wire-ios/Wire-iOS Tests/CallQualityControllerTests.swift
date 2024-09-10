@@ -217,6 +217,6 @@ extension CallQualityControllerTests {
 
 final class MockCallQualityController: CallQualityController {
     override var canPresentCallQualitySurvey: Bool {
-        return true
+        true
     }
 }

@@ -30,7 +30,7 @@ public protocol EphemeralMessageCapable: MessageCapable {
 extension MessageCapable {
     public var expectsReadConfirmation: Bool {
         get {
-            return false
+            false
         }
         set {}
     }

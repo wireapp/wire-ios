@@ -43,12 +43,12 @@ final class AnyAuthenticationEventHandler<Context> {
 
     /// The current status provider.
     var statusProvider: AuthenticationStatusProvider? {
-        get { return _statusProvider.getter() }
+        get { _statusProvider.getter() }
         set { _statusProvider.setter(newValue) }
     }
 
     /// Handles the event.
     func handleEvent(currentStep: AuthenticationFlowStep, context: Context) -> [AuthenticationCoordinatorAction]? {
-        return handlerBlock(currentStep, context)
+        handlerBlock(currentStep, context)
     }
 }

@@ -30,7 +30,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
     )
 
     func responseWithStatus(_ status: Int) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: nil,
             httpStatus: status,
             transportSessionError: nil,

@@ -36,7 +36,7 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        return services.isEmpty
+        services.isEmpty
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -45,26 +45,26 @@ final class SearchServicesSectionController: SearchSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if canSelfUserManageTeam {
-            return services.count + 1
+            services.count + 1
         } else {
-            return services.count
+            services.count
         }
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Peoplepicker.Header.services
+        L10n.Localizable.Peoplepicker.Header.services
     }
 
     func service(for indexPath: IndexPath) -> ServiceUser {
         if canSelfUserManageTeam {
-            return services[indexPath.row - 1]
+            services[indexPath.row - 1]
         } else {
-            return services[indexPath.row]
+            services[indexPath.row]
         }
     }
 
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize.zero
+        CGSize.zero
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

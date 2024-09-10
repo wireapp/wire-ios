@@ -26,7 +26,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         let location: LocationMessageData
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -51,7 +51,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return containerView
+        containerView
     }
 
     override init(frame: CGRect) {
@@ -194,7 +194,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
+        configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
     }
 
     let accessibilityLabel: String? = nil

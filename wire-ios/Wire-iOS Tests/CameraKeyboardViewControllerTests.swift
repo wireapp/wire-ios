@@ -59,7 +59,7 @@ final class SplitLayoutObservableMock: NSObject, SplitLayoutObservable {
 // MARK: - MockAssetLibrary
 
 private final class MockAssetLibrary: AssetLibrary {
-    override fileprivate var count: UInt { return 5 }
+    override fileprivate var count: UInt { 5 }
 
     override fileprivate func refetchAssets(synchronous: Bool) {
         // no op
@@ -74,15 +74,15 @@ private final class MockImageManager: ImageManagerProtocol {
     }
 
     func requestImage(for asset: PHAsset, targetSize: CGSize, contentMode: PHImageContentMode, options: PHImageRequestOptions?, resultHandler: @escaping (UIImage?, [AnyHashable: Any]?) -> Void) -> PHImageRequestID {
-        return 0
+        0
     }
 
     func requestImageData(for asset: PHAsset, options: PHImageRequestOptions?, resultHandler: @escaping (Data?, String?, UIImage.Orientation, [AnyHashable: Any]?) -> Void) -> PHImageRequestID {
-        return 0
+        0
     }
 
     func requestExportSession(forVideo asset: PHAsset, options: PHVideoRequestOptions?, exportPreset: String, resultHandler: @escaping (AVAssetExportSession?, [AnyHashable: Any]?) -> Void) -> PHImageRequestID {
-        return 0
+        0
     }
 
     static var defaultInstance: ImageManagerProtocol = MockImageManager()
@@ -92,7 +92,7 @@ private final class MockImageManager: ImageManagerProtocol {
 
 private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewController {
     override var shouldBlockCallingRelatedActions: Bool {
-        return true
+        true
     }
 }
 

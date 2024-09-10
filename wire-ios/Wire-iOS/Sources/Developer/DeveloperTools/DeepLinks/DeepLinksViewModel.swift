@@ -26,7 +26,7 @@ final class DeepLinksViewModel: ObservableObject {
         var errorDescription: String? {
             switch self {
             case .invalidLink:
-                return "The deeplink you have entered is invalid."
+                "The deeplink you have entered is invalid."
             }
         }
     }

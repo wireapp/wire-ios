@@ -100,11 +100,11 @@ private class EventNotificationBuilder: NotificationBuilder {
     }
 
     func titleText() -> String? {
-        return notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
 
     func bodyText() -> String {
-        return notificationType.messageBodyText(sender: sender, conversation: conversation)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
     }
 
     func userInfo() -> NotificationUserInfo? {
@@ -133,9 +133,9 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 
     override var notificationType: LocalNotificationType {
         if LocalNotificationDispatcher.shouldHideNotificationContent(moc: self.moc) {
-            return LocalNotificationType.message(.hidden)
+            LocalNotificationType.message(.hidden)
         } else {
-            return LocalNotificationType.message(.reaction(emoji: emoji))
+            LocalNotificationType.message(.reaction(emoji: emoji))
         }
     }
 
@@ -180,11 +180,11 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 
 private class ConversationCreateEventNotificationBuilder: EventNotificationBuilder {
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(.conversationCreated)
+        LocalNotificationType.event(.conversationCreated)
     }
 
     override func shouldCreateNotification() -> Bool {
-        return super.shouldCreateNotification() && conversation?.conversationType == .group
+        super.shouldCreateNotification() && conversation?.conversationType == .group
     }
 }
 
@@ -192,11 +192,11 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
 
 private class ConversationDeleteEventNotificationBuilder: EventNotificationBuilder {
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(.conversationDeleted)
+        LocalNotificationType.event(.conversationDeleted)
     }
 
     override func shouldCreateNotification() -> Bool {
-        return super.shouldCreateNotification() && conversation?.conversationType == .group
+        super.shouldCreateNotification() && conversation?.conversationType == .group
     }
 }
 
@@ -207,7 +207,7 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     var senderName: String?
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(eventType)
+        LocalNotificationType.event(eventType)
     }
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
@@ -229,11 +229,11 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     override func titleText() -> String? {
-        return nil
+        nil
     }
 
     override func bodyText() -> String {
-        return notificationType.messageBodyText(senderName: senderName)
+        notificationType.messageBodyText(senderName: senderName)
     }
 }
 
@@ -241,11 +241,11 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
 
 private class NewUserEventNotificationBuilder: EventNotificationBuilder {
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.event(.newConnection)
+        LocalNotificationType.event(.newConnection)
     }
 
     override func titleText() -> String? {
-        return nil
+        nil
     }
 
     override func bodyText() -> String {
@@ -274,15 +274,15 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func titleText() -> String? {
-        return notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
 
     override func bodyText() -> String {
-        return notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {
-        return shouldHideNotificationContent
+        shouldHideNotificationContent
             ? .message(.hidden)
             : .message(contentType)
     }
@@ -290,9 +290,9 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     private var shouldHideNotificationContent: Bool {
         switch contentType {
         case .ephemeral:
-            return false
+            false
         default:
-            return LocalNotificationDispatcher.shouldHideNotificationContent(moc: moc)
+            LocalNotificationDispatcher.shouldHideNotificationContent(moc: moc)
         }
     }
 
@@ -330,15 +330,15 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func titleText() -> String? {
-        return notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
+        notificationType.titleText(selfUser: ZMUser.selfUser(in: moc), conversation: conversation)
     }
 
     override func bodyText() -> String {
-        return notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {
-        return LocalNotificationType.message(contentType)
+        LocalNotificationType.message(contentType)
     }
 
     override func shouldCreateNotification() -> Bool {

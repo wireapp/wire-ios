@@ -145,15 +145,15 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     // MARK: - mock conversation
 
     func createGroupConversation() -> ZMConversation {
-        return ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createTeamGroupConversation() -> ZMConversation {
-        return ZMConversation.createTeamGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createTeamGroupConversation(moc: uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createGroupConversationOnlyAdmin() -> ZMConversation {
-        return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
+        ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 
     // MARK: - mock service user

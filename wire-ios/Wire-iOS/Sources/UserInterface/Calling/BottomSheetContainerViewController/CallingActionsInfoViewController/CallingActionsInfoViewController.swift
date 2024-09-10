@@ -148,17 +148,17 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
     private func calculateHeightConstant() -> CGFloat {
         if UIDevice.current.twoDimensionOrientation.isLandscape {
-            return 128
+            128
         } else {
-            return (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
+            (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
         }
     }
 
     private func determineStackViewAlignment() -> UIStackView.Alignment {
         if UIDevice.current.twoDimensionOrientation.isLandscape {
-            return .center
+            .center
         } else {
-            return .fill
+            .fill
         }
     }
 

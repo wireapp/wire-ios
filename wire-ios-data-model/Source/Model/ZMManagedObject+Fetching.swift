@@ -20,7 +20,7 @@ import Foundation
 
 extension ZMManagedObject {
     @objc public static func fetch(with remoteIdentifier: UUID, in context: NSManagedObjectContext) -> Self? {
-        return internalFetch(withRemoteIdentifier: remoteIdentifier, in: context)
+        internalFetch(withRemoteIdentifier: remoteIdentifier, in: context)
     }
 
     /// Fetch a managed object by its remote identifier
@@ -45,13 +45,13 @@ extension ZMManagedObject {
     }
 
     public static func fetch(with qualifiedId: QualifiedID, in context: NSManagedObjectContext) -> Self? {
-        return fetch(with: qualifiedId.uuid, domain: qualifiedId.domain, in: context)
+        fetch(with: qualifiedId.uuid, domain: qualifiedId.domain, in: context)
     }
 }
 
 extension ZMManagedObject {
     public static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) -> Self? {
-        return try? context.existingObject(with: id) as? Self
+        try? context.existingObject(with: id) as? Self
     }
 
     public static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) throws -> Self {
@@ -77,6 +77,6 @@ extension Collection<NSManagedObjectID> {
 extension ZMManagedObject {
     // common implementation of primaryKey for ZMConversation and ZMUser
     public static func primaryKey(from remoteIdentifier: UUID?, domain: String?) -> String {
-        return "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
+        "\(remoteIdentifier?.uuidString ?? "<nil>")_\(domain ?? "<nil>")"
     }
 }

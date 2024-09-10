@@ -25,6 +25,6 @@ extension ZMUpdateEvent {
     }
 
     static func dummy() -> ZMUpdateEvent {
-        return ZMUpdateEvent()
+        ZMUpdateEvent()
     }
 }

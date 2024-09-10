@@ -139,7 +139,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return ZMUser.sortedFetchRequest(with: ZMUser.predicateForNeedingToBeUpdatedFromBackend()!)
+        ZMUser.sortedFetchRequest(with: ZMUser.predicateForNeedingToBeUpdatedFromBackend()!)
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -378,13 +378,13 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
 extension Collection<ZMUser> {
     fileprivate func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
-        return compactMap { user in
+        compactMap { user in
             if let qualifiedID = user.qualifiedID {
-                return qualifiedID
+                qualifiedID
             } else if let identifier = user.remoteIdentifier {
-                return QualifiedID(uuid: identifier, domain: localDomain)
+                QualifiedID(uuid: identifier, domain: localDomain)
             } else {
-                return nil
+                nil
             }
         }
     }

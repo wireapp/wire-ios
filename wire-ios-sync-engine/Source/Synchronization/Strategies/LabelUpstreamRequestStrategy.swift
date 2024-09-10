@@ -30,13 +30,13 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return upstreamSync.nextRequest(for: apiVersion)
+        upstreamSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMContextChangeTracker, ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
@@ -67,7 +67,7 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
         let labels = managedObjectContext.fetchOrAssert(request: fetchRequest)
         let labelsToUpload = labels.filter({ !$0.markedForDeletion })
-        let updatedKeys = labels.map({ return ($0, $0.modifiedKeys) })
+        let updatedKeys = labels.map({ ($0, $0.modifiedKeys) })
 
         let labelPayload = LabelPayload(labels: labelsToUpload.compactMap({ LabelUpdate($0) }))
         let transportPayload: Any

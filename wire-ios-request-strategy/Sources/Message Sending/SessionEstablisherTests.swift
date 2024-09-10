@@ -134,7 +134,7 @@ final class SessionEstablisherTests: MessagingTestBase {
         }
 
         func arrange() -> (Arrangement, SessionEstablisher) {
-            return (self, SessionEstablisher(
+            (self, SessionEstablisher(
                 context: coreDataStack.syncContext,
                 apiProvider: apiProvider,
                 processor: processor)

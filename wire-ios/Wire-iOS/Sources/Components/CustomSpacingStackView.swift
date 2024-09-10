@@ -51,7 +51,7 @@ final class CustomSpacingStackView: UIView {
      On iOS 11, it uses the default system implementation.
      */
     func wr_addCustomSpacing(_ customSpacing: CGFloat, after view: UIView) {
-        return stackView.setCustomSpacing(customSpacing, after: view)
+        stackView.setCustomSpacing(customSpacing, after: view)
     }
 
     private func createConstraints() {
@@ -60,22 +60,22 @@ final class CustomSpacingStackView: UIView {
     }
 
     var alignment: UIStackView.Alignment {
-        get { return stackView.alignment }
+        get { stackView.alignment }
         set { stackView.alignment = newValue }
     }
 
     var distribution: UIStackView.Distribution {
-        get { return stackView.distribution }
+        get { stackView.distribution }
         set { stackView.distribution = newValue }
     }
 
     var axis: NSLayoutConstraint.Axis {
-        get { return stackView.axis }
+        get { stackView.axis }
         set { stackView.axis = newValue }
     }
 
     var spacing: CGFloat {
-        get { return stackView.spacing }
+        get { stackView.spacing }
         set { stackView.spacing = newValue }
     }
 }
@@ -100,7 +100,7 @@ final class SpacingView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: size, height: size)
+        CGSize(width: size, height: size)
     }
 }
 
@@ -135,6 +135,6 @@ final class ContentInsetView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return view.intrinsicContentSize
+        view.intrinsicContentSize
     }
 }

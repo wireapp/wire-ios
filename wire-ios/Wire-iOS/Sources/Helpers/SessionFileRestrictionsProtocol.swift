@@ -26,12 +26,12 @@ protocol SessionFileRestrictionsProtocol {
 
 extension ZMUserSession: SessionFileRestrictionsProtocol {
     var isFileSharingEnabled: Bool {
-        return fileSharingFeature.status == .enabled
+        fileSharingFeature.status == .enabled
     }
 }
 
 extension SharingSession: SessionFileRestrictionsProtocol {
     var isFileSharingEnabled: Bool {
-        return fileSharingFeature.status == .enabled
+        fileSharingFeature.status == .enabled
     }
 }

@@ -18,6 +18,6 @@
 
 extension Array<ZMRequestGenerator> {
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return (self as NSArray).nextRequest(for: apiVersion)
+        (self as NSArray).nextRequest(for: apiVersion)
     }
 }

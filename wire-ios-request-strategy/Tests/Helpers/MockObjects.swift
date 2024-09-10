@@ -22,11 +22,11 @@ import WireRequestStrategy
 
 public class MockApplicationStatus: NSObject, ApplicationStatus {
     public var requestCancellation: ZMRequestCancellation {
-        return self.mockTaskCancellationDelegate
+        self.mockTaskCancellationDelegate
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return self.mockClientRegistrationStatus
+        self.mockClientRegistrationStatus
     }
 
     public var mockSynchronizationState: SynchronizationState = .unauthenticated
@@ -34,21 +34,21 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
     public var mockClientRegistrationStatus = MockClientRegistrationStatus()
 
     public var synchronizationState: SynchronizationState {
-        return mockSynchronizationState
+        mockSynchronizationState
     }
 
     public var mockOperationState: OperationState = .foreground
 
     public var operationState: OperationState {
-        return mockOperationState
+        mockOperationState
     }
 
     public var cancelledIdentifiers: [ZMTaskIdentifier] {
-        return mockTaskCancellationDelegate.cancelledIdentifiers
+        mockTaskCancellationDelegate.cancelledIdentifiers
     }
 
     public var deletionCalls: Int {
-        return mockClientRegistrationStatus.deletionCalls
+        mockClientRegistrationStatus.deletionCalls
     }
 
     public var resyncResourcesWasRequested = false
@@ -74,7 +74,7 @@ public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate 
     }
 
     public var clientIsReadyForRequests: Bool {
-        return true
+        true
     }
 }
 

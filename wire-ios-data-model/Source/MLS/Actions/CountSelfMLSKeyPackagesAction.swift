@@ -33,15 +33,15 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .clientNotFound:
-                return "Client not found"
+                "Client not found"
             case .malformedResponse:
-                return "Malformed response"
+                "Malformed response"
             case .endpointUnavailable:
-                return "End point not available"
+                "End point not available"
             case .invalidClientID:
-                return "Invalid clientID"
+                "Invalid clientID"
             case let .unknown(status):
-                return "Unknown error (response status: \(status))"
+                "Unknown error (response status: \(status))"
             }
         }
     }

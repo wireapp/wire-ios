@@ -52,7 +52,7 @@ import Foundation
     }
 
     var payloadValues: [String: Any?] {
-        return [
+        [
             "id": identifier,
             "name": name,
             "handle": handle,
@@ -61,14 +61,14 @@ import Foundation
             "summary": summary ?? "",
             "tag": tag ?? "",
             "assets": (self.assets ?? Set()).map {
-                return ["type": "image",
-                        "size": "preview",
-                        "key": $0.identifier] as [String: String]
+                ["type": "image",
+                 "size": "preview",
+                 "key": $0.identifier] as [String: String]
             }
         ]
     }
 
     var payload: ZMTransportData {
-        return payloadValues as NSDictionary
+        payloadValues as NSDictionary
     }
 }

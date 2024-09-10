@@ -44,15 +44,15 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
     }
 
     func initialFrame(for viewController: UIViewController) -> CGRect {
-        return containerView.bounds
+        containerView.bounds
     }
 
     func finalFrame(for viewController: UIViewController) -> CGRect {
-        return containerView.bounds
+        containerView.bounds
     }
 
     func viewController(forKey key: UITransitionContextViewControllerKey) -> UIViewController? {
-        return viewControllers[key]
+        viewControllers[key]
     }
 
     func view(forKey key: UITransitionContextViewKey) -> UIView? {
@@ -74,13 +74,13 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
     }
 
     var transitionWasCancelled: Bool {
-        return false
+        false
         // Our non-interactive transition can't be cancelled (it could be interrupted, though)
     }
 
     // Supress warnings by implementing empty interaction methods for the remainder of the protocol:
     var targetTransform: CGAffineTransform {
-        return .identity
+        .identity
     }
 
     func updateInteractiveTransition(_ percentComplete: CGFloat) {

@@ -22,7 +22,7 @@ import XCTest
 
 final class ConversationStatusTests: CoreDataSnapshotTestCase {
     override var needsCaches: Bool {
-        return true
+        true
     }
 
     func testThatItReturnsStatusForEmptyConversation() {

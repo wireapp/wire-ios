@@ -296,7 +296,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
-            return ciphersuite
+            ciphersuite
         }
 
         let selfUserSync = syncMOC.performAndWait {
@@ -378,7 +378,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         let mlsService = MockMLSServiceInterface()
         mlsService.createGroupForParentGroupID_MockMethod = { _, _ in
-            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+            .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         }
 
         let selfUserSync = syncMOC.performAndWait {

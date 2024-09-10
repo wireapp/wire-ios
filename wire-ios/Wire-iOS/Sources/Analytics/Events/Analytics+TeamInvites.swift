@@ -25,13 +25,13 @@ enum TeamInviteEvent: Event {
 
     var name: String {
         switch self {
-        case .sentInvite: return "team.sent_invite"
+        case .sentInvite: "team.sent_invite"
         }
     }
 
     var attributes: [AnyHashable: Any]? {
         switch self {
-        case let .sentInvite(method): return ["method": method.rawValue]
+        case let .sentInvite(method): ["method": method.rawValue]
         }
     }
 }

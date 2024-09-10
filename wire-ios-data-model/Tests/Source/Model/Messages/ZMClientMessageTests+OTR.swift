@@ -47,11 +47,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
 
         self.mockProteusService.remoteFingerprintForSession_MockMethod = { sessionID in
-            return sessionID.rawValue + "remote_fingerprint"
+            sessionID.rawValue + "remote_fingerprint"
         }
 
         self.mockProteusService.encryptDataForSession_MockMethod = { plaintext, _ in
-            return plaintext
+            plaintext
         }
 
         syncMOC.performGroupedAndWait {
@@ -104,8 +104,8 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         XCTAssertEqual(createdMessage.hasBlob, true)
         await syncMOC.perform {
             let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
-                return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
-                    return clientEntry.client
+                (userEntry.clients).map { clientEntry -> Proteus_ClientId in
+                    clientEntry.client
                 }
             }
             let clientSet = Set(clientIds)
@@ -225,7 +225,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         // Mock
         self.mockProteusService.encryptDataForSession_MockMethod = { plaintext, _ in
-            return plaintext
+            plaintext
         }
 
         // When
@@ -437,7 +437,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             }
 
             let payloadClients = messageMetadata.recipients.compactMap { user -> [String] in
-                return user.clients.map({ String(format: "%llx", $0.client.client) })
+                user.clients.map({ String(format: "%llx", $0.client.client) })
             }.flatMap { $0 }
             XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
         }

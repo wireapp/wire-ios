@@ -54,7 +54,7 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     var canOpenConnection: Bool {
-        return keepOpen && websocketURL != nil && consumer != nil
+        keepOpen && websocketURL != nil && consumer != nil
     }
 
     var websocketURL: URL? {
@@ -281,10 +281,10 @@ extension TLSVersion {
     fileprivate var starscreamValue: Starscream.TLSVersion {
         switch self {
         case .v1_2:
-            return .v1_2
+            .v1_2
 
         case .v1_3:
-            return .v1_3
+            .v1_3
         }
     }
 }

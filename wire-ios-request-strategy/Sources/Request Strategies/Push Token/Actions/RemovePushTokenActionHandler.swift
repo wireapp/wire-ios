@@ -25,7 +25,7 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
         for action: ActionHandler<RemovePushTokenAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        return ZMTransportRequest(
+        ZMTransportRequest(
             path: "/push/tokens/\(action.deviceToken)",
             method: .delete,
             payload: nil,

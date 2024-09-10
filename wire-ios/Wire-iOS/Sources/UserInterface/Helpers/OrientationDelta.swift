@@ -42,26 +42,26 @@ enum OrientationDelta: Int, CaseIterable {
     var radians: CGFloat {
         switch self {
         case .upsideDown:
-            return OrientationAngle.straight.radians
+            OrientationAngle.straight.radians
         case .rotatedLeft:
-            return OrientationAngle.right.radians
+            OrientationAngle.right.radians
         case .rotatedRight:
-            return -OrientationAngle.right.radians
+            -OrientationAngle.right.radians
         default:
-            return OrientationAngle.none.radians
+            OrientationAngle.none.radians
         }
     }
 
     var edgeInsetsShiftAmount: Int {
         switch self {
         case .rotatedLeft:
-            return 1
+            1
         case .rotatedRight:
-            return -1
+            -1
         case .upsideDown:
-            return 2
+            2
         default:
-            return 0
+            0
         }
     }
 }
@@ -74,11 +74,11 @@ enum OrientationAngle {
     var radians: CGFloat {
         switch self {
         case .none:
-            return 0
+            0
         case .right:
-            return .pi / 2
+            .pi / 2
         case .straight:
-            return .pi
+            .pi
         }
     }
 }
@@ -87,13 +87,13 @@ extension UIDeviceOrientation {
     fileprivate var deltaFromPortrait: OrientationDelta {
         switch self {
         case .landscapeLeft:
-            return .rotatedLeft
+            .rotatedLeft
         case .landscapeRight:
-            return .rotatedRight
+            .rotatedRight
         case .portraitUpsideDown:
-            return .upsideDown
+            .upsideDown
         default:
-            return .equal
+            .equal
         }
     }
 }
@@ -102,13 +102,13 @@ extension UIInterfaceOrientation {
     fileprivate var deltaFromPortrait: OrientationDelta {
         switch self {
         case .landscapeLeft:
-            return .rotatedLeft
+            .rotatedLeft
         case .landscapeRight:
-            return .rotatedRight
+            .rotatedRight
         case .portraitUpsideDown:
-            return .upsideDown
+            .upsideDown
         default:
-            return .equal
+            .equal
         }
     }
 }

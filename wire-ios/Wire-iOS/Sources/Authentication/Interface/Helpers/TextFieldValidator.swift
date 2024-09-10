@@ -93,7 +93,7 @@ final class TextFieldValidator {
 
 extension PasswordRuleSet {
     var textInputPasswordRules: UITextInputPasswordRules {
-        return UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
+        UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
     }
 }
 
@@ -103,41 +103,41 @@ extension TextFieldValidator.ValidationError: LocalizedError {
         case let .tooShort(kind: kind):
             switch kind {
             case .name:
-                return L10n.Localizable.Name.Guidance.tooshort
+                L10n.Localizable.Name.Guidance.tooshort
             case .email:
-                return L10n.Localizable.Email.Guidance.tooshort
+                L10n.Localizable.Email.Guidance.tooshort
             case .password, .passcode:
-                return PasswordRuleSet.localizedErrorMessage
+                PasswordRuleSet.localizedErrorMessage
             case .unknown:
                 // swiftlint:disable:next todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
-                return "unknown.guidance.tooshort".localized
+                "unknown.guidance.tooshort".localized
             case .username:
-                return L10n.Localizable.Name.Guidance.tooshort
+                L10n.Localizable.Name.Guidance.tooshort
             }
         case let .tooLong(kind: kind):
             switch kind {
             case .name:
-                return L10n.Localizable.Name.Guidance.toolong
+                L10n.Localizable.Name.Guidance.toolong
             case .email:
-                return L10n.Localizable.Email.Guidance.toolong
+                L10n.Localizable.Email.Guidance.toolong
             case .password, .passcode:
-                return L10n.Localizable.Password.Guidance.toolong
+                L10n.Localizable.Password.Guidance.toolong
             case .unknown:
                 // swiftlint:disable:next todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
-                return "unknown.guidance.toolong".localized
+                "unknown.guidance.toolong".localized
             case .username:
-                return L10n.Localizable.Name.Guidance.toolong
+                L10n.Localizable.Name.Guidance.toolong
             }
         case .invalidEmail:
-            return L10n.Localizable.Email.Guidance.invalid
+            L10n.Localizable.Email.Guidance.invalid
         case let .custom(description):
-            return description
+            description
         case let .invalidPassword(violations):
-            return violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet.localizedErrorMessage
+            violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet.localizedErrorMessage
         case .invalidUsername:
-            return "invalid"
+            "invalid"
         }
     }
 }

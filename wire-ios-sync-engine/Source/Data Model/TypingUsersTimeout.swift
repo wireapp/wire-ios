@@ -22,7 +22,7 @@ class TypingUsersTimeout: NSObject {
     private var timeouts = [Key: Date]()
 
     var firstTimeout: Date? {
-        return timeouts.values.min()
+        timeouts.values.min()
     }
 
     func add(_ user: ZMUser, for conversation: ZMConversation, withTimeout timeout: Date) {

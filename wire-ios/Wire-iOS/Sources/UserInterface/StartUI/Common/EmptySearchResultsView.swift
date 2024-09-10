@@ -41,9 +41,9 @@ extension EmptySearchResultsViewAction {
     var title: String {
         switch self {
         case .openManageServices:
-            return L10n.Localizable.Peoplepicker.NoMatchingResults.Action.manageServices
+            L10n.Localizable.Peoplepicker.NoMatchingResults.Action.manageServices
         case .openSearchSupportPage:
-            return L10n.Localizable.Peoplepicker.NoMatchingResults.Action.learnMore
+            L10n.Localizable.Peoplepicker.NoMatchingResults.Action.learnMore
         }
     }
 }
@@ -110,11 +110,11 @@ final class EmptySearchResultsView: UIView {
     private var buttonAction: EmptySearchResultsViewAction? {
         switch state {
         case .noServicesEnabled where isSelfUserAdmin:
-            return .openManageServices
+            .openManageServices
         case .noUsers:
-            return .openSearchSupportPage
+            .openSearchSupportPage
         default:
-            return nil
+            nil
         }
     }
 

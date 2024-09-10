@@ -30,7 +30,7 @@ public enum ZMSound: String, CustomStringConvertible {
     public static let ringtones = [ZMSound]()
 
     public func isRingtone() -> Bool {
-        return type(of: self).ringtones.contains(self)
+        type(of: self).ringtones.contains(self)
     }
 
     fileprivate static var playingPreviewID: SystemSoundID?
@@ -79,23 +79,23 @@ public enum ZMSound: String, CustomStringConvertible {
     fileprivate static let fileExtension = "m4a"
 
     public func filename() -> String {
-        return (self.rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
+        (self.rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
     }
 
     public var description: String {
-        return self.rawValue.capitalized
+        self.rawValue.capitalized
     }
 
     public var descriptionLocalizationKey: String {
         switch self {
         case .None:
-            return "self.settings.sound_menu.sounds.none"
+            "self.settings.sound_menu.sounds.none"
         case .WireCall:
-            return "self.settings.sound_menu.sounds.wire_call"
+            "self.settings.sound_menu.sounds.wire_call"
         case .WireText:
-            return "self.settings.sound_menu.sounds.wire_message"
+            "self.settings.sound_menu.sounds.wire_message"
         case .WirePing:
-            return "self.settings.sound_menu.sounds.wire_ping"
+            "self.settings.sound_menu.sounds.wire_ping"
         }
     }
 

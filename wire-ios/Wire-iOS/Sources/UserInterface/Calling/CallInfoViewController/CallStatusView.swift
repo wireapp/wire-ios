@@ -115,14 +115,14 @@ private let callDurationFormatter: DateComponentsFormatter = {
 extension CallStatusViewInputType {
     var displayString: String {
         switch state {
-        case .none: return ""
-        case .connecting: return L10n.Localizable.Call.Status.connecting
-        case let .ringingIncoming(name: name?): return L10n.Localizable.Call.Status.Incoming.user(name)
-        case .ringingIncoming(name: nil): return L10n.Localizable.Call.Status.incoming
-        case .ringingOutgoing: return L10n.Localizable.Call.Status.outgoing
-        case let .established(duration: duration): return callDurationFormatter.string(from: duration) ?? ""
-        case .reconnecting: return L10n.Localizable.Call.Status.reconnecting
-        case .terminating: return L10n.Localizable.Call.Status.terminating
+        case .none: ""
+        case .connecting: L10n.Localizable.Call.Status.connecting
+        case let .ringingIncoming(name: name?): L10n.Localizable.Call.Status.Incoming.user(name)
+        case .ringingIncoming(name: nil): L10n.Localizable.Call.Status.incoming
+        case .ringingOutgoing: L10n.Localizable.Call.Status.outgoing
+        case let .established(duration: duration): callDurationFormatter.string(from: duration) ?? ""
+        case .reconnecting: L10n.Localizable.Call.Status.reconnecting
+        case .terminating: L10n.Localizable.Call.Status.terminating
         }
     }
 }

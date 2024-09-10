@@ -64,22 +64,22 @@ extension HTTPRequest.Method {
     fileprivate func toZMTransportRequestMethod() -> ZMTransportRequestMethod {
         switch self {
         case .delete:
-            return .delete
+            .delete
         case .get:
-            return .get
+            .get
         case .head:
-            return .head
+            .head
         case .post:
-            return .post
+            .post
         case .put:
-            return .put
+            .put
         }
     }
 }
 
 extension ZMTransportResponse {
     fileprivate func toHTTPResponse() -> HTTPResponse {
-        return HTTPResponse(
+        HTTPResponse(
             code: httpStatus,
             payload: rawData
         )

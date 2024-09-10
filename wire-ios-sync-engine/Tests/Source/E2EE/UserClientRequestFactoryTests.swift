@@ -339,7 +339,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
     // MARK: - Helpers
 
     private func payload(from request: ZMTransportRequest) -> [String: Any]? {
-        return request.payload?.asDictionary() as? [String: Any]
+        request.payload?.asDictionary() as? [String: Any]
     }
 
     private func assertRequest(_ request: ZMTransportRequest, path: String, method: ZMTransportRequestMethod) {
@@ -424,6 +424,6 @@ extension Dictionary<String, Any> {
     }
 
     private func value<T>(forKey key: PayloadKey) -> T? {
-        return self[key.rawValue] as? T
+        self[key.rawValue] as? T
     }
 }

@@ -30,7 +30,7 @@ class OtrBaseTest: XCTestCase {
     }
 
     static var sharedContainerURL: URL {
-        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }
 
     static func otrDirectoryURL(accountIdentifier: UUID) -> URL {
@@ -39,10 +39,10 @@ class OtrBaseTest: XCTestCase {
     }
 
     static var legacyOtrDirectory: URL {
-        return FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL, createParentIfNeeded: true)
+        FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL, createParentIfNeeded: true)
     }
 
     static func legacyAccountOtrDirectory(accountIdentifier: UUID) -> URL {
-        return FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL.appendingPathComponent(accountIdentifier.uuidString), createParentIfNeeded: true)
+        FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL.appendingPathComponent(accountIdentifier.uuidString), createParentIfNeeded: true)
     }
 }

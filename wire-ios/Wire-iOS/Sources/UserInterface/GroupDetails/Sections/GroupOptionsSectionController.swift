@@ -33,19 +33,19 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         func accessible(in conversation: GroupDetailsConversationType,
                         by user: UserType) -> Bool {
             switch self {
-            case .notifications: return user.canModifyNotificationSettings(in: conversation)
-            case .guests:        return user.canModifyAccessControlSettings(in: conversation)
-            case .services:      return user.canModifyAccessControlSettings(in: conversation)
-            case .timeout:       return user.canModifyEphemeralSettings(in: conversation)
+            case .notifications: user.canModifyNotificationSettings(in: conversation)
+            case .guests:        user.canModifyAccessControlSettings(in: conversation)
+            case .services:      user.canModifyAccessControlSettings(in: conversation)
+            case .timeout:       user.canModifyEphemeralSettings(in: conversation)
             }
         }
 
         var cellReuseIdentifier: String {
             switch self {
-            case .guests: return GroupDetailsGuestOptionsCell.zm_reuseIdentifier
-            case .services: return GroupDetailsServicesCell.zm_reuseIdentifier
-            case .timeout: return GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
-            case .notifications: return GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
+            case .guests: GroupDetailsGuestOptionsCell.zm_reuseIdentifier
+            case .services: GroupDetailsServicesCell.zm_reuseIdentifier
+            case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
+            case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
             }
         }
     }
@@ -58,7 +58,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     private let options: [Option]
 
     var hasOptions: Bool {
-        return !options.isEmpty
+        !options.isEmpty
     }
 
     init(
@@ -76,7 +76,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     // MARK: - Collection View
 
     override var sectionTitle: String {
-        return L10n.Localizable.Participants.Section.settings.localizedUppercase
+        L10n.Localizable.Participants.Section.settings.localizedUppercase
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -88,11 +88,11 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return options.count
+        options.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

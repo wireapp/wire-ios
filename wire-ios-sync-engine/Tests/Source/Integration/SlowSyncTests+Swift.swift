@@ -22,7 +22,7 @@ import XCTest
 
 extension AssetRequestFactory {
     func profileImageAssetRequest(with data: Data, apiVersion: APIVersion) -> ZMTransportRequest? {
-        return upstreamRequestForAsset(withData: data, shareable: true, retention: .eternal, apiVersion: apiVersion)
+        upstreamRequestForAsset(withData: data, shareable: true, retention: .eternal, apiVersion: apiVersion)
     }
 }
 

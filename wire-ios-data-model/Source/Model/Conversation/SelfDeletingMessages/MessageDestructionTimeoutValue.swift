@@ -62,35 +62,35 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
     public var rawValue: TimeInterval {
         switch self {
         case .none:
-            return .zero
+            .zero
 
         case .tenSeconds:
-            return .tenSeconds
+            .tenSeconds
 
         case .fiveMinutes:
-            return .fiveMinutes
+            .fiveMinutes
 
         case .oneHour:
-            return .oneHour
+            .oneHour
 
         case .oneDay:
-            return .oneDay
+            .oneDay
 
         case .oneWeek:
-            return .oneWeek
+            .oneWeek
 
         case .fourWeeks:
-            return .fourWeeks
+            .fourWeeks
 
         case let .custom(duration):
-            return duration
+            duration
         }
     }
 }
 
 extension MessageDestructionTimeoutValue {
     public static var all: [Self] {
-        return [
+        [
             .none,
             .tenSeconds,
             .fiveMinutes,
@@ -135,27 +135,27 @@ extension MessageDestructionTimeoutValue {
     }
 
     public var isSeconds: Bool {
-        return .zero..<(.oneMinute) ~= rawValue
+        .zero..<(.oneMinute) ~= rawValue
     }
 
     public var isMinutes: Bool {
-        return .oneMinute..<(.oneHour) ~= rawValue
+        .oneMinute..<(.oneHour) ~= rawValue
     }
 
     public var isHours: Bool {
-        return .oneHour..<(.oneDay) ~= rawValue
+        .oneHour..<(.oneDay) ~= rawValue
     }
 
     public var isDays: Bool {
-        return .oneDay..<(.oneWeek) ~= rawValue
+        .oneDay..<(.oneWeek) ~= rawValue
     }
 
     public var isWeeks: Bool {
-        return .oneWeek..<(.oneYearFromNow) ~= rawValue
+        .oneWeek..<(.oneYearFromNow) ~= rawValue
     }
 
     public var isYears: Bool {
-        return rawValue >= .oneYearFromNow
+        rawValue >= .oneYearFromNow
     }
 }
 

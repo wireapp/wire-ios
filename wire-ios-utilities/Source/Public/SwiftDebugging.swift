@@ -21,11 +21,11 @@ import Foundation
 
 public struct SwiftDebugging {
     public static func address(_ object: AnyObject) -> Int {
-        return unsafeBitCast(object, to: Int.self)
+        unsafeBitCast(object, to: Int.self)
     }
 
     public static func pointerDescription(_ object: NSManagedObject) -> String {
-        return "<\(type(of: object)) 0x\(String(self.address(object), radix: 16))>"
+        "<\(type(of: object)) 0x\(String(self.address(object), radix: 16))>"
     }
 
     public static func sequenceDescription(_ sequence: AnySequence<some Any>) -> String {
@@ -45,11 +45,11 @@ public struct SwiftDebugging {
     public static func shortDescription(_ value: Any) -> String {
         switch value {
         case let managedObject as NSManagedObject:
-            return pointerDescription(managedObject)
+            pointerDescription(managedObject)
         case let collection as AnySequence<Any>:
-            return sequenceDescription(collection)
+            sequenceDescription(collection)
         default:
-            return "\(value)"
+            "\(value)"
         }
     }
 }

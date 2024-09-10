@@ -51,7 +51,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         let page1 = makePage1()
         let page2 = makePage2()
 
-        paginationController.updatePagination(page1, filter: { _ in return true })
+        paginationController.updatePagination(page1, filter: { _ in true })
 
         // WHEN
         var updateResult: ZiphyResult<[Ziph]>?

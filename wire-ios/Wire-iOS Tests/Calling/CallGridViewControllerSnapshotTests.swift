@@ -364,11 +364,11 @@ extension CallGridViewControllerSnapshotTests {
             var event: Wire.CallGridEvent {
                 switch self {
                 case let .maximizationChanged(state: state):
-                    return .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
+                    .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
                 case .configurationChanged:
-                    return .configurationChanged
+                    .configurationChanged
                 default:
-                    return .viewDidLoad
+                    .viewDidLoad
                 }
             }
 
@@ -381,9 +381,9 @@ extension CallGridViewControllerSnapshotTests {
                 var stream: Wire.Stream? {
                     switch self {
                     case let .two(videoState: videoState):
-                        return videoState.stream
+                        videoState.stream
                     case .moreThanTwo:
-                        return nil
+                        nil
                     }
                 }
 
@@ -395,9 +395,9 @@ extension CallGridViewControllerSnapshotTests {
                     var isMaximized: Bool {
                         switch self {
                         case let .sharing(isMaximized: isMaximized):
-                            return isMaximized
+                            isMaximized
                         default:
-                            return false
+                            false
                         }
                     }
 
@@ -408,11 +408,11 @@ extension CallGridViewControllerSnapshotTests {
                     private var videoState: WireSyncEngine.VideoState {
                         switch self {
                         case .notSharing:
-                            return .stopped
+                            .stopped
                         case .sharing:
-                            return .started
+                            .started
                         case .screenSharing:
-                            return .screenSharing
+                            .screenSharing
                         }
                     }
                 }

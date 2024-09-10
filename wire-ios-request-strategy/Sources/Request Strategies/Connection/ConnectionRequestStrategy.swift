@@ -142,12 +142,12 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
     public var requestGenerators: [ZMRequestGenerator] {
         if syncProgress.currentSyncPhase == .fetchingConnections {
-            return [
+            [
                 connectionListSync,
                 localConnectionListSync
             ]
         } else {
-            return [
+            [
                 connectionByIDSync,
                 connectionByQualifiedIDSync,
                 actionSync
@@ -156,7 +156,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [updateSync]
+        [updateSync]
     }
 }
 

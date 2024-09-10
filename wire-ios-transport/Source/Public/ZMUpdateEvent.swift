@@ -86,93 +86,93 @@ extension ZMUpdateEventType {
     var stringValue: String? {
         switch self {
         case .unknown:
-            return nil
+            nil
         case .conversationAssetAdd:
-            return "conversation.asset-add"
+            "conversation.asset-add"
         case .conversationConnectRequest:
-            return "conversation.connect-request"
+            "conversation.connect-request"
         case .conversationCreate:
-            return "conversation.create"
+            "conversation.create"
         case .conversationDelete:
-            return "conversation.delete"
+            "conversation.delete"
         case .conversationKnock:
-            return "conversation.knock"
+            "conversation.knock"
         case .conversationMemberJoin:
-            return "conversation.member-join"
+            "conversation.member-join"
         case .conversationMemberLeave:
-            return "conversation.member-leave"
+            "conversation.member-leave"
         case .conversationMemberUpdate:
-            return "conversation.member-update"
+            "conversation.member-update"
         case .conversationMessageAdd:
-            return "conversation.message-add"
+            "conversation.message-add"
         case .conversationClientMessageAdd:
-            return "conversation.client-message-add"
+            "conversation.client-message-add"
         case .conversationOtrMessageAdd:
-            return "conversation.otr-message-add"
+            "conversation.otr-message-add"
         case .conversationOtrAssetAdd:
-            return "conversation.otr-asset-add"
+            "conversation.otr-asset-add"
         case .conversationRename:
-            return "conversation.rename"
+            "conversation.rename"
         case .conversationProtocolUpdate:
-            return "conversation.protocol-update"
+            "conversation.protocol-update"
         case .conversationTyping:
-            return "conversation.typing"
+            "conversation.typing"
         case .conversationCodeUpdate:
-            return "conversation.code-update"
+            "conversation.code-update"
         case .conversationAccessModeUpdate:
-            return "conversation.access-update"
+            "conversation.access-update"
         case .conversationReceiptModeUpdate:
-            return "conversation.receipt-mode-update"
+            "conversation.receipt-mode-update"
         case .conversationMLSWelcome:
-            return "conversation.mls-welcome"
+            "conversation.mls-welcome"
         case .conversationMLSMessageAdd:
-            return "conversation.mls-message-add"
+            "conversation.mls-message-add"
         case .userConnection:
-            return "user.connection"
+            "user.connection"
         case .userNew:
-            return "user.new"
+            "user.new"
         case .userUpdate:
-            return "user.update"
+            "user.update"
         case .userDelete:
-            return "user.delete"
+            "user.delete"
         case .userPushRemove:
-            return "user.push-remove"
+            "user.push-remove"
         case .userContactJoin:
-            return "user.contact-join"
+            "user.contact-join"
         case .userLegalHoldEnable:
-            return "user.legalhold-enable"
+            "user.legalhold-enable"
         case .userLegalHoldDisable:
-            return "user.legalhold-disable"
+            "user.legalhold-disable"
         case .userLegalHoldRequest:
-            return "user.legalhold-request"
+            "user.legalhold-request"
         case .userClientAdd:
-            return "user.client-add"
+            "user.client-add"
         case .userClientRemove:
-            return "user.client-remove"
+            "user.client-remove"
         case .teamCreate:
-            return "team.create"
+            "team.create"
         case .teamDelete:
-            return "team.delete"
+            "team.delete"
         case .teamMemberLeave:
-            return "team.member-leave"
+            "team.member-leave"
         case .teamConversationCreate:
-            return "team.conversation-create"
+            "team.conversation-create"
         case .teamConversationDelete:
-            return "team.conversation-delete"
+            "team.conversation-delete"
         case .teamMemberUpdate:
-            return "team.member-update"
+            "team.member-update"
         case .conversationMessageTimerUpdate:
-            return "conversation.message-timer-update"
+            "conversation.message-timer-update"
         case .userPropertiesSet:
-            return "user.properties-set"
+            "user.properties-set"
         case .userPropertiesDelete:
-            return "user.properties-delete"
+            "user.properties-delete"
         case .featureConfigUpdate:
-            return "feature-config.update"
+            "feature-config.update"
         case .federationDelete:
-            return "federation.delete"
+            "federation.delete"
         case .federationConnectionRemoved:
-            return "federation.connectionRemoved"
+            "federation.connectionRemoved"
         }
     }
 
@@ -183,10 +183,10 @@ extension ZMUpdateEventType {
                 return (eventType, stringValue)
             }
             .filter { _, stringValue -> Bool in
-                return stringValue == string
+                stringValue == string
             }
             .map { eventType, _ -> ZMUpdateEventType in
-                return eventType
+                eventType
             }
             .first
 
@@ -196,11 +196,11 @@ extension ZMUpdateEventType {
 
 extension ZMUpdateEvent {
     @objc(updateEventTypeForEventTypeString:) public static func updateEventType(for string: String) -> ZMUpdateEventType {
-        return ZMUpdateEventType(string: string)
+        ZMUpdateEventType(string: string)
     }
 
     @objc(eventTypeStringForUpdateEventType:) public static func eventTypeString(for eventType: ZMUpdateEventType) -> String? {
-        return eventType.stringValue
+        eventType.stringValue
     }
 }
 
@@ -227,15 +227,15 @@ open class ZMUpdateEvent: NSObject {
     open var isGenericMessageEvent: Bool {
         switch self.type {
         case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd, .conversationMLSMessageAdd:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     /// Debug information
     open var debugInformation: String {
-        return debugInformationArray.joined(separator: "\n")
+        debugInformationArray.joined(separator: "\n")
     }
 
     public init?(uuid: UUID?, payload: [AnyHashable: Any]?, transient: Bool, decrypted: Bool, source: ZMUpdateEventSource) {
@@ -255,14 +255,14 @@ open class ZMUpdateEvent: NSObject {
     }
 
     open class func eventsArray(fromPushChannelData transportData: ZMTransportData) -> [ZMUpdateEvent]? {
-        return self.eventsArray(from: transportData, source: .webSocket)
+        self.eventsArray(from: transportData, source: .webSocket)
     }
 
     /// Returns an array of @c ZMUpdateEvent from the given push channel data, the source will be set to @c
     /// ZMUpdateEventSourceWebSocket, if a non-nil @c NSUUID is given for the @c pushStartingAt parameter, all
     /// events earlier or equal to this uuid will have a source of @c ZMUpdateEventSourcePushNotification
     open class func eventsArray(fromPushChannelData transportData: ZMTransportData, pushStartingAt threshold: UUID?) -> [Any]? {
-        return self.eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
+        self.eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
     }
 
     class func eventsArray(with uuid: UUID, payloadArray: [Any]?, transient: Bool, source: ZMUpdateEventSource, pushStartingAt sourceThreshold: UUID?) -> [ZMUpdateEvent] {
@@ -283,7 +283,7 @@ open class ZMUpdateEvent: NSObject {
 
     @objc(eventFromEventStreamPayload:uuid:)
     public static func eventFromEventStreamPayload(_ payload: ZMTransportData, uuid: UUID?) -> ZMUpdateEvent? {
-        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
+        ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid)
     }
 
     /// Creates an update event
@@ -298,12 +298,12 @@ open class ZMUpdateEvent: NSObject {
 
     /// Creates an update event that was encrypted and it's now decrypted
     open class func decryptedUpdateEvent(fromEventStreamPayload payload: ZMTransportData, uuid: UUID?, transient: Bool, source: ZMUpdateEventSource) -> ZMUpdateEvent? {
-        return ZMUpdateEvent(uuid: uuid, payload: payload.asDictionary(), transient: transient, decrypted: true, source: source)
+        ZMUpdateEvent(uuid: uuid, payload: payload.asDictionary(), transient: transient, decrypted: true, source: source)
     }
 
     @objc(eventsArrayFromTransportData:source:)
     open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource) -> [ZMUpdateEvent]? {
-        return self.eventsArray(from: transportData, source: source, pushStartingAt: nil)
+        self.eventsArray(from: transportData, source: source, pushStartingAt: nil)
     }
 
     open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource, pushStartingAt threshold: UUID?) -> [ZMUpdateEvent]? {

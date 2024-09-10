@@ -24,11 +24,11 @@ import UniformTypeIdentifiers
 extension UIPasteboard {
     func pasteboardType(forMediaAsset mediaAsset: MediaAsset) -> String {
         if mediaAsset.isGIF {
-            return UTType.gif.identifier
+            UTType.gif.identifier
         } else if mediaAsset.isTransparent {
-            return UTType.png.identifier
+            UTType.png.identifier
         } else {
-            return UTType.jpeg.identifier
+            UTType.jpeg.identifier
         }
     }
 

@@ -48,18 +48,18 @@ extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
     }
 
     public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return self.bounds.size.height
+        self.bounds.size.height
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return self
+        self
     }
 }

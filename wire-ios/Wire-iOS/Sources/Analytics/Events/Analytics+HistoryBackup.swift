@@ -25,13 +25,13 @@ enum BackupEvent: Event {
 
     var name: String {
         switch self {
-        case .importSucceeded: return "history.restore_succeeded"
-        case .importFailed: return "history.restore_failed"
-        case .exportFailed: return "history.backup_failed"
+        case .importSucceeded: "history.restore_succeeded"
+        case .importFailed: "history.restore_failed"
+        case .exportFailed: "history.backup_failed"
         }
     }
 
     var attributes: [AnyHashable: Any]? {
-        return nil
+        nil
     }
 }

@@ -23,45 +23,45 @@ extension E2EIdentityCertificateStatus {
     var title: String {
         switch self {
         case .notActivated:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.notActivated
+            L10n.Localizable.Device.Details.Section.E2ei.Status.notActivated
         case .revoked:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.revoked
+            L10n.Localizable.Device.Details.Section.E2ei.Status.revoked
         case .expired:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.expired
+            L10n.Localizable.Device.Details.Section.E2ei.Status.expired
         case .invalid:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.invalid
+            L10n.Localizable.Device.Details.Section.E2ei.Status.invalid
         case .valid:
-            return L10n.Localizable.Device.Details.Section.E2ei.Status.valid
+            L10n.Localizable.Device.Details.Section.E2ei.Status.valid
         }
     }
 
     var image: Image? {
         switch self {
         case .notActivated:
-            return Image(.certificateExpired)
+            Image(.certificateExpired)
         case .revoked:
-            return Image(.certificateRevoked)
+            Image(.certificateRevoked)
         case .expired:
-            return Image(.certificateExpired)
+            Image(.certificateExpired)
         case .invalid:
-            return Image(.certificateRevoked)
+            Image(.certificateRevoked)
         case .valid:
-            return Image(.certificateValid)
+            Image(.certificateValid)
         }
     }
 
     var uiImage: UIImage? {
         switch self {
         case .notActivated:
-            return .init(resource: .certificateExpired)
+            .init(resource: .certificateExpired)
         case .revoked:
-            return .init(resource: .certificateRevoked)
+            .init(resource: .certificateRevoked)
         case .expired:
-            return .init(resource: .certificateExpired)
+            .init(resource: .certificateExpired)
         case .invalid:
-            return .init(resource: .certificateRevoked)
+            .init(resource: .certificateRevoked)
         case .valid:
-            return .init(resource: .certificateValid)
+            .init(resource: .certificateValid)
         }
     }
 }

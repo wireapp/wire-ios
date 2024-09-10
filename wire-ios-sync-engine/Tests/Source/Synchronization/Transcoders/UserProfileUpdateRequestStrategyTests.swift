@@ -484,52 +484,52 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func badRequestResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "bad-request"] as NSDictionary,
-                                   httpStatus: 400,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "bad-request"] as NSDictionary,
+                            httpStatus: 400,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func handleExistsResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "handle-exists"] as NSDictionary,
-                                   httpStatus: 409,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "handle-exists"] as NSDictionary,
+                            httpStatus: 409,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func keyExistsResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "key-exists"] as NSDictionary,
-                                   httpStatus: 409,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "key-exists"] as NSDictionary,
+                            httpStatus: 409,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func invalidPhoneNumberResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "invalid-phone"] as NSDictionary,
-                                   httpStatus: 400,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "invalid-phone"] as NSDictionary,
+                            httpStatus: 400,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func lastIdentityResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "last-identity"] as NSDictionary,
-                                   httpStatus: 403,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "last-identity"] as NSDictionary,
+                            httpStatus: 403,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func invalidEmailResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "invalid-email"] as NSDictionary,
-                                   httpStatus: 400,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "invalid-email"] as NSDictionary,
+                            httpStatus: 400,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func invalidCredentialsResponse() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "invalid-credentials"] as NSDictionary,
-                                   httpStatus: 403,
-                                   transportSessionError: nil,
-                                   apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(payload: ["label": "invalid-credentials"] as NSDictionary,
+                            httpStatus: 403,
+                            transportSessionError: nil,
+                            apiVersion: APIVersion.v0.rawValue)
     }
 
     func successResponse(path: String? = nil) -> ZMTransportResponse {

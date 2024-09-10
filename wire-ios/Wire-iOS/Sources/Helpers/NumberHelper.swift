@@ -20,13 +20,13 @@ import UIKit
 
 extension Float {
     func clamp(_ lower: Float, upper: Float) -> Float {
-        return max(lower, min(upper, self))
+        max(lower, min(upper, self))
     }
 }
 
 extension CGFloat {
     func clamp(_ lower: CGFloat, upper: CGFloat) -> CGFloat {
-        return fmax(lower, fmin(upper, self))
+        fmax(lower, fmin(upper, self))
     }
 }
 
@@ -41,6 +41,6 @@ extension Float {
      - returns: Normalized loudness value between 0 and 1
      */
     func normalizedDecibelValue() -> Float {
-        return (pow(10, self / 20) * 4.0).clamp(0, upper: 1)
+        (pow(10, self / 20) * 4.0).clamp(0, upper: 1)
     }
 }

@@ -31,7 +31,7 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     // MARK: - setUp

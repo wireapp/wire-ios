@@ -31,7 +31,7 @@ final class CallController: NSObject {
     private var minimizedCall: ZMConversation?
 
     private var priorityCallConversation: ZMConversation? {
-        return callConversationProvider?.priorityCallConversation
+        callConversationProvider?.priorityCallConversation
     }
 
     private var dateOfLastErrorAlertByConversationId = [AVSIdentifier: Date]()
@@ -117,9 +117,9 @@ final class CallController: NSObject {
     private func isClientOutdated(callState: CallState) -> Bool {
         switch callState {
         case let .terminating(reason) where reason == .outdatedClient:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

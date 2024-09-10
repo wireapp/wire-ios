@@ -132,9 +132,7 @@ private class DebugCommandMixin: DebugCommand {
         onComplete(.failure(error: "Not implemented"))
     }
 
-    func restoreFromState(userSession: ZMUserSession, state: [String: Any]) {
-        return
-    }
+    func restoreFromState(userSession: ZMUserSession, state: [String: Any]) {}
 }
 
 /// The result of a debug command

@@ -42,11 +42,11 @@ extension URL {
     }
 
     var urlWithoutScheme: String {
-        return stringWithoutPrefix("\(scheme ?? "")://")
+        stringWithoutPrefix("\(scheme ?? "")://")
     }
 
     var urlWithoutSchemeAndHost: String {
-        return stringWithoutPrefix("\(scheme ?? "")://\(host ?? "")")
+        stringWithoutPrefix("\(scheme ?? "")://\(host ?? "")")
     }
 
     private func stringWithoutPrefix(_ prefix: String) -> String {

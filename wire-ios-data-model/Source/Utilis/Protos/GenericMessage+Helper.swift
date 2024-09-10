@@ -212,17 +212,17 @@ extension GenericMessage {
 
 extension Text {
     public func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
-        return mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
     public func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
-        return quotedMessage?.sender?.isSelfUser ?? false
+        quotedMessage?.sender?.isSelfUser ?? false
     }
 }
 
 extension GenericMessage {
     var v3_isImage: Bool {
-        return assetData?.original.hasRasterImage ?? false
+        assetData?.original.hasRasterImage ?? false
     }
 
     var v3_uploadedAssetId: String? {
@@ -503,7 +503,7 @@ public enum ProtosReactionFactory {
         emojis: Set<String>,
         messageID: UUID
     ) -> WireProtos.Reaction {
-        return WireProtos.Reaction.createReaction(
+        WireProtos.Reaction.createReaction(
             emojis: emojis,
             messageID: messageID
         )
@@ -624,7 +624,7 @@ extension External {
 
 extension WireProtos.Mention {
     public static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
-        return mention.convertToProtosMention()
+        mention.convertToProtosMention()
     }
 }
 
@@ -744,9 +744,9 @@ extension LinkPreview {
     public var hasTweet: Bool {
         switch metaData {
         case .tweet:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -768,7 +768,7 @@ extension Tweet {
 
 extension ImageAsset {
     public func imageFormat() -> ZMImageFormat {
-        return ZMImageFormat(self.tag)
+        ZMImageFormat(self.tag)
     }
 }
 

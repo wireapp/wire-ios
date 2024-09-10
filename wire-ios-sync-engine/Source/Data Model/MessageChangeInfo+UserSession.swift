@@ -26,7 +26,7 @@ extension MessageChangeInfo {
     public static func add(observer: ZMMessageObserver,
                            for message: ZMConversationMessage,
                            userSession: ZMUserSession) -> NSObjectProtocol {
-        return self.add(observer: observer, for: message, managedObjectContext: userSession.managedObjectContext)
+        self.add(observer: observer, for: message, managedObjectContext: userSession.managedObjectContext)
     }
 }
 
@@ -34,7 +34,7 @@ extension NewUnreadMessagesChangeInfo {
     /// Adds a ZMNewUnreadMessagesObserver
     /// You must hold on to the token and use it to unregister
     public static func add(observer: ZMNewUnreadMessagesObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
-        return self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
+        self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
     }
 }
 
@@ -42,6 +42,6 @@ extension NewUnreadKnockMessagesChangeInfo {
     /// Adds a ZMNewUnreadKnocksObserver
     /// You must hold on to the token and use it to unregister
     public static func add(observer: ZMNewUnreadKnocksObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
-        return self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
+        self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
     }
 }

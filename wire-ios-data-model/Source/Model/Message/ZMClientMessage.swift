@@ -36,16 +36,16 @@ public class ZMClientMessage: ZMOTRMessage {
     var cachedUnderlyingMessage: GenericMessage?
 
     override public static func entityName() -> String {
-        return "ClientMessage"
+        "ClientMessage"
     }
 
     override open var ignoredKeys: Set<AnyHashable>? {
-        return (super.ignoredKeys ?? Set())
+        (super.ignoredKeys ?? Set())
             .union([#keyPath(updatedTimestamp)])
     }
 
     override public var updatedAt: Date? {
-        return updatedTimestamp
+        updatedTimestamp
     }
 
     override public var hashOfContent: Data? {
@@ -86,8 +86,8 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public static func keyPathsForValuesAffectingUnderlyingMessage() -> Set<String> {
-        return Set([#keyPath(ZMClientMessage.dataSet),
-                    #keyPath(ZMClientMessage.dataSet) + ".data"])
+        Set([#keyPath(ZMClientMessage.dataSet),
+             #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
     override public func expire() {
@@ -220,14 +220,14 @@ public class ZMClientMessage: ZMOTRMessage {
 
 extension ZMClientMessage {
     override public var imageMessageData: ZMImageMessageData? {
-        return nil
+        nil
     }
 
     override public var fileMessageData: ZMFileMessageData? {
-        return nil
+        nil
     }
 
     override public var isSilenced: Bool {
-        return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+        conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }
 }

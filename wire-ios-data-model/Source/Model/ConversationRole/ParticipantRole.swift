@@ -29,11 +29,11 @@ public final class ParticipantRole: ZMManagedObject {
     @NSManaged public var role: Role?
 
     override public static func entityName() -> String {
-        return "ParticipantRole"
+        "ParticipantRole"
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
-        return true
+        true
     }
 
     @discardableResult

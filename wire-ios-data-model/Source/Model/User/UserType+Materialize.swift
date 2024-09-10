@@ -37,7 +37,7 @@ extension Sequence where Element: UserType {
 
 extension UserType {
     public func materialize(in context: NSManagedObjectContext) -> ZMUser? {
-        return [self].materialize(in: context).first
+        [self].materialize(in: context).first
     }
 
     func unbox(in context: NSManagedObjectContext) -> ZMUser? {

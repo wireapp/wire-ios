@@ -20,19 +20,19 @@ import Foundation
 
 extension ZMTransportResponse {
     static func teamNotFound(apiVersion: APIVersion) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        ZMTransportResponse(payload: ["label": "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     static func notTeamMember(apiVersion: APIVersion) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "no-team-member"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        ZMTransportResponse(payload: ["label": "no-team-member"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     static func operationDenied(apiVersion: APIVersion) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "operation-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        ZMTransportResponse(payload: ["label": "operation-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     static func conversationNotFound(apiVersion: APIVersion) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label": "no-convo"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        ZMTransportResponse(payload: ["label": "no-convo"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 }
 

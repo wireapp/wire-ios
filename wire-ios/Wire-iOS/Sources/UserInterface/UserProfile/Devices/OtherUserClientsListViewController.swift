@@ -34,7 +34,7 @@ final class OtherUserClientsListViewController: UIViewController,
     private let contextProvider: ContextProvider?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private let mlsGroupId: MLSGroupID?
@@ -108,7 +108,7 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     private static func clientsSortedByRelevance(for user: UserType) -> [UserClientType] {
-        return user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
+        user.allClients.sortedByRelevance().filter({ !$0.isSelfClient() })
     }
 
     private func updateCertificatesForUserClients() {
@@ -143,11 +143,11 @@ final class OtherUserClientsListViewController: UIViewController,
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return clients.count
+        clients.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

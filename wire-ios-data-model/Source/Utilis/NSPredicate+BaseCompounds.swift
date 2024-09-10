@@ -20,22 +20,22 @@ import Foundation
 
 extension NSPredicate {
     public var inverse: NSPredicate {
-        return NSCompoundPredicate(notPredicateWithSubpredicate: self)
+        NSCompoundPredicate(notPredicateWithSubpredicate: self)
     }
 
     public func and(_ other: NSPredicate) -> NSPredicate {
-        return Self.all(of: [self, other])
+        Self.all(of: [self, other])
     }
 
     public func or(_ other: NSPredicate) -> NSPredicate {
-        return Self.any(of: [self, other])
+        Self.any(of: [self, other])
     }
 
     public class func any(of predicates: [NSPredicate]) -> NSPredicate {
-        return NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+        NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
     }
 
     public class func all(of predicates: [NSPredicate]) -> NSPredicate {
-        return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 }

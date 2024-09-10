@@ -26,7 +26,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
     typealias Token = GetPushTokensActionHandler.Token
 
     func token(clientID: String, data: Data, type: String) -> Token {
-        return Token(app: "app", client: clientID, token: data.zmHexEncodedString(), transport: type)
+        Token(app: "app", client: clientID, token: data.zmHexEncodedString(), transport: type)
     }
 
     func response(payload: GetPushTokensActionHandler.ResponsePayload, status: Int) -> ZMTransportResponse {
@@ -36,7 +36,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
     }
 
     func response(payload: ZMTransportData?, status: Int) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: payload,
             httpStatus: status,
             transportSessionError: nil,

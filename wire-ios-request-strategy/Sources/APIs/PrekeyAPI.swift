@@ -35,7 +35,7 @@ class PrekeyAPIV0: PrekeyAPI {
     }
 
     open var apiVersion: APIVersion {
-        return .v0
+        .v0
     }
 
     let httpClient: HttpClient
@@ -62,7 +62,7 @@ class PrekeyAPIV0: PrekeyAPI {
 
 class PrekeyAPIV1: PrekeyAPIV0 {
     override var apiVersion: APIVersion {
-        return .v1
+        .v1
     }
 
     override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
@@ -85,19 +85,19 @@ class PrekeyAPIV1: PrekeyAPIV0 {
 
 class PrekeyAPIV2: PrekeyAPIV1 {
     override var apiVersion: APIVersion {
-        return .v2
+        .v2
     }
 }
 
 class PrekeyAPIV3: PrekeyAPIV2 {
     override var apiVersion: APIVersion {
-        return .v3
+        .v3
     }
 }
 
 class PrekeyAPIV4: PrekeyAPIV3 {
     override var apiVersion: APIVersion {
-        return .v4
+        .v4
     }
 
     override func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID {
@@ -121,13 +121,13 @@ class PrekeyAPIV4: PrekeyAPIV3 {
 
 class PrekeyAPIV5: PrekeyAPIV4 {
     override var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 }
 
 class PrekeyAPIV6: PrekeyAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
 }
 

@@ -81,11 +81,11 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch sync {
         case requestSync:
-            return makeSignatureRequest(apiVersion: apiVersion)
+            makeSignatureRequest(apiVersion: apiVersion)
         case retrieveSync:
-            return makeRetrieveSignatureRequest(apiVersion: apiVersion)
+            makeRetrieveSignatureRequest(apiVersion: apiVersion)
         default:
-            return nil
+            nil
         }
     }
 
@@ -206,7 +206,7 @@ private struct SignaturePayload: Codable, Equatable {
     let fileName: String?
     let hash: String?
     var jsonDictionary: [String: String]? {
-        return makeJSONDictionary()
+        makeJSONDictionary()
     }
 
     private enum CodingKeys: String, CodingKey {

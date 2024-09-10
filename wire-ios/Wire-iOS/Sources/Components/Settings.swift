@@ -76,7 +76,7 @@ class Settings {
 
     subscript<T>(index: SettingKey) -> T? {
         get {
-            return defaults.value(forKey: index.rawValue) as? T
+            defaults.value(forKey: index.rawValue) as? T
         }
         set {
             defaults.set(newValue, forKey: index.rawValue)
@@ -135,7 +135,7 @@ class Settings {
     }
 
     var defaults: UserDefaults {
-        return .standard
+        .standard
     }
 
     // These settings are not actually persisted, just kept in memory
@@ -165,7 +165,7 @@ class Settings {
 
     static var disableLinkPreviews: Bool {
         get {
-            return !SecurityFlags.generateLinkPreviews.isEnabled
+            !SecurityFlags.generateLinkPreviews.isEnabled
                 ? true
                 : ExtensionSettings.shared.disableLinkPreviews
         }
@@ -175,7 +175,7 @@ class Settings {
     }
 
     static var isClipboardEnabled: Bool {
-        return SecurityFlags.clipboard.isEnabled
+        SecurityFlags.clipboard.isEnabled
     }
 
     // MARK: - MediaManager

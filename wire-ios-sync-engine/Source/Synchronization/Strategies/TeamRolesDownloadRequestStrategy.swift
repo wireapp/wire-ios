@@ -66,17 +66,17 @@ public final class TeamRolesDownloadRequestStrategy:
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 
     public var requestGenerators: [ZMRequestGenerator] {
-        return [self]
+        [self]
     }
 
     fileprivate let expectedSyncPhase = SyncPhase.fetchingTeamRoles
 
     fileprivate var isSyncing: Bool {
-        return syncStatus.currentSyncPhase == self.expectedSyncPhase
+        syncStatus.currentSyncPhase == self.expectedSyncPhase
     }
 
     private func completeSyncPhaseIfNoTeam() {

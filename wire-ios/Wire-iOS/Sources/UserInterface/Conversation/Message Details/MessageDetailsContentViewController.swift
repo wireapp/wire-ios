@@ -52,7 +52,7 @@ final class MessageDetailsContentViewController: UIViewController {
     /// The subtitle displaying message details.
     var subtitle: String? {
         get {
-            return subtitleLabel.text
+            subtitleLabel.text
         }
         set {
             subtitleLabel.text = newValue
@@ -63,7 +63,7 @@ final class MessageDetailsContentViewController: UIViewController {
     /// The subtitle displaying message details in Voice Over.
     var accessibleSubtitle: String? {
         get {
-            return subtitleLabel.accessibilityValue
+            subtitleLabel.accessibilityValue
         }
         set {
             subtitleLabel.accessibilityValue = newValue
@@ -291,11 +291,11 @@ final class MessageDetailsContentViewController: UIViewController {
 
 extension MessageDetailsContentViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return sections[section].items.count
+        sections[section].items.count
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections.count
+        sections.count
     }
 
     func collectionView(
@@ -359,7 +359,7 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     /// When the user selects a cell, show the details for this user.

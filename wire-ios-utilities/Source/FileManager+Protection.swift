@@ -92,6 +92,6 @@ extension URL {
     }
 
     public static func directory(for searchPathDirectory: FileManager.SearchPathDirectory) -> URL {
-        return URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(searchPathDirectory, .userDomainMask, true).first!)
+        URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(searchPathDirectory, .userDomainMask, true).first!)
     }
 }

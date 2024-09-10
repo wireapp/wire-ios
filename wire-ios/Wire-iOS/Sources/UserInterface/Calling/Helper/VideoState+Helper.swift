@@ -20,20 +20,20 @@ import WireSyncEngine
 
 extension VideoState {
     var toggledState: VideoState {
-        return isSending ? .stopped : .started
+        isSending ? .stopped : .started
     }
 
     var isSending: Bool {
         switch self {
-        case .started, .paused, .badConnection, .screenSharing: return true
-        case .stopped: return false
+        case .started, .paused, .badConnection, .screenSharing: true
+        case .stopped: false
         }
     }
 
     var isPaused: Bool {
         switch self {
-        case .paused: return true
-        default: return false
+        case .paused: true
+        default: false
         }
     }
 }

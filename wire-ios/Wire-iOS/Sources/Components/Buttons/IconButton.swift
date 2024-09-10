@@ -253,15 +253,15 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     func iconDefinition(for state: UIControl.State) -> IconDefinition? {
-        return iconDefinitionsByState[state.rawValue]
+        iconDefinitionsByState[state.rawValue]
     }
 
     func iconColor(for state: UIControl.State) -> UIColor? {
-        return iconColorsByState[state.rawValue] ?? iconColorsByState[UIControl.State.normal.rawValue]
+        iconColorsByState[state.rawValue] ?? iconColorsByState[UIControl.State.normal.rawValue]
     }
 
     func borderColor(for state: UIControl.State) -> UIColor? {
-        return borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
+        borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
     private func updateBorderColor() {
@@ -302,7 +302,7 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     func icon(for state: UIControl.State) -> StyleKitIcon? {
-        return iconDefinition(for: state)?.type
+        iconDefinition(for: state)?.type
     }
 
     func setBorderColor(_ color: UIColor?, for state: UIControl.State) {

@@ -128,7 +128,7 @@ final class MockCountly: CountlyInstance {
     }
 
     static func sharedInstance() -> Self {
-        return shared as! Self
+        shared as! Self
     }
 
     func recordEvent(_ key: String, segmentation: [String: String]?) {

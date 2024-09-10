@@ -52,11 +52,11 @@ class MediaShareRestrictionManager {
     }
 
     var isFileSharingFlagEnabled: Bool {
-        return SecurityFlags.fileSharing.isEnabled
+        SecurityFlags.fileSharing.isEnabled
     }
 
     var isPhotoLibraryEnabled: Bool {
-        return SecurityFlags.cameraRoll.isEnabled
+        SecurityFlags.cameraRoll.isEnabled
     }
 
     // MARK: - Public Properties
@@ -71,41 +71,41 @@ class MediaShareRestrictionManager {
     func canUploadMedia(from source: ShareableMediaSource) -> Bool {
         switch level {
         case .none:
-            return true
+            true
         case .securityFlag:
-            return !securityFlagRestrictedTypes.contains(source)
+            !securityFlagRestrictedTypes.contains(source)
         case .APIFlag:
-            return false
+            false
         }
     }
 
     var canDownloadMedia: Bool {
         switch level {
         case .none:
-            return true
+            true
         case .APIFlag, .securityFlag:
-            return false
+            false
         }
     }
 
     var canUseClipboard: Bool {
-        return canUploadMedia(from: .clipboard)
+        canUploadMedia(from: .clipboard)
     }
 
     var canUseSpellChecking: Bool {
-        return canUploadMedia(from: .clipboard)
+        canUploadMedia(from: .clipboard)
     }
 
     var canUseAutoCorrect: Bool {
-        return canUploadMedia(from: .clipboard)
+        canUploadMedia(from: .clipboard)
     }
 
     var hasAccessToCameraRoll: Bool {
         switch level {
         case .none:
-            return true
+            true
         case .APIFlag, .securityFlag:
-            return false
+            false
         }
     }
 }

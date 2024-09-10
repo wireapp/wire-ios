@@ -62,7 +62,7 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     override func viewDidLoad() {
@@ -142,19 +142,19 @@ final class RemoveClientsViewController: UIViewController,
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.clients.count
+        viewModel.clients.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return L10n.Localizable.Registration.Devices.activeListHeader
+        L10n.Localizable.Registration.Devices.activeListHeader
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return L10n.Localizable.Registration.Devices.activeListSubtitle
+        L10n.Localizable.Registration.Devices.activeListSubtitle
     }
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
@@ -188,7 +188,7 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
+        viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -200,6 +200,6 @@ final class RemoveClientsViewController: UIViewController,
 
 extension RemoveUserClientError: LocalizedError {
     public var errorDescription: String? {
-        return L10n.Localizable.General.failure
+        L10n.Localizable.General.failure
     }
 }

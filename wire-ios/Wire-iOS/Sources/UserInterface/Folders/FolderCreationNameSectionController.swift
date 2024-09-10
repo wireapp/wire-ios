@@ -22,11 +22,11 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
     typealias Cell = FolderCreationNameCell
 
     var isHidden: Bool {
-        return false
+        false
     }
 
     var value: SimpleTextField.Value? {
-        return nameCell?.textField.value
+        nameCell?.textField.value
     }
 
     private var conversationName: String
@@ -62,7 +62,7 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
 
 extension FolderCreationNameSectionController {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -85,7 +85,7 @@ extension FolderCreationNameSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

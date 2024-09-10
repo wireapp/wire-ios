@@ -50,7 +50,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     public var minNumberOfRemainingKeys: UInt = 20
 
     fileprivate var insertSyncFilter: NSPredicate {
-        return NSPredicate { object, _ -> Bool in
+        NSPredicate { object, _ -> Bool in
             guard let client = object as? UserClient, let user = client.user else { return false }
             return user.isSelfUser
         }
@@ -200,19 +200,19 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     // we don;t use this method but it's required by ZMObjectStrategy protocol
     public var requestGenerators: [ZMRequestGenerator] {
-        return []
+        []
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.insertSync, self.modifiedSync, self.deleteSync]
+        [self.insertSync, self.modifiedSync, self.deleteSync]
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        false
     }
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        return requestsFactory.fetchClientsRequest(apiVersion: apiVersion)
+        requestsFactory.fetchClientsRequest(apiVersion: apiVersion)
     }
 
     public func request(
@@ -491,7 +491,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients
         let deletedClients = otherClients.filter {
-            return $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
+            $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
         }
 
         WaitingGroupTask(context: context) {
@@ -547,7 +547,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     // Should return the objects that need to be refetched from the BE in case of upload error
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
+        nil
     }
 
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {

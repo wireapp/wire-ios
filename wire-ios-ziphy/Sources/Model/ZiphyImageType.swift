@@ -39,6 +39,6 @@ public enum ZiphyImageType: String, CodingKey {
 
 extension ZiphyImageType {
     static var previewFallbackList: [ZiphyImageType] {
-        return [.fixedWidthDownsampled, .fixedWidth, .downsized, .original]
+        [.fixedWidthDownsampled, .fixedWidth, .downsized, .original]
     }
 }

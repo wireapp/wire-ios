@@ -25,21 +25,21 @@ import WireDataModel
 
 @objcMembers
 public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrationDelegate, ZMRequestCancellation {
-    public var taskCancellationDelegate: ZMRequestCancellation { return self }
-    public var clientRegistrationDelegate: ClientRegistrationDelegate { return self }
+    public var taskCancellationDelegate: ZMRequestCancellation { self }
+    public var clientRegistrationDelegate: ClientRegistrationDelegate { self }
 
     public var mockSynchronizationState = SynchronizationState.unauthenticated
     public var synchronizationState: SynchronizationState {
-        return mockSynchronizationState
+        mockSynchronizationState
     }
 
     public var mockOperationState = OperationState.foreground
     public var operationState: OperationState {
-        return mockOperationState
+        mockOperationState
     }
 
     public var requestCancellation: ZMRequestCancellation {
-        return self
+        self
     }
 
     // MARK: ZMRequestCancellation
@@ -61,7 +61,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
 
     /// Returns true if the client is registered
     public var clientIsReadyForRequests: Bool {
-        return true
+        true
     }
 
     public var didRequestResyncResources = false
@@ -83,7 +83,7 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
     }
 
     override var currentPhase: ZMAuthenticationPhase {
-        return mockPhase
+        mockPhase
     }
 }
 
@@ -113,21 +113,21 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     }
 
     var isLoggedIn: Bool {
-        return true
+        true
     }
 
     override var clientIsReadyForRequests: Bool {
-        return mockReadiness
+        mockReadiness
     }
 
     var isWaitingForLoginValue: Bool = false
     override var isWaitingForLogin: Bool {
-        return isWaitingForLoginValue
+        isWaitingForLoginValue
     }
 
     var isAddingEmailNecessaryValue: Bool = false
     override var isAddingEmailNecessary: Bool {
-        return isAddingEmailNecessaryValue
+        isAddingEmailNecessaryValue
     }
 }
 
@@ -139,7 +139,7 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var mockCredentials: UserEmailCredentials = UserEmailCredentials(email: "bla@example.com", password: "secret")
 
     override var credentials: UserEmailCredentials? {
-        return mockCredentials
+        mockCredentials
     }
 
     override func didFetchClients(_ clients: [UserClient]) {
@@ -165,7 +165,7 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
     var password = "verySafePassword"
 
     func emailCredentials() -> UserEmailCredentials {
-        return UserEmailCredentials(email: email, password: password)
+        UserEmailCredentials(email: email, password: password)
     }
 
     func credentialsMayBeCleared() {

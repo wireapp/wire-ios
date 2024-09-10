@@ -31,7 +31,7 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
 
         // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
-            return request
+            request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -55,12 +55,12 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
         })
 
         sut.responseGeneratorBlock = { (_: ZMTransportRequest?) -> ZMTransportResponse in
-            return ResponseGenerator.ResponseNotCompleted
+            ResponseGenerator.ResponseNotCompleted
         }
 
         // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
-            return request
+            request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -93,7 +93,7 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
 
         // WHEN
         sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
-            return request
+            request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

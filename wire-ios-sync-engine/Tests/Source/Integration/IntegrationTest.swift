@@ -125,18 +125,18 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
 
 extension IntegrationTest {
     var sessionManagerConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration.defaultConfiguration
+        SessionManagerConfiguration.defaultConfiguration
     }
 
     var shouldProcessLegacyPushes: Bool {
-        return false
+        false
     }
 
     static let SelfUserEmail = "myself@user.example.com"
     static let SelfUserPassword = "fgf0934';$@#%"
 
     var jailbreakDetector: JailbreakDetectorProtocol {
-        return MockJailbreakDetector()
+        MockJailbreakDetector()
     }
 
     @objc
@@ -325,7 +325,7 @@ extension IntegrationTest {
 
     @objc
     var unauthenticatedSession: UnauthenticatedSession? {
-        return sessionManager?.unauthenticatedSession
+        sessionManager?.unauthenticatedSession
     }
 
     @objc
@@ -499,7 +499,7 @@ extension IntegrationTest {
     @objc(userForMockUser:)
     func user(for mockUser: MockUser) -> ZMUser? {
         let uuid = mockUser.managedObjectContext!.performGroupedAndWait {
-            return UUID(transportString: mockUser.identifier)!
+            UUID(transportString: mockUser.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
@@ -516,7 +516,7 @@ extension IntegrationTest {
     @objc(conversationForMockConversation:)
     func conversation(for mockConversation: MockConversation) -> ZMConversation? {
         let uuid = mockConversation.managedObjectContext!.performGroupedAndWait {
-            return UUID(transportString: mockConversation.identifier)!
+            UUID(transportString: mockConversation.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
@@ -559,13 +559,13 @@ extension IntegrationTest {
     @discardableResult
     @objc(createSentConnectionFromUserWithName:uuid:)
     func createSentConnection(fromUserWithName name: String, uuid: UUID) -> MockUser {
-        return createConnection(fromUserWithName: name, uuid: uuid, status: "sent")
+        createConnection(fromUserWithName: name, uuid: uuid, status: "sent")
     }
 
     @discardableResult
     @objc(createPendingConnectionFromUserWithName:uuid:)
     func createPendingConnection(fromUserWithName name: String, uuid: UUID) -> MockUser {
-        return createConnection(fromUserWithName: name, uuid: uuid, status: "pending")
+        createConnection(fromUserWithName: name, uuid: uuid, status: "pending")
     }
 
     @discardableResult
@@ -711,11 +711,11 @@ extension IntegrationTest {
 
 extension IntegrationTest: SessionManagerDelegate {
     public var isInAuthenticatedAppState: Bool {
-        return appState == "authenticated"
+        appState == "authenticated"
     }
 
     public var isInUnathenticatedAppState: Bool {
-        return appState == "unauthenticated"
+        appState == "unauthenticated"
     }
 
     public func sessionManagerDidFailToLogin(error: Error?) {

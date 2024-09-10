@@ -21,7 +21,7 @@ import XCTest
 
 class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
     private func uniqueText() -> String {
-        return "This is a test for \(self.name): \(UUID.create())"
+        "This is a test for \(self.name): \(UUID.create())"
     }
 
     func testThatWeReceiveAMessageSentRemotely() {

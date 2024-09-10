@@ -90,7 +90,7 @@ extension NSManagedObjectContext {
     /// Non-persisted list of messages that caused security level degradation, indexed by conversation
     fileprivate(set) var messagesThatCausedSecurityLevelDegradationByConversation: SecurityDegradingMessagesByConversation {
         get {
-            return self.userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation ?? SecurityDegradingMessagesByConversation()
+            self.userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation ?? SecurityDegradingMessagesByConversation()
         }
         set {
             self.userInfo[messagesThatCausedSecurityLevelDegradationKey] = newValue

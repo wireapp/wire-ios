@@ -32,29 +32,29 @@ extension MicrophoneIconStyle: IconImageStyle {
     var icon: StyleKitIcon? {
         switch self {
         case .muted:
-            return .microphoneOff
+            .microphoneOff
         case .unmuted, .unmutedPulsing:
-            return .microphone
+            .microphone
         case .hidden:
-            return .none
+            .none
         }
     }
 
     var tintColor: UIColor? {
         switch self {
         case .unmutedPulsing:
-            return .accent()
+            .accent()
         default:
-            return nil
+            nil
         }
     }
 
     var accessibilityPrefix: String {
-        return "img.microphone"
+        "img.microphone"
     }
 
     var accessibilitySuffix: String {
-        return rawValue
+        rawValue
     }
 
     var accessibilityLabel: String {
@@ -70,7 +70,7 @@ extension MicrophoneIconStyle: IconImageStyle {
 }
 
 extension MicrophoneIconStyle: PulsingIconImageStyle {
-    var shouldPulse: Bool { return self == .unmutedPulsing }
+    var shouldPulse: Bool { self == .unmutedPulsing }
 }
 
 extension MicrophoneIconStyle {

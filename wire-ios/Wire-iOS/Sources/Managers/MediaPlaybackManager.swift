@@ -54,7 +54,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
 
     var looping: Bool {
         get {
-            return false
+            false
         }
 
         set {
@@ -64,7 +64,7 @@ final class MediaPlaybackManager: NSObject, AVSMedia {
 
     var playbackMuted: Bool {
         get {
-            return false
+            false
         }
 
         set {

@@ -92,7 +92,7 @@ import Foundation
     }
 
     private var searchUserObserverCenter: SearchUserObserverCenter {
-        return managedObjectContext.searchUserObserverCenter
+        managedObjectContext.searchUserObserverCenter
     }
 
     private var changeDetector: ChangeDetector
@@ -341,7 +341,7 @@ import Foundation
     }
 
     private var shouldFireNotifications: Bool {
-        return operationMode != .economical
+        operationMode != .economical
     }
 
     private func fireAllNotifications() {
@@ -401,6 +401,6 @@ import Foundation
 
 extension LazySequenceProtocol {
     fileprivate func collect() -> [Element] {
-        return Array(self)
+        Array(self)
     }
 }

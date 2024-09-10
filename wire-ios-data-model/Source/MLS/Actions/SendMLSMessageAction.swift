@@ -66,79 +66,79 @@ public final class SendMLSMessageAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "Endpoint not available"
+                "Endpoint not available"
 
             case .malformedRequest:
-                return "The request could not be formed"
+                "The request could not be formed"
 
             case .malformedResponse:
-                return "The response payload could not be decoded"
+                "The response payload could not be decoded"
 
             case .mlsWelcomeMismatch:
-                return "The list of targets of a welcome message does not match the list of new clients in a group"
+                "The list of targets of a welcome message does not match the list of new clients in a group"
 
             case .mlsGroupConversationMismatch:
-                return "Conversation ID resolved from group ID does not match submitted conversation ID"
+                "Conversation ID resolved from group ID does not match submitted conversation ID"
 
             case .mlsClientSenderUserMismatch:
-                return "User ID resolved from client ID does not match message's sender user ID"
+                "User ID resolved from client ID does not match message's sender user ID"
 
             case .mlsSelfRemovalNotAllowed:
-                return "Self removal from group is not allowed"
+                "Self removal from group is not allowed"
 
             case .mlsProtocolError:
-                return "MLS protocol error"
+                "MLS protocol error"
 
             case .mlsCommitMissingReferences:
-                return "The commit is not referencing all pending proposals"
+                "The commit is not referencing all pending proposals"
 
             case .invalidRequestBody:
-                return "Invalid request body"
+                "Invalid request body"
 
             case .missingLegalHoldConsent:
-                return "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent"
+                "Failed to connect to a user or to invite a user to a group because somebody is under legal hold and somebody else has not granted consent"
 
             case .mlsMissingSenderClient:
-                return "The client has to refresh their access token and provide their client ID"
+                "The client has to refresh their access token and provide their client ID"
 
             case .legalHoldNotEnabled:
-                return "Legal hold is not enabled for this team"
+                "Legal hold is not enabled for this team"
 
             case .accessDenied:
-                return "Conversation access denied"
+                "Conversation access denied"
 
             case .mlsProposalNotFound:
-                return "A proposal referenced in a commit message could not be found"
+                "A proposal referenced in a commit message could not be found"
 
             case .mlsKeyPackageRefNotFound:
-                return "A referenced key package could not be mapped to a known client"
+                "A referenced key package could not be mapped to a known client"
 
             case .noConversation:
-                return "Conversation not found"
+                "Conversation not found"
 
             case .noConversationMember:
-                return "Conversation member not found"
+                "Conversation member not found"
 
             case .mlsStaleMessage:
-                return "The conversation epoch in a message is too old"
+                "The conversation epoch in a message is too old"
 
             case .mlsClientMismatch:
-                return "A proposal of type Add or Remove does not apply to the full list of clients for a user"
+                "A proposal of type Add or Remove does not apply to the full list of clients for a user"
 
             case let .nonFederatingDomains(domains):
-                return "Some domains are note fully connected: \(domains)"
+                "Some domains are note fully connected: \(domains)"
 
             case .mlsUnsupportedProposal:
-                return "Unsupported proposal type"
+                "Unsupported proposal type"
 
             case .mlsUnsupportedMessage:
-                return "Attempted to send a message with an unsupported combination of content type and wire format"
+                "Attempted to send a message with an unsupported combination of content type and wire format"
 
             case let .unknown(status, label, message):
-                return "Unknown error (response status: \(status), label: \(label), message: \(message))"
+                "Unknown error (response status: \(status), label: \(label), message: \(message))"
 
             case let .unreachableDomains(domains):
-                return "Some domains were unreachable: \(domains)"
+                "Some domains were unreachable: \(domains)"
             }
         }
     }

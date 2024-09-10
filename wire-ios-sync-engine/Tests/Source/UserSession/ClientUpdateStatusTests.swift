@@ -84,11 +84,11 @@ class ClientUpdateStatusTests: MessagingTest {
     }
 
     func insertSelfClient() -> UserClient {
-        return insertNewClient(true)!
+        insertNewClient(true)!
     }
 
     func insertNewClient() -> UserClient {
-        return insertNewClient(false)!
+        insertNewClient(false)!
     }
 
     func testThatFetchedClientsDoNotContainSelfClient() {

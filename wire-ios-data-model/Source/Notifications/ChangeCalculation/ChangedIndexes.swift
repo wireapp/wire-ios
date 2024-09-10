@@ -29,7 +29,7 @@ extension NSOrderedSet {
 
 extension Array where Element: Hashable {
     public func toOrderedSetState() -> OrderedSetState<Element> {
-        return OrderedSetState(array: self)
+        OrderedSetState(array: self)
     }
 }
 
@@ -63,11 +63,11 @@ public struct OrderedSetState<T: Hashable>: Equatable {
     }
 
     public static func == (lhs: OrderedSetState<T>, rhs: OrderedSetState<T>) -> Bool {
-        return lhs.array as [T] == rhs.array as [T]
+        lhs.array as [T] == rhs.array as [T]
     }
 
     public func map<U>(_ transform: (T) throws -> U) rethrows -> [U] {
-        return try array.map(transform)
+        try array.map(transform)
     }
 }
 
@@ -80,7 +80,7 @@ public struct MovedIndex: Equatable {
     public let to: Int
 
     public static func == (lhs: MovedIndex, rhs: MovedIndex) -> Bool {
-        return lhs.from == rhs.from && lhs.to == rhs.to
+        lhs.from == rhs.from && lhs.to == rhs.to
     }
 }
 

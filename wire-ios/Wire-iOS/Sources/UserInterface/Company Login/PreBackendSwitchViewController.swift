@@ -31,7 +31,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     typealias Login = L10n.Localizable.Login.Sso.BackendSwitch
 
     var delegate: PreBackendSwitchViewControllerDelegate? {
-        return authenticationCoordinator
+        authenticationCoordinator
     }
 
     // MARK: - UI Styles

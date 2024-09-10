@@ -220,7 +220,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     }
 
     private var shouldTracksEvent: Bool {
-        return selfUser?.isTeamMember == true
+        selfUser?.isTeamMember == true
     }
 
     // MARK: - Tag events
@@ -314,6 +314,6 @@ extension Dictionary<String, Any> {
 
 extension Int {
     func logRound(factor: Double = 6) -> Int {
-        return Int(ceil(pow(2, floor(factor * log2(Double(self))) / factor)))
+        Int(ceil(pow(2, floor(factor * log2(Double(self))) / factor)))
     }
 }

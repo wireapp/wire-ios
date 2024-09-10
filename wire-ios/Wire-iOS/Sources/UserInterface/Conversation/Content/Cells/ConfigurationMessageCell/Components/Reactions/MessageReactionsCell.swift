@@ -27,7 +27,7 @@ struct MessageReactionMetadata: Equatable {
     let isSelfUserReacting: Bool
 
     static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
-        return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
+        lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
     }
 }
 

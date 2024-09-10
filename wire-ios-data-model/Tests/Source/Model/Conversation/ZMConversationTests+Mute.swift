@@ -21,11 +21,11 @@ import Foundation
 
 extension ZMConversation {
     @objc var isFullyMuted: Bool {
-        return mutedMessageTypes == .all
+        mutedMessageTypes == .all
     }
 
     @objc var isOnlyMentionsAndReplies: Bool {
-        return mutedMessageTypes == .regular
+        mutedMessageTypes == .regular
     }
 }
 

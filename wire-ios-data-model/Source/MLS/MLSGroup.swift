@@ -25,15 +25,15 @@ import Foundation
 @objcMembers
 public class MLSGroup: ZMManagedObject {
     override public static func entityName() -> String {
-        return "MLSGroup"
+        "MLSGroup"
     }
 
     override public class func sortKey() -> String? {
-        return nil
+        nil
     }
 
     override public class func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 
     // MARK: - Properties

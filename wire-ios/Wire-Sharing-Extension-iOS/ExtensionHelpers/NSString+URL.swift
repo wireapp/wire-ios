@@ -32,14 +32,14 @@ extension NSString {
     // MARK: - URL Formatting
 
     public func removingPrefixWWW() -> String {
-        return replacingOccurrences(of: "www.", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
+        replacingOccurrences(of: "www.", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
     }
 
     public func removingTrailingForwardSlash() -> String {
-        return replacingOccurrences(of: "/", with: "", options: [.anchored, .backwards], range: NSRange(location: 0, length: self.length))
+        replacingOccurrences(of: "/", with: "", options: [.anchored, .backwards], range: NSRange(location: 0, length: self.length))
     }
 
     public func removingURLScheme(_ scheme: String) -> String {
-        return replacingOccurrences(of: scheme + "://", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
+        replacingOccurrences(of: scheme + "://", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
     }
 }

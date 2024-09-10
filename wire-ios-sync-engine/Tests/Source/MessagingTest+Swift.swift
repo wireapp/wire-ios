@@ -37,7 +37,7 @@ extension MessagingTest {
     }
 
     public func createClientTextMessage() -> ZMClientMessage? {
-        return createClientTextMessageWith(text: self.name)
+        createClientTextMessageWith(text: self.name)
     }
 
     public func createClientTextMessageWith(text: String) -> ZMClientMessage? {

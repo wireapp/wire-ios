@@ -37,7 +37,7 @@ public enum ClientUpdateError: NSInteger {
     case clientToDeleteNotFound
 
     func errorForType() -> NSError {
-        return NSError(domain: ClientUpdateErrorDomain, code: self.rawValue, userInfo: nil)
+        NSError(domain: ClientUpdateErrorDomain, code: self.rawValue, userInfo: nil)
     }
 }
 
@@ -53,7 +53,7 @@ public enum ClientUpdateError: NSInteger {
     var prekeys: [IdPrekeyTuple]?
 
     open var credentials: UserEmailCredentials? {
-        return internalCredentials
+        internalCredentials
     }
 
     public init(syncManagedObjectContext: NSManagedObjectContext) {

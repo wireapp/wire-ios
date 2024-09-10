@@ -48,7 +48,7 @@ public struct TypingEvent {
     }
 
     func isEqual(other: TypingEvent) -> Bool {
-        return isTyping == other.isTyping &&
+        isTyping == other.isTyping &&
             objectID.isEqual(other.objectID) &&
             fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
     }

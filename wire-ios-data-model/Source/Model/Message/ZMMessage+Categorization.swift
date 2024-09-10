@@ -71,7 +71,7 @@ extension ZMMessage {
                                             excluding: MessageCategory = .none,
                                             conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
         let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: categories.map {
-            return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
+            NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
         })
 
         let excludingPredicate: NSPredicate? = (excluding != .none)
@@ -123,7 +123,7 @@ extension ZMMessage {
                         self.systemMessageCategory
         ]
         .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
-            return current.union(other)
+            current.union(other)
         }
         return category
     }
@@ -259,9 +259,9 @@ extension MessageCategory: CustomDebugStringConvertible {
     public var debugDescription: String {
         let categories = MessageCategory.descriptions
             .filter { category, _ -> Bool in
-                return contains(category)
+                contains(category)
             }.map { _, description -> String in
-                return description
+                description
             }
         let description = categories.isEmpty ? "None" : categories.joined(separator: ", ")
         return description

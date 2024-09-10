@@ -25,11 +25,11 @@ public protocol CallNotificationStyleProvider: AnyObject {
 
 @objc extension ZMUserSession: CallNotificationStyleProvider {
     public var callCenter: WireCallCenterV3? {
-        return managedObjectContext.zm_callCenter
+        managedObjectContext.zm_callCenter
     }
 
     public var callNotificationStyle: CallNotificationStyle {
-        return sessionManager?.callNotificationStyle ?? .pushNotifications
+        sessionManager?.callNotificationStyle ?? .pushNotifications
     }
 
     public var isCallOngoing: Bool {
@@ -39,12 +39,12 @@ public protocol CallNotificationStyleProvider: AnyObject {
     }
 
     var callKitManager: CallKitManagerInterface? {
-        return sessionManager?.callKitManager
+        sessionManager?.callKitManager
     }
 
     var useConstantBitRateAudio: Bool {
         get {
-            return managedObjectContext.zm_useConstantBitRateAudio
+            managedObjectContext.zm_useConstantBitRateAudio
         }
         set {
             managedObjectContext.zm_useConstantBitRateAudio = newValue
@@ -54,7 +54,7 @@ public protocol CallNotificationStyleProvider: AnyObject {
 
     var usePackagingFeatureConfig: Bool {
         get {
-            return managedObjectContext.zm_usePackagingFeatureConfig
+            managedObjectContext.zm_usePackagingFeatureConfig
         }
         set {
             managedObjectContext.zm_usePackagingFeatureConfig = newValue

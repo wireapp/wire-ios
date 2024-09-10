@@ -44,7 +44,7 @@ struct CallSnapshot {
     var updateConferenceInfoTask: Task<Void, Never>?
 
     var isDegradedCall: Bool {
-        return degradedUser != nil
+        degradedUser != nil
     }
 
     /**
@@ -53,7 +53,7 @@ struct CallSnapshot {
      */
 
     func update(with callState: CallState) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,
@@ -80,7 +80,7 @@ struct CallSnapshot {
      */
 
     func updateConstantBitrate(_ enabled: Bool) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,
@@ -107,7 +107,7 @@ struct CallSnapshot {
      */
 
     func updateVideoState(_ videoState: VideoState) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,
@@ -134,7 +134,7 @@ struct CallSnapshot {
      */
 
     func updateNetworkQuality(_ networkQuality: NetworkQuality) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,
@@ -165,7 +165,7 @@ struct CallSnapshot {
      */
 
     func updateDegradedUser(_ degradedUser: ZMUser) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,
@@ -192,7 +192,7 @@ struct CallSnapshot {
      */
 
     func updateActiveSpeakers(_ activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,
@@ -219,7 +219,7 @@ struct CallSnapshot {
      */
 
     func updateVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode) -> CallSnapshot {
-        return CallSnapshot(
+        CallSnapshot(
             qualifiedID: qualifiedID,
             groupIDs: groupIDs,
             callParticipants: callParticipants,

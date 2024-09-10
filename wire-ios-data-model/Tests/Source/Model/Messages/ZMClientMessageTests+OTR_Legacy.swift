@@ -71,8 +71,8 @@ extension ClientMessageTests_OTR_Legacy {
         XCTAssertEqual(createdMessage.hasBlob, true)
         await syncMOC.perform {
             let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
-                return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
-                    return clientEntry.client
+                (userEntry.clients).map { clientEntry -> Proteus_ClientId in
+                    clientEntry.client
                 }
             }
             let clientSet = Set(clientIds)
@@ -388,7 +388,7 @@ extension ClientMessageTests_OTR_Legacy {
             }
 
             let payloadClients = messageMetadata.recipients.compactMap { user -> [String] in
-                return user.clients.map({ String(format: "%llx", $0.client.client) })
+                user.clients.map({ String(format: "%llx", $0.client.client) })
             }.flatMap { $0 }
             XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
         }

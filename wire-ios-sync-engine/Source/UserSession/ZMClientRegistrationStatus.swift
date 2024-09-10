@@ -247,28 +247,28 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     public var clientIsReadyForRequests: Bool {
-        return currentPhase == .registered && !needsToRegisterMLSCLient
+        currentPhase == .registered && !needsToRegisterMLSCLient
     }
 
     var isWaitingForLogin: Bool {
-        return !cookieProvider.isAuthenticated
+        !cookieProvider.isAuthenticated
     }
 
     var needsToRegisterClient: Bool {
-        return Self.needsToRegisterClient(in: managedObjectContext)
+        Self.needsToRegisterClient(in: managedObjectContext)
     }
 
     var needsToRegisterMLSCLient: Bool {
-        return Self.needsToRegisterMLSClient(in: managedObjectContext)
+        Self.needsToRegisterMLSClient(in: managedObjectContext)
     }
 
     @objc(needsToRegisterClientInContext:)
     public static func needsToRegisterClient(in context: NSManagedObjectContext) -> Bool {
         // replace with selfUser.client.remoteIdentifier == nil
         if let clientID = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
-            return clientID.isEmpty
+            clientID.isEmpty
         } else {
-            return true
+            true
         }
     }
 
@@ -625,7 +625,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc
     public var needsToEnrollE2EI: Bool {
-        return FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
+        FeatureRepository(context: managedObjectContext).fetchE2EI().isEnabled
     }
 
     @objc(needsToRegisterMLSClientInContext:)

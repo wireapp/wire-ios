@@ -35,7 +35,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     @NSManaged var sortIndex: Int64
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        return NSEntityDescription.insertNewObject(forEntityName: self.entityName, into: context) as? StoredUpdateEvent
+        NSEntityDescription.insertNewObject(forEntityName: self.entityName, into: context) as? StoredUpdateEvent
     }
 
     /// Maps a passed in `ZMUpdateEvent` to a `StoredUpdateEvent` which is persisted in a database

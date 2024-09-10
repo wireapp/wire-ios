@@ -132,11 +132,11 @@ enum ConsentRequestFactory {
     static let consentPath = "/self/consent"
 
     static func fetchConsentRequest(apiVersion: APIVersion) -> ZMTransportRequest {
-        return .init(getFromPath: consentPath, apiVersion: apiVersion.rawValue)
+        .init(getFromPath: consentPath, apiVersion: apiVersion.rawValue)
     }
 
     static var sourceString: String {
-        return "iOS " + Bundle.main.version
+        "iOS " + Bundle.main.version
     }
 
     static func setConsentRequest(for consentType: ConsentType, value: Bool, apiVersion: APIVersion) -> ZMTransportRequest {

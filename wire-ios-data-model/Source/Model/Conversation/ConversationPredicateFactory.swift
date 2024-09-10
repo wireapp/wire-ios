@@ -36,7 +36,7 @@ public final class ConversationPredicateFactory: NSObject {
 
     @objc(predicateForArchivedConversations)
     public func predicateForArchivedConversations() -> NSPredicate {
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")])
+        NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")])
     }
 
     @objc(predicateForConversationsIncludingArchived)
@@ -110,7 +110,7 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func isValidConversation() -> NSPredicate {
-        return .any(of: [isValidConnection(), isValidOneOnOne(), isValidGroup()])
+        .any(of: [isValidConnection(), isValidOneOnOne(), isValidGroup()])
     }
 
     private func isValidConnection() -> NSPredicate {
@@ -130,13 +130,11 @@ public final class ConversationPredicateFactory: NSObject {
         let hasOneOnOneUser = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)) != NULL")
         let isConnectionAccepted = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser)).connection.status == \(ZMConnectionStatus.accepted.rawValue)")
 
-        let isOtherUserInSameTeam = {
-            if let selfTeam {
-                return NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
-            } else {
-                return NSPredicate(value: false)
-            }
-        }()
+        let isOtherUserInSameTeam = if let selfTeam {
+            NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.membership.team)) == %@", selfTeam)
+        } else {
+            NSPredicate(value: false)
+        }
 
         let isOtherUserBot = NSPredicate(format: "\(#keyPath(ZMConversation.oneOnOneUser.serviceIdentifier)) != NULL")
 
@@ -152,7 +150,7 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func predicateForConversationsInFolders() -> NSPredicate {
-        return NSPredicate(format: "ANY %K.%K == \(Label.Kind.folder.rawValue)", ZMConversationLabelsKey, #keyPath(Label.type))
+        NSPredicate(format: "ANY %K.%K == \(Label.Kind.folder.rawValue)", ZMConversationLabelsKey, #keyPath(Label.type))
     }
 
     private func predicateForOneToOneConversation() -> NSPredicate {
@@ -162,6 +160,6 @@ public final class ConversationPredicateFactory: NSObject {
     }
 
     private func predicateForUnconnectedConversations() -> NSPredicate {
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+        NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
     }
 }

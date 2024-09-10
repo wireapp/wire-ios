@@ -49,13 +49,13 @@ final class WebLinkTextView: UITextView {
 
     /// non-selectable textview
     override var selectedTextRange: UITextRange? {
-        get { return nil }
+        get { nil }
         set { /* no-op */ }
     }
 
     // Prevent double-tap to select 
     override var canBecomeFirstResponder: Bool {
-        return false
+        false
     }
 
     override func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
@@ -70,6 +70,6 @@ final class WebLinkTextView: UITextView {
 
 extension WebLinkTextView: UITextDragDelegate {
     func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
-        return []
+        []
     }
 }

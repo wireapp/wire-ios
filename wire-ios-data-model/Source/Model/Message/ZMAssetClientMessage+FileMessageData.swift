@@ -134,11 +134,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     /// If the asset is a rich file type, this returns its type.
     public var richAssetType: RichAssetFileType? {
-        return mimeType.flatMap(RichAssetFileType.init)
+        mimeType.flatMap(RichAssetFileType.init)
     }
 
     public var hasLocalFileData: Bool {
-        return asset?.hasDownloadedFile ?? false
+        asset?.hasDownloadedFile ?? false
     }
 
     public func temporaryURLToDecryptedFile() -> URL? {
@@ -190,7 +190,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     /// File name as was sent or `nil` in case of an image asset
     public var filename: String? {
-        return underlyingMessage?.assetData?.original.name.normalizedFilename
+        underlyingMessage?.assetData?.original.name.normalizedFilename
     }
 
     public var thumbnailAssetID: String? {
@@ -249,27 +249,27 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return asset?.imagePreviewDataIdentifier
+        asset?.imagePreviewDataIdentifier
     }
 
     public var isPass: Bool {
-        return richAssetType == .walletPass
+        richAssetType == .walletPass
     }
 
     public var isVideo: Bool {
-        return richAssetType == .video
+        richAssetType == .video
     }
 
     public var isAudio: Bool {
-        return richAssetType == .audio
+        richAssetType == .audio
     }
 
     public var isPDF: Bool {
-        return mimeType == "application/pdf"
+        mimeType == "application/pdf"
     }
 
     public var v3_isImage: Bool {
-        return underlyingMessage?.v3_isImage ?? false
+        underlyingMessage?.v3_isImage ?? false
     }
 
     public var videoDimensions: CGSize {

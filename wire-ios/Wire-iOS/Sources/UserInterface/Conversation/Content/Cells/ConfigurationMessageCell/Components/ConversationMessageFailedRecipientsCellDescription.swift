@@ -109,7 +109,7 @@ extension NSAttributedString {
     }
 
     static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {
-        return .markdown(from: text, style: .errorLabelStyle)
+        .markdown(from: text, style: .errorLabelStyle)
             .adding(font: .mediumSemiboldFont, to: highlighted)
     }
 }

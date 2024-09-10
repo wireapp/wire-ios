@@ -95,14 +95,14 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var isDownloaded: Bool {
-        return hasDownloadedFile
+        hasDownloadedFile
     }
 
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
 
     fileprivate var isImage: Bool {
-        return assetClientMessage.underlyingMessage?.v3_isImage ?? false
+        assetClientMessage.underlyingMessage?.v3_isImage ?? false
     }
 
     public init?(with message: ZMAssetClientMessage) {
@@ -142,11 +142,11 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var imageDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
+        FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
     }
 
     public var isAnimatedGIF: Bool {
@@ -182,9 +182,9 @@ extension V3Asset: AssetProxyType {
 
     public var hasDownloadedFile: Bool {
         if isImage {
-            return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
+            moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
         } else {
-            return moc.zm_fileAssetCache.hasFileData(for: assetClientMessage)
+            moc.zm_fileAssetCache.hasFileData(for: assetClientMessage)
         }
     }
 

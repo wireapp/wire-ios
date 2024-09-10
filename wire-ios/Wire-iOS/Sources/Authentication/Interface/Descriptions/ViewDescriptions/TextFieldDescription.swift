@@ -40,7 +40,7 @@ final class TextFieldDescription: NSObject, ValueSubmission {
         super.init()
 
         canSubmit = { [weak self] in
-            return (self?.acceptsInput == true) && (self?.validationError == nil)
+            (self?.acceptsInput == true) && (self?.validationError == nil)
         }
     }
 }

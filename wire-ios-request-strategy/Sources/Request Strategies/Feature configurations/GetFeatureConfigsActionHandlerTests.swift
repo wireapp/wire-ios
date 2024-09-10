@@ -28,7 +28,7 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
     }
 
     func mockResponse(status: Int, payload: ZMTransportData? = nil) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: payload,
             httpStatus: status,
             transportSessionError: nil,

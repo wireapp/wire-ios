@@ -35,7 +35,7 @@ public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync]
+        [modifiedKeysSync]
     }
 }
 

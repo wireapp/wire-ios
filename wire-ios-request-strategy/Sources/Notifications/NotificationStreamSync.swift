@@ -105,7 +105,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     public func startUUID() -> UUID? {
-        return self.lastUpdateEventID
+        self.lastUpdateEventID
     }
 
     @objc(processUpdateEventsAndReturnLastNotificationIDFromPayload:)
@@ -178,6 +178,6 @@ extension NotificationStreamSync {
     }
 
     private func eventDictionariesFrom(payload: ZMTransportData?) -> [[String: Any]]? {
-        return payload?.asDictionary()?["notifications"] as? [[String: Any]]
+        payload?.asDictionary()?["notifications"] as? [[String: Any]]
     }
 }

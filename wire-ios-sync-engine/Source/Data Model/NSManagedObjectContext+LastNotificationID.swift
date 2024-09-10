@@ -46,6 +46,6 @@ extension NSManagedObjectContext: ZMLastNotificationIDStore {
     }
 
     public var zm_hasLastNotificationID: Bool {
-        return zm_lastNotificationID != nil
+        zm_lastNotificationID != nil
     }
 }

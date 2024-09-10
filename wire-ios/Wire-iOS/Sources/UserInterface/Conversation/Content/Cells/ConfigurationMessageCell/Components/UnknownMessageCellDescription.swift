@@ -21,7 +21,7 @@ import WireDataModel
 
 extension CustomMessageView: ConversationMessageCell {
     var selectionView: UIView? {
-        return messageLabel
+        messageLabel
     }
 
     func configure(with object: String, animated: Bool) {

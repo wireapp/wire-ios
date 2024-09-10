@@ -26,7 +26,7 @@ final class TextSearchViewController: NSObject {
     weak var delegate: MessageActionResponder? = .none
     let conversation: ConversationLike
     var searchQuery: String? {
-        return searchBar.query
+        searchBar.query
     }
 
     private var textSearchQuery: TextSearchQuery?
@@ -150,13 +150,13 @@ extension TextSearchViewController: TextSearchInputViewDelegate {
     }
 
     func searchViewShouldReturn(_ searchView: TextSearchInputView) -> Bool {
-        return TextSearchQuery.isValid(query: searchView.query)
+        TextSearchQuery.isValid(query: searchView.query)
     }
 }
 
 extension TextSearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return results.count
+        results.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

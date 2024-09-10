@@ -66,11 +66,11 @@ extension UpdateConversationProtocolAction {
             public var statusCode: Int {
                 switch self {
                 case .mlsMigrationCriteriaNotSatisfied, .invalidBody:
-                    return 400
+                    400
                 case .operationDenied, .noTeamMember, .invalidOp, .actionDenied, .invalidProtocolTransition:
-                    return 403
+                    403
                 case .conversationIdOrDomainNotFound, .noTeam, .noConversation:
-                    return 404
+                    404
                 }
             }
         }

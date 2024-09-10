@@ -51,7 +51,7 @@ extension Data {
     }
 
     public func zmHMACSHA256Digest(key: Data) -> Data {
-        return (self as NSData).zmHMACSHA256Digest(withKey: key)
+        (self as NSData).zmHMACSHA256Digest(withKey: key)
     }
 
     public func zmHexEncodedString() -> String {
@@ -68,23 +68,23 @@ extension Data {
     }
 
     public static func zmRandomSHA256Key() -> Data {
-        return NSData.zmRandomSHA256Key()
+        NSData.zmRandomSHA256Key()
     }
 
     public func zmSHA256Digest() -> Data {
-        return (self as NSData).zmSHA256Digest()
+        (self as NSData).zmSHA256Digest()
     }
 
     public func base64String() -> String {
-        return (self as NSData).base64String()
+        (self as NSData).base64String()
     }
 
     public func zmEncryptPrefixingIV(key: Data) -> Data {
-        return (self as NSData).zmEncryptPrefixingIV(withKey: key)
+        (self as NSData).zmEncryptPrefixingIV(withKey: key)
     }
 
     public func zmDecryptPrefixedIV(key: Data) -> Data {
-        return (self as NSData).zmDecryptPrefixedIV(withKey: key)
+        (self as NSData).zmDecryptPrefixedIV(withKey: key)
     }
 
     public func zmEncryptPrefixingPlainTextIV(key: Data) throws -> Data {
@@ -101,7 +101,7 @@ extension Data {
         let iv = Data.secureRandomData(length: UInt(ivSize))
 
         let encryptedDataBytes = encryptedData.withUnsafeMutableBytes {
-            return $0.baseAddress
+            $0.baseAddress
         }
         let status = CCCrypt(CCOperation(kCCEncrypt),
                              CCAlgorithm(kCCAlgorithmAES),
@@ -127,15 +127,15 @@ extension Data {
     }
 
     public func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {
-        return (self as NSData).zmDecryptPrefixedPlainTextIV(withKey: key)
+        (self as NSData).zmDecryptPrefixedPlainTextIV(withKey: key)
     }
 
     public static func secureRandomData(length: UInt) -> Data {
-        return NSData.secureRandomData(ofLength: length)
+        NSData.secureRandomData(ofLength: length)
     }
 
     public static func randomEncryptionKey() -> Data {
-        return NSData.randomEncryptionKey()
+        NSData.randomEncryptionKey()
     }
 }
 

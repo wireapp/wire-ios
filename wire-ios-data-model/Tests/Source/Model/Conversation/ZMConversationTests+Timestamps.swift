@@ -294,7 +294,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
         // expect
         customExpectation(forNotification: ZMConversation.lastReadDidChangeNotificationName, object: nil) { _ -> Bool in
-            return true
+            true
         }
 
         // when

@@ -501,9 +501,9 @@ extension FeatureRepository {
         public var hasFurtherActions: Bool {
             switch self {
             case .e2eIEnabled:
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }

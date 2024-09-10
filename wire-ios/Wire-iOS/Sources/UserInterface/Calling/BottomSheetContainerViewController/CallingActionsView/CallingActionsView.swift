@@ -239,11 +239,11 @@ final class CallingActionsView: UIView {
     }
 
     private func canToggleMuteButton(_ input: CallActionsViewInputType) -> Bool {
-        return !input.permissions.isAudioDisabledForever
+        !input.permissions.isAudioDisabledForever
     }
 
     private func canToggleSpeakerButton(_ input: CallActionsViewInputType) -> Bool {
-        return input.mediaState.canSpeakerBeToggled
+        input.mediaState.canSpeakerBeToggled
     }
 
     // MARK: - Action Output
@@ -254,13 +254,13 @@ final class CallingActionsView: UIView {
 
     private func action(for button: IconLabelButton) -> CallAction {
         switch button {
-        case microphoneButton: return .toggleMuteState
-        case cameraButton: return .toggleVideoState
-        case videoButtonDisabledTapRecognizer: return .alertVideoUnavailable
-        case speakerButton: return .toggleSpeakerState
-        case flipCameraButton: return .flipCamera
-        case endCallButton, largeHangUpButton: return .terminateCall
-        case largePickUpButton: return .acceptCall
+        case microphoneButton: .toggleMuteState
+        case cameraButton: .toggleVideoState
+        case videoButtonDisabledTapRecognizer: .alertVideoUnavailable
+        case speakerButton: .toggleSpeakerState
+        case flipCameraButton: .flipCamera
+        case endCallButton, largeHangUpButton: .terminateCall
+        case largePickUpButton: .acceptCall
         default: fatalError("Unexpected Button: \(button)")
         }
     }

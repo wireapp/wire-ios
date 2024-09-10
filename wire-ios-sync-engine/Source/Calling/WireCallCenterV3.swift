@@ -208,17 +208,17 @@ extension WireCallCenterV3 {
 extension WireCallCenterV3 {
     /// All non idle conversations and their corresponding call state.
     public var nonIdleCalls: [AVSIdentifier: CallState] {
-        return callSnapshots.mapValues({ $0.callState })
+        callSnapshots.mapValues({ $0.callState })
     }
 
     /// The list of conversation with established calls.
     public var activeCalls: [AVSIdentifier: CallState] {
-        return nonIdleCalls.filter { _, callState in
+        nonIdleCalls.filter { _, callState in
             switch callState {
             case .established, .establishedDataChannel:
-                return true
+                true
             default:
-                return false
+                false
             }
         }
     }
@@ -230,7 +230,7 @@ extension WireCallCenterV3 {
      */
 
     public func isVideoCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isVideo ?? false
+        callSnapshots[conversationId]?.isVideo ?? false
     }
 
     /**
@@ -240,7 +240,7 @@ extension WireCallCenterV3 {
      */
 
     public func isContantBitRate(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isConstantBitRate ?? false
+        callSnapshots[conversationId]?.isConstantBitRate ?? false
     }
 
     /**
@@ -250,7 +250,7 @@ extension WireCallCenterV3 {
      */
 
     public func videoState(conversationId: AVSIdentifier) -> VideoState {
-        return callSnapshots[conversationId]?.videoState ?? .stopped
+        callSnapshots[conversationId]?.videoState ?? .stopped
     }
 
     /**
@@ -260,7 +260,7 @@ extension WireCallCenterV3 {
      */
 
     public func callState(conversationId: AVSIdentifier) -> CallState {
-        return callSnapshots[conversationId]?.callState ?? .none
+        callSnapshots[conversationId]?.callState ?? .none
     }
 
     /**
@@ -272,9 +272,9 @@ extension WireCallCenterV3 {
     public func isActive(conversationId: AVSIdentifier) -> Bool {
         switch callState(conversationId: conversationId) {
         case .established, .establishedDataChannel:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -333,36 +333,36 @@ extension WireCallCenterV3 {
     /// Returns conversations with a non idle call state.
     public func nonIdleCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
         let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, _: CallState) -> ZMConversation? in
-            return ZMConversation.fetch(with: key.identifier,
-                                        domain: key.domain,
-                                        in: userSession.managedObjectContext)
+            ZMConversation.fetch(with: key.identifier,
+                                 domain: key.domain,
+                                 in: userSession.managedObjectContext)
         }
 
         return conversations
     }
 
     public func networkQuality(conversationId: AVSIdentifier) -> NetworkQuality {
-        return callSnapshots[conversationId]?.networkQuality ?? .normal
+        callSnapshots[conversationId]?.networkQuality ?? .normal
     }
 
     public func isConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.conversationType.isConference ?? false
+        callSnapshots[conversationId]?.conversationType.isConference ?? false
     }
 
     public func isMLSConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.conversationType == .mlsConference
+        callSnapshots[conversationId]?.conversationType == .mlsConference
     }
 
     func degradedUser(conversationId: AVSIdentifier) -> ZMUser? {
-        return callSnapshots[conversationId]?.degradedUser
+        callSnapshots[conversationId]?.degradedUser
     }
 
     public func videoGridPresentationMode(conversationId: AVSIdentifier) -> VideoGridPresentationMode {
-        return callSnapshots[conversationId]?.videoGridPresentationMode ?? .allVideoStreams
+        callSnapshots[conversationId]?.videoGridPresentationMode ?? .allVideoStreams
     }
 
     private func isGroup(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isGroup ?? false
+        callSnapshots[conversationId]?.isGroup ?? false
     }
 }
 
@@ -447,7 +447,7 @@ extension WireCallCenterV3 {
     }
 
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
-        return onParticipantsChangedSubject.eraseToAnyPublisher()
+        onParticipantsChangedSubject.eraseToAnyPublisher()
     }
 }
 
@@ -504,7 +504,7 @@ extension WireCallCenterV3 {
         previousParticipants: [AVSCallMember],
         newParticipants: [AVSCallMember]
     ) -> Bool {
-        return previousParticipants.count == 2 && newParticipants.count == 1
+        previousParticipants.count == 2 && newParticipants.count == 1
     }
 }
 
@@ -907,9 +907,9 @@ extension WireCallCenterV3 {
 
     private func callType(for conversation: ZMConversation, startedWithVideo: Bool, isConferenceCall: Bool) -> AVSCallType {
         if !isConferenceCall, conversation.localParticipants.count > legacyVideoParticipantsLimit {
-            return .audioOnly
+            .audioOnly
         } else {
-            return startedWithVideo ? .video : .normal
+            startedWithVideo ? .video : .normal
         }
     }
 }
@@ -1014,7 +1014,7 @@ extension WireCallCenterV3 {
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
-        return conversationType(from: callEvent.conversationId)
+        conversationType(from: callEvent.conversationId)
     }
 
     func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
@@ -1094,16 +1094,16 @@ extension WireCallCenterV3 {
     private func getAVSConversationType(for conversation: ZMConversation) -> AVSConversationType? {
         switch (conversation.conversationType, conversation.messageProtocol) {
         case (.oneOnOne, _):
-            return getAVSConversationTypeForOneOnOne(conversation)
+            getAVSConversationTypeForOneOnOne(conversation)
 
         case (.group, .proteus), (.group, .mixed):
-            return .conference
+            .conference
 
         case (.group, .mls), (.`self`, .mls):
-            return .mlsConference
+            .mlsConference
 
         default:
-            return nil
+            nil
         }
     }
 

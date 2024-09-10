@@ -92,11 +92,11 @@ public final class CompanyLoginRequestDetector: NSObject {
     /// - Returns: type of input with its eventual associated value
     public static func parse(input: String) -> ParserResult {
         if let domain = domain(from: input) {
-            return .domain(domain)
+            .domain(domain)
         } else if let code = requestCode(in: input) {
-            return .ssoCode(code)
+            .ssoCode(code)
         } else {
-            return .unknown
+            .unknown
         }
     }
 
@@ -131,6 +131,6 @@ public final class CompanyLoginRequestDetector: NSObject {
      */
 
     public static func isValidRequestCode(in string: String) -> Bool {
-        return requestCode(in: string) != nil
+        requestCode(in: string) != nil
     }
 }

@@ -128,7 +128,7 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
     // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        return ZMTransportRequest(getFromPath: "/properties/labels", apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(getFromPath: "/properties/labels", apiVersion: apiVersion.rawValue)
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

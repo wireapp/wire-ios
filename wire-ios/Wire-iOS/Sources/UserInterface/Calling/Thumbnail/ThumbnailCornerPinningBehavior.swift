@@ -162,10 +162,10 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     }
 
     func position(for corner: Corner) -> CGPoint {
-        return fieldBehaviors[corner.rawValue].position
+        fieldBehaviors[corner.rawValue].position
     }
 
     func positionForCurrentCorner() -> CGPoint? {
-        return currentCorner.flatMap(position)
+        currentCorner.flatMap(position)
     }
 }

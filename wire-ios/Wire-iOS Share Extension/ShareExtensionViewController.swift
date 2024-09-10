@@ -195,9 +195,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override func configurationItems() -> [Any]! {
         if let count = accountManager?.accounts.count, count > 1 {
-            return [accountItem, conversationItem]
+            [accountItem, conversationItem]
         } else {
-            return [conversationItem]
+            [conversationItem]
         }
     }
 
@@ -211,7 +211,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override func presentationAnimationDidFinish() {
         if authenticatedAccounts.count == 0 {
-            return presentNotSignedInMessage()
+            presentNotSignedInMessage()
         }
     }
 
@@ -381,7 +381,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     /// Display a preview image.
     override func loadPreviewView() -> UIView! {
-        return preview
+        preview
     }
 
     func updatePreview() {

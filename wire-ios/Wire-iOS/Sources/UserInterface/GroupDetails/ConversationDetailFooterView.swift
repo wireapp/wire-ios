@@ -34,7 +34,7 @@ class ConversationDetailFooterView: UIView {
 
     var leftIcon: StyleKitIcon? {
         get {
-            return leftButton.icon(for: .normal)
+            leftButton.icon(for: .normal)
         }
         set {
             leftButton.isHidden = (newValue == .none)
@@ -46,7 +46,7 @@ class ConversationDetailFooterView: UIView {
 
     var rightIcon: StyleKitIcon? {
         get {
-            return rightButton.icon(for: .normal)
+            rightButton.icon(for: .normal)
         }
         set {
             rightButton.isHidden = (newValue == .none)

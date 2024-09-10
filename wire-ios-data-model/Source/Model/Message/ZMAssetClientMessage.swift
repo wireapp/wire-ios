@@ -46,22 +46,22 @@ import Foundation
 
     /// Remote asset ID
     public var assetId: UUID? {
-        get { return transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }
+        get { transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }
         set { setTransientUUID(newValue, forKey: #keyPath(ZMAssetClientMessage.assetId)) }
     }
 
     public static func keyPathsForValuesAffectingAssetID() -> Set<String> {
-        return [#keyPath(ZMAssetClientMessage.assetID_data)]
+        [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Preprocessed size of image
     public var preprocessedSize: CGSize {
-        get { return transientCGSize(forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
+        get { transientCGSize(forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
         set { setTransientCGSize(newValue, forKey: #keyPath(ZMAssetClientMessage.preprocessedSize)) }
     }
 
     public static func keyPathsForValuesPreprocessedSize() -> Set<String> {
-        return [#keyPath(ZMAssetClientMessage.assetID_data)]
+        [#keyPath(ZMAssetClientMessage.assetID_data)]
     }
 
     /// Original file size
@@ -96,22 +96,22 @@ import Foundation
     /// Download state
     public var downloadState: AssetDownloadState {
         if hasDownloadedFile {
-            return .downloaded
+            .downloaded
         } else if isDownloading {
-            return .downloading
+            .downloading
         } else {
-            return .remote
+            .remote
         }
     }
 
     /// Whether the image preview has been downloaded
     public var hasDownloadedPreview: Bool {
-        return asset?.hasDownloadedPreview ?? false
+        asset?.hasDownloadedPreview ?? false
     }
 
     /// Whether the file has been downloaded
     public var hasDownloadedFile: Bool {
-        return asset?.hasDownloadedFile ?? false
+        asset?.hasDownloadedFile ?? false
     }
 
     // Wheather the referenced asset is encrypted
@@ -156,19 +156,19 @@ import Foundation
     }
 
     static func keyPathsForValuesAffectingAssociatedTaskIdentifier() -> Set<String> {
-        return [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
+        [#keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)]
     }
 
     var v2Asset: V2Asset? {
-        return V2Asset(with: self)
+        V2Asset(with: self)
     }
 
     var v3Asset: V3Asset? {
-        return V3Asset(with: self)
+        V3Asset(with: self)
     }
 
     var asset: AssetProxyType? {
-        return self.v2Asset ?? self.v3Asset
+        self.v2Asset ?? self.v3Asset
     }
 
     override public func expire() {
@@ -229,7 +229,7 @@ import Foundation
     }
 
     override public var isSilenced: Bool {
-        return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+        conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }
 
     // Private implementation
@@ -262,11 +262,11 @@ extension ZMAssetClientMessage {
     }
 
     override public static func entityName() -> String {
-        return "AssetClientMessage"
+        "AssetClientMessage"
     }
 
     override public var ignoredKeys: Set<AnyHashable>? {
-        return (super.ignoredKeys ?? Set())
+        (super.ignoredKeys ?? Set())
             .union([
                 #keyPath(ZMAssetClientMessage.assetID_data),
                 #keyPath(ZMAssetClientMessage.preprocessedSize_data),
@@ -281,7 +281,7 @@ extension ZMAssetClientMessage {
     }
 
     override public static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
-        return nil
+        nil
     }
 }
 
@@ -328,26 +328,26 @@ struct CacheAsset: AssetType {
     var needsPreprocessing: Bool {
         switch type {
         case .file:
-            return false
+            false
         case .image,
              .thumbnail:
-            return true
+            true
         }
     }
 
     var hasOriginal: Bool {
         if case .file = type {
-            return cache.hasOriginalFileData(for: owner)
+            cache.hasOriginalFileData(for: owner)
         } else {
-            return cache.hasOriginalImageData(for: owner)
+            cache.hasOriginalImageData(for: owner)
         }
     }
 
     var original: Data? {
         if case .file = type {
-            return cache.originalFileData(for: owner)
+            cache.originalFileData(for: owner)
         } else {
-            return cache.originalImageData(for: owner)
+            cache.originalImageData(for: owner)
         }
     }
 
@@ -364,18 +364,18 @@ struct CacheAsset: AssetType {
     var hasEncrypted: Bool {
         switch type {
         case .file:
-            return cache.hasEncryptedFileData(for: owner)
+            cache.hasEncryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.hasEncryptedMediumImageData(for: owner)
+            cache.hasEncryptedMediumImageData(for: owner)
         }
     }
 
     var encrypted: Data? {
         switch type {
         case .file:
-            return cache.encryptedFileData(for: owner)
+            cache.encryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.encryptedMediumImageData(for: owner)
+            cache.encryptedMediumImageData(for: owner)
         }
     }
 

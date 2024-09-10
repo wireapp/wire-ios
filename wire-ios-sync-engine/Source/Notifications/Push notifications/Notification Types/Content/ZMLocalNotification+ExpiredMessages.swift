@@ -34,7 +34,7 @@ extension ZMLocalNotification {
         fileprivate let managedObjectContext: NSManagedObjectContext
 
         var notificationType: LocalNotificationType {
-            return LocalNotificationType.failedMessage
+            LocalNotificationType.failedMessage
         }
 
         init?(conversation: ZMConversation?) {
@@ -45,15 +45,15 @@ extension ZMLocalNotification {
         }
 
         func shouldCreateNotification() -> Bool {
-            return true
+            true
         }
 
         func titleText() -> String? {
-            return notificationType.titleText(selfUser: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
+            notificationType.titleText(selfUser: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
         }
 
         func bodyText() -> String {
-            return notificationType.messageBodyText(sender: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
+            notificationType.messageBodyText(sender: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
         }
 
         func userInfo() -> NotificationUserInfo? {

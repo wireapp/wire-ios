@@ -75,15 +75,15 @@ extension ZMTransportRequestMethod: CustomStringConvertible {
     public var description: String {
         switch self {
         case .get:
-            return "GET"
+            "GET"
         case .delete:
-            return "DELETE"
+            "DELETE"
         case .put:
-            return "PUT"
+            "PUT"
         case .post:
-            return "POST"
+            "POST"
         case .head:
-            return "HEAD"
+            "HEAD"
         }
     }
 }

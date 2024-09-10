@@ -28,7 +28,7 @@ final class NoResultsView: UIView {
 
     var placeholderText: String? {
         get {
-            return label.text
+            label.text
         }
         set {
             label.text = newValue

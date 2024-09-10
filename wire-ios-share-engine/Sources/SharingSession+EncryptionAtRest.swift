@@ -28,11 +28,11 @@ public protocol SharingSessionEncryptionAtRestInterface {
 
 extension SharingSession: SharingSessionEncryptionAtRestInterface {
     public var encryptMessagesAtRest: Bool {
-        return userInterfaceContext.encryptMessagesAtRest
+        userInterfaceContext.encryptMessagesAtRest
     }
 
     public var isDatabaseLocked: Bool {
-        return userInterfaceContext.isLocked
+        userInterfaceContext.isLocked
     }
 
     public func unlockDatabase() throws {

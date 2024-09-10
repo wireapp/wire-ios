@@ -94,7 +94,7 @@ class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
         // given
         let text = String(repeating: "@", count: 501)
         let tooManyMentions = (0...500).map({ index in
-            return Mention(range: NSRange(location: index, length: 1), user: user1)
+            Mention(range: NSRange(location: index, length: 1), user: user1)
         })
         let message = createMessage(text: text, mentions: tooManyMentions)
 

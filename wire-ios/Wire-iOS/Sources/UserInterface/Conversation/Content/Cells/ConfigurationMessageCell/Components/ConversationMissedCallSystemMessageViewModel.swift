@@ -30,7 +30,7 @@ struct ConversationMissedCallSystemMessageViewModel {
     let message: ZMConversationMessage
 
     func image() -> UIImage? {
-        return iconColor.map { icon.makeImage(size: .tiny, color: $0) }
+        iconColor.map { icon.makeImage(size: .tiny, color: $0) }
     }
 
     func attributedTitle() -> NSAttributedString? {

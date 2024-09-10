@@ -33,7 +33,7 @@ protocol EARKeyEncryptorInterface {
 
 struct EARKeyEncryptor: EARKeyEncryptorInterface {
     private var databaseKeyAlgorithm: SecKeyAlgorithm {
-        return .eciesEncryptionCofactorX963SHA256AESGCM
+        .eciesEncryptionCofactorX963SHA256AESGCM
     }
 
     func encryptDatabaseKey(

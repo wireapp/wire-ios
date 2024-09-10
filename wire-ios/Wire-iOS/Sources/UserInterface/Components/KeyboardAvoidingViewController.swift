@@ -43,28 +43,28 @@ class KeyboardAvoidingViewController: UIViewController {
     }
 
     override var shouldAutorotate: Bool {
-        return viewController.shouldAutorotate
+        viewController.shouldAutorotate
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return viewController.supportedInterfaceOrientations
+        viewController.supportedInterfaceOrientations
     }
 
     override var navigationItem: UINavigationItem {
-        return viewController.navigationItem
+        viewController.navigationItem
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return viewController
+        viewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return viewController
+        viewController
     }
 
     override var title: String? {
         get {
-            return viewController.title
+            viewController.title
         }
         set {
             viewController.title = newValue

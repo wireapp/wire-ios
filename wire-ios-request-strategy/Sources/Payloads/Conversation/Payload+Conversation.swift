@@ -43,7 +43,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationCreate
+            .conversationCreate
         }
 
         var qualifiedID: QualifiedID?

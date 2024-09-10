@@ -20,7 +20,7 @@ import UIKit
 
 extension String {
     func split(every: Int) -> [String] {
-        return stride(from: 0, to: count, by: every).map { i in
+        stride(from: 0, to: count, by: every).map { i in
             let start = index(startIndex, offsetBy: i)
             let end = index(start, offsetBy: every, limitedBy: endIndex) ?? endIndex
 
@@ -29,7 +29,7 @@ extension String {
     }
 
     var fingerprintStringWithSpaces: String {
-        return split(every: 2).joined(separator: " ")
+        split(every: 2).joined(separator: " ")
     }
 
     func fingerprintString(attributes: [NSAttributedString.Key: Any],

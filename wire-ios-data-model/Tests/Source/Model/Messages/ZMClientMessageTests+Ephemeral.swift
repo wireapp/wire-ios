@@ -46,11 +46,11 @@ class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
     }
 
     var obfuscationTimer: ZMMessageDestructionTimer? {
-        return syncMOC.zm_messageObfuscationTimer
+        syncMOC.zm_messageObfuscationTimer
     }
 
     var deletionTimer: ZMMessageDestructionTimer? {
-        return uiMOC.zm_messageDeletionTimer
+        uiMOC.zm_messageDeletionTimer
     }
 }
 
@@ -405,9 +405,9 @@ extension ZMClientMessageTests_Ephemeral {
             if let clientMessage = $0 as? ZMClientMessage,
                let genericMessage = clientMessage.underlyingMessage,
                case .deleted? = genericMessage.content {
-                return true
+                true
             } else {
-                return false
+                false
             }
         }) as? ZMClientMessage
         else { return XCTFail()}

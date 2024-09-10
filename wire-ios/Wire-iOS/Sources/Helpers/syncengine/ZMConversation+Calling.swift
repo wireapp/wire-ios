@@ -24,7 +24,7 @@ import class WireCommonComponents.NetworkStatus
 // TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
     var isCallingSupported: Bool {
-        return localParticipants.count > 1
+        localParticipants.count > 1
     }
 
     var firstCallingParticipantOtherThanSelf: UserType? {

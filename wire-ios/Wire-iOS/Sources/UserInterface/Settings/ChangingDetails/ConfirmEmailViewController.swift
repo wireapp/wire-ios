@@ -32,7 +32,7 @@ protocol ConfirmEmailDelegate: AnyObject {
 extension UITableView {
     var autolayoutTableHeaderView: UIView? {
         get {
-            return self.tableHeaderView
+            self.tableHeaderView
         }
 
         set {
@@ -120,11 +120,11 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     // MARK: - Setup tableView
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

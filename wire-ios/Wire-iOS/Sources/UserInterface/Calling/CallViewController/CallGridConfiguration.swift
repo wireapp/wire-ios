@@ -47,7 +47,7 @@ struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
 
 extension CallParticipant {
     var streamId: AVSClient {
-        return AVSClient(userId: userId, clientId: clientId)
+        AVSClient(userId: userId, clientId: clientId)
     }
 }
 
@@ -118,8 +118,8 @@ extension VoiceChannel {
     }
 
     func activeStreams(from participants: [CallParticipant]) -> [Stream] {
-        return participants.compactMap { participant in
-            return Stream(
+        participants.compactMap { participant in
+            Stream(
                 streamId: participant.streamId,
                 user: participant.user,
                 callParticipantState: participant.state,
@@ -160,7 +160,7 @@ extension VoiceChannel {
     }
 
     private var selfStreamId: AVSClient? {
-        return ZMUser.selfUser()?.selfStreamId
+        ZMUser.selfUser()?.selfStreamId
     }
 
     private func selfStream(from streams: [Stream], createIfNeeded: Bool) -> Stream? {
@@ -176,21 +176,21 @@ extension VoiceChannel {
     private var callingConfig: CallingConfiguration { .config }
 
     private var isEstablished: Bool {
-        return state == .established
+        state == .established
     }
 
     fileprivate var callHasTwoParticipants: Bool {
-        return participants.count == 2
+        participants.count == 2
     }
 
     fileprivate var shouldShowActiveSpeakerFrame: Bool {
-        return participants.count > 2 && videoGridPresentationMode == .allVideoStreams
+        participants.count > 2 && videoGridPresentationMode == .allVideoStreams
     }
 
     private var isUnconnectedOutgoingVideoCall: Bool {
         switch (state, isVideoCall) {
-        case (.outgoing, true): return true
-        default: return false
+        case (.outgoing, true): true
+        default: false
         }
     }
 }
@@ -199,13 +199,13 @@ extension VideoGridPresentationMode {
     fileprivate var callParticipantsListKind: CallParticipantsListKind {
         switch self {
         case .activeSpeakers:
-            return .smoothedActiveSpeakers
+            .smoothedActiveSpeakers
         case .allVideoStreams:
-            return .all
+            .all
         }
     }
 
     fileprivate var needsSelfStream: Bool {
-        return self == .allVideoStreams
+        self == .allVideoStreams
     }
 }

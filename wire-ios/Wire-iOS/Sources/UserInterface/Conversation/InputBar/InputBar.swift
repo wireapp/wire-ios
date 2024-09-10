@@ -35,7 +35,7 @@ enum EphemeralState: Equatable {
     case none
 
     var isEphemeral: Bool {
-        return [.message, .conversation].contains(self)
+        [.message, .conversation].contains(self)
     }
 }
 
@@ -46,44 +46,44 @@ enum InputBarState: Equatable {
 
     var isWriting: Bool {
         switch self {
-        case .writing: return true
-        default: return false
+        case .writing: true
+        default: false
         }
     }
 
     var isEditing: Bool {
         switch self {
-        case .editing: return true
-        default: return false
+        case .editing: true
+        default: false
         }
     }
 
     var isMarkingDown: Bool {
         switch self {
-        case .markingDown: return true
-        default: return false
+        case .markingDown: true
+        default: false
         }
     }
 
     var isEphemeral: Bool {
         switch self {
         case let .markingDown(ephemeral):
-            return ephemeral.isEphemeral
+            ephemeral.isEphemeral
         case let .writing(ephemeral):
-            return ephemeral.isEphemeral
+            ephemeral.isEphemeral
         default:
-            return false
+            false
         }
     }
 
     var isEphemeralEnabled: Bool {
         switch self {
         case let .markingDown(ephemeral):
-            return ephemeral == .message
+            ephemeral == .message
         case let .writing(ephemeral):
-            return ephemeral == .message
+            ephemeral == .message
         default:
-            return false
+            false
         }
     }
 
@@ -138,7 +138,7 @@ final class InputBar: UIView {
     let markdownView = MarkdownBarView()
 
     var editingBackgroundColor: UIColor {
-        return .lowAccentColor()
+        .lowAccentColor()
     }
 
     var barBackgroundColor: UIColor? = SemanticColors.SearchBar.backgroundInputView
@@ -146,7 +146,7 @@ final class InputBar: UIView {
     var editingSeparatorColor: UIColor? = SemanticColors.View.backgroundSeparatorEditView
 
     var ephemeralColor: UIColor {
-        return .accent()
+        .accent()
     }
 
     var placeholderColor: UIColor = SemanticColors.SearchBar.textInputViewPlaceholder
@@ -163,11 +163,11 @@ final class InputBar: UIView {
     private lazy var leftAccessoryViewWidthConstraint: NSLayoutConstraint = leftAccessoryView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
 
     var isEditing: Bool {
-        return inputBarState.isEditing
+        inputBarState.isEditing
     }
 
     var isMarkingDown: Bool {
-        return inputBarState.isMarkingDown
+        inputBarState.isMarkingDown
     }
 
     private var inputBarState: InputBarState = .writing(ephemeral: .none) {

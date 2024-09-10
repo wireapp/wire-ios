@@ -31,9 +31,9 @@ final class PasscodeSetupPresenter {
     var isPasscodeValid: Bool {
         switch passcodeValidationResult {
         case .valid:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

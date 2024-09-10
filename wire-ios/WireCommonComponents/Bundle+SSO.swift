@@ -20,6 +20,6 @@ import Foundation
 
 extension Bundle {
     public static var ssoURLScheme: String? {
-        return Bundle.appMainBundle.infoForKey("Wire SSO URL Scheme")
+        Bundle.appMainBundle.infoForKey("Wire SSO URL Scheme")
     }
 }

@@ -150,7 +150,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return Array(downstreamRequestSyncs.values)
+        Array(downstreamRequestSyncs.values)
     }
 
     // MARK: - ZMDownstreamTranscoder

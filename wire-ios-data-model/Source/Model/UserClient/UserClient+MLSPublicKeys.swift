@@ -57,7 +57,7 @@ extension UserClient {
 
     @objc
     public var hasRegisteredMLSClient: Bool {
-        return !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
+        !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
     }
 
     // MARK: MLSPublicKeys
@@ -121,7 +121,7 @@ extension UserClient {
         }
 
         public var isEmpty: Bool {
-            return allKeys.isEmpty
+            allKeys.isEmpty
         }
 
         public var allKeys: [String] {

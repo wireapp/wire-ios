@@ -26,7 +26,7 @@ protocol ObjectInSnapshot {
 
 extension ZMUser: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
-        return [
+        [
             #keyPath(ZMUser.name),
             #keyPath(ZMUser.accentColorValue),
             #keyPath(ZMUser.imageMediumData),
@@ -56,7 +56,7 @@ extension ZMUser: ObjectInSnapshot {
     }
 
     public var notificationName: Notification.Name {
-        return .UserChange
+        .UserChange
     }
 }
 
@@ -87,83 +87,83 @@ extension ZMUser: ObjectInSnapshot {
     }
 
     open var nameChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.name))
+        changedKeysContain(keys: #keyPath(ZMUser.name))
     }
 
     open var accentColorValueChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.accentColorValue))
+        changedKeysContain(keys: #keyPath(ZMUser.accentColorValue))
     }
 
     open var imageMediumDataChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserType.completeImageData), #keyPath(ZMUser.completeProfileAssetIdentifier))
+        changedKeysContain(keys: #keyPath(UserType.completeImageData), #keyPath(ZMUser.completeProfileAssetIdentifier))
     }
 
     open var imageSmallProfileDataChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserType.previewImageData), #keyPath(ZMUser.previewProfileAssetIdentifier))
+        changedKeysContain(keys: #keyPath(UserType.previewImageData), #keyPath(ZMUser.previewProfileAssetIdentifier))
     }
 
     open var profileInformationChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.emailAddress), #keyPath(ZMUser.phoneNumber))
+        changedKeysContain(keys: #keyPath(ZMUser.emailAddress), #keyPath(ZMUser.phoneNumber))
     }
 
     open var connectionStateChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.isConnected),
-                                  #keyPath(ZMUser.canBeConnected),
-                                  #keyPath(ZMUser.isPendingApprovalByOtherUser),
-                                  #keyPath(ZMUser.isPendingApprovalBySelfUser))
+        changedKeysContain(keys: #keyPath(ZMUser.isConnected),
+                           #keyPath(ZMUser.canBeConnected),
+                           #keyPath(ZMUser.isPendingApprovalByOtherUser),
+                           #keyPath(ZMUser.isPendingApprovalBySelfUser))
     }
 
     open var trustLevelChanged: Bool {
-        return userClientChangeInfos.count != 0
+        userClientChangeInfos.count != 0
     }
 
     open var clientsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.clients))
+        changedKeysContain(keys: #keyPath(ZMUser.clients))
     }
 
     public var handleChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.handle))
+        changedKeysContain(keys: #keyPath(ZMUser.handle))
     }
 
     public var teamsChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.team))
+        changedKeys.contains(#keyPath(ZMUser.team))
     }
 
     public var availabilityChanged: Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.availability))
+        changedKeysContain(keys: #keyPath(ZMUser.availability))
     }
 
     public var readReceiptsEnabledChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabled))
+        changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabled))
     }
 
     public var readReceiptsEnabledChangedRemotelyChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabledChangedRemotely))
+        changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabledChangedRemotely))
     }
 
     public var richProfileChanged: Bool {
-        return changedKeys.contains(ZMUserKeys.RichProfile)
+        changedKeys.contains(ZMUserKeys.RichProfile)
     }
 
     public var legalHoldStatusChanged: Bool {
-        return !changedKeys.isDisjoint(with: ZMUser.keysAffectingLegalHoldStatus())
+        !changedKeys.isDisjoint(with: ZMUser.keysAffectingLegalHoldStatus())
     }
 
     public var isUnderLegalHoldChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.isUnderLegalHold))
+        changedKeys.contains(#keyPath(ZMUser.isUnderLegalHold))
     }
 
     public var roleChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.participantRoles))
+        changedKeys.contains(#keyPath(ZMUser.participantRoles))
     }
 
     public var analyticsIdentifierChanged: Bool {
-        return changedKeys.contains(#keyPath(ZMUser.analyticsIdentifier))
+        changedKeys.contains(#keyPath(ZMUser.analyticsIdentifier))
     }
 
     public let user: UserType
     open var userClientChangeInfos: [UserClientChangeInfo] {
-        return changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
+        changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
     }
 }
 
@@ -188,14 +188,14 @@ extension UserChangeInfo {
     /// Adds an observer for all ZMSearchUsers in the given context. You must hold on to the token and use it to unregister.
     ///
     public static func add(searchUserObserver observer: UserObserving, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return add(searchUserObserver: observer, for: nil, in: managedObjectContext)
+        add(searchUserObserver: observer, for: nil, in: managedObjectContext)
     }
 
     /// Adds an observer for the searchUser if one specified or to all ZMSearchUser is none is specified. You must
     /// hold on to the token and use it to unregister.
     ///
     private static func add(searchUserObserver observer: UserObserving, for user: ZMSearchUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
+        ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
             guard
                 let observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo
@@ -212,14 +212,14 @@ extension UserChangeInfo {
     /// Adds an observer for all ZMUsers in the given context. You must hold on to the token and use it to unregister.
     ///
     public static func add(userObserver observer: UserObserving, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return add(userObserver: observer, for: nil, in: managedObjectContext)
+        add(userObserver: observer, for: nil, in: managedObjectContext)
     }
 
     /// Adds an observer for the user if one specified or to all ZMUsers is none is specified. You must hold on to
     /// the token and use it to unregister.
     ///
     private static func add(userObserver observer: UserObserving, for user: ZMUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
+        ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
             guard
                 let observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo

@@ -77,7 +77,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         label: String = "device label",
         time: Date = Date(timeIntervalSince1970: 12345)
     ) -> ZMTransportData {
-        return [
+        [
             "client": [
                 "id": clientId,
                 "label": label,
@@ -89,7 +89,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
-        return [
+        [
             "client": [
                 "id": clientId
             ],

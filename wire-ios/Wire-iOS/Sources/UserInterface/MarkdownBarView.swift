@@ -50,7 +50,7 @@ final class MarkdownBarView: UIView {
     let buttons: [IconButton]
 
     private var buttonMargin: CGFloat {
-        return conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     required init() {
@@ -65,7 +65,7 @@ final class MarkdownBarView: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 56)
+        CGSize(width: UIView.noIntrinsicMetric, height: 56)
     }
 
     func setupViews() {
@@ -169,13 +169,13 @@ final class MarkdownBarView: UIView {
 
     fileprivate func markdown(for button: IconButton) -> Markdown? {
         switch button {
-        case headerButton:      return headerButton.icon(for: .normal)?.headerMarkdown ?? .h1
-        case boldButton:        return .bold
-        case italicButton:      return .italic
-        case codeButton:        return .code
-        case numberListButton:  return .oList
-        case bulletListButton:  return .uList
-        default:                return nil
+        case headerButton:      headerButton.icon(for: .normal)?.headerMarkdown ?? .h1
+        case boldButton:        .bold
+        case italicButton:      .italic
+        case codeButton:        .code
+        case numberListButton:  .oList
+        case bulletListButton:  .uList
+        default:                nil
         }
     }
 
@@ -221,10 +221,10 @@ extension MarkdownBarView: PopUpIconButtonDelegate {
 extension StyleKitIcon {
     fileprivate var headerMarkdown: Markdown? {
         switch self {
-        case .markdownH1: return .h1
-        case .markdownH2: return .h2
-        case .markdownH3: return .h3
-        default:          return nil
+        case .markdownH1: .h1
+        case .markdownH2: .h2
+        case .markdownH3: .h3
+        default:          nil
         }
     }
 }
@@ -232,10 +232,10 @@ extension StyleKitIcon {
 extension Markdown {
     fileprivate var headerIcon: StyleKitIcon? {
         switch self {
-        case .h1: return .markdownH1
-        case .h2: return .markdownH2
-        case .h3: return .markdownH3
-        default:  return nil
+        case .h1: .markdownH1
+        case .h2: .markdownH2
+        case .h3: .markdownH3
+        default:  nil
         }
     }
 }

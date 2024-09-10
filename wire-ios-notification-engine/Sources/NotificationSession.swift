@@ -29,19 +29,19 @@ public enum NotificationSessionError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .accountNotAuthenticated:
-            return "user is not authenticated"
+            "user is not authenticated"
 
         case .noEventID:
-            return "event id is missing in push payload"
+            "event id is missing in push payload"
 
         case .invalidEventID:
-            return "invalid event id"
+            "invalid event id"
 
         case .alreadyFetchedEvent:
-            return "event was already fetched"
+            "event was already fetched"
 
         case .unknown:
-            return "unknown"
+            "unknown"
         }
     }
 }

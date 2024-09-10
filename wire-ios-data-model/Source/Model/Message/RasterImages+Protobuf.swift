@@ -30,7 +30,7 @@ extension WireProtos.Asset.Original {
 
 extension ImageAsset {
     fileprivate var isRaster: Bool {
-        return !UTIHelper.conformsToVectorType(mime: mimeType)
+        !UTIHelper.conformsToVectorType(mime: mimeType)
     }
 }
 

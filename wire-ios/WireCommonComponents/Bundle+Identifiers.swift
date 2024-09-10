@@ -25,6 +25,6 @@ extension Bundle {
     }
 
     public var hostBundleIdentifier: String? {
-        return infoDictionary?["HostBundleIdentifier"] as? String
+        infoDictionary?["HostBundleIdentifier"] as? String
     }
 }

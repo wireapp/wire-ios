@@ -53,7 +53,7 @@ public final class APSSignalingKeysStore: NSObject {
 
     /// use this method to create new keys, e.g. for client registration or update
     static func createKeys() -> SignalingKeys {
-        return SignalingKeys()
+        SignalingKeys()
     }
 
     /// we previously stored keys in the key chain. use this method to retreive the previously stored values to move them into the selfClient
@@ -71,6 +71,6 @@ public final class APSSignalingKeysStore: NSObject {
     }
 
     public func decryptDataDictionary(_ payload: [AnyHashable: Any]!) -> [AnyHashable: Any]! {
-        return self.apsDecoder.decodeAPSPayload(payload)
+        self.apsDecoder.decodeAPSPayload(payload)
     }
 }

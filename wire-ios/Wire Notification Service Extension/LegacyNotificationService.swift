@@ -220,7 +220,7 @@ extension UNNotificationContent {
     // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering
 
     static var empty: Self {
-        return Self()
+        Self()
     }
 
     var accountID: UUID? {

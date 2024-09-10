@@ -20,7 +20,7 @@ import Foundation
 
 extension UserDefaults {
     public static var applicationGroup: UserDefaults {
-        return UserDefaults(suiteName: Bundle.main.applicationGroupIdentifier) ?? .standard
+        UserDefaults(suiteName: Bundle.main.applicationGroupIdentifier) ?? .standard
     }
 
     static var applicationGroupCombinedWithStandard: UserDefaults {

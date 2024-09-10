@@ -38,7 +38,7 @@ class SessionManagerURLActionsTests: IntegrationTest {
     }
 
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     // MARK: Tests

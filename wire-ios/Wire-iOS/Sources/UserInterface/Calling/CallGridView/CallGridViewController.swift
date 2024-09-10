@@ -35,8 +35,8 @@ final class CallGridViewController: UIViewController {
 
     static var maxItemsPerPage: Int {
         switch CallingConfiguration.config.streamLimit {
-        case let .limit(amount: amount): return amount
-        case .noLimit: return 8
+        case let .limit(amount: amount): amount
+        case .noLimit: 8
         }
     }
 
@@ -85,7 +85,7 @@ final class CallGridViewController: UIViewController {
     }
 
     var previewOverlay: UIView? {
-        return thumbnailViewController.contentView
+        thumbnailViewController.contentView
     }
 
     /// Update view visibility when this view controller is covered or not
@@ -466,7 +466,7 @@ final class CallGridViewController: UIViewController {
     }
 
     private func cachedStreamView(for stream: Stream) -> OrientableView? {
-        return viewCache[stream.streamId]
+        viewCache[stream.streamId]
     }
 
     private func streamView(at location: CGPoint) -> BaseCallParticipantView? {
@@ -498,11 +498,11 @@ final class CallGridViewController: UIViewController {
 
 extension CallGridViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource.count
+        dataSource.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

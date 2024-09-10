@@ -35,11 +35,11 @@ final class CopyableLabel: UILabel {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return action == #selector(copy(_:))
+        action == #selector(copy(_:))
     }
 
     override func copy(_ sender: Any?) {

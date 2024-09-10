@@ -46,7 +46,7 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 
     public func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws {
         let isE2EIEnabled = await context.perform {
-            return self.featureRepository.fetchE2EI().isEnabled
+            self.featureRepository.fetchE2EI().isEnabled
         }
         guard isE2EIEnabled else { return }
 
@@ -86,11 +86,11 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
     ) -> MLSVerificationStatus {
         switch (newStatusFromCC, currentStatus) {
         case (.notVerified, .verified):
-            return .degraded
+            .degraded
         case(.notVerified, .degraded):
-            return .degraded
+            .degraded
         default:
-            return newStatusFromCC
+            newStatusFromCC
         }
     }
 

@@ -23,7 +23,7 @@ import WireShareEngine
 
 enum AttachmentType: Int, CaseIterable {
     static func < (lhs: AttachmentType, rhs: AttachmentType) -> Bool {
-        return lhs.rawValue < rhs.rawValue
+        lhs.rawValue < rhs.rawValue
     }
 
     case walletPass = 1
@@ -36,11 +36,11 @@ enum AttachmentType: Int, CaseIterable {
 
 extension NSItemProvider {
     var hasGifImage: Bool {
-        return hasItemConformingToTypeIdentifier(UTType.gif.identifier)
+        hasItemConformingToTypeIdentifier(UTType.gif.identifier)
     }
 
     var hasImage: Bool {
-        return hasItemConformingToTypeIdentifier(UTType.image.identifier)
+        hasItemConformingToTypeIdentifier(UTType.image.identifier)
     }
 
     func hasFile(completion: @escaping (Bool) -> Void) {
@@ -58,15 +58,15 @@ extension NSItemProvider {
     }
 
     private var hasData: Bool {
-        return hasItemConformingToTypeIdentifier(UTType.data.identifier)
+        hasItemConformingToTypeIdentifier(UTType.data.identifier)
     }
 
     var hasURL: Bool {
-        return hasItemConformingToTypeIdentifier(UTType.url.identifier) && registeredTypeIdentifiers.count == 1
+        hasItemConformingToTypeIdentifier(UTType.url.identifier) && registeredTypeIdentifiers.count == 1
     }
 
     var hasFileURL: Bool {
-        return hasItemConformingToTypeIdentifier(UTType.url.identifier)
+        hasItemConformingToTypeIdentifier(UTType.url.identifier)
     }
 
     var hasVideo: Bool {
@@ -75,10 +75,10 @@ extension NSItemProvider {
     }
 
     var hasWalletPass: Bool {
-        return hasItemConformingToTypeIdentifier(UnsentFileSendable.passkitUTI)
+        hasItemConformingToTypeIdentifier(UnsentFileSendable.passkitUTI)
     }
 
     var hasRawFile: Bool {
-        return hasItemConformingToTypeIdentifier(UTType.content.identifier) && !hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
+        hasItemConformingToTypeIdentifier(UTType.content.identifier) && !hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
     }
 }

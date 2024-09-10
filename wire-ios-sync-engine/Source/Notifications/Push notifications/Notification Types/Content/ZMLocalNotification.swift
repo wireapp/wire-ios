@@ -112,16 +112,16 @@ class ZMLocalNotification: NSObject {
 // MARK: - Properties
 
 extension ZMLocalNotification {
-    var selfUserID: UUID? { return userInfo?.selfUserID }
-    var senderID: UUID? { return userInfo?.senderID }
-    var messageNonce: UUID? { return userInfo?.messageNonce }
-    var conversationID: UUID? { return userInfo?.conversationID }
+    var selfUserID: UUID? { userInfo?.selfUserID }
+    var senderID: UUID? { userInfo?.senderID }
+    var messageNonce: UUID? { userInfo?.messageNonce }
+    var conversationID: UUID? { userInfo?.conversationID }
 
     /// Returns true if it is a calling notification, else false.
     var isCallingNotification: Bool {
         switch type {
-        case .calling: return true
-        default: return false
+        case .calling: true
+        default: false
         }
     }
 
@@ -136,11 +136,11 @@ extension ZMLocalNotification {
 
 extension ZMLocalNotification {
     func conversation(in moc: NSManagedObjectContext) -> ZMConversation? {
-        return userInfo?.conversation(in: moc)
+        userInfo?.conversation(in: moc)
     }
 
     func sender(in moc: NSManagedObjectContext) -> ZMUser? {
-        return userInfo?.sender(in: moc)
+        userInfo?.sender(in: moc)
     }
 }
 
@@ -207,5 +207,5 @@ extension LocalNotificationType {
 
 // Helper function inserted by Swift 4.2 migrator.
 private func convertToUNNotificationSoundName(_ input: String) -> UNNotificationSoundName {
-    return UNNotificationSoundName(rawValue: input)
+    UNNotificationSoundName(rawValue: input)
 }

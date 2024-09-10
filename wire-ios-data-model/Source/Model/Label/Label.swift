@@ -59,7 +59,7 @@ public class Label: ZMManagedObject, LabelType {
 
     public var kind: Kind {
         get {
-            return Kind(rawValue: type) ?? .folder
+            Kind(rawValue: type) ?? .folder
         }
         set {
             type = newValue.rawValue
@@ -71,27 +71,27 @@ public class Label: ZMManagedObject, LabelType {
     }
 
     override public static func entityName() -> String {
-        return "Label"
+        "Label"
     }
 
     override public static func sortKey() -> String {
-        return #keyPath(Label.name)
+        #keyPath(Label.name)
     }
 
     override public static func defaultSortDescriptors() -> [NSSortDescriptor]? {
-        return [NSSortDescriptor(key: sortKey(), ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
+        [NSSortDescriptor(key: sortKey(), ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
     }
 
     override public static func predicateForFilteringResults() -> NSPredicate? {
-        return NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
+        NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
-        return true
+        true
     }
 
     public static func fetchFavoriteLabel(in context: NSManagedObjectContext) -> Label {
-        return fetchOrCreateFavoriteLabel(in: context, create: false)
+        fetchOrCreateFavoriteLabel(in: context, create: false)
     }
 
     @discardableResult

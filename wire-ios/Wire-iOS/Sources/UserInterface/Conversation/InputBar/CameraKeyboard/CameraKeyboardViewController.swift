@@ -483,7 +483,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     // TODO: a protocol for this for testing
     @objc
     var shouldBlockCallingRelatedActions: Bool {
-        return ZMUserSession.shared()?.isCallOngoing ?? false
+        ZMUserSession.shared()?.isCallOngoing ?? false
     }
 
     private func deniedAuthorizationCell(for type: DeniedAuthorizationType, collectionView: UICollectionView, indexPath: IndexPath) -> CameraKeyboardPermissionsCell {
@@ -512,9 +512,9 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     private var cameraCellSize: CGSize {
         switch self.splitLayoutObservable.layoutSize {
         case .compact:
-            return CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height)
+            CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height)
         case .regularPortrait, .regularLandscape:
-            return CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
+            CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
         }
     }
 

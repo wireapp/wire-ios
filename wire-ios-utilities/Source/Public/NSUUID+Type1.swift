@@ -92,26 +92,26 @@ extension NSUUID {
 
 extension UUID {
     public var isType1UUID: Bool {
-        return (self as NSUUID).isType1UUID
+        (self as NSUUID).isType1UUID
     }
 
     fileprivate func readOctectsReverted(_ start: UInt, len: UInt) -> UInt64 {
-        return (self as NSUUID).readOctectsReverted(start, len: len)
+        (self as NSUUID).readOctectsReverted(start, len: len)
     }
 
     public var type1Timestamp: Date? {
-        return (self as NSUUID).type1Timestamp
+        (self as NSUUID).type1Timestamp
     }
 
     public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
-        return (self as NSUUID).compare(withType1UUID: type1UUID)
+        (self as NSUUID).compare(withType1UUID: type1UUID)
     }
 
     public func compare(withType1 uuid: UUID) -> ComparisonResult {
-        return (self as NSUUID).compare(withType1UUID: uuid as NSUUID)
+        (self as NSUUID).compare(withType1UUID: uuid as NSUUID)
     }
 
     public static func timeBasedUUID() -> NSUUID {
-        return NSUUID.timeBasedUUID()
+        NSUUID.timeBasedUUID()
     }
 }

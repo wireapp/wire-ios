@@ -89,7 +89,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {
@@ -99,7 +99,7 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     override var accessibilityValue: String? {
         get {
-            return showCheckmark ? L10n.Accessibility.ConversationDetails.MessageTimeoutState.description : nil
+            showCheckmark ? L10n.Accessibility.ConversationDetails.MessageTimeoutState.description : nil
         }
 
         set {

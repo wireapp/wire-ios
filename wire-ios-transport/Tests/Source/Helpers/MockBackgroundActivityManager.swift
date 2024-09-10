@@ -43,7 +43,7 @@ import WireTransport
 
     /// The number of active tasks.
     @objc var numberOfTasks: Int {
-        return tasks.count
+        tasks.count
     }
 
     // MARK: - Data

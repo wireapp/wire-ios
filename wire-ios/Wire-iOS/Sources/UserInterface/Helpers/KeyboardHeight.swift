@@ -32,10 +32,10 @@ final class KeyboardHeight: NSObject {
 
     private static func phoneKeyboardHeight() -> CGFloat {
         switch UIScreen.main.bounds.height {
-        case 667: return 258
-        case 736: return 271
-        case 812: return 253 + UIScreen.safeArea.bottom
-        default: return 253
+        case 667: 258
+        case 736: 271
+        case 812: 253 + UIScreen.safeArea.bottom
+        default: 253
         }
     }
 }

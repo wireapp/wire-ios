@@ -24,11 +24,11 @@ private let zmLog = ZMSLog(tag: "UI")
 
 extension ContactsViewController {
     private var canInviteByEmail: Bool {
-        return ZMAddressBookContact.canInviteLocallyWithEmail()
+        ZMAddressBookContact.canInviteLocallyWithEmail()
     }
 
     private var canInviteByPhone: Bool {
-        return ZMAddressBookContact.canInviteLocallyWithPhoneNumber()
+        ZMAddressBookContact.canInviteLocallyWithPhoneNumber()
     }
 
     @objc
@@ -156,9 +156,9 @@ extension ContactsViewController {
             var messageKey: String {
                 switch self {
                 case .email, .any:
-                    return L10n.Localizable.Error.Invite.noEmailProvider
+                    L10n.Localizable.Error.Invite.noEmailProvider
                 case .sms:
-                    return L10n.Localizable.Error.Invite.noMessagingProvider
+                    L10n.Localizable.Error.Invite.noMessagingProvider
                 }
             }
         }

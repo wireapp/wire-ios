@@ -29,7 +29,7 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.55
+        0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -83,6 +83,6 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
     }
 
     private var rightToLeft: Bool {
-        return UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
+        UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft
     }
 }

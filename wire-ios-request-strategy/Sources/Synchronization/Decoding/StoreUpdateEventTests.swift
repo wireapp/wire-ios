@@ -113,7 +113,7 @@ final class StoreUpdateEventTests: MessagingTestBase {
     }
 
     private func createStoredEvent(index: UInt) throws -> StoredUpdateEvent {
-        return try createStoredEvents(indices: [index])[0]
+        try createStoredEvents(indices: [index])[0]
     }
 
     private func createStoredEvents(indices: [UInt]) throws -> [StoredUpdateEvent] {
@@ -129,11 +129,11 @@ final class StoreUpdateEventTests: MessagingTestBase {
         from event: ZMUpdateEvent,
         index: UInt
     ) throws -> StoredUpdateEvent {
-        return try createStoredEvents(eventsAndIndices: [(event, index)])[0]
+        try createStoredEvents(eventsAndIndices: [(event, index)])[0]
     }
 
     private func createStoredEvents(eventsAndIndices: [(ZMUpdateEvent, UInt)]) throws -> [StoredUpdateEvent] {
-        return try eventsAndIndices.map { event, index in
+        try eventsAndIndices.map { event, index in
             guard let storedEvent = StoredUpdateEvent.encryptAndCreate(
                 event,
                 context: eventMOC,

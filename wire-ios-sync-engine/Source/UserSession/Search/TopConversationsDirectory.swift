@@ -75,7 +75,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
     /// Top conversations
     public var topConversations: [ZMConversation] {
-        return self.topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
+        self.topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
     }
 
     /// Persist list of conversations to persistent store
@@ -107,7 +107,7 @@ struct TopConversationsDirectoryNotification: SelfPostingNotification {
 
 extension TopConversationsDirectory {
     @objc(addObserver:) public func add(observer: TopConversationsDirectoryObserver) -> Any {
-        return NotificationInContext.addObserver(name: TopConversationsDirectoryNotification.notificationName, context: uiMOC.notificationContext) { [weak observer] _ in
+        NotificationInContext.addObserver(name: TopConversationsDirectoryNotification.notificationName, context: uiMOC.notificationContext) { [weak observer] _ in
             observer?.topConversationsDidChange()
         }
     }

@@ -30,7 +30,7 @@ public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
     }
 
     public var messages: [ZMConversationMessage] {
-        return object as? [ZMConversationMessage] ?? []
+        object as? [ZMConversationMessage] ?? []
     }
 }
 
@@ -43,7 +43,7 @@ extension NewUnreadMessagesChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addNewMessageObserver:forManagedObjectContext:)
     public static func add(observer: ZMNewUnreadMessagesObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .NewUnreadMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
+        ManagedObjectObserverToken(name: .NewUnreadMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadMessagesChangeInfo
             else { return }
@@ -64,7 +64,7 @@ extension NewUnreadMessagesChangeInfo {
     }
 
     public var messages: [ZMConversationMessage] {
-        return object as? [ZMConversationMessage] ?? []
+        object as? [ZMConversationMessage] ?? []
     }
 }
 
@@ -77,7 +77,7 @@ extension NewUnreadKnockMessagesChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addNewKnockObserver:forManagedObjectContext:)
     public static func add(observer: ZMNewUnreadKnocksObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .NewUnreadKnock, managedObjectContext: managedObjectContext) { [weak observer] note in
+        ManagedObjectObserverToken(name: .NewUnreadKnock, managedObjectContext: managedObjectContext) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadKnockMessagesChangeInfo
             else { return }
@@ -98,7 +98,7 @@ extension NewUnreadKnockMessagesChangeInfo {
     }
 
     public var messages: [ZMConversationMessage] {
-        return  object as? [ZMConversationMessage] ?? []
+        object as? [ZMConversationMessage] ?? []
     }
 }
 
@@ -111,7 +111,7 @@ extension NewUnreadUnsentMessageChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addNewUnreadUnsentMessageObserver:forManagedObjectContext:)
     public static func add(observer: ZMNewUnreadUnsentMessageObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .NewUnreadUnsentMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
+        ManagedObjectObserverToken(name: .NewUnreadUnsentMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadUnsentMessageChangeInfo
             else { return }

@@ -92,11 +92,11 @@ final class ConversationStateAccessoryView: UIView {
     private func iconForVerificationLevel(in conversation: Conversation) -> UIImage? {
         switch conversation.securityLevel {
         case .secure:
-            return WireStyleKit.imageOfShieldverified
+            WireStyleKit.imageOfShieldverified
         case .secureWithIgnored:
-            return WireStyleKit.imageOfShieldnotverified
+            WireStyleKit.imageOfShieldnotverified
         case .notSecure:
-            return nil
+            nil
         }
     }
 }

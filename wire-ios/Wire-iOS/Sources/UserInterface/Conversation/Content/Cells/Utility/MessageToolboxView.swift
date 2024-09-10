@@ -201,7 +201,7 @@ final class MessageToolboxView: UIView {
     // MARK: - Configuration
 
     private var contentWidth: CGFloat {
-        return bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
+        bounds.width - conversationHorizontalMargins.left - conversationHorizontalMargins.right
     }
 
     func configureForMessage(
@@ -333,6 +333,6 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        return gestureRecognizer.isEqual(self.tapGestureRecogniser)
+        gestureRecognizer.isEqual(self.tapGestureRecogniser)
     }
 }

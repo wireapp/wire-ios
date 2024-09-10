@@ -98,12 +98,12 @@ extension Data {
     // Supports JPEG, TIFF, PNG and other image (container) formats/types.
     // @throws MetadataError
     public func wr_removingImageMetadata() throws -> Data {
-        return try (self as NSData).wr_imageDataWithoutMetadata() as Data
+        try (self as NSData).wr_imageDataWithoutMetadata() as Data
     }
 
     // Retrieves image metadata from the binary image.
     // @throws MetadataError
     public func wr_metadata() throws -> [String: Any] {
-        return try (self as NSData).wr_metadata()
+        try (self as NSData).wr_metadata()
     }
 }

@@ -1055,7 +1055,7 @@ extension UserClientTests {
             mockMethodCalled = true
         }
         mockProteusService.remoteFingerprintForSession_MockMethod = {_ in
-            return "test"
+            "test"
         }
 
         let mock = MockProteusProvider(mockProteusService: mockProteusService)

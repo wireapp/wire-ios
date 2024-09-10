@@ -53,7 +53,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func createSearchUser() -> ZMSearchUser {
-        return ZMSearchUser(
+        ZMSearchUser(
             contextProvider: coreDataStack,
             name: "Foo",
             handle: "foo",
@@ -64,18 +64,18 @@ final class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func userIDs(from searchUsers: Set<ZMSearchUser>) -> Set<UUID> {
-        return Set(searchUsers.compactMap(\.remoteIdentifier))
+        Set(searchUsers.compactMap(\.remoteIdentifier))
     }
 
     func userData(previewAssetKey: String?, completeAssetKey: String? = nil, for userID: UUID) -> [String: Any] {
-        return [
+        [
             "id": userID.transportString(),
             "assets": assetPayload(previewAssetKey: previewAssetKey, completeAssetKey: completeAssetKey)
         ]
     }
 
     func assetPayload(previewAssetKey: String?, completeAssetKey: String? = nil) -> [[String: Any]] {
-        return [
+        [
             [
                 "size": "preview",
                 "type": "image",

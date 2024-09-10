@@ -143,15 +143,15 @@ private enum DeletionConfiguration {
 
     var showHide: Bool {
         switch self {
-        case .hide, .hideAndDelete: return true
-        case .delete: return false
+        case .hide, .hideAndDelete: true
+        case .delete: false
         }
     }
 
     var showDelete: Bool {
         switch self {
-        case .delete, .hideAndDelete: return true
-        case .hide: return false
+        case .delete, .hideAndDelete: true
+        case .hide: false
         }
     }
 }

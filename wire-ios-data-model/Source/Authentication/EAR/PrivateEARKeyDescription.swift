@@ -69,7 +69,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
 
     func setQuery(value: some Any) -> [CFString: Any] {
         // Private keys are stored in the Secure Enclave.
-        return [:]
+        [:]
     }
 
     // MARK: - Static Access

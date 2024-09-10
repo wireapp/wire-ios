@@ -23,7 +23,7 @@ private let NSManagedObjectContextFileAssetCacheKey = "zm_fileAssetCache"
 extension NSManagedObjectContext {
     @objc public var zm_fileAssetCache: FileAssetCache! {
         get {
-            return self.userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
+            self.userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
         }
 
         set {
@@ -47,7 +47,7 @@ public final class FileAssetCache: NSObject {
     private let tempCache: FileCache
 
     var cache: Cache {
-        return fileCache
+        fileCache
     }
 
     /// Creates an asset cache.
@@ -250,7 +250,7 @@ public final class FileAssetCache: NSObject {
     // MARK: - Encrypted images
 
     public func encryptMediumImage(for message: ZMConversationMessage) -> ZMImageAssetEncryptionKeys? {
-        return encryptImageAndComputeSHA256Digest(
+        encryptImageAndComputeSHA256Digest(
             message,
             format: .medium
         )
@@ -727,21 +727,21 @@ public final class FileAssetCache: NSObject {
     // MARK: - Asset data
 
     public func assetData(_ key: String) -> Data? {
-        return cache.assetData(key)
+        cache.assetData(key)
     }
 
     // MARK: - Conversation message
 
     @objc(hasImageDataForMessage:)
     public func hasImageData(for message: ZMConversationMessage) -> Bool {
-        return hasOriginalImageData(for: message)
+        hasOriginalImageData(for: message)
             || hasMediumImageData(for: message)
             || hasEncryptedMediumImageData(for: message)
     }
 
     @objc(hasFileDataForMessage:)
     public func hasFileData(for message: ZMConversationMessage) -> Bool {
-        return hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
+        hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
     }
 
     /// Returns the asset URL for a given message.
@@ -811,7 +811,7 @@ public final class FileAssetCache: NSObject {
         format: ZMImageFormat,
         encrypted: Bool = false
     ) -> String? {
-        return cacheKeyForAsset(
+        cacheKeyForAsset(
             message,
             identifier: format.stringValue,
             encrypted: encrypted
@@ -963,7 +963,7 @@ private struct FileCache: Cache {
     }
 
     func hasDataForKey(_ key: String) -> Bool {
-        return assetURL(key) != nil
+        assetURL(key) != nil
     }
 
     /// Returns the expected URL of a cache entry

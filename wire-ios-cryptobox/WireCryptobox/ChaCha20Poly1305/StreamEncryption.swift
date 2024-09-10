@@ -54,11 +54,11 @@ extension ChaCha20Poly1305 {
                 case uuidHash = 32
 
                 static var layout: [Field] {
-                    return [.platform, .emptySpace, .version, .salt, .uuidHash]
+                    [.platform, .emptySpace, .version, .salt, .uuidHash]
                 }
 
                 static var sizeOfAllFields: Int {
-                    return layout.reduce(0, { result, part in
+                    layout.reduce(0, { result, part in
                         result + part.rawValue
                     })
                 }

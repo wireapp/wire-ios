@@ -29,7 +29,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     let userSession: UserSession
 
     var isHidden: Bool {
-        return false
+        false
     }
 
     init(conversation: GroupDetailsConversationType, userSession: UserSession) {
@@ -53,7 +53,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -77,7 +77,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {

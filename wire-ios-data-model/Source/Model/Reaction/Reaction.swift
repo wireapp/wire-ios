@@ -39,7 +39,7 @@ public let ZMReactionUsersValueKey      = "users"
     @NSManaged private var firstReactionDate: Date?
 
     public var creationDate: Date {
-        return firstReactionDate ?? Date.distantPast
+        firstReactionDate ?? Date.distantPast
     }
 
     public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage, creationDate: Date?) -> Reaction {
@@ -52,15 +52,15 @@ public let ZMReactionUsersValueKey      = "users"
     }
 
     override open func keysTrackedForLocalModifications() -> Set<String> {
-        return [ZMReactionUsersValueKey]
+        [ZMReactionUsersValueKey]
     }
 
     override open class func entityName() -> String {
-        return "Reaction"
+        "Reaction"
     }
 
     override open class func sortKey() -> String? {
-        return ZMReactionUnicodeValueKey
+        ZMReactionUnicodeValueKey
     }
 
     public static func validate(unicode: String) -> Bool {

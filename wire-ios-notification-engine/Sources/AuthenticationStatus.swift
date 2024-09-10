@@ -33,7 +33,7 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     // MARK: - Methods
 
     var state: AuthenticationState {
-        return isLoggedIn ? .authenticated : .unauthenticated
+        isLoggedIn ? .authenticated : .unauthenticated
     }
 
     private var isLoggedIn: Bool {

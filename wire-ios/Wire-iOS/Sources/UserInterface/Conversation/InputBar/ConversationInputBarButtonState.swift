@@ -27,19 +27,19 @@ final class ConversationInputBarButtonState {
     }
 
     var sendButtonHidden: Bool {
-        return editing
+        editing
     }
 
     var ephemeralIndicatorButtonHidden: Bool {
-        return editing || !ephemeral || isEphemeralSendingDisabled
+        editing || !ephemeral || isEphemeralSendingDisabled
     }
 
     var ephemeralIndicatorButtonEnabled: Bool {
-        return !ephemeralIndicatorButtonHidden && !syncedMessageDestructionTimeout && !isEphemeralTimeoutForced
+        !ephemeralIndicatorButtonHidden && !syncedMessageDestructionTimeout && !isEphemeralTimeoutForced
     }
 
     private var hasText: Bool {
-        return textLength != 0
+        textLength != 0
     }
 
     var ephemeral: Bool {

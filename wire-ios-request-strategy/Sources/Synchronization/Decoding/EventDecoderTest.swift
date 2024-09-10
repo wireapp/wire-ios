@@ -426,7 +426,7 @@ extension EventDecoderTest {
 
         // Given
         mockProteusService.decryptDataForSession_MockMethod = { data, _ in
-            return (didCreateNewSession: false, decryptedData: data)
+            (didCreateNewSession: false, decryptedData: data)
         }
 
         let event = await syncMOC.perform {

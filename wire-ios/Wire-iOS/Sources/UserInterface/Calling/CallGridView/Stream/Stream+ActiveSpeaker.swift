@@ -20,10 +20,10 @@ import Foundation
 
 extension Stream {
     var isParticipantUnmutedAndSpeakingNow: Bool {
-        return activeSpeakerState.isSpeakingNow && microphoneState == .unmuted
+        activeSpeakerState.isSpeakingNow && microphoneState == .unmuted
     }
 
     var isParticipantUnmutedAndActive: Bool {
-        return activeSpeakerState != .inactive && microphoneState == .unmuted
+        activeSpeakerState != .inactive && microphoneState == .unmuted
     }
 }

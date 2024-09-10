@@ -58,11 +58,11 @@ extension ZMConversation {
         }
 
         var allowGuests: Bool {
-            return conversation.allowGuests
+            conversation.allowGuests
         }
 
         var allowServices: Bool {
-            return conversation.allowServices
+            conversation.allowServices
         }
 
         var guestLinkFeatureStatus: GuestLinkFeatureStatus = .unknown {
@@ -72,15 +72,15 @@ extension ZMConversation {
         }
 
         var isCodeEnabled: Bool {
-            return conversation.accessMode?.contains(.code) ?? false
+            conversation.accessMode?.contains(.code) ?? false
         }
 
         var areGuestPresent: Bool {
-            return conversation.areGuestsPresent
+            conversation.areGuestsPresent
         }
 
         var areServicePresent: Bool {
-            return conversation.areServicesPresent
+            conversation.areServicesPresent
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {

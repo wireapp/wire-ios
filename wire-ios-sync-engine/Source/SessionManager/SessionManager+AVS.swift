@@ -29,7 +29,7 @@ public protocol AVSLogger: AnyObject {
 extension SessionManager {
     @objc
     public static func addLogger(_ logger: AVSLogger) -> Any {
-        return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: AVSLogMessageNotification, object: nil, queue: nil) { [weak logger] note in
+        SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: AVSLogMessageNotification, object: nil, queue: nil) { [weak logger] note in
             guard let message = note.userInfo?["message"] as? String else { return }
             logger?.log(message: message)
         })

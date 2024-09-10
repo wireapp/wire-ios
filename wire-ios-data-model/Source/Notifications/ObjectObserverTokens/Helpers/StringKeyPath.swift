@@ -47,7 +47,7 @@ public final class StringKeyPath: Hashable {
     }
 
     public var isPath: Bool {
-        return 1 < count
+        1 < count
     }
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {
@@ -72,15 +72,15 @@ extension StringKeyPath: Equatable {}
 
 public func == (lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
-    return (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
+    (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
 }
 
 extension StringKeyPath: CustomDebugStringConvertible {
     public var description: String {
-        return rawValue
+        rawValue
     }
 
     public var debugDescription: String {
-        return rawValue
+        rawValue
     }
 }

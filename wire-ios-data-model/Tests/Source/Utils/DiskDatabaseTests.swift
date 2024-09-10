@@ -26,13 +26,13 @@ public class DiskDatabaseTest: ZMTBaseTest {
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     var coreDataStack: CoreDataStack!
 
     var storeURL: URL {
-        return CoreDataStack.accountDataFolder(
+        CoreDataStack.accountDataFolder(
             accountIdentifier: accountId,
             applicationContainer: sharedContainerURL
         ).appendingPersistentStoreLocation()

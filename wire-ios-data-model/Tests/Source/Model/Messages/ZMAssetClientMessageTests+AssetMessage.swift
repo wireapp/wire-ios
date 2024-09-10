@@ -22,15 +22,15 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     // MARK: Helpers
 
     var videoMetadataWithThumbnail: ZMVideoMetadata {
-        return ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: verySmallJPEGData())
+        ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: verySmallJPEGData())
     }
 
     var videoMetadata: ZMVideoMetadata {
-        return ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"))
+        ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"))
     }
 
     var fileMetadata: ZMFileMetadata {
-        return ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))
+        ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))
     }
 
     // MARK: Assets

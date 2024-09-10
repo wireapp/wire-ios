@@ -58,7 +58,7 @@ extension MessageDetailsCellDescription {
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
     static func makeReactionCells(_ users: [UserType]) -> [MessageDetailsCellDescription] {
-        return users.map {
+        users.map {
             let handle = $0.handle.map { "@" + $0 }
             return MessageDetailsCellDescription(user: $0, subtitle: handle,
                                                  accessibleSubtitleLabel: MessageDetails.userHandleSubtitleLabel,
@@ -67,7 +67,7 @@ extension MessageDetailsCellDescription {
     }
 
     static func makeReceiptCell(_ receipts: [ReadReceipt]) -> [MessageDetailsCellDescription] {
-        return receipts.map {
+        receipts.map {
             let formattedDate = $0.serverTimestamp.map(Message.shortDateTimeFormatter.string)
             let formattedAccessibleDate = $0.serverTimestamp.map(Message.spellOutDateTimeFormatter.string)
 

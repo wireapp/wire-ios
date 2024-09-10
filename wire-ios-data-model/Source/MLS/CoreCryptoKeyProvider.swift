@@ -79,7 +79,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
     }
 
     var getQuery: [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecReturnData: true,
@@ -88,7 +88,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
     }
 
     func setQuery(value: some Any) -> [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecValueData: value,
@@ -107,7 +107,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
     }
 
     var getQuery: [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecReturnData: true,
@@ -116,7 +116,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
     }
 
     func setQuery(value: some Any) -> [CFString: Any] {
-        return [
+        [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
             kSecValueData: value,

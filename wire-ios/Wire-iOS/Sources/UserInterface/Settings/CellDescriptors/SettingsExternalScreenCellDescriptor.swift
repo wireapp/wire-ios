@@ -158,6 +158,6 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     }
 
     func generateViewController() -> UIViewController? {
-        return self.presentationAction()
+        self.presentationAction()
     }
 }

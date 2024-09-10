@@ -108,11 +108,11 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     private var wireCallCenterRef: UnsafeMutableRawPointer? {
-        return Unmanaged<WireCallCenterV3>.passUnretained(userSession!.managedObjectContext.zm_callCenter!).toOpaque()
+        Unmanaged<WireCallCenterV3>.passUnretained(userSession!.managedObjectContext.zm_callCenter!).toOpaque()
     }
 
     private var conversationIdRef: [CChar]? {
-        return conversationUnderTest.remoteIdentifier!.transportString().cString(using: .utf8)
+        conversationUnderTest.remoteIdentifier!.transportString().cString(using: .utf8)
     }
 
     func establishedFlow(user: ZMUser) {
@@ -145,15 +145,15 @@ final class CallingV3Tests: IntegrationTest {
 
     var useGroupConversation: Bool = false
     var mockConversationUnderTest: MockConversation {
-        return useGroupConversation ? groupConversation : selfToUser2Conversation
+        useGroupConversation ? groupConversation : selfToUser2Conversation
     }
 
     var conversationUnderTest: ZMConversation {
-        return conversation(for: mockConversationUnderTest)!
+        conversation(for: mockConversationUnderTest)!
     }
 
     var localSelfUser: ZMUser {
-        return user(for: selfUser)!
+        user(for: selfUser)!
     }
 
     func testJoiningAndLeavingAnEmptyVoiceChannel_OneOnOne() {

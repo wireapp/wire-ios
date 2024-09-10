@@ -42,7 +42,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
     }
 
     var defaultMatchPair: CategoryMatch {
-        return CategoryMatch(including: .image, excluding: .none)
+        CategoryMatch(including: .image, excluding: .none)
     }
 
     @discardableResult func insertAssetMessages(count: Int) -> [ZMMessage] {

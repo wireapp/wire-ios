@@ -56,7 +56,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     func sampleResponse(teamID: UUID, creatorId: UUID, isBound: Bool = true) -> [String: Any] {
-        return [
+        [
             "id": teamID.transportString(),
             "creator": creatorId.transportString(),
             "name": "Wire GmbH",

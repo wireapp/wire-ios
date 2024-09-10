@@ -29,7 +29,7 @@ final class BiometricsState: BiometricsStateProtocol {
 
     var lastPolicyDomainState: Data? {
         get {
-            return UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
+            UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
         }
 
         set {

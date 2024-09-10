@@ -20,20 +20,20 @@ import Foundation
 
 extension UserClient {
     override public var description: String {
-        return "Client: \(String(describing: sessionIdentifier?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
+        "Client: \(String(describing: sessionIdentifier?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
     }
 }
 
 extension UserClient: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
-        return Set([#keyPath(UserClient.trustedByClients),
-                    #keyPath(UserClient.ignoredByClients),
-                    #keyPath(UserClient.needsToNotifyUser),
-                    #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
+        Set([#keyPath(UserClient.trustedByClients),
+             #keyPath(UserClient.ignoredByClients),
+             #keyPath(UserClient.needsToNotifyUser),
+             #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
     }
 
     public var notificationName: Notification.Name {
-        return .UserClientChange
+        .UserClientChange
     }
 }
 
@@ -50,26 +50,26 @@ public enum UserClientChangeInfoKey: String {
     }
 
     open var trustedByClientsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.trustedByClients))
+        changedKeysContain(keys: #keyPath(UserClient.trustedByClients))
     }
 
     open var ignoredByClientsChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.ignoredByClients))
+        changedKeysContain(keys: #keyPath(UserClient.ignoredByClients))
     }
 
     open var needsToNotifyUserChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
+        changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
     }
 
     open var sessionHasBeenReset: Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)) &&
+        changedKeysContain(keys: #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)) &&
             userClient.needsToNotifyOtherUserAboutSessionReset == false
     }
 
     public let userClient: UserClient
 
     static func changeInfo(for client: UserClient, changes: Changes) -> UserClientChangeInfo? {
-        return UserClientChangeInfo(object: client, changes: changes)
+        UserClientChangeInfo(object: client, changes: changes)
     }
 }
 

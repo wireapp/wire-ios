@@ -115,7 +115,7 @@ final class DatabaseStatisticsController: UIViewController {
                 func addSize(of assets: [ZMAssetClientMessage], title: String, filter: (ZMAssetClientMessage) -> Bool) {
                     let filtered = assets.filter(filter)
                     let size = filtered.reduce(0) { count, asset -> Int64 in
-                        return count + Int64(asset.size)
+                        count + Int64(asset.size)
                     }
                     let titleWithCount = filtered.isEmpty ? title : title + " (\(filtered.count))"
                     self.addRow(title: titleWithCount, contents: ByteCountFormatter.string(fromByteCount: size, countStyle: .file))

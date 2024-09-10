@@ -89,7 +89,7 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
         forType type: SubgroupType,
         parentGroupID: MLSGroupID
     ) -> MLSGroupID? {
-        return storage[parentGroupID]?[type]
+        storage[parentGroupID]?[type]
     }
 
     // MARK: - Finding subgroup

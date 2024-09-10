@@ -288,9 +288,9 @@ extension SearchTask {
 
             result = result.filter { membership in
                 if let user = membership.user {
-                    return user.teamRole != .partner || user.handle == query || membership.createdBy == selfUser || activeContacts.contains(user)
+                    user.teamRole != .partner || user.handle == query || membership.createdBy == selfUser || activeContacts.contains(user)
                 } else {
-                    return false
+                    false
                 }
             }
         }

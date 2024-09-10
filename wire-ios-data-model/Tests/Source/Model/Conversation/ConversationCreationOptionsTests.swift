@@ -39,7 +39,7 @@ class ConversationCreationOptionsTests: ZMConversationTestsBase {
 
 extension ContextProvider {
     func insertGroup(with options: ConversationCreationOptions) -> ZMConversation {
-        return ZMConversation.insertGroupConversation(
+        ZMConversation.insertGroupConversation(
             session: self,
             participants: options.participants,
             name: options.name,

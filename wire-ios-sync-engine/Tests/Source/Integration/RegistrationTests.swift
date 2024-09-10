@@ -22,7 +22,7 @@ import Foundation
 class RegistrationTests: IntegrationTest {
     var delegate: TestRegistrationStatusDelegate!
     var registrationStatus: WireSyncEngine.RegistrationStatus? {
-        return sessionManager?.unauthenticatedSession?.registrationStatus
+        sessionManager?.unauthenticatedSession?.registrationStatus
     }
 
     var teamToRegister: UnregisteredTeam!

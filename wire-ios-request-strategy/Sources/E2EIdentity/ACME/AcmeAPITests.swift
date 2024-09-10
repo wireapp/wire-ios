@@ -298,10 +298,10 @@ class MockHttpClient: HttpClientCustom {
 
 private class MockAcmeResponse {
     func acmeDirectory() -> AcmeDirectoriesResponse {
-        return AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                       newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                       newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                       revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
-                                       keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
+        AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+                                newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+                                newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+                                revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
+                                keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
     }
 }

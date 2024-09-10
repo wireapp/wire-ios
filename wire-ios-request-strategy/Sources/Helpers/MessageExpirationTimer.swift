@@ -59,7 +59,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
+        ZMMessage.sortedFetchRequest(with: ZMMessage.predicateForMessagesThatWillExpire())
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {

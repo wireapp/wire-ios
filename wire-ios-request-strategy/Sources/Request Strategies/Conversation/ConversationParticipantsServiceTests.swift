@@ -361,7 +361,7 @@ extension ConversationParticipantsServiceTests {
     fileprivate typealias DomainUserTuple = (domain: String, user: ZMUser)
 
     private func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
-        return await uiMOC.perform { [self] in
+        await uiMOC.perform { [self] in
 
             let applesDomain = "apples.com"
             let bananasDomain = "bananas.com"

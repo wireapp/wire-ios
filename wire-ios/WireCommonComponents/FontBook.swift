@@ -113,40 +113,40 @@ extension UIFont {
     public static func swiftUIFont(for style: UIFont.FontStyle) -> Font {
         switch style {
         case .title3:
-            return .title3
+            .title3
 
         case .headline:
-            return .headline
+            .headline
 
         case .body:
-            return .body
+            .body
 
         case .subheadline:
-            return .subheadline
+            .subheadline
 
         case .caption1:
-            return .caption
+            .caption
 
         case .title3Bold:
-            return .title3.bold()
+            .title3.bold()
 
         case .calloutBold:
-            return .callout.bold()
+            .callout.bold()
 
         case .footnoteSemibold:
-            return .footnote.weight(.semibold)
+            .footnote.weight(.semibold)
 
         case .bodyTwoSemibold:
-            return .system(size: 16, weight: .semibold)
+            .system(size: 16, weight: .semibold)
 
         case .buttonSmallSemibold:
-            return .system(size: 14, weight: .semibold)
+            .system(size: 14, weight: .semibold)
 
         case .buttonBigSemibold:
-            return .title3.bold()
+            .title3.bold()
 
         case .bigHeadline:
-            return .system(size: 36)
+            .system(size: 36)
         }
     }
 

@@ -289,7 +289,7 @@ final class MessagePresenter: NSObject {
 
 extension MessagePresenter: UIDocumentInteractionControllerDelegate {
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
-        return modalTargetController!
+        modalTargetController!
     }
 
     func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {

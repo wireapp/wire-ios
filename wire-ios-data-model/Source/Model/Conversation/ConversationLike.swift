@@ -68,7 +68,7 @@ public protocol SwiftConversationLike {
 
 extension ZMConversation: ConversationLike {
     public var localParticipantsCount: Int {
-        return localParticipants.count
+        localParticipants.count
     }
 
     public func localParticipantsContain(user: UserType) -> Bool {
@@ -77,7 +77,7 @@ extension ZMConversation: ConversationLike {
     }
 
     public var connectedUserType: UserType? {
-        return connectedUser
+        connectedUser
     }
 
     public var sortedOtherParticipants: [UserType] {

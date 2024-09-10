@@ -393,7 +393,7 @@ final class SettingsTextCell: SettingsTableCell,
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        return true
+        true
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {

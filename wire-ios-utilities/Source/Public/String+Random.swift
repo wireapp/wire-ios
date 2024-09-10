@@ -37,7 +37,7 @@ extension String {
     }
 
     public static func randomDomain(hostLength: UInt = 5) -> String {
-        return "\(String.randomAlphanumerical(length: hostLength)).com"
+        "\(String.randomAlphanumerical(length: hostLength)).com"
     }
 
     public static func randomRemoteIdentifier(length: UInt = 16) -> String {

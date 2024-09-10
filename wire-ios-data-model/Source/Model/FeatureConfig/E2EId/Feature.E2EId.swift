@@ -64,6 +64,6 @@ extension Feature {
 
 extension Feature.E2EI {
     public var isEnabled: Bool {
-        return status == .enabled
+        status == .enabled
     }
 }

@@ -25,26 +25,26 @@ enum CallInfoViewControllerAccessoryType: Equatable {
 
     var showParticipantList: Bool {
         if case .participantsList = self {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var showAvatar: Bool {
         if case .avatar = self {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var participants: CallParticipantsList {
         switch self {
         case let .participantsList(participants):
-            return participants
+            participants
         default:
-            return []
+            []
         }
     }
 }

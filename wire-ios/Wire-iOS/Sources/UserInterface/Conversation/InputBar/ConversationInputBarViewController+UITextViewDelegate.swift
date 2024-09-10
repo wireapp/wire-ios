@@ -52,15 +52,15 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     }
 
     func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return textAttachment.image == nil
+        textAttachment.image == nil
     }
 
     var isMentionsViewKeyboardCollapsed: Bool {
         // Press tab or enter to insert mention if iPhone keyboard is collapsed
         if let isKeyboardCollapsed = mentionsView?.isKeyboardCollapsed {
-            return isKeyboardCollapsed
+            isKeyboardCollapsed
         } else {
-            return false
+            false
         }
     }
 
@@ -115,7 +115,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     }
 
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        return delegate?.conversationInputBarViewControllerShouldEndEditing(self) ?? true
+        delegate?.conversationInputBarViewControllerShouldEndEditing(self) ?? true
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {

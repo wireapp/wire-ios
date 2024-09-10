@@ -38,7 +38,7 @@ extension CGSize {
     /// - Parameter otherSize: other CGSize to compare
     /// - Returns: true if both with and height are longer than otherSize
     func contains(_ otherSize: CGSize) -> Bool {
-        return otherSize.width < width &&
+        otherSize.width < width &&
             otherSize.height < height
     }
 }

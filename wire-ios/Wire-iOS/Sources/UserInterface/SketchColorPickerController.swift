@@ -76,7 +76,7 @@ final class SketchColorPickerController: UIViewController {
     }
 
     private func canSelectColor(atIndex index: Int) -> Bool {
-        return colorsCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) != nil
+        colorsCollectionView.cellForItem(at: IndexPath(row: index, section: 0)) != nil
     }
 
     /// Read only: Use the selectedColorIndex to change the selected color
@@ -140,7 +140,7 @@ final class SketchColorPickerController: UIViewController {
 
     /// Returns the current brush width for the given color
     func brushWidth(for color: UIColor) -> CGFloat {
-        return colorToBrushWidthMapper?[color] ?? SketchColorPickerDefaultBrushWidth
+        colorToBrushWidthMapper?[color] ?? SketchColorPickerDefaultBrushWidth
     }
 
     private func bumpBrushWidth(for color: UIColor) -> CGFloat {
@@ -178,11 +178,11 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
     // MARK: - UICollectionViewDataSource
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return colorToBrushWidthMapper?.count ?? 0
+        colorToBrushWidthMapper?.count ?? 0
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -211,19 +211,19 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
     }
 
     private var contentWidth: CGFloat {
-        return numberOfItems * colorsCollectionViewLayout.itemSize.width + max(numberOfItems - 1, 0) * colorsCollectionViewLayout.minimumInteritemSpacing
+        numberOfItems * colorsCollectionViewLayout.itemSize.width + max(numberOfItems - 1, 0) * colorsCollectionViewLayout.minimumInteritemSpacing
     }
 
     private var frameWidth: CGFloat {
-        return colorsCollectionView.frame.size.width
+        colorsCollectionView.frame.size.width
     }
 
     private var numberOfItems: CGFloat {
-        return CGFloat(sketchColors.count)
+        CGFloat(sketchColors.count)
     }
 
     private var allItemsAreIncluded: Bool {
-        return contentWidth < frameWidth
+        contentWidth < frameWidth
     }
 
     func collectionView(

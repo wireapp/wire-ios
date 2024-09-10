@@ -22,7 +22,7 @@ import LocalAuthentication
 
 final class SessionManagerEncryptionAtRestMigrationTests: IntegrationTest {
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     override func setUp() {

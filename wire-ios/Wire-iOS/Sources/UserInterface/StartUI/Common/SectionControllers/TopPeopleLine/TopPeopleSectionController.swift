@@ -70,22 +70,22 @@ final class TopPeopleSectionController: SearchSectionController {
 
     override var isHidden: Bool {
         if let topConversationsDirectory {
-            return topConversationsDirectory.topConversations.isEmpty
+            topConversationsDirectory.topConversations.isEmpty
         } else {
-            return true
+            true
         }
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Peoplepicker.Header.topPeople
+        L10n.Localizable.Peoplepicker.Header.topPeople
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 97)
+        CGSize(width: collectionView.bounds.size.width, height: 97)
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

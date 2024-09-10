@@ -64,13 +64,11 @@ final class NetworkStatusView: UIView {
     private let offlineView: OfflineBar
     private var _state: NetworkStatusViewState = .online
 
-    private lazy var topMargin: CGFloat = {
-        if UIScreen.hasNotch {
-            return 0
-        } else {
-            return CGFloat.NetworkStatusBar.topMargin
-        }
-    }()
+    private lazy var topMargin: CGFloat = if UIScreen.hasNotch {
+        0
+    } else {
+        CGFloat.NetworkStatusBar.topMargin
+    }
 
     weak var delegate: NetworkStatusViewDelegate?
 
@@ -215,7 +213,7 @@ final class NetworkStatusView: UIView {
 
     // Detects when the view can be touchable
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        return state == .offlineExpanded
+        state == .offlineExpanded
     }
 
     // MARK: - Helper Logging

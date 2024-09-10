@@ -76,13 +76,13 @@ enum PasswordCharacterClass: Hashable, Decodable {
     /// The string describing the character set.
     var rawValue: String {
         switch self {
-        case .unicode: return "unicode"
-        case .uppercase: return "upper"
-        case .lowercase: return "lower"
-        case .digits: return "digits"
-        case .special: return "special"
-        case .asciiPrintable: return "ascii-printable"
-        case let .custom(characterSet): return "[\(characterSet)]"
+        case .unicode: "unicode"
+        case .uppercase: "upper"
+        case .lowercase: "lower"
+        case .digits: "digits"
+        case .special: "special"
+        case .asciiPrintable: "ascii-printable"
+        case let .custom(characterSet): "[\(characterSet)]"
         }
     }
 
@@ -109,13 +109,13 @@ enum PasswordCharacterClass: Hashable, Decodable {
     /// The standard character set that represents the character class.
     var associatedCharacterSet: CharacterSet {
         switch self {
-        case .unicode: return .unicode
-        case .uppercase: return .asciiUppercaseLetters
-        case .lowercase: return .asciiLowercaseLetters
-        case .digits: return .decimalDigits
-        case .asciiPrintable: return .asciiPrintableSet
-        case .special: return CharacterSet.asciiStandardCharacters.inverted
-        case let .custom(charactersString): return CharacterSet(charactersIn: charactersString)
+        case .unicode: .unicode
+        case .uppercase: .asciiUppercaseLetters
+        case .lowercase: .asciiLowercaseLetters
+        case .digits: .decimalDigits
+        case .asciiPrintable: .asciiPrintableSet
+        case .special: CharacterSet.asciiStandardCharacters.inverted
+        case let .custom(charactersString): CharacterSet(charactersIn: charactersString)
         }
     }
 }

@@ -22,7 +22,7 @@ import WireRequestStrategy
 import WireUtilities
 
 extension ZMConversation: Conversation {
-    public var name: String? { return displayName }
+    public var name: String? { displayName }
 
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
         do {
@@ -62,7 +62,7 @@ extension ZMConversation: Conversation {
 
     /// Adds an observer for when the conversation verification status degrades
     public func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable {
-        return DegradationObserver(conversation: self, callback: conversationVerificationDegradedObserver)
+        DegradationObserver(conversation: self, callback: conversationVerificationDegradedObserver)
     }
 }
 

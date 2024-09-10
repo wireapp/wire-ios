@@ -137,7 +137,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
     // MARK: - Helpers
 
     private func createGenericMessage(text: String) -> GenericMessage {
-        return GenericMessage(content: Text(content: text))
+        GenericMessage(content: Text(content: text))
     }
 
     @discardableResult

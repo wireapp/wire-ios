@@ -57,7 +57,7 @@ public class Feature: ZMManagedObject {
 
     public var config: Data? {
         get {
-            return configData
+            configData
         }
 
         set {
@@ -101,17 +101,17 @@ public class Feature: ZMManagedObject {
 
     /// Whether the feature has been updated from backend
     private var hasBeenUpdatedFromBackend: Bool {
-        return !statusValue.isEmpty && !hasInitialDefault
+        !statusValue.isEmpty && !hasInitialDefault
     }
 
     // MARK: - Methods
 
     override public static func entityName() -> String {
-        return "Feature"
+        "Feature"
     }
 
     override public static func sortKey() -> String {
-        return #keyPath(Feature.nameValue)
+        #keyPath(Feature.nameValue)
     }
 
     /// Fetch the instance for the given name.

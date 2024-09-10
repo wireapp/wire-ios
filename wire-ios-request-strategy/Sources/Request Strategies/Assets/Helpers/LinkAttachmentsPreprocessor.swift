@@ -25,11 +25,11 @@ public final class LinkAttachmentDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkAttachmentDetector: LinkAttachmentDetectorType?
 
     public static func defaultDetector() -> LinkAttachmentDetectorType {
-        return test_debug_linkAttachmentDetector() ?? LinkAttachmentDetector()
+        test_debug_linkAttachmentDetector() ?? LinkAttachmentDetector()
     }
 
     public static func test_debug_linkAttachmentDetector() -> LinkAttachmentDetectorType? {
-        return _test_debug_linkAttachmentDetector
+        _test_debug_linkAttachmentDetector
     }
 
     public static func setTest_debug_linkAttachmentDetector(_ detectorType: LinkAttachmentDetectorType?) {

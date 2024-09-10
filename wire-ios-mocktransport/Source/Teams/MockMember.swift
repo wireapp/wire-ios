@@ -53,7 +53,7 @@ public struct MockPermissions: OptionSet {
     @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: MockPermissions {
-        get { return MockPermissions(rawValue: permissionsRawValue) }
+        get { MockPermissions(rawValue: permissionsRawValue) }
         set { permissionsRawValue = newValue.rawValue }
     }
 

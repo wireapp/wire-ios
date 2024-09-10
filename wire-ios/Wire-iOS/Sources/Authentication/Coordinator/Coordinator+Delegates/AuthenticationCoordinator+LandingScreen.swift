@@ -80,16 +80,16 @@ extension EnvironmentTypeProvider {
     var customUrl: URL? {
         switch value {
         case let .custom(url):
-            return url
+            url
         default:
-            return nil
+            nil
         }
     }
 }
 
 extension BackendEnvironment {
     var proxyCredentials: ProxyCredentials? {
-        return proxy.flatMap { proxy in
+        proxy.flatMap { proxy in
             ProxyCredentials.retrieve(for: proxy)
         }
     }

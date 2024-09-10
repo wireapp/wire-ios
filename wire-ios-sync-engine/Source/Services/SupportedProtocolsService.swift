@@ -147,7 +147,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     }
 
     private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        return selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
+        selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 }
 
@@ -155,11 +155,11 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
 extension UserClient {
     fileprivate var isActiveMLSClient: Bool {
-        return hasMLSIdentity && isRecentlyActive
+        hasMLSIdentity && isRecentlyActive
     }
 
     private var hasMLSIdentity: Bool {
-        return !mlsPublicKeys.isEmpty
+        !mlsPublicKeys.isEmpty
     }
 
     private var isRecentlyActive: Bool {

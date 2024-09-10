@@ -114,7 +114,7 @@ extension ApplicationMock {
     }
 
     var isInBackground: Bool {
-        return self.applicationState == .background
+        self.applicationState == .background
     }
 
     @objc func setBackground() {
@@ -122,7 +122,7 @@ extension ApplicationMock {
     }
 
     var isInactive: Bool {
-        return self.applicationState == .inactive
+        self.applicationState == .inactive
     }
 
     @objc func setInactive() {
@@ -130,7 +130,7 @@ extension ApplicationMock {
     }
 
     var isActive: Bool {
-        return self.applicationState == .active
+        self.applicationState == .active
     }
 
     @objc func setActive() {

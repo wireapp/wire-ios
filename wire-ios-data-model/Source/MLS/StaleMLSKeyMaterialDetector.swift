@@ -45,7 +45,7 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
     public static var keyMaterialRefreshIntervalInDays: UInt {
         // To ensure that a group's key material does not exceed its maximum age,
         // refresh pre-emptively so that it doesn't go stale while the user is offline.
-        return keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
+        keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
     }
 
     /// The maximum age of a group's key material before it's considered stale.

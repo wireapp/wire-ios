@@ -162,6 +162,6 @@ extension PreviewDownloader {
 extension HTTPURLResponse {
     /// Whether the response is a success.
     var isSuccess: Bool {
-        return statusCode < 400
+        statusCode < 400
     }
 }

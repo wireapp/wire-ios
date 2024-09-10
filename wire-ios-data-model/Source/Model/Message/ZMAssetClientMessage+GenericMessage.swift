@@ -20,25 +20,25 @@ import Foundation
 
 extension ZMAssetClientMessage {
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
-        return self.dataSet.lazy
+        self.dataSet.lazy
             .compactMap { $0 as? ZMGenericMessageData }
             .first(where: { $0.underlyingMessage?.imageAssetData?.imageFormat() == format })
     }
 
     public var mediumGenericMessage: GenericMessage? {
-        return self.genericMessageDataFromDataSet(for: .medium)?.underlyingMessage
+        self.genericMessageDataFromDataSet(for: .medium)?.underlyingMessage
     }
 
     static func keyPathsForValuesAffectingMediumGenericMessage() -> Set<String> {
-        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
+        Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
     }
 
     public var previewGenericMessage: GenericMessage? {
-        return self.genericMessageDataFromDataSet(for: .preview)?.underlyingMessage
+        self.genericMessageDataFromDataSet(for: .preview)?.underlyingMessage
     }
 
     static func keyPathsForValuesAffectingPreviewGenericMessage() -> Set<String> {
-        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
+        Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
     }
 
     public var underlyingMessage: GenericMessage? {
@@ -160,7 +160,7 @@ extension ZMAssetClientMessage {
     }
 
     override public var imageMessageData: ZMImageMessageData? {
-        return self.asset?.imageMessageData
+        self.asset?.imageMessageData
     }
 
     override public var fileMessageData: ZMFileMessageData? {

@@ -183,7 +183,7 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
 extension ConversationButtonMessageCell.Configuration: Hashable {
     static func == (lhs: ConversationButtonMessageCell.Configuration, rhs: ConversationButtonMessageCell.Configuration) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        lhs.hashValue == rhs.hashValue
     }
 
     func hash(into hasher: inout Hasher) {

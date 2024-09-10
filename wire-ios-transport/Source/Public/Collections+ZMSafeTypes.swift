@@ -44,68 +44,68 @@ func objectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required
 }
 
 func requiredObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
-    return objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: true, transform: transform)
+    objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: true, transform: transform)
 }
 
 func optionalObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
-    return objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: false, transform: transform)
+    objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: false, transform: transform)
 }
 
 extension NSDictionary {
     @objc public func string(forKey key: String) -> String? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func optionalString(forKey key: String) -> String? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func number(forKey key: String) -> NSNumber? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func optionalNumber(forKey key: String) -> NSNumber? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func array(forKey key: String) -> [AnyObject]? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func optionalArray(forKey key: String) -> [AnyObject]? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func data(forKey key: String) -> Data? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func optionalData(forKey key: String) -> Data? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func dictionary(forKey key: String) -> [String: AnyObject]? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
 
     @objc public func uuid(forKey key: String) -> UUID? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
     @objc public func optionalUuid(forKey key: String) -> UUID? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
     @objc
     public func date(for key: String) -> Date? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
+        requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
     }
 
     @objc public func optionalDate(forKey key: String) -> Date? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
+        optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { .init(transportString: $0) }
     }
 }

@@ -25,7 +25,7 @@ final class TopPeopleLineCollectionViewController: NSObject {
     weak var delegate: TopPeopleLineCollectionViewControllerDelegate?
 
     private func conversation(at indexPath: IndexPath) -> ZMConversation {
-        return topPeople[indexPath.item % topPeople.count]
+        topPeople[indexPath.item % topPeople.count]
     }
 }
 
@@ -33,7 +33,7 @@ final class TopPeopleLineCollectionViewController: NSObject {
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return topPeople.count
+        topPeople.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -56,14 +56,14 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return .init(top: 6, left: 0, bottom: 0, right: 0)
+        .init(top: 6, left: 0, bottom: 0, right: 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return .init(width: 56, height: 78)
+        .init(width: 56, height: 78)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 12
+        12
     }
 }

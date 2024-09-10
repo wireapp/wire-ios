@@ -50,7 +50,7 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
     // MARK: - Requests
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return actionSync.nextRequest(for: apiVersion)
+        actionSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMEventConsumer

@@ -26,7 +26,7 @@ extension UIAlertController {
         forceAlertModal: Bool = false,
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
-        return ongoingCallConfirmation(
+        ongoingCallConfirmation(
             title: OngoingCallAlert.alertTitle,
             message: OngoingCallAlert.Join.message,
             buttonTitle: OngoingCallAlert.Join.button,

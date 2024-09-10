@@ -22,7 +22,7 @@ import UIKit
 final class PassthroughTouchesView: UIView {
     override var isOpaque: Bool {
         get {
-            return false
+            false
         }
 
         set {

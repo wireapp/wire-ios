@@ -26,28 +26,28 @@ extension CallStatusViewState {
 
     var isIncoming: Bool {
         switch self {
-        case .ringingIncoming: return true
-        default: return false
+        case .ringingIncoming: true
+        default: false
         }
     }
 
     var requiresShowingStatusView: Bool {
         switch self {
-        case .none, .established: return false
-        default: return true
+        case .none, .established: false
+        default: true
         }
     }
 
     var displayString: String {
         switch self {
-        case .none: return ""
-        case .connecting: return CallStatus.connecting
-        case let .ringingIncoming(name: name?): return CallStatus.Incoming.user("\(name)")
-        case .ringingIncoming(name: nil): return CallStatus.incoming
-        case .ringingOutgoing: return CallStatus.outgoing
-        case let .established(duration: duration): return callDurationFormatter.string(from: duration) ?? ""
-        case .reconnecting: return CallStatus.reconnecting
-        case .terminating: return CallStatus.terminating
+        case .none: ""
+        case .connecting: CallStatus.connecting
+        case let .ringingIncoming(name: name?): CallStatus.Incoming.user("\(name)")
+        case .ringingIncoming(name: nil): CallStatus.incoming
+        case .ringingOutgoing: CallStatus.outgoing
+        case let .established(duration: duration): callDurationFormatter.string(from: duration) ?? ""
+        case .reconnecting: CallStatus.reconnecting
+        case .terminating: CallStatus.terminating
         }
     }
 }

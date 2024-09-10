@@ -60,7 +60,7 @@ extension MockTransportSession {
     }
 
     func missedClients(fromRecipients recipients: [Proteus_UserEntry], sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
-        return missedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers, sender: sender, onlyForUserId: onlyForUserId)
+        missedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers, sender: sender, onlyForUserId: onlyForUserId)
     }
 
     /// Returns a list of missing clients in the conversation that were not included in the list of intendend recipients
@@ -88,7 +88,7 @@ extension MockTransportSession {
             }
 
             let recipientClients = userEntry?.clients.map { entry in
-                return String(format: "%llx", CUnsignedLongLong(entry.client.client))
+                String(format: "%llx", CUnsignedLongLong(entry.client.client))
             }
 
             var userClients: Set<String> = Set(user.userClients.compactMap { client in
@@ -115,7 +115,7 @@ extension MockTransportSession {
     }
 
     func deletedClients(fromRecipients recipients: [Proteus_UserEntry]) -> [String: [String]] {
-        return deletedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers)
+        deletedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers)
     }
 
     /// Returns a list of deleted clients for broascasting that were included in the list of intendend recipients
@@ -139,11 +139,11 @@ extension MockTransportSession {
             }
 
             let recipientClients = userEntry.clients.map { entry in
-                return String(format: "%llx", CUnsignedLongLong(entry.client.client))
+                String(format: "%llx", CUnsignedLongLong(entry.client.client))
             }
 
             let userClients: Set<String> = Set(user.userClients.compactMap { client in
-                return client.identifier
+                client.identifier
             })
 
             var deletedUserClients = Set(recipientClients)
@@ -163,7 +163,7 @@ extension MockTransportSession {
                                 createEventBlock: (MockUserClient, Data, Data) -> MockEvent) {
         let activeUsers = conversation.activeUsers.array as? [MockUser]
         guard let activeClients = activeUsers?.flatMap({ user in
-            return user.userClients.compactMap(\.identifier)
+            user.userClients.compactMap(\.identifier)
         }) else {
             return
         }
@@ -173,7 +173,7 @@ extension MockTransportSession {
         let allClients1 = try! managedObjectContext.fetch(allClientsRequest)
         let allClients = allClients1 as? [MockUserClient]
 
-        let clientsEntries = recipients.flatMap { return $0.clients }
+        let clientsEntries = recipients.flatMap(\.clients)
 
         for entry in clientsEntries {
             guard let client = allClients?.first(where: { client in

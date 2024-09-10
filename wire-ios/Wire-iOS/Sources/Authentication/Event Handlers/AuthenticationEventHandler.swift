@@ -56,6 +56,6 @@ protocol AuthenticationEventHandler: AnyObject {
 
 extension AuthenticationEventHandler {
     var isRegistered: Bool {
-        return statusProvider?.authenticatedUserWasRegisteredOnThisDevice == true
+        statusProvider?.authenticatedUserWasRegisteredOnThisDevice == true
     }
 }

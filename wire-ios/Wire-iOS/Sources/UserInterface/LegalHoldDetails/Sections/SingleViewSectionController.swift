@@ -63,7 +63,7 @@ final class SingleViewSectionController: NSObject, CollectionViewSectionControll
     }
 
     var isHidden: Bool {
-        return false
+        false
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -73,7 +73,7 @@ final class SingleViewSectionController: NSObject, CollectionViewSectionControll
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

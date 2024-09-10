@@ -22,6 +22,6 @@ import XCTest
 
 extension Account {
     static func mockAccount(imageData: Data) -> Account {
-        return Account(userName: "", userIdentifier: UUID(), teamName: nil, imageData: imageData)
+        Account(userName: "", userIdentifier: UUID(), teamName: nil, imageData: imageData)
     }
 }

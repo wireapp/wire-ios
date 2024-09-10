@@ -40,7 +40,7 @@ struct Changes: Mergeable {
     // MARK: - Methods
 
     var hasChangeInfo: Bool {
-        return !changedKeys.isEmpty || !originalChanges.isEmpty || mayHaveUnknownChanges
+        !changedKeys.isEmpty || !originalChanges.isEmpty || mayHaveUnknownChanges
     }
 
     func merged(with other: Changes) -> Changes {

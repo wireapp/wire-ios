@@ -23,7 +23,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
     func remotelyInsertAssetOriginalAndUpdate(updateMessage: GenericMessage,
                                               insertBlock: @escaping (_ data: Data, _ conversation: MockConversation, _ from: MockUserClient, _ to: MockUserClient) -> Void,
                                               nonce: UUID) -> ZMAssetClientMessage? {
-        return remotelyInsertAssetOriginalWithMimeType(mimeType: "text/plain", updateMessage: updateMessage, insertBlock: insertBlock, nonce: nonce, isEphemeral: false)
+        remotelyInsertAssetOriginalWithMimeType(mimeType: "text/plain", updateMessage: updateMessage, insertBlock: insertBlock, nonce: nonce, isEphemeral: false)
     }
 
     func remotelyInsertAssetOriginalWithMimeType(mimeType: String,

@@ -29,7 +29,7 @@ public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCap
     }
 
     public func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     public var mayBeReachable: Bool = true

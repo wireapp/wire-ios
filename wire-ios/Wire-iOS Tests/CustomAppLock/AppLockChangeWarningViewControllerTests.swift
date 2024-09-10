@@ -42,7 +42,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
 
     func testWarningThatAppLockIsActive() {
         let createSut: () -> UIViewController = {
-            return AppLockChangeWarningViewController(
+            AppLockChangeWarningViewController(
                 isAppLockActive: true,
                 userSession: self.userSession
             )
@@ -73,7 +73,7 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
 
     func testWarningThatAppLockIsNotActive() {
         let createSut: () -> UIViewController = {
-            return AppLockChangeWarningViewController(
+            AppLockChangeWarningViewController(
                 isAppLockActive: false,
                 userSession: self.userSession
             )

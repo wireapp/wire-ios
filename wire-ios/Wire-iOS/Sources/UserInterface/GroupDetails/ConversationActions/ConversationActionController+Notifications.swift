@@ -24,35 +24,35 @@ enum NotificationResult: CaseIterable {
     case everything, mentionsAndReplies, nothing, cancel
 
     static var title: String {
-        return L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
+        L10n.Localizable.Meta.Menu.ConfigureNotification.dialogMessage
     }
 
     var mutedMessageTypes: MutedMessageTypes? {
         switch self {
         case .everything:
-            return MutedMessageTypes.none
+            MutedMessageTypes.none
         case .mentionsAndReplies:
-            return .regular
+            .regular
         case .nothing:
-            return .all
+            .all
         case .cancel:
-            return nil
+            nil
         }
     }
 
     var title: String {
         switch self {
-        case .everything: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
-        case .mentionsAndReplies: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
-        case .nothing: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
-        case .cancel: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonCancel
+        case .everything: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
+        case .mentionsAndReplies: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
+        case .nothing: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
+        case .cancel: L10n.Localizable.Meta.Menu.ConfigureNotification.buttonCancel
         }
     }
 
     private var style: UIAlertAction.Style {
         switch self {
-        case .cancel: return .cancel
-        default: return .default
+        case .cancel: .cancel
+        default: .default
         }
     }
 

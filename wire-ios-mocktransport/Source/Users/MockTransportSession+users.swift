@@ -61,6 +61,6 @@ extension MockTransportSession {
 
     @objc(insertUserWithName:)
     public func insertUserWithName(name: String) -> MockUser {
-        return self.insertUserWith(name: name, includeClient: true)
+        self.insertUserWith(name: name, includeClient: true)
     }
 }

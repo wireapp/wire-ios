@@ -34,7 +34,7 @@ final class UserProfileUpdateStatusTests: MessagingTest {
 
     /// Number of time the new request callback was invoked
     var newRequestCallbackCount: Int {
-        return newRequestObserver.notifications.count
+        newRequestObserver.notifications.count
     }
 
     override func setUp() {

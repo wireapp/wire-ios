@@ -83,7 +83,7 @@ public struct CallParticipant: Hashable {
     // MARK: - Hashable
 
     public static func == (lhs: CallParticipant, rhs: CallParticipant) -> Bool {
-        return lhs.userId == rhs.userId &&
+        lhs.userId == rhs.userId &&
             lhs.clientId == rhs.clientId &&
             lhs.state == rhs.state
     }
@@ -221,13 +221,13 @@ public enum CallState: Equatable {
     func update(isConversationDegraded: Bool) -> CallState {
         switch self {
         case .incoming(video: let video, shouldRing: let shouldRing, degraded: _):
-            return .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
+            .incoming(video: video, shouldRing: shouldRing, degraded: isConversationDegraded)
         case .outgoing:
-            return .outgoing(degraded: isConversationDegraded)
+            .outgoing(degraded: isConversationDegraded)
         case .answered:
-            return .answered(degraded: isConversationDegraded)
+            .answered(degraded: isConversationDegraded)
         default:
-            return self
+            self
         }
     }
 }

@@ -259,6 +259,6 @@ extension UnlockViewController: TextFieldValidationDelegate {
 
 extension UnlockViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        return unlock()
+        unlock()
     }
 }

@@ -41,12 +41,12 @@ public final class AutomationHelper: NSObject {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: get it from xcconfig?
         // return UserDefaults.standard.bool(forKey: "UseAnalytics")
-        return true
+        true
     }
 
     /// Whether to skip the first login alert
     public var skipFirstLoginAlerts: Bool {
-        return self.automationEmailCredentials != nil
+        self.automationEmailCredentials != nil
     }
 
     /// The login credentials provides by command line
@@ -183,14 +183,14 @@ protocol ArgumentsType {
 // MARK: - default implementation
 
 extension ArgumentsType {
-    var flagPrefix: String { return "--" }
+    var flagPrefix: String { "--" }
 
     func hasFlag(_ name: String) -> Bool {
-        return self.arguments.contains(flagPrefix + name)
+        self.arguments.contains(flagPrefix + name)
     }
 
     func hasFlag<Flag: RawRepresentable>(_ flag: Flag) -> Bool where Flag.RawValue == String {
-        return hasFlag(flag.rawValue)
+        hasFlag(flag.rawValue)
     }
 
     func flagValueIfPresent(_ commandLineArgument: String) -> String? {

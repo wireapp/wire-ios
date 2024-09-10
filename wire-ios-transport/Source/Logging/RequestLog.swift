@@ -108,11 +108,11 @@ extension URL {
 
 extension String {
     public var redacted: String {
-        return "*".repeat(self.count)
+        "*".repeat(self.count)
     }
 
     public func `repeat`(_ count: Int) -> String {
-        return String(repeating: self, count: count)
+        String(repeating: self, count: count)
     }
 
     public func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {

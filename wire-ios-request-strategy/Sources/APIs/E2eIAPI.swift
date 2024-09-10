@@ -29,7 +29,7 @@ class E2eIAPIV5: E2eIAPI {
     let httpClient: HttpClient
 
     open var apiVersion: APIVersion {
-        return .v5
+        .v5
     }
 
     init(httpClient: HttpClient) {
@@ -66,7 +66,7 @@ class E2eIAPIV5: E2eIAPI {
 
 class E2eIAPIV6: E2eIAPIV5 {
     override var apiVersion: APIVersion {
-        return .v6
+        .v6
     }
 }
 

@@ -27,8 +27,8 @@ enum ConversationActionType {
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
         switch self {
-        case .left, .teamMemberLeave, .added(herself: true): return false
-        default:                                             return true
+        case .left, .teamMemberLeave, .added(herself: true): false
+        default:                                             true
         }
     }
 
@@ -36,8 +36,8 @@ enum ConversationActionType {
         // Don't collapse when removing participants, since the collapsed
         // link is only used for participants in the conversation.
         switch self {
-        case .removed:  return false
-        default:        return true
+        case .removed:  false
+        default:        true
         }
     }
 
@@ -76,15 +76,15 @@ final class ParticipantsCellViewModel {
     let message: ZMConversationMessage
 
     private var action: ConversationActionType {
-        return message.actionType
+        message.actionType
     }
 
     private var maxShownUsers: Int {
-        return isSelfIncludedInUsers ? 16 : 17
+        isSelfIncludedInUsers ? 16 : 17
     }
 
     private var maxShownUsersWhenCollapsed: Int {
-        return isSelfIncludedInUsers ? 14 : 15
+        isSelfIncludedInUsers ? 14 : 15
     }
 
     private var showServiceUserWarning: Bool {
@@ -122,8 +122,8 @@ final class ParticipantsCellViewModel {
     /// The users to display when opening the participants details screen.
     var selectedUsers: [UserType] {
         switch action {
-        case .added: return sortedUsers
-        default: return []
+        case .added: sortedUsers
+        default: []
         }
     }
 
@@ -166,9 +166,9 @@ final class ParticipantsCellViewModel {
 
     private func name(for user: UserType) -> String {
         if user.isSelfUser {
-            return "content.system.you_\(grammaticalCase(for: user))".localized
+            "content.system.you_\(grammaticalCase(for: user))".localized
         } else {
-            return user.name ?? L10n.Localizable.Conversation.Status.someone
+            user.name ?? L10n.Localizable.Conversation.Status.someone
         }
     }
 
@@ -202,7 +202,7 @@ final class ParticipantsCellViewModel {
     // ------------------------------------------------------------
 
     func image() -> UIImage? {
-        return action.image(with: iconColor)
+        action.image(with: iconColor)
     }
 
     func attributedHeading() -> NSAttributedString? {

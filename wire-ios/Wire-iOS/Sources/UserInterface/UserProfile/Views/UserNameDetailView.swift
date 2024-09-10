@@ -62,7 +62,7 @@ final class UserNameDetailViewModel: NSObject {
     private let correlationText: NSAttributedString?
 
     var firstSubtitle: NSAttributedString? {
-        return handleText ?? correlationText
+        handleText ?? correlationText
     }
 
     var secondSubtitle: NSAttributedString? {
@@ -96,7 +96,7 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     static func attributedTitle(for user: UserType?, fallback: String) -> NSAttributedString {
-        return (user?.name ?? fallback) && normalBoldFont.font! && SemanticColors.Label.textDefault
+        (user?.name ?? fallback) && normalBoldFont.font! && SemanticColors.Label.textDefault
     }
 
     static func attributedSubtitle(for user: UserType?) -> NSAttributedString? {

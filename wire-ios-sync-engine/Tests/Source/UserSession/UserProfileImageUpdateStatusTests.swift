@@ -21,27 +21,27 @@ import WireUtilities
 import XCTest
 
 var sampleUploadState: UserProfileImageUpdateStatus.ImageState {
-    return UserProfileImageUpdateStatus.ImageState.upload(image: Data())
+    UserProfileImageUpdateStatus.ImageState.upload(image: Data())
 }
 
 var sampleUploadedState: UserProfileImageUpdateStatus.ImageState {
-    return UserProfileImageUpdateStatus.ImageState.uploaded(assetId: "foo")
+    UserProfileImageUpdateStatus.ImageState.uploaded(assetId: "foo")
 }
 
 var sampleFailedImageState: UserProfileImageUpdateStatus.ImageState {
-    return UserProfileImageUpdateStatus.ImageState.failed(.preprocessingFailed)
+    UserProfileImageUpdateStatus.ImageState.failed(.preprocessingFailed)
 }
 
 var samplePreprocessState: UserProfileImageUpdateStatus.ProfileUpdateState {
-    return UserProfileImageUpdateStatus.ProfileUpdateState.preprocess(image: Data())
+    UserProfileImageUpdateStatus.ProfileUpdateState.preprocess(image: Data())
 }
 
 var sampleUpdateState: UserProfileImageUpdateStatus.ProfileUpdateState {
-    return UserProfileImageUpdateStatus.ProfileUpdateState.update(previewAssetId: "id1", completeAssetId: "id2")
+    UserProfileImageUpdateStatus.ProfileUpdateState.update(previewAssetId: "id1", completeAssetId: "id2")
 }
 
 var sampleFailedState: UserProfileImageUpdateStatus.ProfileUpdateState {
-    return UserProfileImageUpdateStatus.ProfileUpdateState.failed(.preprocessingFailed)
+    UserProfileImageUpdateStatus.ProfileUpdateState.failed(.preprocessingFailed)
 }
 
 class MockPreprocessor: NSObject, ZMAssetsPreprocessorProtocol {
@@ -99,14 +99,14 @@ enum MockUploadError: String, Error {
 }
 
 class MockImageOwner: NSObject, ZMImageOwner {
-    public func requiredImageFormats() -> NSOrderedSet { return NSOrderedSet() }
-    public func imageData(for format: ZMImageFormat) -> Data? { return Data() }
+    public func requiredImageFormats() -> NSOrderedSet { NSOrderedSet() }
+    public func imageData(for format: ZMImageFormat) -> Data? { Data() }
     public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {}
-    public func originalImageData() -> Data? { return Data() }
-    public func originalImageSize() -> CGSize { return .zero }
-    public func isInline(for format: ZMImageFormat) -> Bool { return false }
-    public func isPublic(for format: ZMImageFormat) -> Bool { return false }
-    public func isUsingNativePush(for format: ZMImageFormat) -> Bool { return false }
+    public func originalImageData() -> Data? { Data() }
+    public func originalImageSize() -> CGSize { .zero }
+    public func isInline(for format: ZMImageFormat) -> Bool { false }
+    public func isPublic(for format: ZMImageFormat) -> Bool { false }
+    public func isUsingNativePush(for format: ZMImageFormat) -> Bool { false }
     public func processingDidFinish() {}
 }
 
@@ -137,25 +137,25 @@ public typealias UserProfileImageUpdateStatus = WireSyncEngine.UserProfileImageU
 
 extension UserProfileImageUpdateStatus.ImageState: Equatable {
     public static func == (lhs: UserProfileImageUpdateStatus.ImageState, rhs: UserProfileImageUpdateStatus.ImageState) -> Bool {
-        return String(describing: lhs) == String(describing: rhs)
+        String(describing: lhs) == String(describing: rhs)
     }
 }
 
 extension UserProfileImageUpdateStatus.ImageState: StateTransition {
     static var allStates: [ImageState] {
-        return [.ready, .preprocessing, sampleUploadState, .uploading, sampleUploadedState, sampleFailedImageState]
+        [.ready, .preprocessing, sampleUploadState, .uploading, sampleUploadedState, sampleFailedImageState]
     }
 }
 
 extension ProfileUpdateState: Equatable {
     public static func == (lhs: ProfileUpdateState, rhs: ProfileUpdateState) -> Bool {
-        return String(describing: lhs) == String(describing: rhs)
+        String(describing: lhs) == String(describing: rhs)
     }
 }
 
 extension ProfileUpdateState: StateTransition {
     static var allStates: [ProfileUpdateState] {
-        return [.ready, samplePreprocessState, sampleUpdateState, sampleFailedState]
+        [.ready, samplePreprocessState, sampleUpdateState, sampleFailedState]
     }
 }
 

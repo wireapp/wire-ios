@@ -52,7 +52,7 @@ extension ZMConversation {
 
     /// Returns the most recent message in the conversation.
     @objc public var lastMessage: ZMConversationMessage? {
-        return lastMessages(limit: 1).first
+        lastMessages(limit: 1).first
     }
 
     /// Returns the most recent message sent by a particular user in the conversation.

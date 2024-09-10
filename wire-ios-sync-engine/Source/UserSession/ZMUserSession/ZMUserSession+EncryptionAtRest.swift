@@ -83,7 +83,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// Whether the database is currently locked.
 
     public var isDatabaseLocked: Bool {
-        return managedObjectContext.isLocked
+        managedObjectContext.isLocked
     }
 
     /// Register an observer for events when the database becomes locked or unlocked.
@@ -94,7 +94,7 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     /// - Returns: an observer token to be retained.
 
     public func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: DatabaseEncryptionLockNotification.notificationName,
             context: notificationContext,
             queue: .main

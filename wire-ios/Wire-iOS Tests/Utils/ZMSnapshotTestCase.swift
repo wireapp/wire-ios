@@ -31,7 +31,7 @@ class ZMSnapshotTestCase: XCTestCase {
 
     /// If YES the uiMOC will have image and file caches. Defaults to NO.
     var needsCaches: Bool {
-        return false
+        false
     }
 
     var documentsDirectory: URL?

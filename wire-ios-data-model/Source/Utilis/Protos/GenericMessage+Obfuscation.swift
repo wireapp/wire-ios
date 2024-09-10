@@ -79,7 +79,7 @@ extension GenericMessage {
 
 extension ImageAsset {
     func obfuscated() -> ImageAsset {
-        return WireProtos.ImageAsset.with({
+        WireProtos.ImageAsset.with({
             $0.tag = tag
             $0.width = width
             $0.height = height

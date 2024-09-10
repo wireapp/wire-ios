@@ -45,7 +45,7 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
     }
 
     var userInfoKeys: Set<String> {
-        return [
+        [
             #keyPath(ParticipantRoleChangeInfo.roleChanged)
         ]
     }

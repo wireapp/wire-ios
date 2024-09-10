@@ -121,7 +121,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     var mockMembers: [AVSCallMember] {
         get {
-            return mockAVSWrapper.mockMembers
+            mockAVSWrapper.mockMembers
         }
         set {
             mockAVSWrapper.mockMembers = newValue
@@ -150,15 +150,15 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
     }
 
     public var didCallStartCall: Bool {
-        return (avsWrapper as! MockAVSWrapper).startCallArguments != nil
+        (avsWrapper as! MockAVSWrapper).startCallArguments != nil
     }
 
     public var didCallAnswerCall: Bool {
-        return (avsWrapper as! MockAVSWrapper).answerCallArguments != nil
+        (avsWrapper as! MockAVSWrapper).answerCallArguments != nil
     }
 
     public var didCallRejectCall: Bool {
-        return (avsWrapper as! MockAVSWrapper).didCallRejectCall
+        (avsWrapper as! MockAVSWrapper).didCallRejectCall
     }
 
     // MARK: Mock Call State

@@ -33,7 +33,7 @@ import WireUtilities
     public var oldNotifications = [NotificationUserInfo]()
 
     private var allNotifications: [NotificationUserInfo] {
-        return notifications.compactMap(\.userInfo) + oldNotifications
+        notifications.compactMap(\.userInfo) + oldNotifications
     }
 
     public init(archivingKey: String, keyValueStore: ZMSynchonizableKeyValueStore) {
@@ -71,7 +71,7 @@ import WireUtilities
 
     @discardableResult
     public func remove(_ notification: ZMLocalNotification) -> ZMLocalNotification? {
-        return notifications.remove(notification)
+        notifications.remove(notification)
     }
 
     public func addObject(_ notification: ZMLocalNotification) {

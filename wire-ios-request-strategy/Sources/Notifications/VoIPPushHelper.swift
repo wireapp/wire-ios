@@ -43,7 +43,7 @@ public enum VoIPPushHelper {
     }
 
     public static func isUserSessionLoaded(accountID: UUID) -> Bool {
-        return loadedUserSessions
+        loadedUserSessions
             .compactMap(UUID.init(uuidString:))
             .contains(accountID)
     }

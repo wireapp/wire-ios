@@ -47,7 +47,8 @@
     redundantObjc, \
     redundantOptionalBinding, \
     redundantParens, \
-    redundantRawValues
+    redundantRawValues, \
+    redundantReturn
 
 # Options
 

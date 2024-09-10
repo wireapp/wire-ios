@@ -40,11 +40,11 @@ extension MessageToolboxContent: Comparable {
     static func < (lhs: MessageToolboxContent, rhs: MessageToolboxContent) -> Bool {
         switch (lhs, rhs) {
         case (.sendFailure, _):
-            return true
+            true
         case (.details, _):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -73,7 +73,7 @@ final class MessageToolboxDataSource {
     private static let ephemeralTimeFormatter = EphemeralTimeoutFormatter()
 
     private var attributes: [NSAttributedString.Key: AnyObject] {
-        return [.font: statusFont, .foregroundColor: statusTextColor]
+        [.font: statusFont, .foregroundColor: statusTextColor]
     }
 
     // MARK: - Initialization
@@ -147,7 +147,7 @@ final class MessageToolboxDataSource {
                 .compactMap(timestampString)
 
             let finalText = childrenTimestamps.reduce(timestamp) { text, current in
-                return "\(text)\n\(current)"
+                "\(text)\n\(current)"
             }
 
             return finalText && attributes

@@ -39,6 +39,6 @@ extension APIVersion: CaseIterable {}
 
 extension APIVersion: Comparable {
     public static func < (lhs: Self, rhs: Self) -> Bool {
-        return lhs.rawValue < rhs.rawValue
+        lhs.rawValue < rhs.rawValue
     }
 }

@@ -226,23 +226,23 @@ final class MockMessageFactory {
     }
 
     static func expiredImageMessage() -> MockMessage? {
-        return self.expiredMessage(from: self.imageMessage())
+        self.expiredMessage(from: self.imageMessage())
     }
 
     static func expiredVideoMessage() -> MockMessage? {
-        return self.expiredMessage(from: self.videoMessage())
+        self.expiredMessage(from: self.videoMessage())
     }
 
     static func expiredAudioMessage() -> MockMessage? {
-        return self.expiredMessage(from: self.audioMessage())
+        self.expiredMessage(from: self.audioMessage())
     }
 
     static func expiredFileMessage() -> MockMessage? {
-        return self.expiredMessage(from: self.fileTransferMessage())
+        self.expiredMessage(from: self.fileTransferMessage())
     }
 
     static func expiredLinkMessage() -> MockMessage? {
-        return self.expiredMessage(from: self.linkMessage())
+        self.expiredMessage(from: self.linkMessage())
     }
 
     static func deletedMessage(from message: MockMessage?) -> MockMessage? {
@@ -253,23 +253,23 @@ final class MockMessageFactory {
     }
 
     static func deletedImageMessage() -> MockMessage? {
-        return self.deletedMessage(from: self.imageMessage())
+        self.deletedMessage(from: self.imageMessage())
     }
 
     static func deletedVideoMessage() -> MockMessage? {
-        return self.deletedMessage(from: self.videoMessage())
+        self.deletedMessage(from: self.videoMessage())
     }
 
     static func deletedAudioMessage() -> MockMessage? {
-        return self.deletedMessage(from: self.audioMessage())
+        self.deletedMessage(from: self.audioMessage())
     }
 
     static func deletedFileMessage() -> MockMessage? {
-        return self.deletedMessage(from: self.fileTransferMessage())
+        self.deletedMessage(from: self.fileTransferMessage())
     }
 
     static func deletedLinkMessage() -> MockMessage? {
-        return self.deletedMessage(from: self.linkMessage())
+        self.deletedMessage(from: self.linkMessage())
     }
 
     static func passFileTransferMessage() -> MockMessage {

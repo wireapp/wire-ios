@@ -34,7 +34,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
 
     var hasUsernameTakeoverViewController: Bool {
         // no-op
-        return false
+        false
     }
 
     @discardableResult

@@ -152,7 +152,7 @@ final class ProfileDetailsViewController: UIViewController {
     // MARK: - Layout
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     override func viewDidLayoutSubviews() {

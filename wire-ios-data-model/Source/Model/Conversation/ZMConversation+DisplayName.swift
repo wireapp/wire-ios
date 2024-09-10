@@ -21,11 +21,11 @@ extension ZMConversation {
     @objc
     public var displayName: String? {
         switch conversationType {
-        case .connection: return connectionDisplayName()
-        case .group: return groupDisplayName()
-        case .oneOnOne: return oneOnOneDisplayName()
-        case .self: return managedObjectContext.map(ZMUser.selfUser)?.name
-        case .invalid: return nil
+        case .connection: connectionDisplayName()
+        case .group: groupDisplayName()
+        case .oneOnOne: oneOnOneDisplayName()
+        case .self: managedObjectContext.map(ZMUser.selfUser)?.name
+        case .invalid: nil
         }
     }
 
@@ -42,7 +42,7 @@ extension ZMConversation {
     }
 
     private var selfUser: ZMUser? {
-        return managedObjectContext.map(ZMUser.selfUser)
+        managedObjectContext.map(ZMUser.selfUser)
     }
 
     /// Get the group name from the participants

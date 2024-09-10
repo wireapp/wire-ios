@@ -180,7 +180,7 @@ extension ZiphyClient {
 extension ZiphyClient {
     /// Creates a wrapper around a completion handler that calls it on the specified queue.
     private func makeCompletionHandler<T>(_ onCompletion: @escaping (T) -> Void) -> (T) -> Void {
-        return { value in
+        { value in
             self.callbackQueue.async {
                 onCompletion(value)
             }

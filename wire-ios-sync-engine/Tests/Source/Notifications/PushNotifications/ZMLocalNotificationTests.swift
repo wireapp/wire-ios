@@ -142,7 +142,7 @@ class ZMLocalNotificationTests: MessagingTest {
     }
 
     func noteWithPayload(_ data: NSDictionary?, from user: ZMUser, in conversation: ZMConversation, type: String) -> ZMLocalNotification? {
-        return noteWithPayload(data, fromUserID: user.remoteIdentifier, in: conversation, type: type)
+        noteWithPayload(data, fromUserID: user.remoteIdentifier, in: conversation, type: type)
     }
 
     func payloadForEvent(in conversation: ZMConversation, type: String, data: NSDictionary?, from userID: UUID?) -> NSMutableDictionary {
@@ -175,8 +175,8 @@ class ZMLocalNotificationTests: MessagingTest {
     func createMemberJoinUpdateEvent(_ nonce: UUID, conversationID: UUID, users: [ZMUser], senderID: UUID = UUID.create()) -> ZMUpdateEvent {
         let userIds = users.map { $0.remoteIdentifier.transportString() }
         let usersWithRoles = users.map { user -> [String: String] in
-            return ["id": user.remoteIdentifier.transportString(),
-                    "conversation_role": "wire_admin"]
+            ["id": user.remoteIdentifier.transportString(),
+             "conversation_role": "wire_admin"]
         }
 
         let payload: [String: Any] = [

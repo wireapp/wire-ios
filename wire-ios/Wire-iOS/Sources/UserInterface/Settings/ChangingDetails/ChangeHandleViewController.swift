@@ -143,7 +143,7 @@ enum HandleValidation {
     static var allowedCharacters: CharacterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz_-.").union(.decimalDigits)
 
     static var allowedLength: CountableClosedRange<Int> {
-        return 2...256
+        2...256
     }
 }
 
@@ -165,7 +165,7 @@ struct HandleChangeState {
     var availability: HandleAvailability
 
     var displayHandle: String? {
-        return newHandle ?? currentHandle
+        newHandle ?? currentHandle
     }
 
     init(currentHandle: String?, newHandle: String?, availability: HandleAvailability) {
@@ -299,11 +299,11 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     // MARK: - UITableView
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : 0
+        section == 0 ? 1 : 0
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -323,7 +323,7 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 56
+        56
     }
 }
 
@@ -406,6 +406,6 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 
 extension String {
     var isEqualToUnicodeName: Bool {
-        return applyingTransform(.toUnicodeName, reverse: false) == self
+        applyingTransform(.toUnicodeName, reverse: false) == self
     }
 }

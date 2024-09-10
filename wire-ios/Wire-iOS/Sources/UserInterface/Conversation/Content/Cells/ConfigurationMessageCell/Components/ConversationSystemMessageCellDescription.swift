@@ -225,7 +225,7 @@ enum ConversationSystemMessageCellDescription {
 
 extension ConversationLike {
     fileprivate var isOpenGroup: Bool {
-        return conversationType == .group && allowGuests
+        conversationType == .group && allowGuests
     }
 
     fileprivate var selfCanAddUsers: Bool {

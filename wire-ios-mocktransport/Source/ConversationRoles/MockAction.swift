@@ -36,6 +36,6 @@ extension MockAction {
     }
 
     var payload: ZMTransportData {
-        return name as NSString
+        name as NSString
     }
 }

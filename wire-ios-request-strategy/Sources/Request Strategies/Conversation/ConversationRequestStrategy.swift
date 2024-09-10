@@ -224,14 +224,14 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
     public var requestGenerators: [ZMRequestGenerator] {
         if syncProgress.currentSyncPhase == .fetchingConversations {
-            return [
+            [
                 conversationIDsSync,
                 conversationQualifiedIDsSync,
                 conversationByIDListSync,
                 conversationByQualifiedIDListSync
             ]
         } else {
-            return [
+            [
                 conversationByIDSync,
                 conversationByQualifiedIDSync,
                 modifiedSync,
@@ -241,7 +241,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [updateSync, modifiedSync]
+        [updateSync, modifiedSync]
     }
 }
 
@@ -315,7 +315,7 @@ extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
 
 extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        false
     }
 
     public func shouldCreateRequest(
@@ -355,7 +355,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse keys: Set<String>
     ) -> Bool {
-        return false
+        false
     }
 
     public func updateInsertedObject(
@@ -388,7 +388,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
+        nil
     }
 
     public func request(forUpdating managedObject: ZMManagedObject,
@@ -486,7 +486,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         forKeys keys: Set<String>?,
         apiVersion: APIVersion
     ) -> ZMUpstreamRequest? {
-        return nil
+        nil
     }
 }
 
@@ -875,13 +875,13 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
 extension Collection<ZMConversation> {
     fileprivate func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
-        return compactMap { conversation in
+        compactMap { conversation in
             if let qualifiedID = conversation.qualifiedID {
-                return qualifiedID
+                qualifiedID
             } else if let identifier = conversation.remoteIdentifier {
-                return QualifiedID(uuid: identifier, domain: localDomain)
+                QualifiedID(uuid: identifier, domain: localDomain)
             } else {
-                return nil
+                nil
             }
         }
     }

@@ -32,7 +32,7 @@ protocol RoundedViewProtocol: AnyObject {
 extension RoundedViewProtocol {
     var shape: MaskShape {
         get {
-            return roundedLayer.shape
+            roundedLayer.shape
         }
         set {
             roundedLayer.shape = newValue
@@ -41,7 +41,7 @@ extension RoundedViewProtocol {
 
     var roundedCorners: UIRectCorner {
         get {
-            return roundedLayer.roundedCorners
+            roundedLayer.roundedCorners
         }
         set {
             roundedLayer.roundedCorners = newValue
@@ -49,6 +49,6 @@ extension RoundedViewProtocol {
     }
 
     var roundedLayer: ContinuousMaskLayer {
-        return layer as! ContinuousMaskLayer
+        layer as! ContinuousMaskLayer
     }
 }

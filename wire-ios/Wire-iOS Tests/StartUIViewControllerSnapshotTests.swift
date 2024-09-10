@@ -32,11 +32,11 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
     func persistCurrentAccessStatus() {}
 
     var isAddressBookAccessGranted: Bool {
-        return false
+        false
     }
 
     var isAddressBookAccessUnknown: Bool {
-        return true
+        true
     }
 
     func requestPermissions(_ callback: ((Bool) -> Void)?) {

@@ -252,7 +252,7 @@ public class HttpClientE2EI: NSObject, HttpClientCustom {
     }
 
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        return try await urlSession.data(for: request)
+        try await urlSession.data(for: request)
     }
 }
 

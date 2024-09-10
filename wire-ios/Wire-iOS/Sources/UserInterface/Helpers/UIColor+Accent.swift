@@ -55,14 +55,14 @@ extension UIColor {
     }
 
     static var accentDarken: UIColor {
-        return accent().mix(.black, amount: 0.1).withAlphaComponent(0.32)
+        accent().mix(.black, amount: 0.1).withAlphaComponent(0.32)
     }
 
     static var accentDimmedFlat: UIColor {
         if ColorScheme.default.variant == .light {
-            return accent().withAlphaComponent(0.16).removeAlphaByBlending(with: .white)
+            accent().withAlphaComponent(0.16).removeAlphaByBlending(with: .white)
         } else {
-            return accentDarken
+            accentDarken
         }
     }
 
@@ -73,43 +73,43 @@ extension UIColor {
     class func lowAccentColor() -> UIColor {
         switch (indexedAccentColor() ?? .default).accentColor {
         case .blue:
-            return SemanticColors.View.backgroundBlue
+            SemanticColors.View.backgroundBlue
         case .red:
-            return SemanticColors.View.backgroundRed
+            SemanticColors.View.backgroundRed
         case .green:
-            return SemanticColors.View.backgroundGreen
+            SemanticColors.View.backgroundGreen
         case .amber:
-            return SemanticColors.View.backgroundAmber
+            SemanticColors.View.backgroundAmber
         case .turquoise:
-            return SemanticColors.View.backgroundTurqoise
+            SemanticColors.View.backgroundTurqoise
         case .purple:
-            return SemanticColors.View.backgroundPurple
+            SemanticColors.View.backgroundPurple
         }
     }
 
     class func lowAccentColorForUsernameMention() -> UIColor {
         switch (indexedAccentColor() ?? .default).accentColor {
         case .blue:
-            return SemanticColors.View.backgroundBlueUsernameMention
+            SemanticColors.View.backgroundBlueUsernameMention
         case .red:
-            return SemanticColors.View.backgroundRedUsernameMention
+            SemanticColors.View.backgroundRedUsernameMention
         case .green:
-            return SemanticColors.View.backgroundGreenUsernameMention
+            SemanticColors.View.backgroundGreenUsernameMention
         case .amber:
-            return SemanticColors.View.backgroundAmberUsernameMention
+            SemanticColors.View.backgroundAmberUsernameMention
         case .turquoise:
-            return SemanticColors.View.backgroundTurqoiseUsernameMention
+            SemanticColors.View.backgroundTurqoiseUsernameMention
         case .purple:
-            return SemanticColors.View.backgroundPurpleUsernameMention
+            SemanticColors.View.backgroundPurpleUsernameMention
         }
     }
 
     static func buttonEmptyText(variant: ColorSchemeVariant) -> UIColor {
         switch variant {
         case .dark:
-            return .white
+            .white
         case .light:
-            return accent()
+            accent()
         }
     }
 }

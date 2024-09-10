@@ -20,6 +20,6 @@ import Foundation
 
 extension ZMUserSession: SelfUserProvider {
     public var providedSelfUser: UserType & EditableUserType {
-        return ZMUser.selfUser(in: managedObjectContext)
+        ZMUser.selfUser(in: managedObjectContext)
     }
 }

@@ -252,10 +252,10 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 
 extension ZMConversation {
     fileprivate func participantForUser(_ user: ZMUser) -> ParticipantRole? {
-        return self.participantForUser(id: user.remoteIdentifier!)
+        self.participantForUser(id: user.remoteIdentifier!)
     }
 
     fileprivate func participantForUser(id: UUID) -> ParticipantRole? {
-        return self.participantRoles.first(where: { $0.user?.remoteIdentifier == id })
+        self.participantRoles.first(where: { $0.user?.remoteIdentifier == id })
     }
 }

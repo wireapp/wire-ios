@@ -65,7 +65,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     }
 
     var thumbnailURL: URL {
-        return URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
+        URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!
     }
 
     func createAttachment(withCachedImage: Bool = true) -> LinkAttachment {

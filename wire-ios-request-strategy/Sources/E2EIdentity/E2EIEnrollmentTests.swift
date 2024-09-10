@@ -68,7 +68,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.getACMENoncePath_MockMethod = { _ in
-            return expectedNonce
+            expectedNonce
         }
 
         // when
@@ -88,10 +88,10 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return acmeResponse
+            acmeResponse
         }
         mockE2eiService.getNewAccountRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setAccountResponseAccountData_MockMethod = { _ in }
 
@@ -117,13 +117,13 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return acmeResponse
+            acmeResponse
         }
         mockE2eiService.getNewOrderRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setOrderResponseOrder_MockMethod = { _ in
-            return expectedAcmeOrder
+            expectedAcmeOrder
         }
 
         // when
@@ -159,13 +159,13 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendAuthorizationRequestPathRequestBody_MockMethod = { _, _ in
-            return authorizationResponse
+            authorizationResponse
         }
         mockE2eiService.getNewAuthzRequestUrlPreviousNonce_MockMethod = { _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setAuthzResponseAuthz_MockMethod = { _ in
-            return newAcmeAuthz
+            newAcmeAuthz
         }
 
         // when
@@ -185,7 +185,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         BackendInfo.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
         e2eIAPI.getWireNonceClientId_MockMethod = {_ in
-            return expectedNonce
+            expectedNonce
         }
         mockApiProvider.e2eIAPIApiVersion_MockValue = e2eIAPI
 
@@ -202,7 +202,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockE2eiService.createDpopTokenNonce_MockMethod = { _ in
-            return expectedDPoPToken
+            expectedDPoPToken
         }
 
         // when
@@ -220,7 +220,7 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         BackendInfo.apiVersion = .v5
         let e2eIAPI = MockE2eIAPI()
         e2eIAPI.getAccessTokenClientIdDpopToken_MockMethod = {_, _ in
-            return expectedAccessToken
+            expectedAccessToken
         }
         mockApiProvider.e2eIAPIApiVersion_MockValue = e2eIAPI
 
@@ -243,10 +243,10 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
-            return expectedChallengeResponse
+            expectedChallengeResponse
         }
         mockE2eiService.getNewDpopChallengeRequestAccessTokenNonce_MockMethod = { _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setDPoPChallengeResponseChallenge_MockMethod = { _ in }
 
@@ -276,10 +276,10 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
-            return expectedChallengeResponse
+            expectedChallengeResponse
         }
         mockE2eiService.getNewOidcChallengeRequestIdTokenRefreshTokenNonce_MockMethod = { _, _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
 
@@ -348,13 +348,13 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return expectedACMEResponse
+            expectedACMEResponse
         }
         mockE2eiService.checkOrderRequestOrderUrlNonce_MockMethod = { _, _ in
-            return Data()
+            Data()
         }
         mockE2eiService.checkOrderResponseOrder_MockMethod = { _ in
-            return expectedOrder
+            expectedOrder
         }
 
         // when
@@ -378,13 +378,13 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return expectedACMEResponse
+            expectedACMEResponse
         }
         mockE2eiService.finalizeRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
         mockE2eiService.finalizeResponseFinalize_MockMethod = { _ in
-            return expected
+            expected
         }
 
         // when
@@ -407,10 +407,10 @@ class E2EIEnrollmentTests: ZMTBaseTest {
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
-            return expectedACMEResponse
+            expectedACMEResponse
         }
         mockE2eiService.certificateRequestNonce_MockMethod = { _ in
-            return Data()
+            Data()
         }
 
         // when

@@ -125,8 +125,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
             XCTAssertEqual(error, responseError)
             XCTAssertEqual(HTTPResponse, responseURLResponse)
             expectation.fulfill()
-
-            return
         }))
 
         // when

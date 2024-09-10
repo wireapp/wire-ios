@@ -54,10 +54,10 @@ extension ConversationInputBarViewController: ReplyComposingViewDelegate {
     }
 
     var isReplyingToMessage: Bool {
-        return quotedMessage != nil
+        quotedMessage != nil
     }
 
     var isEditingMessage: Bool {
-        return editingMessage != nil
+        editingMessage != nil
     }
 }

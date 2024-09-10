@@ -55,38 +55,38 @@ enum BuildType: Equatable {
     var certificateName: String {
         switch self {
         case .production:
-            return "com.wire"
+            "com.wire"
 
         case .alpha, .beta, .development, .internal, .releaseCandidate:
-            return bundleID
+            bundleID
 
         case let .custom(bundleID):
-            return bundleID
+            bundleID
         }
     }
 
     var bundleID: String {
         switch self {
         case .production:
-            return "com.wearezeta.zclient.ios"
+            "com.wearezeta.zclient.ios"
 
         case .alpha:
-            return "com.wearezeta.zclient.alpha"
+            "com.wearezeta.zclient.alpha"
 
         case .beta:
-            return "com.wearezeta.zclient.ios.beta"
+            "com.wearezeta.zclient.ios.beta"
 
         case .development:
-            return "com.wearezeta.zclient.development"
+            "com.wearezeta.zclient.development"
 
         case .internal:
-            return "com.wearezeta.zclient.internal"
+            "com.wearezeta.zclient.internal"
 
         case .releaseCandidate:
-            return "com.wearezeta.zclient.rc"
+            "com.wearezeta.zclient.rc"
 
         case let .custom(bundleID):
-            return bundleID
+            bundleID
         }
     }
 }

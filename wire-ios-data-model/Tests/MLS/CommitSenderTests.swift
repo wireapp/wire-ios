@@ -90,7 +90,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Mock action provider
         mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            return [event]
+            [event]
         }
 
         // Mock core crypto
@@ -185,7 +185,7 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Mock action provider
         mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            return [event]
+            [event]
         }
 
         // Mock core crypto
@@ -263,11 +263,11 @@ class CommitSenderTests: ZMBaseManagedObjectTest {
 
         // Mock action provider
         mockActionsProvider.sendCommitBundleIn_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // Mock commit accepted
-        mockCoreCrypto.commitAcceptedConversationId_MockMethod = { _ in  return nil }
+        mockCoreCrypto.commitAcceptedConversationId_MockMethod = { _ in  nil }
 
         // Set up expectation
         let expectation = XCTestExpectation(description: "observed epoch change")

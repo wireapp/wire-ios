@@ -21,13 +21,13 @@ import WireSyncEngine
 
 extension Account {
     func userDefaultsKey() -> String {
-        return "account_\(self.userIdentifier.transportString())"
+        "account_\(self.userIdentifier.transportString())"
     }
 }
 
 extension Settings {
     private func payload(for account: Account) -> [String: Any] {
-        return defaults.value(forKey: account.userDefaultsKey()) as? [String: Any] ?? [:]
+        defaults.value(forKey: account.userDefaultsKey()) as? [String: Any] ?? [:]
     }
 
     /// Returns the value associated with the given account for the given key

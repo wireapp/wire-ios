@@ -62,7 +62,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
     // MARK: - Static Access
 
     static func keyDescription(accountID: UUID) -> DatabaseEARKeyDescription {
-        return DatabaseEARKeyDescription(
+        DatabaseEARKeyDescription(
             accountID: accountID,
             label: "database"
         )

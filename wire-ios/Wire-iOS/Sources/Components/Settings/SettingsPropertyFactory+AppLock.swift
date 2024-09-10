@@ -27,14 +27,14 @@ extension SettingsPropertyFactory {
     }
 
     var timeout: UInt {
-        return userSession?.appLockTimeout ?? .max
+        userSession?.appLockTimeout ?? .max
     }
 
     var isAppLockForced: Bool {
-        return userSession?.isAppLockForced ?? false
+        userSession?.isAppLockForced ?? false
     }
 
     var isAppLockAvailable: Bool {
-        return userSession?.isAppLockAvailable ?? false
+        userSession?.isAppLockAvailable ?? false
     }
 }

@@ -25,7 +25,7 @@ extension NSManagedObjectContext: DeletableAssetIdentifierProvider {
 
     public var assetIdentifiersToBeDeleted: Set<String> {
         get {
-            return Set(persistentStoreMetadata(forKey: NSManagedObjectContext.assetIdentifiersToBeDeletedKey) as? [String] ?? [])
+            Set(persistentStoreMetadata(forKey: NSManagedObjectContext.assetIdentifiersToBeDeletedKey) as? [String] ?? [])
         }
         set {
             setPersistentStoreMetadata(Array(newValue), key: NSManagedObjectContext.assetIdentifiersToBeDeletedKey)

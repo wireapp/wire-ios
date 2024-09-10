@@ -91,7 +91,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
     }
 
     private static var verifiedIcon: UIImage {
-        return WireStyleKit.imageOfShieldnotverified
+        WireStyleKit.imageOfShieldnotverified
     }
 
     private static func configureForNewClientOfSelfUser(_ selfUser: UserType, clients: [UserClientType], link: URL) -> View.Configuration {

@@ -92,7 +92,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
@@ -202,7 +202,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [assetDownstreamObjectSync]
+        [assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder

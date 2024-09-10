@@ -155,7 +155,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAClientMessageIsRemovedWhenAskForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+            ZMClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         }
         // then
         XCTAssertTrue(removed)
@@ -196,7 +196,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatATextMessageIsRemovedWhenAskForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return TextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            TextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
         // then
         XCTAssertTrue(removed)
@@ -205,7 +205,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAnAssetClientMessageIsRemovedWhenAskForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
 
         // then
@@ -215,7 +215,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAnPreE2EETextMessageIsRemovedWhenAskedForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return TextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            TextMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
         // then
         XCTAssertTrue(removed)
@@ -224,7 +224,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAnPreE2EEImageMessageIsRemovedWhenAskedForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMImageMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            ZMImageMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
 
         // then
@@ -234,7 +234,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     func testThatAnPreE2EEKnockMessageIsRemovedWhenAskedForDeletion() throws {
         // when
         let removed = try checkThatAMessageIsRemoved { () -> ZMMessage in
-            return ZMKnockMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+            ZMKnockMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         }
 
         // then

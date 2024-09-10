@@ -47,7 +47,7 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
     typealias ResponsePayload = UserClientByQualifiedUserIDTranscoder.ResponsePayload
 
     func payload(from response: ZMTransportResponse) throws -> ResponsePayload? {
-        return ResponsePayload(response)
+        ResponsePayload(response)
     }
 
     // MARK: - Request generation

@@ -18,7 +18,7 @@
 
 public enum TeamDownloadRequestFactory {
     public static var teamPath: String {
-        return "/teams"
+        "/teams"
     }
 
     public static func getRequest(for identifiers: [UUID], apiVersion: APIVersion) -> ZMTransportRequest {
@@ -27,11 +27,11 @@ public enum TeamDownloadRequestFactory {
     }
 
     public static func requestToDownloadRoles(for identifier: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
-        return ZMTransportRequest(getFromPath: teamPath + "/" + identifier.transportString() + "/conversations/roles", apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(getFromPath: teamPath + "/" + identifier.transportString() + "/conversations/roles", apiVersion: apiVersion.rawValue)
     }
 
     public static func getTeamsRequest(apiVersion: APIVersion) -> ZMTransportRequest {
-        return ZMTransportRequest(getFromPath: teamPath, apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(getFromPath: teamPath, apiVersion: apiVersion.rawValue)
     }
 
     public static func getSingleMemberRequest(for identifier: UUID, in teamIdentifier: UUID, apiVersion: APIVersion) -> ZMTransportRequest {

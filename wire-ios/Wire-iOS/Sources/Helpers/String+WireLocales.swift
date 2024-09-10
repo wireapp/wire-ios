@@ -20,10 +20,10 @@ import Foundation
 
 extension NSString {
     var uppercasedWithCurrentLocale: String {
-        return uppercased(with: NSLocale.current)
+        uppercased(with: NSLocale.current)
     }
 
     var lowercasedWithCurrentLocale: String {
-        return lowercased(with: NSLocale.current)
+        lowercased(with: NSLocale.current)
     }
 }

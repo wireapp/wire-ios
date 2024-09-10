@@ -25,7 +25,7 @@ extension ZMOTRMessage {
 
     @objc
     var needsDeliveryConfirmation: Bool {
-        return needsDeliveryConfirmationAtCurrentDate()
+        needsDeliveryConfirmationAtCurrentDate()
     }
 
     func needsDeliveryConfirmationAtCurrentDate(_ currentDate: Date = Date()) -> Bool {
@@ -47,19 +47,19 @@ extension ZMOTRMessage {
             var expectsReadConfirmation: Bool {
                 switch genericMessage.content {
                 case let .ephemeral(data)?:
-                    return data.expectsReadConfirmation
+                    data.expectsReadConfirmation
                 case let .knock(data)?:
-                    return data.expectsReadConfirmation
+                    data.expectsReadConfirmation
                 case let .text(data)?:
-                    return data.expectsReadConfirmation
+                    data.expectsReadConfirmation
                 case let .location(data)?:
-                    return data.expectsReadConfirmation
+                    data.expectsReadConfirmation
                 case let .asset(data)?:
-                    return data.expectsReadConfirmation
+                    data.expectsReadConfirmation
                 case let .composite(data):
-                    return data.expectsReadConfirmation
+                    data.expectsReadConfirmation
                 default:
-                    return false
+                    false
                 }
             }
 

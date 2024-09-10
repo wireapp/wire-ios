@@ -84,7 +84,7 @@ extension MockUserClient {
 
 extension MockUserClient {
     public var isLegalHoldDevice: Bool {
-        return type == "legalhold" || deviceClass == "legalhold"
+        type == "legalhold" || deviceClass == "legalhold"
     }
 }
 
@@ -199,7 +199,7 @@ extension MockUserClient {
 
 @objc extension MockUserClient {
     public static var mockEncryptionSessionDirectory: URL {
-        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
     }
 
     static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {
@@ -211,7 +211,7 @@ extension MockUserClient {
     }
 
     private var encryptionContext: EncryptionContext {
-        return MockUserClient.encryptionContext(for: user, clientId: identifier)
+        MockUserClient.encryptionContext(for: user, clientId: identifier)
     }
 
     /// Make sure that there is a session established between this client and the given client

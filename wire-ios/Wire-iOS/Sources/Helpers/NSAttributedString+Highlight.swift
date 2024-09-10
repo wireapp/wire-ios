@@ -20,15 +20,15 @@ import UIKit
 
 extension String {
     func nsRange(from range: Range<String.Index>) -> NSRange {
-        return NSRange(range, in: self)
+        NSRange(range, in: self)
     }
 
     func containsCharacters(from characterSet: CharacterSet) -> Bool {
-        return self.rangeOfCharacter(from: characterSet) != .none
+        self.rangeOfCharacter(from: characterSet) != .none
     }
 
     func range(of strings: [String], options: CompareOptions = [], range: Range<String.Index>? = .none) -> Range<String.Index>? {
-        return strings.compactMap {
+        strings.compactMap {
             self.range(of: $0,
                        options: options,
                        range: range,

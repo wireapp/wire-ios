@@ -50,7 +50,7 @@ final class UserPropertyCell: SeparatorTableViewCell {
     /// The name of the user property.
     var propertyName: String? {
         get {
-            return propertyNameLabel.text
+            propertyNameLabel.text
         }
         set {
             propertyNameLabel.text = newValue
@@ -62,7 +62,7 @@ final class UserPropertyCell: SeparatorTableViewCell {
     /// The value of the user property.
     var propertyValue: String? {
         get {
-            return propertyValueLabel.text
+            propertyValueLabel.text
         }
         set {
             propertyValueLabel.text = newValue

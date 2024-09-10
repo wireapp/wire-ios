@@ -20,11 +20,11 @@ import Foundation
 
 class ConversationTests_Ephemeral: ConversationTestsBase {
     var obfuscationTimer: ZMMessageDestructionTimer? {
-        return userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
+        userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
     }
 
     var deletionTimer: ZMMessageDestructionTimer? {
-        return userSession!.managedObjectContext.zm_messageDeletionTimer
+        userSession!.managedObjectContext.zm_messageDeletionTimer
     }
 
     func testThatItCreatesAndSendsAnEphemeralMessage() {
@@ -183,9 +183,9 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
             if let message = $0 as? ZMClientMessage,
                let deleteMessage = message.underlyingMessage, deleteMessage.hasDeleted,
                deleteMessage.deleted.messageID == ephemeral.nonce!.transportString() {
-                return true
+                true
             } else {
-                return false
+                false
             }
         })) != nil
         else {

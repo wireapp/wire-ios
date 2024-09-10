@@ -525,7 +525,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
     func successfulResponse(for request: Payload.QualifiedUserIDList, failed: [QualifiedID]? = nil, apiVersion: APIVersion) -> ZMTransportResponse? {
         let userProfiles = request.qualifiedIDs.map({
-            return userProfile(for: $0.uuid, domain: $0.domain)
+            userProfile(for: $0.uuid, domain: $0.domain)
         })
 
         var payloadData: Data?
@@ -552,21 +552,21 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func userProfile(for uuid: UUID, domain: String?) -> Payload.UserProfile {
-        return Payload.UserProfile(id: uuid,
-                                   qualifiedID: nil,
-                                   teamID: nil,
-                                   serviceID: nil,
-                                   SSOID: nil,
-                                   name: "John Doe",
-                                   handle: nil,
-                                   phone: nil,
-                                   email: nil,
-                                   assets: [],
-                                   managedBy: nil,
-                                   accentColor: nil,
-                                   isDeleted: nil,
-                                   expiresAt: nil,
-                                   legalholdStatus: nil)
+        Payload.UserProfile(id: uuid,
+                            qualifiedID: nil,
+                            teamID: nil,
+                            serviceID: nil,
+                            SSOID: nil,
+                            name: "John Doe",
+                            handle: nil,
+                            phone: nil,
+                            email: nil,
+                            assets: [],
+                            managedBy: nil,
+                            accentColor: nil,
+                            isDeleted: nil,
+                            expiresAt: nil,
+                            legalholdStatus: nil)
     }
 }
 

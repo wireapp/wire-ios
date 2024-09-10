@@ -21,7 +21,7 @@ import XCTest
 
 extension Message {
     static func dayFormatter(date: Date) -> DateFormatter {
-        return date.olderThanOneWeekdateFormatter
+        date.olderThanOneWeekdateFormatter
     }
 }
 

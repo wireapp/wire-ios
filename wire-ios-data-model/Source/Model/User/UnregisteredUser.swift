@@ -73,7 +73,7 @@ public class UnregisteredUser {
 
 extension UnregisteredUser: Equatable {
     public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {
-        return lhs.unverifiedEmail == rhs.unverifiedEmail
+        lhs.unverifiedEmail == rhs.unverifiedEmail
             && lhs.verificationCode == rhs.verificationCode
             && lhs.name == rhs.name
             && lhs.accentColor == rhs.accentColor

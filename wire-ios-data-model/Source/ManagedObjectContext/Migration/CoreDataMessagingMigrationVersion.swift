@@ -71,24 +71,24 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
     var nextVersion: Self? {
         switch self {
         case .v118:
-            return nil
+            nil
         case .v116, .v117:
-            return .v118
+            .v118
         case .v115,
              .v114:
-            return .v116 // destination version runs custom migration actions
+            .v116 // destination version runs custom migration actions
         case .v111,
              .v112,
              .v113:
-            return .v114 // destination version runs custom migration actions
+            .v114 // destination version runs custom migration actions
         case .v110:
-            return .v111 // destination version runs custom migration actions
+            .v111 // destination version runs custom migration actions
         case .v107,
              .v108,
              .v109:
-            return .v110
+            .v110
         case .v106:
-            return .v107 // destination version runs custom migration actions
+            .v107 // destination version runs custom migration actions
         case .v80,
              .v81,
              .v82,
@@ -115,7 +115,7 @@ enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
              .v103,
              .v104,
              .v105:
-            return .v106
+            .v106
         }
     }
 

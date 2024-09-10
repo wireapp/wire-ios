@@ -36,7 +36,7 @@ import WireTransport
     private(set) var oldNotifications = [NotificationUserInfo]()
 
     private var allNotifications: [NotificationUserInfo] {
-        return notifications.compactMap(\.userInfo) + oldNotifications
+        notifications.compactMap(\.userInfo) + oldNotifications
     }
 
     init(archivingKey: String, keyValueStore: ZMSynchonizableKeyValueStore) {
@@ -63,7 +63,7 @@ import WireTransport
     }
 
     @discardableResult func remove(_ notification: ZMLocalNotification) -> ZMLocalNotification? {
-        return notifications.remove(notification)
+        notifications.remove(notification)
     }
 
     func addObject(_ notification: ZMLocalNotification) {

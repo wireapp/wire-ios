@@ -27,7 +27,7 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return conversationSync.nextRequest(for: apiVersion)
+        conversationSync.nextRequest(for: apiVersion)
     }
 
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
@@ -43,11 +43,11 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 
 extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return ZMConversation.sortedFetchRequest(with: NSPredicate(format: "needsToVerifyLegalHold != 0"))
+        ZMConversation.sortedFetchRequest(with: NSPredicate(format: "needsToVerifyLegalHold != 0"))
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -69,7 +69,7 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
     public typealias T = ZMConversation
 
     public var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<ZMConversation>, apiVersion: APIVersion) -> ZMTransportRequest? {

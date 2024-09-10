@@ -23,7 +23,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     let account: Account = Account(userName: "", userIdentifier: UUID())
 
     var applicationContainer: URL {
-        return FileManager.default
+        FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)
             .first!
             .appendingPathComponent("CoreDataStackTests")
@@ -114,7 +114,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     }
 
     func createStoreFilesInLegacyLocations() -> [URL] {
-        return previousStorageLocations.flatMap { location -> [URL] in
+        previousStorageLocations.flatMap { location -> [URL] in
             let fileManager = FileManager.default
             try? fileManager.createDirectory(at: location,
                                              withIntermediateDirectories: true,
@@ -142,7 +142,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     }
 
     func createSessionFilesInLegacyLocations() -> [URL] {
-        return previousStorageLocations.map { location -> URL in
+        previousStorageLocations.map { location -> URL in
             let fileManager = FileManager.default
             let sessionDirectory = location.appendingPathComponent("otr")
             try! fileManager.createDirectory(at: sessionDirectory,

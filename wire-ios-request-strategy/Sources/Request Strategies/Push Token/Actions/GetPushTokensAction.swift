@@ -31,15 +31,15 @@ public class GetPushTokensAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .malformedResponse:
-                return "Malformed response"
+                "Malformed response"
 
             case let .unknown(status):
-                return "Unknown error (response status: \(status))"
+                "Unknown error (response status: \(status))"
             }
         }
 
         public var safeForLoggingDescription: String {
-            return errorDescription ?? ""
+            errorDescription ?? ""
         }
     }
 

@@ -31,26 +31,26 @@ enum ConversationAction {
 
     var name: String {
         switch self {
-        case .addConversationMember: return "add_conversation_member"
-        case .removeConversationMember: return "remove_conversation_member"
-        case .modifyConversationName: return "modify_conversation_name"
-        case .modifyConversationMessageTimer: return "modify_conversation_message_timer"
-        case .modifyConversationReceiptMode: return "modify_conversation_receipt_mode"
-        case .modifyConversationAccess: return "modify_conversation_access"
-        case .modifyOtherConversationMember: return "modify_other_conversation_member"
-        case .leaveConversation: return "leave_conversation"
-        case .deleteConvesation: return "delete_conversation"
+        case .addConversationMember: "add_conversation_member"
+        case .removeConversationMember: "remove_conversation_member"
+        case .modifyConversationName: "modify_conversation_name"
+        case .modifyConversationMessageTimer: "modify_conversation_message_timer"
+        case .modifyConversationReceiptMode: "modify_conversation_receipt_mode"
+        case .modifyConversationAccess: "modify_conversation_access"
+        case .modifyOtherConversationMember: "modify_other_conversation_member"
+        case .leaveConversation: "leave_conversation"
+        case .deleteConvesation: "delete_conversation"
         }
     }
 }
 
 extension ZMUser {
     public var teamRole: TeamRole {
-        return TeamRole(rawPermissions: permissions?.rawValue ?? 0)
+        TeamRole(rawPermissions: permissions?.rawValue ?? 0)
     }
 
     private var permissions: Permissions? {
-        return membership?.permissions
+        membership?.permissions
     }
 
     @objc(canAddServiceToConversation:)
@@ -152,19 +152,19 @@ extension ZMUser {
         switch type {
         case .oneOnOne:
             // all users are allow to open 1-on-1 conversation
-            return true
+            true
         default:
             // partner is not allowed to create non 1-on-1 convo
-            return permissions?.contains(.member) ?? true
+            permissions?.contains(.member) ?? true
         }
     }
 
     @objc public var canCreateService: Bool {
-        return permissions?.contains(.member) ?? false
+        permissions?.contains(.member) ?? false
     }
 
     @objc public var canManageTeam: Bool {
-        return permissions?.contains(.admin) ?? false
+        permissions?.contains(.admin) ?? false
     }
 
     public func canAccessCompanyInformation(of user: UserType) -> Bool {

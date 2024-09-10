@@ -70,7 +70,7 @@ class SelfClientCertificateProviderTests: MessagingTest {
     func testResultSelfClientDoesNotHaveCertificate() async throws {
         // Given
         mockGetE2eIdentityCertificatesUseCase.invokeMlsGroupIdClientIds_MockMethod = { _, _ in
-            return []
+            []
         }
 
         // When

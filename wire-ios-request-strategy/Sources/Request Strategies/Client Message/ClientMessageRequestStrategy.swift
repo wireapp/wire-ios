@@ -74,7 +74,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     // MARK: - Methods
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [
+        [
             insertedObjectSync,
             messageExpirationTimer,
             linkAttachmentsPreprocessor
@@ -166,16 +166,16 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
     }
 
     public func messageNoncesToPrefetch(toProcessEvents events: [ZMUpdateEvent]) -> Set<UUID> {
-        return Set(events.compactMap {
+        Set(events.compactMap {
             switch $0.type {
             case .conversationClientMessageAdd,
                  .conversationOtrMessageAdd,
                  .conversationOtrAssetAdd,
                  .conversationMLSMessageAdd:
-                return $0.messageNonce
+                $0.messageNonce
 
             default:
-                return nil
+                nil
             }
         })
     }

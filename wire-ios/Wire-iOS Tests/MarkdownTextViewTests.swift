@@ -54,13 +54,13 @@ final class MarkdownTextViewTests: XCTestCase {
 
     func button(for markdown: Markdown) -> IconButton? {
         switch markdown {
-        case .h1, .h2, .h3: return bar.headerButton
-        case .bold:         return bar.boldButton
-        case .italic:       return bar.italicButton
-        case .code:         return bar.codeButton
-        case .oList:        return bar.numberListButton
-        case .uList:        return bar.bulletListButton
-        default:            return nil
+        case .h1, .h2, .h3: bar.headerButton
+        case .bold:         bar.boldButton
+        case .italic:       bar.italicButton
+        case .code:         bar.codeButton
+        case .oList:        bar.numberListButton
+        case .uList:        bar.bulletListButton
+        default:            nil
         }
     }
 
@@ -483,7 +483,7 @@ final class MarkdownTextViewTests: XCTestCase {
     // MARK: - Selections
 
     var wholeTextRange: UITextRange {
-        return sut.textRange(from: sut.beginningOfDocument, to: sut.endOfDocument)!
+        sut.textRange(from: sut.beginningOfDocument, to: sut.endOfDocument)!
     }
 
     func testThatSelectingMarkdownOnRangeContainingSingleMarkdownUpdatesAttributes() {
@@ -791,6 +791,6 @@ final class MarkdownTextViewTests: XCTestCase {
 
 extension String {
     fileprivate var length: Int {
-        return (self as NSString).length
+        (self as NSString).length
     }
 }

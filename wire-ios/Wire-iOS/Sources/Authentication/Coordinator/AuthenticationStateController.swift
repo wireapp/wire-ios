@@ -161,16 +161,16 @@ extension AuthenticationStateController.RewindMilestone {
     fileprivate func shouldRewind(to step: AuthenticationFlowStep) -> Bool {
         switch (self, step) {
         case (.createCredentials, .createCredentials):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     fileprivate var stepsToAdd: [AuthenticationFlowStep] {
         switch self {
         case let .createCredentials(user):
-            return [.createCredentials(user)]
+            [.createCredentials(user)]
         }
     }
 }

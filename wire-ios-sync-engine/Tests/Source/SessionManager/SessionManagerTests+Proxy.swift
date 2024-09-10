@@ -97,7 +97,7 @@ final class SessionManagerProxyTests: IntegrationTest {
 
         // EXPECT
         customExpectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { _ -> Bool in
-            return true
+            true
         }
 
         // WHEN

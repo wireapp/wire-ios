@@ -98,11 +98,11 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        return onEpochChangedSubject.eraseToAnyPublisher()
+        onEpochChangedSubject.eraseToAnyPublisher()
     }
 
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        return onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Life cycle

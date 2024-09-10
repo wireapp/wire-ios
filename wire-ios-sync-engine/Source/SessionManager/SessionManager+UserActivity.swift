@@ -21,6 +21,6 @@ import Foundation
 extension SessionManager {
     /// Forwards the Handoff/CallKit activity that user would like to continue in the app
     public func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
-        return callKitManager.continueUserActivity(userActivity)
+        callKitManager.continueUserActivity(userActivity)
     }
 }

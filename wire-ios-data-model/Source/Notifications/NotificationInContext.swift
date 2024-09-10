@@ -33,21 +33,21 @@ import WireUtilities
 
     /// Name of the notification
     public var name: Notification.Name {
-        return notification.name
+        notification.name
     }
 
     /// The object of the notification
     public var object: AnyObject? {
-        return self.userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
+        self.userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
     }
 
     /// The context in which the notification is valid
     public var context: NotificationContext {
-        return notification.object! as! NotificationContext
+        notification.object! as! NotificationContext
     }
 
     public var userInfo: [AnyHashable: Any] {
-        return notification.userInfo ?? [:]
+        notification.userInfo ?? [:]
     }
 
     /// Internal notification
@@ -82,7 +82,7 @@ import WireUtilities
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
         using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
-        return addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
+        addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
     }
 
     public static func addUnboundedObserver(
@@ -91,9 +91,9 @@ import WireUtilities
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
         using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
-        return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: name,
-                                                                                               object: context,
-                                                                                               queue: queue) { note in
+        SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: name,
+                                                                                        object: context,
+                                                                                        queue: queue) { note in
                 let notificationInContext = NotificationInContext(notification: note)
                 guard object == nil || object! === notificationInContext.object else { return }
                 using(notificationInContext)
@@ -138,10 +138,10 @@ extension NotificationInContext {
     }
 
     public var changeInfo: ObjectChangeInfo? {
-        return self.userInfo[UserInfoKeys.changeInfo.rawValue] as? ObjectChangeInfo
+        self.userInfo[UserInfoKeys.changeInfo.rawValue] as? ObjectChangeInfo
     }
 
     public var changedKeys: [String]? {
-        return self.userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
+        self.userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
     }
 }

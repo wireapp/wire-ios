@@ -54,7 +54,7 @@ final class SectionFooter: UICollectionReusableView {
     let footerView = SectionFooterView()
 
     var titleLabel: UILabel {
-        return footerView.titleLabel
+        footerView.titleLabel
     }
 
     override init(frame: CGRect) {
@@ -78,7 +78,7 @@ final class SectionTableFooter: UITableViewHeaderFooterView {
     let footerView = SectionFooterView()
 
     var titleLabel: UILabel {
-        return footerView.titleLabel
+        footerView.titleLabel
     }
 
     override init(reuseIdentifier: String?) {

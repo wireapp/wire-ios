@@ -60,7 +60,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         name: String,
         status: DeviceStatus
     ) -> WireCoreCrypto.WireIdentity {
-        return .init(
+        .init(
             clientId: clientID,
             status: status,
             thumbprint: "QrsvPI0PDiJyAgsF-p3HoSyWLGWjyKwMdqlL0zWZOew",
@@ -135,7 +135,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         )
 
         coreCrypto.getDeviceIdentitiesConversationIdDeviceIds_MockMethod = { _, _ in
-            return [
+            [
                 validIdentity,
                 identityWithInvalidHandle,
                 identityWithInvalidName,

@@ -32,7 +32,7 @@ import WireDataModel
         case tokenMismatch
 
         public var identifier: String {
-            return "notifications_" + rawValue
+            "notifications_" + rawValue
         }
     }
 
@@ -93,6 +93,6 @@ import WireDataModel
 
 extension NotificationsTracker {
     override public var debugDescription: String {
-        return "Current values: \(analytics?.persistedAttributes(for: eventName) ?? [:])"
+        "Current values: \(analytics?.persistedAttributes(for: eventName) ?? [:])"
     }
 }

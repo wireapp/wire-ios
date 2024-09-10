@@ -72,12 +72,12 @@ import Foundation
     }
 
     override public var hash: Int {
-        return self.message.hashValue
+        self.message.hashValue
     }
 }
 
 public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
-    return lhs === rhs
+    lhs === rhs
 }
 
 extension GenericMessageEntity: EncryptedPayloadGenerator {

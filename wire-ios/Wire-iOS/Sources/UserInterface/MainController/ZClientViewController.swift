@@ -226,11 +226,11 @@ final class ZClientViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     override var shouldAutorotate: Bool {
-        return presentedViewController?.shouldAutorotate ?? true
+        presentedViewController?.shouldAutorotate ?? true
     }
 
     // MARK: keyboard shortcut
@@ -254,20 +254,20 @@ final class ZClientViewController: UIViewController {
     // MARK: Status bar
 
     private var child: UIViewController? {
-        return topOverlayViewController ?? wireSplitViewController
+        topOverlayViewController ?? wireSplitViewController
     }
 
     private var childForStatusBar: UIViewController? {
         // For iPad regular mode, there is a black bar area and we always use light style and non hidden status bar
-        return isIPadRegular() ? nil : child
+        isIPadRegular() ? nil : child
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return childForStatusBar
+        childForStatusBar
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return childForStatusBar
+        childForStatusBar
     }
 
     // MARK: trait
@@ -749,11 +749,11 @@ final class ZClientViewController: UIViewController {
     }
 
     var isConversationViewVisible: Bool {
-        return wireSplitViewController.isConversationViewVisible
+        wireSplitViewController.isConversationViewVisible
     }
 
     var isConversationListVisible: Bool {
-        return (wireSplitViewController.layoutSize == .regularLandscape) ||
+        (wireSplitViewController.layoutSize == .regularLandscape) ||
             (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
@@ -771,7 +771,7 @@ final class ZClientViewController: UIViewController {
 
 extension ZClientViewController: SplitViewControllerDelegate {
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-        return splitViewController.rightViewController != nil &&
+        splitViewController.rightViewController != nil &&
             splitViewController.leftViewController == conversationListViewController.tabBarController &&
             conversationListViewController.state == .conversationList &&
             (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)

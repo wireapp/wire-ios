@@ -1151,7 +1151,7 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
     }
 
     private func richProfileFieldWithEmail(for user: UserType) -> UserRichProfileField {
-        return UserRichProfileField(type: "Email", value: user.emailAddress!)
+        UserRichProfileField(type: "Email", value: user.emailAddress!)
     }
 
     private func richProfileItemWithEmailAndDefaultData(for user: UserType) -> ProfileDetailsContentController.Content {

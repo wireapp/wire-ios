@@ -93,7 +93,7 @@ extension OpenGraphData {
 extension OpenGraphData: Equatable {}
 
 public func == (lhs: OpenGraphData, rhs: OpenGraphData) -> Bool {
-    return lhs.title == rhs.title && lhs.type == rhs.type &&
+    lhs.title == rhs.title && lhs.type == rhs.type &&
         lhs.url == rhs.url && lhs.imageUrls == rhs.imageUrls &&
         lhs.siteName == rhs.siteName && lhs.content == rhs.content &&
         lhs.siteNameString == rhs.siteNameString && lhs.userGeneratedImage == rhs.userGeneratedImage &&
@@ -103,7 +103,7 @@ public func == (lhs: OpenGraphData, rhs: OpenGraphData) -> Bool {
 extension FoursquareMetaData: Equatable {}
 
 public func == (lhs: FoursquareMetaData, rhs: FoursquareMetaData) -> Bool {
-    return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
 }
 
 extension ArticleMetadata {
@@ -166,7 +166,7 @@ extension TwitterStatusMetadata {
 
 extension OpenGraphData {
     func linkPreview(_ originalURLString: String, offset: Int) -> LinkMetadata {
-        return TwitterStatusMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset) ??
+        TwitterStatusMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset) ??
             ArticleMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset)
     }
 }

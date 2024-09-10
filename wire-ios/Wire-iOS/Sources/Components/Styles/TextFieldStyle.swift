@@ -23,7 +23,7 @@ struct TextFieldStyle {
     typealias TextFieldColors = SemanticColors.SearchBar
 
     var borderColorSelected: UIColor {
-        return .accent()
+        .accent()
     }
 
     var borderColorNotSelected: UIColor

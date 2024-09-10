@@ -199,7 +199,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
 
     // MARK: - setup UI

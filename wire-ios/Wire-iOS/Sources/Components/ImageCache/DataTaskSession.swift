@@ -53,6 +53,6 @@ extension URLSessionDataTask: DataTask {}
 
 extension URLSession: DataTaskSession {
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
-        return dataTask(with: url, completionHandler: completionHandler)
+        dataTask(with: url, completionHandler: completionHandler)
     }
 }

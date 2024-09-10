@@ -26,11 +26,11 @@ extension UUID {
     }
 
     public static func isValid(bytes: Data?) -> Bool {
-        return bytes?.count == 16
+        bytes?.count == 16
     }
 
     public static func isValid(array: [Any]?) -> Bool {
-        return array?.map(UUID.isValid).contains(false) == false
+        array?.map(UUID.isValid).contains(false) == false
     }
 }
 
@@ -122,7 +122,7 @@ extension Text {
 
 extension Quote {
     public func validatingFields() -> Quote? {
-        return UUID.isValid(object: quotedMessageID) ? self : nil
+        UUID.isValid(object: quotedMessageID) ? self : nil
     }
 }
 
@@ -130,7 +130,7 @@ extension Quote {
 
 extension WireProtos.Mention {
     public func validatingFields() -> WireProtos.Mention? {
-        return UUID.isValid(object: userID) ? self : nil
+        UUID.isValid(object: userID) ? self : nil
     }
 }
 
@@ -138,7 +138,7 @@ extension WireProtos.Mention {
 
 extension LastRead {
     public func validatingFields() -> LastRead? {
-        return UUID.isValid(object: conversationID) ? self : nil
+        UUID.isValid(object: conversationID) ? self : nil
     }
 }
 
@@ -146,7 +146,7 @@ extension LastRead {
 
 extension Cleared {
     public func validatingFields() -> Cleared? {
-        return UUID.isValid(object: conversationID) ? self : nil
+        UUID.isValid(object: conversationID) ? self : nil
     }
 }
 
@@ -164,7 +164,7 @@ extension MessageHide {
 
 extension MessageDelete {
     public func validatingFields() -> MessageDelete? {
-        return UUID.isValid(object: messageID) ? self : nil
+        UUID.isValid(object: messageID) ? self : nil
     }
 }
 
@@ -172,7 +172,7 @@ extension MessageDelete {
 
 extension MessageEdit {
     public func validatingFields() -> MessageEdit? {
-        return UUID.isValid(object: replacingMessageID) ? self : nil
+        UUID.isValid(object: replacingMessageID) ? self : nil
     }
 }
 
@@ -194,7 +194,7 @@ extension Confirmation {
 
 extension WireProtos.Reaction {
     public func validatingFields() -> WireProtos.Reaction? {
-        return UUID.isValid(object: messageID) ? self : nil
+        UUID.isValid(object: messageID) ? self : nil
     }
 }
 
@@ -202,7 +202,7 @@ extension WireProtos.Reaction {
 
 extension WireProtos.Proteus_UserId {
     public func validatingFields() -> WireProtos.Proteus_UserId? {
-        return UUID.isValid(bytes: uuid) ? self : nil
+        UUID.isValid(bytes: uuid) ? self : nil
     }
 }
 

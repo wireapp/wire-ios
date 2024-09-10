@@ -29,7 +29,7 @@ final class Tab: LegacyButton {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 48)
+        CGSize(width: UIView.noIntrinsicMetric, height: 48)
     }
 
     private func updateColors() {

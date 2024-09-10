@@ -42,7 +42,7 @@ public struct UnregisteredTeam: Equatable {
     }
 
     var payload: ZMTransportData {
-        return [
+        [
             "email": email,
             "email_code": emailCode,
             "team": [

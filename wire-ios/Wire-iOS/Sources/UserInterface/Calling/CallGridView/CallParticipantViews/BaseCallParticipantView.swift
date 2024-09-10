@@ -58,7 +58,7 @@ class BaseCallParticipantView: OrientableView {
     }
 
     var shouldFill: Bool {
-        return isMaximized ? false : videoKind.shouldFill
+        isMaximized ? false : videoKind.shouldFill
     }
 
     let userDetailsView = CallParticipantDetailsView()
@@ -201,9 +201,9 @@ class BaseCallParticipantView: OrientableView {
     var shouldEnableScaling: Bool {
         switch pinchToZoomRule {
         case .enableWhenFitted:
-            return !shouldFill
+            !shouldFill
         case .enableWhenMaximized:
-            return isMaximized
+            isMaximized
         }
     }
 

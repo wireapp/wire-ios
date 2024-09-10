@@ -20,7 +20,7 @@ import Foundation
 
 extension ModifiedObjects: Mergeable {
     func merged(with other: ModifiedObjects) -> ModifiedObjects {
-        return ModifiedObjects(
+        ModifiedObjects(
             updated: updated.union(other.updated),
             refreshed: refreshed.union(other.refreshed),
             inserted: inserted.union(other.inserted),

@@ -160,9 +160,9 @@ extension LocalNotificationDispatcher: PushMessageHandler {
 
 extension LocalNotificationDispatcher {
     private var allNotificationSets: [ZMLocalNotificationSet] {
-        return [self.eventNotifications,
-                self.failedMessageNotifications,
-                self.callingNotifications]
+        [self.eventNotifications,
+         self.failedMessageNotifications,
+         self.callingNotifications]
     }
 
     /// Can be used for cancelling all conversations if need

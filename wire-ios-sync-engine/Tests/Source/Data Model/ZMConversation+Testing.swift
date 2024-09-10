@@ -21,7 +21,7 @@ import Foundation
 extension ZMConversation {
     @objc var isFullyMuted: Bool {
         get {
-            return mutedMessageTypes == .all
+            mutedMessageTypes == .all
         }
         set {
             mutedMessageTypes = newValue ? .all : .none
@@ -30,7 +30,7 @@ extension ZMConversation {
 
     @objc var isMutedDisplayingMentions: Bool {
         get {
-            return mutedMessageTypes == .regular
+            mutedMessageTypes == .regular
         }
         set {
             mutedMessageTypes = newValue ? .regular : .none

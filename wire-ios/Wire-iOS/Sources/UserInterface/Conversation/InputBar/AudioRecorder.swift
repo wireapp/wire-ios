@@ -26,8 +26,8 @@ enum PlayingState: UInt, CustomStringConvertible {
 
     var description: String {
         switch self {
-        case .idle: return "idle"
-        case .playing: return "playing"
+        case .idle: "idle"
+        case .playing: "playing"
         }
     }
 }
@@ -39,18 +39,18 @@ enum AudioRecorderFormat {
     func fileExtension() -> String {
         switch self {
         case .m4A:
-            return "m4a"
+            "m4a"
         case .wav:
-            return "wav"
+            "wav"
         }
     }
 
     func audioFormat() -> AudioFormatID {
         switch self {
         case .m4A:
-            return kAudioFormatMPEG4AAC
+            kAudioFormatMPEG4AAC
         case .wav:
-            return kAudioFormatLinearPCM
+            kAudioFormatLinearPCM
         }
     }
 }

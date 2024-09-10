@@ -19,7 +19,7 @@ import UIKit
 
 extension UIColor {
     private func mix(value0: CGFloat, value1: CGFloat, progress: CGFloat) -> CGFloat {
-        return value0 * (1 - progress) + value1 * progress
+        value0 * (1 - progress) + value1 * progress
     }
 
     /// Pass in amount of 0 for self, 1 is the other color

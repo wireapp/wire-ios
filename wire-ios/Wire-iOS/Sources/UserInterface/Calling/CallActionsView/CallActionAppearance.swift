@@ -25,43 +25,43 @@ enum CallActionAppearance: Equatable {
 
     var showBlur: Bool {
         switch self {
-        case .light: return false
-        case let .dark(blurred: blurred): return blurred
+        case .light: false
+        case let .dark(blurred: blurred): blurred
         }
     }
 
     var backgroundColorNormal: UIColor {
         switch self {
-        case .light: return UIColor.lightGraphite.withAlphaComponent(0.08)
-        case .dark: return UIColor.white.withAlphaComponent(0.24)
+        case .light: UIColor.lightGraphite.withAlphaComponent(0.08)
+        case .dark: UIColor.white.withAlphaComponent(0.24)
         }
     }
 
     var backgroundColorSelected: UIColor {
         switch self {
-        case .light: return UIColor.from(scheme: .iconNormal, variant: .light)
-        case .dark: return UIColor.from(scheme: .iconNormal, variant: .dark)
+        case .light: UIColor.from(scheme: .iconNormal, variant: .light)
+        case .dark: UIColor.from(scheme: .iconNormal, variant: .dark)
         }
     }
 
     var backgroundColorSelectedAndHighlighted: UIColor {
         switch self {
-        case .light: return UIColor.black.withAlphaComponent(0.16)
-        case .dark: return UIColor.white.withAlphaComponent(0.4)
+        case .light: UIColor.black.withAlphaComponent(0.16)
+        case .dark: UIColor.white.withAlphaComponent(0.4)
         }
     }
 
     var iconColorNormal: UIColor {
         switch self {
-        case .light: return UIColor.from(scheme: .iconNormal, variant: .light)
-        case .dark: return UIColor.from(scheme: .iconNormal, variant: .dark)
+        case .light: UIColor.from(scheme: .iconNormal, variant: .light)
+        case .dark: UIColor.from(scheme: .iconNormal, variant: .dark)
         }
     }
 
     var iconColorSelected: UIColor {
         switch self {
-        case .light: return UIColor.from(scheme: .iconNormal, variant: .dark)
-        case .dark: return UIColor.from(scheme: .iconNormal, variant: .light)
+        case .light: UIColor.from(scheme: .iconNormal, variant: .dark)
+        case .dark: UIColor.from(scheme: .iconNormal, variant: .light)
         }
     }
 }

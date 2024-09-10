@@ -33,7 +33,7 @@ final class MockZMEditableUser: MockUser, EditableUserType {
     }
 
     static func validate(name: inout String?) throws -> Bool {
-        return false
+        false
     }
 }
 

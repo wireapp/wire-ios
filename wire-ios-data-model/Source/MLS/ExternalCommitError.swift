@@ -38,10 +38,10 @@ extension ExternalCommitError.RecoveryStrategy {
     var shouldClearPendingGroup: Bool {
         switch self {
         case .retry:
-            return false
+            false
 
         case .giveUp:
-            return true
+            true
         }
     }
 }

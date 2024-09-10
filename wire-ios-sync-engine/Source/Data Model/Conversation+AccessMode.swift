@@ -90,7 +90,7 @@ extension ZMConversation {
     }
 
     var isLegacyAccessMode: Bool {
-        return self.accessMode == [.invite]
+        self.accessMode == [.invite]
     }
 
     /// Checks if a guest link can be generated or not

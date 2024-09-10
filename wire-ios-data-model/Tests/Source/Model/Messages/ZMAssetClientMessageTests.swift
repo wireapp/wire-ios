@@ -801,11 +801,11 @@ extension ZMAssetClientMessageTests {
 
 extension ZMAssetClientMessageTests {
     func sampleImageData() -> Data {
-        return self.verySmallJPEGData()
+        self.verySmallJPEGData()
     }
 
     func sampleProcessedImageData(_ format: ZMImageFormat) -> Data {
-        return "\(format.stringValue) fake data".data(using: String.Encoding.utf8, allowLossyConversion: true)!
+        "\(format.stringValue) fake data".data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
 
     func sampleImageProperties(_ format: ZMImageFormat) -> ZMIImageProperties {

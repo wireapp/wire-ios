@@ -43,7 +43,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     var asset: Asset {
-        return context.asset
+        context.asset
     }
 
     let context: Context
@@ -112,7 +112,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        false
     }
 
     // MARK: - View Creation
@@ -143,18 +143,18 @@ final class ConfirmAssetViewController: UIViewController {
     var showEditingOptions: Bool {
         switch asset {
         case let .image(mediaAsset):
-            return mediaAsset is UIImage
+            mediaAsset is UIImage
         case .video:
-            return false
+            false
         }
     }
 
     private var imageToolbarFitsInsideImage: Bool {
         switch asset {
         case let .image(image):
-            return image.size.width > 192 && image.size.height > 96
+            image.size.width > 192 && image.size.height > 96
         case .video:
-            return false
+            false
         }
     }
 

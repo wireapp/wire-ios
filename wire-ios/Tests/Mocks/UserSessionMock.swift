@@ -32,7 +32,7 @@ final class UserSessionMock: UserSession {
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
-        return MLSGroupID(Data())
+        MLSGroupID(Data())
     }
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
@@ -47,7 +47,7 @@ final class UserSessionMock: UserSession {
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
         mock.invokeUserClient_MockMethod = { _ in
-            return Data("102030405060708090102030405060708090102030405060708090".utf8)
+            Data("102030405060708090102030405060708090102030405060708090".utf8)
         }
         return mock
     }()
@@ -167,7 +167,7 @@ final class UserSessionMock: UserSession {
     }
 
     var conversationDirectory: ConversationDirectoryType {
-        return mockConversationDirectory
+        mockConversationDirectory
     }
 
     func perform(_ changes: @escaping () -> Void) {
@@ -183,18 +183,18 @@ final class UserSessionMock: UserSession {
     }
 
     func addUserObserver(_ observer: UserObserving, for user: UserType) -> NSObjectProtocol? {
-        return nil
+        nil
     }
 
     func addUserObserver(_ observer: UserObserving) -> NSObjectProtocol {
-        return NSObject()
+        NSObject()
     }
 
     func addConversationListObserver(
         _ observer: WireDataModel.ZMConversationListObserver,
         for list: ConversationList
     ) -> NSObjectProtocol {
-        return NSObject()
+        NSObject()
     }
 
     func conversationList() -> ConversationList {
@@ -223,25 +223,25 @@ final class UserSessionMock: UserSession {
         _ observer: ZMMessageObserver,
         for message: ZMConversationMessage
     ) -> NSObjectProtocol {
-        return NSObject()
+        NSObject()
     }
 
     func addConferenceCallingUnavailableObserver(
         _ observer: ConferenceCallingUnavailableObserver
     ) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     func addConferenceCallStateObserver(
         _ observer: WireCallCenterCallStateObserver
     ) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     func addConferenceCallErrorObserver(
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any {
-        return NSObject()
+        NSObject()
     }
 
     func acknowledgeFeatureChange(for feature: Feature.Name) {}
@@ -261,7 +261,7 @@ final class UserSessionMock: UserSession {
         users: [UserType],
         conversationDomain: String?
     ) -> SecurityClassification? {
-        return .none
+        .none
     }
 
     func proxiedRequest(
@@ -270,7 +270,7 @@ final class UserSessionMock: UserSession {
         type: WireSyncEngine.ProxiedRequestType,
         callback: WireSyncEngine.ProxyRequestCallback?
     ) -> WireSyncEngine.ProxyRequest {
-        return ProxyRequest(type: type, path: path, method: method, callback: callback)
+        ProxyRequest(type: type, path: path, method: method, callback: callback)
     }
 
     func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {}
@@ -292,7 +292,7 @@ final class UserSessionMock: UserSession {
     }()
 
     var selfUserClient: UserClient? {
-        return nil
+        nil
     }
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {

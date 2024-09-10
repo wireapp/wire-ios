@@ -41,7 +41,7 @@ final class MockAssetCreationRequest: AssetCreationRequestProtocol {
     static var image: UIImage?
 
     static func forAsset() -> MockAssetCreationRequest {
-        return MockAssetCreationRequest()
+        MockAssetCreationRequest()
     }
 
     func addResource(with type: PHAssetResourceType, data: Data, options: PHAssetResourceCreationOptions?) {

@@ -90,9 +90,9 @@ extension SimpleTextFieldValidator.ValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .tooLong:
-            return L10n.Localizable.Conversation.Create.Guidance.toolong
+            L10n.Localizable.Conversation.Create.Guidance.toolong
         case .empty:
-            return L10n.Localizable.Conversation.Create.Guidance.empty
+            L10n.Localizable.Conversation.Create.Guidance.empty
         }
     }
 }

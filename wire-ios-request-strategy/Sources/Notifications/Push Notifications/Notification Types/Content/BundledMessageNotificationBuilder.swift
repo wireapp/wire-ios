@@ -20,7 +20,7 @@ import Foundation
 
 final class BundledMessagesNotificationBuilder: NotificationBuilder {
     var notificationType: LocalNotificationType {
-        return .bundledMessages
+        .bundledMessages
     }
 
     private let messageCount: Int
@@ -30,18 +30,18 @@ final class BundledMessagesNotificationBuilder: NotificationBuilder {
     }
 
     func shouldCreateNotification() -> Bool {
-        return true
+        true
     }
 
     func titleText() -> String? {
-        return nil
+        nil
     }
 
     func bodyText() -> String {
-        return notificationType.bundledMessagesBodyText(messageCount: messageCount)
+        notificationType.bundledMessagesBodyText(messageCount: messageCount)
     }
 
     func userInfo() -> NotificationUserInfo? {
-        return nil
+        nil
     }
 }

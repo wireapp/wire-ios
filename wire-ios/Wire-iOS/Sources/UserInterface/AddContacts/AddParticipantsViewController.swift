@@ -50,18 +50,18 @@ extension AddParticipantsViewController.Context {
     var includeGuests: Bool {
         switch self {
         case let .add(conversation):
-            return conversation.canAddGuest
+            conversation.canAddGuest
         case let .create(creationValues):
-            return creationValues.allowGuests
+            creationValues.allowGuests
         }
     }
 
     var selectionLimit: Int {
         switch self {
         case let .add(conversation):
-            return conversation.freeParticipantSlots
+            conversation.freeParticipantSlots
         case .create:
-            return ZMConversation.maxParticipantsExcludingSelf
+            ZMConversation.maxParticipantsExcludingSelf
         }
     }
 
@@ -165,7 +165,7 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(
@@ -367,12 +367,10 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func updateTitle() {
-        title = {
-            switch viewModel.context {
-            case let .create(values): return viewModel.title(with: values.participants)
-            case .add: return viewModel.title(with: userSelection.users)
-            }
-        }()
+        title = switch viewModel.context {
+        case let .create(values): viewModel.title(with: values.participants)
+        case .add: viewModel.title(with: userSelection.users)
+        }
 
         guard let title else { return }
 
@@ -472,11 +470,11 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
 
 extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.overFullScreen
+        UIModalPresentationStyle.overFullScreen
     }
 
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.overFullScreen
+        UIModalPresentationStyle.overFullScreen
     }
 }
 

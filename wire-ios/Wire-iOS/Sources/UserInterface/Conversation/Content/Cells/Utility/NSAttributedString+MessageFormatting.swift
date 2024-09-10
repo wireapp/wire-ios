@@ -27,7 +27,7 @@ extension NSAttributedString {
     static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()
 
     static var previewParagraphStyle: NSParagraphStyle {
-        return defaultPreviewParagraphStyle()
+        defaultPreviewParagraphStyle()
     }
 
     static var style: DownStyle = defaultMarkdownStyle()
@@ -161,7 +161,7 @@ extension NSAttributedString {
     }
 
     func links() -> [URLWithRange] {
-        return NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: []) ?? []
+        NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: []) ?? []
     }
 }
 
@@ -208,8 +208,8 @@ extension NSMutableAttributedString {
 
 extension String {
     fileprivate mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
-        return mentions.sorted(by: {
-            return $0.range.location > $1.range.location
+        mentions.sorted(by: {
+            $0.range.location > $1.range.location
         }).compactMap({ mention in
             guard let range = Range(mention.range, in: self) else { return nil }
 

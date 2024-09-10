@@ -48,39 +48,39 @@ enum CoreDataMigrationActionFactory {
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
         case .v111:
-            return RemoveDuplicatePreAction()
+            RemoveDuplicatePreAction()
 
         case .v107:
-            return CleanupModels107PreAction()
+            CleanupModels107PreAction()
 
         default:
-            return nil
+            nil
         }
     }
 
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
         case .v116:
-            return IsPendingInitialFetchMigrationAction()
+            IsPendingInitialFetchMigrationAction()
 
         case .v114:
-            return OneOnOneConversationMigrationAction()
+            OneOnOneConversationMigrationAction()
 
         case .v111:
-            return PrefillPrimaryKeyAction()
+            PrefillPrimaryKeyAction()
 
         default:
-            return nil
+            nil
         }
     }
 
     // MARK: - CoreDataEventsMigrationVersion
 
     static func createPreMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
-        return nil
+        nil
     }
 
     static func createPostMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
-        return nil
+        nil
     }
 }

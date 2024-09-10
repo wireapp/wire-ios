@@ -28,7 +28,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationAccessModeUpdate
+            .conversationAccessModeUpdate
         }
 
         let access: [String]

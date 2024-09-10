@@ -33,7 +33,7 @@ extension ZMConversationMessage {
     }
 
     var audioTrack: AudioTrack? {
-        return fileMessageData?.isAudio == true ? self as? AudioTrack : .none
+        fileMessageData?.isAudio == true ? self as? AudioTrack : .none
     }
 }
 
@@ -44,7 +44,7 @@ extension ZMAssetClientMessage: AudioTrack {
     }
 
     var author: String? {
-        return self.sender?.name
+        self.sender?.name
     }
 
     var duration: TimeInterval {
@@ -53,12 +53,12 @@ extension ZMAssetClientMessage: AudioTrack {
     }
 
     var streamURL: URL? {
-        return fileMessageData?.temporaryURLToDecryptedFile()
+        fileMessageData?.temporaryURLToDecryptedFile()
     }
 
     var failedToLoad: Bool {
         get {
-            return false
+            false
         }
         set {
             // no-op

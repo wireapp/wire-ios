@@ -73,7 +73,7 @@ public final class Cache<Key: Hashable, Value> {
     ///     - key: Key used to retrieve a previously stored value.
     /// - Returns: Value if it exists the cache.
     public func value(for key: Key) -> Value? {
-        return cache[key]?.value
+        cache[key]?.value
     }
 
     /// Remove all values from the cache.

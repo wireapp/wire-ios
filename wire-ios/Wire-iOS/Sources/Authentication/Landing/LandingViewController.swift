@@ -36,7 +36,7 @@ final class LandingViewController: AuthenticationStepViewController {
     var backendEnvironmentProvider: () -> BackendEnvironmentProvider
 
     var backendEnvironment: BackendEnvironmentProvider {
-        return backendEnvironmentProvider()
+        backendEnvironmentProvider()
     }
 
     init(backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
@@ -56,7 +56,7 @@ final class LandingViewController: AuthenticationStepViewController {
     typealias Landing = L10n.Localizable.Landing
 
     var delegate: LandingViewControllerDelegate? {
-        return authenticationCoordinator
+        authenticationCoordinator
     }
 
     // MARK: - UI Elements
@@ -220,7 +220,7 @@ final class LandingViewController: AuthenticationStepViewController {
 
     var topStackTopConstraint = NSLayoutConstraint()
     var topStackTopConstraintConstant: CGFloat {
-        return traitCollection.horizontalSizeClass == .compact ? 42.0 : 200.0
+        traitCollection.horizontalSizeClass == .compact ? 42.0 : 200.0
     }
 
     var contentViewWidthConstraint = NSLayoutConstraint()
@@ -230,13 +230,13 @@ final class LandingViewController: AuthenticationStepViewController {
     var messageLabelLeadingConstraint = NSLayoutConstraint()
     var messageLabelTrailingConstraint = NSLayoutConstraint()
     var messageLabelLabelConstraintsConstant: CGFloat {
-        return traitCollection.horizontalSizeClass == .compact ? 0.0 : 72.0
+        traitCollection.horizontalSizeClass == .compact ? 0.0 : 72.0
     }
 
     var subMessageLabelLeadingConstraint = NSLayoutConstraint()
     var subMessageLabelTrailingConstraint = NSLayoutConstraint()
     var subMessageLabelConstraintsConstant: CGFloat {
-        return traitCollection.horizontalSizeClass == .compact ? 0.0 : 24.0
+        traitCollection.horizontalSizeClass == .compact ? 0.0 : 24.0
     }
 
     var createAccountInfoLabelTopConstraint = NSLayoutConstraint()
@@ -427,9 +427,9 @@ final class LandingViewController: AuthenticationStepViewController {
     var isCustomBackend: Bool {
         switch backendEnvironment.environmentType.value {
         case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:
-            return false
+            false
         case .custom:
-            return true
+            true
         }
     }
 

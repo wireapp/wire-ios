@@ -22,7 +22,7 @@ import WireTransport
 extension Payload {
     struct UpdateConversationConnectionRequest: CodableEventData {
         static var eventType: ZMUpdateEventType {
-            return .conversationConnectRequest
+            .conversationConnectRequest
         }
     }
 }

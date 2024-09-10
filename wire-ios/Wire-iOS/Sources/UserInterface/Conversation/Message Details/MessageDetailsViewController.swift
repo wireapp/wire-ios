@@ -40,16 +40,16 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         /// The read receipts view controller.
         var readReceipts: MessageDetailsContentViewController {
             switch self {
-            case let .combinedView(readReceipts, _): return readReceipts
-            case let .singleView(viewController): return viewController
+            case let .combinedView(readReceipts, _): readReceipts
+            case let .singleView(viewController): viewController
             }
         }
 
         /// The reactions view controller.
         var reactions: MessageDetailsContentViewController {
             switch self {
-            case let .combinedView(_, reactions): return reactions
-            case let .singleView(viewController): return viewController
+            case let .combinedView(_, reactions): reactions
+            case let .singleView(viewController): viewController
             }
         }
 
@@ -57,9 +57,9 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         var all: [MessageDetailsContentViewController] {
             switch self {
             case let .combinedView(readReceipts, reactions):
-                return [readReceipts, reactions]
+                [readReceipts, reactions]
             case let .singleView(viewController):
-                return [viewController]
+                [viewController]
             }
         }
     }
@@ -256,11 +256,11 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     }
 
     override var shouldAutorotate: Bool {
-        return false
+        false
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 }
 

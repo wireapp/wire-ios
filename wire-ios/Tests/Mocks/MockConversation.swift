@@ -45,7 +45,7 @@ class SwiftMockConversation: NSObject, Conversation {
 
     var mockLocalParticipantsContain: Bool = false
     func localParticipantsContain(user: UserType) -> Bool {
-        return mockLocalParticipantsContain
+        mockLocalParticipantsContain
     }
 
     var displayName: String? = ""

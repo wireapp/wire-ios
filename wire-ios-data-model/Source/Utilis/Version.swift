@@ -31,7 +31,7 @@ import Foundation
     }
 
     private static func integerComponents(of string: String) -> [Int] {
-        return string.components(separatedBy: ".").map {
+        string.components(separatedBy: ".").map {
             ($0 as NSString).integerValue
         }
     }
@@ -66,20 +66,20 @@ import Foundation
     }
 
     override public var description: String {
-        return arrayRepresentation.map { "\($0)" }.joined(separator: ".")
+        arrayRepresentation.map { "\($0)" }.joined(separator: ".")
     }
 
     override public var debugDescription: String {
-        return String(format: "<%@ %p> %@", NSStringFromClass(type(of: self)), self, description)
+        String(format: "<%@ %p> %@", NSStringFromClass(type(of: self)), self, description)
     }
 }
 
 // MARK: - Operators
 
 public func == (lhs: Version, rhs: Version) -> Bool {
-    return lhs.compare(with: rhs) == .orderedSame
+    lhs.compare(with: rhs) == .orderedSame
 }
 
 public func < (lhs: Version, rhs: Version) -> Bool {
-    return lhs.compare(with: rhs) == .orderedAscending
+    lhs.compare(with: rhs) == .orderedAscending
 }

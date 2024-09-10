@@ -78,7 +78,7 @@ public enum E2eIdentityCertificateConstants {
 
 extension E2eIdentityCertificate {
     private var isExpired: Bool {
-        return expiryDate <= comparedDate.now
+        expiryDate <= comparedDate.now
     }
 
     private var isValid: Bool {
@@ -86,7 +86,7 @@ extension E2eIdentityCertificate {
     }
 
     private var isActivated: Bool {
-        return notValidBefore <= comparedDate.now
+        notValidBefore <= comparedDate.now
     }
 
     public func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {

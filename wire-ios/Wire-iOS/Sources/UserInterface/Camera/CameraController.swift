@@ -134,7 +134,7 @@ final class CameraController {
      * The capture device for the given camera position, if available.
      */
     private func cameraDevice(for position: AVCaptureDevice.Position) -> AVCaptureDevice? {
-        return AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
+        AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
     }
 
     /**
@@ -142,8 +142,8 @@ final class CameraController {
      */
     private func input(for camera: SettingsCamera) -> AVCaptureDeviceInput? {
         switch camera {
-        case .front:    return frontCameraDeviceInput
-        case .back:     return backCameraDeviceInput
+        case .front:    frontCameraDeviceInput
+        case .back:     backCameraDeviceInput
         }
     }
 

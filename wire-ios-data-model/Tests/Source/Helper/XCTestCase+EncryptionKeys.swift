@@ -35,10 +35,10 @@ extension XCTestCase {
     }
 
     var validDatabaseKey: VolatileData {
-        return VolatileData(from: .zmRandomSHA256Key())
+        VolatileData(from: .zmRandomSHA256Key())
     }
 
     var malformedDatabaseKey: VolatileData {
-        return VolatileData(from: .zmRandomSHA256Key().dropFirst())
+        VolatileData(from: .zmRandomSHA256Key().dropFirst())
     }
 }

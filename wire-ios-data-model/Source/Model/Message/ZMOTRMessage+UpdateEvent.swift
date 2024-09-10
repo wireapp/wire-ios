@@ -194,11 +194,11 @@ extension ZMOTRMessage {
     }
 
     private static func isSelf(conversation: ZMConversation, andIsSenderID senderID: UUID, differentFromSelfUserID selfUserID: UUID) -> Bool {
-        return conversation.isSelfConversation && senderID != selfUserID
+        conversation.isSelfConversation && senderID != selfUserID
     }
 
     private static func isGroup(conversation: ZMConversation, andIsSenderID senderID: UUID, differentFromSelfUserID selfUserID: UUID) -> Bool {
-        return conversation.conversationType == .group && senderID != selfUserID
+        conversation.conversationType == .group && senderID != selfUserID
     }
 
     private static func appendInvalidSystemMessage(forUpdateEvent event: ZMUpdateEvent, toConversation conversation: ZMConversation, inContext moc: NSManagedObjectContext) {

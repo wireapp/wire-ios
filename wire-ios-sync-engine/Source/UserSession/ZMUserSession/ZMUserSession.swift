@@ -100,7 +100,7 @@ public final class ZMUserSession: NSObject {
     }
 
     public var syncStatus: SyncStatusProtocol {
-        return applicationStatusDirectory.syncStatus
+        applicationStatusDirectory.syncStatus
     }
 
     public var fileSharingFeature: Feature.FileSharing {
@@ -163,35 +163,35 @@ public final class ZMUserSession: NSObject {
     var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     public var syncManagedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
-        return coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     public var searchManagedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
-        return coreDataStack.searchContext
+        coreDataStack.searchContext
     }
 
     public var sharedContainerURL: URL { // TODO jacob we don't want this to be public
-        return coreDataStack.applicationContainer
+        coreDataStack.applicationContainer
     }
 
     public var selfUserClient: UserClient? { // TODO jacob we don't want this to be public
-        return ZMUser.selfUser(in: managedObjectContext).selfClient()
+        ZMUser.selfUser(in: managedObjectContext).selfClient()
     }
 
     public var userProfile: UserProfile {
-        return applicationStatusDirectory.userProfileUpdateStatus
+        applicationStatusDirectory.userProfileUpdateStatus
     }
 
     public var userProfileImage: UserProfileImageUpdateProtocol {
-        return applicationStatusDirectory.userProfileImageUpdateStatus
+        applicationStatusDirectory.userProfileImageUpdateStatus
     }
 
     public var conversationDirectory: ConversationDirectoryType {
-        return managedObjectContext.conversationListDirectory()
+        managedObjectContext.conversationListDirectory()
     }
 
     public private(set) var networkState: NetworkState = .online {
@@ -514,7 +514,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
-        return [
+        [
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
@@ -530,12 +530,12 @@ public final class ZMUserSession: NSObject {
     }
 
     private func createSyncStrategy() -> ZMSyncStrategy {
-        return ZMSyncStrategy(contextProvider: coreDataStack,
-                              notificationsDispatcher: notificationDispatcher,
-                              operationStatus: applicationStatusDirectory.operationStatus,
-                              application: application,
-                              strategyDirectory: strategyDirectory!,
-                              eventProcessingTracker: eventProcessingTracker)
+        ZMSyncStrategy(contextProvider: coreDataStack,
+                       notificationsDispatcher: notificationDispatcher,
+                       operationStatus: applicationStatusDirectory.operationStatus,
+                       application: application,
+                       strategyDirectory: strategyDirectory!,
+                       eventProcessingTracker: eventProcessingTracker)
     }
 
     private func createOperationLoop(isDeveloperModeEnabled: Bool) -> ZMOperationLoop {
@@ -1010,23 +1010,23 @@ extension ZMUserSession: URLActionProcessor {
 
 extension ZMUserSession: ContextProvider {
     public var account: Account {
-        return coreDataStack.account
+        coreDataStack.account
     }
 
     public var viewContext: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     public var syncContext: NSManagedObjectContext {
-        return coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     public var searchContext: NSManagedObjectContext {
-        return coreDataStack.searchContext
+        coreDataStack.searchContext
     }
 
     public var eventContext: NSManagedObjectContext {
-        return coreDataStack.eventContext
+        coreDataStack.eventContext
     }
 }
 

@@ -31,7 +31,7 @@ final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransp
     }
 
     func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
-        return nextEnqueueResult
+        nextEnqueueResult
     }
 
     func tearDown() {}
@@ -101,7 +101,7 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
     }
 
     func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
-        return isAllowedToCreatingNewAccounts
+        isAllowedToCreatingNewAccounts
     }
 }
 

@@ -100,7 +100,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     private func createTemporaryURL() -> URL {
-        return directoryURL.appendingPathComponent(UUID().uuidString)
+        directoryURL.appendingPathComponent(UUID().uuidString)
     }
 
     private func encrypt(_ message: Data, passphrase: Sut.Passphrase) throws -> Data {

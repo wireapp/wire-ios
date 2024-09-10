@@ -27,9 +27,9 @@ enum ParticipantsRowType {
     var cellType: UICollectionViewCell.Type {
         switch self {
         case .user:
-            return UserCell.self
+            UserCell.self
         case .showAll:
-            return ShowAllParticipantsCell.self
+            ShowAllParticipantsCell.self
         }
     }
 }
@@ -40,9 +40,9 @@ enum ConversationRole {
     var name: String {
         switch self {
         case .admin:
-            return "Admins"
+            "Admins"
         case .member:
-            return "Members"
+            "Members"
         }
     }
 }
@@ -77,18 +77,18 @@ private struct ParticipantsSectionViewModel {
     var footerTitle: String {
         switch conversationRole {
         case .admin:
-            return L10n.Localizable.Participants.Section.Admins.footer
+            L10n.Localizable.Participants.Section.Admins.footer
         case .member:
-            return L10n.Localizable.Participants.Section.Members.footer
+            L10n.Localizable.Participants.Section.Members.footer
         }
     }
 
     var footerVisible: Bool {
-        return participants.isEmpty
+        participants.isEmpty
     }
 
     var accessibilityTitle: String {
-        return conversationRole.name
+        conversationRole.name
     }
 
     /// init method
@@ -214,15 +214,15 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     }
 
     override var sectionTitle: String? {
-        return viewModel.sectionTitle
+        viewModel.sectionTitle
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return viewModel.sectionAccesibilityIdentifier
+        viewModel.sectionAccesibilityIdentifier
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.rows.count
+        viewModel.rows.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -315,9 +315,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         switch viewModel.rows[indexPath.row] {
         case let .user(bareUser):
-            return !bareUser.isSelfUser
+            !bareUser.isSelfUser
         default:
-            return true
+            true
         }
     }
 }

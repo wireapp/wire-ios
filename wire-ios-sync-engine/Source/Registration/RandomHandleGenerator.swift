@@ -71,19 +71,19 @@ extension RandomHandleGenerator {
 extension String {
     /// Returns an array with self with digits from 1 to 9 appended
     func appendAllDigits() -> [String] {
-        return (1..<10).map { self + "\($0)" }
+        (1..<10).map { self + "\($0)" }
     }
 
     /// Return an array with self with random digits appended
     fileprivate func appendRandomDigits(numberOfDigits: Int, variations: Int) -> [String] {
-        return (0..<variations).map { _ in
-            return self + String.random(numberOfDigits: numberOfDigits)
+        (0..<variations).map { _ in
+            self + String.random(numberOfDigits: numberOfDigits)
         }
     }
 
     /// Returns a string composed of random digits
     fileprivate static func random(numberOfDigits: Int) -> String {
-        return (0..<numberOfDigits).map { _ in "\(Int.random(in: 0..<10))" }
+        (0..<numberOfDigits).map { _ in "\(Int.random(in: 0..<10))" }
             .joined(separator: "")
     }
 }
@@ -125,7 +125,7 @@ extension Array {
 extension String {
     /// Normalized user handle form
     public var normalizedForUserHandle: String {
-        return self.translitteratedToLatin
+        self.translitteratedToLatin
             .spacesAndPuctationToUnderscore
             .onlyAlphanumericWithUnderscore
             .lowercased()
@@ -160,7 +160,7 @@ extension String {
 
     /// Returns a truncated version of the string
     func truncated(at position: Int) -> String {
-        return String(self[..<index(startIndex, offsetBy: min(position, count))])
+        String(self[..<index(startIndex, offsetBy: min(position, count))])
     }
 
     /// Returns the string if its a valid handle, or nil

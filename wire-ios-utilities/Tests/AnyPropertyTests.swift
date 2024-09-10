@@ -60,11 +60,11 @@ class AnyMessage {
     }
 
     var sender: String {
-        return _sender.getter()
+        _sender.getter()
     }
 
     var numberOfLikes: Int {
-        get { return _numberOfLikes.getter() }
+        get { _numberOfLikes.getter() }
         set { _numberOfLikes.setter(newValue) }
     }
 }

@@ -55,7 +55,7 @@ import Foundation
     }
 
     public static func deleted(team: MockTeam) -> MockTeamEvent {
-        return MockTeamEvent(kind: .delete, team: team, data: [:])
+        MockTeamEvent(kind: .delete, team: team, data: [:])
     }
 
     public init(kind: Kind, team: MockTeam, data: [String: Any?]) {
@@ -65,7 +65,7 @@ import Foundation
     }
 
     public var payload: ZMTransportData {
-        return [
+        [
             "team": teamIdentifier,
             "time": timestamp.transportString(),
             "type": kind.rawValue,
@@ -74,6 +74,6 @@ import Foundation
     }
 
     override public var debugDescription: String {
-        return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
+        "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
     }
 }

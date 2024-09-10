@@ -38,15 +38,15 @@ enum CallParticipantsListCellConfiguration: Hashable {
 
     var cellType: CallParticipantsListCellConfigurable.Type {
         switch self {
-        case .callParticipant: return UserCell.self
-        case .showAll: return ShowAllParticipantsCell.self
+        case .callParticipant: UserCell.self
+        case .showAll: ShowAllParticipantsCell.self
         }
     }
 
     // MARK: - Convenience
 
     static var allCellTypes: [UICollectionViewCell.Type] {
-        return [
+        [
             UserCell.self,
             ShowAllParticipantsCell.self
         ]
@@ -85,11 +85,11 @@ final class CallParticipantsListView: UICollectionView {
 
 extension CallParticipantsListView: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return rows.count
+        rows.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

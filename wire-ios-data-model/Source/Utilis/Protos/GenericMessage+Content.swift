@@ -22,67 +22,67 @@ import Foundation
 
 extension GenericMessage {
     public var hasText: Bool {
-        return messageData is Text
+        messageData is Text
     }
 
     public var hasConfirmation: Bool {
-        return messageData is Confirmation
+        messageData is Confirmation
     }
 
     public var hasReaction: Bool {
-        return messageData is WireProtos.Reaction
+        messageData is WireProtos.Reaction
     }
 
     public var hasAsset: Bool {
-        return messageData is WireProtos.Asset
+        messageData is WireProtos.Asset
     }
 
     public var hasClientAction: Bool {
-        return messageData is ClientAction
+        messageData is ClientAction
     }
 
     public var hasCleared: Bool {
-        return messageData is Cleared
+        messageData is Cleared
     }
 
     public var hasLastRead: Bool {
-        return messageData is LastRead
+        messageData is LastRead
     }
 
     public var hasKnock: Bool {
-        return messageData is Knock
+        messageData is Knock
     }
 
     public var hasExternal: Bool {
-        return messageData is External
+        messageData is External
     }
 
     public var hasAvailability: Bool {
-        return messageData is WireProtos.Availability
+        messageData is WireProtos.Availability
     }
 
     public var hasEdited: Bool {
-        return messageData is MessageEdit
+        messageData is MessageEdit
     }
 
     public var hasDeleted: Bool {
-        return messageData is MessageDelete
+        messageData is MessageDelete
     }
 
     public var hasCalling: Bool {
-        return messageData is Calling
+        messageData is Calling
     }
 
     public var hasHidden: Bool {
-        return messageData is MessageHide
+        messageData is MessageHide
     }
 
     public var hasLocation: Bool {
-        return messageData is Location
+        messageData is Location
     }
 
     public var hasDataTransfer: Bool {
-        return messageData is DataTransfer
+        messageData is DataTransfer
     }
 }
 
@@ -90,18 +90,18 @@ extension GenericMessage {
 
 extension Ephemeral {
     public var hasAsset: Bool {
-        return messageData is WireProtos.Asset
+        messageData is WireProtos.Asset
     }
 
     public var hasKnock: Bool {
-        return messageData is Knock
+        messageData is Knock
     }
 
     public var hasLocation: Bool {
-        return messageData is Location
+        messageData is Location
     }
 
     public var hasText: Bool {
-        return messageData is Text
+        messageData is Text
     }
 }

@@ -67,7 +67,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     // MARK: - Helpers
 
     var isPasswordEmpty: Bool {
-        return passwordField.input.isEmpty
+        passwordField.input.isEmpty
     }
 
     // MARK: - Initialization
@@ -145,28 +145,28 @@ class EmailPasswordTextField: UIView, MagicTappable {
     // MARK: - Responder
 
     override var isFirstResponder: Bool {
-        return emailField.isFirstResponder || passwordField.isFirstResponder
+        emailField.isFirstResponder || passwordField.isFirstResponder
     }
 
     override var canBecomeFirstResponder: Bool {
-        return logicalFirstResponder.canBecomeFirstResponder
+        logicalFirstResponder.canBecomeFirstResponder
     }
 
     override func becomeFirstResponder() -> Bool {
-        return logicalFirstResponder.becomeFirstResponder()
+        logicalFirstResponder.becomeFirstResponder()
     }
 
     override var canResignFirstResponder: Bool {
-        return emailField.canResignFirstResponder || passwordField.canResignFirstResponder
+        emailField.canResignFirstResponder || passwordField.canResignFirstResponder
     }
 
     @discardableResult override func resignFirstResponder() -> Bool {
         if emailField.isFirstResponder {
-            return emailField.resignFirstResponder()
+            emailField.resignFirstResponder()
         } else if passwordField.isFirstResponder {
-            return passwordField.resignFirstResponder()
+            passwordField.resignFirstResponder()
         } else {
-            return false
+            false
         }
     }
 
@@ -174,9 +174,9 @@ class EmailPasswordTextField: UIView, MagicTappable {
     private var logicalFirstResponder: UITextField {
         // If we have a pre-filled email and the password field is empty, start with the password field
         if hasPrefilledValue, (passwordField.text ?? "").isEmpty {
-            return passwordField
+            passwordField
         } else {
-            return emailField
+            emailField
         }
     }
 
@@ -211,7 +211,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     }
 
     var hasValidInput: Bool {
-        return emailField.isInputValid && passwordField.isInputValid
+        emailField.isInputValid && passwordField.isInputValid
     }
 }
 

@@ -105,11 +105,11 @@ final class NavigationController: UINavigationController {
     // MARK: - status bar
 
     override var childForStatusBarStyle: UIViewController? {
-        return topViewController
+        topViewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return topViewController
+        topViewController
     }
 }
 
@@ -135,11 +135,11 @@ extension NavigationController: UINavigationControllerDelegate {
 
 extension NavigationController: UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return SwizzleTransition(direction: .vertical)
+        SwizzleTransition(direction: .vertical)
     }
 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return SwizzleTransition(direction: .vertical)
+        SwizzleTransition(direction: .vertical)
     }
 }
 
@@ -152,6 +152,6 @@ extension NavigationController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        true
     }
 }

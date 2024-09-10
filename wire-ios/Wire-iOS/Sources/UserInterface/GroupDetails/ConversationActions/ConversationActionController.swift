@@ -136,7 +136,7 @@ final class ConversationActionController {
     }
 
     private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
-        return action.alertAction { [weak self] in
+        action.alertAction { [weak self] in
             guard let self else { return }
             self.handleAction(action)
         }

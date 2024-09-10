@@ -68,14 +68,14 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
     // MARK: - Static Access
 
     static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
-        return PublicEARKeyDescription(
+        PublicEARKeyDescription(
             accountID: accountID,
             label: Constant.labelPublicPrimary
         )
     }
 
     static func secondaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
-        return PublicEARKeyDescription(
+        PublicEARKeyDescription(
             accountID: accountID,
             label: Constant.labelPublicSecondary
         )

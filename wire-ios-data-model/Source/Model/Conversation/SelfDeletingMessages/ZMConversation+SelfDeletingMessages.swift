@@ -23,13 +23,13 @@ extension ZMConversation {
     /// Whether a group conversation timeout value exists.
 
     public var hasSyncedMessageDestructionTimeout: Bool {
-        return messageDestructionTimeoutValue(for: .groupConversation) != .none
+        messageDestructionTimeoutValue(for: .groupConversation) != .none
     }
 
     /// Whether a personal timeout value exists for the self user.
 
     public var hasLocalMessageDestructionTimeout: Bool {
-        return messageDestructionTimeoutValue(for: .selfUser) != .none
+        messageDestructionTimeoutValue(for: .selfUser) != .none
     }
 
     /// The timeout value actively used with new messages.
@@ -43,13 +43,13 @@ extension ZMConversation {
 
     public var activeMessageDestructionTimeoutType: MessageDestructionTimeoutType? {
         if hasForcedMessageDestructionTimeout {
-            return .team
+            .team
         } else if hasSyncedMessageDestructionTimeout {
-            return .groupConversation
+            .groupConversation
         } else if hasLocalMessageDestructionTimeout {
-            return .selfUser
+            .selfUser
         } else {
-            return nil
+            nil
         }
     }
 
@@ -60,11 +60,11 @@ extension ZMConversation {
     public func messageDestructionTimeoutValue(for type: MessageDestructionTimeoutType) -> MessageDestructionTimeoutValue {
         switch type {
         case .team:
-            return .init(rawValue: teamMessageDestructionTimeout)
+            .init(rawValue: teamMessageDestructionTimeout)
         case .groupConversation:
-            return .init(rawValue: syncedMessageDestructionTimeout)
+            .init(rawValue: syncedMessageDestructionTimeout)
         case .selfUser:
-            return .init(rawValue: localMessageDestructionTimeout)
+            .init(rawValue: localMessageDestructionTimeout)
         }
     }
 
@@ -127,14 +127,14 @@ extension ZMConversation {
 
 extension Feature.SelfDeletingMessages {
     fileprivate var isForcedOff: Bool {
-        return status == .disabled
+        status == .disabled
     }
 
     fileprivate var isForcedOn: Bool {
-        return config.enforcedTimeoutSeconds > 0
+        config.enforcedTimeoutSeconds > 0
     }
 
     fileprivate var timeoutValue: MessageDestructionTimeoutValue {
-        return .init(rawValue: Double(config.enforcedTimeoutSeconds))
+        .init(rawValue: Double(config.enforcedTimeoutSeconds))
     }
 }

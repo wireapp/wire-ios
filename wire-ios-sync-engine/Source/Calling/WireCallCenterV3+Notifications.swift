@@ -23,7 +23,7 @@ protocol SelfPostingNotification {
 }
 
 extension SelfPostingNotification {
-    static var userInfoKey: String { return notificationName.rawValue }
+    static var userInfoKey: String { notificationName.rawValue }
 
     func post(in context: NotificationContext, object: AnyObject? = nil) {
         NotificationInContext(name: type(of: self).notificationName, context: context, object: object, userInfo: [type(of: self).userInfoKey: self]).post()
@@ -186,11 +186,11 @@ extension WireCallCenterV3 {
     // MARK: - Observer
 
     public class func addCallErrorObserver(observer: WireCallCenterCallErrorObserver, userSession: ZMUserSession) -> Any {
-        return addCallErrorObserver(observer: observer, context: userSession.managedObjectContext)
+        addCallErrorObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
     class func addCallErrorObserver(observer: WireCallCenterCallErrorObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterCallErrorNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterCallErrorNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallErrorNotification.userInfoKey] as? WireCallCenterCallErrorNotification {
                 observer?.callCenterDidReceiveCallError(note.error, conversationId: note.conversationId)
             }
@@ -200,13 +200,13 @@ extension WireCallCenterV3 {
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallStateObserver(observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any {
-        return addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
+        addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
     /// Register observer of the call center call state in all user sessions.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addGlobalCallStateObserver(observer: WireCallCenterCallStateObserver) -> Any {
-        return NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] note in
+        NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
                let context = note.context,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
@@ -223,7 +223,7 @@ extension WireCallCenterV3 {
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addCallStateObserver(observer: WireCallCenterCallStateObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterCallStateNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterCallStateNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
                                          domain: note.callerId.domain,
@@ -239,13 +239,13 @@ extension WireCallCenterV3 {
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallStateObserver(observer: WireCallCenterCallStateObserver, for conversation: ZMConversation, userSession: ZMUserSession) -> Any {
-        return addCallStateObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
+        addCallStateObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addCallStateObserver(observer: WireCallCenterCallStateObserver, for conversation: ZMConversation, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterCallStateNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterCallStateNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
                                          domain: note.callerId.domain,
@@ -259,13 +259,13 @@ extension WireCallCenterV3 {
     /// Register observer of missed calls.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addMissedCallObserver(observer: WireCallCenterMissedCallObserver, userSession: ZMUserSession) -> Any {
-        return addMissedCallObserver(observer: observer, context: userSession.managedObjectContext)
+        addMissedCallObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
     /// Register observer of missed calls.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addMissedCallObserver(observer: WireCallCenterMissedCallObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterMissedCallNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterMissedCallNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterMissedCallNotification.userInfoKey] as? WireCallCenterMissedCallNotification,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
                                          domain: note.callerId.domain,
@@ -281,7 +281,7 @@ extension WireCallCenterV3 {
     /// Register observer of missed calls for in all user sessions
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addGlobalMissedCallObserver(observer: WireCallCenterMissedCallObserver) -> Any {
-        return NotificationInContext.addUnboundedObserver(name: WireCallCenterMissedCallNotification.notificationName, context: nil) { [weak observer] note in
+        NotificationInContext.addUnboundedObserver(name: WireCallCenterMissedCallNotification.notificationName, context: nil) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterMissedCallNotification.userInfoKey] as? WireCallCenterMissedCallNotification,
                let context = note.context,
                let caller = ZMUser.fetch(with: note.callerId.identifier,
@@ -298,13 +298,13 @@ extension WireCallCenterV3 {
     /// Register observer when constant audio bit rate is enabled/disabled
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addConstantBitRateObserver(observer: ConstantBitRateAudioObserver, userSession: ZMUserSession) -> Any {
-        return addConstantBitRateObserver(observer: observer, context: userSession.managedObjectContext)
+        addConstantBitRateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
     /// Register observer when constant audio bit rate is enabled/disabled
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addConstantBitRateObserver(observer: ConstantBitRateAudioObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterCBRNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterCBRNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCBRNotification.userInfoKey] as? WireCallCenterCBRNotification {
                 observer?.callCenterDidChange(constantAudioBitRateAudioEnabled: note.enabled)
             }
@@ -314,13 +314,13 @@ extension WireCallCenterV3 {
     /// Add observer of particpants in a voice channel. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallParticipantObserver(observer: WireCallCenterCallParticipantObserver, for conversation: ZMConversation, userSession: ZMUserSession) -> Any {
-        return addCallParticipantObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
+        addCallParticipantObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
     /// Add observer of call particpants in a conversation. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addCallParticipantObserver(observer: WireCallCenterCallParticipantObserver, for conversation: ZMConversation, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterCallParticipantNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterCallParticipantNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             guard
                 let note = note.userInfo[WireCallCenterCallParticipantNotification.userInfoKey] as? WireCallCenterCallParticipantNotification,
                 let observer,
@@ -334,13 +334,13 @@ extension WireCallCenterV3 {
     /// Add observer of voice gain. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addVoiceGainObserver(observer: VoiceGainObserver, for conversation: ZMConversation, userSession: ZMUserSession) -> Any {
-        return addVoiceGainObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
+        addVoiceGainObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
     /// Add observer of voice gain. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addVoiceGainObserver(observer: VoiceGainObserver, for conversation: ZMConversation, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: VoiceGainNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: VoiceGainNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             guard
                 let note = note.userInfo[VoiceGainNotification.userInfoKey] as? VoiceGainNotification,
                 let observer,
@@ -355,13 +355,13 @@ extension WireCallCenterV3 {
     /// Register observer when network quality changes
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addNetworkQualityObserver(observer: NetworkQualityObserver, for conversation: ZMConversation, userSession: ZMUserSession) -> Any {
-        return addNetworkQualityObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
+        addNetworkQualityObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
     /// Register observer when network quality changes
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addNetworkQualityObserver(observer: NetworkQualityObserver, for conversation: ZMConversation, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterNetworkQualityNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterNetworkQualityNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterNetworkQualityNotification.userInfoKey] as? WireCallCenterNetworkQualityNotification {
                 if note.conversationId == conversation.avsIdentifier {
                     observer?.callCenterDidChange(networkQuality: note.networkQuality)
@@ -373,13 +373,13 @@ extension WireCallCenterV3 {
     /// Add observer of mute state. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addMuteStateObserver(observer: MuteStateObserver, userSession: ZMUserSession) -> Any {
-        return addMuteStateObserver(observer: observer, context: userSession.managedObjectContext)
+        addMuteStateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 
     /// Add observer of mute state. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addMuteStateObserver(observer: MuteStateObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterMutedNotification.notificationName, context: context.notificationContext, object: nil, queue: .main) { [weak observer] note in
+        NotificationInContext.addObserver(name: WireCallCenterMutedNotification.notificationName, context: context.notificationContext, object: nil, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[WireCallCenterMutedNotification.userInfoKey] as? WireCallCenterMutedNotification,
                   let observer
             else { return }
@@ -388,7 +388,7 @@ extension WireCallCenterV3 {
     }
 
     public class func addActiveSpeakersObserver(observer: ActiveSpeakersObserver, context: NSManagedObjectContext) -> Any {
-        return NotificationInContext.addObserver(
+        NotificationInContext.addObserver(
             name: WireCallCenterActiveSpeakersNotification.notificationName,
             context: context.notificationContext) { [weak observer] _ in
                 observer?.callCenterDidChangeActiveSpeakers()
@@ -400,8 +400,8 @@ extension WireCallCenterV3 {
     /// - Returns: A token which needs to be retained as long as the observer should be active.
 
     public class func addConferenceCallingUnavailableObserver(observer: ConferenceCallingUnavailableObserver, userSession: ZMUserSession) -> Any {
-        return NotificationInContext.addObserver(name: WireCallCenterConferenceCallingUnavailableNotification.notificationName,
-                                                 context: userSession.managedObjectContext.notificationContext,
-                                                 using: { [weak observer] _ in observer?.callCenterDidNotStartConferenceCall() })
+        NotificationInContext.addObserver(name: WireCallCenterConferenceCallingUnavailableNotification.notificationName,
+                                          context: userSession.managedObjectContext.notificationContext,
+                                          using: { [weak observer] _ in observer?.callCenterDidNotStartConferenceCall() })
     }
 }

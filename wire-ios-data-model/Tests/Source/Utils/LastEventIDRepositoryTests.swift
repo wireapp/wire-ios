@@ -46,11 +46,11 @@ final class LastEventIDRepositoryTests: XCTestCase {
     // MARK: - Helper
 
     var userDefaultsKey: String {
-        return "\(userID.uuidString)_lastEventID"
+        "\(userID.uuidString)_lastEventID"
     }
 
     var getStoredValue: String? {
-        return userDefaults.string(forKey: userDefaultsKey)
+        userDefaults.string(forKey: userDefaultsKey)
     }
 
     func storeValue(_ string: String) {

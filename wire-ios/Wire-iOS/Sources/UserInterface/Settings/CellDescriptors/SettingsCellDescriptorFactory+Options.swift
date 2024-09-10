@@ -66,7 +66,7 @@ extension SettingsCellDescriptorFactory {
             header: L10n.Localizable.Self.Settings.PrivacyContactsSection.title,
             footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
             visibilityAction: { _ in
-                return AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
+                AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
             })
     }
 
@@ -82,7 +82,7 @@ extension SettingsCellDescriptorFactory {
             cellDescriptors: [clearHistoryButton],
             header: .none,
             footer: L10n.Localizable.Self.Settings.Privacy.ClearHistory.subtitle,
-            visibilityAction: { _ in return false }
+            visibilityAction: { _ in false }
         )
     }
 
@@ -113,7 +113,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var soundAlertSection: SettingsSectionDescriptorType {
-        return SettingsSectionDescriptor(cellDescriptors: [soundAlertGroup])
+        SettingsSectionDescriptor(cellDescriptors: [soundAlertGroup])
     }
 
     private var callKitSection: SettingsSectionDescriptorType {
@@ -249,8 +249,8 @@ extension SettingsCellDescriptorFactory {
 
         return SettingsSectionDescriptor(
             cellDescriptors: [appLockToggle],
-            headerGenerator: { return nil },
-            footerGenerator: { return self.appLockSectionSubtitle }
+            headerGenerator: { nil },
+            footerGenerator: { self.appLockSectionSubtitle }
         )
     }
 
@@ -272,7 +272,7 @@ extension SettingsCellDescriptorFactory {
     static func darkThemeGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
 
-            return SettingsPropertySelectValueCellDescriptor(
+            SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
                 title: option.displayString
@@ -295,7 +295,7 @@ extension SettingsCellDescriptorFactory {
     func twitterOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
         let cells = TweetOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
-            return SettingsPropertySelectValueCellDescriptor(
+            SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
                 title: option.displayString
@@ -318,7 +318,7 @@ extension SettingsCellDescriptorFactory {
     func mapsOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
         let cells = MapsOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
-            return SettingsPropertySelectValueCellDescriptor(
+            SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
                 title: option.displayString
@@ -341,7 +341,7 @@ extension SettingsCellDescriptorFactory {
     func browserOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
         let cells = BrowserOpeningOption.availableOptions.map { option -> SettingsPropertySelectValueCellDescriptor in
 
-            return SettingsPropertySelectValueCellDescriptor(
+            SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
                 title: option.displayString
@@ -389,11 +389,11 @@ extension SettingsCellDescriptorFactory {
     private func authenticationTypeDescription() -> String {
         switch AuthenticationType.current {
         case .touchID:
-            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.touchId
+            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.touchId
         case .faceID:
-            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.faceId
+            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.faceId
         default:
-            return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.none
+            L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.none
         }
     }
 }
@@ -403,6 +403,6 @@ extension SettingsCellDescriptorFactory {
 extension SettingsCellDescriptorFactory {
     // Encryption at rest will trigger its own variant of AppLock.
     var isAppLockAvailable: Bool {
-        return !SecurityFlags.forceEncryptionAtRest.isEnabled && settingsPropertyFactory.isAppLockAvailable
+        !SecurityFlags.forceEncryptionAtRest.isEnabled && settingsPropertyFactory.isAppLockAvailable
     }
 }

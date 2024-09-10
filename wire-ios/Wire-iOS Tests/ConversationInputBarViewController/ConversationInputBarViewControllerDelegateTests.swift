@@ -82,11 +82,11 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
                                                           replyingTo message: ZMConversationMessage?) {}
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        return true
+        true
     }
 
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        return true
+        true
     }
 
     func conversationInputBarViewControllerDidFinishEditing(_ message: ZMConversationMessage,

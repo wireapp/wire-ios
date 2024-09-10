@@ -194,7 +194,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
     // MARK: - Helpers
 
     private func metadataForPersistentStore(at storeURL: URL) throws -> [String: Any] {
-        return try NSPersistentStoreCoordinator.metadataForPersistentStore(type: persistentStoreType, at: storeURL)
+        try NSPersistentStoreCoordinator.metadataForPersistentStore(type: persistentStoreType, at: storeURL)
     }
 
     private func compatibleVersionForStoreMetadata(_ metadata: [String: Any]) -> Version? {

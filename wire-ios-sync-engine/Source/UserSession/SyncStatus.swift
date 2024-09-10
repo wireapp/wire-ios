@@ -53,21 +53,21 @@ extension Notification.Name {
     var quickSyncContinuation: CheckedContinuation<Void, Never>?
 
     public var isSlowSyncing: Bool {
-        return !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
+        !currentSyncPhase.isOne(of: [.fetchingMissedEvents, .done])
     }
 
     private var isForceQuickSync = false
 
     public var isSyncing: Bool {
-        return currentSyncPhase.isSyncing || !isPushChannelOpen
+        currentSyncPhase.isSyncing || !isPushChannelOpen
     }
 
     public var isSyncingInBackground: Bool {
-        return currentSyncPhase.isSyncing
+        currentSyncPhase.isSyncing
     }
 
     public var isPushChannelOpen: Bool {
-        return pushChannelEstablishedDate != nil
+        pushChannelEstablishedDate != nil
     }
 
     public init(
@@ -128,7 +128,7 @@ extension Notification.Name {
     }
 
     public func performQuickSync() async {
-        return await withCheckedContinuation { [weak self] continuation in
+        await withCheckedContinuation { [weak self] continuation in
             guard let self else {
                 continuation.resume()
                 return
@@ -199,7 +199,7 @@ extension SyncStatus {
     }
 
     var hasPersistedLastEventID: Bool {
-        return lastEventIDRepository.fetchLastEventID() != nil
+        lastEventIDRepository.fetchLastEventID() != nil
     }
 
     public func updateLastUpdateEventID(eventID: UUID) {

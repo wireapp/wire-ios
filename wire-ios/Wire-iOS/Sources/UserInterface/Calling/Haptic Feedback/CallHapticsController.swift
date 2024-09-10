@@ -50,7 +50,7 @@ final class CallHapticsController {
     // MARK: - Private
 
     private func shouldUpdateParticipantsList(_ newParticipants: [CallParticipant]) -> Bool {
-        return !(Array(participants).hasMoreThanTwoConnectedParticipants || newParticipants.hasMoreThanTwoConnectedParticipants)
+        !(Array(participants).hasMoreThanTwoConnectedParticipants || newParticipants.hasMoreThanTwoConnectedParticipants)
     }
 
     private func updateParticipantsList(_ newParticipants: [CallParticipant]) {
@@ -99,7 +99,7 @@ final class CallHapticsController {
     }
 
     private func createVideoStateMap(using participants: [CallParticipant]) -> [CallParticipant: Bool] {
-        return Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { first, _ in first })
+        Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { first, _ in first })
     }
 }
 

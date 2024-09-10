@@ -143,7 +143,7 @@ func && (left: NSAttributedString, right: ParagraphStyleDescriptor) -> NSAttribu
 }
 
 func && (left: String, right: ParagraphStyleDescriptor) -> NSAttributedString {
-    return left.attributedString && right
+    left.attributedString && right
 }
 
 // The point of view is important for the localization grammar. In some languages, for example German, the verb has
@@ -166,37 +166,37 @@ enum PointOfView: UInt {
     fileprivate var suffix: String {
         switch self {
         case .none:
-            return ""
+            ""
         case .firstPerson:
-            return "i"
+            "i"
         case .secondPerson:
-            return "you"
+            "you"
         case .thirdPerson:
-            return "they"
+            "they"
         }
     }
 }
 
 extension PointOfView: CustomStringConvertible {
     var description: String {
-        return "POV: \(self.suffix)"
+        "POV: \(self.suffix)"
     }
 }
 
 extension String {
     /// Retuns the NSLocalizedString version of self from the InfoPlist table
     var infoPlistLocalized: String {
-        return localized(table: "InfoPlist")
+        localized(table: "InfoPlist")
     }
 
     /// Returns the NSLocalizedString version of self as found in specified table
     func localized(table tableName: String, bundle: Bundle = Bundle.main) -> String {
-        return NSLocalizedString(self, tableName: tableName, bundle: bundle, value: "", comment: "")
+        NSLocalizedString(self, tableName: tableName, bundle: bundle, value: "", comment: "")
     }
 
     /// Used to generate localized strings with plural rules from the stringdict
     func localized(uppercased: Bool = false, pov pointOfView: PointOfView = .none, args: CVarArg...) -> String {
-        return withVaList(args) {
+        withVaList(args) {
             let text = NSString(format: self.localized(pov: pointOfView), arguments: $0) as String
             return uppercased ? text.localizedUppercase : text
         }
@@ -232,11 +232,11 @@ extension NSAttributedString {
     }
 
     func adding(color: UIColor, to substring: String) -> NSAttributedString {
-        return addAttributes([.foregroundColor: color], toSubstring: substring)
+        addAttributes([.foregroundColor: color], toSubstring: substring)
     }
 
     func adding(font: UIFont, to substring: String) -> NSAttributedString {
-        return addAttributes([.font: font], toSubstring: substring)
+        addAttributes([.font: font], toSubstring: substring)
     }
 }
 

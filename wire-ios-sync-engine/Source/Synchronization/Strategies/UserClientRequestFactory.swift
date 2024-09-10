@@ -106,13 +106,13 @@ extension UserClientRequestFactory {
     }
 
     func payloadForPreKeys(_ prekeys: [IdPrekeyTuple]) -> [[String: Any]] {
-        return prekeys.map {
+        prekeys.map {
             ["key": $0.prekey, "id": NSNumber(value: $0.id)]
         }
     }
 
     func payloadForLastPreKey(_ lastResortPrekey: IdPrekeyTuple) -> [String: Any] {
-        return [
+        [
             "key": lastResortPrekey.prekey,
             "id": NSNumber(value: lastResortPrekey.id)
         ]
@@ -217,7 +217,7 @@ extension UserClientRequestFactory {
     }
 
     public func fetchClientsRequest(apiVersion: APIVersion) -> ZMTransportRequest! {
-        return ZMTransportRequest(getFromPath: "/clients", apiVersion: apiVersion.rawValue)
+        ZMTransportRequest(getFromPath: "/clients", apiVersion: apiVersion.rawValue)
     }
 }
 

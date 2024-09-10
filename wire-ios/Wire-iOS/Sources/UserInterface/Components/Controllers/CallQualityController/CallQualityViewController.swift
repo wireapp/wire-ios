@@ -184,7 +184,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        return touch.view?.isDescendant(of: contentView) == false
+        touch.view?.isDescendant(of: contentView) == false
     }
 
     override func accessibilityPerformMagicTap() -> Bool {
@@ -320,7 +320,7 @@ final class QualityScoreSelectorView: UIView {
     }
 
     func localizedNameForScore(_ score: Int) -> String {
-        return NSLocalizedString("calling.quality_survey.answer.\(score)", comment: "")
+        NSLocalizedString("calling.quality_survey.answer.\(score)", comment: "")
     }
 
     @available(*, unavailable)
@@ -335,10 +335,10 @@ final class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate
     func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return (presented is CallQualityViewController) ? CallQualityPresentationTransition() : nil
+        (presented is CallQualityViewController) ? CallQualityPresentationTransition() : nil
     }
 
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return (dismissed is CallQualityViewController) ? CallQualityDismissalTransition() : nil
+        (dismissed is CallQualityViewController) ? CallQualityDismissalTransition() : nil
     }
 }

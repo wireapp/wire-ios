@@ -23,22 +23,22 @@ import Foundation
 
 final class MockContextProvider: ContextProvider {
     var account: WireDataModel.Account {
-        return Account(userName: "abcd", userIdentifier: UUID.create())
+        Account(userName: "abcd", userIdentifier: UUID.create())
     }
 
     var viewContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
     var syncContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
     var searchContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 
     var eventContext: NSManagedObjectContext {
-        return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
 }

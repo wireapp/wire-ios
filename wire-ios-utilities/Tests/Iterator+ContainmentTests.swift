@@ -20,11 +20,11 @@ import XCTest
 
 class IteratorContainmentTests: XCTestCase {
     func testThatItReturnsFalseForAnyInEmptySequence() {
-        XCTAssertFalse([].any { _ in return true })
+        XCTAssertFalse([].any { _ in true })
     }
 
     func testThatItReturnsTrueForAllInEmptySequence() {
-        XCTAssertTrue([].all { _ in return false })
+        XCTAssertTrue([].all { _ in false })
     }
 
     func testThatItReturnsTrueIfThereIsAnElementThatMatchesAny() {

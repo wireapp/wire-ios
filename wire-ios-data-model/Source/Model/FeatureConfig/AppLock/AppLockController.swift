@@ -31,7 +31,7 @@ public final class AppLockController: AppLockType {
 
     public var isActive: Bool {
         get {
-            return isForced || selfUser.isAppLockActive
+            isForced || selfUser.isAppLockActive
         }
 
         set {
@@ -41,11 +41,11 @@ public final class AppLockController: AppLockType {
     }
 
     public var isForced: Bool {
-        return legacyConfig?.isForced ?? config.isForced
+        legacyConfig?.isForced ?? config.isForced
     }
 
     public var timeout: UInt {
-        return legacyConfig?.timeout ?? config.timeout
+        legacyConfig?.timeout ?? config.timeout
     }
 
     public var isLocked: Bool {
@@ -65,11 +65,11 @@ public final class AppLockController: AppLockType {
     }
 
     public var requireCustomPasscode: Bool {
-        return legacyConfig?.requireCustomPasscode ?? false
+        legacyConfig?.requireCustomPasscode ?? false
     }
 
     public var isCustomPasscodeSet: Bool {
-        return fetchPasscode() != nil
+        fetchPasscode() != nil
     }
 
     public var needsToNotifyUser: Bool {
@@ -233,7 +233,7 @@ public final class AppLockController: AppLockType {
     }
 
     func fetchPasscode() -> Data? {
-        return try? Keychain.fetchItem(keychainItem)
+        try? Keychain.fetchItem(keychainItem)
     }
 }
 

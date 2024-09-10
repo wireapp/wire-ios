@@ -322,7 +322,7 @@ public class EARService: EARServiceInterface {
     // MARK: - Keys
 
     private var existSecondaryKeys: Bool {
-        return (try? fetchSecondaryPublicKey()) != nil
+        (try? fetchSecondaryPublicKey()) != nil
     }
 
     func deleteExistingKeys() throws {
@@ -400,7 +400,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func generateDatabaseKey() throws -> Data {
-        return try keyGenerator.generateKey(numberOfBytes: 32)
+        try keyGenerator.generateKey(numberOfBytes: 32)
     }
 
     private func storePrimaryPublicKey(_ key: SecKey) throws {
@@ -449,11 +449,11 @@ public class EARService: EARServiceInterface {
     }
 
     private func fetchPrimaryPublicKey() throws -> SecKey {
-        return try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
+        try keyRepository.fetchPublicKey(description: primaryPublicKeyDescription)
     }
 
     private func fetchSecondaryPublicKey() throws -> SecKey {
-        return try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
+        try keyRepository.fetchPublicKey(description: secondaryPublicKeyDescription)
     }
 
     // MARK: - Private keys
@@ -498,7 +498,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func fetchSecondaryPrivateKey() throws -> SecKey {
-        return try keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
+        try keyRepository.fetchPrivateKey(description: secondaryPrivateKeyDescription)
     }
 
     // MARK: - Database key
@@ -514,7 +514,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func fetchEncryptedDatabaseKey() throws -> Data {
-        return try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
+        try keyRepository.fetchDatabaseKey(description: databaseKeyDescription)
     }
 
     // MARK: - Lock / unlock database

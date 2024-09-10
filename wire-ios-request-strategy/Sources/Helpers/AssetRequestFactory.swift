@@ -149,10 +149,10 @@ extension AssetRequestFactory.Retention {
 
 extension ZMConversation {
     var containsTeamUser: Bool {
-        return localParticipants.any { $0.hasTeam }
+        localParticipants.any { $0.hasTeam }
     }
 
     var hasTeam: Bool {
-        return nil != team
+        nil != team
     }
 }

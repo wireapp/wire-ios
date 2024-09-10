@@ -21,11 +21,11 @@ import WireSyncEngine
 
 final class AuthenticationStatusProvider {
     var sharedUserSession: ZMUserSession? {
-        return ZMUserSession.shared()
+        ZMUserSession.shared()
     }
 
     var authenticatedUserWasRegisteredOnThisDevice: Bool {
-        return sharedUserSession?.registeredOnThisDevice == true
+        sharedUserSession?.registeredOnThisDevice == true
     }
 
     var authenticatedUserNeedsEmailCredentials: Bool {
@@ -34,14 +34,14 @@ final class AuthenticationStatusProvider {
     }
 
     var selfUserProfile: UserProfileUpdateStatus? {
-        return sharedUserSession?.userProfile as? UserProfileUpdateStatus
+        sharedUserSession?.userProfile as? UserProfileUpdateStatus
     }
 
     var selfUser: UserType? {
-        return sharedUserSession?.providedSelfUser
+        sharedUserSession?.providedSelfUser
     }
 
     var numberOfAccounts: Int {
-        return SessionManager.numberOfAccounts
+        SessionManager.numberOfAccounts
     }
 }

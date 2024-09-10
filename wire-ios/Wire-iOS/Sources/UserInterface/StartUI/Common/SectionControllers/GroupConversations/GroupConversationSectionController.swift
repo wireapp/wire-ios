@@ -25,15 +25,15 @@ final class GroupConversationsSectionController: SearchSectionController {
     weak var delegate: SearchSectionControllerDelegate?
 
     override var isHidden: Bool {
-        return groupConversations.isEmpty
+        groupConversations.isEmpty
     }
 
     override var sectionTitle: String {
-        return title
+        title
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return "label.search.group_conversation"
+        "label.search.group_conversation"
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -41,7 +41,7 @@ final class GroupConversationsSectionController: SearchSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return groupConversations.count
+        groupConversations.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

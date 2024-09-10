@@ -80,7 +80,7 @@ extension SettingsCellDescriptorFactory {
             header: .none,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                return true
+                true
             })
     }
 

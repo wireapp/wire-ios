@@ -162,10 +162,10 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
         mockProteusProvider = MockProteusProvider(mockProteusService: mockProteusService,
                                                   useProteusService: proteusEnabled)
         mockProteusProvider.mockProteusService.localFingerprint_MockMethod = {
-            return self.fingerprint
+            self.fingerprint
         }
         mockProteusProvider.mockProteusService.remoteFingerprintForSession_MockMethod = { _ in
-            return self.fingerprint
+            self.fingerprint
         }
 
         return GetUserClientFingerprintUseCase(proteusProvider: mockProteusProvider,

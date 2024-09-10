@@ -128,11 +128,11 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
 extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
+        UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -223,7 +223,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<UserClientID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -281,7 +281,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     var fetchLimit: Int {
-        return 100
+        100
     }
 
     struct RequestPayload: Codable, Equatable {
@@ -429,7 +429,7 @@ final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var fetchLimit: Int {
-        return 1
+        1
     }
 
     public func request(for identifiers: Set<UUID>, apiVersion: APIVersion) -> ZMTransportRequest? {

@@ -24,7 +24,7 @@ public typealias URLWithRange = (URL: URL, range: NSRange)
 extension NSDataDetector {
     /// A data detector configured to detect only links.
     @objc public static var linkDetector: NSDataDetector? {
-        return try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
     }
 
     /**
@@ -35,7 +35,7 @@ extension NSDataDetector {
 
     @objc(containsLinkInText:)
     public func containsLink(in text: String) -> Bool {
-        return !detectLinks(in: text).isEmpty
+        !detectLinks(in: text).isEmpty
     }
 
     /**

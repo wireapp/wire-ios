@@ -78,7 +78,7 @@ extension ZMClientMessage {
     }
 
     private func containsButtonState(withId buttonId: String) -> Bool {
-        return buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
+        buttonStates?.contains(where: { $0.remoteIdentifier == buttonId }) ?? false
     }
 
     private func expireButtonState(withButtonAction buttonAction: ButtonAction) {

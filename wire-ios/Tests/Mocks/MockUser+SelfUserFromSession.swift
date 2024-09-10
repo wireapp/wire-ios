@@ -20,6 +20,6 @@
 
 extension MockUser: SelfUserProviderUI {
     public static var selfUser: EditableUser {
-        return (mockSelf() as Any as! ZMUser)
+        (mockSelf() as Any as! ZMUser)
     }
 }

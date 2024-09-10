@@ -41,6 +41,6 @@ public struct EARKeyGenerator {
     }
 
     public func generateKey(numberOfBytes: UInt) throws -> Data {
-        return try KeychainManager.generateKey(numberOfBytes: numberOfBytes)
+        try KeychainManager.generateKey(numberOfBytes: numberOfBytes)
     }
 }

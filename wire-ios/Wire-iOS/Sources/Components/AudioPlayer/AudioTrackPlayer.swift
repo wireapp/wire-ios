@@ -277,7 +277,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     var title: String? {
-        return audioTrack?.title
+        audioTrack?.title
     }
 
     // MARK: - MPNowPlayingInfoCenter

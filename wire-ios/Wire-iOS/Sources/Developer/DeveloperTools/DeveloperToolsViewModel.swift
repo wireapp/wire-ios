@@ -47,13 +47,13 @@ final class DeveloperToolsViewModel: ObservableObject {
         var id: UUID {
             switch self {
             case let .button(item):
-                return item.id
+                item.id
 
             case let .text(item):
-                return item.id
+                item.id
 
             case let .destination(item):
-                return item.id
+                item.id
             }
         }
     }
@@ -323,23 +323,23 @@ final class DeveloperToolsViewModel: ObservableObject {
     // MARK: - Helpers
 
     private var appVersion: String {
-        return Bundle.main.shortVersionString ?? "Unknown"
+        Bundle.main.shortVersionString ?? "Unknown"
     }
 
     private var bundleIdentifier: String {
-        return Bundle.main.bundleIdentifier ?? "Unknown"
+        Bundle.main.bundleIdentifier ?? "Unknown"
     }
 
     private var buildNumber: String {
-        return Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
+        Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "Unknown"
     }
 
     private var backendName: String {
-        return BackendEnvironment.shared.title
+        BackendEnvironment.shared.title
     }
 
     private var backendDomain: String {
-        return BackendInfo.domain ?? "None"
+        BackendInfo.domain ?? "None"
     }
 
     private var apiVersion: String {
@@ -348,7 +348,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private var isFederationEnabled: String {
-        return String(describing: BackendInfo.isFederationEnabled)
+        String(describing: BackendInfo.isFederationEnabled)
     }
 
     private var selfUser: ZMUser? {
@@ -398,17 +398,17 @@ extension PushToken.TokenType: CustomStringConvertible {
     public var description: String {
         switch self {
         case .standard:
-            return "Standard"
+            "Standard"
 
         case .voip:
-            return "VoIP"
+            "VoIP"
         }
     }
 }
 
 extension PushToken: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return """
+        """
         token: \(deviceTokenString),
         type: \(tokenType),
         transport: \(transportType)

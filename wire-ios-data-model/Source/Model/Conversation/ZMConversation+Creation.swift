@@ -71,7 +71,7 @@ extension ZMConversation {
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
     public static func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser]) -> ZMConversation? {
-        return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
+        self.insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
 
     /// FOR TESTS ONLY.
@@ -86,14 +86,14 @@ extension ZMConversation {
                                                allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
-        return self.insertGroupConversation(moc: session.viewContext,
-                                            participants: participants.materialize(in: session.viewContext),
-                                            name: name,
-                                            team: team,
-                                            allowGuests: allowGuests,
-                                            allowServices: allowServices,
-                                            readReceipts: readReceipts,
-                                            participantsRole: participantsRole)
+        self.insertGroupConversation(moc: session.viewContext,
+                                     participants: participants.materialize(in: session.viewContext),
+                                     name: name,
+                                     team: team,
+                                     allowGuests: allowGuests,
+                                     allowServices: allowServices,
+                                     readReceipts: readReceipts,
+                                     participantsRole: participantsRole)
     }
 
     /// FOR TESTS ONLY.
@@ -108,15 +108,15 @@ extension ZMConversation {
                                                allowServices: Bool = true,
                                                readReceipts: Bool = false,
                                                participantsRole: Role? = nil) -> ZMConversation? {
-        return insertConversation(moc: moc,
-                                  participants: participants,
-                                  name: name,
-                                  team: team,
-                                  allowGuests: allowGuests,
-                                  allowServices: allowServices,
-                                  readReceipts: readReceipts,
-                                  participantsRole: participantsRole,
-                                  type: .group)
+        insertConversation(moc: moc,
+                           participants: participants,
+                           name: name,
+                           team: team,
+                           allowGuests: allowGuests,
+                           allowServices: allowServices,
+                           readReceipts: readReceipts,
+                           participantsRole: participantsRole,
+                           type: .group)
     }
 
     /// FOR TESTS ONLY.

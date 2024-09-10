@@ -165,7 +165,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        return NSEntityDescription.insertNewObject(
+        NSEntityDescription.insertNewObject(
             forEntityName: self.entityName,
             into: context
         ) as? StoredUpdateEvent

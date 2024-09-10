@@ -65,11 +65,11 @@ public struct AVSCallMember: Hashable {
     var callParticipantState: CallParticipantState {
         switch audioState {
         case .connecting:
-            return .connecting
+            .connecting
         case .established:
-            return .connected(videoState: videoState, microphoneState: microphoneState)
+            .connected(videoState: videoState, microphoneState: microphoneState)
         case .networkProblem:
-            return .unconnectedButMayConnect
+            .unconnectedButMayConnect
         }
     }
 
@@ -80,7 +80,7 @@ public struct AVSCallMember: Hashable {
     }
 
     public static func == (lhs: AVSCallMember, rhs: AVSCallMember) -> Bool {
-        return lhs.hashValue == rhs.hashValue
+        lhs.hashValue == rhs.hashValue
     }
 }
 

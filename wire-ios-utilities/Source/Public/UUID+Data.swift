@@ -21,7 +21,7 @@ import Foundation
 extension UUID {
     /// return a Data representation of this UUID
     public var uuidData: Data {
-        return withUnsafeBytes(of: uuid, Data.init(_:))
+        withUnsafeBytes(of: uuid, Data.init(_:))
     }
 
     /// Create an UUID from Data. Fails when Data is not in valid format

@@ -147,15 +147,15 @@ final class EphemeralKeyboardViewController: UIViewController {
 
 extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-        return 35
+        35
     }
 
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        1
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return timeouts.count
+        timeouts.count
     }
 
     func pickerView(

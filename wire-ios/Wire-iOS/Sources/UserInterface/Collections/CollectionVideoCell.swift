@@ -71,7 +71,7 @@ final class CollectionVideoCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .movie
+        .movie
     }
 
     private func setup(_ view: UIView) {

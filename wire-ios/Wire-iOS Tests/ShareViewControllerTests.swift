@@ -26,13 +26,13 @@ final class MockShareViewControllerConversation: SwiftMockConversation {}
 
 extension MockShareViewControllerConversation: ShareDestination {
     var showsGuestIcon: Bool {
-        return false
+        false
     }
 }
 
 extension MockShareViewControllerConversation: StableRandomParticipantsProvider {
     var stableRandomParticipants: [UserType] {
-        return sortedOtherParticipants
+        sortedOtherParticipants
     }
 }
 
@@ -169,7 +169,7 @@ final class ShareViewControllerTests: XCTestCase {
 
 final class MockShareableMessage: MockMessage, Shareable {
     func previewView() -> UIView? {
-        return nil
+        nil
     }
 
     typealias I = MockShareViewControllerConversation

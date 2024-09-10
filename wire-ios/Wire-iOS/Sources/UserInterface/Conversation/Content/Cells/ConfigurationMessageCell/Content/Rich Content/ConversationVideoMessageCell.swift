@@ -24,7 +24,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     struct Configuration {
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -121,7 +121,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     }
 
     var selectionRect: CGRect {
-        return transferView.bounds
+        transferView.bounds
     }
 }
 
@@ -149,7 +149,7 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
     weak var actionController: ConversationMessageActionController?
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedVideoCell" : "VideoCell"
+        configuration.isObfuscated ? "ObfuscatedVideoCell" : "VideoCell"
     }
 
     let accessibilityLabel: String?

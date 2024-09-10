@@ -59,7 +59,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     // MARK: - Interface
 
     public func crlExpirationDateExists(for distributionPoint: URL) -> Bool {
-        return fetchCRLExpirationDate(for: distributionPoint) != nil
+        fetchCRLExpirationDate(for: distributionPoint) != nil
     }
 
     public func storeCRLExpirationDate(_ expirationDate: Date, for distributionPoint: URL) {

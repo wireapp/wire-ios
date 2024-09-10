@@ -149,7 +149,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         self.sections = group.visibleItems
         super.init(style: group.style == .plain ? .plain : .grouped)
 
-        self.group.items.flatMap { return $0.cellDescriptors }.forEach {
+        self.group.items.flatMap(\.cellDescriptors).forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
                 groupDescriptor.viewController = self
             }
@@ -214,7 +214,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     // MARK: - UITableViewDelegate & UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        sections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

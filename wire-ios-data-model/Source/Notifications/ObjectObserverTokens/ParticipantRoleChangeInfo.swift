@@ -21,12 +21,12 @@ import WireSystem
 
 extension ParticipantRole: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
-        return [
+        [
             #keyPath(ParticipantRole.role)]
     }
 
     public var notificationName: Notification.Name {
-        return .ParticipantRoleChange
+        .ParticipantRoleChange
     }
 }
 
@@ -35,7 +35,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
 
     static func changeInfo(for participantRole: ParticipantRole, changes: Changes) -> ParticipantRoleChangeInfo? {
-        return ParticipantRoleChangeInfo(object: participantRole, changes: changes)
+        ParticipantRoleChangeInfo(object: participantRole, changes: changes)
     }
 
     public required init(object: NSObject) {
@@ -48,7 +48,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     public let participantRole: ParticipantRole
 
     public var roleChanged: Bool {
-        return changedKeys.contains(#keyPath(ParticipantRole.role))
+        changedKeys.contains(#keyPath(ParticipantRole.role))
     }
 
     // MARK: Registering ParticipantRoleObservers
@@ -58,7 +58,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addParticipantRoleObserver:forParticipantRole:)
     public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole) -> NSObjectProtocol {
-        return add(observer: observer, for: participantRole, managedObjectContext: participantRole.managedObjectContext!)
+        add(observer: observer, for: participantRole, managedObjectContext: participantRole.managedObjectContext!)
     }
 
     /// Adds an observer for the participantRole if one specified or to all ParticipantRoles is none is specified
@@ -66,7 +66,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addParticipantRoleObserver:forParticipantRole:managedObjectContext:)
     public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] note in
+        ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
             else { return }

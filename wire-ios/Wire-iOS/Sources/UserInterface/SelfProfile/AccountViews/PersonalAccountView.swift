@@ -44,7 +44,7 @@ final class PersonalAccountView: BaseAccountView {
         self.accessibilityIdentifier = "personal team"
 
         selectionView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
+            UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
         }
 
         if let userSession = ZMUserSession.shared() {

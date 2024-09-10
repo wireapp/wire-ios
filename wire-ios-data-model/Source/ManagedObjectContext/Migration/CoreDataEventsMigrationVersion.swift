@@ -36,13 +36,13 @@ enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
     var nextVersion: Self? {
         switch self {
         case .v06:
-            return nil
+            nil
         case .v05:
-            return .v06
+            .v06
         case .v04:
-            return .v05
+            .v05
         case .v01, .v02, .v03:
-            return .v04
+            .v04
         }
     }
 

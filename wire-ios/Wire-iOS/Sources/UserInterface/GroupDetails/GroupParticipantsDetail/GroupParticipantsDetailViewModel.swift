@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension String {
     fileprivate var isValidQuery: Bool {
-        return !isEmpty && self != "@"
+        !isEmpty && self != "@"
     }
 }
 

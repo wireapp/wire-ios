@@ -24,8 +24,8 @@ enum CancelConnectionRequestResult {
 
     var title: String {
         switch self {
-        case .cancel: return L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonCancel
-        case .cancelRequest: return L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonYes
+        case .cancel: L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonCancel
+        case .cancelRequest: L10n.Localizable.Profile.CancelConnectionRequestDialog.buttonYes
         }
     }
 
@@ -35,15 +35,15 @@ enum CancelConnectionRequestResult {
     }
 
     func action(_ handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertAction {
-        return .init(title: title, style: style) { _ in handler(self) }
+        .init(title: title, style: style) { _ in handler(self) }
     }
 
     static func message(for user: UserType) -> String {
-        return L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
+        L10n.Localizable.Profile.CancelConnectionRequestDialog.message(user.name ?? "")
     }
 
     static var all: [CancelConnectionRequestResult] {
-        return [.cancelRequest, .cancel]
+        [.cancelRequest, .cancel]
     }
 
     static func controller(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertController {
@@ -56,7 +56,7 @@ enum CancelConnectionRequestResult {
 
 extension UIAlertController {
     static func cancelConnectionRequest(for user: UserType, completion: @escaping (Bool) -> Void) -> UIAlertController {
-        return CancelConnectionRequestResult.controller(for: user) { result in
+        CancelConnectionRequestResult.controller(for: user) { result in
             completion(result == .cancel)
         }
     }

@@ -21,14 +21,14 @@ import Foundation
 extension String {
     public func truncated(afterCharacterCount count: Int = 25) -> String {
         if self.count > count {
-            return String(
+            String(
                 self[...self.index(
                     self.startIndex,
                     offsetBy: count
                 )]
             ) + "..."
         } else {
-            return self
+            self
         }
     }
 }

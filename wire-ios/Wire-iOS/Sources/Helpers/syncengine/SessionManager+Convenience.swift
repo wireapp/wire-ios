@@ -24,15 +24,15 @@ import WireSyncEngine
 
 extension SessionManager {
     static var shared: SessionManager? {
-        return AppDelegate.shared.appRootRouter?.sessionManager
+        AppDelegate.shared.appRootRouter?.sessionManager
     }
 
     static var numberOfAccounts: Int {
-        return SessionManager.shared?.accountManager.accounts.count ?? 0
+        SessionManager.shared?.accountManager.accounts.count ?? 0
     }
 
     var firstAuthenticatedAccount: Account? {
-        return firstAuthenticatedAccount(excludingCredentials: nil)
+        firstAuthenticatedAccount(excludingCredentials: nil)
     }
 
     func firstAuthenticatedAccount(excludingCredentials credentials: LoginCredentials?) -> Account? {

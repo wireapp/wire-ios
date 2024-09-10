@@ -48,7 +48,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
     func test_itUpdatesConversation_toVerifiedStatus() async throws {
         // Mock
         e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .verified
+            .verified
         }
 
         // Given
@@ -76,7 +76,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
     func test_itUpdatesConversation_fromVerifiedToDegraded() async throws {
         // Mock
         e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .notVerified
+            .notVerified
         }
 
         // Given
@@ -104,7 +104,7 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
     func test_itDoesNotUpdateConversation_newStatusIsSame() async throws {
         // Mock
         e2eIVerificationStatusService.getConversationStatusGroupID_MockMethod = {_ in
-            return .notVerified
+            .notVerified
         }
 
         // Given

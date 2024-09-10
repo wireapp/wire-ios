@@ -51,7 +51,7 @@ final class Analytics: NSObject {
 
     var selfUser: UserType? {
         get {
-            return provider?.selfUser
+            provider?.selfUser
         }
 
         set {
@@ -95,7 +95,7 @@ extension Analytics: AnalyticsType {
 
     func persistedAttributes(for event: String) -> [String: NSObject]? {
         // no-op
-        return nil
+        nil
     }
 
     /// Record an event with no attributes

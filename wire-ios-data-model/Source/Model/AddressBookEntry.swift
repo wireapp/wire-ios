@@ -32,19 +32,19 @@ import Foundation
     @NSManaged public var cachedName: String?
 
     override public func keysTrackedForLocalModifications() -> Set<String> {
-        return []
+        []
     }
 
     override public static func entityName() -> String {
-        return "AddressBookEntry"
+        "AddressBookEntry"
     }
 
     override public static func sortKey() -> String? {
-        return Fields.localIdentifier.rawValue
+        Fields.localIdentifier.rawValue
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
-        return false
+        false
     }
 }
 

@@ -36,14 +36,14 @@ public enum BackendInfo {
     /// The currently selected API Version.
 
     public static var apiVersion: APIVersion? {
-        get { return apiVersion(for: Key.selectedAPIVersion) }
+        get { apiVersion(for: Key.selectedAPIVersion) }
         set { storage.set(newValue?.rawValue, forKey: Key.selectedAPIVersion.rawValue) }
     }
 
     /// The preferred API Version.
 
     public static var preferredAPIVersion: APIVersion? {
-        get { return apiVersion(for: Key.preferredAPIVersion) }
+        get { apiVersion(for: Key.preferredAPIVersion) }
         set { storage.set(newValue?.rawValue, forKey: Key.preferredAPIVersion.rawValue) }
     }
 

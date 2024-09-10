@@ -61,11 +61,11 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
     // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
-        return true
+        true
     }
 
     var title: String {
-        return URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
+        URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
     }
 
     var identifier: String?

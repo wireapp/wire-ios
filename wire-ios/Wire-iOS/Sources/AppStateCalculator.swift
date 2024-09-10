@@ -35,29 +35,29 @@ enum AppState: Equatable {
     static func == (lhs: AppState, rhs: AppState) -> Bool {
         switch (lhs, rhs) {
         case (.headless, .headless):
-            return true
+            true
         case (.locked, .locked):
-            return true
+            true
         case (.authenticated, .authenticated):
-            return true
+            true
         case let (.unauthenticated(error1), .unauthenticated(error2)):
-            return error1 === error2
+            error1 === error2
         case let (.blacklisted(reason1), .blacklisted(reason2)):
-            return reason1 == reason2
+            reason1 == reason2
         case (jailbroken, jailbroken):
-            return true
+            true
         case (certificateEnrollmentRequired, certificateEnrollmentRequired):
-            return true
+            true
         case (databaseFailure, databaseFailure):
-            return true
+            true
         case (migrating, migrating):
-            return true
+            true
         case let (loading(accountTo1, accountFrom1), loading(accountTo2, accountFrom2)):
-            return accountTo1 == accountTo2 && accountFrom1 == accountFrom2
+            accountTo1 == accountTo2 && accountFrom1 == accountFrom2
         case (.retryStart, .retryStart):
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }
@@ -95,27 +95,27 @@ extension AppState: SafeForLoggingStringConvertible {
     var safeForLoggingDescription: String {
         switch self {
         case .retryStart:
-            return "retryStart"
+            "retryStart"
         case .headless:
-            return "headless"
+            "headless"
         case .locked:
-            return "locked"
+            "locked"
         case .authenticated:
-            return "authenticated"
+            "authenticated"
         case let .unauthenticated(error):
-            return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
+            "unauthenticated \(error?.localizedDescription ?? "<nil>")"
         case let .blacklisted(reason):
-            return "blacklisted \(reason)"
+            "blacklisted \(reason)"
         case .jailbroken:
-            return "jailbroken"
+            "jailbroken"
         case .certificateEnrollmentRequired:
-            return "certificateEnrollmentRequired"
+            "certificateEnrollmentRequired"
         case let .databaseFailure(reason):
-            return "databaseFailure \(reason)"
+            "databaseFailure \(reason)"
         case .migrating:
-            return "migrating"
+            "migrating"
         case let .loading(account, from):
-            return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
+            "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
         }
     }
 }
@@ -216,18 +216,18 @@ extension AppStateCalculator: SessionManagerDelegate {
     var isInAuthenticatedAppState: Bool {
         switch appState {
         case .authenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     var isInUnathenticatedAppState: Bool {
         switch appState {
         case .unauthenticated:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 

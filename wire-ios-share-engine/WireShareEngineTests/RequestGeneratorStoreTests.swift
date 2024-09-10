@@ -38,7 +38,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         }
 
         func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-            return requestBlock()
+            requestBlock()
         }
     }
 
@@ -50,7 +50,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         }
 
         public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-            return request
+            request
         }
     }
 
@@ -73,7 +73,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     func testThatItDoesNOTReturnARequestIfNoAPIVersionIsSelected() {
         // Given
         mockStrategy.requestGenerators.append(DummyGenerator(requestBlock: {
-            return ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
+            ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
         }))
 
         sut = RequestGeneratorStore(strategies: [mockStrategy])
@@ -110,7 +110,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         let sourceRequest = ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
 
         let generator = DummyGenerator(requestBlock: {
-            return sourceRequest
+            sourceRequest
         })
 
         mockStrategy.requestGenerators.append(generator)
@@ -177,7 +177,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         })
 
         let secondGenerator = DummyGenerator(requestBlock: {
-            return sourceRequest2
+            sourceRequest2
         })
 
         mockStrategy.requestGenerators.append(generator)

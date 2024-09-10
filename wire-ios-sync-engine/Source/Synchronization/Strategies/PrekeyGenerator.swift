@@ -34,10 +34,10 @@ class PrekeyGenerator {
     func generatePrekeys(startIndex: UInt16 = 0) async throws -> [IdPrekeyTuple] {
         let preKeys = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return try await proteusService.generatePrekeys(start: startIndex, count: keyCount)
+                try await proteusService.generatePrekeys(start: startIndex, count: keyCount)
             },
             withKeyStore: { keyStore in
-                return try keyStore.generateMoreKeys(keyCount, start: startIndex)
+                try keyStore.generateMoreKeys(keyCount, start: startIndex)
             }
         )
         return preKeys
@@ -46,13 +46,13 @@ class PrekeyGenerator {
     func generateLastResortPrekey() async throws -> IdPrekeyTuple {
         let lastKey = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return try await (
+                try await (
                     id: proteusService.lastPrekeyID,
                     prekey: proteusService.lastPrekey()
                 )
             },
             withKeyStore: { keyStore in
-                return try (
+                try (
                     id: CBOX_LAST_PREKEY_ID,
                     prekey: keyStore.lastPreKey()
                 )

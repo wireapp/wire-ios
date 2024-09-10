@@ -42,34 +42,34 @@ enum CallQualitySurveyReview {
     /// The label of the review.
     var label: NSString {
         switch self {
-        case .notDisplayed: return "not-displayed"
-        case .answered: return "answered"
-        case .dismissed: return "dismissed"
+        case .notDisplayed: "not-displayed"
+        case .answered: "answered"
+        case .dismissed: "dismissed"
         }
     }
 
     /// The score provided by the user.
     var score: NSNumber? {
         switch self {
-        case let .answered(score, _): return score as NSNumber
-        default: return nil
+        case let .answered(score, _): score as NSNumber
+        default: nil
         }
     }
 
     /// The duration of the call.
     var callDuration: NSNumber {
         switch self {
-        case let .notDisplayed(_, duration): return duration as NSNumber
-        case let .answered(_, duration): return duration as NSNumber
-        case let .dismissed(duration): return duration as NSNumber
+        case let .notDisplayed(_, duration): duration as NSNumber
+        case let .answered(_, duration): duration as NSNumber
+        case let .dismissed(duration): duration as NSNumber
         }
     }
 
     /// The reason why the alert was not displayed.
     var ignoreReason: NSString? {
         switch self {
-        case let .notDisplayed(reason, _): return reason.rawValue as NSString
-        default: return nil
+        case let .notDisplayed(reason, _): reason.rawValue as NSString
+        default: nil
         }
     }
 }

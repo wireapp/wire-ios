@@ -28,6 +28,6 @@
     }
 
     override public var hash: Int {
-        return reactionString.hash
+        reactionString.hash
     }
 }

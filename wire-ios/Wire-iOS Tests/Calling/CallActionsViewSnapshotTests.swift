@@ -43,19 +43,19 @@ struct CallStateMock: CallStateExtending {
 
 extension CallStateMock {
     static var incoming: CallStateMock {
-        return CallStateMock(isConnected: false, isTerminating: false, canAccept: true)
+        CallStateMock(isConnected: false, isTerminating: false, canAccept: true)
     }
 
     static var outgoing: CallStateMock {
-        return CallStateMock(isConnected: false, isTerminating: false, canAccept: false)
+        CallStateMock(isConnected: false, isTerminating: false, canAccept: false)
     }
 
     static var terminating: CallStateMock {
-        return CallStateMock(isConnected: false, isTerminating: true, canAccept: false)
+        CallStateMock(isConnected: false, isTerminating: true, canAccept: false)
     }
 
     static var ongoing: CallStateMock {
-        return CallStateMock(isConnected: true, isTerminating: false, canAccept: false)
+        CallStateMock(isConnected: true, isTerminating: false, canAccept: false)
     }
 }
 

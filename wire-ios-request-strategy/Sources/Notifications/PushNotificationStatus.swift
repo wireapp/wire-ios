@@ -38,7 +38,7 @@ open class PushNotificationStatus: NSObject {
     private var isFetching = false
 
     public var hasEventsToFetch: Bool {
-        return eventIdRanking.count > 0 && !isFetching
+        eventIdRanking.count > 0 && !isFetching
     }
 
     public init(

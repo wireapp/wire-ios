@@ -104,7 +104,7 @@ public class UnauthenticatedSession: NSObject {
 
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
     var isAllowedToCreateNewAccount: Bool {
-        return delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
+        delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 }
 

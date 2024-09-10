@@ -45,7 +45,7 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
 
     /// Returns the root element of the document.
     var rootElement: xmlNodePtr? {
-        return xmlDocGetRootElement(self)
+        xmlDocGetRootElement(self)
     }
 
     /// Releases the resources used by an HTML document after we are done processing it.
@@ -57,7 +57,7 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
 extension UnsafeMutablePointer where Pointee == xmlNode {
     /// The name of the HTML tag.
     var tagName: HTMLStringBuffer {
-        return HTMLStringBuffer(unowned: pointee.name)
+        HTMLStringBuffer(unowned: pointee.name)
     }
 
     /// The textual content of the element.
@@ -150,8 +150,8 @@ final class HTMLStringBuffer {
 func == (lhs: HTMLStringBuffer, rhs: String) -> Bool {
     switch lhs.storage {
     case let .retained(ptr):
-        return xmlStrEqual(ptr, rhs) == 1
+        xmlStrEqual(ptr, rhs) == 1
     case let .unowned(ptr):
-        return xmlStrEqual(ptr, rhs) == 1
+        xmlStrEqual(ptr, rhs) == 1
     }
 }

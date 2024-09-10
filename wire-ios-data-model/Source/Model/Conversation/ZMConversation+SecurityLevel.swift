@@ -27,9 +27,9 @@ import WireCryptobox
     public var denotesEnabledComplianceDevice: Bool {
         switch self {
         case .pendingApproval, .enabled:
-            return true
+            true
         case .disabled:
-            return false
+            false
         }
     }
 }
@@ -86,12 +86,12 @@ extension ZMConversation {
 
     /// Whether the conversation is under legal hold.
     @objc public var isUnderLegalHold: Bool {
-        return legalHoldStatus.denotesEnabledComplianceDevice
+        legalHoldStatus.denotesEnabledComplianceDevice
     }
 
     /// Whether the self user can send messages in this conversation.
     @objc public var selfUserCanSendMessages: Bool {
-        return !isReadOnly && securityLevel != .secureWithIgnored && legalHoldStatus != .pendingApproval
+        !isReadOnly && securityLevel != .secureWithIgnored && legalHoldStatus != .pendingApproval
     }
 
     /// Verify the legal hold subjects in the conversation. This will synchronize with the backend on who's currently under legal hold.
@@ -386,9 +386,9 @@ extension ZMConversation {
     public var isDegraded: Bool {
         switch messageProtocol {
         case .proteus, .mixed:
-            return securityLevel == .secureWithIgnored
+            securityLevel == .secureWithIgnored
         case .mls:
-            return mlsVerificationStatus == .degraded
+            mlsVerificationStatus == .degraded
         }
     }
 
@@ -670,7 +670,7 @@ extension ZMConversation {
     // Returns a timestamp that is shortly (as short as possible) after the last message in the conversation,
     // or current time if there's no last message
     private func timestampAfterLastMessage() -> Date {
-        return timestamp(after: lastMessage) ?? Date()
+        timestamp(after: lastMessage) ?? Date()
     }
 }
 
@@ -696,17 +696,17 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         return localParticipants.first {
             if $0.isConnected || $0 == selfUser {
-                return false
+                false
             } else if $0.isWirelessUser {
-                return false
+                false
             } else {
-                return selfUser.team == nil || $0.team != selfUser.team
+                selfUser.team == nil || $0.team != selfUser.team
             }
         } != nil
     }
 
     private var allParticipantsHaveClients: Bool {
-        return self.localParticipants.first { $0.clients.count == 0 } == nil
+        self.localParticipants.first { $0.clients.count == 0 } == nil
     }
 
     private var hasMoreClientsThanSelfClient: Bool {
@@ -728,7 +728,7 @@ extension ZMConversation {
 
     /// If true the conversation might still be trusted / ignored
     @objc public var hasUntrustedClients: Bool {
-        return self.localParticipants.contains { !$0.isTrusted }
+        self.localParticipants.contains { !$0.isTrusted }
     }
 }
 
@@ -761,20 +761,20 @@ extension ZMMessage {
 
 extension Date {
     var nextNearestTimestamp: Date {
-        return Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
+        Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
     }
 
     var previousNearestTimestamp: Date {
-        return Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
+        Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
     }
 }
 
 extension NSDate {
     @objc var nextNearestTimestamp: NSDate {
-        return NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
+        NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
     }
 
     @objc var previousNearestTimestamp: NSDate {
-        return NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
+        NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
     }
 }

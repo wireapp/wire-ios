@@ -1685,7 +1685,7 @@ extension WireCallCenterV3Tests {
     }
 
     private func createClients(for user: ZMUser, ids: String...) -> [UserClient] {
-        return ids.map {
+        ids.map {
             let client = UserClient.insertNewObject(in: self.uiMOC)
             client.remoteIdentifier = $0
             client.user = user
@@ -1754,7 +1754,7 @@ extension WireCallCenterV3Tests {
     }
 
     private func callSnapshot(conversationId: AVSIdentifier, clients: [AVSClient]) -> [AVSIdentifier: CallSnapshot] {
-        return [
+        [
             conversationId: CallSnapshotTestFixture.callSnapshot(
                 conversationId: conversationId,
                 callCenter: sut,
@@ -2167,8 +2167,8 @@ extension WireCallCenterV3Tests {
 
 extension AVSClient {
     fileprivate static var mockClient: AVSClient {
-        return AVSClient(userId: AVSIdentifier(identifier: UUID(), domain: "wire.com"),
-                         clientId: UUID().transportString())
+        AVSClient(userId: AVSIdentifier(identifier: UUID(), domain: "wire.com"),
+                  clientId: UUID().transportString())
     }
 }
 

@@ -180,33 +180,33 @@ extension CallClosedReason {
     fileprivate var analyticsValue: String {
         switch self {
         case .canceled:
-            return "canceled"
+            "canceled"
         case .normal, .stillOngoing:
-            return "normal"
+            "normal"
         case .inputOutputError:
-            return "io_error"
+            "io_error"
         case .internalError:
-            return "internal_error"
+            "internal_error"
         case .securityDegraded:
-            return "security_degraded"
+            "security_degraded"
         case .answeredElsewhere:
-            return "answered_elsewhere"
+            "answered_elsewhere"
         case .timeout, .timeoutECONN:
-            return "timeout"
+            "timeout"
         case .unknown:
-            return "unknown"
+            "unknown"
         case .lostMedia:
-            return "drop"
+            "drop"
         case .rejectedElsewhere:
-            return "rejected_elsewhere"
+            "rejected_elsewhere"
         case .outdatedClient:
-            return "outdated_client"
+            "outdated_client"
         case .datachannel:
-            return "datachannel"
+            "datachannel"
         case .noOneJoined:
-            return "no_one_joined"
+            "no_one_joined"
         case .everyoneLeft:
-            return "everyone_left"
+            "everyone_left"
         }
     }
 }

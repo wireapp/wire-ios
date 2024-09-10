@@ -23,9 +23,9 @@ extension ActiveSpeakerState {
     var isSpeakingNow: Bool {
         switch self {
         case let .active(audioLevelNow: audioLevel):
-            return audioLevel > 0
+            audioLevel > 0
         default:
-            return false
+            false
         }
     }
 }

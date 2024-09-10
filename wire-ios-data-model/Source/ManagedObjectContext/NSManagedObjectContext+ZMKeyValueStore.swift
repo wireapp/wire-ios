@@ -35,6 +35,6 @@ extension NSManagedObjectContext: ZMSynchonizableKeyValueStore {
     }
 
     public func storedValue(key: String) -> Any? {
-        return self.persistentStoreMetadata(forKey: key)
+        self.persistentStoreMetadata(forKey: key)
     }
 }

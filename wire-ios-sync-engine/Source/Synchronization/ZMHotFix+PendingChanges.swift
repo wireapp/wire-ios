@@ -30,6 +30,6 @@ extension ZMUserSession {
     @objc public var isPendingHotFixChanges: Bool {
         // Related to HotFix 62.3.1 (see `refetchConnectedUsers`)
         // we need to refetch the user to ensure we have its username locally in case it was set on a secondary device.
-        return ZMUser.selfUser(in: managedObjectContext).needsToBeUpdatedFromBackend
+        ZMUser.selfUser(in: managedObjectContext).needsToBeUpdatedFromBackend
     }
 }

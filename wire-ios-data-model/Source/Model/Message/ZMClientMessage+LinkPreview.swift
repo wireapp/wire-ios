@@ -55,15 +55,15 @@ extension ZMClientMessage {
 
     /// Returns the first link attachment that we need to embed in the UI.
     public var mainLinkAttachment: LinkAttachment? {
-        return linkAttachments?.first
+        linkAttachments?.first
     }
 
     var firstZMLinkPreview: LinkPreview? {
-        return self.underlyingMessage?.linkPreviews.first
+        self.underlyingMessage?.linkPreviews.first
     }
 
     static func keyPathsForValuesAffectingLinkPreview() -> Set<String> {
-        return Set([#keyPath(ZMClientMessage.dataSet), #keyPath(ZMClientMessage.dataSet) + ".data"])
+        Set([#keyPath(ZMClientMessage.dataSet), #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
     public func requestLinkPreviewImageDownload() {
@@ -156,7 +156,7 @@ extension ZMClientMessage: ZMImageOwner {
     }
 
     @objc public func originalImageData() -> Data? {
-        return managedObjectContext?.zm_fileAssetCache.originalImageData(for: self)
+        managedObjectContext?.zm_fileAssetCache.originalImageData(for: self)
     }
 
     @objc public func originalImageSize() -> CGSize {
@@ -185,7 +185,7 @@ extension ZMClientMessage: ZMImageOwner {
     }
 
     @objc public var linkPreviewImageCacheKey: String? {
-        return self.nonce?.uuidString
+        self.nonce?.uuidString
     }
 
     @objc public func setImageData(

@@ -78,7 +78,7 @@ public class CircularProgressView: UIView {
     }
 
     override public class var layerClass: AnyClass {
-        return CAShapeLayer.self
+        CAShapeLayer.self
     }
 
     var shapeLayer: CAShapeLayer {

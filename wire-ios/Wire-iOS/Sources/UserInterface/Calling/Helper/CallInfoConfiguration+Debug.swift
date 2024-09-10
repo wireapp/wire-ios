@@ -18,7 +18,7 @@
 
 extension CallInfoViewControllerInput {
     var debugDescription: String {
-        return """
+        """
         <\(type(of: self))>
         accessoryType: \(accessoryType.showAvatar ? "avatar" : "participants (\(accessoryType.participants.count))")
         degradationState: \(degradationState)

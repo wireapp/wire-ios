@@ -1128,7 +1128,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        return try await decryptionService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+        try await decryptionService.processWelcomeMessage(welcomeMessage: welcomeMessage)
     }
 
     // MARK: - Joining conversations
@@ -1364,9 +1364,9 @@ public final class MLSService: MLSServiceInterface {
         return await context.perform {
             conversations.compactMap {
                 if let groupId = $0.mlsGroupID {
-                    return (groupId, $0)
+                    (groupId, $0)
                 } else {
-                    return nil
+                    nil
                 }
             }
         }
@@ -1580,7 +1580,7 @@ public final class MLSService: MLSServiceInterface {
         message: Data,
         for groupID: MLSGroupID
     ) async throws -> Data {
-        return try await encryptionService.encrypt(
+        try await encryptionService.encrypt(
             message: message,
             for: groupID
         )
@@ -2039,7 +2039,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Epoch
 
     public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
-        return decryptionService.onEpochChanged()
+        decryptionService.onEpochChanged()
             .merge(with: mlsActionExecutor.onEpochChanged())
             .eraseToAnyPublisher()
     }
@@ -2166,7 +2166,7 @@ public struct MLSUser: Equatable {
 
 extension MLSUser: CustomStringConvertible {
     public var description: String {
-        return "\(id)@\(domain)"
+        "\(id)@\(domain)"
     }
 }
 

@@ -222,7 +222,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     // MARK: - Helper
 
     func createLinkPreview() -> LinkPreview {
-        return LinkPreview.with {
+        LinkPreview.with {
             $0.url = "www.example.com/original"
             $0.permanentURL = "www.example.com/permanent"
             $0.urlOffset = 42

@@ -53,6 +53,6 @@ extension Collection where Iterator.Element: UserType {
 
 extension UserType {
     fileprivate var nameTokens: [String] {
-        return name?.components(separatedBy: CharacterSet.alphanumerics.inverted) ?? []
+        name?.components(separatedBy: CharacterSet.alphanumerics.inverted) ?? []
     }
 }

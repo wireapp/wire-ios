@@ -74,7 +74,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
-        return SessionManager.shared?.unauthenticatedSession
+        SessionManager.shared?.unauthenticatedSession
     }
 
     var launchOptions: LaunchOptions = [:]
@@ -82,7 +82,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // TODO: [WPB-8778] remove this property
     @available(*, deprecated, message: "Will be removed")
     static var shared: AppDelegate {
-        return UIApplication.shared.delegate as! AppDelegate
+        UIApplication.shared.delegate as! AppDelegate
     }
 
     // TODO [WPB-9867]: remove this property
@@ -96,7 +96,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     // to require explict configuration of the self user.
 
     var shouldConfigureSelfUserProvider: Bool {
-        return true
+        true
     }
 
     var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
@@ -364,6 +364,6 @@ extension AppDelegate {
     private var requiredPushTokenType: PushToken.TokenType {
         // Previously VoIP push were available for iOS <15
         // this forces transition to standard ones.
-        return .standard
+        .standard
     }
 }

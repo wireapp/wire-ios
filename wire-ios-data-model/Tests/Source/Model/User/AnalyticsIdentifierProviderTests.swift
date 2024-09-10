@@ -128,7 +128,7 @@ extension AnalyticsIdentifierProviderTests {
 
 extension ZMConversation {
     fileprivate func numberOfDataTransferMessagesContaining(analyticsIdentifier: String) -> Int {
-        return allMessages.lazy
+        allMessages.lazy
             .compactMap { $0 as? ZMClientMessage }
             .compactMap(\.underlyingMessage)
             .filter(\.hasDataTransfer)

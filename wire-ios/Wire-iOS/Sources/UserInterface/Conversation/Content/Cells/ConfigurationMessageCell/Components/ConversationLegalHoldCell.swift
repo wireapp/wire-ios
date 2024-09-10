@@ -87,11 +87,11 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
-            return L10n.Localizable.Content.System.MessageLegalHold.disabled
+            L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
-            return ""
+            ""
         }
     }
 }

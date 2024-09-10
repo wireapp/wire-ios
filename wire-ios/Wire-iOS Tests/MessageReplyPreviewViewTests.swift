@@ -308,7 +308,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     func testDeallocation() {
         let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed.")
         verifyDeallocation {
-            return message.replyPreview()!
+            message.replyPreview()!
         }
     }
 

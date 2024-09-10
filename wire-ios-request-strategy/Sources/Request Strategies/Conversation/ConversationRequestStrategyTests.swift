@@ -472,7 +472,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     }
 
     func conversation(uuid: UUID, domain: String?, type: BackendConversationType = .group) -> Payload.Conversation {
-        return Payload.Conversation.stub(
+        Payload.Conversation.stub(
             id: uuid,
             type: type
         )

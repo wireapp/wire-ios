@@ -152,7 +152,7 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
     var canDisplayAlerts: Bool = true
     func urlActionRouterCanDisplayAlerts() -> Bool {
-        return canDisplayAlerts
+        canDisplayAlerts
     }
 }
 

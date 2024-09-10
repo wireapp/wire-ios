@@ -48,26 +48,26 @@ enum SettingsPropertyValue: Equatable {
     static func propertyValue(_ object: Any?) -> SettingsPropertyValue {
         switch object {
         case let number as NSNumber:
-            return SettingsPropertyValue.number(value: number)
+            SettingsPropertyValue.number(value: number)
 
         case let stringValue as Swift.String:
-            return SettingsPropertyValue.string(value: stringValue)
+            SettingsPropertyValue.string(value: stringValue)
 
         default:
-            return .none
+            .none
         }
     }
 
     func value() -> Any? {
         switch self {
         case let .number(value):
-            return value as AnyObject?
+            value as AnyObject?
         case let .string(value):
-            return value as AnyObject?
+            value as AnyObject?
         case let .bool(value):
-            return value as AnyObject?
+            value as AnyObject?
         case .none:
-            return .none
+            .none
         }
     }
 }
@@ -84,7 +84,7 @@ protocol SettingsProperty {
 
 extension SettingsProperty {
     func rawValue() -> Any? {
-        return self.value().value()
+        self.value().value()
     }
 }
 
@@ -135,11 +135,11 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
     func value() -> SettingsPropertyValue {
         switch self.userDefaults.object(forKey: self.userDefaultsKey) as AnyObject? {
         case let numberValue as NSNumber:
-            return SettingsPropertyValue.propertyValue(numberValue.intValue as AnyObject?)
+            SettingsPropertyValue.propertyValue(numberValue.intValue as AnyObject?)
         case let stringValue as String:
-            return SettingsPropertyValue.propertyValue(stringValue as AnyObject?)
+            SettingsPropertyValue.propertyValue(stringValue as AnyObject?)
         default:
-            return .none
+            .none
         }
     }
 
@@ -168,7 +168,7 @@ final class SettingsBlockProperty: SettingsProperty {
 
     let propertyName: SettingsPropertyName
     func value() -> SettingsPropertyValue {
-        return self.getAction(self)
+        self.getAction(self)
     }
 
     func set(newValue: SettingsPropertyValue) throws {

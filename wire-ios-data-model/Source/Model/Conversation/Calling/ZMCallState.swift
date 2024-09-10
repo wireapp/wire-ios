@@ -44,7 +44,7 @@ extension NSManagedObjectContext {
     /// True if the context has some changes in the user info that should cause a save
     @objc public var zm_hasUserInfoChanges: Bool {
         get {
-            return (self.userInfo[UserInfoHasChangesKey] as? Bool) ?? false
+            (self.userInfo[UserInfoHasChangesKey] as? Bool) ?? false
         }
         set {
             self.userInfo[UserInfoHasChangesKey] = newValue
@@ -55,7 +55,7 @@ extension NSManagedObjectContext {
     ///
     /// The call state changes do not dirty the context's objects, hence need to be tracked / checked seperately.
     @objc public var zm_hasChanges: Bool {
-        return hasChanges || self.zm_hasUserInfoChanges
+        hasChanges || self.zm_hasUserInfoChanges
     }
 
     @objc public func mergeCallStateChanges(fromUserInfo userInfo: [String: Any]) {
@@ -72,12 +72,12 @@ extension NSManagedObjectContext {
 // This needs to be set to display the correct conversationListIndicator
 extension ZMConversation {
     var callState: ZMConversationCallState {
-        return managedObjectContext!.zm_callState.stateForConversation(self)
+        managedObjectContext!.zm_callState.stateForConversation(self)
     }
 
     @objc public var isIgnoringCall: Bool {
         get {
-            return callState.isIgnoringCall
+            callState.isIgnoringCall
         }
         set {
             if callState.isIgnoringCall != newValue {
@@ -89,7 +89,7 @@ extension ZMConversation {
 
     @objc public var isCallDeviceActive: Bool {
         get {
-            return callState.isCallDeviceActive
+            callState.isCallDeviceActive
         }
         set {
             if callState.isCallDeviceActive != newValue {
@@ -105,7 +105,7 @@ open class ZMCallState: NSObject, Sequence {
     fileprivate var conversationStates: [NSManagedObjectID: ZMConversationCallState] = [:]
 
     fileprivate var allObjectIDs: Set<NSManagedObjectID> {
-        return Set(conversationStates.keys)
+        Set(conversationStates.keys)
     }
 
     open func allContainedConversationsInContext(_ moc: NSManagedObjectContext) -> Set<ZMConversation> {
@@ -128,7 +128,7 @@ open class ZMCallState: NSObject, Sequence {
     }
 
     func stateForConversationID(_ conversationID: NSManagedObjectID) -> ZMConversationCallState {
-        return conversationStates[conversationID] ?? {
+        conversationStates[conversationID] ?? {
             zmLog.debug("inserting new state for conversationID \(conversationID) into \(SwiftDebugging.address(self))")
             let newState = ZMConversationCallState()
             self.conversationStates[conversationID] = newState
@@ -138,20 +138,20 @@ open class ZMCallState: NSObject, Sequence {
 
     public typealias Iterator = DictionaryIterator<NSManagedObjectID, ZMConversationCallState>
     open func makeIterator() -> Iterator {
-        return conversationStates.makeIterator()
+        conversationStates.makeIterator()
     }
 
     open var isEmpty: Bool {
-        return conversationStates.isEmpty
+        conversationStates.isEmpty
     }
 
     override open var description: String {
-        return "CallState \(SwiftDebugging.address(self)) \n" +
+        "CallState \(SwiftDebugging.address(self)) \n" +
             " --> states : \(conversationStates) \n"
     }
 
     override open var debugDescription: String {
-        return description
+        description
     }
 }
 
@@ -167,12 +167,12 @@ open class ZMConversationCallState: NSObject {
     }
 
     override open var description: String {
-        return "CallState \(SwiftDebugging.address(self)) \n" +
+        "CallState \(SwiftDebugging.address(self)) \n" +
             " --> isCallDeviceActive: \(isCallDeviceActive) \n"
     }
 
     override open var debugDescription: String {
-        return description
+        description
     }
 }
 

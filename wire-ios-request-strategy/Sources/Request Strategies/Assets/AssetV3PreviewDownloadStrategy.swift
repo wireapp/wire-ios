@@ -66,7 +66,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return downstreamSync.nextRequest(for: apiVersion)
+        downstreamSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(
@@ -111,7 +111,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [downstreamSync]
+        [downstreamSync]
     }
 }
 

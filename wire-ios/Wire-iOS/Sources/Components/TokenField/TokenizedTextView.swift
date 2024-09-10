@@ -47,7 +47,7 @@ class TokenizedTextView: TextView {
 
     override var contentOffset: CGPoint {
         get {
-            return super.contentOffset
+            super.contentOffset
         }
 
         set(contentOffset) {
@@ -134,6 +134,6 @@ class TokenizedTextView: TextView {
 
 extension TokenizedTextView: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        true
     }
 }

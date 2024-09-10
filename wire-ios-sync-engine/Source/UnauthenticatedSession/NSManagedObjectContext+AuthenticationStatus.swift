@@ -24,7 +24,7 @@ private let registeredOnThisDeviceKey = "ZMRegisteredOnThisDevice"
 @objc extension NSManagedObjectContext {
     public var registeredOnThisDevice: Bool {
         get {
-            return self.metadataBoolValueForKey(registeredOnThisDeviceKey)
+            self.metadataBoolValueForKey(registeredOnThisDeviceKey)
         }
         set {
             self.setBooleanMetadataOnBothContexts(newValue, key: registeredOnThisDeviceKey)
@@ -32,7 +32,7 @@ private let registeredOnThisDeviceKey = "ZMRegisteredOnThisDevice"
     }
 
     private func metadataBoolValueForKey(_ key: String) -> Bool {
-        return (self.persistentStoreMetadata(forKey: key) as? NSNumber)?.boolValue ?? false
+        (self.persistentStoreMetadata(forKey: key) as? NSNumber)?.boolValue ?? false
     }
 
     private func setBooleanMetadataOnBothContexts(_ newValue: Bool, key: String) {
@@ -46,6 +46,6 @@ private let registeredOnThisDeviceKey = "ZMRegisteredOnThisDevice"
     }
 
     public var legacyCookieLabel: String? {
-        return self.persistentStoreMetadata(forKey: cookieLabelKey) as? String
+        self.persistentStoreMetadata(forKey: cookieLabelKey) as? String
     }
 }

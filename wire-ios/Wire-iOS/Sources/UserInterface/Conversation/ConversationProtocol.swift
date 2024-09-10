@@ -122,7 +122,7 @@ extension ZMConversation: CanManageAccessProvider {}
 
 extension ZMConversation: GroupDetailsConversation {
     var syncedMessageDestructionTimeout: TimeInterval {
-        return messageDestructionTimeoutValue(for: .groupConversation).rawValue
+        messageDestructionTimeoutValue(for: .groupConversation).rawValue
     }
 
     var isE2EIEnabled: Bool {
@@ -136,9 +136,9 @@ extension GroupDetailsConversation {
     var isVerified: Bool {
         switch messageProtocol {
         case .proteus, .mixed:
-            return securityLevel == .secure
+            securityLevel == .secure
         case .mls:
-            return isE2EIEnabled && mlsVerificationStatus == .verified
+            isE2EIEnabled && mlsVerificationStatus == .verified
         }
     }
 }

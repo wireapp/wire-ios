@@ -62,7 +62,7 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     }
 
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return Transcoder.Object.sortedFetchRequest(with: insertPredicate)
+        Transcoder.Object.sortedFetchRequest(with: insertPredicate)
     }
 
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {

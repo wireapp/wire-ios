@@ -35,7 +35,7 @@ public struct CircularArray<Element> {
     private var listEnd = 0
 
     private var isFull: Bool {
-        return self.circularArray.count == size
+        self.circularArray.count == size
     }
 
     /// Insert an element in the array

@@ -22,7 +22,7 @@ import XCTest
 
 class ZMConversationAccessModeTests: ZMConversationTestsBase {
     func conversation() -> ZMConversation {
-        return ZMConversation.insertNewObject(in: self.uiMOC)
+        ZMConversation.insertNewObject(in: self.uiMOC)
     }
 
     var sut: ZMConversation!

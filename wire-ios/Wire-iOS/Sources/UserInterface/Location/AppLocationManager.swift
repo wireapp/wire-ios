@@ -51,7 +51,7 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     weak var delegate: AppLocationManagerDelegate?
 
     var authorizationStatus: CLAuthorizationStatus {
-        return locationManager.authorizationStatus
+        locationManager.authorizationStatus
     }
 
     var userLocationAuthorized: Bool {

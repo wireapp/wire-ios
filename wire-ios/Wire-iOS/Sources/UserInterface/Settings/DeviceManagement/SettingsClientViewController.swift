@@ -83,7 +83,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return [.portrait]
+        [.portrait]
     }
 
     override func viewDidLoad() {
@@ -189,9 +189,9 @@ final class SettingsClientViewController: UIViewController,
 
     func numberOfSections(in tableView: UITableView) -> Int {
         if self.userClient == userSession.selfUserClient {
-            return 2
+            2
         } else {
-            return userClient.type == .legalHold ? 3 : 4
+            userClient.type == .legalHold ? 3 : 4
         }
     }
 
@@ -332,17 +332,17 @@ final class SettingsClientViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == ClientSection.info.rawValue, indexPath.row == 0 {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     func tableView(_ tableView: UITableView, canPerformAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
         if action == #selector(UIResponder.copy(_:)) {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 

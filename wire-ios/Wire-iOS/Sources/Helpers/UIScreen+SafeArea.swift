@@ -49,6 +49,6 @@ extension UIScreen {
 
     @available(*, deprecated, message: "Will be removed")
     var isCompact: Bool {
-        return bounds.size.height <= 568
+        bounds.size.height <= 568
     }
 }

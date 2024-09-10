@@ -61,11 +61,11 @@ final class ConversationSelectionViewController: UITableViewController {
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return visibleConversations.count
+        visibleConversations.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -88,9 +88,9 @@ extension ConversationSelectionViewController: UISearchResultsUpdating {
         if let searchText = searchController.searchBar.text, !searchText.isEmpty {
             visibleConversations = allConversations.filter { conversation in
                 if conversation.name?.range(of: searchText, options: [.diacriticInsensitive, .caseInsensitive]) != nil {
-                    return true
+                    true
                 } else {
-                    return false
+                    false
                 }
             }
         } else {

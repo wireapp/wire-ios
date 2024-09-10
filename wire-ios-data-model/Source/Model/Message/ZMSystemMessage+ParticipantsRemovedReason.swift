@@ -22,9 +22,9 @@ extension ZMParticipantsRemovedReason {
     public var stringValue: String? {
         switch self {
         case .none, .federationTermination:
-            return nil
+            nil
         case .legalHoldPolicyConflict:
-            return "legalhold-policy-conflict"
+            "legalhold-policy-conflict"
         }
     }
 

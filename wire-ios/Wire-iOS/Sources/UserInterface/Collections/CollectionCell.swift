@@ -152,7 +152,7 @@ class CollectionCell: UICollectionViewCell {
     }()
 
     var obfuscationIcon: StyleKitIcon {
-        return .exclamationMarkCircle
+        .exclamationMarkCircle
     }
 
     lazy var obfuscationView = ObfuscationView(icon: self.obfuscationIcon)
@@ -194,15 +194,15 @@ class CollectionCell: UICollectionViewCell {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return actionController?.canPerformAction(action) == true
+        actionController?.canPerformAction(action) == true
     }
 
     override func forwardingTarget(for aSelector: Selector!) -> Any? {
-        return actionController
+        actionController
     }
 
     // To be implemented in the subclass

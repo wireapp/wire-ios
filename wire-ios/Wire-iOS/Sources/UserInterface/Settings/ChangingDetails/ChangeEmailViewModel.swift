@@ -30,7 +30,7 @@ final class ChangeEmailViewModel {
     // MARK: - Computed Properties
 
     var visibleEmail: String? {
-        return newEmail ?? currentEmail
+        newEmail ?? currentEmail
     }
 
     var validatedEmail: String? {
@@ -42,7 +42,7 @@ final class ChangeEmailViewModel {
     }
 
     var isValid: Bool {
-        return validatedEmail != nil
+        validatedEmail != nil
     }
 
     // MARK: - Initialization

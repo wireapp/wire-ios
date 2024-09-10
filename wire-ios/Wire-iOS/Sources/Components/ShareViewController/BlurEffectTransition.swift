@@ -32,7 +32,7 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.35
+        0.35
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {

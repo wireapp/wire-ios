@@ -24,7 +24,7 @@ final class NetworkConditionIndicatorView: UIView {
     private let label = UILabel()
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 32)
+        CGSize(width: UIView.noIntrinsicMetric, height: 32)
     }
 
     init() {

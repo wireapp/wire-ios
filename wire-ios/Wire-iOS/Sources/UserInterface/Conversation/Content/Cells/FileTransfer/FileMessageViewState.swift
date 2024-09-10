@@ -138,14 +138,14 @@ enum FileMessageViewState {
          .failedDownload: (.none, .save, failureColor) ]
 
     func viewsStateForVideo() -> FileMessageViewViewsState? {
-        return type(of: self).viewsStateForCellStateForVideoMessage[self]
+        type(of: self).viewsStateForCellStateForVideoMessage[self]
     }
 
     func viewsStateForAudio() -> FileMessageViewViewsState? {
-        return type(of: self).viewsStateForCellStateForAudioMessage[self]
+        type(of: self).viewsStateForCellStateForAudioMessage[self]
     }
 
     func viewsStateForFile() -> FileMessageViewViewsState? {
-        return type(of: self).viewsStateForCellStateForFileMessage[self]
+        type(of: self).viewsStateForCellStateForFileMessage[self]
     }
 }

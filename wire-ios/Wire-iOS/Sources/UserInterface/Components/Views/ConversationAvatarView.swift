@@ -36,7 +36,7 @@ final class RandomGeneratorFromData: RandomGenerator {
     func rand<ContentType>() -> ContentType {
         let currentStep = self.step
         let result = source.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> ContentType in
-            return pointer.baseAddress!.assumingMemoryBound(to: ContentType.self).advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
+            pointer.baseAddress!.assumingMemoryBound(to: ContentType.self).advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
         }
         step += MemoryLayout<ContentType>.size
 
@@ -118,16 +118,16 @@ extension Mode {
 
     var showInitials: Bool {
         if case .one = self {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var shape: AvatarImageView.Shape {
         switch self {
-        case .one(serviceUser: true): return .relative
-        default: return .rectangle
+        case .one(serviceUser: true): .relative
+        default: .rectangle
         }
     }
 }
@@ -216,24 +216,24 @@ final class ConversationAvatarView: UIView {
     }
 
     private var userImageViews: [UserImageView] {
-        return [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
+        [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
     }
 
     func userImages() -> [UserImageView] {
         switch mode {
         case .none:
-            return []
+            []
 
         case .one:
-            return [imageViewLeftTop]
+            [imageViewLeftTop]
 
         case .four:
-            return userImageViews
+            userImageViews
         }
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
+        CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
     }
 
     let clippingView = UIView()
@@ -267,7 +267,7 @@ final class ConversationAvatarView: UIView {
 
     let interAvatarInset: CGFloat = 2
     var containerSize: CGSize {
-        return self.clippingView.bounds.size
+        self.clippingView.bounds.size
     }
 
     override func layoutSubviews() {

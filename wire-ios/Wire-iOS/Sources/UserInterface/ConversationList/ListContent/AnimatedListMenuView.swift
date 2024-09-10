@@ -129,10 +129,10 @@ final class AnimatedListMenuView: UIView {
     }
 
     func centerToRightDistance(forProgress progress: CGFloat) -> CGFloat {
-        return -(4 + (10 * (1 - progress)))
+        -(4 + (10 * (1 - progress)))
     }
 
     func leftToCenterDistance(forProgress progress: CGFloat) -> CGFloat {
-        return -(4 + (20 * (1 - progress)))
+        -(4 + (20 * (1 - progress)))
     }
 }

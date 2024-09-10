@@ -24,9 +24,9 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
     let messageSender: MessageSenderInterface
 
     static func linkPreviewIsUploadedPredicate(context: NSManagedObjectContext) -> NSPredicate {
-        return NSPredicate(format: "%K == %@ AND %K == %d",
-                           #keyPath(ZMClientMessage.sender), ZMUser.selfUser(in: context),
-                           #keyPath(ZMClientMessage.linkPreviewState), ZMLinkPreviewState.uploaded.rawValue)
+        NSPredicate(format: "%K == %@ AND %K == %d",
+                    #keyPath(ZMClientMessage.sender), ZMUser.selfUser(in: context),
+                    #keyPath(ZMClientMessage.linkPreviewState), ZMLinkPreviewState.uploaded.rawValue)
     }
 
     public init(managedObjectContext: NSManagedObjectContext,
@@ -44,7 +44,7 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedKeysSync]
+        [modifiedKeysSync]
     }
 }
 

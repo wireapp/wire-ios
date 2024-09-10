@@ -154,7 +154,7 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
     /// A snapshot strategy for comparing UIAlertController views based on pixel equality.
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
     static var image: Snapshotting<UIAlertController, UIImage> {
-        return Snapshotting<UIView, UIImage>.image(precision: 1, size: nil).pullback { $0.view }
+        Snapshotting<UIView, UIImage>.image(precision: 1, size: nil).pullback { $0.view }
     }
 }
 

@@ -20,10 +20,10 @@ import Foundation
 
 extension ZMManagedObject {
     static var classIdentifier: String {
-        return entityName()
+        entityName()
     }
 
     var classIdentifier: String {
-        return type(of: self).entityName()
+        type(of: self).entityName()
     }
 }

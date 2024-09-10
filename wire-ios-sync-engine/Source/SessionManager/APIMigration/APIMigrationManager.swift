@@ -33,7 +33,7 @@ final class APIMigrationManager {
     }
 
     func isMigration(to apiVersion: APIVersion, neededForSessions sessions: [ZMUserSession]) -> Bool {
-        return sessions.contains {
+        sessions.contains {
             isMigration(to: apiVersion, neededForSession: $0)
         }
     }
@@ -97,7 +97,7 @@ final class APIMigrationManager {
     // MARK: - Helpers
 
     func lastUsedAPIVersion(for clientID: String) -> APIVersion {
-        return userDefaults(for: clientID).lastUsedAPIVersion ?? previousAPIVersion ?? .v2
+        userDefaults(for: clientID).lastUsedAPIVersion ?? previousAPIVersion ?? .v2
     }
 
     func persistLastUsedAPIVersion(for session: ZMUserSession, apiVersion: APIVersion) {
@@ -110,7 +110,7 @@ final class APIMigrationManager {
     }
 
     private func userDefaults(for clientID: String) -> UserDefaults {
-        return UserDefaults(suiteName: "com.wire.apiversion.\(clientID)")!
+        UserDefaults(suiteName: "com.wire.apiversion.\(clientID)")!
     }
 
     private func clientId(for session: ZMUserSession) -> String? {

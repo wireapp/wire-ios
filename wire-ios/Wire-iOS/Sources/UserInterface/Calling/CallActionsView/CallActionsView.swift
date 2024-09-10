@@ -49,7 +49,7 @@ final class CallActionsView: UIView {
     private let acceptCallButton = IconButton.acceptCall()
 
     private var allButtons: [UIButton] {
-        return [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton, acceptCallButton]
+        [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton, acceptCallButton]
     }
 
     // MARK: - Setup
@@ -209,11 +209,11 @@ final class CallActionsView: UIView {
     }
 
     private func canToggleMuteButton(_ input: CallActionsViewInputType) -> Bool {
-        return !input.permissions.isAudioDisabledForever
+        !input.permissions.isAudioDisabledForever
     }
 
     private func canToggleSpeakerButton(_ input: CallActionsViewInputType) -> Bool {
-        return input.mediaState.canSpeakerBeToggled
+        input.mediaState.canSpeakerBeToggled
     }
 
     // MARK: - Action Output
@@ -228,13 +228,13 @@ final class CallActionsView: UIView {
 
     private func action(for button: IconLabelButton) -> CallAction {
         switch button {
-        case microphoneButton: return .toggleMuteState
-        case cameraButton: return .toggleVideoState
-        case videoButtonDisabledTapRecognizer: return .alertVideoUnavailable
-        case speakerButton: return .toggleSpeakerState
-        case flipCameraButton: return .flipCamera
-        case endCallButton: return .terminateCall
-        case acceptCallButton: return .acceptCall
+        case microphoneButton: .toggleMuteState
+        case cameraButton: .toggleVideoState
+        case videoButtonDisabledTapRecognizer: .alertVideoUnavailable
+        case speakerButton: .toggleSpeakerState
+        case flipCameraButton: .flipCamera
+        case endCallButton: .terminateCall
+        case acceptCallButton: .acceptCall
         default: fatalError("Unexpected Button: \(button)")
         }
     }

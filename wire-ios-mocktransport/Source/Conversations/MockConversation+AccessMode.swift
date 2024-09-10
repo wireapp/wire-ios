@@ -27,7 +27,7 @@ public enum MockConversationAccessRole: String {
     case nonActivated = "non_activated"
 
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessRole {
-        return allowGuests ? .nonActivated : .team
+        allowGuests ? .nonActivated : .team
     }
 }
 
@@ -44,13 +44,13 @@ public enum MockConversationAccessRoleV2: String {
     public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
         switch (allowGuests, allowServices) {
         case (true, true):
-            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
+            [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
         case (false, false):
-            return [teamMember.rawValue]
+            [teamMember.rawValue]
         case (true, false):
-            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue]
+            [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue]
         case (false, true):
-            return [teamMember.rawValue, service.rawValue]
+            [teamMember.rawValue, service.rawValue]
         }
     }
 }
@@ -81,11 +81,11 @@ public struct MockConversationAccessMode: OptionSet {
                                                                      .private: "private"]
 
     public var stringValue: [String] {
-        return MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
+        MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
     }
 
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessMode {
-        return allowGuests ? .allowGuests : .teamOnly
+        allowGuests ? .allowGuests : .teamOnly
     }
 }
 

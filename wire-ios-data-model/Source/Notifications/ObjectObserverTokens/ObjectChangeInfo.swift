@@ -51,7 +51,7 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
     }
 
     func changedKeysContain(keys: String...) -> Bool {
-        return considerAllKeysChanged || !changedKeys.isDisjoint(with: keys)
+        considerAllKeysChanged || !changedKeys.isDisjoint(with: keys)
     }
 
     var customDebugDescription: String {
@@ -66,15 +66,15 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
 extension ObjectChangeInfo {
     static func changeInfo(for object: NSObject, changes: Changes) -> ObjectChangeInfo? {
         switch object {
-        case let object as ZMConversation:  return ConversationChangeInfo.changeInfo(for: object, changes: changes)
-        case let object as ZMUser:          return UserChangeInfo.changeInfo(for: object, changes: changes)
-        case let object as ZMMessage:       return MessageChangeInfo.changeInfo(for: object, changes: changes)
-        case let object as UserClient:      return UserClientChangeInfo.changeInfo(for: object, changes: changes)
-        case let object as Team:            return TeamChangeInfo.changeInfo(for: object, changes: changes)
-        case let object as Label:           return LabelChangeInfo.changeInfo(for: object, changes: changes)
-        case let object as ParticipantRole: return ParticipantRoleChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as ZMConversation:  ConversationChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as ZMUser:          UserChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as ZMMessage:       MessageChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as UserClient:      UserClientChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as Team:            TeamChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as Label:           LabelChangeInfo.changeInfo(for: object, changes: changes)
+        case let object as ParticipantRole: ParticipantRoleChangeInfo.changeInfo(for: object, changes: changes)
         default:
-            return nil
+            nil
         }
     }
 }

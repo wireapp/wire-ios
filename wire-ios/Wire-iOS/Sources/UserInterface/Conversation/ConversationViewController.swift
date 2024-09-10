@@ -28,7 +28,7 @@ final class ConversationViewController: UIViewController {
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
 
     override var keyCommands: [UIKeyCommand]? {
-        return [
+        [
             UIKeyCommand(action: #selector(gotoBottom(_:)),
                          input: UIKeyCommand.inputDownArrow,
                          modifierFlags: [.command, .alternate],
@@ -266,14 +266,14 @@ final class ConversationViewController: UIViewController {
     // MARK: - Device orientation
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return .portrait
+            .portrait
         } else {
-            return .all
+            .all
         }
     }
 

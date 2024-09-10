@@ -121,7 +121,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     // MARK: - HighlightableView
 
     var highlightContainer: UIView {
-        return attachmentView
+        attachmentView
     }
 
     // MARK: - Events
@@ -134,7 +134,7 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
 
 extension ConversationLinkAttachmentCell: LinkViewDelegate {
     var url: URL? {
-        return currentAttachment?.permalink
+        currentAttachment?.permalink
     }
 }
 

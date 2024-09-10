@@ -71,7 +71,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     override var collectionViewContentSize: CGSize {
-        return CGSize(width: contentWidth, height: contentHeight)
+        CGSize(width: contentWidth, height: contentHeight)
     }
 
     // MARK: - Layout
@@ -81,10 +81,10 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The current positioning context.
     private var positioningContext: VerticalColumnPositioningContext {
-        return VerticalColumnPositioningContext(contentWidth: contentWidth,
-                                                numberOfColumns: numberOfColumns,
-                                                interItemSpacing: interItemSpacing,
-                                                interColumnSpacing: interColumnSpacing)
+        VerticalColumnPositioningContext(contentWidth: contentWidth,
+                                         numberOfColumns: numberOfColumns,
+                                         interItemSpacing: interItemSpacing,
+                                         interColumnSpacing: interColumnSpacing)
     }
 
     override func prepare() {
@@ -104,7 +104,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        return positioning?.rows.filter { $0.frame.height > 0 && $0.frame.intersects(rect) }
+        positioning?.rows.filter { $0.frame.height > 0 && $0.frame.intersects(rect) }
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {

@@ -54,7 +54,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
     // MARK: - Collection View
 
     override var sectionTitle: String {
-        return ""
+        ""
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
@@ -64,11 +64,11 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        1
     }
 
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -100,17 +100,17 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     // MARK: - Header
 
     override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: emptySectionHeaderHeight)
+        CGSize(width: collectionView.bounds.size.width, height: emptySectionHeaderHeight)
     }
 
     // MARK: - Footer

@@ -56,11 +56,11 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     }
 
     var state: AuthenticationState {
-        return isLoggedIn ? .authenticated : .unauthenticated
+        isLoggedIn ? .authenticated : .unauthenticated
     }
 
     private var isLoggedIn: Bool {
-        return transportSession.cookieStorage.hasAuthenticationCookie
+        transportSession.cookieStorage.hasAuthenticationCookie
     }
 }
 
@@ -71,7 +71,7 @@ extension BackendEnvironmentProvider {
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
-        return cookieStorage(for: account).hasAuthenticationCookie
+        cookieStorage(for: account).hasAuthenticationCookie
     }
 }
 
@@ -102,22 +102,22 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
-            return .online
+            .online
         } else {
-            return .unauthenticated
+            .unauthenticated
         }
     }
 
     public var operationState: OperationState {
-        return .foreground
+        .foreground
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return self.clientRegistrationStatus
+        self.clientRegistrationStatus
     }
 
     public var requestCancellation: ZMRequestCancellation {
-        return transportSession
+        transportSession
     }
 
     func requestResyncResources() {
@@ -143,11 +143,11 @@ public final class SharingSession {
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
-        return coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     private var syncContext: NSManagedObjectContext {
-        return coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     /// Directory of all application statuses
@@ -166,23 +166,23 @@ public final class SharingSession {
 
     /// The `ZMConversationListDirectory` containing all conversation lists
     private var directory: ZMConversationListDirectory {
-        return userInterfaceContext.conversationListDirectory()
+        userInterfaceContext.conversationListDirectory()
     }
 
     /// Whether all prerequsisties for sharing are met
     public var canShare: Bool {
-        return applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
+        applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
     }
 
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
     public var writeableNonArchivedConversations: [Conversation] {
-        return directory.unarchivedConversations.writeableConversations
+        directory.unarchivedConversations.writeableConversations
     }
 
     /// List of archived conversations in which the user can write
     public var writebleArchivedConversations: [Conversation] {
-        return directory.archivedConversations.writeableConversations
+        directory.archivedConversations.writeableConversations
     }
 
     private let operationLoop: RequestGeneratingOperationLoop

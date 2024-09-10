@@ -45,7 +45,7 @@ protocol MediaAssetView: UIView {
 extension MediaAssetView where Self: UIImageView {
     var mediaAsset: MediaAsset? {
         get {
-            return image
+            image
         }
         set {
             if newValue == nil {
@@ -60,7 +60,7 @@ extension MediaAssetView where Self: UIImageView {
 extension MediaAssetView where Self: FLAnimatedImageView {
     var mediaAsset: MediaAsset? {
         get {
-            return animatedImage ?? image
+            animatedImage ?? image
         }
 
         set {
@@ -80,22 +80,22 @@ extension MediaAssetView where Self: FLAnimatedImageView {
 
 extension FLAnimatedImage: MediaAsset {
     var imageData: Data? {
-        return data
+        data
     }
 
     var isGIF: Bool {
-        return true
+        true
     }
 
     var isTransparent: Bool {
-        return false
+        false
     }
 }
 
 extension UIImageView: MediaAssetView {
     var imageData: Data? {
         get {
-            return image?.imageData
+            image?.imageData
         }
 
         set {

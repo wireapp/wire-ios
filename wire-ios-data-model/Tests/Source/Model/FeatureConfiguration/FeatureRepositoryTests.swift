@@ -931,6 +931,6 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 
 extension Data {
     fileprivate func decode<T: Decodable>(as type: T.Type) -> T? {
-        return try? JSONDecoder().decode(type, from: self)
+        try? JSONDecoder().decode(type, from: self)
     }
 }

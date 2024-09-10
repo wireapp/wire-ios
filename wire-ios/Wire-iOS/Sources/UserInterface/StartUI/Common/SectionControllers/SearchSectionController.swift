@@ -31,15 +31,15 @@ protocol SearchSectionControllerDelegate: AnyObject {
 
 class SearchSectionController: NSObject, CollectionViewSectionController {
     var isHidden: Bool {
-        return false
+        false
     }
 
     var sectionTitle: String {
-        return ""
+        ""
     }
 
     var sectionAccessibilityIdentifier: String {
-        return "section_header"
+        "section_header"
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
@@ -58,11 +58,11 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 48)
+        CGSize(width: collectionView.bounds.size.width, height: 48)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: CGFloat.StartUI.CellHeight)
+        CGSize(width: collectionView.bounds.size.width, height: CGFloat.StartUI.CellHeight)
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -83,7 +83,7 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
+        true
         // NOTE: workaround for regression in Swift 5
         // https://bugs.swift.org/browse/SR-2919
     }

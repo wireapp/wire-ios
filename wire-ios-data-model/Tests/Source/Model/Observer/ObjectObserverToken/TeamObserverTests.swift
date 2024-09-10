@@ -45,7 +45,7 @@ class TeamObserverTests: NotificationDispatcherTestBase {
     }
 
     var userInfoKeys: Set<String> {
-        return [
+        [
             #keyPath(TeamChangeInfo.membersChanged),
             #keyPath(TeamChangeInfo.nameChanged),
             #keyPath(TeamChangeInfo.imageDataChanged)

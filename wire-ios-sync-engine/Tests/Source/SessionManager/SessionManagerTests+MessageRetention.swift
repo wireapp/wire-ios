@@ -29,7 +29,7 @@ final class SessionManagerMessageRetentionTests: IntegrationTest {
     }
 
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     func testThatItDeletesMessagesOlderThanTheRetentionLimit() {

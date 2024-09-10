@@ -23,24 +23,24 @@ import XCTest
 typealias ProfileImageSize = WireSyncEngine.ProfileImageSize
 
 class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol {
-    var allSizes: [ProfileImageSize] { return [.preview, .complete] }
+    var allSizes: [ProfileImageSize] { [.preview, .complete] }
 
     var assetIdsToDelete = Set<String>()
     func hasAssetToDelete() -> Bool {
-        return !assetIdsToDelete.isEmpty
+        !assetIdsToDelete.isEmpty
     }
 
     func consumeAssetToDelete() -> String? {
-        return assetIdsToDelete.removeFirst()
+        assetIdsToDelete.removeFirst()
     }
 
     var dataToConsume = [ProfileImageSize: Data]()
     func consumeImage(for size: ProfileImageSize) -> Data? {
-        return dataToConsume[size]
+        dataToConsume[size]
     }
 
     func hasImageToUpload(for size: ProfileImageSize) -> Bool {
-        return dataToConsume[size] != nil
+        dataToConsume[size] != nil
     }
 
     var uploadDoneForSize: ProfileImageSize?

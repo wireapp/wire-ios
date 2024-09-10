@@ -130,7 +130,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     }
 
     public static var defaultConfiguration: SessionManagerConfiguration {
-        return SessionManagerConfiguration()
+        SessionManagerConfiguration()
     }
 
     public static func load(from URL: URL) -> SessionManagerConfiguration? {

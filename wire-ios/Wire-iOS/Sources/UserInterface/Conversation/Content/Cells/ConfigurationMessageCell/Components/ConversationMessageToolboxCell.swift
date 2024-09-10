@@ -26,7 +26,7 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
         let deliveryState: ZMDeliveryState
 
         static func == (lhs: ConversationMessageToolboxCell.Configuration, rhs: ConversationMessageToolboxCell.Configuration) -> Bool {
-            return lhs.deliveryState == rhs.deliveryState &&
+            lhs.deliveryState == rhs.deliveryState &&
                 lhs.message == rhs.message
         }
     }

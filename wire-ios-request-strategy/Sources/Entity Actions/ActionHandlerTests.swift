@@ -27,7 +27,7 @@ private class MockAction: EntityAction, Equatable {
     typealias Failure = Error
 
     static func == (lhs: MockAction, rhs: MockAction) -> Bool {
-        return lhs.uuid == rhs.uuid
+        lhs.uuid == rhs.uuid
     }
 }
 
@@ -140,7 +140,7 @@ class ActionHandlerTests: MessagingTestBase {
     }
 
     private func response(httpStatus: Int, apiVersion: APIVersion) -> ZMTransportResponse {
-        return ZMTransportResponse(
+        ZMTransportResponse(
             payload: nil,
             httpStatus: httpStatus,
             transportSessionError: nil,

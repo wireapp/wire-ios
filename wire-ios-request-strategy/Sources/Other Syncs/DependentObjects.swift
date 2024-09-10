@@ -40,7 +40,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 
     /// Return any one dependency for the given dependent
     public func anyDependency(for dependent: Object) -> Dependency? {
-        return self.dependentsToDependencies[dependent]?.first
+        self.dependentsToDependencies[dependent]?.first
     }
 
     /// Removes from dependencies those objects for which the `block` returns true
@@ -54,11 +54,11 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     }
 
     public func dependencies(for dependent: Object) -> Set<Dependency> {
-        return self.dependentsToDependencies[dependent] ?? Set()
+        self.dependentsToDependencies[dependent] ?? Set()
     }
 
     public func dependents(on dependency: Dependency) -> Set<Object> {
-        return self.dependenciesToDependents[dependency as Dependency] ?? Set()
+        self.dependenciesToDependents[dependency as Dependency] ?? Set()
     }
 
     public func remove(dependency: Dependency, for dependent: Object) {
@@ -119,7 +119,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 
     @objc(anyDependencyForObject:)
     public func anyDependency(for object: ZMManagedObject) -> ZMManagedObject? {
-        return dependentObjects.anyDependency(for: object)
+        dependentObjects.anyDependency(for: object)
     }
 
     @objc(enumerateAndRemoveObjectsForDependency:usingBlock:)

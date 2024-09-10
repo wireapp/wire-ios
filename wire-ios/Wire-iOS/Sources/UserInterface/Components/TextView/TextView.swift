@@ -86,7 +86,7 @@ class TextView: UITextView {
 
     override var accessibilityValue: String? {
         get {
-            return text.isEmpty ? placeholderLabel.accessibilityValue : super.accessibilityValue
+            text.isEmpty ? placeholderLabel.accessibilityValue : super.accessibilityValue
         }
 
         set {
@@ -181,7 +181,7 @@ class TextView: UITextView {
     // MARK: Language
 
     override var textInputMode: UITextInputMode? {
-        return overriddenTextInputMode
+        overriddenTextInputMode
     }
 
     /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center vertically)

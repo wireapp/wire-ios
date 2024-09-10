@@ -105,7 +105,7 @@ final class Job: NSObject, Loggable {
     }
 
     private var isUserAuthenticated: Bool {
-        return networkSession.isAuthenticated
+        networkSession.isAuthenticated
     }
 
     private func fetchAccessToken() async throws -> AccessToken {

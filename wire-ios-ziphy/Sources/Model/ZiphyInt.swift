@@ -28,7 +28,7 @@ public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
     public let rawValue: Int
 
     public var description: String {
-        return rawValue.description
+        rawValue.description
     }
 
     public init(rawValue: Int) {

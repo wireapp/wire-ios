@@ -44,20 +44,20 @@ extension XCTestCase {
     static var deviceScreenSizes: [String: CGSize] = phoneScreenSizes.merging(tabletScreenSizes) { $1 }
 
     func phoneWidths() -> Set<CGFloat> {
-        return Set(XCTestCase.phoneScreenSizes.map({ size in
-            return size.value.width
+        Set(XCTestCase.phoneScreenSizes.map({ size in
+            size.value.width
         }))
     }
 
     var smallestWidth: CGFloat {
-        return XCTestCase.phoneScreenSizes.map({ size in
-            return size.value.width
+        XCTestCase.phoneScreenSizes.map({ size in
+            size.value.width
         }).sorted().first!
     }
 
     func tabletWidths() -> Set<CGFloat> {
-        return Set(XCTestCase.tabletScreenSizes.map({ size in
-            return size.value.width
+        Set(XCTestCase.tabletScreenSizes.map({ size in
+            size.value.width
         }))
     }
 
@@ -65,6 +65,6 @@ extension XCTestCase {
     // TODO: [AGIS] - Check if that's still the case when we drop iOS 13 and 14
     /// return the smallest iPhone screen size that Wire app supports
     var defaultIPhoneSize: CGSize {
-        return XCTestCase.DeviceSizeIPhone5
+        XCTestCase.DeviceSizeIPhone5
     }
 }

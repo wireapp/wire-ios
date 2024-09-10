@@ -31,7 +31,7 @@ final class DotView: UIView {
 
     var showIndicator: Bool {
         get {
-            return !isHidden
+            !isHidden
         }
 
         set {
@@ -45,13 +45,13 @@ final class DotView: UIView {
         isHidden = true
 
         circleView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
+            UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
         }
         circleView.hostedLayer.lineWidth = 0
         circleView.hostedLayer.fillColor = UIColor.white.cgColor
 
         centerView.pathGenerator = {
-            return UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
+            UIBezierPath(ovalIn: CGRect(origin: .zero, size: $0))
         }
         centerView.hostedLayer.fillColor = UIColor.accent().cgColor
 

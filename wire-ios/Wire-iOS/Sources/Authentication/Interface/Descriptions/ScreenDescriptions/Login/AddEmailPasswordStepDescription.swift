@@ -111,6 +111,6 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
     }
 
     func display(on error: Error) -> ViewDescriptor? {
-        return nil
+        nil
     }
 }

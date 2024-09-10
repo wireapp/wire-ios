@@ -61,9 +61,9 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     private var messageLabelText: String {
         if isAppLockActive {
-            return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel.forcedApplock
+            L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel.forcedApplock
         } else {
-            return L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
+            L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
         }
     }
 

@@ -47,14 +47,14 @@ extension MockRole {
     }
 
     var payloadValues: [String: Any?] {
-        return [
+        [
             "conversation_role": name,
             "actions": actions.map(\.payload)
         ]
     }
 
     var payload: ZMTransportData {
-        return payloadValues as NSDictionary
+        payloadValues as NSDictionary
     }
 }
 

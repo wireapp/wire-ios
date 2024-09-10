@@ -27,7 +27,7 @@ import Foundation
 
     @objc(eventWithPayload:uuid:isTransient:isSilent:)
     public static func event(with payload: ZMTransportData, uuid: UUID, isTransient: Bool, isSilent: Bool) -> MockPushEvent {
-        return MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
+        MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
     }
 
     public init(with payload: ZMTransportData, uuid: UUID, isTransient: Bool = false, isSilent: Bool = false) {
@@ -38,7 +38,7 @@ import Foundation
     }
 
     public var transportData: ZMTransportData {
-        return [
+        [
             "id": uuid.transportString(),
             "payload": [ payload ],
             "transient": isTransient
@@ -46,10 +46,10 @@ import Foundation
     }
 
     override public var description: String {
-        return payload.description
+        payload.description
     }
 
     override public var debugDescription: String {
-        return "<\(type(of: self))> [\(uuid.transportString())] payload = \(payload)"
+        "<\(type(of: self))> [\(uuid.transportString())] payload = \(payload)"
     }
 }

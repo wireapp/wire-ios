@@ -59,5 +59,5 @@ struct EventWithAttributes: Equatable {
 }
 
 func == (lhs: EventWithAttributes, rhs: EventWithAttributes) -> Bool {
-    return lhs.event == rhs.event && lhs.attributes == rhs.attributes
+    lhs.event == rhs.event && lhs.attributes == rhs.attributes
 }

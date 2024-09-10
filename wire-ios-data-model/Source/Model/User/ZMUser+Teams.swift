@@ -18,15 +18,15 @@
 
 extension ZMUser {
     @objc public var team: Team? {
-        return membership?.team
+        membership?.team
     }
 
     @objc public static func keyPathsForValuesAffectingTeam() -> Set<String> {
-        return [#keyPath(ZMUser.membership)]
+        [#keyPath(ZMUser.membership)]
     }
 
     @objc public var isWirelessUser: Bool {
-        return self.expiresAt != nil
+        self.expiresAt != nil
     }
 
     @objc public var isExpired: Bool {

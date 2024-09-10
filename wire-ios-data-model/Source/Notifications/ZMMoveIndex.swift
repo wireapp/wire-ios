@@ -33,6 +33,6 @@
 
     /// - seealso: https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function
     override public var hash: Int {
-        return Int(((from + to) * (from + to + 1) / 2) + to)
+        Int(((from + to) * (from + to + 1) / 2) + to)
     }
 }

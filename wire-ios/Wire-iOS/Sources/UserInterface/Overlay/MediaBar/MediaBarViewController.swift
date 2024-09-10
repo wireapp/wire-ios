@@ -24,7 +24,7 @@ final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?
 
     private var mediaBarView: MediaBar? {
-        return view as? MediaBar
+        view as? MediaBar
     }
 
     required init(mediaPlaybackManager: MediaPlaybackManager?) {

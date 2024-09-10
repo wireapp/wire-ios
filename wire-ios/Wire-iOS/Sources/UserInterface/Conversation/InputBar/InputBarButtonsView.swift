@@ -30,7 +30,7 @@ private enum InputBarRowConstants {
     static let iconSize = StyleKitIcon.Size.tiny.rawValue
 
     static func minimumButtonWidth(forWidth width: CGFloat) -> CGFloat {
-        return width <= CGFloat.iPhone4Inch.width ? InputBarRowConstants.minimumButtonWidthIPhone5 : InputBarRowConstants.minimumButtonWidth
+        width <= CGFloat.iPhone4Inch.width ? InputBarRowConstants.minimumButtonWidthIPhone5 : InputBarRowConstants.minimumButtonWidth
     }
 }
 
@@ -188,7 +188,7 @@ final class InputBarButtonsView: UIView {
     // MARK: - Button Layout
 
     private var buttonMargin: CGFloat {
-        return conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
+        conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     private func layoutAndConstrainButtonRows() {

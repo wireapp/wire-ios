@@ -40,7 +40,7 @@ final class ZiphyPaginationController {
 
     /// Fetches a new page from the current offset.
     func fetchNewPage() -> CancelableTask? {
-        return self.fetchNewPage(self.offset)
+        self.fetchNewPage(self.offset)
     }
 
     // MARK: - Updating the Data

@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
     var botCanBeAdded: Bool {
-        return conversationType != .oneOnOne &&
+        conversationType != .oneOnOne &&
             teamType != nil &&
             allowServices
     }
@@ -56,7 +56,7 @@ final class ServiceDetailViewController: UIViewController {
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     let completion: Completion?

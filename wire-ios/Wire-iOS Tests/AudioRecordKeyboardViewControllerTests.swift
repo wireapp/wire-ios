@@ -81,15 +81,15 @@ final class MockAudioRecorder: AudioRecorderType {
     }
 
     func levelForCurrentState() -> RecordingLevel {
-        return 0
+        0
     }
 
     func durationForCurrentState() -> TimeInterval? {
-        return 0
+        0
     }
 
     func alertForRecording(error: RecordingError) -> UIAlertController? {
-        return nil
+        nil
     }
 }
 

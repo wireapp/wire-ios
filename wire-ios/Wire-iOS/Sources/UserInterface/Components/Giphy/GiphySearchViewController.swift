@@ -195,7 +195,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     // MARK: - Collection View
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.ziphs.count
+        self.ziphs.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

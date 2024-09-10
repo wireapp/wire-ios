@@ -78,7 +78,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
     }
 
     private func handleRegistrationCompletion(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
-        return [.showLoadingView, .completeUserRegistration]
+        [.showLoadingView, .completeUserRegistration]
     }
 
     private func makeNewUnregisteredUser(from oldUser: UnregisteredUser) -> UnregisteredUser {

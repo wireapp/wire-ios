@@ -65,11 +65,11 @@ final class ConversationTextMessageCell: UIView,
     }
 
     var selectionView: UIView? {
-        return messageTextView
+        messageTextView
     }
 
     var selectionRect: CGRect {
-        return messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
+        messageTextView.layoutManager.usedRect(for: messageTextView.textContainer)
     }
 
     override init(frame: CGRect) {

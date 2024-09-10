@@ -55,17 +55,17 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     /// Whether we are in the registration flow.
     var isRegistering: Bool {
         if case .registration? = flowType {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
     var isReauthenticating: Bool {
         if case .reauthentication? = flowType {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
@@ -78,7 +78,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     var backendEnvironmentProvider: (() -> BackendEnvironmentProvider)!
 
     var backendEnvironment: BackendEnvironmentProvider {
-        return backendEnvironmentProvider()
+        backendEnvironmentProvider()
     }
 
     var isProxyCredentialsRequired: Bool {
@@ -330,7 +330,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     @objc
@@ -386,7 +386,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     // MARK: - Events
 
     override func accessibilityPerformMagicTap() -> Bool {
-        return (contextualFirstResponder as? MagicTappable)?.performMagicTap() == true
+        (contextualFirstResponder as? MagicTappable)?.performMagicTap() == true
     }
 
     @objc private func emailConfirmButtonTapped(sender: IconButton) {

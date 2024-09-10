@@ -20,11 +20,11 @@ import Foundation
 
 enum API {
     static func fetchAccessToken() -> AccessTokenEndpoint {
-        return AccessTokenEndpoint()
+        AccessTokenEndpoint()
     }
 
     static func fetchNotification(eventID: UUID) -> NotificationByIDEndpoint {
-        return NotificationByIDEndpoint(eventID: eventID)
+        NotificationByIDEndpoint(eventID: eventID)
     }
 }
 

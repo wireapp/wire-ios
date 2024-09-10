@@ -35,19 +35,19 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .emptyParameters:
-                return "Empty parameter(s)."
+                "Empty parameter(s)."
             case .endpointUnavailable:
-                return "Endpoint unavailable."
+                "Endpoint unavailable."
             case .mlsProtocolError:
-                return "MLS protocol error."
+                "MLS protocol error."
             case .invalidBody:
-                return "Invalid body."
+                "Invalid body."
             case .identityMismatch:
-                return "Prekey credential does not match qualified client ID."
+                "Prekey credential does not match qualified client ID."
             case .clientNotFound:
-                return "Client not found."
+                "Client not found."
             case let .unknown(status):
-                return "Unknown error (response status: \(status))"
+                "Unknown error (response status: \(status))"
             }
         }
     }

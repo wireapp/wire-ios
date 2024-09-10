@@ -90,11 +90,11 @@ final class StartUIViewController: UIViewController {
     }
 
     var searchHeader: SearchHeaderViewController {
-        return self.searchHeaderViewController
+        self.searchHeaderViewController
     }
 
     var searchResults: SearchResultsViewController {
-        return self.searchResultsViewController
+        self.searchResultsViewController
     }
 
     // MARK: - Life cycle methods
@@ -205,7 +205,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var showsGroupSelector: Bool {
-        return SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
+        SearchGroup.all.count > 1 && userSession.selfUser.canSeeServices
     }
 
     func showKeyboardIfNeeded() {

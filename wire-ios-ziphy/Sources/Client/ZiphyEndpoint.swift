@@ -31,17 +31,17 @@ enum ZiphyEndpoint: String {
     var resourcePath: String {
         switch self {
         case .gifs:
-            return gifsEndpoint
+            gifsEndpoint
         default:
-            return gifsEndpoint + "/" + rawValue
+            gifsEndpoint + "/" + rawValue
         }
     }
 
     private var gifsEndpoint: String {
-        return "/gifs"
+        "/gifs"
     }
 
     static var version: String {
-        return "v1"
+        "v1"
     }
 }

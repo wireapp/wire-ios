@@ -86,7 +86,7 @@ final class SavableImage: NSObject {
     // SavableImage instances get created when image cells etc are being created and
     // we don't want to write data to disk when we didn't start a save operation, yet.
     private func createSource() -> Source {
-        return isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
+        isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
     }
 
     func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {

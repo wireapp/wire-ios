@@ -32,7 +32,7 @@ final class ContactsDataSource: NSObject {
 
     private(set) var searchDirectory: SearchDirectory?
     private var sections = [[UserType]]()
-    private var collation: UILocalizedIndexedCollation { return .current() }
+    private var collation: UILocalizedIndexedCollation { .current() }
 
     // MARK: - Life Cycle
 
@@ -61,7 +61,7 @@ final class ContactsDataSource: NSObject {
     }
 
     var shouldShowSectionIndex: Bool {
-        return ungroupedSearchResults.count >= type(of: self).MinimumNumberOfContactsToDisplaySections
+        ungroupedSearchResults.count >= type(of: self).MinimumNumberOfContactsToDisplaySections
     }
 
     // MARK: - Methods
@@ -82,11 +82,11 @@ final class ContactsDataSource: NSObject {
     }
 
     func user(at indexPath: IndexPath) -> UserType {
-        return section(at: indexPath.section)[indexPath.row]
+        section(at: indexPath.section)[indexPath.row]
     }
 
     private func section(at index: Int) -> [UserType] {
-        return sections[index]
+        sections[index]
     }
 
     private func recalculateSections() {
@@ -116,15 +116,15 @@ final class ContactsDataSource: NSObject {
 
 extension ContactsDataSource: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count
+        sections.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.section(at: section).count
+        self.section(at: section).count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return delegate?.dataSource(self, cellFor: user(at: indexPath), at: indexPath) ?? UITableViewCell()
+        delegate?.dataSource(self, cellFor: user(at: indexPath), at: indexPath) ?? UITableViewCell()
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -133,20 +133,20 @@ extension ContactsDataSource: UITableViewDataSource {
     }
 
     func sectionIndexTitles(for tableView: UITableView) -> [String]? {
-        return collation.sectionIndexTitles
+        collation.sectionIndexTitles
     }
 
     func tableView(_ tableView: UITableView, sectionForSectionIndexTitle title: String, at index: Int) -> Int {
-        return collation.section(forSectionIndexTitle: index)
+        collation.section(forSectionIndexTitle: index)
     }
 }
 
 extension ContactsDataSource: UITableViewDelegate {
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 }

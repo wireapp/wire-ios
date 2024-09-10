@@ -25,7 +25,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         let showImage: Bool
         let message: ZMConversationMessage
         var isObfuscated: Bool {
-            return message.isObfuscated
+            message.isObfuscated
         }
     }
 
@@ -37,7 +37,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
     var isSelected: Bool = false
 
     var selectionView: UIView? {
-        return articleView
+        articleView
     }
 
     var configuration: Configuration?
@@ -87,7 +87,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
 extension ConversationLinkPreviewArticleCell: LinkViewDelegate {
     var url: URL? {
-        return configuration?.textMessageData.linkPreview?.openableURL
+        configuration?.textMessageData.linkPreview?.openableURL
     }
 }
 
@@ -107,7 +107,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     let containsHighlightableContent: Bool = true
 
     var accessibilityIdentifier: String? {
-        return configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
+        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
     }
 
     let accessibilityLabel: String?

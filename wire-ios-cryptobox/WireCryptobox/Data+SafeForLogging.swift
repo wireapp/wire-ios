@@ -20,7 +20,7 @@ import WireUtilities
 
 extension Data: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return "<\(self.readableHash)>"
+        "<\(self.readableHash)>"
     }
 }
 
@@ -30,6 +30,6 @@ struct HexDumpUnsafeLoggingData: SafeForLoggingStringConvertible {
     let data: Data
 
     public var safeForLoggingDescription: String {
-        return data.zmHexEncodedString()
+        data.zmHexEncodedString()
     }
 }

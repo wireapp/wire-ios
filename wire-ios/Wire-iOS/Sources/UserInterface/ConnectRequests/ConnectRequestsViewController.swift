@@ -78,7 +78,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override func viewDidLayoutSubviews() {
@@ -108,7 +108,7 @@ final class ConnectRequestsViewController: UIViewController,
     // MARK: - UITableViewDataSource
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return connectionRequests.count
+        connectionRequests.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

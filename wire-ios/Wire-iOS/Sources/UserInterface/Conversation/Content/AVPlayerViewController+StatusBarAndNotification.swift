@@ -25,7 +25,7 @@ extension Notification.Name {
 
 extension AVPlayerViewController {
     override open var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override open func viewDidDisappear(_ animated: Bool) {

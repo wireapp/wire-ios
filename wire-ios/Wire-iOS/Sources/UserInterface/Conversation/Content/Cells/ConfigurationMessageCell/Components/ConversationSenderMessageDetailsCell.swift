@@ -340,20 +340,20 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 extension UserType {
     fileprivate func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
         if self.isServiceUser {
-            return .service
+            .service
 
         } else if self.isExternalPartner {
-            return .externalPartner
+            .externalPartner
 
         } else if self.isFederated {
-            return .federated
+            .federated
 
         } else if !self.isTeamMember,
                   let selfUser = provider?.providedSelfUser,
                   selfUser.isTeamMember {
-            return .guest
+            .guest
         } else {
-            return nil
+            nil
         }
     }
 }

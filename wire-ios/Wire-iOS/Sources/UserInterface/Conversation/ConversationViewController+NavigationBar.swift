@@ -29,7 +29,7 @@ extension ConversationViewController {
     typealias CallActions = L10n.Localizable.Call.Actions
 
     func addCallStateObserver() -> Any? {
-        return conversation.voiceChannel?.addCallStateObserver(self)
+        conversation.voiceChannel?.addCallStateObserver(self)
     }
 
     var audioCallButton: UIButton {
@@ -271,30 +271,30 @@ extension ConversationViewController: WireCallCenterCallStateObserver {
 extension ZMConversation {
     /// Whether there is an incoming or inactive incoming call that can be joined.
     var canJoinCall: Bool {
-        return voiceChannel?.state.canJoinCall ?? false
+        voiceChannel?.state.canJoinCall ?? false
     }
 
     var canStartVideoCall: Bool {
-        return !isCallOngoing
+        !isCallOngoing
     }
 
     var isCallOngoing: Bool {
-        return voiceChannel?.state.isCallOngoing ?? true
+        voiceChannel?.state.isCallOngoing ?? true
     }
 }
 
 extension CallState {
     var canJoinCall: Bool {
         switch self {
-        case .incoming: return true
-        default: return false
+        case .incoming: true
+        default: false
         }
     }
 
     var isCallOngoing: Bool {
         switch self {
-        case .none, .incoming: return false
-        default: return true
+        case .none, .incoming: false
+        default: true
         }
     }
 }

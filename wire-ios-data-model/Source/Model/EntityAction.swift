@@ -45,11 +45,11 @@ extension EntityAction {
     public typealias ResultHandler = (Swift.Result<Result, Failure>) -> Void
 
     public static var notificationName: Notification.Name {
-        return Notification.Name(String(describing: Self.Type.self))
+        Notification.Name(String(describing: Self.Type.self))
     }
 
     public static var userInfoKey: String {
-        return "action"
+        "action"
     }
 
     /// Request the action to be performed

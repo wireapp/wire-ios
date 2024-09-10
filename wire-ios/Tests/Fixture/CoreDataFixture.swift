@@ -54,7 +54,7 @@ final class CoreDataFixture {
 
     /// If YES the uiMOC will have image and file caches. Defaults to NO.
     var needsCaches: Bool {
-        return false
+        false
     }
 
     var documentsDirectory: URL?
@@ -245,29 +245,29 @@ protocol CoreDataFixtureTestHelper {
 
 extension CoreDataFixtureTestHelper {
     var otherUser: ZMUser! {
-        return coreDataFixture.otherUser
+        coreDataFixture.otherUser
     }
 
     var selfUser: ZMUser! {
-        return coreDataFixture.selfUser
+        coreDataFixture.selfUser
     }
 
     var otherUserConversation: ZMConversation! {
-        return coreDataFixture.otherUserConversation
+        coreDataFixture.otherUserConversation
     }
 
     func createGroupConversation() -> ZMConversation {
-        return ZMConversation.createGroupConversation(moc: coreDataFixture.uiMOC,
-                                                      otherUser: otherUser,
-                                                      selfUser: selfUser)
+        ZMConversation.createGroupConversation(moc: coreDataFixture.uiMOC,
+                                               otherUser: otherUser,
+                                               selfUser: selfUser)
     }
 
     func createTeamGroupConversation() -> ZMConversation {
-        return ZMConversation.createTeamGroupConversation(moc: coreDataFixture.uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createTeamGroupConversation(moc: coreDataFixture.uiMOC, otherUser: otherUser, selfUser: selfUser)
     }
 
     func createUser(name: String) -> ZMUser {
-        return coreDataFixture.createUser(name: name)
+        coreDataFixture.createUser(name: name)
     }
 
     func teamTest(_ block: () -> Void) {
@@ -279,23 +279,23 @@ extension CoreDataFixtureTestHelper {
     }
 
     var uiMOC: NSManagedObjectContext! {
-        return coreDataFixture.uiMOC
+        coreDataFixture.uiMOC
     }
 
     var usernames: [String] {
-        return coreDataFixture.usernames
+        coreDataFixture.usernames
     }
 
     var team: Team? {
-        return coreDataFixture.team
+        coreDataFixture.team
     }
 
     func mockUserClient() -> UserClient! {
-        return coreDataFixture.mockUserClient()
+        coreDataFixture.mockUserClient()
     }
 
     func createGroupConversationOnlyAdmin() -> ZMConversation {
-        return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
+        ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 }
 

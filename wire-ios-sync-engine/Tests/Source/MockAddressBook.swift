@@ -23,7 +23,7 @@ import Foundation
 class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAccessor {
     /// Find contact by Id
     func contact(identifier: String) -> WireSyncEngine.ContactRecord? {
-        return contacts.first { $0.localIdentifier == identifier }
+        contacts.first { $0.localIdentifier == identifier }
     }
 
     /// List of contacts in this address book
@@ -34,7 +34,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
     var numberOfAdditionalContacts: UInt = 0
 
     var numberOfContacts: UInt {
-        return UInt(self.contacts.count) + numberOfAdditionalContacts
+        UInt(self.contacts.count) + numberOfAdditionalContacts
     }
 
     /// Enumerates the contacts, invoking the block for each contact.
@@ -69,7 +69,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 
     /// Create a fake contact
     func createContact(card: UInt) -> MockAddressBookContact {
-        return MockAddressBookContact(firstName: "tester \(card)", emailAddresses: ["tester_\(card)@example.com"], phoneNumbers: ["+155512300\(card % 10)"], identifier: "\(card)")
+        MockAddressBookContact(firstName: "tester \(card)", emailAddresses: ["tester_\(card)@example.com"], phoneNumbers: ["+155512300\(card % 10)"], identifier: "\(card)")
     }
 
     /// Generate an infinite number of contacts
@@ -99,6 +99,6 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
     }
 
     var expectedHashes: [String] {
-        return self.rawEmails.map(\.base64EncodedSHADigest) + self.rawPhoneNumbers.map(\.base64EncodedSHADigest)
+        self.rawEmails.map(\.base64EncodedSHADigest) + self.rawPhoneNumbers.map(\.base64EncodedSHADigest)
     }
 }

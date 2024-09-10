@@ -27,8 +27,8 @@ public struct PushToken: Equatable {
 
         public var transportType: String {
             switch self {
-            case .standard: return "APNS"
-            case .voip: return "APNS_VOIP"
+            case .standard: "APNS"
+            case .voip: "APNS_VOIP"
             }
         }
     }
@@ -57,7 +57,7 @@ public struct PushToken: Equatable {
     // MARK: - Methods
 
     public var deviceTokenString: String {
-        return deviceToken.zmHexEncodedString()
+        deviceToken.zmHexEncodedString()
     }
 }
 

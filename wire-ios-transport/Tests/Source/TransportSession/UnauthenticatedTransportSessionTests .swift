@@ -50,9 +50,9 @@ private final class MockReachability: NSObject, ReachabilityProvider, TearDownCa
     let oldIsMobileConnection = true
 
     func tearDown() {}
-    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { return NSObject() }
+    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { NSObject() }
     func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        return NSObject()
+        NSObject()
     }
 }
 
@@ -61,7 +61,7 @@ final class MockCertificateTrust: NSObject, BackendTrustProvider {
     var isTrustingServer: Bool = true
 
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return isTrustingServer
+        isTrustingServer
     }
 }
 

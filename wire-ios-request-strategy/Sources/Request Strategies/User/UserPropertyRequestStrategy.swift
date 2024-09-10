@@ -29,19 +29,19 @@ extension UserProperty {
     var propertyName: String {
         switch self {
         case .readReceiptsEnabled:
-            return "readReceiptsEnabled"
+            "readReceiptsEnabled"
         }
     }
 
     var serverName: String {
         switch self {
         case .readReceiptsEnabled:
-            return "WIRE_RECEIPT_MODE"
+            "WIRE_RECEIPT_MODE"
         }
     }
 
     init?(serverName: String) {
-        let matchingProperty = UserProperty.allCases.first { return $0.serverName == serverName }
+        let matchingProperty = UserProperty.allCases.first { $0.serverName == serverName }
         guard let property = matchingProperty else {
             return nil
         }
@@ -49,7 +49,7 @@ extension UserProperty {
     }
 
     init?(propertyName: String) {
-        let matchingProperty = UserProperty.allCases.first { return $0.propertyName == propertyName }
+        let matchingProperty = UserProperty.allCases.first { $0.propertyName == propertyName }
         guard let property = matchingProperty else {
             return nil
         }
@@ -117,7 +117,7 @@ extension UserProperty {
     func transportValue(for selfUser: ZMUser) -> ZMTransportData {
         switch self {
         case .readReceiptsEnabled:
-            return (selfUser.readReceiptsEnabled ? "1" : "0") as ZMTransportData
+            (selfUser.readReceiptsEnabled ? "1" : "0") as ZMTransportData
         }
     }
 }
@@ -181,29 +181,29 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
-        return nil
+        nil
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject,
                                     requestUserInfo: [AnyHashable: Any]? = nil,
                                     response: ZMTransportResponse,
                                     keysToParse: Set<String>) -> Bool {
-        return false
+        false
     }
 
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,
                                              request upstreamRequest: ZMUpstreamRequest,
                                              response: ZMTransportResponse,
                                              keysToParse keys: Set<String>) -> Bool {
-        return false
+        false
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        false
     }
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
-        return nil // we will never insert objects
+        nil // we will never insert objects
     }
 
     public func updateInsertedObject(_ managedObject: ZMManagedObject,
@@ -213,13 +213,13 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
+        nil
     }
 }
 
 extension UserPropertyRequestStrategy: ZMContextChangeTrackerSource {
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [modifiedSync]
+        [modifiedSync]
     }
 }
 

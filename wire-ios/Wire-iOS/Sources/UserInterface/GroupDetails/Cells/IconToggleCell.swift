@@ -23,7 +23,7 @@ class IconToggleCell: DetailsCollectionViewCell {
 
     var isOn: Bool {
         get {
-            return toggle.isOn
+            toggle.isOn
         }
 
         set {
@@ -38,7 +38,7 @@ class IconToggleCell: DetailsCollectionViewCell {
 
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {
@@ -48,7 +48,7 @@ class IconToggleCell: DetailsCollectionViewCell {
 
     override var accessibilityValue: String? {
         get {
-            return toggle.accessibilityValue
+            toggle.accessibilityValue
         }
 
         set {
@@ -58,7 +58,7 @@ class IconToggleCell: DetailsCollectionViewCell {
 
     override var accessibilityTraits: UIAccessibilityTraits {
         get {
-            return toggle.accessibilityTraits
+            toggle.accessibilityTraits
         }
         set {
             super.accessibilityTraits = newValue

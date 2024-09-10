@@ -43,7 +43,7 @@ final class GuestsBarController: UIViewController {
 
     var state: State {
         get {
-            return _state
+            _state
         }
         set {
             setState(newValue, animated: false)
@@ -145,6 +145,6 @@ final class GuestsBarController: UIViewController {
 
 extension GuestsBarController: Bar {
     var weight: Float {
-        return 1
+        1
     }
 }

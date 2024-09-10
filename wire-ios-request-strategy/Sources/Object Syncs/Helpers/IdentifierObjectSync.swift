@@ -46,7 +46,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     weak var delegate: IdentifierObjectSyncDelegate?
 
     var isSyncing: Bool {
-        return !pending.isEmpty || !downloading.isEmpty
+        !pending.isEmpty || !downloading.isEmpty
     }
 
     /// - parameter managedObjectContext: Managed object context on which the sync will operate

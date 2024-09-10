@@ -63,7 +63,7 @@ import Foundation
     @NSManaged public var participantRoles: Set<MockParticipantRole>
 
     public var userClients: Set<MockUserClient> {
-        return clients as! Set<MockUserClient>
+        clients as! Set<MockUserClient>
     }
 
     override public func awakeFromInsert() {
@@ -107,11 +107,11 @@ extension MockUser {
 extension MockUser {
     public var legalHoldState: LegalHoldState {
         if userClients.any(\.isLegalHoldDevice) {
-            return .enabled
+            .enabled
         } else if let pendingDevice = pendingLegalHoldClient {
-            return .pending(pendingDevice)
+            .pending(pendingDevice)
         } else {
-            return .disabled
+            .disabled
         }
     }
 }
@@ -141,7 +141,7 @@ extension MockUser {
 
     // Nil if user is not part of a team
     public var currentTeamMembers: [MockUser]? {
-        return self.memberships?.first?.team.members.compactMap(\.user)
+        self.memberships?.first?.team.members.compactMap(\.user)
     }
 }
 
@@ -149,19 +149,19 @@ extension MockUser {
 
 extension MockUser {
     @objc public var mediumImageIdentifier: String? {
-        return mediumImage?.identifier
+        mediumImage?.identifier
     }
 
     @objc public var smallProfileImageIdentifier: String? {
-        return smallProfileImage?.identifier
+        smallProfileImage?.identifier
     }
 
     @objc public var smallProfileImage: MockPicture? {
-        return picture(withTag: "smallProfile")
+        picture(withTag: "smallProfile")
     }
 
     @objc public var mediumImage: MockPicture? {
-        return picture(withTag: "medium")
+        picture(withTag: "medium")
     }
 
     private func picture(withTag tag: String) -> MockPicture? {
@@ -182,7 +182,7 @@ extension MockUser {
 
 extension MockUser {
     @objc public var selfUserTransportData: ZMTransportData {
-        return selfUserData as ZMTransportData
+        selfUserData as ZMTransportData
     }
 
     var selfUserData: [String: Any?] {
@@ -197,7 +197,7 @@ extension MockUser {
     }
 
     @objc public var transportData: ZMTransportData {
-        return data as ZMTransportData
+        data as ZMTransportData
     }
 
     var data: [String: Any?] {
@@ -299,6 +299,6 @@ extension MockUser {
 
 extension MockUser {
     @objc public func role(in conversation: MockConversation) -> MockRole? {
-        return participantRoles.first(where: { $0.conversation == conversation })?.role
+        participantRoles.first(where: { $0.conversation == conversation })?.role
     }
 }

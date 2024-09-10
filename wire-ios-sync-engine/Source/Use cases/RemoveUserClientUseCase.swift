@@ -42,7 +42,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     func invoke(clientId: String, password: String) async throws {
         let userClient = await syncContext.perform {
-            return UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
+            UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
         }
         guard let userClient else {
             throw RemoveUserClientError.clientDoesNotExistLocally
@@ -68,7 +68,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     private var selfUserClientsExcludingSelfClient: [UserClient] {
         get async {
-            return await syncContext.perform {
+            await syncContext.perform {
                 let selfUser = ZMUser.selfUser(in: self.syncContext)
                 let selfClient = selfUser.selfClient()
                 let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }

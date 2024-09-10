@@ -162,7 +162,7 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - Helpers
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     private func presentUnauthorizedAlert() {

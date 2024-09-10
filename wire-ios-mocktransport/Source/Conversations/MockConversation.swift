@@ -68,13 +68,13 @@ extension MockConversation {
     public static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String, [String]) {
         switch (team, conversationType) {
         case (.some, .group):
-            return (["invite"], "activated", ["team_member", "non_team_member", "guest"])
+            (["invite"], "activated", ["team_member", "non_team_member", "guest"])
         case (.some, _):
-            return (["private"], "private", [""])
+            (["private"], "private", [""])
         case (.none, .group):
-            return (["invite"], "activated", ["team_member", "non_team_member", "guest"])
+            (["invite"], "activated", ["team_member", "non_team_member", "guest"])
         case (.none, _):
-            return (["private"], "private", [""])
+            (["private"], "private", [""])
         }
     }
 
@@ -103,7 +103,7 @@ extension MockConversation {
 
 extension MockConversation: EntityNamedProtocol {
     public static var entityName: String {
-        return "Conversation"
+        "Conversation"
     }
 }
 

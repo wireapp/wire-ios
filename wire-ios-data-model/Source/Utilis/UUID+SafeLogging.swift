@@ -22,6 +22,6 @@ import WireUtilities
 
 extension UUID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return transportString().redactedAndTruncated()
+        transportString().redactedAndTruncated()
     }
 }

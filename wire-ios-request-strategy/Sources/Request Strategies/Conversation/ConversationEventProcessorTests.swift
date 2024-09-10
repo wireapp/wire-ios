@@ -63,7 +63,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     // MARK: - Helpers
 
     func updateEvent(from payload: some CodableEventData) -> ZMUpdateEvent {
-        return updateEvent(
+        updateEvent(
             from: payload,
             conversationID: groupConversation.qualifiedID,
             senderID: otherUser.qualifiedID,
@@ -806,7 +806,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
 extension Encodable {
     fileprivate func toTransportDictionary() throws -> ZMTransportData {
-        return try toDictionary() as ZMTransportData
+        try toDictionary() as ZMTransportData
     }
 
     private func toDictionary() throws -> [String: Any] {

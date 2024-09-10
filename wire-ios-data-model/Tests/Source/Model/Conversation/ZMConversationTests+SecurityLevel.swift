@@ -736,7 +736,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
 
         let message = try await syncMOC.perform {
-            return try XCTUnwrap(
+            try XCTUnwrap(
                 conversation.appendText(content: "foo") as? ZMOTRMessage
             )
         }
@@ -914,7 +914,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func setupUnverifiedUsers(count: Int) -> Set<ZMUser> {
-        return Set((0..<count).map { _ in
+        Set((0..<count).map { _ in
             let unverifiedUser = ZMUser.insertNewObject(in: self.uiMOC)
             let unverifiedUserConnection = ZMConnection.insertNewSentConnection(to: unverifiedUser)
             unverifiedUserConnection.status = .accepted

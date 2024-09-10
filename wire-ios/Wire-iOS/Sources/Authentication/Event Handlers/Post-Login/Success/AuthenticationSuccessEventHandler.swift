@@ -27,6 +27,6 @@ final class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventH
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
-        return [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
+        [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
     }
 }

@@ -58,9 +58,9 @@ enum AuthenticationCoordinatorAction {
     var retainsModal: Bool {
         switch self {
         case .openURL:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

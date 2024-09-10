@@ -20,11 +20,11 @@ import Foundation
 
 extension String {
     var containsURL: Bool {
-        return URLMatchesInString.count > 0
+        URLMatchesInString.count > 0
     }
 
     var URLsInString: [URL?] {
-        return URLMatchesInString.map(\.url)
+        URLMatchesInString.map(\.url)
     }
 
     private var URLMatchesInString: [NSTextCheckingResult] {

@@ -22,21 +22,21 @@ public typealias Byte = UInt8
 
 extension Data {
     public var bytes: [Byte] {
-        return [Byte](self)
+        [Byte](self)
     }
 
     public static func random(byteCount: UInt = 8) -> Data {
-        return Data([Byte].random(length: byteCount))
+        Data([Byte].random(length: byteCount))
     }
 }
 
 extension [Byte] {
     public var data: Data {
-        return Data(self)
+        Data(self)
     }
 
     public static func random(length: UInt = 8) -> [Byte] {
-        return (0..<length).map { _ in
+        (0..<length).map { _ in
             Byte.random()
         }
     }
@@ -44,6 +44,6 @@ extension [Byte] {
 
 extension Byte {
     public static func random() -> Byte {
-        return random(in: .min...(.max))
+        random(in: .min...(.max))
     }
 }

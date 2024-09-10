@@ -100,7 +100,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
 
         setMigrationReadiness(to: true)
         mockStorage.underlyingMigrationStatus = .started
-        mockMLSService.conversationExistsGroupID_MockMethod = { _ in return true }
+        mockMLSService.conversationExistsGroupID_MockMethod = { _ in true }
 
         var startedMigration = false
         mockMLSService.startProteusToMLSMigration_MockMethod = {
@@ -411,7 +411,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     private func createUserAndGroupConversation(
         groupID: MLSGroupID = .random()
     ) async -> (ZMUser, ZMConversation) {
-        return await syncMOC.perform {
+        await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.teamIdentifier = UUID()
 

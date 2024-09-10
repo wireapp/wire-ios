@@ -20,13 +20,13 @@ import Foundation
 
 extension Label: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
-        return [
+        [
             #keyPath(Label.name), #keyPath(Label.markedForDeletion), #keyPath(Label.conversations)
         ]
     }
 
     public var notificationName: Notification.Name {
-        return .LabelChange
+        .LabelChange
     }
 }
 
@@ -34,7 +34,7 @@ extension Label: ObjectInSnapshot {
     public let label: LabelType
 
     static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
-        return LabelChangeInfo(object: label, changes: changes)
+        LabelChangeInfo(object: label, changes: changes)
     }
 
     public required init(object: NSObject) {
@@ -43,15 +43,15 @@ extension Label: ObjectInSnapshot {
     }
 
     public var nameChanged: Bool {
-        return changedKeys.contains(#keyPath(Label.name))
+        changedKeys.contains(#keyPath(Label.name))
     }
 
     public var markedForDeletion: Bool {
-        return changedKeys.contains(#keyPath(Label.markedForDeletion))
+        changedKeys.contains(#keyPath(Label.markedForDeletion))
     }
 
     public var conversationsChanged: Bool {
-        return changedKeys.contains(#keyPath(Label.conversations))
+        changedKeys.contains(#keyPath(Label.conversations))
     }
 }
 
@@ -76,7 +76,7 @@ extension LabelChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:managedObjectContext:)
     public static func add(observer: LabelObserver, for label: LabelType?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .LabelChange, managedObjectContext: managedObjectContext, object: label) { [weak observer] note in
+        ManagedObjectObserverToken(name: .LabelChange, managedObjectContext: managedObjectContext, object: label) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? LabelChangeInfo
             else { return }

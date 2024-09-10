@@ -26,7 +26,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
     var mockMessageSender: MockMessageSenderInterface!
 
     override var useInMemoryStore: Bool {
-        return false
+        false
     }
 
     override func setUp() {

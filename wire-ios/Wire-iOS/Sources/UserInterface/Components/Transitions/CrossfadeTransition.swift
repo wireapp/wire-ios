@@ -27,7 +27,7 @@ final class CrossfadeTransition: NSObject, UIViewControllerAnimatedTransitioning
     }
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return duration
+        duration
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {

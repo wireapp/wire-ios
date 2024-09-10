@@ -21,25 +21,25 @@ import UIKit
 final class RotationAwareNavigationController: UINavigationController {
     override var shouldAutorotate: Bool {
         if let topController = self.viewControllers.last {
-            return topController.shouldAutorotate
+            topController.shouldAutorotate
         } else {
-            return super.shouldAutorotate
+            super.shouldAutorotate
         }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if let topController = self.viewControllers.last {
-            return topController.supportedInterfaceOrientations
+            topController.supportedInterfaceOrientations
         } else {
-            return super.supportedInterfaceOrientations
+            super.supportedInterfaceOrientations
         }
     }
 
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
         if let topController = self.viewControllers.last {
-            return topController.preferredInterfaceOrientationForPresentation
+            topController.preferredInterfaceOrientationForPresentation
         } else {
-            return super.preferredInterfaceOrientationForPresentation
+            super.preferredInterfaceOrientationForPresentation
         }
     }
 
@@ -58,10 +58,10 @@ final class RotationAwareNavigationController: UINavigationController {
     // MARK: - status bar
 
     override var childForStatusBarStyle: UIViewController? {
-        return topViewController
+        topViewController
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return topViewController
+        topViewController
     }
 }

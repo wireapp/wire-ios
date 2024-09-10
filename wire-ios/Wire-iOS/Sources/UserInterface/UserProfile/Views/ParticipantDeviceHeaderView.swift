@@ -96,7 +96,7 @@ final class ParticipantDeviceHeaderView: UIView {
     }
 
     var linkAttributes: [NSAttributedString.Key: Any] {
-        return [
+        [
             NSAttributedString.Key.font: font,
             NSAttributedString.Key.foregroundColor: linkAttributeColor,
             NSAttributedString.Key.link: WireURLs.shared.whyToVerifyFingerprintArticle,

@@ -46,25 +46,25 @@ enum PushNotificationCategory: String, CaseIterable {
     var actions: [NotificationAction] {
         switch self {
         case .incomingCall:
-            return [CallNotificationAction.ignore]
+            [CallNotificationAction.ignore]
         case .missedCall:
-            return [CallNotificationAction.callBack]
+            [CallNotificationAction.callBack]
         case .conversation:
-            return []
+            []
         case .conversationWithMute:
-            return [ConversationNotificationAction.mute]
+            [ConversationNotificationAction.mute]
         case .conversationWithLike:
-            return []
+            []
         case .conversationWithLikeAndMute:
-            return [ConversationNotificationAction.mute]
+            [ConversationNotificationAction.mute]
         case .connect:
-            return [ConversationNotificationAction.connect]
+            [ConversationNotificationAction.connect]
         case .alert:
-            return []
+            []
         case .conversationUnderEncryptionAtRest:
-            return []
+            []
         case .conversationUnderEncryptionAtRestWithMute:
-            return [ConversationNotificationAction.mute]
+            [ConversationNotificationAction.mute]
         }
     }
 

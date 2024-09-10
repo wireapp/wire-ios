@@ -58,7 +58,7 @@ extension MockUserClient {
 
     /// Create user entries for all received of a message
     private func userEntries(for clients: [MockUserClient], plainText: Data) -> [Proteus_UserEntry] {
-        return MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> Proteus_UserEntry in
+        MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> Proteus_UserEntry in
 
             let clientEntries = clients.map { client -> Proteus_ClientEntry in
                 let clientId = Proteus_ClientId.with {

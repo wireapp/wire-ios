@@ -154,7 +154,7 @@ extension ActionHandlerTestBase {
         expectedAcceptType: ZMTransportAccept? = nil,
         apiVersion: APIVersion = .v1
     ) throws -> ZMTransportRequest {
-        return try test_itGeneratesARequest(
+        try test_itGeneratesARequest(
             for: action,
             expectedPath: expectedPath,
             expectedPayload: DefaultEquatable?.none,
@@ -273,7 +273,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         let label: String?
 
         static func failure(status: Int, error: Action.Failure, label: String? = nil) -> Self {
-            return .init(status: status, error: error, label: label)
+            .init(status: status, error: error, label: label)
         }
     }
 }

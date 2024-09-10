@@ -31,15 +31,15 @@ public class RegisterPushTokenAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .appDoesNotExist:
-                return "Application identifier does not exist."
+                "Application identifier does not exist."
 
             case let .unknown(status):
-                return "Unknown error (response status: \(status))"
+                "Unknown error (response status: \(status))"
             }
         }
 
         public var safeForLoggingDescription: String {
-            return errorDescription ?? ""
+            errorDescription ?? ""
         }
     }
 

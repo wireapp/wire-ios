@@ -74,7 +74,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     override var obfuscationIcon: StyleKitIcon {
-        return .photo
+        .photo
     }
 
     override func updateForMessage(changeInfo: MessageChangeInfo?) {

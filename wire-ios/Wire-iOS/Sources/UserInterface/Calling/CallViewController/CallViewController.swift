@@ -55,17 +55,17 @@ final class CallViewController: UIViewController {
     let userSession: UserSession
 
     var conversation: ZMConversation? {
-        return voiceChannel.conversation
+        voiceChannel.conversation
     }
 
     private var proximityMonitorManager: ProximityMonitorManager?
 
     private var permissions: CallPermissionsConfiguration {
-        return callInfoConfiguration.permissions
+        callInfoConfiguration.permissions
     }
 
     private static var userEnabledCBR: Bool {
-        return Settings.shared[.callingConstantBitRate] == true
+        Settings.shared[.callingConstantBitRate] == true
     }
 
     weak var configurationObserver: CallInfoConfigurationObserver?
@@ -223,7 +223,7 @@ final class CallViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return !isOverlayVisible
+        !isOverlayVisible
     }
 
     @objc
@@ -572,11 +572,11 @@ extension CallViewController: CallGridViewControllerDelegate {
 
 extension CallViewController {
     var isOverlayVisible: Bool {
-        return callInfoRootViewController.view.alpha > 0
+        callInfoRootViewController.view.alpha > 0
     }
 
     private var shouldOverlayStayVisibleForAutomation: Bool {
-        return AutomationHelper.sharedHelper.keepCallingOverlayVisible
+        AutomationHelper.sharedHelper.keepCallingOverlayVisible
     }
 
     private var canHideOverlay: Bool {

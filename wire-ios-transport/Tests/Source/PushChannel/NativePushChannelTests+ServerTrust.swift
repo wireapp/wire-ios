@@ -23,7 +23,7 @@ class MockURLProtectionSpace: URLProtectionSpace {
     var mockServerTrust: SecTrust?
 
     override var serverTrust: SecTrust? {
-        return mockServerTrust
+        mockServerTrust
     }
 }
 

@@ -39,9 +39,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     var isRecording: Bool {
         switch self.recorder.state {
         case .recording:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -72,7 +72,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private let userSession: UserSession
 
     private var isAppLockActive: Bool {
-        return userSession.isAppLockActive
+        userSession.isAppLockActive
     }
 
     // MARK: - Life Cycle

@@ -52,9 +52,9 @@ extension ZMMessage {
     private func verificationStatusKey(for messageProtocol: MessageProtocol) -> String {
         switch messageProtocol {
         case .proteus:
-            return #keyPath(ZMConversation.securityLevel)
+            #keyPath(ZMConversation.securityLevel)
         case .mls, .mixed:
-            return ZMConversation.mlsVerificationStatusKey
+            ZMConversation.mlsVerificationStatusKey
         }
     }
 }

@@ -21,7 +21,7 @@ import WireDataModel
 
 extension ConversationInputBarViewController {
     var isInMentionsFlow: Bool {
-        return mentionsHandler != nil
+        mentionsHandler != nil
     }
 
     var canInsertMention: Bool {

@@ -64,9 +64,9 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
 
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         if let modifiedPredicate {
-            return Transcoder.Object.sortedFetchRequest(with: modifiedPredicate)
+            Transcoder.Object.sortedFetchRequest(with: modifiedPredicate)
         } else {
-            return Transcoder.Object.sortedFetchRequest()
+            Transcoder.Object.sortedFetchRequest()
         }
     }
 

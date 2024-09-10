@@ -50,16 +50,16 @@ protocol SettingsCellDescriptorType: AnyObject {
 
 extension SettingsCellDescriptorType {
     var copiableText: String? {
-        return nil
+        nil
     }
 }
 
 func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) -> Bool {
     if let leftID = left.identifier,
        let rightID = right.identifier {
-        return leftID == rightID
+        leftID == rightID
     } else {
-        return left == right
+        left == right
     }
 }
 
@@ -79,7 +79,7 @@ protocol SettingsSectionDescriptorType: AnyObject {
 
 extension SettingsSectionDescriptorType {
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return cellDescriptors
+        cellDescriptors
     }
 }
 
@@ -97,8 +97,8 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 
 extension SettingsInternalGroupCellDescriptorType {
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
-            return section.allCellDescriptors()
+        items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
+            section.allCellDescriptors()
         })
     }
 }
@@ -120,28 +120,28 @@ protocol SettingsControllerGeneratorType {
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let cellDescriptors: [SettingsCellDescriptorType]
     var visibleCellDescriptors: [SettingsCellDescriptorType] {
-        return self.cellDescriptors.filter(\.visible)
+        self.cellDescriptors.filter(\.visible)
     }
 
     var visible: Bool {
-        return visibilityAction?(self) ?? true
+        visibilityAction?(self) ?? true
     }
 
     let visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))?
 
     var header: String? {
-        return headerGenerator()
+        headerGenerator()
     }
 
     var footer: String? {
-        return footerGenerator()
+        footerGenerator()
     }
 
     let headerGenerator: () -> String?
     let footerGenerator: () -> String?
 
     convenience init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
-        self.init(cellDescriptors: cellDescriptors, headerGenerator: { return header }, footerGenerator: { return footer }, visibilityAction: visibilityAction)
+        self.init(cellDescriptors: cellDescriptors, headerGenerator: { header }, footerGenerator: { footer }, visibilityAction: visibilityAction)
     }
 
     init(cellDescriptors: [SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
@@ -167,7 +167,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     weak var group: SettingsGroupCellDescriptorType?
 
     var visibleItems: [SettingsSectionDescriptorType] {
-        return self.items.filter(\.visible)
+        self.items.filter(\.visible)
     }
 
     weak var viewController: UIViewController?

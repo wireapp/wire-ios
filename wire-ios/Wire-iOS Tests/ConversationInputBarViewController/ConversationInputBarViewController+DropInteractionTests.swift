@@ -88,6 +88,6 @@ private final class MediaShareRestrictionManagerMock: MediaShareRestrictionManag
     }
 
     override var isFileSharingFlagEnabled: Bool {
-        return canFilesBeShared
+        canFilesBeShared
     }
 }

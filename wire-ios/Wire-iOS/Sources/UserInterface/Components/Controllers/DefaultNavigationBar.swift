@@ -51,9 +51,9 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
     }
 
     static func titleTextAttributes(for color: UIColor = SemanticColors.Label.textDefault) -> [NSAttributedString.Key: Any] {
-        return [.font: FontSpec.smallSemiboldFont.font!,
-                .foregroundColor: color,
-                .baselineOffset: 1.0]
+        [.font: FontSpec.smallSemiboldFont.font!,
+         .foregroundColor: color,
+         .baselineOffset: 1.0]
     }
 }
 

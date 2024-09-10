@@ -153,8 +153,8 @@ final class TokenField: UIView {
 
     private(set) var tokens = [Token<NSObjectProtocol>]()
     private var textAttributes: [NSAttributedString.Key: Any] {
-        return [.font: font,
-                .foregroundColor: textView.textColor ?? .clear]
+        [.font: font,
+         .foregroundColor: textView.textColor ?? .clear]
     }
 
     // Collapse
@@ -251,15 +251,15 @@ final class TokenField: UIView {
     }
 
     override var isFirstResponder: Bool {
-        return textView.isFirstResponder
+        textView.isFirstResponder
     }
 
     override var canBecomeFirstResponder: Bool {
-        return textView.canBecomeFirstResponder
+        textView.canBecomeFirstResponder
     }
 
     override var canResignFirstResponder: Bool {
-        return textView.canResignFirstResponder
+        textView.canResignFirstResponder
     }
 
     override func becomeFirstResponder() -> Bool {
@@ -325,7 +325,7 @@ final class TokenField: UIView {
 
     // searches by isEqual:
     func token(forRepresentedObject object: NSObjectProtocol) -> Token<NSObjectProtocol>? {
-        return tokens.first(where: { $0.representedObject == HashBox(value: object) })
+        tokens.first(where: { $0.representedObject == HashBox(value: object) })
     }
 
     private func scrollToBottomOfInputField() {
@@ -389,15 +389,15 @@ final class TokenField: UIView {
     // MARK: - Layout
 
     var fontLineHeight: CGFloat {
-        return font.lineHeight
+        font.lineHeight
     }
 
     private var accessoryButtonTop: CGFloat {
-        return textView.textContainerInset.top + (fontLineHeight - accessoryButtonSize) / 2 - textView.contentOffset.y
+        textView.textContainerInset.top + (fontLineHeight - accessoryButtonSize) / 2 - textView.contentOffset.y
     }
 
     private var accessoryButtonRight: CGFloat {
-        return textView.textContainerInset.right
+        textView.textContainerInset.right
     }
 
     private func updateLayout() {
@@ -645,7 +645,7 @@ final class TokenField: UIView {
     }
 
     private func rangeIncludesRange(_ range: NSRange, _ includedRange: NSRange) -> Bool {
-        return range == range.union(includedRange)
+        range == range.union(includedRange)
     }
 
     private func notifyIfFilterTextChanged() {
@@ -699,7 +699,7 @@ extension TokenField: TokenizedTextViewDelegate {
 
 extension TokenField: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return !(textAttachment is TokenSeparatorAttachment)
+        !(textAttachment is TokenSeparatorAttachment)
     }
 
     func textViewDidChange(_ textView: UITextView) {

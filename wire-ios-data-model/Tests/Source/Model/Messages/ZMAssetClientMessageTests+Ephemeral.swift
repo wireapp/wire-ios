@@ -45,11 +45,11 @@ class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
     }
 
     var obfuscationTimer: ZMMessageDestructionTimer? {
-        return syncMOC.zm_messageObfuscationTimer
+        syncMOC.zm_messageObfuscationTimer
     }
 
     var deletionTimer: ZMMessageDestructionTimer? {
-        return uiMOC.zm_messageDeletionTimer
+        uiMOC.zm_messageDeletionTimer
     }
 }
 

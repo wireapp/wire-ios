@@ -320,9 +320,9 @@ extension ZMUserSessionTests_PushNotifications {
     func assertHasReadConfirmationForMessage(nonce: UUID, conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
         let containsReadConfirmation = conversation.lastMessages().contains { message in
             if let clientMessage = message as? ZMClientMessage, clientMessage.underlyingMessage?.hasConfirmation == true {
-                return clientMessage.underlyingMessage?.confirmation.firstMessageID == nonce.transportString()
+                clientMessage.underlyingMessage?.confirmation.firstMessageID == nonce.transportString()
             } else {
-                return false
+                false
             }
         }
 

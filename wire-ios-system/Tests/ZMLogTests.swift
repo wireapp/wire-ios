@@ -429,7 +429,7 @@ extension ZMLogTests {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
-                return "hidden"
+                "hidden"
             }
         }
 
@@ -450,7 +450,7 @@ extension ZMLogTests {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
-                return "hidden"
+                "hidden"
             }
         }
 

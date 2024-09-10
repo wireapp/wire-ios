@@ -45,49 +45,49 @@ enum ProfileAction: Equatable {
     /// The text of the button for this action.
     var buttonText: String {
         switch self {
-        case .createGroup: return L10n.Localizable.Profile.createConversationButtonTitle
-        case let .mute(isMuted): return isMuted
+        case .createGroup: L10n.Localizable.Profile.createConversationButtonTitle
+        case let .mute(isMuted): isMuted
             ? L10n.Localizable.Meta.Menu.Silence.unmute
             : L10n.Localizable.Meta.Menu.Silence.mute
-        case .manageNotifications: return L10n.Localizable.Meta.Menu.configureNotifications
-        case .archive: return L10n.Localizable.Meta.Menu.archive
-        case .deleteContents: return L10n.Localizable.Meta.Menu.clearContent
-        case let .block(isBlocked): return isBlocked
+        case .manageNotifications: L10n.Localizable.Meta.Menu.configureNotifications
+        case .archive: L10n.Localizable.Meta.Menu.archive
+        case .deleteContents: L10n.Localizable.Meta.Menu.clearContent
+        case let .block(isBlocked): isBlocked
             ? L10n.Localizable.Profile.unblockButtonTitle
             : L10n.Localizable.Profile.blockButtonTitle
-        case .openOneToOne: return L10n.Localizable.Profile.openConversationButtonTitle
-        case .startOneToOne: return L10n.Localizable.Profile.startConversationButtonTitle
-        case .removeFromGroup: return L10n.Localizable.Profile.removeDialogButtonRemove
-        case .connect: return L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
-        case .cancelConnectionRequest: return L10n.Localizable.Meta.Menu.cancelConnectionRequest
-        case .openSelfProfile: return L10n.Localizable.Meta.Menu.openSelfProfile
-        case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
-        case .duplicateTeam: return "⚠️ DEBUG - Duplicate Team"
+        case .openOneToOne: L10n.Localizable.Profile.openConversationButtonTitle
+        case .startOneToOne: L10n.Localizable.Profile.startConversationButtonTitle
+        case .removeFromGroup: L10n.Localizable.Profile.removeDialogButtonRemove
+        case .connect: L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
+        case .cancelConnectionRequest: L10n.Localizable.Meta.Menu.cancelConnectionRequest
+        case .openSelfProfile: L10n.Localizable.Meta.Menu.openSelfProfile
+        case .duplicateUser: "⚠️ DEBUG - Duplicate User"
+        case .duplicateTeam: "⚠️ DEBUG - Duplicate Team"
         }
     }
 
     /// The icon of the button for this action, if it's eligible to be a key action.
     var keyActionIcon: StyleKitIcon? {
         switch self {
-        case .createGroup: return .createConversation
-        case .manageNotifications, .mute: return nil
-        case .archive: return nil
-        case .deleteContents: return nil
-        case .block: return nil
-        case .openOneToOne: return .conversation
-        case .startOneToOne: return .conversation
-        case .removeFromGroup: return .minus
-        case .connect: return .plus
-        case .cancelConnectionRequest: return .undo
-        case .openSelfProfile: return .personalProfile
-        case .duplicateUser: return nil
-        case .duplicateTeam: return nil
+        case .createGroup: .createConversation
+        case .manageNotifications, .mute: nil
+        case .archive: nil
+        case .deleteContents: nil
+        case .block: nil
+        case .openOneToOne: .conversation
+        case .startOneToOne: .conversation
+        case .removeFromGroup: .minus
+        case .connect: .plus
+        case .cancelConnectionRequest: .undo
+        case .openSelfProfile: .personalProfile
+        case .duplicateUser: nil
+        case .duplicateTeam: nil
         }
     }
 
     /// Whether the action can be used as a key action.
     var isEligibleForKeyAction: Bool {
-        return keyActionIcon != nil
+        keyActionIcon != nil
     }
 }
 
@@ -282,9 +282,9 @@ extension UserType {
     var canBeUnblocked: Bool {
         switch blockState {
         case .blockedMissingLegalholdConsent:
-            return false
+            false
         default:
-            return true
+            true
         }
     }
 }

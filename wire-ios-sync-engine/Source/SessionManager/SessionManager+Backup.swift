@@ -192,7 +192,7 @@ extension SessionManager {
     }
 
     private static func temporaryURL(for url: URL) -> URL {
-        return url.deletingLastPathComponent().appendingPathComponent(UUID().uuidString)
+        url.deletingLastPathComponent().appendingPathComponent(UUID().uuidString)
     }
 }
 
@@ -216,7 +216,7 @@ extension BackupMetadata {
     }()
 
     fileprivate func backupFilename(for handle: String) -> String {
-        return "\(BackupMetadata.nameAppName)-\(handle)-\(BackupMetadata.nameFileName)_\(BackupMetadata.formatter.string(from: creationTime)).\(BackupMetadata.fileExtension)"
+        "\(BackupMetadata.nameAppName)-\(handle)-\(BackupMetadata.nameFileName)_\(BackupMetadata.formatter.string(from: creationTime)).\(BackupMetadata.fileExtension)"
     }
 }
 
@@ -224,10 +224,10 @@ extension BackupMetadata {
 
 extension URL {
     func zipDirectory(to url: URL) -> Bool {
-        return SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
+        SSZipArchive.createZipFile(atPath: url.path, withContentsOfDirectory: path)
     }
 
     func unzip(to url: URL) -> Bool {
-        return SSZipArchive.unzipFile(atPath: path, toDestination: url.path)
+        SSZipArchive.unzipFile(atPath: path, toDestination: url.path)
     }
 }

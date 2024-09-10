@@ -21,7 +21,7 @@ import WireImages
 
 public final class UserProfileImageOwner: NSObject, ZMImageOwner {
     static var imageFormats: [ZMImageFormat] {
-        return [.medium, .profile]
+        [.medium, .profile]
     }
 
     let imageData: Data
@@ -37,31 +37,31 @@ public final class UserProfileImageOwner: NSObject, ZMImageOwner {
     }
 
     public func imageData(for format: ZMImageFormat) -> Data? {
-        return processedImages[format]
+        processedImages[format]
     }
 
     public func requiredImageFormats() -> NSOrderedSet {
-        return NSOrderedSet(array: UserProfileImageOwner.imageFormats.map(\.rawValue))
+        NSOrderedSet(array: UserProfileImageOwner.imageFormats.map(\.rawValue))
     }
 
     public func originalImageData() -> Data? {
-        return imageData
+        imageData
     }
 
     public func originalImageSize() -> CGSize {
-        return .zero
+        .zero
     }
 
     public func isInline(for format: ZMImageFormat) -> Bool {
-        return false
+        false
     }
 
     public func isPublic(for format: ZMImageFormat) -> Bool {
-        return false
+        false
     }
 
     public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
-        return false
+        false
     }
 
     public func processingDidFinish() {}

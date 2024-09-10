@@ -299,11 +299,11 @@ final class AudioEffectsPickerViewController: UIViewController {
 
 extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return effects.count
+        effects.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -317,8 +317,8 @@ extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollecti
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: CGFloat(Int(collectionView.bounds.width) / type(of: self).effectColumns),
-                      height: CGFloat(Int(collectionView.bounds.height) / type(of: self).effectRows))
+        CGSize(width: CGFloat(Int(collectionView.bounds.width) / type(of: self).effectColumns),
+               height: CGFloat(Int(collectionView.bounds.height) / type(of: self).effectRows))
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -359,15 +359,15 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
     }
 
     var state: MediaPlayerState? {
-        return player.isPlaying ? .playing : .completed
+        player.isPlaying ? .playing : .completed
     }
 
     var title: String? {
-        return nil
+        nil
     }
 
     var sourceMessage: ZMConversationMessage? {
-        return nil
+        nil
     }
 
     func play() {

@@ -191,7 +191,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     // MARK: - Actions
 
     private func actionsToEndAllOngoingCalls(excepting handle: CallHandle) -> [CXAction] {
-        return callRegister.allCalls
+        callRegister.allCalls
             .lazy
             .filter { $0.handle != handle }
             .map { CXEndCallAction(call: $0.id) }
@@ -877,11 +877,11 @@ extension Date {
 
     private func clamp(between fromDate: Date, and toDate: Date) -> Date {
         if timeIntervalSinceReferenceDate < fromDate.timeIntervalSinceReferenceDate {
-            return fromDate
+            fromDate
         } else if timeIntervalSinceReferenceDate > toDate.timeIntervalSinceReferenceDate {
-            return toDate
+            toDate
         } else {
-            return self
+            self
         }
     }
 }
@@ -911,7 +911,7 @@ extension ZMConversation {
 
 extension CXCallAction {
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
-        return ZMConversation.fetch(with: callUUID, in: context)
+        ZMConversation.fetch(with: callUUID, in: context)
     }
 }
 
@@ -919,15 +919,15 @@ extension CallClosedReason {
     var CXCallEndedReason: CXCallEndedReason {
         switch self {
         case .timeout, .timeoutECONN:
-            return .unanswered
+            .unanswered
         case .normal, .canceled:
-            return .remoteEnded
+            .remoteEnded
         case .answeredElsewhere:
-            return .answeredElsewhere
+            .answeredElsewhere
         case .rejectedElsewhere:
-            return .declinedElsewhere
+            .declinedElsewhere
         default:
-            return .failed
+            .failed
         }
     }
 }
@@ -941,6 +941,6 @@ extension CallKitCallRegister {
 
 extension CXCallController {
     fileprivate func existingCall(for callKitCall: CallKitCall) -> CXCall? {
-        return callObserver.calls.first { $0.uuid == callKitCall.id }
+        callObserver.calls.first { $0.uuid == callKitCall.id }
     }
 }

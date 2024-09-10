@@ -46,7 +46,7 @@ public enum CallError: Int32 {
     var wcall_error: Int32 {
         switch self {
         case .unknownProtocol:
-            return WCALL_REASON_NORMAL
+            WCALL_REASON_NORMAL
         }
     }
 }

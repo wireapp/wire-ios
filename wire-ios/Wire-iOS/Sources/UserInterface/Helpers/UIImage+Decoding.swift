@@ -42,12 +42,12 @@ extension UIImage {
 
 extension CGContext {
     fileprivate static func fromRawImage(_ rawImage: CGImage) -> CGContext? {
-        return CGContext(data: nil,
-                         width: rawImage.width,
-                         height: rawImage.height,
-                         bitsPerComponent: 8,
-                         bytesPerRow: rawImage.width * 4,
-                         space: CGColorSpaceCreateDeviceRGB(),
-                         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+        CGContext(data: nil,
+                  width: rawImage.width,
+                  height: rawImage.height,
+                  bitsPerComponent: 8,
+                  bytesPerRow: rawImage.width * 4,
+                  space: CGColorSpaceCreateDeviceRGB(),
+                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     }
 }

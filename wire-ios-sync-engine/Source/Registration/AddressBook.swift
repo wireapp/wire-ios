@@ -55,7 +55,7 @@ extension AddressBookAccessor {
 
     /// Returns valid contacts matching the search query, with normalized email and phone numbers
     func contacts(matchingQuery: String) -> [ZMAddressBookContact] {
-        return self.rawContacts(matchingQuery: matchingQuery)
+        self.rawContacts(matchingQuery: matchingQuery)
             .compactMap { ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer) }
     }
 
@@ -252,7 +252,7 @@ let addressBookContactsSearchLimit = 2000
 extension String {
     /// Returns the base64 encoded string of the SHA hash of the string
     var base64EncodedSHADigest: String {
-        return Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
+        Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
     }
 }
 
@@ -297,7 +297,7 @@ protocol ContactRecord {
 
 extension ContactRecord {
     var displayName: String {
-        return [self.firstName, self.middleName, self.lastName]
+        [self.firstName, self.middleName, self.lastName]
             .filter { $0 != "" }
             .joined(separator: " ")
     }

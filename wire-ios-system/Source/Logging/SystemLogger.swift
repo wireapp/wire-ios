@@ -27,7 +27,7 @@ struct SystemLogger: LoggerProtocol {
     let persistQueue = DispatchQueue(label: "persistQueue")
 
     var logFiles: [URL] {
-        return []
+        []
     }
 
     var lastReportTime: Date? {

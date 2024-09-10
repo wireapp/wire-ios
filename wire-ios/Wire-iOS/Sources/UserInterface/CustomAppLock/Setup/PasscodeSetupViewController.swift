@@ -34,10 +34,10 @@ final class PasscodeSetupViewController: UIViewController {
         var infoLabelString: String {
             switch self {
             case .createPasscode:
-                return L10n.Localizable.CreatePasscode.infoLabel
+                L10n.Localizable.CreatePasscode.infoLabel
 
             case .forcedForTeam:
-                return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode.infoLabelForcedApplock
+                L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode.infoLabelForcedApplock
             }
         }
     }
@@ -300,7 +300,7 @@ extension PasscodeSetupViewController: PasscodeSetupUserInterface {
 
     var createButtonEnabled: Bool {
         get {
-            return createButton.isEnabled
+            createButton.isEnabled
         }
 
         set {
@@ -319,9 +319,9 @@ extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate 
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         // more space for iPhone 4-inch to prevent keyboard hides the create passcode button
         if view.frame.size.height <= CGFloat.iPhone4Inch.height {
-            return .fullScreen
+            .fullScreen
         } else {
-            return .automatic
+            .automatic
         }
     }
 }

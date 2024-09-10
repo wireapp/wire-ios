@@ -122,7 +122,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     var mockedIsServiceUser: Bool = false
     var isServiceUser: Bool {
-        return mockedIsServiceUser
+        mockedIsServiceUser
     }
 
     var isVerified: Bool = false
@@ -132,7 +132,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var membership: Member?
 
     var isTeamMember: Bool {
-        return teamIdentifier != nil
+        teamIdentifier != nil
     }
 
     var hasTeam: Bool = false
@@ -198,31 +198,31 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     var canManageTeam: Bool = false
 
     func canLeave(_ conversation: ZMConversation) -> Bool {
-        return canLeaveConversation
+        canLeaveConversation
     }
 
     func canCreateConversation(type: ZMConversationType) -> Bool {
-        return canCreateConversation
+        canCreateConversation
     }
 
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
-        return canDeleteConversation
+        canDeleteConversation
     }
 
     func canAddUser(to conversation: ConversationLike) -> Bool {
-        return canAddUserToConversation
+        canAddUserToConversation
     }
 
     func canRemoveUser(from conversation: ZMConversation) -> Bool {
-        return canRemoveUserFromConversation
+        canRemoveUserFromConversation
     }
 
     func canAddService(to conversation: ZMConversation) -> Bool {
-        return canAddServiceToConversation
+        canAddServiceToConversation
     }
 
     func canRemoveService(from conversation: ZMConversation) -> Bool {
-        return canRemoveService
+        canRemoveService
     }
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
@@ -236,31 +236,31 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     }
 
     func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
-        return canModifyOtherMemberInConversation
+        canModifyOtherMemberInConversation
     }
 
     func canModifyTitle(in conversation: ConversationLike) -> Bool {
-        return canModifyTitleInConversation
+        canModifyTitleInConversation
     }
 
     func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyReadReceiptSettingsInConversation
+        canModifyReadReceiptSettingsInConversation
     }
 
     func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyEphemeralSettingsInConversation
+        canModifyEphemeralSettingsInConversation
     }
 
     func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyNotificationSettingsInConversation
+        canModifyNotificationSettingsInConversation
     }
 
     func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
-        return canModifyAccessControlSettings
+        canModifyAccessControlSettings
     }
 
     func isGroupAdmin(in conversation: ConversationLike) -> Bool {
-        return isGroupAdminInConversation
+        isGroupAdminInConversation
     }
 
     var canCreateMLSGroups: Bool = false
@@ -272,7 +272,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     }
 
     func isGuest(in conversation: ConversationLike) -> Bool {
-        return isGuestInConversation
+        isGuestInConversation
     }
 
     func requestPreviewProfileImage() {

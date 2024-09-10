@@ -21,7 +21,7 @@ import XCTest
 
 class NSPersistentStoreMetadataTests: ZMBaseManagedObjectTest {
     override var shouldUseInMemoryStore: Bool {
-        return false
+        false
     }
 
     func forceSave() {

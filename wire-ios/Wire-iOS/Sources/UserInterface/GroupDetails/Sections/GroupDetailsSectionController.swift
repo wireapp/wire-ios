@@ -32,15 +32,15 @@ protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter,
 
 class GroupDetailsSectionController: NSObject, CollectionViewSectionController {
     var isHidden: Bool {
-        return false
+        false
     }
 
     var sectionTitle: String? {
-        return nil
+        nil
     }
 
     var sectionAccessibilityIdentifier: String {
-        return "section_header"
+        "section_header"
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
@@ -59,11 +59,11 @@ class GroupDetailsSectionController: NSObject, CollectionViewSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 48)
+        CGSize(width: collectionView.bounds.size.width, height: 48)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: 56)
+        CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

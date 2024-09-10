@@ -198,11 +198,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     // MARK: - Context Change Tracker
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self]
+        [self]
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return nil
+        nil
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
@@ -489,11 +489,11 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         var errorDescription: String? {
             switch self {
             case let .server(status: status):
-                return "Server http status code: \(status)"
+                "Server http status code: \(status)"
             case let .transport(error: error):
-                return "Transport error: \(error.localizedDescription)"
+                "Transport error: \(error.localizedDescription)"
             case .missingData:
-                return "Response body missing data"
+                "Response body missing data"
             }
         }
     }
@@ -612,7 +612,7 @@ extension CallingRequestStrategy {
         var intValue: Int?
 
         init?(intValue: Int) {
-            return nil
+            nil
         }
     }
 }

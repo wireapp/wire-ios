@@ -34,11 +34,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
     private var callEventHandlerMock: CallEventHandlerMock!
 
     private var otherUser: ZMUser {
-        return coreDataFixture.otherUser
+        coreDataFixture.otherUser
     }
 
     private var selfUser: ZMUser {
-        return coreDataFixture.selfUser
+        coreDataFixture.selfUser
     }
 
     private var client: UserClient {

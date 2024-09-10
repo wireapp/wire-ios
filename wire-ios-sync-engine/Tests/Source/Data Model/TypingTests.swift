@@ -76,7 +76,7 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
     }
 
     private func createUser() -> ZMUser {
-        return ZMUser.insertNewObject(in: uiMOC)
+        ZMUser.insertNewObject(in: uiMOC)
     }
 
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType]) {

@@ -31,13 +31,11 @@ open class ZMFileMetadata: NSObject {
 
     public required init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
-        self.thumbnail = {
-            if let thumbnail, !thumbnail.isEmpty {
-                return thumbnail
-            } else {
-                return nil
-            }
-        }()
+        self.thumbnail = if let thumbnail, !thumbnail.isEmpty {
+            thumbnail
+        } else {
+            nil
+        }
         let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
 
         self.filename = endName.removingExtremeCombiningCharacters
@@ -49,7 +47,7 @@ open class ZMFileMetadata: NSObject {
     }
 
     var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+        WireProtos.Asset(self)
     }
 }
 
@@ -71,7 +69,7 @@ open class ZMAudioMetadata: ZMFileMetadata {
     }
 
     override var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+        WireProtos.Asset(self)
     }
 }
 
@@ -94,13 +92,13 @@ open class ZMVideoMetadata: ZMFileMetadata {
     }
 
     override var asset: WireProtos.Asset {
-        return WireProtos.Asset(self)
+        WireProtos.Asset(self)
     }
 }
 
 extension ZMFileMetadata {
     public var mimeType: String {
-        return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
+        UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
     }
 
     public var size: UInt64 {

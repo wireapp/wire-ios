@@ -27,7 +27,7 @@ final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
     }
 
     override var needsCaches: Bool {
-        return true
+        true
     }
 
     enum UnreadMessageType {

@@ -54,9 +54,9 @@ public final class NetworkStatus: NetworkStatusObservable {
         // Passes the reference of the struct
         guard let reachabilityRef = withUnsafePointer(to: &zeroAddress, { pointer in
             // Converts to a generic socket address
-            return pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
+            pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
                 // $0 is the pointer to `sockaddr`
-                return SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, $0)
+                SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, $0)
             }
         }) else {
             fatalError("reachabilityRef can not be inited")

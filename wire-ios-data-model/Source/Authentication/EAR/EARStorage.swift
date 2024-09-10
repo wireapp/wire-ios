@@ -44,7 +44,7 @@ struct EARStorage {
     // MARK: - Methods
 
     func earEnabled() -> Bool {
-        return storage.bool(forKey: .enabledEAR)
+        storage.bool(forKey: .enabledEAR)
     }
 
     func enableEAR(_ enabled: Bool) {

@@ -26,9 +26,9 @@ extension ZMMessage {
         public var errorDescription: String? {
             switch self {
             case .missingManagedObjectContext:
-                return "Missing managed object context."
+                "Missing managed object context."
             case let .failedToProcessMessageData(reason):
-                return "Failed to process message data. Reason: \(reason)"
+                "Failed to process message data. Reason: \(reason)"
             }
         }
     }

@@ -178,7 +178,7 @@ class LegacyButton: ButtonWithLargerHitArea {
     }
 
     func borderColor(for state: UIControl.State) -> UIColor? {
-        return borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
+        borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
     private func updateBorderColor() {

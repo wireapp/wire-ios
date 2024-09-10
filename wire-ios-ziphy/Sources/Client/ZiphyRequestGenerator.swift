@@ -57,7 +57,7 @@ extension ZiphyRequestGenerator {
      */
 
     func makeRandomImageRequest() -> ZiphyResult<URLRequest> {
-        return makeRequest(endpoint: .random)
+        makeRequest(endpoint: .random)
     }
 
     /**

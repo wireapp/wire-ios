@@ -93,7 +93,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
     /// display title of the header
     var title: String? {
         get {
-            return titleLabel.text
+            titleLabel.text
         }
 
         set {
@@ -103,7 +103,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
     override var accessibilityLabel: String? {
         get {
-            return title
+            title
         }
 
         set {

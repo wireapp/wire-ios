@@ -33,7 +33,7 @@ extension URL {
 
 extension NSURL {
     var UTI: String {
-        return (self as URL).UTI()
+        (self as URL).UTI()
     }
 }
 
@@ -91,7 +91,7 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return self.subGenerators.filter {
+        self.subGenerators.filter {
             $0.canGeneratePreviewForFile(fileURL, UTI: uti)
         }.count > 0
     }
@@ -117,7 +117,7 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return UTType(uti)?.conforms(to: UTType.image) ?? false
+        UTType(uti)?.conforms(to: UTType.image) ?? false
     }
 
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
@@ -152,7 +152,7 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return AVURLAsset.wr_isAudioVisualUTI(uti)
+        AVURLAsset.wr_isAudioVisualUTI(uti)
     }
 
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
@@ -206,7 +206,7 @@ public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return UTTypeConformsTo(uti as CFString, kUTTypePDF)
+        UTTypeConformsTo(uti as CFString, kUTTypePDF)
     }
 
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {

@@ -41,7 +41,7 @@ struct HorizontalMargins {
 
 extension UITraitEnvironment {
     var conversationHorizontalMargins: HorizontalMargins {
-        return conversationHorizontalMargins()
+        conversationHorizontalMargins()
     }
 
     func conversationHorizontalMargins(windowWidth: CGFloat? = AppDelegate.shared.mainWindow?.frame.width) -> HorizontalMargins {

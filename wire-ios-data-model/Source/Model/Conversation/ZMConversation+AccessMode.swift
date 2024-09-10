@@ -53,7 +53,7 @@ extension ConversationAccessMode {
                                                                  .private: "private"]
 
     public var stringValue: [String] {
-        return ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
+        ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
     }
 
     public init(values: [String]) {
@@ -69,7 +69,7 @@ extension ConversationAccessMode {
 
 extension ConversationAccessMode {
     public static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessMode {
-        return allowGuests ? .allowGuests : .teamOnly
+        allowGuests ? .allowGuests : .teamOnly
     }
 }
 
@@ -86,13 +86,13 @@ public enum ConversationAccessRole: String {
 
     public static func fromAccessRoleV2(_ accessRoles: Set<ConversationAccessRoleV2>) -> ConversationAccessRole {
         if accessRoles.contains(.guest) {
-            return .nonActivated
+            .nonActivated
         } else if accessRoles.contains(.nonTeamMember) || accessRoles.contains(.service) {
-            return .activated
+            .activated
         } else if accessRoles.contains(.teamMember) {
-            return .team
+            .team
         } else {
-            return .private
+            .private
         }
     }
 }
@@ -124,13 +124,13 @@ public enum ConversationAccessRoleV2: String {
     public static func fromLegacyAccessRole(_ accessRole: ConversationAccessRole) -> Set<Self> {
         switch accessRole {
         case .team:
-            return [.teamMember]
+            [.teamMember]
         case .activated:
-            return [.teamMember, .nonTeamMember, guest]
+            [.teamMember, .nonTeamMember, guest]
         case .nonActivated:
-            return [.teamMember, .nonTeamMember, guest, .service]
+            [.teamMember, .nonTeamMember, guest, .service]
         case .private:
-            return []
+            []
         }
     }
 
@@ -155,7 +155,7 @@ public enum ConversationAccessRoleV2: String {
 
 extension ConversationAccessRole {
     public static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessRole {
-        return allowGuests ? ConversationAccessRole.nonActivated : ConversationAccessRole.team
+        allowGuests ? ConversationAccessRole.nonActivated : ConversationAccessRole.team
     }
 }
 
@@ -165,11 +165,11 @@ extension ZMConversation: SwiftConversationLike {
     @NSManaged dynamic var accessRoleStringsV2: [String]?
 
     public var sortedActiveParticipantsUserTypes: [UserType] {
-        return sortedActiveParticipants
+        sortedActiveParticipants
     }
 
     public var teamType: TeamType? {
-        return team
+        team
     }
 
     public internal(set) var accessRoles: Set<ConversationAccessRoleV2> {
@@ -192,7 +192,7 @@ extension ZMConversation: SwiftConversationLike {
     /// Controls the values of `accessMode` and `accessRoleV2`.
     @objc public var allowGuests: Bool {
         get {
-            return accessMode != .teamOnly && accessRoles.contains(.guest) && accessRoles.contains(.nonTeamMember)
+            accessMode != .teamOnly && accessRoles.contains(.guest) && accessRoles.contains(.nonTeamMember)
         }
         set {
             accessMode = ConversationAccessMode.value(forAllowGuests: newValue)
@@ -211,7 +211,7 @@ extension ZMConversation: SwiftConversationLike {
     /// Controls the value of `accessRoleV2`.
     @objc public var allowServices: Bool {
         get {
-            return accessRoles.contains(.service)
+            accessRoles.contains(.service)
         }
         set {
             if newValue {

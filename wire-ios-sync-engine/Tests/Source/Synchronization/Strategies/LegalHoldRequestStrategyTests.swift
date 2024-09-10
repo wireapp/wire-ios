@@ -47,7 +47,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     }
 
     static func legalHoldRequest(for user: ZMUser) -> LegalHoldRequest {
-        return LegalHoldRequest(
+        LegalHoldRequest(
             target: user.remoteIdentifier!,
             requester: UUID(),
             clientIdentifier: "eca3c87cfe28be49",

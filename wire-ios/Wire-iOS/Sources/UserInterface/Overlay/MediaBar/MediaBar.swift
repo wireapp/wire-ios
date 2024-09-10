@@ -80,7 +80,7 @@ final class MediaBar: UIView {
     }
 
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: 44)
+        CGSize(width: UIView.noIntrinsicMetric, height: 44)
     }
 
     override func updateConstraints() {

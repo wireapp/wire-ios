@@ -33,7 +33,7 @@ public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
     }
 
     public var debugDescription: String {
-        return "\(uuid)@\(domain)"
+        "\(uuid)@\(domain)"
     }
 }
 
@@ -88,7 +88,7 @@ extension Collection<ZMConversation> {
 
 extension QualifiedID {
     public static func random() -> QualifiedID {
-        return QualifiedID(
+        QualifiedID(
             uuid: UUID(),
             domain: .randomDomain()
         )

@@ -21,6 +21,6 @@ import WireTesting
 
 extension MockUser {
     var loginCredentials: LoginCredentials {
-        return LoginCredentials(emailAddress: email, hasPassword: email != nil, usesCompanyLogin: false)
+        LoginCredentials(emailAddress: email, hasPassword: email != nil, usesCompanyLogin: false)
     }
 }

@@ -33,19 +33,19 @@ extension ZMConversation {
     @objc
     public var ephemeralTrackingAttributes: [String: Any] {
         if let timeout = activeMessageDestructionTimeoutValue {
-            return [
+            [
                 "is_ephemeral": true,
                 "ephemeral_time": Int(timeout.rawValue)
             ]
         } else {
-            return ["is_ephemeral": false]
+            ["is_ephemeral": false]
         }
     }
 
     /// Whether the conversation includes at least 1 service user.
     @objc
     public var includesServiceUser: Bool {
-        return localParticipants.any { $0.isServiceUser }
+        localParticipants.any { $0.isServiceUser }
     }
 }
 
@@ -53,11 +53,11 @@ extension ZMConversationType {
     var analyticsType: String {
         switch self {
         case .oneOnOne:
-            return "one_to_one"
+            "one_to_one"
         case .group:
-            return "group"
+            "group"
         default:
-            return ""
+            ""
         }
     }
 }
@@ -67,16 +67,16 @@ public enum ConversationMediaAction: UInt {
 
     public var attributeValue: String {
         switch self {
-        case .text:         return "text"
-        case .photo:        return "photo"
-        case .audioCall:    return "audio_call"
-        case .videoCall:    return "video_call"
-        case .gif:          return "giphy"
-        case .ping:         return "ping"
-        case .fileTransfer: return "file"
-        case .videoMessage: return "video"
-        case .audioMessage: return "audio"
-        case .location:     return "location"
+        case .text:         "text"
+        case .photo:        "photo"
+        case .audioCall:    "audio_call"
+        case .videoCall:    "video_call"
+        case .gif:          "giphy"
+        case .ping:         "ping"
+        case .fileTransfer: "file"
+        case .videoMessage: "video"
+        case .audioMessage: "audio"
+        case .location:     "location"
         }
     }
 }

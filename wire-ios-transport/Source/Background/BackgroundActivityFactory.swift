@@ -52,13 +52,13 @@ import WireUtilities
 
     /// Whether any tasks are active.
     @objc public var isActive: Bool {
-        return isolationQueue.sync {
-            return hasValidCurrentBackgroundTask
+        isolationQueue.sync {
+            hasValidCurrentBackgroundTask
         }
     }
 
     private var hasValidCurrentBackgroundTask: Bool {
-        return self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
+        self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
     }
 
     @objc var mainQueue: DispatchQueue = .main
@@ -159,7 +159,7 @@ import WireUtilities
 
     /// Starts the background activity of the system allows it.
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
-        return isolationQueue.sync {
+        isolationQueue.sync {
             let activityName = ActivityName(name: name)
             guard let activityManager else {
                 return nil
@@ -201,7 +201,7 @@ import WireUtilities
         }
 
         let activities = isolationQueue.sync {
-            return self.activities
+            self.activities
         }
         for activity in activities {
             activity.expirationHandler?()

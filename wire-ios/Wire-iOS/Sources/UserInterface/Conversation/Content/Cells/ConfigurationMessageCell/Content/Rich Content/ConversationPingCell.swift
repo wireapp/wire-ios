@@ -106,7 +106,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 
     func canAnimationContinue(for message: ZMConversationMessage?) -> Bool {
-        return message?.knockMessageData?.isEqual(configuration?.message?.knockMessageData) ?? false
+        message?.knockMessageData?.isEqual(configuration?.message?.knockMessageData) ?? false
     }
 
     func willDisplay() {
@@ -129,7 +129,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
     weak var actionController: ConversationMessageActionController?
 
     var showEphemeralTimer: Bool {
-        get { return false }
+        get { false }
         set { /* pings doesn't support the ephemeral timer */ }
     }
 

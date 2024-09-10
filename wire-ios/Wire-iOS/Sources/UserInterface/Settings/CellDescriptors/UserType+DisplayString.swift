@@ -22,9 +22,9 @@ import WireDataModel
 extension UserType {
     func handleDisplayString(withDomain: Bool) -> String? {
         if withDomain {
-            return handleAndDomainString
+            handleAndDomainString
         } else {
-            return handleString
+            handleString
         }
     }
 

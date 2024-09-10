@@ -22,7 +22,7 @@ final class MetaStreamContainer {
     var bytes = Data()
 
     var stringContent: String? {
-        return parseString(from: bytes)
+        parseString(from: bytes)
     }
 
     var head: String? {

@@ -85,7 +85,7 @@ final class CallParticipantsSnapshot {
     /// Returns the member matching the given userId and clientId.
 
     private func findMember(with client: AVSClient) -> AVSCallMember? {
-        return members.array.first { $0.client == client }
+        members.array.first { $0.client == client }
     }
 
     /// Notifies observers of a potential change in the participants set.

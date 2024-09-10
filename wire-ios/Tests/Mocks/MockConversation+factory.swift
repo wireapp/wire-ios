@@ -27,13 +27,13 @@ extension MockConversation {
 
     @objc
     var localParticipants: Set<AnyHashable> {
-        return Set(sortedActiveParticipants as! [AnyHashable])
+        Set(sortedActiveParticipants as! [AnyHashable])
     }
 
     @objc
     var activeParticipants: [AnyHashable] {
         get {
-            return sortedActiveParticipants as! [AnyHashable]
+            sortedActiveParticipants as! [AnyHashable]
         }
 
         set {
@@ -43,7 +43,7 @@ extension MockConversation {
 
     @objc
     var primitiveMlsGroupID: Data? {
-        return nil
+        nil
     }
 
     static func oneOnOneConversation(otherUser: UserType = MockUser.mockUsers().first!) -> MockConversation {

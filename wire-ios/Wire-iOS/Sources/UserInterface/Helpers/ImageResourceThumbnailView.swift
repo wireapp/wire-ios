@@ -77,7 +77,7 @@ final class ImageResourceThumbnailView: RoundedView {
     // MARK: - Content
 
     override var intrinsicContentSize: CGSize {
-        return imageView.intrinsicContentSize
+        imageView.intrinsicContentSize
     }
 
     func setResource(_ resource: PreviewableImageResource, isVideoPreview: Bool) {

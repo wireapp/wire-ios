@@ -38,19 +38,19 @@ public struct CompanyLoginVerificationToken: Codable, Equatable {
 
     /// Whether the token is no langer valid (older than its time to live).
     var isExpired: Bool {
-        return abs(creationDate.timeIntervalSinceNow) >= timeToLive
+        abs(creationDate.timeIntervalSinceNow) >= timeToLive
     }
 
     /// Validates a passed in UUID against the token.
     /// - parameter identifier: The uuid which should be validated against the token.
     /// - returns: Whether the UUID matches the token and the token is still valid.
     func matches(identifier: UUID) -> Bool {
-        return uuid == identifier && !isExpired
+        uuid == identifier && !isExpired
     }
 }
 
 public func == (lhs: CompanyLoginVerificationToken, rhs: CompanyLoginVerificationToken) -> Bool {
-    return lhs.uuid == rhs.uuid
+    lhs.uuid == rhs.uuid
 }
 
 extension CompanyLoginVerificationToken {
@@ -59,7 +59,7 @@ extension CompanyLoginVerificationToken {
     /// Returns the currently stored verification token.
     /// - parameter defaults: The defaults to retrieve the token from.
     public static func current(in defaults: UserDefaults = .shared()) -> CompanyLoginVerificationToken? {
-        return defaults.data(forKey: CompanyLoginVerificationToken.defaultsKey).flatMap {
+        defaults.data(forKey: CompanyLoginVerificationToken.defaultsKey).flatMap {
             try? JSONDecoder().decode(CompanyLoginVerificationToken.self, from: $0)
         }
     }

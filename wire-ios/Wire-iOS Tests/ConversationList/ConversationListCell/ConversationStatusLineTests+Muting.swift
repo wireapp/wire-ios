@@ -27,7 +27,7 @@ final class ConversationStatusLineTests_Muting: CoreDataSnapshotTestCase {
     }
 
     override var needsCaches: Bool {
-        return true
+        true
     }
 }
 

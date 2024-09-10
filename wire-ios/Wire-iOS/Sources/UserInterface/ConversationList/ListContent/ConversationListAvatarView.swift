@@ -34,7 +34,7 @@ final class RandomGeneratorFromData: RandomGenerator {
     public func rand<ContentType>() -> ContentType {
         let currentStep = self.step
         let result = source.withUnsafeBytes { (pointer: UnsafePointer<ContentType>) -> ContentType in
-            return pointer.advanced(by: currentStep % source.count).pointee
+            pointer.advanced(by: currentStep % source.count).pointee
         }
         step += 1
 
@@ -155,13 +155,13 @@ public final class ConversationListAvatarView: UIView {
     func userImages() -> [UserImageView] {
         switch mode {
         case .one:
-            return [imageViewLeftTop]
+            [imageViewLeftTop]
 
         case .two:
-            return [imageViewLeftTop, imageViewRightTop]
+            [imageViewLeftTop, imageViewRightTop]
 
         case .four:
-            return [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
+            [imageViewLeftTop, imageViewRightTop, imageViewLeftBottom, imageViewRightBottom]
         }
     }
 

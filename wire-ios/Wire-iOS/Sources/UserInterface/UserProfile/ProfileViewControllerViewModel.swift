@@ -110,28 +110,28 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     var hasLegalHoldItem: Bool {
-        return user.isUnderLegalHold || conversation?.isUnderLegalHold == true
+        user.isUnderLegalHold || conversation?.isUnderLegalHold == true
     }
 
     var hasUserClientListTab: Bool {
-        return context != .search &&
+        context != .search &&
             context != .profileViewer
     }
 
     var userSet: UserSet {
-        return UserSet(arrayLiteral: user)
+        UserSet(arrayLiteral: user)
     }
 
     var incomingRequestFooterHidden: Bool {
-        return !user.isPendingApprovalBySelfUser
+        !user.isPendingApprovalBySelfUser
     }
 
     var blockTitle: String? {
-        return BlockResult.title(for: user)
+        BlockResult.title(for: user)
     }
 
     var allBlockResult: [BlockResult] {
-        return BlockResult.all(isBlocked: user.isBlocked)
+        BlockResult.all(isBlocked: user.isBlocked)
     }
 
     // MARK: - Delegate

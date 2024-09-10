@@ -80,7 +80,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(login())
 
         let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
-            return (
+            (
                 self.user(for: self.user1),
                 self.conversation(for: self.groupConversation)
             )
@@ -118,7 +118,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(login())
 
         let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
-            return (
+            (
                 self.user(for: self.user1),
                 self.conversation(for: self.groupConversation)
             )

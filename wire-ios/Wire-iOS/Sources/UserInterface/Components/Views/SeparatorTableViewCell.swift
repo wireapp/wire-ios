@@ -26,7 +26,7 @@ class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
     var separatorInsetConstraint: NSLayoutConstraint!
 
     var separatorLeadingAnchor: NSLayoutXAxisAnchor {
-        return contentView.layoutMarginsGuide.leadingAnchor
+        contentView.layoutMarginsGuide.leadingAnchor
     }
 
     var separatorLeadingInset: CGFloat = 0 {
@@ -36,7 +36,7 @@ class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     var showSeparator: Bool {
-        get { return !separator.isHidden }
+        get { !separator.isHidden }
         set { separator.isHidden = !newValue }
     }
 

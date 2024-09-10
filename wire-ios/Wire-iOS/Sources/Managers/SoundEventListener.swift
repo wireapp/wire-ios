@@ -22,11 +22,11 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
     var isSentBySelfUser: Bool {
-        return senderUser?.isSelfUser ?? false
+        senderUser?.isSelfUser ?? false
     }
 
     var isRecentMessage: Bool {
-        return (self.serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
+        (self.serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
     }
 
     var isSystemMessageWithSoundNotification: Bool {
@@ -155,7 +155,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             guard let sessionManager = SessionManager.shared, conversation.mutedMessageTypesIncludingAvailability == .none else { return }
 
             let otherNonIdleCalls = callCenter.nonIdleCalls.filter({ (key: AVSIdentifier, _) -> Bool in
-                return key != conversationId
+                key != conversationId
             })
 
             if otherNonIdleCalls.count > 0 {

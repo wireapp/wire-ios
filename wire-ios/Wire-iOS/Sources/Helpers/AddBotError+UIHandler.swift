@@ -23,15 +23,15 @@ extension AddBotError {
     typealias PeoplePickerServicesLocale = L10n.Localizable.Peoplepicker.Services.AddService
 
     var localizedTitle: String {
-        return PeoplePickerServicesLocale.Error.title
+        PeoplePickerServicesLocale.Error.title
     }
 
     var localizedMessage: String {
         switch self {
         case .tooManyParticipants:
-            return PeoplePickerServicesLocale.Error.title
+            PeoplePickerServicesLocale.Error.title
         default:
-            return PeoplePickerServicesLocale.Error.default
+            PeoplePickerServicesLocale.Error.default
         }
     }
 

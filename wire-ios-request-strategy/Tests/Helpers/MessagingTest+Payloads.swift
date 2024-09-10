@@ -21,7 +21,7 @@ import Foundation
 
 extension QualifiedID {
     static func randomID() -> QualifiedID {
-        return QualifiedID(uuid: UUID(), domain: "example.com")
+        QualifiedID(uuid: UUID(), domain: "example.com")
     }
 }
 
@@ -29,7 +29,7 @@ extension MessagingTestBase {
     func createConnectionPayload(_ connection: ZMConnection,
                                  status: ZMConnectionStatus = .accepted,
                                  lastUpdate: Date = Date()) -> Payload.Connection {
-        return Payload.Connection(
+        Payload.Connection(
             from: nil,
             to: connection.to.remoteIdentifier,
             qualifiedTo: connection.to.qualifiedID,
@@ -94,7 +94,7 @@ extension MessagingTestBase {
         senderID: QualifiedID? = nil,
         timestamp: Date? = nil
     ) -> Payload.ConversationEvent<Event> {
-        return Payload.ConversationEvent<Event>(
+        Payload.ConversationEvent<Event>(
             id: conversationID?.uuid,
             data: data,
             from: senderID?.uuid,

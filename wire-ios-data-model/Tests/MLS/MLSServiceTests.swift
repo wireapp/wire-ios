@@ -73,7 +73,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
         mockCoreCrypto.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            return 100
+            100
         }
 
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
@@ -145,7 +145,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func createKeyPackage(userID: UUID, domain: String) -> KeyPackage {
-        return KeyPackage(
+        KeyPackage(
             client: Data.random(byteCount: 32).base64EncodedString(),
             domain: domain,
             keyPackage: Data.random(byteCount: 32).base64EncodedString(),
@@ -443,11 +443,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             removal: .init(ed25519: removalKey)
         )
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return []
+            []
         }
 
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            return []
+            []
         }
 
         var mockCreateConversationCount = 0
@@ -530,7 +530,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = Data([1, 2, 3])
         let mlsSelfUser = await uiMOC.perform {
-            return MLSUser(from: self.selfUser)
+            MLSUser(from: self.selfUser)
         }
         let users = [MLSUser(id: UUID(), domain: "example.com"),
                      MLSUser(id: UUID(), domain: "example.com")]
@@ -1566,7 +1566,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     ) {
         // mock conversation epoch
         mockCoreCrypto.conversationEpochConversationId_MockMethod = { _ in
-            return epoch
+            epoch
         }
 
         if let subgroup {
@@ -1743,7 +1743,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
-            return 0
+            0
         }
 
         mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
@@ -1769,7 +1769,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.countUnclaimedKeyPackagesClientIDContext_MockMethod = { _, _ in
-            return 0
+            0
         }
 
         mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in }
@@ -1800,7 +1800,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // mock that we don't have enough unclaimed kp locally
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            return UInt64(unsufficientKeyPackagesAmount)
+            UInt64(unsufficientKeyPackagesAmount)
         }
 
         // mock return value for unclaimed key packages count
@@ -2124,7 +2124,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let externalSender = Data.random()
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
-            return MLSSubgroup(
+            MLSSubgroup(
                 cipherSuite: 0,
                 epoch: epoch,
                 epochTimestamp: epochTimestamp,
@@ -2201,7 +2201,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
-            return MLSSubgroup(
+            MLSSubgroup(
                 cipherSuite: 0,
                 epoch: epoch,
                 epochTimestamp: epochTimestamp,
@@ -2287,7 +2287,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
-            return MLSSubgroup(
+            MLSSubgroup(
                 cipherSuite: 0,
                 epoch: epoch,
                 epochTimestamp: epochTimestamp,
@@ -2453,11 +2453,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let selfClientID = MLSClientID.random()
 
         mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockMethod = { _, _ in
-            return nil
+            nil
         }
 
         mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockMethod = { _, _, _, _ in
-            return MLSSubgroup(
+            MLSSubgroup(
                 cipherSuite: 1,
                 epoch: 1,
                 epochTimestamp: nil,
@@ -2670,7 +2670,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return []
+            []
         }
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = []
@@ -2699,11 +2699,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { _, _, _, _, _ in
-            return [KeyPackage(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
+            [KeyPackage(client: "", domain: "", keyPackage: "", keyPackageRef: "", userID: UUID())]
         }
 
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return [ZMUpdateEvent()]
+            [ZMUpdateEvent()]
         }
 
         mockMLSActionExecutor.mockAddMembers = { _, _ in
@@ -2762,11 +2762,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let expectation1 = self.customExpectation(description: "CreateConversation should be called")
 
         mockMLSActionExecutor.mockJoinGroup = { _, _ in
-            return [ZMUpdateEvent()]
+            [ZMUpdateEvent()]
         }
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
         mockCoreCrypto.conversationExistsConversationId_MockMethod = {_ in
-            return false
+            false
         }
         mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in
             expectation1.fulfill()
@@ -2805,11 +2805,11 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockMLSActionExecutor.mockJoinGroup = { _, _ in
-            return [ZMUpdateEvent()]
+            [ZMUpdateEvent()]
         }
         mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
         mockCoreCrypto.conversationExistsConversationId_MockMethod = { _ in
-            return true
+            true
         }
 
         mockMLSActionExecutor.mockCommitPendingProposals = { id in

@@ -47,9 +47,9 @@ extension ZMConversation {
 
     @objc
     class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
-        return ["participantRoles.user.isServiceUser",
-                "participantRoles.user.hasTeam",
-                "participantRoles.user.isExternalPartner"]
+        ["participantRoles.user.isServiceUser",
+         "participantRoles.user.hasTeam",
+         "participantRoles.user.isExternalPartner"]
     }
 
     /// The state of external participants in the conversation.
@@ -96,16 +96,16 @@ extension ZMConversation {
 
     /// Returns whether an services are present, regardless of the display rules.
     public var areServicesPresent: Bool {
-        return localParticipants.any(\.isServiceUser)
+        localParticipants.any(\.isServiceUser)
     }
 
     /// Returns whether guests are present, regardless of the display rules.
     public var areGuestsPresent: Bool {
-        return localParticipants.any { $0.isGuest(in: self) }
+        localParticipants.any { $0.isGuest(in: self) }
     }
 
     /// Returns whether federated remote users are present, regardless of the display rules.
     public var areRemotesPresent: Bool {
-        return localParticipants.any(\.isFederated)
+        localParticipants.any(\.isFederated)
     }
 }

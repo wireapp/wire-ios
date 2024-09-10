@@ -73,7 +73,7 @@ final class Emoji: Decodable {
 
 extension Emoji: Hashable {
     static func == (lhs: Emoji, rhs: Emoji) -> Bool {
-        return lhs.value == rhs.value
+        lhs.value == rhs.value
     }
 
     func hash(into hasher: inout Hasher) {

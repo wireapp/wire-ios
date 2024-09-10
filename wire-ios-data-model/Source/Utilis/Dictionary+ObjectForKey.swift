@@ -20,18 +20,18 @@ import Foundation
 
 extension Dictionary {
     public func string(forKey key: String) -> String? {
-        return (self as NSDictionary).string(forKey: key)
+        (self as NSDictionary).string(forKey: key)
     }
 
     public func optionalString(forKey key: String) -> String? {
-        return (self as NSDictionary).optionalString(forKey: key)
+        (self as NSDictionary).optionalString(forKey: key)
     }
 
     public func dictionary(forKey key: String) -> [String: AnyObject]? {
-        return (self as NSDictionary).dictionary(forKey: key)
+        (self as NSDictionary).dictionary(forKey: key)
     }
 
     public func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
-        return (self as NSDictionary).optionalDictionary(forKey: key)
+        (self as NSDictionary).optionalDictionary(forKey: key)
     }
 }

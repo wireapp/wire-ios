@@ -997,7 +997,7 @@ struct ConversationEventPayloadProcessor {
         conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) -> [(ZMUser, Role?)] {
-        return payload.others.compactMap {
+        payload.others.compactMap {
             fetchUserAndRole(
                 from: $0,
                 for: conversation,

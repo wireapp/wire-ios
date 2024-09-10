@@ -31,28 +31,28 @@ extension UIAlertController {
         }
 
         var action: String {
-            return LoginSSoAlertLocale.action
+            LoginSSoAlertLocale.action
         }
 
         var title: String {
-            return LoginSSoAlertLocale.title
+            LoginSSoAlertLocale.title
         }
 
         var message: String {
             switch self {
             case .ssoOnly:
-                return LoginSSoAlertLocale.Message.ssoOnly
+                LoginSSoAlertLocale.Message.ssoOnly
             case .ssoAndEmail:
-                return LoginSSoAlertLocale.Message.ssoAndEmail
+                LoginSSoAlertLocale.Message.ssoAndEmail
             }
         }
 
         var placeholder: String {
             switch self {
             case .ssoOnly:
-                return LoginSSoAlertLocale.TextField.Placeholder.ssoOnly
+                LoginSSoAlertLocale.TextField.Placeholder.ssoOnly
             case .ssoAndEmail:
-                return LoginSSoAlertLocale.TextField.Placeholder.ssoAndEmail
+                LoginSSoAlertLocale.TextField.Placeholder.ssoAndEmail
             }
         }
     }

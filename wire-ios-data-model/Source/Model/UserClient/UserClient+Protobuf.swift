@@ -28,7 +28,7 @@ extension UserClient {
     }
 
     public var clientId: Proteus_ClientId {
-        return Proteus_ClientId.with {
+        Proteus_ClientId.with {
             $0.client = self.hexRemoteIdentifier
         }
     }

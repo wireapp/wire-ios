@@ -31,15 +31,15 @@ protocol IconImageStyle {
 
 extension IconImageStyle {
     var accessibilityPrefix: String {
-        return "img"
+        "img"
     }
 
     var accessibilityIdentifier: String {
-        return "\(accessibilityPrefix).\(accessibilitySuffix)"
+        "\(accessibilityPrefix).\(accessibilitySuffix)"
     }
 
     var tintColor: UIColor? {
-        return nil
+        nil
     }
 }
 
@@ -64,7 +64,7 @@ class IconImageView: UIImageView {
 
     override var accessibilityIdentifier: String? {
         get {
-            return style?.accessibilityIdentifier
+            style?.accessibilityIdentifier
         }
         set {
             super.accessibilityIdentifier = newValue
@@ -73,7 +73,7 @@ class IconImageView: UIImageView {
 
     override var accessibilityLabel: String? {
         get {
-            return style?.accessibilityLabel
+            style?.accessibilityLabel
         }
         set {
             super.accessibilityLabel = newValue

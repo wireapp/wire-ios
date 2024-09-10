@@ -81,29 +81,29 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        return clientRegistrationStatus
+        clientRegistrationStatus
     }
 
     public var operationState: OperationState {
         switch operationStatus.operationState {
         case .foreground:
-            return .foreground
+            .foreground
         case .background, .backgroundCall, .backgroundFetch, .backgroundTask:
-            return .background
+            .background
         }
     }
 
     public var synchronizationState: SynchronizationState {
         if !clientRegistrationStatus.clientIsReadyForRequests {
-            return .unauthenticated
+            .unauthenticated
         } else if syncStatus.isSlowSyncing {
-            return .slowSyncing
+            .slowSyncing
         } else if syncStatus.isFetchingNotificationStream {
-            return .quickSyncing
+            .quickSyncing
         } else if syncStatus.isSyncing {
-            return .establishingWebsocket
+            .establishingWebsocket
         } else {
-            return .online
+            .online
         }
     }
 

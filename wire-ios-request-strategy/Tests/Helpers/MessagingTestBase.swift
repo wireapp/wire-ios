@@ -40,15 +40,15 @@ class MessagingTestBase: ZMTBaseTest {
     }
 
     var syncMOC: NSManagedObjectContext! {
-        return self.coreDataStack.syncContext
+        self.coreDataStack.syncContext
     }
 
     var uiMOC: NSManagedObjectContext! {
-        return self.coreDataStack.viewContext
+        self.coreDataStack.viewContext
     }
 
     var eventMOC: NSManagedObjectContext! {
-        return self.coreDataStack.eventContext
+        self.coreDataStack.eventContext
     }
 
     override class func setUp() {
@@ -117,7 +117,7 @@ extension MessagingTestBase {
         source: ZMUpdateEventSource = .pushNotification,
         eventDecoder: EventDecoder
     ) async throws -> ZMUpdateEvent {
-        return try await decryptedUpdateEventFromOtherClient(
+        try await decryptedUpdateEventFromOtherClient(
             message: GenericMessage(content: Text(content: text)),
             conversation: conversation,
             source: source,
@@ -324,7 +324,7 @@ extension MessagingTestBase {
 
     /// Creates a user and a client
     func createUser(alsoCreateClient: Bool = false) -> ZMUser {
-        return createUser(
+        createUser(
             alsoCreateClient: alsoCreateClient,
             in: syncMOC
         )
@@ -351,7 +351,7 @@ extension MessagingTestBase {
 
     /// Creates a new client for a user
     func createClient(user: ZMUser) -> UserClient {
-        return createClient(
+        createClient(
             user: user,
             in: syncMOC
         )
@@ -371,7 +371,7 @@ extension MessagingTestBase {
 
     /// Creates a group conversation with a user
     func createGroupConversation(with user: ZMUser) -> ZMConversation {
-        return createGroupConversation(
+        createGroupConversation(
             with: user,
             in: syncMOC
         )
@@ -408,7 +408,7 @@ extension MessagingTestBase {
 
     @discardableResult
     func createTeam() -> Team {
-        return createTeam(in: syncMOC)
+        createTeam(in: syncMOC)
     }
 
     @discardableResult
@@ -486,7 +486,7 @@ extension MessagingTestBase {
 
 extension MessagingTestBase {
     override var allDispatchGroups: [ZMSDispatchGroup] {
-        return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
+        super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
     }
 
     func performPretendingUiMocIsSyncMoc(block: () -> Void) {
@@ -502,7 +502,7 @@ extension MessagingTestBase {
 
 extension MessagingTestBase {
     private var cacheFolder: URL {
-        return FileManager.default.randomCacheURL!
+        FileManager.default.randomCacheURL!
     }
 
     private func deleteAllFilesInCache() {
@@ -523,7 +523,7 @@ extension MessagingTestBase {
     public func payloadForMessage(in conversation: ZMConversation?,
                                   type: String,
                                   data: Any) -> NSMutableDictionary? {
-        return payloadForMessage(in: conversation!, type: type, data: data, time: nil)
+        payloadForMessage(in: conversation!, type: type, data: data, time: nil)
     }
 
     public func payloadForMessage(in conversation: ZMConversation,
@@ -552,11 +552,11 @@ extension MessagingTestBase {
                                   data: Any,
                                   time: Date?,
                                   from: ZMUser) -> NSMutableDictionary? {
-        return ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
-                "data": data,
-                "from": from.remoteIdentifier.transportString(),
-                "time": time?.transportString() ?? "",
-                "type": type
+        ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
+         "data": data,
+         "from": from.remoteIdentifier.transportString(),
+         "time": time?.transportString() ?? "",
+         "type": type
         ]
     }
 
@@ -566,15 +566,15 @@ extension MessagingTestBase {
                                   data: Any,
                                   time: Date?,
                                   fromID: UUID) -> NSMutableDictionary? {
-        return ["conversation": conversationID.transportString(),
-                "qualified_conversation": [
-                    "id": conversationID.transportString(),
-                    "domain": domain
-                ],
-                "data": data,
-                "from": fromID.transportString(),
-                "time": time?.transportString() ?? "",
-                "type": type
+        ["conversation": conversationID.transportString(),
+         "qualified_conversation": [
+             "id": conversationID.transportString(),
+             "domain": domain
+         ],
+         "data": data,
+         "from": fromID.transportString(),
+         "time": time?.transportString() ?? "",
+         "type": type
         ]
     }
 }

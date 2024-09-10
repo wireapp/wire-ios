@@ -34,7 +34,7 @@ protocol SeparatorViewProtocol: AnyObject {
 
 extension SeparatorViewProtocol where Self: ViewWithContentView {
     var separatorLeadingAnchor: NSLayoutXAxisAnchor {
-        return contentView.leadingAnchor
+        contentView.leadingAnchor
     }
 
     func createSeparatorConstraints() {

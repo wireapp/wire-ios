@@ -54,7 +54,7 @@ final class BreathLoadingBar: UIView {
     var animationDuration: TimeInterval = 0.0
 
     var isAnimationRunning: Bool {
-        return layer.animation(forKey: BreathLoadingAnimationKey) != nil
+        layer.animation(forKey: BreathLoadingAnimationKey) != nil
     }
 
     init(animationDuration duration: TimeInterval) {
@@ -149,6 +149,6 @@ final class BreathLoadingBar: UIView {
     }
 
     static func withDefaultAnimationDuration() -> BreathLoadingBar {
-        return BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
+        BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
     }
 }

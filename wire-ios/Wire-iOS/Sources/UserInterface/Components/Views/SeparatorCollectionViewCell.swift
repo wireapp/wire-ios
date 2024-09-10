@@ -30,7 +30,7 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
     }
 
     var showSeparator: Bool {
-        get { return !separator.isHidden }
+        get { !separator.isHidden }
         set { separator.isHidden = !newValue }
     }
 

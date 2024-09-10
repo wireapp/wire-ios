@@ -508,7 +508,7 @@ enum FileType {
     }
 
     var testData: Data {
-        return try! Data(contentsOf: testURL)
+        try! Data(contentsOf: testURL)
     }
 }
 

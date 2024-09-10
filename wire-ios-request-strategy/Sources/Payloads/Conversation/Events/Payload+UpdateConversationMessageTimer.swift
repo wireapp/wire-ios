@@ -26,7 +26,7 @@ extension Payload {
         }
 
         static var eventType: ZMUpdateEventType {
-            return .conversationMessageTimerUpdate
+            .conversationMessageTimerUpdate
         }
 
         let messageTimer: TimeInterval?

@@ -237,9 +237,9 @@ extension CallParticipantState {
     var isConnected: Bool {
         switch self {
         case .connected:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

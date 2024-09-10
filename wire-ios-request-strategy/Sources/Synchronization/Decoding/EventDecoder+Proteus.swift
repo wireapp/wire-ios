@@ -249,7 +249,7 @@ extension EventDecoder {
 
 extension ZMUpdateEvent {
     fileprivate var recipientID: String? {
-        return self.eventData?["recipient"] as? String
+        self.eventData?["recipient"] as? String
     }
 
     private var eventData: [String: Any]? {
@@ -285,17 +285,17 @@ extension ZMUpdateEvent {
     private var payloadKey: String? {
         switch type {
         case .conversationOtrMessageAdd:
-            return "text"
+            "text"
 
         case .conversationOtrAssetAdd:
-            return "key"
+            "key"
 
         default:
-            return nil
+            nil
         }
     }
 
     private var externalStringCount: Int {
-        return (eventData?["data"] as? String)?.count ?? 0
+        (eventData?["data"] as? String)?.count ?? 0
     }
 }

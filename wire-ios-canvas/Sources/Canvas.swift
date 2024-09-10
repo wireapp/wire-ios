@@ -47,7 +47,7 @@ struct Orientation {
     var rotation: CGFloat
 
     static var standard: Orientation {
-        return Orientation(scale: 1, position: CGPoint.zero, rotation: 0)
+        Orientation(scale: 1, position: CGPoint.zero, rotation: 0)
     }
 }
 
@@ -92,7 +92,7 @@ public final class Canvas: UIView {
 
     /// hasChanges is true if the canvas has changes which can be un done. See undo()
     public var hasChanges: Bool {
-        return sceneExcludingReferenceObject.count > 0
+        sceneExcludingReferenceObject.count > 0
     }
 
     private var scene: [Renderable] = []
@@ -103,7 +103,7 @@ public final class Canvas: UIView {
     private var flattenIndex: Int = 0
 
     fileprivate var sceneExcludingReferenceObject: [Renderable] {
-        return scene.filter({ $0 !== referenceObject })
+        scene.filter({ $0 !== referenceObject })
     }
 
     fileprivate var selection: Editable? {
@@ -328,7 +328,7 @@ public final class Canvas: UIView {
     }
 
     override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return gestureRecognizers?.contains(gestureRecognizer) ?? false
+        gestureRecognizers?.contains(gestureRecognizer) ?? false
     }
 
     // MARK: - Touch handling
@@ -386,7 +386,7 @@ extension Canvas: UIGestureRecognizerDelegate {
     }
 
     @objc public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
+        true
     }
 
     @objc func handleTapGesture(gestureRecognizer: UITapGestureRecognizer) {

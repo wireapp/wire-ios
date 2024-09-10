@@ -23,58 +23,58 @@ import UIKit
 extension UIViewController {
     @available(*, deprecated, message: "Will be removed")
     var safeBottomAnchor: NSLayoutYAxisAnchor {
-        return self.view.safeAreaLayoutGuide.bottomAnchor
+        self.view.safeAreaLayoutGuide.bottomAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeTopAnchor: NSLayoutYAxisAnchor {
-        return self.view.safeAreaLayoutGuide.topAnchor
+        self.view.safeAreaLayoutGuide.topAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
-        return view.safeAreaLayoutGuide.centerYAnchor
+        view.safeAreaLayoutGuide.centerYAnchor
     }
 }
 
 extension UIView {
     @available(*, deprecated, message: "Will be removed")
     var safeAreaLayoutGuideOrFallback: UILayoutGuide {
-        return safeAreaLayoutGuide
+        safeAreaLayoutGuide
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeAreaInsetsOrFallback: UIEdgeInsets {
-        return safeAreaInsets
+        safeAreaInsets
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeLeadingAnchor: NSLayoutXAxisAnchor {
-        return safeAreaLayoutGuide.leadingAnchor
+        safeAreaLayoutGuide.leadingAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeTrailingAnchor: NSLayoutXAxisAnchor {
-        return safeAreaLayoutGuide.trailingAnchor
+        safeAreaLayoutGuide.trailingAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeBottomAnchor: NSLayoutYAxisAnchor {
-        return safeAreaLayoutGuide.bottomAnchor
+        safeAreaLayoutGuide.bottomAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeTopAnchor: NSLayoutYAxisAnchor {
-        return safeAreaLayoutGuide.topAnchor
+        safeAreaLayoutGuide.topAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
-        return safeAreaLayoutGuide.centerYAnchor
+        safeAreaLayoutGuide.centerYAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeCenterXAnchor: NSLayoutXAxisAnchor {
-        return safeAreaLayoutGuide.centerXAnchor
+        safeAreaLayoutGuide.centerXAnchor
     }
 }

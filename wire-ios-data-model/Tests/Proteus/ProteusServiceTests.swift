@@ -92,7 +92,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            return 209
+            209
         }
 
         mockCoreCrypto.proteusDecryptSessionIdCiphertext_MockMethod = { _, _ in
@@ -149,7 +149,7 @@ class ProteusServiceTests: XCTestCase {
         }
 
         mockCoreCrypto.proteusLastErrorCode_MockMethod = {
-            return 209
+            209
         }
 
         mockCoreCrypto.proteusSessionFromMessageSessionIdEnvelope_MockMethod = { _, _ in

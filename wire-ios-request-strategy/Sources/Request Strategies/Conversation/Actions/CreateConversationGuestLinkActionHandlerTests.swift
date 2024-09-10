@@ -29,7 +29,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
     private var conversationID: UUID!
 
     private var syncContext: NSManagedObjectContext {
-        return stack.syncContext
+        stack.syncContext
     }
 
     override func setUp() async throws {

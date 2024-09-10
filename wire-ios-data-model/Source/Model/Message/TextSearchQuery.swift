@@ -60,7 +60,7 @@ extension ZMClientMessage {
     }
 
     static func predicateForMessages(inConversationWith identifier: UUID) -> NSPredicate {
-        return NSPredicate(
+        NSPredicate(
             format: "%K.%K == %@",
             ZMMessageConversationKey,
             ZMConversationRemoteIdentifierDataKey,
@@ -69,11 +69,11 @@ extension ZMClientMessage {
     }
 
     static func predicateForNotIndexedMessages() -> NSPredicate {
-        return NSPredicate(format: "%K == NULL", #keyPath(ZMMessage.normalizedText))
+        NSPredicate(format: "%K == NULL", #keyPath(ZMMessage.normalizedText))
     }
 
     static func predicateForIndexedMessages() -> NSPredicate {
-        return NSPredicate(format: "%K != NULL", #keyPath(ZMMessage.normalizedText))
+        NSPredicate(format: "%K != NULL", #keyPath(ZMMessage.normalizedText))
     }
 
     static func descendingFetchRequest(with predicate: NSPredicate) -> NSFetchRequest<NSFetchRequestResult>? {
@@ -97,7 +97,7 @@ public class TextQueryResult: NSObject {
     }
 
     func updated(appending matches: [ZMMessage], hasMore: Bool) -> TextQueryResult {
-        return TextQueryResult(query: self.query, matches: self.matches + matches, hasMore: hasMore)
+        TextQueryResult(query: self.query, matches: self.matches + matches, hasMore: hasMore)
     }
 }
 
@@ -145,7 +145,7 @@ public class TextSearchQuery: NSObject {
     private var notIndexedMessageCount = 0
 
     public class func isValid(query: String) -> Bool {
-        return query.count >= 2
+        query.count >= 2
     }
 
     /// Creates a new `TextSearchQuery` object.

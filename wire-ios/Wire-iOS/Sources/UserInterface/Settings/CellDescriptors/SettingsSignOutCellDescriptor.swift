@@ -35,7 +35,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             isDestructive: true,
             presentationStyle: .modal,
             identifier: nil,
-            presentationAction: { return nil },
+            presentationAction: { nil },
             previewGenerator: nil,
             icon: nil,
             accessoryViewMode: .default,

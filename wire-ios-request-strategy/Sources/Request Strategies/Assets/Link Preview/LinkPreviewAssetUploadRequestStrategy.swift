@@ -23,7 +23,7 @@ public final class LinkPreviewDetectorHelper: NSObject {
     fileprivate static var _test_debug_linkPreviewDetector: LinkPreviewDetectorType?
 
     public static func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType? {
-        return _test_debug_linkPreviewDetector
+        _test_debug_linkPreviewDetector
     }
 
     public static func setTest_debug_linkPreviewDetector(_ detectorType: LinkPreviewDetectorType?) {
@@ -90,11 +90,11 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
     }
 
     var predicateForAssetUpload: NSPredicate {
-        return NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.processed.rawValue)
+        NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.processed.rawValue)
     }
 
     var filterForAssetUpload: NSPredicate {
-        return NSPredicate { [unowned self] object, _ in
+        NSPredicate { [unowned self] object, _ in
             guard let message = object as? ZMClientMessage else {
                 return false
             }
@@ -104,11 +104,11 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
+        [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        return self.assetUpstreamSync.nextRequest(for: apiVersion)
+        self.assetUpstreamSync.nextRequest(for: apiVersion)
     }
 }
 
@@ -144,15 +144,15 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
-        return nil
+        nil
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        false
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
+        nil
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]?, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {

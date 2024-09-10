@@ -47,12 +47,12 @@ extension IndexedListView {
 
 extension UITableView: IndexedListView {
     func numberOfCells(inSection section: Int) -> Int {
-        return numberOfRows(inSection: section)
+        numberOfRows(inSection: section)
     }
 }
 
 extension UICollectionView: IndexedListView {
     func numberOfCells(inSection section: Int) -> Int {
-        return numberOfItems(inSection: section)
+        numberOfItems(inSection: section)
     }
 }

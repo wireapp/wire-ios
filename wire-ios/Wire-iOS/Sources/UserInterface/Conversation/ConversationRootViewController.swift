@@ -110,15 +110,15 @@ final class ConversationRootViewController: UIViewController {
     }
 
     private var child: UIViewController? {
-        return conversationViewController?.contentViewController
+        conversationViewController?.contentViewController
     }
 
     override var childForStatusBarStyle: UIViewController? {
-        return child
+        child
     }
 
     override var childForStatusBarHidden: UIViewController? {
-        return child
+        child
     }
 
     func configure() {
@@ -206,7 +206,7 @@ final class ConversationRootViewController: UIViewController {
 
 extension ConversationRootViewController: NetworkStatusBarDelegate {
     var bottomMargin: CGFloat {
-        return 0
+        0
     }
 
     func showInIPad(
@@ -214,7 +214,7 @@ extension ConversationRootViewController: NetworkStatusBarDelegate {
         with orientation: UIInterfaceOrientation
     ) -> Bool {
         // always show on iPad for any orientation in regular mode
-        return true
+        true
     }
 }
 

@@ -49,15 +49,15 @@ final class ConversationReplyContentView: UIView {
         }
 
         var isEdited: Bool {
-            return quotedMessage?.updatedAt != nil
+            quotedMessage?.updatedAt != nil
         }
 
         var senderName: String? {
-            return quotedMessage?.senderName
+            quotedMessage?.senderName
         }
 
         var timestamp: String? {
-            return quotedMessage?.formattedOriginalReceivedDate()
+            quotedMessage?.formattedOriginalReceivedDate()
         }
 
         var showRestriction: Bool {
@@ -88,7 +88,7 @@ final class ConversationReplyContentView: UIView {
         }
 
         var content: Content {
-            return setupContent()
+            setupContent()
         }
 
         var contentType: String {
@@ -326,19 +326,19 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
 extension ZMConversationMessage {
     fileprivate var typeString: String {
         if isText {
-            return "text"
+            "text"
         } else if isLocation {
-            return "location"
+            "location"
         } else if isAudio {
-            return "audio"
+            "audio"
         } else if isImage {
-            return "image"
+            "image"
         } else if isVideo {
-            return "video"
+            "video"
         } else if isFile {
-            return "file"
+            "file"
         } else {
-            return "unavailable"
+            "unavailable"
         }
     }
 }

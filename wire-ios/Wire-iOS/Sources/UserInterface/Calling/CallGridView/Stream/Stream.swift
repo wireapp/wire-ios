@@ -30,7 +30,7 @@ struct Stream: Equatable {
 
 extension Stream: Differentiable {
     var differenceIdentifier: AVSClient {
-        return streamId
+        streamId
     }
 
     var microphoneState: MicrophoneState? {
@@ -46,7 +46,7 @@ extension Stream: Differentiable {
 
 extension Stream {
     static func == (lhs: Stream, rhs: Stream) -> Bool {
-        return lhs.streamId == rhs.streamId
+        lhs.streamId == rhs.streamId
             && lhs.callParticipantState == rhs.callParticipantState
             && lhs.activeSpeakerState == rhs.activeSpeakerState
     }

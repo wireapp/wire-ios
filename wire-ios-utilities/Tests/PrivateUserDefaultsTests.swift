@@ -96,6 +96,6 @@ final class PrivateUserDefaultsTests: XCTestCase {
 
 extension String: DefaultsKey {
     public var rawValue: String {
-        return self
+        self
     }
 }

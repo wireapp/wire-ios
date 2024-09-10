@@ -130,11 +130,11 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return navigationController?.isNavigationBarHidden ?? false
+        navigationController?.isNavigationBarHidden ?? false
     }
 
     override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .fade
+        .fade
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -195,9 +195,9 @@ final class ConversationImagesViewController: UIViewController {
 
     private func logicalPreviousIndex(for index: Int) -> Int? {
         if self.inverse {
-            return self.nextIndex(for: index)
+            self.nextIndex(for: index)
         } else {
-            return self.previousIndex(for: index)
+            self.previousIndex(for: index)
         }
     }
 
@@ -213,9 +213,9 @@ final class ConversationImagesViewController: UIViewController {
 
     private func logicalNextIndex(for index: Int) -> Int? {
         if self.inverse {
-            return self.previousIndex(for: index)
+            self.previousIndex(for: index)
         } else {
-            return self.nextIndex(for: index)
+            self.nextIndex(for: index)
         }
     }
 
@@ -233,19 +233,19 @@ final class ConversationImagesViewController: UIViewController {
     private func selector(for action: MessageAction) -> Selector? {
         switch action {
         case .copy:
-            return #selector(copyCurrent(_:))
+            #selector(copyCurrent(_:))
         case .save:
-            return #selector(saveCurrent(_:))
+            #selector(saveCurrent(_:))
         case .sketchDraw:
-            return #selector(sketchCurrent(_:))
+            #selector(sketchCurrent(_:))
         case .sketchEmoji:
-            return #selector(sketchCurrentEmoji(_:))
+            #selector(sketchCurrentEmoji(_:))
         case .showInConversation:
-            return #selector(revealCurrent(_:))
+            #selector(revealCurrent(_:))
         case .delete:
-            return #selector(deleteCurrent)
+            #selector(deleteCurrent)
         default:
-            return nil
+            nil
         }
     }
 
@@ -355,8 +355,8 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func indexOf(message messageToFind: ZMConversationMessage) -> Int? {
-        return self.imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
-            return message == messageToFind
+        self.imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
+            message == messageToFind
         })
     }
 
@@ -437,7 +437,7 @@ final class ConversationImagesViewController: UIViewController {
 
 extension ConversationImagesViewController: ScreenshotProvider {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView? {
-        return self.snapshotBackgroundView
+        self.snapshotBackgroundView
     }
 }
 
@@ -459,15 +459,15 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
 
 extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
     func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
-        return .portrait
+        .portrait
     }
 
     func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController) -> UIInterfaceOrientationMask {
-        return self.traitCollection.horizontalSizeClass == .compact ? .portrait : .all
+        self.traitCollection.horizontalSizeClass == .compact ? .portrait : .all
     }
 
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        return self.imageMessages.count
+        self.imageMessages.count
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
@@ -508,7 +508,7 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
 
 extension ConversationImagesViewController: MenuVisibilityController {
     var menuVisible: Bool {
-        return buttonsBar.isHidden && separator.isHidden
+        buttonsBar.isHidden && separator.isHidden
     }
 
     func fadeAndHideMenu(_ hidden: Bool) {
@@ -532,7 +532,7 @@ extension ConversationImagesViewController: MenuVisibilityController {
 extension ConversationImagesViewController {
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     override var previewActionItems: [UIPreviewActionItem] {
-        return currentActionController?.previewActionItems ?? []
+        currentActionController?.previewActionItems ?? []
     }
 }
 

@@ -32,16 +32,16 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
         public var errorDescription: String? {
             switch self {
             case .endpointUnavailable:
-                return "Endpoint unavailable"
+                "Endpoint unavailable"
 
             case .malformedResponse:
-                return "Malformed response"
+                "Malformed response"
 
             case .mlsNotEnabled:
-                return "MLS not enabled"
+                "MLS not enabled"
 
             case let .unknown(status, label, message):
-                return "Unknown error response status: \(status), label: \(label), message: \(message)"
+                "Unknown error response status: \(status), label: \(label), message: \(message)"
             }
         }
     }

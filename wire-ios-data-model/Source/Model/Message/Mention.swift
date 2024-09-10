@@ -78,18 +78,18 @@ extension Mention {
 
 extension NSRange {
     fileprivate var range: Range<Int> {
-        return lowerBound..<upperBound
+        lowerBound..<upperBound
     }
 }
 
 @objc extension Mention {
     public var isForSelf: Bool {
-        return user.isSelfUser
+        user.isSelfUser
     }
 }
 
 extension TextMessageData {
     public var isMentioningSelf: Bool {
-        return mentions.any(\.isForSelf)
+        mentions.any(\.isForSelf)
     }
 }

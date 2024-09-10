@@ -101,7 +101,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     /// The ID of the legal hold client.
     public var clientIdentifier: String {
-        return client.id
+        client.id
     }
 
     /// The last prekey for the legal hold client.
@@ -152,17 +152,17 @@ extension ZMUser: SelfLegalHoldSubject {
 
     /// The keys that affect the legal hold status for the user.
     static func keysAffectingLegalHoldStatus() -> Set<String> {
-        return [#keyPath(ZMUser.clients), ZMUserKeys.legalHoldRequest]
+        [#keyPath(ZMUser.clients), ZMUserKeys.legalHoldRequest]
     }
 
     /// The current legal hold status for the user.
     public var legalHoldStatus: UserLegalHoldStatus {
         if clients.any(\.isLegalHoldDevice) {
-            return .enabled
+            .enabled
         } else if let legalHoldRequest = self.legalHoldRequest {
-            return .pending(legalHoldRequest)
+            .pending(legalHoldRequest)
         } else {
-            return .disabled
+            .disabled
         }
     }
 

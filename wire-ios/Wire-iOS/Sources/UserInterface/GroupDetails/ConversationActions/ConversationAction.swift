@@ -39,23 +39,23 @@ extension ZMConversation {
     }
 
     var listActions: [Action] {
-        return actions.filter({ $0 != .deleteGroup })
+        actions.filter({ $0 != .deleteGroup })
     }
 
     var detailActions: [Action] {
-        return actions.filter({ $0 != .configureNotifications })
+        actions.filter({ $0 != .configureNotifications })
     }
 
     private var actions: [Action] {
         switch conversationType {
         case .connection:
-            return availablePendingActions()
+            availablePendingActions()
         case .oneOnOne:
-            return availableOneToOneActions()
+            availableOneToOneActions()
         case .self,
              .group,
              .invalid:
-            return availableGroupActions()
+            availableGroupActions()
         }
     }
 
@@ -143,8 +143,8 @@ extension ZMConversation.Action {
         switch self {
         case .remove,
              .deleteGroup:
-            return true
-        default: return false
+            true
+        default: false
         }
     }
 
@@ -188,11 +188,11 @@ extension ZMConversation.Action {
     }
 
     func alertAction(handler: @escaping () -> Void) -> UIAlertAction {
-        return .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
+        .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
     }
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     func previewAction(handler: @escaping () -> Void) -> UIPreviewAction {
-        return .init(title: title, style: isDestructive ? .destructive : .default, handler: { _, _ in handler() })
+        .init(title: title, style: isDestructive ? .destructive : .default, handler: { _, _ in handler() })
     }
 }

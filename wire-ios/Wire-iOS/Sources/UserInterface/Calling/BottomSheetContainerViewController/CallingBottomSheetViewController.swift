@@ -47,7 +47,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     private let callDegradationController = CallDegradationController()
 
     var bottomSheetMinimalOffset: CGFloat {
-        return callingActionsInfoViewController.actionsViewHeightConstraint.constant
+        callingActionsInfoViewController.actionsViewHeightConstraint.constant
     }
 
     let userSession: UserSession
@@ -293,6 +293,6 @@ extension VoiceChannel {
 
 private final class PassThroughOpaqueView: UIView {
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        return false
+        false
     }
 }

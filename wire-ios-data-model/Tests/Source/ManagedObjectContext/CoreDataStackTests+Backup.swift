@@ -30,7 +30,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         migrator = MockCoreDataMessagingMigratorProtocol()
         migrator.requiresMigrationAtToVersion_MockMethod = { _, _ in
-            return false
+            false
         }
         migrator.migrateStoreAtToVersion_MockMethod = { _, _ in }
     }

@@ -43,16 +43,16 @@ extension SearchGroup {
         static let all: [SearchGroup] = [.people]
     #else
         static var all: [SearchGroup] {
-            return [.people, .services].filter(\.accessible)
+            [.people, .services].filter(\.accessible)
         }
     #endif
 
     var name: String {
         switch self {
         case .people:
-            return L10n.Localizable.Peoplepicker.Header.people
+            L10n.Localizable.Peoplepicker.Header.people
         case .services:
-            return L10n.Localizable.Peoplepicker.Header.services
+            L10n.Localizable.Peoplepicker.Header.services
         }
     }
 }
@@ -117,9 +117,9 @@ extension UIViewController {
         return hierarchy.any {
             if let arrowDirection = $0.popoverPresentationController?.arrowDirection,
                arrowDirection != .unknown {
-                return true
+                true
             } else {
-                return false
+                false
             }
         }
     }
@@ -412,21 +412,21 @@ final class SearchResultsViewController: UIViewController {
 
     func sectionFor(controller: CollectionViewSectionController) -> SearchResultsViewControllerSection {
         if controller === topPeopleSection {
-            return .topPeople
+            .topPeople
         } else if controller === contactsSection {
-            return .contacts
+            .contacts
         } else if controller === teamMemberAndContactsSection {
-            return .teamMembers
+            .teamMembers
         } else if  controller === conversationsSection {
-            return .conversations
+            .conversations
         } else if controller === directorySection {
-            return .directory
+            .directory
         } else if controller === servicesSection {
-            return .services
+            .services
         } else if controller === federationSection {
-            return .federation
+            .federation
         } else {
-            return .unknown
+            .unknown
         }
     }
 }

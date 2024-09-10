@@ -31,12 +31,12 @@ extension Date {
     /// Whether the date is after the current instant.
 
     public var isInTheFuture: Bool {
-        return !isInThePast
+        !isInThePast
     }
 
     /// Whether the date is before the current instant.
 
     public var isInThePast: Bool {
-        return compare(Date()) != .orderedDescending
+        compare(Date()) != .orderedDescending
     }
 }

@@ -132,7 +132,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
-        return deviceClass == .legalHold || type == .legalHold
+        deviceClass == .legalHold || type == .legalHold
     }
 
     public var verified: Bool {
@@ -144,11 +144,11 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     override public static func entityName() -> String {
-        return "UserClient"
+        "UserClient"
     }
 
     override public func keysTrackedForLocalModifications() -> Set<String> {
-        return [
+        [
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
             ZMUserClientMissingKey,
@@ -159,11 +159,11 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     override public static func sortKey() -> String {
-        return ZMUserClientLabelKey
+        ZMUserClientLabelKey
     }
 
     override public static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
-        return NSPredicate(format: "%K == NULL", ZMUserClientRemoteIdentifierKey)
+        NSPredicate(format: "%K == NULL", ZMUserClientRemoteIdentifierKey)
     }
 
     override public static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
@@ -516,7 +516,7 @@ extension UserClient {
 extension UserClient {
     @objc public var failedToEstablishSession: Bool {
         get {
-            return managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
+            managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
         }
         set {
             if newValue {
@@ -607,7 +607,7 @@ extension UserClient {
         usingPreKey preKey: String,
         proteusProviding: ProteusProviding
     ) async -> Bool {
-        return await proteusProviding.performAsync { proteusService in
+        await proteusProviding.performAsync { proteusService in
             await establishSession(through: proteusService,
                                    sessionId: sessionId,
                                    preKey: preKey
@@ -769,7 +769,7 @@ extension UserClient {
     }
 
     func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
-        return clients.map(\.user).reduce(into: []) {
+        clients.map(\.user).reduce(into: []) {
             guard let user = $1 else {
                 return
             }
@@ -836,16 +836,16 @@ extension UserClient {
 
     public var sessionIdentifier: EncryptionSessionIdentifier? {
         if needsSessionMigration {
-            return sessionIdentifier_V2
+            sessionIdentifier_V2
         } else {
-            return sessionIdentifier_V3
+            sessionIdentifier_V3
         }
     }
 
     /// Previous session identifiers.
 
     private var sessionIdentifier_V1: String? {
-        return self.remoteIdentifier
+        self.remoteIdentifier
     }
 
     private var sessionIdentifier_V2: EncryptionSessionIdentifier? {
@@ -907,9 +907,9 @@ extension UserClient {
 extension UserClient {
     public var proteusSessionID: ProteusSessionID? {
         if needsSessionMigration {
-            return proteusSessionID_V2
+            proteusSessionID_V2
         } else {
-            return proteusSessionID_V3
+            proteusSessionID_V3
         }
     }
 

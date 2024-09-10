@@ -34,19 +34,19 @@ extension ZMConversationMessage {
 
 extension TextMessageData {
     var linkPreviewImage: WireImageResource {
-        return LinkPreviewImageResourceAdaptor(textMessageData: self)
+        LinkPreviewImageResourceAdaptor(textMessageData: self)
     }
 }
 
 extension ZMFileMessageData {
     var thumbnailImage: PreviewableImageResource {
-        return FileMessageImageResourceAdaptor(fileMesssageData: self)
+        FileMessageImageResourceAdaptor(fileMesssageData: self)
     }
 }
 
 extension ZMImageMessageData {
     var image: PreviewableImageResource {
-        return ImageMessageImageResourceAdaptor(imageMessageData: self)
+        ImageMessageImageResourceAdaptor(imageMessageData: self)
     }
 }
 
@@ -54,11 +54,11 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
     let textMessageData: TextMessageData
 
     var cacheIdentifier: String? {
-        return textMessageData.linkPreviewImageCacheKey?.appending("-link")
+        textMessageData.linkPreviewImageCacheKey?.appending("-link")
     }
 
     var isAnimatedGIF: Bool {
-        return false
+        false
     }
 
     func requestImageDownload() {
@@ -76,11 +76,11 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
     let urlSession: URLSessionProtocol
 
     var cacheIdentifier: String? {
-        return textMessageData.linkPreviewImageCacheKey?.appending("-linkattachment")
+        textMessageData.linkPreviewImageCacheKey?.appending("-linkattachment")
     }
 
     var isAnimatedGIF: Bool {
-        return false
+        false
     }
 
     init(attachment: LinkAttachment, textMessageData: TextMessageData, urlSession: URLSessionProtocol) {
@@ -120,19 +120,19 @@ struct FileMessageImageResourceAdaptor: PreviewableImageResource {
     let fileMesssageData: ZMFileMessageData
 
     var cacheIdentifier: String? {
-        return fileMesssageData.imagePreviewDataIdentifier?.appending("-file")
+        fileMesssageData.imagePreviewDataIdentifier?.appending("-file")
     }
 
     var contentMode: UIView.ContentMode {
-        return .scaleAspectFill
+        .scaleAspectFill
     }
 
     var contentSize: CGSize {
-        return CGSize(width: 250, height: 140)
+        CGSize(width: 250, height: 140)
     }
 
     var isAnimatedGIF: Bool {
-        return false
+        false
     }
 
     func requestImageDownload() {
@@ -148,19 +148,19 @@ struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
     let imageMessageData: ZMImageMessageData
 
     var cacheIdentifier: String? {
-        return imageMessageData.imageDataIdentifier?.appending("-image")
+        imageMessageData.imageDataIdentifier?.appending("-image")
     }
 
     var isAnimatedGIF: Bool {
-        return imageMessageData.isAnimatedGIF
+        imageMessageData.isAnimatedGIF
     }
 
     var contentMode: UIView.ContentMode {
-        return .scaleAspectFit
+        .scaleAspectFit
     }
 
     var contentSize: CGSize {
-        return imageMessageData.originalSize
+        imageMessageData.originalSize
     }
 
     func requestImageDownload() {
@@ -196,13 +196,13 @@ extension ImageSizeLimit {
     var cacheKeyExtension: String {
         switch self {
         case .none:
-            return "default"
+            "default"
         case .deviceOptimized:
-            return "device"
+            "device"
         case let .maxDimension(size):
-            return "max_\(String(Int(size)))"
+            "max_\(String(Int(size)))"
         case let .maxDimensionForShortSide(size):
-            return "maxshort_\(String(Int(size)))"
+            "maxshort_\(String(Int(size)))"
         }
     }
 }

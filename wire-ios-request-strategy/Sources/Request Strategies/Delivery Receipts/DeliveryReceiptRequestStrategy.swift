@@ -135,9 +135,9 @@ extension GenericMessage {
     fileprivate var needsDeliveryConfirmation: Bool {
         switch content {
         case .text, .image, .asset, .knock, .external, .location, .ephemeral, .composite:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

@@ -151,7 +151,7 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
     }
 
     public var debugInfo: String {
-        return underlyingMessage?.safeForLoggingDescription ?? ""
+        underlyingMessage?.safeForLoggingDescription ?? ""
     }
 }
 
@@ -185,7 +185,7 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
     }
 
     public var debugInfo: String {
-        return "\(String(describing: underlyingMessage))"
+        "\(String(describing: underlyingMessage))"
     }
 }
 
@@ -747,9 +747,9 @@ extension GenericMessage {
         let filteredClientEntries = await context.perform {
             userClients.compactMap {
                 if $0 != selfClient {
-                    return ClientEntry(client: $0, context: context)
+                    ClientEntry(client: $0, context: context)
                 } else {
-                    return nil
+                    nil
                 }
             }
         }
@@ -769,7 +769,7 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: LegacyEncryptionFunction
     ) -> [Proteus_ClientEntry] {
-        return userClients.compactMap { client in
+        userClients.compactMap { client in
             guard client != selfClient else { return nil }
             return legacyClientEntry(for: client, using: encryptionFunction)
         }
@@ -928,7 +928,7 @@ extension GenericMessage {
             if let connectedUser = conversation.connectedUser { return [connectedUser, selfUser] }
 
             func mentionedServices() -> Set<ZMUser> {
-                return services.filter { service in
+                services.filter { service in
                     self.textData?.mentions.contains { $0.userID == service.remoteIdentifier?.transportString() } ?? false
                 }
             }

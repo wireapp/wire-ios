@@ -27,22 +27,22 @@ enum SettingsColorScheme: Int, CaseIterable {
     var colorSchemeVariant: ColorSchemeVariant {
         switch self {
         case .light:
-            return .light
+            .light
         case .dark:
-            return .dark
+            .dark
         case .system:
-            return UIApplication.userInterfaceStyle == .dark ? .dark : .light
+            UIApplication.userInterfaceStyle == .dark ? .dark : .light
         }
     }
 
     var userInterfaceStyle: UIUserInterfaceStyle {
         switch self {
         case .light:
-            return .light
+            .light
         case .dark:
-            return .dark
+            .dark
         case .system:
-            return .unspecified
+            .unspecified
         }
     }
 
@@ -60,22 +60,22 @@ enum SettingsColorScheme: Int, CaseIterable {
     }
 
     static var defaultPreference: SettingsColorScheme {
-        return .system
+        .system
     }
 
     var keyValueString: String {
         switch self {
-        case .dark: return "dark"
-        case .light: return "light"
-        case .system: return "system"
+        case .dark: "dark"
+        case .light: "light"
+        case .system: "system"
         }
     }
 
     var displayString: String {
         switch self {
-        case .dark: return L10n.Localizable.DarkTheme.Option.dark
-        case .light: return L10n.Localizable.DarkTheme.Option.light
-        case .system: return L10n.Localizable.DarkTheme.Option.system
+        case .dark: L10n.Localizable.DarkTheme.Option.dark
+        case .light: L10n.Localizable.DarkTheme.Option.light
+        case .system: L10n.Localizable.DarkTheme.Option.system
         }
     }
 }

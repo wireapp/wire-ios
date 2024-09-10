@@ -106,42 +106,42 @@ enum MessageAction: CaseIterable, Equatable {
     var icon: StyleKitIcon? {
         switch self {
         case .copy:
-            return .copy
+            .copy
         case .reply:
-            return .reply
+            .reply
         case .openDetails:
-            return .about
+            .about
         case .edit:
-            return .pencil
+            .pencil
         case .delete:
-            return .trash
+            .trash
         case .save:
-            return .save
+            .save
         case .cancel:
-            return .cross
+            .cross
         case .download:
-            return .downArrow
+            .downArrow
         case .resend:
-            return .redo
+            .redo
         case .showInConversation:
-            return .eye
+            .eye
         case .sketchDraw:
-            return .brush
+            .brush
         case .sketchEmoji:
-            return .emoji
+            .emoji
         case .visitLink:
-            return .externalLink
+            .externalLink
         case .present,
              .openQuote,
              .digitallySign,
              .resetSession,
              .react:
-            return nil
+            nil
         }
     }
 
     func systemIcon() -> UIImage? {
-        return imageSystemName().flatMap(UIImage.init(systemName:))
+        imageSystemName().flatMap(UIImage.init(systemName:))
     }
 
     private func imageSystemName() -> String? {
@@ -185,38 +185,38 @@ enum MessageAction: CaseIterable, Equatable {
     var selector: Selector? {
         switch self {
         case .copy:
-            return #selector(ConversationMessageActionController.copyMessage)
+            #selector(ConversationMessageActionController.copyMessage)
         case .digitallySign:
-            return #selector(ConversationMessageActionController.digitallySignMessage)
+            #selector(ConversationMessageActionController.digitallySignMessage)
         case .reply:
-            return #selector(ConversationMessageActionController.quoteMessage)
+            #selector(ConversationMessageActionController.quoteMessage)
         case .openDetails:
-            return #selector(ConversationMessageActionController.openMessageDetails)
+            #selector(ConversationMessageActionController.openMessageDetails)
         case .edit:
-            return #selector(ConversationMessageActionController.editMessage)
+            #selector(ConversationMessageActionController.editMessage)
         case .delete:
-            return #selector(ConversationMessageActionController.deleteMessage)
+            #selector(ConversationMessageActionController.deleteMessage)
         case .save:
-            return #selector(ConversationMessageActionController.saveMessage)
+            #selector(ConversationMessageActionController.saveMessage)
         case .cancel:
-            return #selector(ConversationMessageActionController.cancelDownloadingMessage)
+            #selector(ConversationMessageActionController.cancelDownloadingMessage)
         case .download:
-            return #selector(ConversationMessageActionController.downloadMessage)
+            #selector(ConversationMessageActionController.downloadMessage)
         case .resend:
-            return #selector(ConversationMessageActionController.resendMessage)
+            #selector(ConversationMessageActionController.resendMessage)
         case .showInConversation:
-            return #selector(ConversationMessageActionController.revealMessage)
+            #selector(ConversationMessageActionController.revealMessage)
         case .react:
-            return #selector(ConversationMessageActionController.addReaction(reaction:) )
+            #selector(ConversationMessageActionController.addReaction(reaction:) )
         case .visitLink:
-            return #selector(ConversationMessageActionController.visitLink)
+            #selector(ConversationMessageActionController.visitLink)
         case .present,
              .sketchDraw,
              .sketchEmoji,
              .openQuote,
              .resetSession:
             // no message related actions are not handled in ConversationMessageActionController
-            return nil
+            nil
         }
     }
 

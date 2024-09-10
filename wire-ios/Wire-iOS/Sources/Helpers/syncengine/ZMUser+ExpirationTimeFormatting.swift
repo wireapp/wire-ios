@@ -21,11 +21,11 @@ import WireDataModel
 
 extension TimeInterval {
     fileprivate var hours: Double {
-        return self / 3600
+        self / 3600
     }
 
     fileprivate var minutes: Double {
-        return self / 60
+        self / 60
     }
 }
 
@@ -38,7 +38,7 @@ final class WirelessExpirationTimeFormatter {
     }()
 
     func string(for user: UserType) -> String? {
-        return string(for: user.expiresAfter)
+        string(for: user.expiresAfter)
     }
 
     func string(for interval: TimeInterval) -> String? {
@@ -60,7 +60,7 @@ final class WirelessExpirationTimeFormatter {
     }
 
     private func localizedMinutes(_ minutes: Double) -> String {
-        return L10n.Localizable.GuestRoom.Expiration.lessThanMinutesLeft(String(format: "%.0f", minutes))
+        L10n.Localizable.GuestRoom.Expiration.lessThanMinutesLeft(String(format: "%.0f", minutes))
     }
 
     private func localizedHours(_ hours: Double) -> String {
@@ -71,6 +71,6 @@ final class WirelessExpirationTimeFormatter {
 
 extension UserType {
     var expirationDisplayString: String? {
-        return WirelessExpirationTimeFormatter.shared.string(for: self)
+        WirelessExpirationTimeFormatter.shared.string(for: self)
     }
 }

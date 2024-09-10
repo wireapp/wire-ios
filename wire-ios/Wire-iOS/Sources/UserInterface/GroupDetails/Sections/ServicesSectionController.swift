@@ -37,15 +37,15 @@ final class ServicesSectionController: GroupDetailsSectionController {
     }
 
     override var sectionTitle: String {
-        return L10n.Localizable.Participants.Section.services(serviceUsers.count).localizedUppercase
+        L10n.Localizable.Participants.Section.services(serviceUsers.count).localizedUppercase
     }
 
     override var sectionAccessibilityIdentifier: String {
-        return "label.groupdetails.services"
+        "label.groupdetails.services"
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return serviceUsers.count
+        serviceUsers.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

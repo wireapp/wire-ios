@@ -41,7 +41,7 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
     }
 
     private func scopeKey(_ key: Key) -> String {
-        return "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
+        "\(Self.scopePrefix(userID: userID))\(key.rawValue)"
     }
 }
 
@@ -60,7 +60,7 @@ extension PrivateUserDefaults {
     }
 
     public func bool(forKey key: Key) -> Bool {
-        return storage.bool(forKey: scopeKey(key))
+        storage.bool(forKey: scopeKey(key))
     }
 
     public func set(_ value: Any?, forKey key: Key) {
@@ -68,7 +68,7 @@ extension PrivateUserDefaults {
     }
 
     public func object(forKey key: Key) -> Any? {
-        return storage.object(forKey: scopeKey(key))
+        storage.object(forKey: scopeKey(key))
     }
 
     public func set(_ value: Int, forKey key: Key) {
@@ -76,7 +76,7 @@ extension PrivateUserDefaults {
     }
 
     public func integer(forKey key: Key) -> Int {
-        return storage.integer(forKey: scopeKey(key))
+        storage.integer(forKey: scopeKey(key))
     }
 
     public func set(_ value: Date, forKey key: Key) {
@@ -84,7 +84,7 @@ extension PrivateUserDefaults {
     }
 
     public func date(forKey key: Key) -> Date? {
-        return storage.object(forKey: scopeKey(key)) as? Date
+        storage.object(forKey: scopeKey(key)) as? Date
     }
 
     public func removeObject(forKey key: Key) {

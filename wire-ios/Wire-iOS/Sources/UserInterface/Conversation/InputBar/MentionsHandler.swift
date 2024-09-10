@@ -21,7 +21,7 @@ import WireDataModel
 
 extension String {
     var wholeRange: NSRange {
-        return NSRange(location: 0, length: endIndex.utf16Offset(in: self))
+        NSRange(location: 0, length: endIndex.utf16Offset(in: self))
     }
 }
 

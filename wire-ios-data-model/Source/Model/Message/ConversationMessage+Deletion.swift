@@ -82,7 +82,7 @@ extension ZMMessage {
     }
 
     @objc var isEditableMessage: Bool {
-        return false
+        false
     }
 }
 

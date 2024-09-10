@@ -79,32 +79,32 @@ public class NotificationUserInfo: NSObject, NSCoding {
     }
 
     public var requestID: UUID? {
-        get { return uuid(for: .requestID) }
+        get { uuid(for: .requestID) }
         set { self[.requestID] = newValue?.uuidString }
     }
 
     public var conversationID: UUID? {
-        get { return uuid(for: .conversationID)}
+        get { uuid(for: .conversationID)}
         set { self[.conversationID] = newValue?.uuidString }
     }
 
     public var conversationName: String? {
-        get { return self[.conversationName] as? String }
+        get { self[.conversationName] as? String }
         set { self[.conversationName] = newValue }
     }
 
     public var teamName: String? {
-        get { return self[.teamName] as? String }
+        get { self[.teamName] as? String }
         set { self[.teamName] = newValue }
     }
 
     public var messageNonce: UUID? {
-        get { return uuid(for: .messageNonce) }
+        get { uuid(for: .messageNonce) }
         set { self[.messageNonce] = newValue?.uuidString }
     }
 
     public var senderID: UUID? {
-        get { return uuid(for: .senderID) }
+        get { uuid(for: .senderID) }
         set { self[.senderID] = newValue?.uuidString }
     }
 
@@ -117,7 +117,7 @@ public class NotificationUserInfo: NSObject, NSCoding {
     }
 
     public var selfUserID: UUID? {
-        get { return uuid(for: .selfUserID) }
+        get { uuid(for: .selfUserID) }
         set { self[.selfUserID] = newValue?.uuidString }
     }
 }
@@ -127,7 +127,7 @@ public class NotificationUserInfo: NSObject, NSCoding {
 extension NotificationUserInfo {
     fileprivate subscript(_ key: NotificationUserInfoKey) -> Any? {
         get {
-            return storage[key.rawValue]
+            storage[key.rawValue]
         }
         set {
             storage[key.rawValue] = newValue
@@ -140,7 +140,7 @@ extension NotificationUserInfo {
     }
 
     static func == (lhs: NotificationUserInfo, rhs: NotificationUserInfo) -> Bool {
-        return  lhs.requestID == rhs.requestID &&
+        lhs.requestID == rhs.requestID &&
             lhs.conversationID == rhs.conversationID &&
             lhs.conversationName == rhs.conversationName &&
             lhs.teamName == rhs.teamName &&
@@ -242,13 +242,13 @@ extension NotificationUserInfo {
 extension UNNotification {
     /// The user info describing the notification context.
     public var userInfo: NotificationUserInfo {
-        return NotificationUserInfo(storage: request.content.userInfo)
+        NotificationUserInfo(storage: request.content.userInfo)
     }
 }
 
 extension UNNotificationResponse {
     /// The user info describing the notification context.
     public var userInfo: NotificationUserInfo {
-        return notification.userInfo
+        notification.userInfo
     }
 }

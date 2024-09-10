@@ -31,7 +31,7 @@ extension Notification.Name {
 final class MarkdownTextView: NextResponderTextView {
     enum ListType {
         case number, bullet
-        var prefix: String { return self == .number ? "1. " : "- " }
+        var prefix: String { self == .number ? "1. " : "- " }
     }
 
     // MARK: - Properties
@@ -176,7 +176,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     private var previousLineTextRange: UITextRange? {
-        return previousLineRange?.textRange(in: self)
+        previousLineRange?.textRange(in: self)
     }
 
     // MARK: - Init
@@ -416,12 +416,12 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Returns true if an empty list item is present in the given range.
     private func isEmptyListItem(at range: NSRange) -> Bool {
-        return emptyListItemRegex.numberOfMatches(in: text, options: [], range: range) != 0
+        emptyListItemRegex.numberOfMatches(in: text, options: [], range: range) != 0
     }
 
     /// Returns the list type in the given range, if it exists.
     private func listType(in range: NSRange) -> ListType? {
-        if numberPrefix(at: range) != nil { return .number } else if bulletPrefix(at: range) != nil { return .bullet } else { return nil }
+        if numberPrefix(at: range) != nil { .number } else if bulletPrefix(at: range) != nil { .bullet } else { nil }
     }
 
     /// Returns the range of the list prefix in the given range, if it exists.

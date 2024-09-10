@@ -24,7 +24,7 @@ public protocol AccountDeletedObserver: AnyObject {
 
 public struct AccountDeletedNotification {
     public static let notificationName = Notification.Name("AccountDeletedNotification")
-    public static var userInfoKey: String { return notificationName.rawValue }
+    public static var userInfoKey: String { notificationName.rawValue }
 
     weak var context: NSManagedObjectContext?
 
@@ -41,10 +41,10 @@ extension AccountDeletedNotification {
     public static func addObserver(observer: AccountDeletedObserver,
                                    context: NSManagedObjectContext? = nil,
                                    queue: GroupQueue) -> Any {
-        return NotificationInContext.addUnboundedObserver(name: AccountDeletedNotification.notificationName,
-                                                          context: context?.notificationContext,
-                                                          object: nil,
-                                                          queue: .main) { [weak observer] note in
+        NotificationInContext.addUnboundedObserver(name: AccountDeletedNotification.notificationName,
+                                                   context: context?.notificationContext,
+                                                   object: nil,
+                                                   queue: .main) { [weak observer] note in
             guard
                 let note = note.userInfo[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification,
                 let context = note.context,

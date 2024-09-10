@@ -252,7 +252,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         WireLogger.mls.info("MLS event processor is wiping conversation")
 
         let (messageProtocol, groupID, mlsService) = await context.perform {
-            return (
+            (
                 conversation.messageProtocol,
                 conversation.mlsGroupID,
                 context.mlsService
@@ -303,13 +303,13 @@ public class MLSEventProcessor: MLSEventProcessing {
         var stringValue: String {
             switch self {
             case .conversationNotMLSCapable:
-                return "conversation is not MLS capable"
+                "conversation is not MLS capable"
             case .missingGroupID:
-                return "missing group ID"
+                "missing group ID"
             case .missingMLSService:
-                return "missing mlsService"
+                "missing mlsService"
             case let .other(reason: reason):
-                return reason
+                reason
             }
         }
     }

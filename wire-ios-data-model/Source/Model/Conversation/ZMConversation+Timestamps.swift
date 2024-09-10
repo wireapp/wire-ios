@@ -31,9 +31,9 @@ extension ZMConversationMessage {
 extension ZMMessage {
     fileprivate static func isVisible(_ message: ZMMessage) -> Bool {
         if let systemMessage = message as? ZMSystemMessage, let parentMessage = systemMessage.parentMessage as? ZMMessage {
-            return parentMessage.visibleInConversation != nil
+            parentMessage.visibleInConversation != nil
         } else {
-            return message.visibleInConversation != nil
+            message.visibleInConversation != nil
         }
     }
 }
@@ -349,9 +349,9 @@ extension ZMConversation {
     public var firstUnreadMessage: ZMConversationMessage? {
         let replaceChildWithParent: (ZMMessage) -> ZMMessage = { message in
             if let systemMessage = message as? ZMSystemMessage, let parentMessage = systemMessage.parentMessage as? ZMMessage {
-                return parentMessage
+                parentMessage
             } else {
-                return message
+                message
             }
         }
 
@@ -364,7 +364,7 @@ extension ZMConversation {
     /// Returns first unread message mentioning the self user.
 
     public var firstUnreadMessageMentioningSelf: ZMConversationMessage? {
-        return unreadMessages.first(where: { $0.textMessageData?.isMentioningSelf ?? false })
+        unreadMessages.first(where: { $0.textMessageData?.isMentioningSelf ?? false })
     }
 
     /// Returns all unread messages. This may contain unread child messages of a system message
@@ -372,11 +372,11 @@ extension ZMConversation {
 
     @objc
     public var unreadMessages: [ZMConversationMessage] {
-        return unreadMessages()
+        unreadMessages()
     }
 
     func unreadMessages(until timestamp: Date = .distantFuture) -> [ZMMessage] {
-        return unreadMessagesIncludingInvisible(until: timestamp).filter(ZMMessage.isVisible)
+        unreadMessagesIncludingInvisible(until: timestamp).filter(ZMMessage.isVisible)
     }
 
     func unreadMessagesIncludingInvisible(until timestamp: Date = .distantFuture) -> [ZMMessage] {
@@ -385,7 +385,7 @@ extension ZMConversation {
     }
 
     func unreadMessages(in range: ClosedRange<Date>) -> [ZMMessage] {
-        return unreadMessagesIncludingInvisible(in: range).filter(ZMMessage.isVisible)
+        unreadMessagesIncludingInvisible(in: range).filter(ZMMessage.isVisible)
     }
 
     func unreadMessagesIncludingInvisible(in range: ClosedRange<Date>) -> [ZMMessage] {

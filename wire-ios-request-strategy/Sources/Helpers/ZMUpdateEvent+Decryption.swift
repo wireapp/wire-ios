@@ -67,9 +67,9 @@ extension ZMUpdateEvent {
     private var plaintextPayloadKey: String {
         switch self.type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
-            return "text"
+            "text"
         case .conversationOtrAssetAdd:
-            return "info"
+            "info"
         default:
             fatal("Decrypting wrong type of event")
         }

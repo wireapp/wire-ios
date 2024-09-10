@@ -30,7 +30,7 @@ extension UserSessionAppLockInterface {
     /// Whether the session is currently locked.
 
     public var isLocked: Bool {
-        return lock != .none
+        lock != .none
     }
 }
 

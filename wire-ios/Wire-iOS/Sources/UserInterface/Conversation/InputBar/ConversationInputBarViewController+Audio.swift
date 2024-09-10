@@ -68,7 +68,7 @@ extension ConversationInputBarViewController {
     }
 
     private func displayAudioMessageAlertIfNeeded() -> Bool {
-        return CameraAccess.displayAlertIfOngoingCall(at: .recordAudioMessage, from: self)
+        CameraAccess.displayAlertIfOngoingCall(at: .recordAudioMessage, from: self)
     }
 
     @objc func audioButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
