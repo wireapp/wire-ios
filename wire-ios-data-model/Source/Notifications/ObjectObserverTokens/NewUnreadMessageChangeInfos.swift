@@ -44,7 +44,7 @@ extension NewUnreadMessagesChangeInfo {
     @objc(addNewMessageObserver:forManagedObjectContext:)
     public static func add(observer: ZMNewUnreadMessagesObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .NewUnreadMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
-            guard let observer = observer,
+            guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadMessagesChangeInfo
             else { return }
             observer.didReceiveNewUnreadMessages(changeInfo)
@@ -78,7 +78,7 @@ extension NewUnreadKnockMessagesChangeInfo {
     @objc(addNewKnockObserver:forManagedObjectContext:)
     public static func add(observer: ZMNewUnreadKnocksObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .NewUnreadKnock, managedObjectContext: managedObjectContext) { [weak observer] note in
-            guard let observer = observer,
+            guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadKnockMessagesChangeInfo
             else { return }
             observer.didReceiveNewUnreadKnockMessages(changeInfo)
@@ -112,7 +112,7 @@ extension NewUnreadUnsentMessageChangeInfo {
     @objc(addNewUnreadUnsentMessageObserver:forManagedObjectContext:)
     public static func add(observer: ZMNewUnreadUnsentMessageObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .NewUnreadUnsentMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
-            guard let observer = observer,
+            guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadUnsentMessageChangeInfo
             else { return }
             observer.didReceiveNewUnreadUnsentMessages(changeInfo)

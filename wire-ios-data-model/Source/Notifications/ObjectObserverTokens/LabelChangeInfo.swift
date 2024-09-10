@@ -77,7 +77,7 @@ extension LabelChangeInfo {
     @objc(addTeamObserver:forTeam:managedObjectContext:)
     public static func add(observer: LabelObserver, for label: LabelType?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .LabelChange, managedObjectContext: managedObjectContext, object: label) { [weak observer] note in
-            guard let observer = observer,
+            guard let observer,
                   let changeInfo = note.changeInfo as? LabelChangeInfo
             else { return }
 

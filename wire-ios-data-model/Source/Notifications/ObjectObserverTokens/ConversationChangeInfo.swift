@@ -235,7 +235,7 @@ extension ConversationChangeInfo {
         return ManagedObjectObserverToken(name: .ConversationChange,
                                           managedObjectContext: conversation.managedObjectContext!,
                                           object: conversation) { [weak observer] note in
-            guard let observer = observer,
+            guard let observer,
                   let changeInfo = note.changeInfo as? ConversationChangeInfo
             else { return }
 
