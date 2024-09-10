@@ -26,6 +26,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             changes.append(changeInfo)
         }
     }
+
     var testObserver: TestObserver!
 
     class TestConversationListReloadObserver: NSObject, ZMConversationListReloadObserver {
@@ -35,6 +36,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             conversationListsReloadCount += 1
         }
     }
+
     var testConversationListReloadObserver: TestConversationListReloadObserver!
 
     class TestConversationListFolderObserver: NSObject, ZMConversationListFolderObserver {
@@ -44,6 +46,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             conversationListsFolderChangeCount += 1
         }
     }
+
     var testConversationListFolderObserver: TestConversationListFolderObserver!
 
     override func setUp() {

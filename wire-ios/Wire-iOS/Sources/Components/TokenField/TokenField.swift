@@ -68,6 +68,7 @@ final class TokenField: UIView {
             updateTokenAttachments()
         }
     }
+
     var tokenSelectedTitleColor: UIColor = UIColor(red: 0.103, green: 0.382, blue: 0.691, alpha: 1) {
         didSet {
             guard oldValue != tokenSelectedTitleColor else { return }
@@ -75,6 +76,7 @@ final class TokenField: UIView {
             updateTokenAttachments()
         }
     }
+
     var tokenBackgroundColor: UIColor = UIColor(red: 0.118, green: 0.467, blue: 0.745, alpha: 1) {
         didSet {
             guard oldValue != tokenBackgroundColor else { return }
@@ -119,6 +121,7 @@ final class TokenField: UIView {
             updateTokenAttachments()
         }
     }
+
     /* horisontal distance between tokens, and btw "To:" and first token */
     var tokenTitleVerticalAdjustment: CGFloat = 1 {
         didSet {

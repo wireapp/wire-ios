@@ -25,6 +25,7 @@ enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
     case noDatabaseActivity
 }
+
 extension CoreDataStackError: LocalizedError {
     var errorDescription: String? {
         switch self {

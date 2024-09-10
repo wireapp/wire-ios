@@ -30,6 +30,7 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
     func didChangeText(_ inputField: CharacterInputField, to: String) {
         didChangeText.append(to)
     }
+
     var didFillInput: Int = 0
     func didFillInput(inputField: CharacterInputField, text: String) {
         didFillInput += 1

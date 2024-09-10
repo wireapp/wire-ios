@@ -73,6 +73,7 @@ public struct KeySet: Sequence {
         }
         backing = Set(a)
     }
+
     public init (_ set: Set<Key>) {
         backing = set
     }
@@ -88,27 +89,35 @@ public struct KeySet: Sequence {
         }
         backing = Set<StringKeyPath>(aa)
     }
+
     public init(key: StringKeyPath) {
         self.init(Set([key]))
     }
+
     public init(keyPaths: [StringKeyPath]) {
         self.init(Set(keyPaths))
     }
+
     public init(key: String) {
         self.init(Set([StringKeyPath.keyPathForString(key)]))
     }
+
     public init(arrayLiteral elements: String...) {
         self.init(elements)
     }
+
     init<S: Sequence>(_ seq: S) where S.Iterator.Element == Key {
         backing = Set<Key>(seq)
     }
+
     public func contains(_ i: StringKeyPath) -> Bool {
         return backing.contains(i)
     }
+
     public func contains(_ i: String) -> Bool {
         return backing.contains(StringKeyPath.keyPathForString(i))
     }
+
     public func makeIterator() -> Set<StringKeyPath>.Iterator {
         return backing.makeIterator()
     }
@@ -132,12 +141,15 @@ extension KeySet {
     func union(_ set: KeySet) -> KeySet {
         return KeySet(backing.union(set.backing))
     }
+
     func subtract(_ set: KeySet) -> KeySet {
         return KeySet(backing.subtracting(set.backing))
     }
+
     public var isEmpty: Bool {
         return backing.isEmpty
     }
+
     func filter(_ match: (StringKeyPath) -> Bool) -> KeySet {
         return KeySet(backing.filter { match($0) })
     }

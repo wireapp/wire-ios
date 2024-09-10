@@ -72,6 +72,7 @@ public class AssetCollection: NSObject, ZMCollection {
     private var syncMOC: NSManagedObjectContext? {
         return conversation?.managedObjectContext?.zm_sync
     }
+
     private var uiMOC: NSManagedObjectContext? {
         return conversation?.managedObjectContext
     }

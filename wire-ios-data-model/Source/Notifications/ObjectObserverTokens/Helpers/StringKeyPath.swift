@@ -70,6 +70,7 @@ public final class StringKeyPath: Hashable {
 
 extension StringKeyPath: Equatable {
 }
+
 public func == (lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
     return (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
@@ -79,6 +80,7 @@ extension StringKeyPath: CustomDebugStringConvertible {
     public var description: String {
         return rawValue
     }
+
     public var debugDescription: String {
         return rawValue
     }

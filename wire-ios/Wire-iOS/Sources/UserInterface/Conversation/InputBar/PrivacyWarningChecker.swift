@@ -28,6 +28,7 @@ struct PrivacyWarningChecker {
     enum AlertType: Int {
         case message, outgoingCall, incomingCall
     }
+
     var conversation: ConversationLike
     var alertType = AlertType.message
     var continueAction: () -> Void

@@ -67,6 +67,7 @@ final class CallViewController: UIViewController {
     private static var userEnabledCBR: Bool {
         return Settings.shared[.callingConstantBitRate] == true
     }
+
     weak var configurationObserver: CallInfoConfigurationObserver?
 
     init(
@@ -280,6 +281,7 @@ final class CallViewController: UIViewController {
     private func minimizeOverlay() {
         delegate?.callViewControllerDidDisappear(self, for: conversation)
     }
+
     private lazy var establishingCallStatusView = EstablishingCallStatusView()
 
     private func acceptDegradedCall() {

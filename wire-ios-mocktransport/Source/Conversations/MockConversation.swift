@@ -64,6 +64,7 @@ extension MockConversation {
         let (_, _, accessRoleV2) = defaultAccess(conversationType: conversationType, team: team)
         return accessRoleV2
     }
+
     public static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String, [String]) {
         switch (team, conversationType) {
         case (.some, .group):

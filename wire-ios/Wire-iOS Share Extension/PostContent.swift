@@ -95,6 +95,7 @@ final class PostContent {
         sendController?.cancel(completion: completion)
     }
 }
+
 /// What to do when a conversation that was verified degraded (we discovered a new
 /// non-verified client)
 enum DegradationStrategy {

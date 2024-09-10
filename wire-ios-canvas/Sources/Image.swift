@@ -25,16 +25,19 @@ final class Image: Editable {
             updateImageTransform()
         }
     }
+
     var rotation: CGFloat {
         didSet {
             updateImageTransform()
         }
     }
+
     var position: CGPoint {
         didSet {
             updateImageTransform()
         }
     }
+
     var selected: Bool
     var selectable = true
     var imageView = UIImageView()

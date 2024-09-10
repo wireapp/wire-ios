@@ -30,6 +30,7 @@ final class TextSearchResultCell: UITableViewCell {
         view.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         return view
     }()
+
     private var observerToken: Any?
     let resultCountView: RoundedTextBadge = {
         let roundedTextBadge = RoundedTextBadge()

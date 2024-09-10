@@ -48,6 +48,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
             self?.passwordIsNecessaryForDelete = true
         })
     }()
+
     private var passwordIsNecessaryForDelete: Bool = false
     private var observerToken: Any?
 

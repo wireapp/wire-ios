@@ -89,11 +89,13 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
         self.subGenerators = subGenerators
         super.init()
     }
+
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return self.subGenerators.filter {
             $0.canGeneratePreviewForFile(fileURL, UTI: uti)
         }.count > 0
     }
+
     func generatePreview(_ fileURL: URL, UTI uti: String, completion: @escaping (UIImage?) -> Void) {
         guard let generator = self.subGenerators.filter({
             $0.canGeneratePreviewForFile(fileURL, UTI: uti)
@@ -113,9 +115,11 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
         self.callbackQueue = callbackQueue
         super.init()
     }
+
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return UTType(uti)?.conforms(to: UTType.image) ?? false
     }
+
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
         var result: UIImage? = .none
         defer {
@@ -146,9 +150,11 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
         self.callbackQueue = callbackQueue
         super.init()
     }
+
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return AVURLAsset.wr_isAudioVisualUTI(uti)
     }
+
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
         var result: UIImage? = .none
         defer {
@@ -198,9 +204,11 @@ public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
         self.callbackQueue = callbackQueue
         super.init()
     }
+
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return UTTypeConformsTo(uti as CFString, kUTTypePDF)
     }
+
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
         var result: UIImage? = .none
         defer {

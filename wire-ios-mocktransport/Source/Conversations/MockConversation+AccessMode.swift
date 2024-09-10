@@ -61,6 +61,7 @@ public struct MockConversationAccessMode: OptionSet {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
     /// Allowed user can be added by an existing conv member.
     public static let invite    = MockConversationAccessMode(rawValue: 1 << 0)
     /// Allowed user can join the conversation using the code.

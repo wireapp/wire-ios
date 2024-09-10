@@ -24,6 +24,7 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     var mainView: ViewDescriptor & ValueSubmission {
         emailPasswordFieldDescription
     }
+
     let headline: String
     let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?

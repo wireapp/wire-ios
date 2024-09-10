@@ -58,6 +58,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
             participantsDidChange?()
         }
     }
+
     var admins = [UserType]()
     var members = [UserType]()
 

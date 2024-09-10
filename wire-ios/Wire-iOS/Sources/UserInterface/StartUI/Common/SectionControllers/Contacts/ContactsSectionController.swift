@@ -26,6 +26,7 @@ class ContactsSectionController: SearchSectionController {
             selection?.add(observer: self)
         }
     }
+
     var allowsSelection: Bool = false
     weak var delegate: SearchSectionControllerDelegate?
     weak var collectionView: UICollectionView?

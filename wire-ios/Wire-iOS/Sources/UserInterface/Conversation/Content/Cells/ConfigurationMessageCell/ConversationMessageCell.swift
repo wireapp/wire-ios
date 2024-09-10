@@ -161,6 +161,7 @@ extension ConversationMessageCellDescription {
 
     func didEndDisplayingCell() {
     }
+
     func register(in tableView: UITableView) {
         tableView.register(cell: type(of: self))
     }

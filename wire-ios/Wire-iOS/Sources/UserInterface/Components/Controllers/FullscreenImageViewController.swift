@@ -65,6 +65,7 @@ final class FullscreenImageViewController: UIViewController {
     private lazy var animator: UIDynamicAnimator = {
         return UIDynamicAnimator(referenceView: scrollView)
     }()
+
     private var attachmentBehavior: UIAttachmentBehavior?
     private var initialImageViewBounds = CGRect.zero
     private var initialImageViewCenter = CGPoint.zero

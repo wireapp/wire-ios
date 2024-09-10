@@ -169,6 +169,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             SectionFooter.register(collectionView: collectionView)
         }
     }
+
     private weak var delegate: GroupDetailsSectionControllerDelegate?
     private var viewModel: ParticipantsSectionViewModel
     private let conversation: GroupDetailsConversationType

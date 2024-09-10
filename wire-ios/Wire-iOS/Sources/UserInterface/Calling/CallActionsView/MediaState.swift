@@ -23,6 +23,7 @@ enum MediaState: Equatable {
         let isEnabled: Bool
         let canBeToggled: Bool
     }
+
     case sendingVideo(speakerState: SpeakerState), notSendingVideo(speakerState: SpeakerState)
 
     var isSendingVideo: Bool {

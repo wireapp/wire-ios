@@ -67,6 +67,7 @@ extension NSDictionary {
     @objc public func optionalNumber(forKey key: String) -> NSNumber? {
         return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
+
     @objc public func array(forKey key: String) -> [AnyObject]? {
         return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
@@ -74,6 +75,7 @@ extension NSDictionary {
     @objc public func optionalArray(forKey key: String) -> [AnyObject]? {
         return optionalObjectWhichIsKindOfClass(dictionary: self, key: key)
     }
+
     @objc public func data(forKey key: String) -> Data? {
         return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }

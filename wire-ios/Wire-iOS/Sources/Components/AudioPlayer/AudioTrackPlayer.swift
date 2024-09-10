@@ -67,6 +67,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             }
         }
     }
+
     var sourceMessage: ZMConversationMessage?
     private var nowPlayingInfo: [String: Any]?
     private var playHandler: Any?

@@ -28,6 +28,7 @@ public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStr
     public init(_ value: T) {
         self.value = value
     }
+
     public var safeForLoggingDescription: String {
         return value.description
     }

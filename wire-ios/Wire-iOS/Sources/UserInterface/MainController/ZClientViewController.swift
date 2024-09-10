@@ -49,6 +49,7 @@ final class ZClientViewController: UIViewController {
             accountSelector: SessionManager.shared
         )
     }
+
     private lazy var conversationListViewController = ConversationListViewController(
         account: account,
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,

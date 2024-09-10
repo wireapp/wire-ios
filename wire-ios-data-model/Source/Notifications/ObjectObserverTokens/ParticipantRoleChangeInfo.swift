@@ -42,6 +42,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
         participantRole = object as! ParticipantRole
         super.init(object: object)
     }
+
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: create ParticipantRoleType
     public let participantRole: ParticipantRole

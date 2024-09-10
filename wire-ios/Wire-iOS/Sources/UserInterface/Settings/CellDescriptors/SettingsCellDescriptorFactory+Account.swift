@@ -347,6 +347,7 @@ extension SettingsCellDescriptorFactory {
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
         return dataUsagePermissionsGroup(isTeamMember: isTeamMember)
     }
+
     func resetPasswordElement() -> SettingsCellDescriptorType {
         let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {

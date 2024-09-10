@@ -77,10 +77,12 @@ public struct FrameworkVersion: Comparable, Equatable {
     public var minor: Int {
         return components[1]
     }
+
     /// Patch component, 10.3.*4*
     public var patch: Int {
         return components[2]
     }
+
     /// Version in string form
     public let version: String
 

@@ -42,6 +42,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
             separatorLine.isHidden = separatorLineViewDisabled
         }
     }
+
     // If this is set to some value, all cells with the same value will close when another one
     // with the same value opens
     var mutuallyExclusiveSwipeIdentifier: String?

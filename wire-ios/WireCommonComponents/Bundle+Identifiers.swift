@@ -23,6 +23,7 @@ extension Bundle {
         guard let groupId = infoDictionary?["WireGroupId"] as? String else { return nil }
         return "group.\(groupId)"
     }
+
     public var hostBundleIdentifier: String? {
         return infoDictionary?["HostBundleIdentifier"] as? String
     }

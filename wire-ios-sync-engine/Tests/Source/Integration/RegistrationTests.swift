@@ -24,6 +24,7 @@ class RegistrationTests: IntegrationTest {
     var registrationStatus: WireSyncEngine.RegistrationStatus? {
         return sessionManager?.unauthenticatedSession?.registrationStatus
     }
+
     var teamToRegister: UnregisteredTeam!
     var user: UnregisteredUser!
     var email: String!

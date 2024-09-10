@@ -23,6 +23,7 @@ public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
         return isServerTrusted
     }
+
     public var title: String = "Example"
     public var backendURL: URL = URL(string: "http://example.com")!
     public var backendWSURL: URL = URL(string: "http://example.com")!

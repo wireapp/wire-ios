@@ -166,11 +166,13 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         get { serialQueue.sync { mockDecryptMessage_ } }
         set { serialQueue.sync { mockDecryptMessage_ = newValue } }
     }
+
     private var mockDecryptMessageCount_ = 0
     var mockDecryptMessageCount: Int {
         get { serialQueue.sync { mockDecryptMessageCount_ } }
         set { serialQueue.sync { mockDecryptMessageCount_ = newValue } }
     }
+
     func decryptMessage(_ message: Data, in groupID: WireDataModel.MLSGroupID) async throws -> WireCoreCrypto.DecryptedMessage {
         guard let mock = mockDecryptMessage else {
             fatalError("no mock for `decryptMessage`")

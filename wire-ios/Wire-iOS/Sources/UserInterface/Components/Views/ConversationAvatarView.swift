@@ -243,6 +243,7 @@ final class ConversationAvatarView: UIView {
 
         return userImageView
     }()
+
     lazy var imageViewRightTop: UserImageView = {
         return UserImageView()
     }()

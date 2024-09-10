@@ -113,6 +113,7 @@ final class TypingIndicatorView: UIView {
 
         return label
     }()
+
     let animatedPen = AnimatedPenView()
     let container: UIView = {
         let view = UIView()
@@ -120,6 +121,7 @@ final class TypingIndicatorView: UIView {
 
         return view
     }()
+
     let expandingLine: UIView = {
         let view = UIView()
         view.backgroundColor = SemanticColors.View.backgroundConversationView

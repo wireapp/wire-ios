@@ -78,6 +78,7 @@ class TextView: UITextView {
             placeholderLabel.textAlignment = placeholderTextAlignment
         }
     }
+
     var language: String?
 
     private let placeholderLabel: TransformLabel = TransformLabel()

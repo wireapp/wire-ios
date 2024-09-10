@@ -35,6 +35,7 @@ import WireDataModel
             return "notifications_" + rawValue
         }
     }
+
     private let isolationQueue = DispatchQueue(label: "NotificationsProcessing")
 
     weak var analytics: AnalyticsType?

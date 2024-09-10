@@ -142,6 +142,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
             (avsWrapper as! MockAVSWrapper).startCallShouldFail = startCallShouldFail
         }
     }
+
     public var answerCallShouldFail: Bool = false {
         didSet {
             (avsWrapper as! MockAVSWrapper).answerCallShouldFail = answerCallShouldFail

@@ -76,6 +76,7 @@ final class InputBarButtonsView: UIView {
             layoutAndConstrainButtonRows()
         }
     }
+
     private let buttonInnerContainer = UIView()
     private let buttonOuterContainer = UIView()
 

@@ -23,9 +23,11 @@ import XCTest
 var sampleUploadState: UserProfileImageUpdateStatus.ImageState {
     return UserProfileImageUpdateStatus.ImageState.upload(image: Data())
 }
+
 var sampleUploadedState: UserProfileImageUpdateStatus.ImageState {
     return UserProfileImageUpdateStatus.ImageState.uploaded(assetId: "foo")
 }
+
 var sampleFailedImageState: UserProfileImageUpdateStatus.ImageState {
     return UserProfileImageUpdateStatus.ImageState.failed(.preprocessingFailed)
 }
@@ -33,9 +35,11 @@ var sampleFailedImageState: UserProfileImageUpdateStatus.ImageState {
 var samplePreprocessState: UserProfileImageUpdateStatus.ProfileUpdateState {
     return UserProfileImageUpdateStatus.ProfileUpdateState.preprocess(image: Data())
 }
+
 var sampleUpdateState: UserProfileImageUpdateStatus.ProfileUpdateState {
     return UserProfileImageUpdateStatus.ProfileUpdateState.update(previewAssetId: "id1", completeAssetId: "id2")
 }
+
 var sampleFailedState: UserProfileImageUpdateStatus.ProfileUpdateState {
     return UserProfileImageUpdateStatus.ProfileUpdateState.failed(.preprocessingFailed)
 }

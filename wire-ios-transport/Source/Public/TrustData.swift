@@ -24,9 +24,11 @@ struct TrustData: Decodable {
             case endsWith = "ends_with"
             case equals
         }
+
         let rule: Rule
         let value: String
     }
+
     let certificateKey: SecKey
     let hosts: [Host]
 

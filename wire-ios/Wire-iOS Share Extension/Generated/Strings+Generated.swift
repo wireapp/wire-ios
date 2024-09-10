@@ -14,6 +14,7 @@ internal enum L10n {
     /// OK
     internal static let ok = L10n.tr("Localizable", "general.ok", fallback: "OK")
   }
+
   internal enum ShareExtension {
     internal enum Content {
       internal enum File {
@@ -21,16 +22,19 @@ internal enum L10n {
         internal static func tooBig(_ p1: Any) -> String {
           return L10n.tr("Localizable", "share_extension.content.file.too_big", String(describing: p1), fallback: "You can send files up to %@")
         }
+
         /// Unsupported attachment
         internal static let unsupportedAttachment = L10n.tr("Localizable", "share_extension.content.file.unsupported_attachment", fallback: "Unsupported attachment")
       }
     }
+
     internal enum Conversation {
       internal enum Displayname {
         /// Empty group conversation
         internal static let emptygroup = L10n.tr("Localizable", "share_extension.conversation.displayname.emptygroup", fallback: "Empty group conversation")
       }
     }
+
     internal enum ConversationSelection {
       /// Account:
       internal static let account = L10n.tr("Localizable", "share_extension.conversation_selection.account", fallback: "Account:")
@@ -41,12 +45,14 @@ internal enum L10n {
         internal static let value = L10n.tr("Localizable", "share_extension.conversation_selection.empty.value", fallback: "Choose")
       }
     }
+
     internal enum Error {
       internal enum ConversationDoesNotExist {
         /// Please select a conversation for sharing
         internal static let message = L10n.tr("Localizable", "share_extension.error.conversation_does_not_exist.message", fallback: "Please select a conversation for sharing")
       }
     }
+
     internal enum Feature {
       internal enum Flag {
         internal enum FileSharing {
@@ -59,16 +65,19 @@ internal enum L10n {
         }
       }
     }
+
     internal enum Input {
       /// Type a message
       internal static let placeholder = L10n.tr("Localizable", "share_extension.input.placeholder", fallback: "Type a message")
     }
+
     internal enum LoggedOut {
       /// Please choose another account.
       internal static let message = L10n.tr("Localizable", "share_extension.logged_out.message", fallback: "Please choose another account.")
       /// You've been logged out from this account.
       internal static let title = L10n.tr("Localizable", "share_extension.logged_out.title", fallback: "You've been logged out from this account.")
     }
+
     internal enum Meta {
       internal enum Degraded {
         /// Do not send
@@ -82,51 +91,61 @@ internal enum L10n {
           internal static func plural(_ p1: Any) -> String {
             return L10n.tr("Localizable", "share_extension.meta.degraded.degradation_reason_message.plural", String(describing: p1), fallback: "%@ started using new devices.")
           }
+
           /// %@ started using a new device.
           internal static func singular(_ p1: Any) -> String {
             return L10n.tr("Localizable", "share_extension.meta.degraded.degradation_reason_message.singular", String(describing: p1), fallback: "%@ started using a new device.")
           }
         }
       }
+
       internal enum Legalhold {
         /// The conversation is now subject to legal hold.
         internal static let sendAlertTitle = L10n.tr("Localizable", "share_extension.meta.legalhold.send_alert_title", fallback: "The conversation is now subject to legal hold.")
       }
     }
+
     internal enum NoInternetConnection {
       /// No Internet Connection
       internal static let title = L10n.tr("Localizable", "share_extension.no_internet_connection.title", fallback: "No Internet Connection")
     }
+
     internal enum NotSignedIn {
       /// Close
       internal static let closeButton = L10n.tr("Localizable", "share_extension.not_signed_in.close_button", fallback: "Close")
       /// You need to sign into Wire before you can share anything
       internal static let title = L10n.tr("Localizable", "share_extension.not_signed_in.title", fallback: "You need to sign into Wire before you can share anything")
     }
+
     internal enum Preparing {
       /// Preparing…
       internal static let title = L10n.tr("Localizable", "share_extension.preparing.title", fallback: "Preparing…")
     }
+
     internal enum PrivacySecurity {
       internal enum LockApp {
         /// Unlock Wire
         internal static let description = L10n.tr("Localizable", "share_extension.privacy_security.lock_app.description", fallback: "Unlock Wire")
       }
     }
+
     internal enum SendButton {
       /// Send
       internal static let title = L10n.tr("Localizable", "share_extension.send_button.title", fallback: "Send")
     }
+
     internal enum SendingProgress {
       /// Sending…
       internal static let title = L10n.tr("Localizable", "share_extension.sending_progress.title", fallback: "Sending…")
     }
+
     internal enum Timeout {
       /// Check your Internet connection and try again. The attachments were saved in the conversation.
       internal static let message = L10n.tr("Localizable", "share_extension.timeout.message", fallback: "Check your Internet connection and try again. The attachments were saved in the conversation.")
       /// The connection has timed out.
       internal static let title = L10n.tr("Localizable", "share_extension.timeout.title", fallback: "The connection has timed out.")
     }
+
     internal enum Unlock {
       /// Wrong passcode
       internal static let errorLabel = L10n.tr("Localizable", "share_extension.unlock.error_label", fallback: "Wrong passcode")
@@ -140,15 +159,18 @@ internal enum L10n {
         /// Open Wire to create a passcode
         internal static let message = L10n.tr("Localizable", "share_extension.unlock.alert.message", fallback: "Open Wire to create a passcode")
       }
+
       internal enum SubmitButton {
         /// unlock
         internal static let title = L10n.tr("Localizable", "share_extension.unlock.submit_button.title", fallback: "unlock")
       }
+
       internal enum Textfield {
         /// Enter your passcode
         internal static let placeholder = L10n.tr("Localizable", "share_extension.unlock.textfield.placeholder", fallback: "Enter your passcode")
       }
     }
+
     internal enum Voiceover {
       /// All clients verified.
       internal static let conversationSecure = L10n.tr("Localizable", "share_extension.voiceover.conversation_secure", fallback: "All clients verified.")
@@ -159,6 +181,7 @@ internal enum L10n {
     }
   }
 }
+
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
 
@@ -181,4 +204,5 @@ private final class BundleToken {
     #endif
   }()
 }
+
 // swiftlint:enable convenience_type

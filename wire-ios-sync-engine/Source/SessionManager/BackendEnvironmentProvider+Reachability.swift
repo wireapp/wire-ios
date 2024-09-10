@@ -88,6 +88,7 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
             }
         }
     }
+
     var reachabilityClosure: () -> Reachability
     private var safeReachability: Reachability? {
         didSet {

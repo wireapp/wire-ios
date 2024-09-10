@@ -25,6 +25,7 @@ struct TextFieldStyle {
     var borderColorSelected: UIColor {
         return .accent()
     }
+
     var borderColorNotSelected: UIColor
     var textColor: UIColor
     var backgroundColor: UIColor

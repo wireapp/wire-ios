@@ -161,6 +161,7 @@ extension ZMConversation {
             convo.setValue(NSOrderedSet(), forKey: oldKey)
         }
     }
+
     // Model version add a `accessRoleStringsV2` attribute to the `Conversation` entity. The values from accessRoleString, need to be migrated to the new relationship
     static func forceToFetchConversationAccessRoles(in moc: NSManagedObjectContext) {
         let conversationsToFetch = ZMConversation.fetchRequest()

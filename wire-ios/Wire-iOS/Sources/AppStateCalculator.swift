@@ -221,6 +221,7 @@ extension AppStateCalculator: SessionManagerDelegate {
             return false
         }
     }
+
     var isInUnathenticatedAppState: Bool {
         switch appState {
         case .unauthenticated:

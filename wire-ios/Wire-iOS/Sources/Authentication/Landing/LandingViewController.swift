@@ -221,6 +221,7 @@ final class LandingViewController: AuthenticationStepViewController {
     var topStackTopConstraintConstant: CGFloat {
         return traitCollection.horizontalSizeClass == .compact ? 42.0 : 200.0
     }
+
     var contentViewWidthConstraint = NSLayoutConstraint()
     var contentViewLeadingConstraint = NSLayoutConstraint()
     var contentViewTrailingConstraint = NSLayoutConstraint()

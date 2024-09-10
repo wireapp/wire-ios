@@ -134,6 +134,7 @@ public extension Flow {
     static var createGroup: Flow {
         Flow(tag: WireLogger.conversation.tag, name: "CreateGroup")
     }
+
     static var addParticipants: Flow {
         Flow(tag: WireLogger.conversation.tag, name: "AddParticipants")
     }

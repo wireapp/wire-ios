@@ -51,6 +51,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
             }
         }
     }
+
     private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
     private let rowHeight: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true

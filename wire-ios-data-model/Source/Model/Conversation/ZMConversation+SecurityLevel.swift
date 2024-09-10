@@ -763,6 +763,7 @@ extension Date {
     var nextNearestTimestamp: Date {
         return Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
     }
+
     var previousNearestTimestamp: Date {
         return Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
     }
@@ -772,6 +773,7 @@ extension NSDate {
     @objc var nextNearestTimestamp: NSDate {
         return NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
     }
+
     @objc var previousNearestTimestamp: NSDate {
         return NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
     }

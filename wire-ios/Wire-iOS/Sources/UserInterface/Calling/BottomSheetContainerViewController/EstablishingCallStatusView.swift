@@ -30,6 +30,7 @@ extension CallStatusViewState {
         default: return false
         }
     }
+
     var requiresShowingStatusView: Bool {
         switch self {
         case .none, .established: return false

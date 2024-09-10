@@ -124,14 +124,17 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
             $0.visible
         }
     }
+
     var visible: Bool {
         return visibilityAction?(self) ?? true
     }
+
     let visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))?
 
     var header: String? {
         return headerGenerator()
     }
+
     var footer: String? {
         return footerGenerator()
     }

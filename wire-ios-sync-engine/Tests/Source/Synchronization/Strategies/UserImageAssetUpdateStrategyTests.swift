@@ -29,6 +29,7 @@ class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol
     func hasAssetToDelete() -> Bool {
         return !assetIdsToDelete.isEmpty
     }
+
     func consumeAssetToDelete() -> String? {
         return assetIdsToDelete.removeFirst()
     }
@@ -37,6 +38,7 @@ class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol
     func consumeImage(for size: ProfileImageSize) -> Data? {
         return dataToConsume[size]
     }
+
     func hasImageToUpload(for size: ProfileImageSize) -> Bool {
         return dataToConsume[size] != nil
     }

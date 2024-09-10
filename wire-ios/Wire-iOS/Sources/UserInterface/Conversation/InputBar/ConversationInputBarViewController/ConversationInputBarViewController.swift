@@ -126,6 +126,7 @@ final class ConversationInputBarViewController: UIViewController,
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
         return button
     }()
+
     let mentionButton: IconButton = IconButton()
     lazy var audioButton: IconButton = {
         let button = IconButton()

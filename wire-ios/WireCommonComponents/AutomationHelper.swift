@@ -43,10 +43,12 @@ public final class AutomationHelper: NSObject {
     // return UserDefaults.standard.bool(forKey: "UseAnalytics")
         return true
     }
+
     /// Whether to skip the first login alert
     public var skipFirstLoginAlerts: Bool {
         return self.automationEmailCredentials != nil
     }
+
     /// The login credentials provides by command line
     public let automationEmailCredentials: AutomationEmailCredentials?
     /// Whether we push notification permissions alert is disabled
@@ -136,6 +138,7 @@ public final class AutomationHelper: NSObject {
         case deprecatedCallingUI = "deprecated-calling-ui"
         case enableMLSSupport = "enable-mls-support"
     }
+
     /// Returns the login email and password credentials if set in the given arguments
     private static func credentials(_ arguments: ArgumentsType) -> AutomationEmailCredentials? {
         guard let email = arguments.flagValueIfPresent(AutomationKey.email.rawValue),
@@ -144,12 +147,14 @@ public final class AutomationHelper: NSObject {
         }
         return AutomationEmailCredentials(email: email, password: password)
     }
+
     // Switches on all flags that you would like to log listed after `--debug-log=` tags should be separated by comma
     private static func enableLogTags(_ arguments: ArgumentsType) {
         guard let tagsString = arguments.flagValueIfPresent(AutomationKey.logTags.rawValue) else { return }
         let tags = tagsString.components(separatedBy: ",")
         tags.forEach { ZMSLog.set(level: .debug, tag: $0) }
     }
+
     /// Returns the custom time interval for address book search delay if it set in the given arguments
     private static func addressBookSearchDelay(_ arguments: ArgumentsType) -> TimeInterval? {
         guard let delayString = arguments.flagValueIfPresent(AutomationKey.addressBookRemoteSearchDelay.rawValue),

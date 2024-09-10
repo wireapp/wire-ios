@@ -42,6 +42,7 @@ extension ObjectChangeInfo {
     var dispatcher: NotificationDispatcher! {
         return sut
     }
+
     var sut: NotificationDispatcher!
     var conversationObserver: ConversationObserver!
     var newUnreadMessageObserver: NewUnreadMessageObserver!
@@ -79,6 +80,7 @@ extension ObjectChangeInfo {
         self.dispatcher.didMergeChanges(Set(changedObjects))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
+
     @discardableResult public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
         guard let change = mergeNotifications.last else { return [] }
         let changedObjects = (change.userInfo?[NSUpdatedObjectsKey] as? Set<ZMManagedObject>)?.map { $0.objectID } ?? []
@@ -97,6 +99,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         init(managedObjectContext: NSManagedObjectContext) {
             self.dispatcher = NotificationDispatcher(managedObjectContext: managedObjectContext)
         }
+
         deinit {
             dispatcher.tearDown()
         }

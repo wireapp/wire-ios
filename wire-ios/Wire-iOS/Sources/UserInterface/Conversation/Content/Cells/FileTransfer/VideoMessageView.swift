@@ -40,6 +40,7 @@ final class VideoMessageView: UIView, TransferView {
             for: .normal)
         return button
     }()
+
     private let bottomGradientView = GradientView()
     private let timeLabel: UILabel = {
         let label = UILabel()
@@ -47,6 +48,7 @@ final class VideoMessageView: UIView, TransferView {
 
         return label
     }()
+
     private let loadingView = ThreeDotsLoadingView()
 
     private var allViews: [UIView] = []

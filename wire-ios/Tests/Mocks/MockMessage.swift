@@ -43,6 +43,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var quoteMessage: ZMConversationMessage?
     var isQuotingSelf: Bool = false
     var hasQuote: Bool = false
@@ -78,6 +79,7 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var userTypes: Set<AnyHashable> = Set()
     var clients: Set<AnyHashable> = Set()
     var addedUsers: Set<ZMUser> {
@@ -90,6 +92,7 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var addedUserTypes: Set<AnyHashable> = Set()
     var removedUsers: Set<ZMUser> {
         get {
@@ -101,6 +104,7 @@ final class MockSystemMessageData: NSObject, ZMSystemMessageData {
             XCTFail("This property should not be used in tests")
         }
     }
+
     var removedUserTypes: Set<AnyHashable> = Set()
     var text: String? = ""
     var needsUpdatingUsers: Bool = false
@@ -153,6 +157,7 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
         set {
         }
     }
+
     var thumbnailAssetID: String? = ""
     var imagePreviewDataIdentifier: String? = "preview-identifier-123"
     var durationMilliseconds: UInt64 = 0
@@ -340,6 +345,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
             XCTFail("This property should not be used in tests")
         }
     }
+
     var senderUser: UserType? {
         didSet {
             if senderUser is ZMUser {
@@ -347,6 +353,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
             }
         }
     }
+
     var serverTimestamp: Date? = .none
     var updatedAt: Date? = .none
 

@@ -41,6 +41,7 @@ class BottomSheetContainerViewController: UIViewController {
             didChangeState()
         }
     }
+
     private var visibleControllerBottomConstraint: NSLayoutConstraint!
     private var bottomViewHeightConstraint: NSLayoutConstraint!
 
@@ -79,6 +80,7 @@ class BottomSheetContainerViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()

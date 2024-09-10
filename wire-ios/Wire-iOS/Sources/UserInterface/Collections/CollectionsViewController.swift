@@ -40,6 +40,7 @@ final class CollectionsViewController: UIViewController {
     private var contentView: CollectionsView! {
         return view as? CollectionsView
     }
+
     private let messagePresenter = MessagePresenter()
     private weak var selectedMessage: ZMConversationMessage? = .none
 

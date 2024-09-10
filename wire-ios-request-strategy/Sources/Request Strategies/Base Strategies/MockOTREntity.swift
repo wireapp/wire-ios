@@ -30,6 +30,7 @@ final class MockOTREntity: OTREntity {
     func expire() {
         isExpired = true
     }
+
     var expirationReasonCode: NSNumber?
 
     let messageData: Data
@@ -37,6 +38,7 @@ final class MockOTREntity: OTREntity {
     func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
     }
+
     var conversation: ZMConversation?
 
     var isMissingClients = false

@@ -28,6 +28,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         BackendInfo.apiVersion = .v0
     }
+
     func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
         // given
         await syncMOC.perform { [self] in

@@ -325,6 +325,7 @@ public class MockRequestStrategy: NSObject, RequestStrategy {
             }
         }
     }
+
     public var nextRequestCalled = false
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         nextRequestCalled = true

@@ -33,6 +33,7 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
             updateFingerprint()
         }
     }
+
     var fingerprintLabelBoldFont: FontSpec? {
         didSet {
             updateFingerprint()

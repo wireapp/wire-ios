@@ -223,6 +223,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
         }
     }
+
     public weak var presentationDelegate: PresentationDelegate?
     public weak var foregroundNotificationResponder: ForegroundNotificationResponder?
     public weak var switchingDelegate: SessionManagerSwitchingDelegate?

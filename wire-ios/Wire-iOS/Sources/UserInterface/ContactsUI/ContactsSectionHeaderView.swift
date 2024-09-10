@@ -26,6 +26,7 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
 
         return label
     }()
+
     static let height: CGFloat = 20
 
     override init(reuseIdentifier: String?) {

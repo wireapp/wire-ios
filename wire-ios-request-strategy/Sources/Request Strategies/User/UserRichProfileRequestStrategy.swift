@@ -58,6 +58,7 @@ extension UserRichProfileRequestStrategy: ZMDownstreamTranscoder {
                 var type: String
                 var value: String
             }
+
             var fields: [Field]
         }
 

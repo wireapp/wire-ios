@@ -137,6 +137,7 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     var accessibilityIdentifier: String? {
         return configuration.isObfuscated ? "ObfuscatedFileCell" : "FileCell"
     }
+
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage) {
