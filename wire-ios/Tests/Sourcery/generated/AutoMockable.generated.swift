@@ -718,17 +718,17 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     // MARK: - metadataForFile
 
-    public var metadataForFileAtNameUniformTypeCompletion_Invocations: [(url: URL, name: String, uniformType: UTType, completion: (ZMFileMetadata) -> Void)] = []
-    public var metadataForFileAtNameUniformTypeCompletion_MockMethod: ((URL, String, UTType, @escaping (ZMFileMetadata) -> Void) -> Void)?
+    public var metadataForFileAtNameCompletion_Invocations: [(url: URL, name: String, completion: (ZMFileMetadata) -> Void)] = []
+    public var metadataForFileAtNameCompletion_MockMethod: ((URL, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
 
-    public func metadataForFile(at url: URL, name: String, uniformType: UTType, completion: @escaping (ZMFileMetadata) -> Void) {
-        metadataForFileAtNameUniformTypeCompletion_Invocations.append((url: url, name: name, uniformType: uniformType, completion: completion))
+    public func metadataForFile(at url: URL, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
+        metadataForFileAtNameCompletion_Invocations.append((url: url, name: name, completion: completion))
 
-        guard let mock = metadataForFileAtNameUniformTypeCompletion_MockMethod else {
-            fatalError("no mock for `metadataForFileAtNameUniformTypeCompletion`")
+        guard let mock = metadataForFileAtNameCompletion_MockMethod else {
+            fatalError("no mock for `metadataForFileAtNameCompletion`")
         }
 
-        mock(url, name, uniformType, completion)
+        mock(url, name, completion)
     }
 
 }

@@ -97,8 +97,7 @@ extension ZMMessage: Shareable {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
             FileMetaDataGenerator.shared.metadataForFile(
                 at: url,
-                name: url.lastPathComponent,
-                uniformType: url.uniformType ?? .item
+                name: url.lastPathComponent
             ) { fileMetadata in
                 ZMUserSession.shared()?.perform {
                     conversations.forEachNonEphemeral {

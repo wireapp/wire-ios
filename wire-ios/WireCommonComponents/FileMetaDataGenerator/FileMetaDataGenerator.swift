@@ -24,22 +24,7 @@ import UniformTypeIdentifiers
 
 private let zmLog = ZMSLog(tag: "UI")
 
-// TODO: remove
-public typealias FileMetaDataGenerating = FileMetaDataGeneratorProtocol
-
-// sourcery: AutoMockable
-public protocol FileMetaDataGeneratorProtocol {
-
-    // TODO: is uniformType argument needed?
-    func metadataForFile(
-        at url: URL,
-        name: String,
-        uniformType: UTType,
-        completion: @escaping (ZMFileMetadata) -> Void
-    )
-}
-
-public final class FileMetaDataGenerator: FileMetaDataGenerating {
+public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
 
     @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
     public static var shared = FileMetaDataGenerator(previewGenerator: SharedPreviewGenerator.generator)
@@ -58,9 +43,9 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
     public func metadataForFile(
         at url: URL,
         name: String,
-        uniformType: UTType,
         completion: @escaping (ZMFileMetadata) -> Void
     ) {
+        let uniformType = url.uniformType ?? .item
         previewGenerator.generatePreviewForFile(at: url, uniformType: uniformType) { preview in
 
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil

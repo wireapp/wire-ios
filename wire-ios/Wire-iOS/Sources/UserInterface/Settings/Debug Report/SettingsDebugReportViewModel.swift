@@ -39,7 +39,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
     private let shareFile: ShareFileUseCaseProtocol
     private let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
     private let logsProvider: LogFilesProviding
-    private let fileMetaDataGenerator: FileMetaDataGenerating
+    private let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
 
     // MARK: - Life cycle
 
@@ -48,7 +48,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
         shareFile: ShareFileUseCaseProtocol,
         fetchShareableConversations: FetchShareableConversationsUseCaseProtocol,
         logsProvider: LogFilesProviding = LogFilesProvider(),
-        fileMetaDataGenerator: FileMetaDataGenerating = FileMetaDataGenerator()
+        fileMetaDataGenerator: FileMetaDataGeneratorProtocol
     ) {
         self.router = router
         self.shareFile = shareFile
@@ -77,8 +77,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
             fileMetaDataGenerator.metadataForFile(
                 at: logsURL,
-                name: logsURL.lastPathComponent,
-                uniformType: logsURL.uniformType ?? .item
+                name: logsURL.lastPathComponent
             ) { [weak self] metadata in
 
                 guard let `self` else { return }

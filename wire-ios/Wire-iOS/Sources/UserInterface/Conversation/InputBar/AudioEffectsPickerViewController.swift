@@ -190,8 +190,7 @@ final class AudioEffectsPickerViewController: UIViewController {
         let url = URL(fileURLWithPath: recordingPath)
         fileMetadataGenerator.metadataForFile(
             at: url,
-            name: url.lastPathComponent,
-            uniformType: url.uniformType ?? .item
+            name: url.lastPathComponent
         ) { metadata in
             DispatchQueue.main.async {
                 if let audioMetadata = metadata as? ZMAudioMetadata {

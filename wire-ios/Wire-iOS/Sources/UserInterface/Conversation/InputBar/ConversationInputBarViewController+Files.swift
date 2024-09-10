@@ -88,8 +88,7 @@ extension ConversationInputBarViewController {
 
         fileMetaDataGenerator.metadataForFile(
             at: url,
-            name: url.lastPathComponent,
-            uniformType: url.uniformType ?? .item
+            name: url.lastPathComponent
         ) { [weak self] metadata in
 
             guard let self else { return }

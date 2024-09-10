@@ -286,8 +286,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                 // Generate preview
                 self?.fileMetaDataGenerator.metadataForFile(
                     at: url,
-                    name: name ?? url.lastPathComponent,
-                    uniformType: uniformType
+                    name: name ?? url.lastPathComponent
                 ) { [weak self] metadata in
                     self?.metadata = metadata
                     completion()

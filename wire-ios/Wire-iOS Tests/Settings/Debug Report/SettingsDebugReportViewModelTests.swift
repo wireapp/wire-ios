@@ -89,11 +89,10 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
         mockFetchShareableConversations.invoke_MockValue = [conversation]
         mockLogsProvider.generateLogFilesZip_MockValue = mockURL
         mockLogsProvider.clearLogsDirectory_MockMethod = {}
-        mockFileMetaDataGenerator.metadataForFileAtNameUniformTypeCompletion_MockMethod = { url, name, uti, completion in
+        mockFileMetaDataGenerator.metadataForFileAtNameCompletion_MockMethod = { url, name, completion in
 
             XCTAssertEqual(url, mockURL)
             XCTAssertEqual(name, mockURL.lastPathComponent)
-            XCTAssertEqual(uti, mockURL.uniformType)
 
             completion(mockMetadata)
         }
@@ -111,8 +110,7 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockFetchShareableConversations.invoke_Invocations.count, 1)
         XCTAssertEqual(mockLogsProvider.generateLogFilesZip_Invocations.count, 1)
-        XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtNameUniformTypeCompletion_Invocations.count, 1)
+        XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtNameCompletion_Invocations.count, 1)
         XCTAssertEqual(mockRouter.presentShareViewControllerDestinationsDebugReport_Invocations.count, 1)
     }
-
 }
