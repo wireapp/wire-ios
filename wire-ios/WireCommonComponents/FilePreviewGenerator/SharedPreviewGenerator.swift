@@ -32,7 +32,7 @@ enum SharedPreviewGenerator {
         let pdfGenerator = PDFFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: callbackQueue)
 
         return AggregateFilePreviewGenerator(
-            subGenerators: [imageGenerator, movieGenerator, pdfGenerator],
+            generators: [imageGenerator, movieGenerator, pdfGenerator],
             thumbnailSize: thumbnailSizeDefault,
             callbackQueue: callbackQueue
         )

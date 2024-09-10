@@ -25,8 +25,13 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
-        AVURLAsset.wr_isAudioVisualUniformType(uniformType)
+    func supportsPreviewGenerationForFile(at url: URL) -> Bool {
+        guard let uniformType = url.uniformType else { return false }
+        return AVURLAsset.wr_isAudioVisualUniformType(uniformType)
+    }
+
+    func generatePreviewForFile(at url: URL) async throws -> UIImage {
+        fatalError()
     }
 
     func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {

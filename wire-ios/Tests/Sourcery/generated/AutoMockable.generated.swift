@@ -718,6 +718,24 @@ public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     // MARK: - metadataForFile
 
+    public var metadataForFileAt_Invocations: [URL] = []
+    public var metadataForFileAt_MockMethod: ((URL) async -> ZMFileMetadata)?
+    public var metadataForFileAt_MockValue: ZMFileMetadata?
+
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        metadataForFileAt_Invocations.append(url)
+
+        if let mock = metadataForFileAt_MockMethod {
+            return await mock(url)
+        } else if let mock = metadataForFileAt_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `metadataForFileAt`")
+        }
+    }
+
+    // MARK: - metadataForFile
+
     public var metadataForFileAtNameCompletion_Invocations: [(url: URL, name: String, completion: (ZMFileMetadata) -> Void)] = []
     public var metadataForFileAtNameCompletion_MockMethod: ((URL, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
 

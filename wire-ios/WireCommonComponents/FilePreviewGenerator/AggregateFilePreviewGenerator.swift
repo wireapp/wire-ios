@@ -21,24 +21,36 @@ import UniformTypeIdentifiers
 
 struct AggregateFilePreviewGenerator: FilePreviewGenerator {
 
-    let subGenerators: [FilePreviewGenerator]
+    let generators: [FilePreviewGenerator]
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
-        !subGenerators.filter {
-            $0.supportsPreviewGenerationForFile(at: url, uniformType: uniformType)
+    func supportsPreviewGenerationForFile(at url: URL) -> Bool {
+        !generators.filter {
+            $0.supportsPreviewGenerationForFile(at: url)
         }.isEmpty
     }
 
-    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
+    func generatePreviewForFile(at url: URL) async throws -> UIImage {
 
-        guard let generator = subGenerators.filter({
-            $0.supportsPreviewGenerationForFile(at: url, uniformType: uniformType)
-        }).first else {
-            return completion(.none)
+        let firstGenerator = generators.first(where: { $0.supportsPreviewGenerationForFile(at: url) })
+        if let firstGenerator {
+            return try await firstGenerator.generatePreviewForFile(at: url)
         }
 
-        return generator.generatePreviewForFile(at: url, uniformType: uniformType, completion: completion)
+        throw AggregateFilePreviewGeneratorError.noMatchingFilePreviewGeneratorFound
+    }
+
+    // TODO: remove
+    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
+        fatalError()
+    }
+
+    // MARK: -
+
+    enum AggregateFilePreviewGeneratorError: Error {
+        /// The `AggregateFilePreviewGenerator` does not contain any generator
+        /// which supports generating preview for the provided file type.
+        case noMatchingFilePreviewGeneratorFound
     }
 }

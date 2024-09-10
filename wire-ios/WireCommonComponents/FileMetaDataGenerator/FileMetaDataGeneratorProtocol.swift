@@ -22,6 +22,8 @@ import WireDataModel
 // sourcery: AutoMockable
 public protocol FileMetaDataGeneratorProtocol {
 
+    func metadataForFile(at url: URL) async -> ZMFileMetadata
+
     func metadataForFile(
         at url: URL,
         name: String,

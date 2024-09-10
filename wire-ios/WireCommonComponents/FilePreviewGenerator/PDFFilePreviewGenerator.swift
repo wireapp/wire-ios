@@ -24,7 +24,7 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
+    func supportsPreviewGenerationForFile(at url: URL) -> Bool {
         url.uniformType?.conforms(to: .pdf) ?? false
     }
 

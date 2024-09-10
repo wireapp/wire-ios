@@ -24,8 +24,12 @@ struct ImageFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
-        uniformType.conforms(to: .image)
+    func supportsPreviewGenerationForFile(at url: URL) -> Bool {
+        url.uniformType?.conforms(to: .image) ?? false
+    }
+
+    func generatePreviewForFile(at url: URL) async throws -> UIImage {
+        fatalError()
     }
 
     func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {

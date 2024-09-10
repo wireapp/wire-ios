@@ -40,6 +40,10 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
         self.init(previewGenerator: SharedPreviewGenerator.generator)
     }
 
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+        // TODO: replace non-async method
+        fatalError()
+    }
     public func metadataForFile(
         at url: URL,
         name: String,
@@ -57,7 +61,6 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
                     completion(ZMVideoMetadata(fileURL: url, duration: asset.duration.seconds, dimensions: videoTrack.naturalSize, thumbnail: thumbnail))
                 } else {
                     let loudness = asset.audioSamplesFromAsset(maxSamples: 100)
-
                     completion(ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? []))
                 }
             } else {
