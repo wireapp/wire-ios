@@ -21,13 +21,13 @@ import XCTest
 class ZMConnectionFetchingTests: DatabaseBaseTest {
     var mocs: CoreDataStack!
 
-    public override func setUp() {
+    override public func setUp() {
         super.setUp()
         self.mocs = self.createStorageStackAndWaitForCompletion()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
     }
 
-    public override func tearDown() {
+    override public func tearDown() {
         self.mocs = nil
         super.tearDown()
     }

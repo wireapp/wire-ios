@@ -38,7 +38,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         ).appendingPersistentStoreLocation()
     }
 
-    public override func setUp() {
+    override public func setUp() {
         super.setUp()
 
         accountId = .create()
@@ -51,7 +51,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         XCTAssert(FileManager.default.fileExists(atPath: storeURL.path))
     }
 
-    public override func tearDown() {
+    override public func tearDown() {
         moc.persistentStoreCoordinator?.persistentStores.forEach {
             try! self.moc.persistentStoreCoordinator!.remove($0)
         }

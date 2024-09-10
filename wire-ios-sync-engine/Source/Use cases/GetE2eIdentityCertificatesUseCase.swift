@@ -26,7 +26,7 @@ public protocol GetE2eIdentityCertificatesUseCaseProtocol {
                 clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate]
 }
 
-final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
+public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let syncContext: NSManagedObjectContext
 

@@ -28,7 +28,7 @@ public protocol LocationMessageData: NSObjectProtocol {
 }
 
 extension ZMClientMessage: LocationMessageData {
-    public override var locationMessageData: LocationMessageData? {
+    override public var locationMessageData: LocationMessageData? {
         guard let content = underlyingMessage?.content else {
             return nil
         }

@@ -29,7 +29,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = .allowsRequestsWhileOnline
@@ -91,7 +91,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 

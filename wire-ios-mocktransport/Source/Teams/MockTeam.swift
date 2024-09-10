@@ -34,7 +34,7 @@ import Foundation
 
     public static var entityName = "Team"
 
-    public override func awakeFromInsert() {
+    override public func awakeFromInsert() {
         super.awakeFromInsert()
         identifier = NSUUID.create().transportString()
         createdAt = Date()

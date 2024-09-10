@@ -54,7 +54,7 @@ final class VideoMessageView: UIView, TransferView {
     private var allViews: [UIView] = []
     private var state: FileMessageViewState = .unavailable
 
-    required override init(frame: CGRect) {
+    override required init(frame: CGRect) {
         super.init(frame: frame)
 
         self.previewImageView.contentMode = .scaleAspectFill

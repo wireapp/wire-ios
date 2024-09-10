@@ -24,7 +24,7 @@ import Foundation
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationToken: Any?
 
-    public override init(
+    override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
@@ -75,7 +75,7 @@ import Foundation
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 

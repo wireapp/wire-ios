@@ -145,12 +145,12 @@ open class ZMCallState: NSObject, Sequence {
         return conversationStates.isEmpty
     }
 
-    open override var description: String {
+    override open var description: String {
         return "CallState \(SwiftDebugging.address(self)) \n" +
             " --> states : \(conversationStates) \n"
     }
 
-    open override var debugDescription: String {
+    override open var debugDescription: String {
         return description
     }
 }
@@ -166,12 +166,12 @@ open class ZMConversationCallState: NSObject {
         isIgnoringCall = other.isIgnoringCall
     }
 
-    open override var description: String {
+    override open var description: String {
         return "CallState \(SwiftDebugging.address(self)) \n" +
             " --> isCallDeviceActive: \(isCallDeviceActive) \n"
     }
 
-    open override var debugDescription: String {
+    override open var debugDescription: String {
         return description
     }
 }

@@ -164,7 +164,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.conversationByQualifiedIDListSync.delegate = self
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if syncProgress.currentSyncPhase == .fetchingConversations {
             fetchAllConversations(for: apiVersion)
         }

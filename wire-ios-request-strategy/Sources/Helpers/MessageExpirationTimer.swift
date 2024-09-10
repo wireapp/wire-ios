@@ -25,7 +25,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
     private let logAttributesBuilder: MessageLogAttributesBuilder
 
-    public override init() {
+    override public init() {
         fatalError("Should not use this init")
     }
 

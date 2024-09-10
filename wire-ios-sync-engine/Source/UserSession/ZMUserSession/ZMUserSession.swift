@@ -276,7 +276,7 @@ public final class ZMUserSession: NSObject {
             context: syncContext)
     }()
 
-    private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+    public private(set) var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(

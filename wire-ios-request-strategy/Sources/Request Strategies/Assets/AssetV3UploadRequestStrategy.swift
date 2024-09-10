@@ -28,7 +28,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
 
     public var shouldUseBackgroundSession = true
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -48,7 +48,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         return [preprocessor, upstreamSync, self]
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return upstreamSync.nextRequest(for: apiVersion)
     }
 

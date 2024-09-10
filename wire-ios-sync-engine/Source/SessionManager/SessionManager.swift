@@ -304,7 +304,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    public override init() {
+    override public init() {
         fatal("init() not implemented")
     }
 

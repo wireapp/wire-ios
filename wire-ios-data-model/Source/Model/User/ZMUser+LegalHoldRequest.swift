@@ -277,7 +277,7 @@ extension ZMUser: SelfLegalHoldSubject {
     // MARK: - Status Acknowledgement
 
     /// Whether the user needs to be notified about a legal hold status change.
-    @NSManaged internal(set) public var needsToAcknowledgeLegalHoldStatus: Bool
+    @NSManaged public internal(set) var needsToAcknowledgeLegalHoldStatus: Bool
 
     /**
      * Call this method when the user acknowledged the last legal hold status.

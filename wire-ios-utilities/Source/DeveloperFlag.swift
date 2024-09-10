@@ -79,7 +79,7 @@ public enum DeveloperFlag: String, CaseIterable {
         return DeveloperFlagsDefault.isEnabled(for: bundleKey)
     }
 
-    static public func clearAllFlags() {
+    public static func clearAllFlags() {
         allCases.forEach {
             storage.set(nil, forKey: $0.rawValue)
         }

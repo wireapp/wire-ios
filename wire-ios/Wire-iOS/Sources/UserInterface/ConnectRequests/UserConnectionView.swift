@@ -26,7 +26,7 @@ final class UserConnectionView: UIView, Copyable {
         self.init(user: instance.user)
     }
 
-    static private var correlationFormatter: AddressBookCorrelationFormatter = {
+    private static var correlationFormatter: AddressBookCorrelationFormatter = {
         return AddressBookCorrelationFormatter(
             lightFont: FontSpec(.small, .light),
             boldFont: FontSpec(.small, .medium),

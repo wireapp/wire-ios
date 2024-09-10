@@ -30,7 +30,7 @@ public enum ZMUserKeys {
         self.value = value
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserRichProfileField else { return false }
         return self.type == other.type && self.value == other.value
     }

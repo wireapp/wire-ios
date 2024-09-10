@@ -47,7 +47,7 @@ import WireDataModel
 
     private let isolationQueue = DispatchQueue(label: "EventProcessing")
 
-    public override init() {
+    override public init() {
         super.init()
     }
 

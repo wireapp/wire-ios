@@ -40,7 +40,7 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
         self.cookieData = cookieData
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserInfo else { return false }
         return other.cookieData == cookieData && other.identifier == identifier
     }

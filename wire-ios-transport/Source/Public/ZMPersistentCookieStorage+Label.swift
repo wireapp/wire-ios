@@ -30,7 +30,7 @@ public final class CookieLabel: NSObject {
         super.init()
     }
 
-    private override convenience init() {
+    override private convenience init() {
         self.init(value: UUID().uuidString)
     }
 
@@ -50,7 +50,7 @@ public final class CookieLabel: NSObject {
         }
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? CookieLabel else { return false }
         return value == other.value
     }

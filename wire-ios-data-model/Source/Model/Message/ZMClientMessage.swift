@@ -35,45 +35,45 @@ public class ZMClientMessage: ZMOTRMessage {
     /// In memory cache
     var cachedUnderlyingMessage: GenericMessage?
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "ClientMessage"
     }
 
-    open override var ignoredKeys: Set<AnyHashable>? {
+    override open var ignoredKeys: Set<AnyHashable>? {
         return (super.ignoredKeys ?? Set())
             .union([#keyPath(updatedTimestamp)])
     }
 
-    public override var updatedAt: Date? {
+    override public var updatedAt: Date? {
         return updatedTimestamp
     }
 
-    public override var hashOfContent: Data? {
+    override public var hashOfContent: Data? {
         guard let serverTimestamp else {
             return nil
         }
         return underlyingMessage?.hashOfContent(with: serverTimestamp)
     }
 
-    public override func awakeFromFetch() {
+    override public func awakeFromFetch() {
         super.awakeFromFetch()
 
         cachedUnderlyingMessage = nil
     }
 
-    public override func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
+    override public func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
         super.awake(fromSnapshotEvents: flags)
 
         cachedUnderlyingMessage = nil
     }
 
-    public override func didTurnIntoFault() {
+    override public func didTurnIntoFault() {
         super.didTurnIntoFault()
 
         cachedUnderlyingMessage = nil
     }
 
-    public override var isUpdatingExistingMessage: Bool {
+    override public var isUpdatingExistingMessage: Bool {
         guard let content = underlyingMessage?.content else {
             return false
         }
@@ -90,7 +90,7 @@ public class ZMClientMessage: ZMOTRMessage {
                     #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
-    public override func expire() {
+    override public func expire() {
         WireLogger.messaging.warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
@@ -121,7 +121,7 @@ public class ZMClientMessage: ZMOTRMessage {
         super.expire()
     }
 
-    public override func resend() {
+    override public func resend() {
         if let genericMessage = underlyingMessage,
            case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
@@ -132,7 +132,7 @@ public class ZMClientMessage: ZMOTRMessage {
         super.resend()
     }
 
-    public override func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
+    override public func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
         // we don't want to update the conversation if the message is a confirmation message
         guard
             let genericMessage = underlyingMessage,
@@ -176,13 +176,13 @@ public class ZMClientMessage: ZMOTRMessage {
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 
-    override static public func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
+    override public static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
         let encryptedNotSynced = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [encryptedNotSynced, notExpired])
     }
 
-    public override func markAsSent() {
+    override public func markAsSent() {
         super.markAsSent()
 
         if linkPreviewState == ZMLinkPreviewState.uploaded {
@@ -219,15 +219,15 @@ public class ZMClientMessage: ZMOTRMessage {
 }
 
 extension ZMClientMessage {
-    public override var imageMessageData: ZMImageMessageData? {
+    override public var imageMessageData: ZMImageMessageData? {
         return nil
     }
 
-    public override var fileMessageData: ZMFileMessageData? {
+    override public var fileMessageData: ZMFileMessageData? {
         return nil
     }
 
-    public override var isSilenced: Bool {
+    override public var isSilenced: Bool {
         return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }
 }

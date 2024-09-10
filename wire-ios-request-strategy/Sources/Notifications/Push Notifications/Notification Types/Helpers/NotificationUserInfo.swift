@@ -55,7 +55,7 @@ public class NotificationUserInfo: NSObject, NSCoding {
     }
 
     /// Creates an empty notification user info payload.
-    public override convenience init() {
+    override public convenience init() {
         self.init(storage: [:])
     }
 

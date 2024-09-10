@@ -106,11 +106,11 @@ public class Feature: ZMManagedObject {
 
     // MARK: - Methods
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "Feature"
     }
 
-    public override static func sortKey() -> String {
+    override public static func sortKey() -> String {
         return #keyPath(Feature.nameValue)
     }
 

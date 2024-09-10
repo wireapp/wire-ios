@@ -30,7 +30,7 @@ import WireUtilities
         super.init(managedObjectContext: managedObjectContext, zmLog: log)
     }
 
-    public override func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+    override public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.waitingToBeProcessed.rawValue)
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }

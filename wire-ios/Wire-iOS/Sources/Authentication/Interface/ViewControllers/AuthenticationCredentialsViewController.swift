@@ -69,7 +69,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         }
     }
 
-    weak override var authenticationCoordinator: AuthenticationCoordinator? {
+    override weak var authenticationCoordinator: AuthenticationCoordinator? {
         didSet {
             actioner = authenticationCoordinator
         }

@@ -101,7 +101,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
                                        groupQueue: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if isSyncing {
             slowSync.readyForNextRequestIfNotBusy()
             return slowSync.nextRequest(for: apiVersion)

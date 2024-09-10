@@ -40,7 +40,7 @@ public class UserCredentials: NSObject {
         self.emailVerificationCode = emailVerificationCode
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? UserCredentials else {
             return false
         }
@@ -51,7 +51,7 @@ public class UserCredentials: NSObject {
             self.emailVerificationCode == other.emailVerificationCode
     }
 
-    public override var hash: Int {
+    override public var hash: Int {
         var hasher = Hasher()
         hasher.combine(email)
         hasher.combine(password)

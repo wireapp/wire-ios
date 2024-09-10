@@ -31,12 +31,12 @@ class MockCallKitProvider: CXProvider {
     }
 
     public var timesReportNewIncomingCallCalled: Int = 0
-    public override func reportNewIncomingCall(with UUID: UUID, update: CXCallUpdate, completion: @escaping (Error?) -> Void) {
+    override public func reportNewIncomingCall(with UUID: UUID, update: CXCallUpdate, completion: @escaping (Error?) -> Void) {
         timesReportNewIncomingCallCalled += 1
     }
 
     public var timesReportCallUpdatedCalled: Int = 0
-    public override func reportCall(with UUID: UUID, updated update: CXCallUpdate) {
+    override public func reportCall(with UUID: UUID, updated update: CXCallUpdate) {
         timesReportCallUpdatedCalled += 1
     }
 
@@ -74,7 +74,7 @@ class MockCallObserver: CXCallObserver {
 }
 
 class MockCallKitCallController: CXCallController {
-    public override var callObserver: CXCallObserver {
+    override public var callObserver: CXCallObserver {
         return mockCallObserver
     }
 
@@ -84,7 +84,7 @@ class MockCallKitCallController: CXCallController {
     public var requestedTransactions: [CXTransaction] = []
     public let mockCallObserver = MockCallObserver()
 
-    public override func request(_ transaction: CXTransaction, completion: @escaping (Error?) -> Void) {
+    override public func request(_ transaction: CXTransaction, completion: @escaping (Error?) -> Void) {
         timesRequestTransactionCalled += 1
         requestedTransactions.append(transaction)
         if mockErrorCount >= 1 {

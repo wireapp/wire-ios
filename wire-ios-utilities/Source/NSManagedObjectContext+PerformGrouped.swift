@@ -19,7 +19,7 @@
 import CoreData
 
 extension NSManagedObjectContext {
-    static private let timeout: TimeInterval = 10
+    private static let timeout: TimeInterval = 10
 
     @discardableResult @available(*, noasync)
     public func performGroupedAndWait<T>(_ block: () -> T) -> T {

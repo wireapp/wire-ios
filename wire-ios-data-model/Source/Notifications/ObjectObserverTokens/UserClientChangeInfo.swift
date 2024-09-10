@@ -19,13 +19,13 @@
 import Foundation
 
 extension UserClient {
-    public override var description: String {
+    override public var description: String {
         return "Client: \(String(describing: sessionIdentifier?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
     }
 }
 
 extension UserClient: ObjectInSnapshot {
-    static public var observableKeys: Set<String> {
+    public static var observableKeys: Set<String> {
         return Set([#keyPath(UserClient.trustedByClients),
                     #keyPath(UserClient.ignoredByClients),
                     #keyPath(UserClient.needsToNotifyUser),

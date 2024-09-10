@@ -57,7 +57,7 @@ public class Team: ZMManagedObject, TeamType {
         }
     }
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "Team"
     }
 
@@ -65,7 +65,7 @@ public class Team: ZMManagedObject, TeamType {
         return #keyPath(Team.name)
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return false
     }
 

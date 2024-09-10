@@ -59,7 +59,7 @@ public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType 
         previewDownloader.tearDown()
     }
 
-    public convenience override init() {
+    override public convenience init() {
         let workerQueue = OperationQueue()
         self.init(
             previewDownloader: PreviewDownloader(resultsQueue: workerQueue),

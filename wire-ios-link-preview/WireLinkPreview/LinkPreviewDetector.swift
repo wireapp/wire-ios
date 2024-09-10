@@ -30,7 +30,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
 
     public typealias DetectCompletion = ([LinkMetadata]) -> Void
 
-    public convenience override init() {
+    override public convenience init() {
         let workerQueue = OperationQueue()
         self.init(
             previewDownloader: PreviewDownloader(resultsQueue: workerQueue),

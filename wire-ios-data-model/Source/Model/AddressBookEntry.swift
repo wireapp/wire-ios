@@ -31,26 +31,26 @@ import Foundation
     @NSManaged public var user: ZMUser?
     @NSManaged public var cachedName: String?
 
-    public override func keysTrackedForLocalModifications() -> Set<String> {
+    override public func keysTrackedForLocalModifications() -> Set<String> {
         return []
     }
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "AddressBookEntry"
     }
 
-    public override static func sortKey() -> String? {
+    override public static func sortKey() -> String? {
         return Fields.localIdentifier.rawValue
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return false
     }
 }
 
 extension AddressBookEntry {
     @objc(createFromContact:managedObjectContext:user:)
-    static public func create(from contact: CNContact, managedObjectContext: NSManagedObjectContext, user: ZMUser? = nil) -> AddressBookEntry {
+    public static func create(from contact: CNContact, managedObjectContext: NSManagedObjectContext, user: ZMUser? = nil) -> AddressBookEntry {
         let entry = AddressBookEntry.insertNewObject(in: managedObjectContext)
         entry.localIdentifier = contact.identifier
         entry.cachedName = CNContactFormatter.string(from: contact, style: .fullName)

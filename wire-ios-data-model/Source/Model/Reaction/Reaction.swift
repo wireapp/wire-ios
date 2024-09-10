@@ -51,15 +51,15 @@ public let ZMReactionUsersValueKey      = "users"
         return reaction
     }
 
-    open override func keysTrackedForLocalModifications() -> Set<String> {
+    override open func keysTrackedForLocalModifications() -> Set<String> {
         return [ZMReactionUsersValueKey]
     }
 
-    open override class func entityName() -> String {
+    override open class func entityName() -> String {
         return "Reaction"
     }
 
-    open override class func sortKey() -> String? {
+    override open class func sortKey() -> String? {
         return ZMReactionUnicodeValueKey
     }
 

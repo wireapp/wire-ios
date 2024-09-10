@@ -28,7 +28,7 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
 
     let configuration: View.Configuration
 
-    static private let resetSessionURL: URL = URL(string: "action://reset-session")!
+    private static let resetSessionURL: URL = URL(string: "action://reset-session")!
 
     var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?

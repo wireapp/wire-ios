@@ -233,11 +233,11 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     ///   - viewWidth: Total container size
     ///   - coef: Coefficient (from very hard (<0.1) to very easy (>0.9))
     /// - Returns: New offset
-    class private func rubberBandOffset(_ offset: CGFloat, viewWidth: CGFloat, coefficient coef: CGFloat) -> CGFloat {
+    private class func rubberBandOffset(_ offset: CGFloat, viewWidth: CGFloat, coefficient coef: CGFloat) -> CGFloat {
         return (1.0 - (1.0 / ((offset * coef / viewWidth) + 1.0))) * viewWidth
     }
 
-    class private func calculateViewOffset(forUserOffset offsetX: CGFloat, initialOffset initialDrawerOffset: CGFloat, drawerWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
+    private class func calculateViewOffset(forUserOffset offsetX: CGFloat, initialOffset initialDrawerOffset: CGFloat, drawerWidth: CGFloat, viewWidth: CGFloat) -> CGFloat {
         if offsetX + initialDrawerOffset < 0 {
             return rubberBandOffset(offsetX + initialDrawerOffset, viewWidth: viewWidth, coefficient: 0.15)
         }

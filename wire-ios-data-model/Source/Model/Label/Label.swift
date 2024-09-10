@@ -39,7 +39,7 @@ public class Label: ZMManagedObject, LabelType {
     @NSManaged private var remoteIdentifier_data: Data?
     @NSManaged public private(set) var type: Int16
 
-    public override var ignoredKeys: Set<AnyHashable>? {
+    override public var ignoredKeys: Set<AnyHashable>? {
         var ignoredKeys = super.ignoredKeys
 
         _ = ignoredKeys?.insert((#keyPath(Label.type)))
@@ -70,7 +70,7 @@ public class Label: ZMManagedObject, LabelType {
         markedForDeletion = true
     }
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "Label"
     }
 
@@ -82,11 +82,11 @@ public class Label: ZMManagedObject, LabelType {
         return [NSSortDescriptor(key: sortKey(), ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
     }
 
-    public override static func predicateForFilteringResults() -> NSPredicate? {
+    override public static func predicateForFilteringResults() -> NSPredicate? {
         return NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return true
     }
 

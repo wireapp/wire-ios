@@ -160,9 +160,9 @@ extension ConversationAccessRole {
 }
 
 extension ZMConversation: SwiftConversationLike {
-    @NSManaged dynamic internal var accessModeStrings: [String]?
-    @NSManaged dynamic internal var accessRoleString: String?
-    @NSManaged dynamic internal var accessRoleStringsV2: [String]?
+    @NSManaged internal dynamic var accessModeStrings: [String]?
+    @NSManaged internal dynamic var accessRoleString: String?
+    @NSManaged internal dynamic var accessRoleStringsV2: [String]?
 
     public var sortedActiveParticipantsUserTypes: [UserType] {
         return sortedActiveParticipants

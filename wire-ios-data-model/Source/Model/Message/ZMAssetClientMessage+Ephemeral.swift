@@ -63,7 +63,7 @@ extension ZMAssetClientMessage {
         }
     }
 
-    @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
+    @discardableResult @objc override public func startDestructionIfNeeded() -> Bool {
         let imageNotDownloaded = imageMessageData != nil && !hasDownloadedFile
         let fileHasNoUploadState = fileMessageData != nil
             && underlyingMessage?.assetData?.hasUploaded == false

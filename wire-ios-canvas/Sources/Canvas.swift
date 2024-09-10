@@ -138,7 +138,7 @@ public final class Canvas: UIView {
         configureGestureRecognizers()
     }
 
-    required public init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
         layer.drawsAsynchronously = true
@@ -327,7 +327,7 @@ public final class Canvas: UIView {
         return image
     }
 
-    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return gestureRecognizers?.contains(gestureRecognizer) ?? false
     }
 

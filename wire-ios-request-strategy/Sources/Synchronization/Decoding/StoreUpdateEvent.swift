@@ -124,7 +124,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static private func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
+    private static func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
         let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
 

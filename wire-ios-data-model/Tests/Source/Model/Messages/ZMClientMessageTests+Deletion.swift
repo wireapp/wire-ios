@@ -587,7 +587,7 @@ extension ZMClientMessageTests_Deletion {
     }
 }
 
-final private class AssetDeletionNotificationObserver: NSObject {
+private final class AssetDeletionNotificationObserver: NSObject {
     private(set) var deletedIdentifiers = [String]()
 
     override init() {

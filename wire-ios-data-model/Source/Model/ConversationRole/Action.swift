@@ -26,7 +26,7 @@ public final class Action: ZMManagedObject {
     @NSManaged public var role: Role
     @NSManaged public var name: String?
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return String(describing: Action.self)
     }
 
@@ -86,7 +86,7 @@ public final class Action: ZMManagedObject {
         return action
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return false
     }
 }

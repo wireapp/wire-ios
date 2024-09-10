@@ -41,7 +41,7 @@ final class CameraAccess: NSObject {
         return false
     }
 
-    static private func displayCameraAlertForOngoingCall(
+    private static func displayCameraAlertForOngoingCall(
         at feature: CameraAccessFeature,
         from viewController: UIViewController
     ) {

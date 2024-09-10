@@ -37,7 +37,7 @@ public class FakeGroupContext: NSObject, GroupQueue {
         self.dispatchGroup = group
     }
 
-    public override convenience init() {
+    override public convenience init() {
         self.init(queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random() % 1000)"), group: ZMSDispatchGroup(label: "FakeGroupContext")) // swiftlint:disable:this legacy_random
     }
 

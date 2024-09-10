@@ -44,7 +44,7 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
     private let identifierProvider: AssetDeletionIdentifierProviderType
 
     @objc(initWithManagedObjectContext:applicationStatus:identifierProvider:)
-    required public init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus, identifierProvider: AssetDeletionIdentifierProviderType) {
+    public required init(context: NSManagedObjectContext, applicationStatus: ApplicationStatus, identifierProvider: AssetDeletionIdentifierProviderType) {
         self.identifierProvider = identifierProvider
         super.init(withManagedObjectContext: context, applicationStatus: applicationStatus)
         requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
@@ -58,7 +58,7 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         requestSync.readyForNextRequestIfNotBusy()
         return requestSync.nextRequest(for: apiVersion)
     }

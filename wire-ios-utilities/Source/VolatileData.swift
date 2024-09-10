@@ -38,7 +38,7 @@ public final class VolatileData {
     /// **Important**: assign only to a constant (with the `let` keyword) to ensure that no
     /// memory resources are duplicated.
 
-    private(set) public var _storage: Data
+    public private(set) var _storage: Data
 
     // MARK: - Life Cycle
 

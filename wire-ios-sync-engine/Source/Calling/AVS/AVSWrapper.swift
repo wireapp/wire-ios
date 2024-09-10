@@ -74,7 +74,7 @@ public final class AVSWrapper: AVSWrapperType {
     /// - parameter observer: The raw pointer to the object that will receive events from AVS.
     /// This must be a pointer to a `WireCallCenterV3` object. If it isn't, the notifications
     /// won't be handled.
-    required public init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
+    public required init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?) {
         Self.logger.trace("init")
         defer { Self.logger.trace("init finished") }
 

@@ -21,7 +21,7 @@ import UserNotifications
 
 @objc(ZMUserNotificationCenterMock)
 public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
-    weak public var delegate: UNUserNotificationCenterDelegate?
+    public weak var delegate: UNUserNotificationCenterDelegate?
 
     /// Identifiers of scheduled notification requests.
     @objc public var scheduledRequests = [UNNotificationRequest]()

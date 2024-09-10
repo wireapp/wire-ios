@@ -21,7 +21,7 @@ import Foundation
 extension NSManagedObjectContext {
     /// Whether the applock feature is enabled.
 
-    internal(set) public var isAppLockEnabled: Bool {
+    public internal(set) var isAppLockEnabled: Bool {
         get {
             (persistentStoreMetadata(forKey: PersistentMetadataKey.appLock.rawValue) as? NSNumber)?.boolValue ?? false
         }

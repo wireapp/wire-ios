@@ -95,7 +95,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
         )
     }
 
-    static private func createRequester(with scheme: String?) -> CompanyLoginRequester {
+    private static func createRequester(with scheme: String?) -> CompanyLoginRequester {
         return CompanyLoginRequester(
             callbackScheme: scheme ?? CompanyLoginController.fallbackURLScheme
         )

@@ -83,7 +83,7 @@ extension ZMConversation {
         }
     }
 
-    static private func getAParticipantRole(in moc: NSManagedObjectContext, adminRole: Role?, user: ZMUser, conversation: ZMConversation, team: Team?) -> ParticipantRole {
+    private static func getAParticipantRole(in moc: NSManagedObjectContext, adminRole: Role?, user: ZMUser, conversation: ZMConversation, team: Team?) -> ParticipantRole {
         let participantRoleForUser = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: conversation)
         let customRole = Role.fetchOrCreateRole(with: defaultAdminRoleName, teamOrConversation: team != nil ? .team(team!) : .conversation(conversation), in: moc)
 

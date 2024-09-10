@@ -33,7 +33,7 @@ public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransform
         ValueTransformer.setValueTransformer(transformer, forName: name)
     }
 
-    public override class var allowedTopLevelClasses: [AnyClass] {
+    override public class var allowedTopLevelClasses: [AnyClass] {
         // NOTE: NSSet is included for compatibility with iOS 12
         super.allowedTopLevelClasses + [LinkAttachment.self, NSSet.self]
     }

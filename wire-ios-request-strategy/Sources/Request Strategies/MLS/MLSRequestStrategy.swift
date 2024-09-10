@@ -29,7 +29,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Life cycle
 
-    public override init(
+    override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
@@ -65,7 +65,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Requests
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return entitySync.nextRequest(for: apiVersion)
     }
 }

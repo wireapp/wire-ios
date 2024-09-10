@@ -48,7 +48,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
     // MARK: - Life cycle
 
-    convenience public init(userID: UUID) {
+    public convenience init(userID: UUID) {
         self.init(storage: .init(userID: userID))
     }
 

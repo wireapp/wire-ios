@@ -107,7 +107,7 @@ extension NotificationInContext {
         case changeInfo
     }
 
-    convenience public init(name: Notification.Name,
+    public convenience init(name: Notification.Name,
                             context: NotificationContext,
                             object: AnyObject? = nil,
                             changeInfo: ObjectChangeInfo,
@@ -122,7 +122,7 @@ extension NotificationInContext {
             userInfo: userInfo)
     }
 
-    convenience public init(name: Notification.Name,
+    public convenience init(name: Notification.Name,
                             context: NotificationContext,
                             object: AnyObject? = nil,
                             changedKeys: [String],

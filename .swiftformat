@@ -27,7 +27,8 @@
     initCoderUnavailable, \
     leadingDelimiters, \
     linebreakAtEndOfFile, \
-    linebreaks
+    linebreaks, \
+    modifierOrder
 
 # Options
 

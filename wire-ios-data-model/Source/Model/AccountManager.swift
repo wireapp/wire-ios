@@ -36,8 +36,8 @@ extension UserDefaults {
 /// Class used to safely access and change stored accounts and the current selected account.
 public final class AccountManager: NSObject {
     private let defaults = UserDefaults.shared()
-    private(set) public var accounts = [Account]()
-    private(set) public var selectedAccount: Account? // The currently selected account or `nil` in case there is none
+    public private(set) var accounts = [Account]()
+    public private(set) var selectedAccount: Account? // The currently selected account or `nil` in case there is none
 
     private var store: AccountStore
 
@@ -55,7 +55,7 @@ public final class AccountManager: NSObject {
     }
 
     /// Deletes all content stored by an `AccountManager` on disk at the given URL, including the selected account.
-    static public func delete(at root: URL) {
+    public static func delete(at root: URL) {
         AccountStore.delete(at: root)
         UserDefaults.shared().selectedAccountIdentifier = nil
     }

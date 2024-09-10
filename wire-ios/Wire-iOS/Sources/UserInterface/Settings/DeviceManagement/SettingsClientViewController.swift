@@ -162,7 +162,7 @@ final class SettingsClientViewController: UIViewController,
         ])
     }
 
-    required override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError("init(nibNameOrNil:nibBundleOrNil:) has not been implemented")
     }
 

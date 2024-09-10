@@ -34,7 +34,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     // MARK: - AbstractRequestStrategy
 
     @objc
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                          applicationStatus: ApplicationStatus) {
         syncContext = managedObjectContext
         super.init(withManagedObjectContext: managedObjectContext,
@@ -46,7 +46,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     }
 
     @objc
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let signatureStatus = syncContext.signatureStatus else {
             return nil
         }

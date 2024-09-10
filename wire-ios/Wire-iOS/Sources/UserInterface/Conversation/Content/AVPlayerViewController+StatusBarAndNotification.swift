@@ -28,7 +28,7 @@ extension AVPlayerViewController {
         return true
     }
 
-    open override func viewDidDisappear(_ animated: Bool) {
+    override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         guard self.isBeingDismissed else {
             return

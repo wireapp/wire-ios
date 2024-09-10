@@ -38,7 +38,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    convenience override init(context: NSManagedObjectContext) {
+    override convenience init(context: NSManagedObjectContext) {
         self.init(
             context: context,
             eventProcessor: ConversationEventProcessor(context: context)

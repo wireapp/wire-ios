@@ -98,7 +98,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         self.legacyAppLockConfig = legacyAppLockConfig
     }
 
-    required public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
         blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)

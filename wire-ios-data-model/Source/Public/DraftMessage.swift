@@ -36,7 +36,7 @@ import WireCryptobox
         super.init()
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? DraftMessage else { return false }
         return (text, mentions, quote) == (other.text, other.mentions, other.quote)
     }

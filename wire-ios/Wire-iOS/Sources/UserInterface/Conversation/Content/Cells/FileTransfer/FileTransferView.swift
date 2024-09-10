@@ -45,7 +45,7 @@ final class FileTransferView: UIView, TransferView {
 
     private var allViews: [UIView] = []
 
-    required override init(frame: CGRect) {
+    override required init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = SemanticColors.View.backgroundCollectionCell
 

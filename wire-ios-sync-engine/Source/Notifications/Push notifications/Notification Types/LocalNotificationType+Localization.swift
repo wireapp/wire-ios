@@ -306,7 +306,7 @@ extension String {
         return Bundle(for: ZMUserSession.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
     }
 
-    static fileprivate func localizedStringWithFormat(_ format: String, arguments: [CVarArg]) -> String {
+    fileprivate static func localizedStringWithFormat(_ format: String, arguments: [CVarArg]) -> String {
         switch arguments.count {
         case 1:
             return String.localizedStringWithFormat(format, arguments[0])

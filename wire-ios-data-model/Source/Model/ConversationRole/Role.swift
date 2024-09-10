@@ -55,16 +55,16 @@ public final class Role: ZMManagedObject {
     @NSManaged public var team: Team?
     @NSManaged public var conversation: ZMConversation?
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return String(describing: Role.self)
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return false
     }
 
     @discardableResult
-    static public func create(managedObjectContext: NSManagedObjectContext,
+    public static func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               conversation: ZMConversation) -> Role {
         return create(managedObjectContext: managedObjectContext,
@@ -73,7 +73,7 @@ public final class Role: ZMManagedObject {
     }
 
     @discardableResult
-    static public func create(managedObjectContext: NSManagedObjectContext,
+    public static func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               team: Team) -> Role {
         return create(managedObjectContext: managedObjectContext,
@@ -81,7 +81,7 @@ public final class Role: ZMManagedObject {
                       teamOrConversation: .team(team))
     }
 
-    static public func create(managedObjectContext: NSManagedObjectContext,
+    public static func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               teamOrConversation: TeamOrConversation) -> Role {
         let entry = Role.insertNewObject(in: managedObjectContext)

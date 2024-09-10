@@ -48,7 +48,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
     private let entitySync: EntityActionSync
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
         self.userClientByUserClientIDTranscoder = UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
         self.userClientByQualifiedUserIDTranscoder = UserClientByQualifiedUserIDTranscoder(managedObjectContext: managedObjectContext)
@@ -108,7 +108,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         // There may exist some clients that need an update, so try to sync any before asking
         // for requests.
         syncClientsNeedingUpdateIfNeeded()

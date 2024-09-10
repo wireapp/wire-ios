@@ -29,7 +29,7 @@ extension ZMClientMessage {
         quote = nil
     }
 
-    public override func removeClearingSender(_ clearingSender: Bool) {
+    override public func removeClearingSender(_ clearingSender: Bool) {
         deleteContent()
         super.removeClearingSender(clearingSender)
     }

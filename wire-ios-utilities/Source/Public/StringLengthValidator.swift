@@ -46,7 +46,7 @@ open class StringLengthValidator: NSObject {
         try validateStringValue(&pointee, minimumStringLength: minimumStringLength, maximumStringLength: maximumStringLength, maximumByteLength: maximumByteLength)
     }
 
-    @discardableResult static public func validateStringValue(_ ioValue: inout Any?,
+    @discardableResult public static func validateStringValue(_ ioValue: inout Any?,
                                                               minimumStringLength: UInt32,
                                                               maximumStringLength: UInt32,
                                                               maximumByteLength: UInt32) throws -> Bool {

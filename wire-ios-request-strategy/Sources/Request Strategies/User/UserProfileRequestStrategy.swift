@@ -58,7 +58,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         self.userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fetchAllConnectedUsers(for: apiVersion)
 
         return [userProfileByID, userProfileByQualifiedID, actionSync].nextRequest(for: apiVersion)

@@ -158,8 +158,8 @@ public actor CommitSender: CommitSending {
         }
     }
 
-    nonisolated
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+    public nonisolated
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         return onEpochChangedSubject.eraseToAnyPublisher()
     }
 

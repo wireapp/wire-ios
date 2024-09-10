@@ -36,7 +36,7 @@ extension ProxiedRequestType {
 
 /// Perform requests to the Giphy search API
 public final class ProxiedRequestStrategy: AbstractRequestStrategy {
-    static fileprivate let BasePath = "/proxy"
+    fileprivate static let BasePath = "/proxy"
 
     /// The requests to fulfill
     fileprivate weak var requestsStatus: ProxiedRequestsStatus?
@@ -54,7 +54,7 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let status = self.requestsStatus else { return nil }
 
         if let proxyRequest = status.pendingRequests.popFirst() {

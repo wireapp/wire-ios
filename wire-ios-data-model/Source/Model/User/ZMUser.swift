@@ -233,8 +233,8 @@ extension Notification.Name {
 }
 
 extension ZMUser {
-    @objc static public let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
-    @objc static public let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
+    @objc public static let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
+    @objc public static let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
 
     @NSManaged public var previewProfileAssetIdentifier: String?
     @NSManaged public var completeProfileAssetIdentifier: String?

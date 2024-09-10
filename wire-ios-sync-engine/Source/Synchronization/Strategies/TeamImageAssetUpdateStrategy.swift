@@ -25,7 +25,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     fileprivate var downstreamRequestSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate var observer: Any!
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
@@ -46,7 +46,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return downstreamRequestSync?.nextRequest(for: apiVersion)
     }
 

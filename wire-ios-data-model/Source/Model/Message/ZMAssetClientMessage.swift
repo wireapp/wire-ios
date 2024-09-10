@@ -36,7 +36,7 @@ import Foundation
         try mergeWithExistingData(message: genericMessage)
     }
 
-    public override var hashOfContent: Data? {
+    override public var hashOfContent: Data? {
         guard let serverTimestamp else {
             return nil
         }
@@ -171,7 +171,7 @@ import Foundation
         return self.v2Asset ?? self.v3Asset
     }
 
-    public override func expire() {
+    override public func expire() {
         super.expire()
 
         if transferState != .uploaded {
@@ -179,12 +179,12 @@ import Foundation
         }
     }
 
-    public override func markAsSent() {
+    override public func markAsSent() {
         super.markAsSent()
         setObfuscationTimerIfNeeded()
     }
 
-    public override var isUpdatingExistingMessage: Bool {
+    override public var isUpdatingExistingMessage: Bool {
         guard let genericMessage = underlyingMessage,
               let content = genericMessage.content else {
             return false
@@ -205,7 +205,7 @@ import Foundation
         startDestructionIfNeeded()
     }
 
-    public override func resend() {
+    override public func resend() {
         if transferState != .uploaded {
             transferState = .uploading
         }
@@ -216,7 +216,7 @@ import Foundation
         super.resend()
     }
 
-    public override func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
+    override public func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
         if let serverTimestamp = (payload as NSDictionary).optionalDate(forKey: "time") {
             self.serverTimestamp = serverTimestamp
             self.expectsReadConfirmation = self.conversation?.hasReadReceiptsEnabled ?? false
@@ -228,7 +228,7 @@ import Foundation
         super.startDestructionIfNeeded()
     }
 
-    public override var isSilenced: Bool {
+    override public var isSilenced: Bool {
         return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
     }
 
@@ -261,11 +261,11 @@ extension ZMAssetClientMessage {
         self.cachedUnderlyingAssetMessage = nil
     }
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "AssetClientMessage"
     }
 
-    public override var ignoredKeys: Set<AnyHashable>? {
+    override public var ignoredKeys: Set<AnyHashable>? {
         return (super.ignoredKeys ?? Set())
             .union([
                 #keyPath(ZMAssetClientMessage.assetID_data),
@@ -280,7 +280,7 @@ extension ZMAssetClientMessage {
             ])
     }
 
-    override static public func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
+    override public static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
         return nil
     }
 }

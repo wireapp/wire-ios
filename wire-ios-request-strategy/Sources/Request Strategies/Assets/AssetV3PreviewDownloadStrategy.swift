@@ -27,7 +27,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
     private var token: Any?
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in
@@ -65,7 +65,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return downstreamSync.nextRequest(for: apiVersion)
     }
 

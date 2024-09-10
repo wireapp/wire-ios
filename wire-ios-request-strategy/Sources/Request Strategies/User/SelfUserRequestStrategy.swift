@@ -25,7 +25,7 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Life cycle
 
-    public override init(
+    override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
@@ -39,7 +39,7 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Request
 
-    public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         actionSync.nextRequest(for: apiVersion)
     }
 }

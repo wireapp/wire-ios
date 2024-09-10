@@ -23,7 +23,7 @@ public protocol IsE2EICertificateEnrollmentRequiredProtocol {
     func invoke() async throws -> Bool
 }
 
-final public class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificateEnrollmentRequiredProtocol {
+public final class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificateEnrollmentRequiredProtocol {
     // MARK: - Properties
 
     private let isE2EIdentityEnabled: Bool

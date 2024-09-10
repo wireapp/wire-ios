@@ -66,7 +66,7 @@ import Foundation
         ] as ZMTransportData
     }
 
-    public override var debugDescription: String {
+    override public var debugDescription: String {
         return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier) data: \(data)"
     }
 }

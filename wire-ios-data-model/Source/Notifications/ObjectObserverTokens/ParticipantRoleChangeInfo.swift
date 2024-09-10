@@ -20,7 +20,7 @@ import Foundation
 import WireSystem
 
 extension ParticipantRole: ObjectInSnapshot {
-    static public var observableKeys: Set<String> {
+    public static var observableKeys: Set<String> {
         return [
             #keyPath(ParticipantRole.role)]
     }

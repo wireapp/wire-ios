@@ -183,11 +183,11 @@ extension ZMConversation: ObjectInSnapshot {
         return object as! ZMConversation
     }
 
-    public override var description: String {
+    override public var description: String {
         return debugDescription
     }
 
-    public override var debugDescription: String {
+    override public var debugDescription: String {
         return [
             "allMessagesChanged: \(messagesChanged)",
             "participantsChanged: \(participantsChanged)",

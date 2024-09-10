@@ -143,7 +143,7 @@ enum DebugAlert {
 /// Sends debug logs by email
 final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     private var mailViewController: MFMailComposeViewController?
-    static private var senderInstance: DebugLogSender?
+    private static var senderInstance: DebugLogSender?
 
     /// Sends recorded logs by email
     static func sendLogsByEmail(

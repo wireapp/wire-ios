@@ -24,7 +24,7 @@ final class DiskDatabaseTest: DatabaseTest {
         return false
     }
 
-    public override func setUp() {
+    override public func setUp() {
         super.setUp()
 
         self.syncMOC.performGroupedAndWait {

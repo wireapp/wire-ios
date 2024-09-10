@@ -60,16 +60,16 @@ import Foundation
         return .orderedSame
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? Version else { return false }
         return other == self
     }
 
-    public override var description: String {
+    override public var description: String {
         return arrayRepresentation.map { "\($0)" }.joined(separator: ".")
     }
 
-    public override var debugDescription: String {
+    override public var debugDescription: String {
         return String(format: "<%@ %p> %@", NSStringFromClass(type(of: self)), self, description)
     }
 }

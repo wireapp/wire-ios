@@ -106,7 +106,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     // MARK: - Methods
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         let request = callConfigRequestSync.nextRequest(for: apiVersion) ??
             clientDiscoverySync.nextRequest(for: apiVersion)
 

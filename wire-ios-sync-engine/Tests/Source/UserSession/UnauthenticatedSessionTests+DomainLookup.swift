@@ -29,7 +29,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
     var reachability: MockReachability!
     var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!
 
-    public override func setUp() {
+    override public func setUp() {
         super.setUp()
 
         transportSession = TestUnauthenticatedTransportSession()
@@ -45,7 +45,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         sut.groupQueue.add(dispatchGroup)
     }
 
-    public override func tearDown() {
+    override public func tearDown() {
         sut.tearDown()
         sut = nil
         transportSession = nil

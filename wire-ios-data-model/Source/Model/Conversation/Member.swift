@@ -34,15 +34,15 @@ public typealias TeamMembership = Member
         }
     }
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "Member"
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return false
     }
 
-    public override static func defaultSortDescriptors() -> [NSSortDescriptor] {
+    override public static func defaultSortDescriptors() -> [NSSortDescriptor] {
         return []
     }
 

@@ -52,7 +52,7 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     @available(*, unavailable)
-    required override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override required init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         fatalError("init(nibNameOrNil:nibBundleOrNil:) has not been implemented")
     }
 

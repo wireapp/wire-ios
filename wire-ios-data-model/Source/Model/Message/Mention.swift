@@ -45,7 +45,7 @@ public class Mention: NSObject {
         self.user = user
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let otherMention = object as? Mention else { return false }
 
         return user.isEqual(otherMention.user) && NSEqualRanges(range, otherMention.range)

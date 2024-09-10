@@ -70,8 +70,8 @@ open class SetChangeInfo<T: Hashable>: NSObject {
         self.changeSet.enumerateMovedIndexes(block: block)
     }
 
-    open override var description: String { return self.debugDescription }
-    open override var debugDescription: String {
+    override open var description: String { return self.debugDescription }
+    override open var debugDescription: String {
         return "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
             "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
     }

@@ -67,7 +67,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
     fileprivate var assetUpstreamSync: ZMUpstreamModifiedObjectSync!
 
     @available(*, unavailable)
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
@@ -107,7 +107,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
         return [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return self.assetUpstreamSync.nextRequest(for: apiVersion)
     }
 }

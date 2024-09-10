@@ -73,7 +73,7 @@ extension Member {
 public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
     fileprivate var sync: ZMDownstreamObjectSync!
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
         sync = ZMDownstreamObjectSync(
@@ -85,7 +85,7 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
         )
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return sync.nextRequest(for: apiVersion)
     }
 

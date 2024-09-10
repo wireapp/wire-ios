@@ -143,11 +143,11 @@ public class UserClient: ZMManagedObject, UserClientType {
         return selfClient.remoteIdentifier == self.remoteIdentifier || selfClient.trustedClients.contains(self)
     }
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "UserClient"
     }
 
-    public override func keysTrackedForLocalModifications() -> Set<String> {
+    override public func keysTrackedForLocalModifications() -> Set<String> {
         return [
             ZMUserClientMarkedToDeleteKey,
             ZMUserClientNumberOfKeysRemainingKey,
@@ -158,15 +158,15 @@ public class UserClient: ZMManagedObject, UserClientType {
         ]
     }
 
-    public override static func sortKey() -> String {
+    override public static func sortKey() -> String {
         return ZMUserClientLabelKey
     }
 
-    public override static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
+    override public static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
         return NSPredicate(format: "%K == NULL", ZMUserClientRemoteIdentifierKey)
     }
 
-    public override static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
+    override public static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
         let baseModifiedPredicate = super.predicateForObjectsThatNeedToBeUpdatedUpstream()
         let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
         let notDeletedPredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == NO")

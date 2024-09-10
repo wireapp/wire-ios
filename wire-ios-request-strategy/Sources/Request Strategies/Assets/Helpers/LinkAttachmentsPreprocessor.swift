@@ -50,7 +50,7 @@ public final class LinkAttachmentDetectorHelper: NSObject {
         super.init(managedObjectContext: managedObjectContext, zmLog: log)
     }
 
-    public override func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+    override public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = ZMMessage.predicateForMessagesThatNeedToUpdateLinkAttachments()
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }

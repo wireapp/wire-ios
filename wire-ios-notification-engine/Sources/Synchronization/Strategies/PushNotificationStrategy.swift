@@ -59,11 +59,11 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
 
     // MARK: - Methods
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return nextRequest(for: apiVersion)
     }
 
-    public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard isFetchingStreamForAPNS, !isProcessingNotifications else { return nil }
         let request = sync.nextRequest(for: apiVersion)
 

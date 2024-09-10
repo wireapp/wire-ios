@@ -387,15 +387,15 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Epoch publisher
 
-    nonisolated
-    public func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
+    public nonisolated
+    func onEpochChanged() -> AnyPublisher<MLSGroupID, Never> {
         commitSender.onEpochChanged()
     }
 
     // MARK: - CRLs distribution points publisher
 
-    nonisolated
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+    public nonisolated
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 }

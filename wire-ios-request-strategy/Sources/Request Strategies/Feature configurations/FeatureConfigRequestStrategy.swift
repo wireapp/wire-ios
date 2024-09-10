@@ -68,7 +68,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Request
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if isSlowSyncing, slowSyncTask == nil {
             slowSyncTask = Task { [weak self, syncStatus, syncPhase] in
                 guard let self, !Task.isCancelled else { return }

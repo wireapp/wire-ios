@@ -23,7 +23,7 @@ public final class StringKeyPath: Hashable {
     public let rawValue: String
     public let count: Int
 
-    static private var KeyPathCache: [String: StringKeyPath] = [:]
+    private static var KeyPathCache: [String: StringKeyPath] = [:]
 
     public static func keyPathForString(_ string: String) -> StringKeyPath {
         if let keyPath = KeyPathCache[string] {

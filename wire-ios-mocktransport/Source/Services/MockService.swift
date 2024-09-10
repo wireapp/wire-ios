@@ -43,7 +43,7 @@ import Foundation
 
     public static var entityName = "Service"
 
-    static public func existingService(with identifier: String, provider: String, managedObjectContext: NSManagedObjectContext) -> MockService? {
+    public static func existingService(with identifier: String, provider: String, managedObjectContext: NSManagedObjectContext) -> MockService? {
         // Fetch service
         let predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(MockService.identifier), identifier, #keyPath(MockService.provider), provider)
         let result: [MockService] = MockService.fetchAll(in: managedObjectContext, withPredicate: predicate)

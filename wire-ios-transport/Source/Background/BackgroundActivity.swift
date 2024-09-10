@@ -74,11 +74,11 @@ private let activityCounterQueue = DispatchQueue(label: "wire-transport.backgrou
 
     // MARK: - Hashable
 
-    public override var hash: Int {
+    override public var hash: Int {
         return ObjectIdentifier(self).hashValue
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let otherActivity = object as? BackgroundActivity else {
             return false
         }

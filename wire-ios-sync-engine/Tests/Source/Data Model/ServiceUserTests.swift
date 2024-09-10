@@ -248,7 +248,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 }
 
 final class ServiceUserTests: IntegrationTest {
-    public override func setUp() {
+    override public func setUp() {
         super.setUp()
         self.createSelfUserAndConversation()
         self.createExtraUsersAndConversations()

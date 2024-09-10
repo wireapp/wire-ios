@@ -25,7 +25,7 @@ final class AnalyticsConsoleProvider: NSObject {
     let zmLog = ZMSLog(tag: tag)
     var optedOut = false
 
-    required override init() {
+    override required init() {
         super.init()
         ZMSLog.set(level: .info, tag: tag)
     }

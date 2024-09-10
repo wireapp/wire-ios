@@ -39,7 +39,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         return self.callCenter?.establishedDate
     }
 
-    weak public var conversation: ZMConversation?
+    public weak var conversation: ZMConversation?
 
     public required init(conversation: ZMConversation) {
         self.conversation = conversation

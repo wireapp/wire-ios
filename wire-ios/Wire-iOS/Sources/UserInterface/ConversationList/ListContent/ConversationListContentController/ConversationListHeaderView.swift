@@ -137,7 +137,7 @@ final class ConversationListHeaderView: UICollectionReusableView {
         return imageView
     }()
 
-    required override init(frame: CGRect) {
+    override required init(frame: CGRect) {
         super.init(frame: frame)
 
         [titleLabel, arrowIconImageView, badgeView].forEach(addSubview)

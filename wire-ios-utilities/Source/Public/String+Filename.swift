@@ -19,7 +19,7 @@
 import Foundation
 
 extension String {
-    static private let transforms = [kCFStringTransformToLatin, kCFStringTransformStripCombiningMarks, kCFStringTransformToUnicodeName]
+    private static let transforms = [kCFStringTransformToLatin, kCFStringTransformStripCombiningMarks, kCFStringTransformToUnicodeName]
 
     /// Convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
     /// Space will be converted to underscore first.

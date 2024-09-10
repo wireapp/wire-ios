@@ -169,7 +169,7 @@ extension NSManagedObjectContext {
 
     /// Whether the encryption at rest feature is enabled.
 
-    internal(set) public var encryptMessagesAtRest: Bool {
+    public internal(set) var encryptMessagesAtRest: Bool {
         get {
             guard let value = persistentStoreMetadata(forKey: PersistentMetadataKey.encryptMessagesAtRest.rawValue) as? NSNumber else {
                 return false

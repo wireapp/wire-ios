@@ -453,5 +453,5 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
 
     var systemMessageType: ZMSystemMessageType = ZMSystemMessageType.invalid
 
-    required override init() {}
+    override required init() {}
 }

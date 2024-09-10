@@ -112,7 +112,7 @@ public class CircularProgressView: UIView {
         CATransaction.setDisableActions(false)
     }
 
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         setupShapeLayer()
     }

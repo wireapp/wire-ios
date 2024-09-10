@@ -57,7 +57,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
         self.handleSuggestionSearchSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
-    @objc public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    @objc override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         if self.userProfileUpdateStatus.currentlySettingEmail ||
             self.userProfileUpdateStatus.currentlyChangingEmail {
             self.emailUpdateSync.readyForNextRequestIfNotBusy()

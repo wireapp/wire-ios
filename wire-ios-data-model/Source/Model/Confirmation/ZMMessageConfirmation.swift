@@ -47,7 +47,7 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
         return "MessageConfirmation"
     }
 
-    open override var modifiedKeys: Set<AnyHashable>? {
+    override open var modifiedKeys: Set<AnyHashable>? {
         get {
             return Set()
         } set {

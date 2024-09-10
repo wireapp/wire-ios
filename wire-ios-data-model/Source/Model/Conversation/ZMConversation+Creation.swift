@@ -69,7 +69,7 @@ extension ZMConversation {
     /// To create new conversations see ConversationService.
 
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
-    static public func insertGroupConversation(moc: NSManagedObjectContext,
+    public static func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser]) -> ZMConversation? {
         return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
@@ -78,7 +78,7 @@ extension ZMConversation {
     /// To create new conversations see ConversationService.
 
     @objc
-    static public func insertGroupConversation(session: ContextProvider,
+    public static func insertGroupConversation(session: ContextProvider,
                                                participants: [UserType],
                                                name: String? = nil,
                                                team: Team? = nil,
@@ -100,7 +100,7 @@ extension ZMConversation {
     /// To create new conversations see ConversationService.
 
     @objc
-    static public func insertGroupConversation(moc: NSManagedObjectContext,
+    public static func insertGroupConversation(moc: NSManagedObjectContext,
                                                participants: [ZMUser],
                                                name: String? = nil,
                                                team: Team? = nil,
@@ -122,7 +122,7 @@ extension ZMConversation {
     /// FOR TESTS ONLY.
     /// To create new conversations see ConversationService.
 
-    static public func insertConversation(
+    public static func insertConversation(
         moc: NSManagedObjectContext,
         participants: [ZMUser],
         name: String? = nil,

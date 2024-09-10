@@ -69,7 +69,7 @@ import WireCryptobox
         return nonce != nil
     }
 
-    public override var modifiedKeys: Set<AnyHashable>? {
+    override public var modifiedKeys: Set<AnyHashable>? {
         get { return Set() }
         set { /* do nothing */ }
     }

@@ -28,7 +28,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Life cycle
 
-    public override init(
+    override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
@@ -49,7 +49,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
 
     // MARK: - Request
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return nil
     }
 }

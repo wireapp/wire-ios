@@ -83,16 +83,16 @@ public final class Account: NSObject, Codable {
         self.loginCredentials = account.loginCredentials
     }
 
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? Account else { return false }
         return userIdentifier == other.userIdentifier
     }
 
-    public override var hash: Int {
+    override public var hash: Int {
         return userIdentifier.hashValue
     }
 
-    public override var debugDescription: String {
+    override public var debugDescription: String {
         return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
     }
 }

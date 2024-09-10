@@ -28,16 +28,16 @@ public final class ParticipantRole: ZMManagedObject {
     @NSManaged public var user: ZMUser?
     @NSManaged public var role: Role?
 
-    public override static func entityName() -> String {
+    override public static func entityName() -> String {
         return "ParticipantRole"
     }
 
-    public override static func isTrackingLocalModifications() -> Bool {
+    override public static func isTrackingLocalModifications() -> Bool {
         return true
     }
 
     @discardableResult
-    static public func create(managedObjectContext: NSManagedObjectContext,
+    public static func create(managedObjectContext: NSManagedObjectContext,
                               user: ZMUser,
                               conversation: ZMConversation) -> ParticipantRole {
         let entry = ParticipantRole.insertNewObject(in: managedObjectContext)

@@ -39,7 +39,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     // MARK: - Initializers
 
-    required public init(
+    public required init(
         context: NSManagedObjectContext,
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress,
@@ -55,7 +55,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
     // MARK: - Functions
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         guard isSlowSyncing else {
             return nil
         }

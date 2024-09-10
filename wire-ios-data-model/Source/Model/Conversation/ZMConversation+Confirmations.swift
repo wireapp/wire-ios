@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMConversation {
-    @NSManaged dynamic public var hasReadReceiptsEnabled: Bool
+    @NSManaged public dynamic var hasReadReceiptsEnabled: Bool
 
     /// Confirm unread received messages as read.
     ///

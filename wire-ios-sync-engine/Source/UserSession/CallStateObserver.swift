@@ -22,8 +22,8 @@ import WireDataModel
 
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {
-    @objc static public let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
-    @objc static public let CallInProgressKey = "callInProgress"
+    @objc public static let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
+    @objc public static let CallInProgressKey = "callInProgress"
 
     fileprivate weak var notificationStyleProvider: CallNotificationStyleProvider?
     fileprivate let localNotificationDispatcher: LocalNotificationDispatcher

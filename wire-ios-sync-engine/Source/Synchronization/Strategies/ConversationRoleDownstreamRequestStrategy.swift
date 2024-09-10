@@ -45,7 +45,7 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
     private (set) var downstreamSync: ZMDownstreamObjectSync!
 
     @objc
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
 
@@ -60,7 +60,7 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
         )
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return downstreamSync.nextRequest(for: apiVersion)
     }
 

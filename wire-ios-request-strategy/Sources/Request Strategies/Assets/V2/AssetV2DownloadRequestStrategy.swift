@@ -23,7 +23,7 @@ import WireTransport
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsWhileOnline]
@@ -84,7 +84,7 @@ import WireTransport
         }
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 

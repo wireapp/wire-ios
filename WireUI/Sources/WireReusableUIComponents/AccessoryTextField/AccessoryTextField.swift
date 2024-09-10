@@ -154,12 +154,12 @@ extension AccessoryTextField {
 // MARK: - Custom edge insets
 
 extension AccessoryTextField {
-    public override func textRect(forBounds bounds: CGRect) -> CGRect {
+    override public func textRect(forBounds bounds: CGRect) -> CGRect {
         let textRect = super.textRect(forBounds: bounds)
         return textRect.inset(by: textInsets.directionAwareInsets(view: self))
     }
 
-    public override func editingRect(forBounds bounds: CGRect) -> CGRect {
+    override public func editingRect(forBounds bounds: CGRect) -> CGRect {
         let editingRect: CGRect = super.editingRect(forBounds: bounds)
         return editingRect.inset(by: textInsets.directionAwareInsets(view: self))
     }
@@ -174,7 +174,7 @@ extension AccessoryTextField {
         return NSAttributedString(string: placeholder, attributes: attributes)
     }
 
-    public override var placeholder: String? {
+    override public var placeholder: String? {
         get {
             super.placeholder
         }
@@ -185,7 +185,7 @@ extension AccessoryTextField {
         }
     }
 
-    public override func drawPlaceholder(in rect: CGRect) {
+    override public func drawPlaceholder(in rect: CGRect) {
         super.drawPlaceholder(in: rect.inset(by: placeholderInsets.directionAwareInsets(view: self)))
     }
 }
@@ -206,13 +206,13 @@ extension AccessoryTextField {
         return rightViewRect
     }
 
-    public override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+    override public func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         isLeftToRight
             ? rightAccessoryViewRect(forBounds: bounds, isLeftToRight: isLeftToRight)
             : .zero
     }
 
-    public override func leftViewRect(forBounds bounds: CGRect) -> CGRect {
+    override public func leftViewRect(forBounds bounds: CGRect) -> CGRect {
         isLeftToRight
             ? .zero
             : rightAccessoryViewRect(forBounds: bounds, isLeftToRight: isLeftToRight)

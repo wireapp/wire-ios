@@ -25,7 +25,7 @@ import ZipArchive
 private let zmLog = ZMSLog(tag: "SessionManager")
 
 extension SessionManager {
-    static private let workerQueue = DispatchQueue(label: "history-backup")
+    private static let workerQueue = DispatchQueue(label: "history-backup")
 
     // MARK: - Export
 

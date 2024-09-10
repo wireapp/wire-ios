@@ -59,9 +59,9 @@ final class SplitLayoutObservableMock: NSObject, SplitLayoutObservable {
 // MARK: - MockAssetLibrary
 
 private final class MockAssetLibrary: AssetLibrary {
-    fileprivate override var count: UInt { return 5 }
+    override fileprivate var count: UInt { return 5 }
 
-    fileprivate override func refetchAssets(synchronous: Bool) {
+    override fileprivate func refetchAssets(synchronous: Bool) {
         // no op
     }
 }

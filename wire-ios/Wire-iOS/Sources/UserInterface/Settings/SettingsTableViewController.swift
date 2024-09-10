@@ -26,7 +26,7 @@ class SettingsBaseTableViewController: UIViewController {
     let footerSeparator = OverflowSeparatorView()
     private let footerContainer = UIView()
 
-    final fileprivate class IntrinsicSizeTableView: UITableView {
+    fileprivate final class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
             didSet {
                 invalidateIntrinsicContentSize()

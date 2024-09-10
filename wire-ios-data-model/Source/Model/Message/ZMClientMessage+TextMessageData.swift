@@ -25,7 +25,7 @@ extension ZMClientMessage: TextMessageData {
         return quote
     }
 
-    public override var textMessageData: TextMessageData? {
+    override public var textMessageData: TextMessageData? {
         guard underlyingMessage?.textData != nil else {
             return nil
         }

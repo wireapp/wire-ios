@@ -322,7 +322,7 @@ open class ZMUpdateEvent: NSObject {
 }
 
 extension ZMUpdateEvent {
-    open override var description: String {
+    override open var description: String {
         let uuidDescription = uuid?.transportString() ?? "<no uuid>"
         return "<\(Swift.type(of: self))> \(uuidDescription) \(payload) \n \(debugInformation)"
     }

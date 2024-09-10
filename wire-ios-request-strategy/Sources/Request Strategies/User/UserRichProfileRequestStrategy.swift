@@ -34,7 +34,7 @@ public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
                                                    managedObjectContext: managedObjectContext)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return modifiedSync.nextRequest(for: apiVersion)
     }
 }

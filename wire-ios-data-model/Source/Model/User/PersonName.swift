@@ -17,7 +17,7 @@
 //
 
 @objcMembers public class PersonName: NSObject {
-    public override func isEqual(_ object: Any?) -> Bool {
+    override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? PersonName else { return false }
         return self.components == other.components
     }
@@ -74,7 +74,7 @@
         return name
     }()
 
-    lazy public var initials: String = {
+    public lazy var initials: String = {
         guard let firstComponent = self.components.first else { return "" }
 
         var _initials = String()

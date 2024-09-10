@@ -107,7 +107,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 @objc public class DependentObjectsObjc: NSObject {
     let dependentObjects: DependentObjects<ZMManagedObject, ZMManagedObject>
 
-    public override init() {
+    override public init() {
         self.dependentObjects = DependentObjects()
         super.init()
     }

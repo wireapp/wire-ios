@@ -157,7 +157,7 @@ public final class ConversationList: NSObject {
         )
     }
 
-    public override var description: String {
+    override public var description: String {
         shortDescription() + "\n" + super.description
     }
 

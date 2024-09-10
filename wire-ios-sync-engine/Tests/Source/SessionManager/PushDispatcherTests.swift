@@ -55,12 +55,12 @@ public final class PushDispatcherTests: ZMTBaseTest {
         "type": "notice"
     ]]
 
-    public override func setUp() {
+    override public func setUp() {
         super.setUp()
         sut = PushDispatcher(analytics: nil)
     }
 
-    public override func tearDown() {
+    override public func tearDown() {
         sut = nil
         super.tearDown()
     }

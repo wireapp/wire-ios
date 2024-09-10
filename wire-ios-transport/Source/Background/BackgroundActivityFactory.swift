@@ -72,7 +72,7 @@ import WireUtilities
     public var backgroundTaskTimeout: TimeInterval = 60
     var backgroundTaskTimer: Timer?
 
-    public override init() {
+    override public init() {
         super.init()
         registerForNotifications()
     }

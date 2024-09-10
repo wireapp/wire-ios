@@ -243,7 +243,7 @@ public protocol HttpClientCustom {
 public class HttpClientE2EI: NSObject, HttpClientCustom {
     private let urlSession: URLSession
 
-    public override init() {
+    override public init() {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.urlCache = nil
         configuration.requestCachePolicy = .reloadIgnoringLocalCacheData

@@ -24,7 +24,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     static let entityName = "StoredUpdateEvent"
     static let SortIndexKey = "sortIndex"
     /// The key under which the event payload is encrypted by the public key.
-    static internal let encryptedPayloadKey = "encryptedPayload"
+    internal static let encryptedPayloadKey = "encryptedPayload"
 
     @NSManaged var uuidString: String?
     @NSManaged var debugInformation: String?

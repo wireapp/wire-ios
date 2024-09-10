@@ -24,7 +24,7 @@ import WireSyncEngine
 final class TrackingManager: NSObject, TrackingInterface {
     private let flowManagerObserver: NSObjectProtocol
 
-    private override init() {
+    override private init() {
         AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
 
         flowManagerObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: OperationQueue.main, using: { _ in

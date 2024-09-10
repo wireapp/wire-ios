@@ -40,7 +40,7 @@ extension ZMMessage: ObjectInSnapshot {
 }
 
 extension ZMAssetClientMessage {
-    public class override var observableKeys: Set<String> {
+    override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.transferState),
                               MessageKey.previewGenericMessage.rawValue,
@@ -56,7 +56,7 @@ extension ZMAssetClientMessage {
 }
 
 extension ZMClientMessage {
-    public class override var observableKeys: Set<String> {
+    override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedPreview),
                               #keyPath(ZMClientMessage.linkPreviewState),
@@ -72,7 +72,7 @@ extension ZMClientMessage {
 }
 
 extension ZMImageMessage {
-    public class override var observableKeys: Set<String> {
+    override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMImageMessage.mediumData),
                               #keyPath(ZMImageMessage.mediumRemoteIdentifier),
@@ -82,7 +82,7 @@ extension ZMImageMessage {
 }
 
 extension ZMSystemMessage {
-    public class override var observableKeys: Set<String> {
+    override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMSystemMessage.childMessages),
                               #keyPath(ZMSystemMessage.systemMessageType)]
@@ -104,7 +104,7 @@ extension ZMSystemMessage {
         super.init(object: object)
     }
 
-    public override var debugDescription: String {
+    override public var debugDescription: String {
         return ["deliveryStateChanged: \(deliveryStateChanged)",
                 "reactionsChanged: \(reactionsChanged)",
                 "confirmationsChanged: \(confirmationsChanged)",

@@ -25,7 +25,7 @@ protocol ObjectInSnapshot {
 }
 
 extension ZMUser: ObjectInSnapshot {
-    static public var observableKeys: Set<String> {
+    public static var observableKeys: Set<String> {
         return [
             #keyPath(ZMUser.name),
             #keyPath(ZMUser.accentColorValue),

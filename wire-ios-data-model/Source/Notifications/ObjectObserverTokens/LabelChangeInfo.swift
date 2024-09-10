@@ -19,7 +19,7 @@
 import Foundation
 
 extension Label: ObjectInSnapshot {
-    static public var observableKeys: Set<String> {
+    public static var observableKeys: Set<String> {
         return [
             #keyPath(Label.name), #keyPath(Label.markedForDeletion), #keyPath(Label.conversations)
         ]

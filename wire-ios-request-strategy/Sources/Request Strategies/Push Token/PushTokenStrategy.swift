@@ -30,7 +30,7 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
     // MARK: - Life cycle
 
     @objc
-    public override init(
+    override public init(
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
@@ -49,7 +49,7 @@ public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
 
     // MARK: - Requests
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return actionSync.nextRequest(for: apiVersion)
     }
 
