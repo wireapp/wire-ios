@@ -20,7 +20,6 @@
 /// between clients.
 
 public enum MessageProtocol: String, CaseIterable {
-
     /// With proteus, inidividual encryption sessions are created between
     /// every pair of clients in a conversation. This imposes constraints on
     /// number of participants in a conversation because the number of
@@ -46,7 +45,6 @@ public enum MessageProtocol: String, CaseIterable {
 // MARK: MessageProtocol + int16Value
 
 extension MessageProtocol {
-
     var int16Value: Int16 {
         let index = Self.allCases.firstIndex(of: self)!
         return .init(index)
@@ -61,7 +59,6 @@ extension MessageProtocol {
 // MARK: - Custom string convertible
 
 extension MessageProtocol: CustomStringConvertible {
-
     public var description: String {
         return rawValue
     }

@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class RecordingDotView: UIView {
-
     // MARK: - Properties
 
     var animating: Bool = false {

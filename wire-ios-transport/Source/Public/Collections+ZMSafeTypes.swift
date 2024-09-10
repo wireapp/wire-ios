@@ -52,7 +52,6 @@ func optionalObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, 
 }
 
 extension NSDictionary {
-
     @objc public func string(forKey key: String) -> String? {
         return requiredObjectWhichIsKindOfClass(dictionary: self, key: key)
     }

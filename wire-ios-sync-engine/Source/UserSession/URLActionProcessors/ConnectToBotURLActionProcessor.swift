@@ -19,7 +19,6 @@
 import Foundation
 
 final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
-
     var transportSession: TransportSessionType
     var eventProcessor: ConversationEventProcessorProtocol
     var contextProvider: ContextProvider

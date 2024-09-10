@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class AccountViewSnapshotTests: XCTestCase {
-
     private var imageData: Data!
     private var snapshotHelper: SnapshotHelper!
 

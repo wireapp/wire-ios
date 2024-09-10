@@ -20,14 +20,12 @@ import Foundation
 @testable import WireDataModel
 
 final class ConversationObserverTests: NotificationDispatcherTestBase {
-
     func checkThatItNotifiesTheObserverOfAChange(_ conversation: ZMConversation,
                                                  modifier: (ZMConversation, ConversationObserver) -> Void,
                                                  expectedChangedField: String?,
                                                  expectedChangedKeys: Set<String>,
                                                  file: StaticString = #file,
                                                  line: UInt = #line) {
-
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: modifier,
                                                      expectedChangedFields: expectedChangedField != nil ? [expectedChangedField!] : [],
@@ -67,7 +65,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                  expectedChangedKeys: Set<String>,
                                                  file: StaticString = #file,
                                                  line: UInt = #line) {
-
         // given
         let observer = ConversationObserver()
         self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
@@ -890,7 +887,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
@@ -1032,14 +1028,12 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 // MARK: Performance
 
 extension ConversationObserverTests {
-
     func testPerformanceOfCalculatingChangeNotificationsWhenUserChangesName() {
         // average: 0.056, relative standard deviation: 2.400%, values: [0.056840, 0.054732, 0.059911, 0.056330, 0.055015, 0.055535, 0.055917, 0.056481, 0.056177, 0.056115]
         // 13/02/17 average: 0.049, relative standard deviation: 4.095%, values: [0.052629, 0.046448, 0.046743, 0.047157, 0.051125, 0.048899, 0.047646, 0.048362, 0.048110, 0.051135]
         let count = 50
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-
             let user = ZMUser.insertNewObject(in: self.uiMOC)
             user.name = "foo"
             let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -1069,7 +1063,6 @@ extension ConversationObserverTests {
         let count = 50
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-
             let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
             self.uiMOC.saveOrRollback()
 
@@ -1094,7 +1087,6 @@ extension ConversationObserverTests {
         let count = 50
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-
             let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
             self.uiMOC.saveOrRollback()
 
@@ -1121,7 +1113,6 @@ extension ConversationObserverTests {
         let count = 50
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-
             let observer = ConversationObserver()
 
             self.startMeasuring()

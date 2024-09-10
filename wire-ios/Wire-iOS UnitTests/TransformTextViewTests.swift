@@ -20,7 +20,6 @@
 import XCTest
 
 class TransformTextViewTests: XCTestCase {
-
     // MARK: TextTransformNone
 
     func testThatItSetsCorrectInitialValue_Text() {

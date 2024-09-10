@@ -22,7 +22,6 @@ import WireTesting
 @testable import WireSyncEngine
 
 public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
-
     var keysAndValues = [String: Any]()
 
     public func store(value: PersistableInMetadata?, key: String) {
@@ -39,7 +38,6 @@ public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
 }
 
 class ZMLocalNotificationSetTests: MessagingTest {
-
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
     typealias ZMLocalNotificationSet = WireSyncEngine.ZMLocalNotificationSet
 
@@ -88,7 +86,6 @@ class ZMLocalNotificationSetTests: MessagingTest {
     }
 
     func testThatYouCanAddNAndRemoveNotifications() {
-
         // given
         let text = GenericMessage(content: WireProtos.Text(content: "Hello Hello"))
         let event = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: text, senderID: sender.remoteIdentifier!)
@@ -108,7 +105,6 @@ class ZMLocalNotificationSetTests: MessagingTest {
     }
 
     func testThatItCancelsNotificationsOnlyForSpecificConversations() {
-
         // given
         let event1 = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello Hello")), senderID: sender.remoteIdentifier!)
         let note1 = ZMLocalNotification(event: event1, conversation: conversation1, managedObjectContext: self.uiMOC)
@@ -130,7 +126,6 @@ class ZMLocalNotificationSetTests: MessagingTest {
     }
 
     func testThatItPersistsNotifications() {
-
         // given
         let event = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")), senderID: sender.remoteIdentifier!)
         let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: self.uiMOC)
@@ -144,7 +139,6 @@ class ZMLocalNotificationSetTests: MessagingTest {
     }
 
     func testThatItResetsTheNotificationSetWhenCancellingAllNotifications() {
-
         // given
         let event = createUpdateEvent(UUID.create(), conversationID: conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: WireProtos.Text(content: "Hello")), senderID: sender.remoteIdentifier!)
         let note = ZMLocalNotification(event: event, conversation: conversation1, managedObjectContext: self.uiMOC)

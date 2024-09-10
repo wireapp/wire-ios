@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationSecureSystemMessageSectionDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
 

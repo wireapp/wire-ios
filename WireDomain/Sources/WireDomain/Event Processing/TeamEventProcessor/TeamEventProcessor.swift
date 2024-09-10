@@ -22,7 +22,6 @@ import WireAPI
 /// Process team update events.
 
 protocol TeamEventProcessorProtocol {
-
     /// Process a team update event.
     ///
     /// Processing an event is the app's only chance to consume
@@ -34,7 +33,6 @@ protocol TeamEventProcessorProtocol {
 }
 
 struct TeamEventProcessor {
-
     let deleteEventProcessor: any TeamDeleteEventProcessorProtocol
     let memberLeaveEventProcessor: any TeamMemberLeaveEventProcessorProtocol
     let memberUpdateEventProcessor: any TeamMemberUpdateEventProcessorProtocol

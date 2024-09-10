@@ -25,7 +25,6 @@ import WireTransport
 private let zmLog = ZMSLog(tag: "Network")
 
 public final class ClientMessageRequestFactory: NSObject {
-
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
 
@@ -37,7 +36,6 @@ public final class ClientMessageRequestFactory: NSObject {
         var message: SwiftProtobuf.Message
 
         switch apiVersion {
-
         case .v0:
             path = "/" + ["conversations",
                           conversationId.transportString(),
@@ -121,7 +119,6 @@ extension ClientMessageRequestFactory {
 }
 
 extension String {
-
     func pathWithMissingClientStrategy(strategy: MissingClientsStrategy) -> String {
         switch strategy {
         case .doNotIgnoreAnyMissingClient,

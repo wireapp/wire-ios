@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
-
     var transportSession: TestUnauthenticatedTransportSession!
     var sut: UnauthenticatedSession!
     var mockDelegate: MockUnauthenticatedSessionDelegate!

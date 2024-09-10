@@ -49,7 +49,6 @@ extension ZMTransportResponse {
 }
 
 extension ZMConversation {
-
     /// Changes the conversation message destruction timeout
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
@@ -83,7 +82,6 @@ extension ZMConversation {
 }
 
 private struct MessageDestructionTimeoutRequestFactory {
-
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else { fatal("conversation inserted on backend") }
 

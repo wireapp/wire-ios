@@ -7,9 +7,10 @@
     assertionFailures, \
     blankLineAfterImports, \
     blankLinesAroundMark, \
-    blankLinesAtEndOfScope
+    blankLinesAtEndOfScope, \
+    blankLinesAtStartOfScope
 
 # Options
 
 --lineaftermarks true # blankLinesAroundMark
-
+--typeblanklines remove # blankLinesAtStartOfScope

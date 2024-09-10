@@ -31,7 +31,6 @@ enum HeaderKey: String {
 }
 
 final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownloaderType {
-
     typealias DownloadCompletion = (OpenGraphData?) -> Void
 
     var containerByTaskID = [Int: MetaStreamContainer]()
@@ -145,7 +144,6 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 }
 
 extension PreviewDownloader {
-
      /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
      /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
     func urlSession(_ session: URLSessionType, dataTask: URLSessionDataTaskType, didReceiveHTTPResponse response: HTTPURLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
@@ -162,7 +160,6 @@ extension PreviewDownloader {
 }
 
 extension HTTPURLResponse {
-
     /// Whether the response is a success.
     var isSuccess: Bool {
         return statusCode < 400

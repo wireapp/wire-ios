@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class NotificationSessionTests: BaseTest {
-
     // MARK: - Init errors
 
     func test_ItDoesNotInit_WhenCryptoboxMigrationIsPending() throws {

@@ -19,7 +19,6 @@
 import Foundation
 
 struct FeatureConfigsPayload: Decodable {
-
     let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
     let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
     let conferenceCalling: FeatureStatus?
@@ -33,7 +32,6 @@ struct FeatureConfigsPayload: Decodable {
 }
 
 struct FeatureConfigsPayloadAPIV6: Decodable {
-
     let appLock: FeatureStatusWithConfig<Feature.AppLock.Config>?
     let classifiedDomains: FeatureStatusWithConfig<Feature.ClassifiedDomains.Config>?
     let conferenceCalling: FeatureStatusWithConfig<Feature.ConferenceCalling.Config>?

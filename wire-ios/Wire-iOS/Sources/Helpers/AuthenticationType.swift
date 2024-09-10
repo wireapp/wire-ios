@@ -20,7 +20,6 @@ import LocalAuthentication
 import WireSystem
 
 enum AuthenticationType: CaseIterable {
-
     case faceID, touchID, passcode, unavailable
 
     static var current: AuthenticationType {
@@ -29,7 +28,6 @@ enum AuthenticationType: CaseIterable {
 }
 
 struct AuthenticationTypeDetector: AuthenticationTypeProvider {
-
     var current: AuthenticationType {
         WireLogger.ear.info("AuthenticationTypeDetector determines `current`!")
         let context = LAContext()
@@ -56,6 +54,5 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
 }
 
 protocol AuthenticationTypeProvider {
-
     var current: AuthenticationType { get }
 }

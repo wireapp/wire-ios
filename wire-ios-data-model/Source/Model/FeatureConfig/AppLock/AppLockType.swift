@@ -22,7 +22,6 @@ import LocalAuthentication
 /// An app lock abstraction.
 
 public protocol AppLockType {
-
     var delegate: AppLockDelegate? { get set }
 
     /// Whether the app lock feature is availble to the user.

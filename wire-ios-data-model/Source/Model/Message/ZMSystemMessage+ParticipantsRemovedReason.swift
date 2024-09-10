@@ -35,7 +35,6 @@ extension ZMParticipantsRemovedReason {
 }
 
 extension ZMSystemMessage {
-
     @objc public static let participantsRemovedReasonKey = "participantsRemovedReason"
 
     @objc public var participantsRemovedReason: ZMParticipantsRemovedReason {

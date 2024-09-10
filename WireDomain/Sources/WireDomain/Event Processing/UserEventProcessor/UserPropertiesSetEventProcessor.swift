@@ -21,7 +21,6 @@ import WireAPI
 /// Process user properties set events.
 
 protocol UserPropertiesSetEventProcessorProtocol {
-
     /// Process a user properties set event.
     ///
     /// - Parameter event: A user properties set event.
@@ -30,7 +29,6 @@ protocol UserPropertiesSetEventProcessorProtocol {
 }
 
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
-
     func processEvent(_: UserPropertiesSetEvent) async throws {
         // TODO: [WPB-10197]
         assertionFailure("not implemented yet")

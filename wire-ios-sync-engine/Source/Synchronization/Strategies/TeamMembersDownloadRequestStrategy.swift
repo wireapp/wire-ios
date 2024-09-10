@@ -21,14 +21,12 @@ import Foundation
 /// Downloads all team members during the slow sync.
 
 public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-
     let syncStatus: SyncStatus
     var sync: ZMSingleRequestSync!
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncStatus: SyncStatus) {
-
         self.syncStatus = syncStatus
 
         super.init(withManagedObjectContext: managedObjectContext,

@@ -19,7 +19,6 @@
 import Foundation
 
 public final class AssetRequestFactory: NSObject {
-
     public enum Retention: String {
         /// The asset will be automatically removed from the backend
         /// storage after a short-ish amount of time.

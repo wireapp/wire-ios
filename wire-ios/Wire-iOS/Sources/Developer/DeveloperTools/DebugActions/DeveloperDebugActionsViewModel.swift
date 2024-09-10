@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
-
     @Published var buttons: [DeveloperDebugActionsDisplayModel.ButtonItem] = []
 
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
@@ -50,7 +49,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     // MARK: Send Logs
 
     private func sendDebugLogs() {
-
         var presentingViewController = AppDelegate.shared.mainWindow!.rootViewController!
         while let presentedViewController = presentingViewController.presentedViewController {
             presentingViewController = presentedViewController

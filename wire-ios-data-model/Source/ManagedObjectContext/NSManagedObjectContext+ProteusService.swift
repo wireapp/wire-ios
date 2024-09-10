@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 
 extension NSManagedObjectContext {
-
     private static let proteusServiceUserInfoKey = "ProteusServiceUserInfoKey"
 
     public var proteusService: ProteusServiceInterface? {

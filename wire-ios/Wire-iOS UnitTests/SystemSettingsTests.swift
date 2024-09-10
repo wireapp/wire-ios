@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class SystemSettingsTests: XCTestCase {
-
     func test_internalBuild() throws {
         let url = try XCTUnwrap(Bundle.main.url(forResource: "Settings.bundle/Root", withExtension: "plist"))
         let data = try Data(contentsOf: url)

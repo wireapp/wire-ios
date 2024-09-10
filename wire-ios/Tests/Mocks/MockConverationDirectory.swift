@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 class MockConversationDirectory: ConversationDirectoryType {
-
     var allFolders: [LabelType] = []
     var mockGroupConversations: [ZMConversation] = []
     var mockContactsConversations: [ZMConversation] = []

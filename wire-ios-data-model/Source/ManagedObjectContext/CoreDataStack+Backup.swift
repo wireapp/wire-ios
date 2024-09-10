@@ -22,7 +22,6 @@ import WireUtilities
 private let log = ZMSLog(tag: "Backup")
 
 extension CoreDataStack {
-
     private static let metadataFilename = "export.json"
     private static let databaseDirectoryName = "data"
     private static let workQueue = DispatchQueue(label: "database backup", qos: .userInitiated)

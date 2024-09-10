@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPISupport
 
 final class WebSocketTests: XCTestCase {
-
     var connection: MockURLSessionWebSocketTaskProtocol!
 
     override func setUp() async throws {

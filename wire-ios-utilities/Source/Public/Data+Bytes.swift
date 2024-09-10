@@ -21,7 +21,6 @@ import Foundation
 public typealias Byte = UInt8
 
 public extension Data {
-
     var bytes: [Byte] {
         return [Byte](self)
     }
@@ -32,7 +31,6 @@ public extension Data {
 }
 
 public extension [Byte] {
-
     var data: Data {
         return Data(self)
     }
@@ -45,7 +43,6 @@ public extension [Byte] {
 }
 
 public extension Byte {
-
     static func random() -> Byte {
         return random(in: (.min)...(.max))
     }

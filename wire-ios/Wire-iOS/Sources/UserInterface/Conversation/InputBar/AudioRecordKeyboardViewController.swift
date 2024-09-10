@@ -26,7 +26,6 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBaseViewController {
-
     enum State {
         case ready, recording, effects
     }

@@ -21,7 +21,6 @@ import Foundation
 /// A wrapper type to provide hashable capabilities for abstract types.
 
 final class HashBox<Type: NSObjectProtocol>: Hashable {
-
     let value: Type
 
     init(value: Type) {

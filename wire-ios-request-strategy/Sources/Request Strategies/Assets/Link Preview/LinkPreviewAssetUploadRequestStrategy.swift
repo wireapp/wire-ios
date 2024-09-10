@@ -57,7 +57,6 @@ extension ZMImagePreprocessingTracker {
 }
 
 public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
-
     let requestFactory = AssetRequestFactory()
 
     /// Processors
@@ -114,7 +113,6 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 }
 
 extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
-
     public func request(
         forUpdating managedObject: ZMManagedObject,
         forKeys keys: Set<String>,
@@ -165,7 +163,6 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
         if var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
             let messageText = message.textMessageData?.messageText,
             let mentions = message.textMessageData?.mentions {
-
             let assetToken = payload["token"] as? String
             let assetDomain = payload["domain"] as? String
             linkPreview.update(withAssetKey: assetKey, assetToken: assetToken, assetDomain: assetDomain)

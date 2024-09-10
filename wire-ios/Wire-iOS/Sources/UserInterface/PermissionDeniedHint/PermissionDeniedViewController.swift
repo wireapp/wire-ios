@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class PermissionDeniedViewController: UIViewController {
-
     // MARK: - Properties
 
     weak var delegate: PermissionDeniedViewControllerDelegate?

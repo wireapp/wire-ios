@@ -26,7 +26,6 @@ private typealias AlertStrings = L10n.Localizable.Registration.Alert
  */
 
 final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: NSError) -> [AuthenticationCoordinatorAction]? {
@@ -60,7 +59,6 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
 }
 
 private extension AuthenticationCoordinatorAlertAction {
-
     static var changeEmail: Self {
         Self.init(title: AlertStrings.changeEmailAction,
                   coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])

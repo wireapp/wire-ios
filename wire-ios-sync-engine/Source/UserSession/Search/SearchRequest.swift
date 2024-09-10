@@ -79,7 +79,6 @@ extension SearchOptions {
 }
 
 public struct SearchRequest {
-
     public enum Query {
         case exactHandle(String)
         case fullTextSearch(String)
@@ -122,7 +121,6 @@ public struct SearchRequest {
 }
 
 private extension SearchRequest {
-
     static let maxQueryLength = 200
 
     static func parseQuery(_ searchString: String) -> (Query, domain: String?) {
@@ -152,7 +150,6 @@ private extension SearchRequest {
 }
 
 fileprivate extension String {
-
     func normalizedAndTrimmed() -> String {
         guard let normalized = self.normalizedForSearch() as String? else { return "" }
         return normalized.trimmingCharacters(in: .whitespaces)

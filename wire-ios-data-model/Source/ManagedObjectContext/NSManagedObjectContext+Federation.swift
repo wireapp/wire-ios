@@ -32,7 +32,6 @@ extension ZMUser: FederationMigratable {
 }
 
 extension NSManagedObjectContext {
-
     public func migrateToFederation() throws {
         try migrateInstancesTowardsFederation(type: ZMUser.self)
         try migrateInstancesTowardsFederation(type: ZMConversation.self)

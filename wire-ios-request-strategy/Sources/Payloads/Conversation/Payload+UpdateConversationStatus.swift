@@ -38,7 +38,6 @@ extension Payload {
         var hiddenReference: String?
 
         init(_ conversation: ZMConversation) {
-
             if conversation.hasLocalModifications(forKey: ZMConversationSilencedChangedTimeStampKey) {
                 let reference = conversation.silencedChangedTimestamp ?? Date()
                 conversation.silencedChangedTimestamp = reference

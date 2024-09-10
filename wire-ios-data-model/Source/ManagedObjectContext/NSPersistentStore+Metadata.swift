@@ -38,7 +38,6 @@ extension Int: SwiftPersistableInMetadata {}
 // TODO: Swift 4
 // extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
 extension NSManagedObjectContext {
-
     @objc(setPersistentStoreMetadata:forKey:) public func setPersistentStoreMetadata(_ persistable: PersistableInMetadata?, key: String) {
         self.setPersistentStoreMetadata(data: persistable, key: key)
     }
@@ -58,7 +57,6 @@ private let metadataKey = "ZMMetadataKey"
 private let metadataKeysToRemove = "ZMMetadataKeysToRemove"
 
 extension NSManagedObjectContext {
-
     /// Non-persisted store metadata
     @objc internal var nonCommittedMetadata: NSMutableDictionary {
         return self.userInfo[metadataKey] as? NSMutableDictionary ?? NSMutableDictionary()
@@ -78,7 +76,6 @@ extension NSManagedObjectContext {
 
     /// Persist in-memory metadata to persistent store
     @objc func makeMetadataPersistent() -> Bool {
-
         guard nonCommittedMetadata.count > 0 || nonCommittedDeletedMetadataKeys.count > 0 else { return false }
 
         let store = self.persistentStoreCoordinator!.persistentStores.first!

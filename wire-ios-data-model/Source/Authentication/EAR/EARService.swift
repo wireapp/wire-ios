@@ -24,7 +24,6 @@ import LocalAuthentication
 ///
 /// sourcery: AutoMockable
 public protocol EARServiceInterface: AnyObject {
-
     var delegate: EARServiceDelegate? { get set }
 
     /// Enable encryption at rest.
@@ -79,7 +78,6 @@ public protocol EARServiceInterface: AnyObject {
 /// The EARService is responsible for managing encryption at rest functionality. See <doc:encryption-at-rest> for more information about how encryption at rest works.
 
 public class EARService: EARServiceInterface {
-
     // MARK: - Properties
 
     /// An object to assist in migrations.

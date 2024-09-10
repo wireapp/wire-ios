@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUserSession {
-
     func setupMLSGroupVerification() {
         let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         let updateVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(

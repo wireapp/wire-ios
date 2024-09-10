@@ -21,7 +21,6 @@ import WireSystem
 import WireUtilities
 
 final class RecurringActionService: RecurringActionServiceInterface {
-
     // MARK: - Properties
 
     private(set) var actionsByID = [String: RecurringAction]()
@@ -46,7 +45,6 @@ final class RecurringActionService: RecurringActionServiceInterface {
         let now = dateProvider.now
 
         for (id, action) in actionsByID {
-
             let lastActionDate = lastCheckDate(for: action.id) ?? .distantPast
 
             if (lastActionDate + action.interval) <= now {

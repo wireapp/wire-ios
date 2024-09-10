@@ -26,7 +26,6 @@ import XCTest
 @testable import WireDomainSupport
 
 final class UpdateEventsRepositoryTests: XCTestCase {
-
     var sut: UpdateEventsRepository!
     var updateEventsAPI: MockUpdateEventsAPI!
     var pushChannel: MockPushChannelProtocol!
@@ -369,7 +368,6 @@ final class UpdateEventsRepositoryTests: XCTestCase {
 }
 
 private enum Scaffolding {
-
     // MARK: - Local domain
 
     static let localDomain = "local.com"

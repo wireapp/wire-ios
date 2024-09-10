@@ -32,7 +32,6 @@ private final class MockCallHapticsGenerator: CallHapticsGeneratorType {
 }
 
 final class CallHapticsControllerTests: ZMSnapshotTestCase {
-
     private var sut: CallHapticsController!
     private var generator: MockCallHapticsGenerator!
     private var firstUser: ZMUser!

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireCommonComponents
 
 final class MockZMEditableUser: MockUser, EditableUserType {
-
     var needsRichProfileUpdate: Bool = false
 
     var enableReadReceipts: Bool = false
@@ -53,7 +52,6 @@ final class ZMMockTracking: TrackingInterface {
 }
 
 final class SettingsPropertyTests: XCTestCase {
-
     var userDefaults: UserDefaults!
     var userSession: UserSessionMock!
 

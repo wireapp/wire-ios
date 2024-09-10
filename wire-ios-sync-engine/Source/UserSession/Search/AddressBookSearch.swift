@@ -21,7 +21,6 @@ import Foundation
 
 /// Search for contacts in the address book
 class AddressBookSearch {
-
     /// Maximum number of contacts to consider when matching/searching,
     /// for performance reasons
     fileprivate let maximumSearchRange: UInt = 3000
@@ -37,7 +36,6 @@ class AddressBookSearch {
 // MARK: - Search contacts
 
 extension AddressBookSearch {
-
     /// Returns address book contacts matching the query, excluding the one with the given identifier
     func contactsMatchingQuery(_ query: String, identifiersToExclude: [String]) -> [ZMAddressBookContact] {
         let excluded = Set(identifiersToExclude)

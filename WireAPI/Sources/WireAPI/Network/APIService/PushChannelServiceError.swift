@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `PushChannelService`.
 
 public enum PushChannelServiceError: Error {
-
     /// An enqueued url request is invalid.
 
     case invalidRequest

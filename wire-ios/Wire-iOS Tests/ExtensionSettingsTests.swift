@@ -20,7 +20,6 @@
 import XCTest
 
 final class ExtensionSettingsTests: XCTestCase {
-
     var defaults: UserDefaults!
     var settings: ExtensionSettings!
 

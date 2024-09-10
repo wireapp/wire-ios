@@ -49,7 +49,6 @@ public enum ConversationFetchError: Error {
 }
 
 extension ZMConversation {
-
     /// Join a conversation using a reusable code
     /// - Parameters:
     ///   - key: stable conversation identifier
@@ -65,7 +64,6 @@ extension ZMConversation {
                             eventProcessor: ConversationEventProcessorProtocol,
                             contextProvider: ContextProvider,
                             completion: @escaping (Result<ZMConversation, Error>) -> Void) {
-
         guard let request = ConversationJoinRequestFactory.requestForJoinConversation(key: key, code: code, password: password) else {
             return completion(.failure(ConversationJoinError.unknown))
         }
@@ -129,7 +127,6 @@ extension ZMConversation {
                                transportSession: TransportSessionType,
                                contextProvider: ContextProvider,
                                completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
-
         guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))
             return
@@ -162,7 +159,6 @@ extension ZMConversation {
 }
 
 struct ConversationJoinRequestFactory {
-
     static let joinConversationsPath = "/conversations/join"
 
     static func requestForJoinConversation(

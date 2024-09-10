@@ -149,7 +149,6 @@ extension FontSpec: CustomStringConvertible {
 // MARK: -
 
 public final class FontScheme {
-
     public static let shared: FontScheme = {
         let fontScheme = FontScheme()
         fontScheme.configure(with: .large)

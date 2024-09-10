@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMMessageTests_SystemMessages: BaseZMMessageTests {
-
     func testThatOnlyRecoverableDecryptionErrorsAreReportedAsRecoverable() throws {
         let allEncryptionErrors = [
             CBOX_STORAGE_ERROR,
@@ -70,7 +69,6 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
 }
 
 extension ZMMessageTests_SystemMessages {
-
     func testThatItGeneratesTheCorrectSystemMessageTypesFromUpdateEvents() {
         // expect a message
         checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberJoin,
@@ -157,7 +155,6 @@ extension ZMMessageTests_SystemMessages {
                                                                 reason: ZMParticipantsRemovedReason?,
                                                                 selfUserDomain: String? = nil,
                                                                 otherUserDomain: String? = nil) {
-
         // given
         ZMUser.selfUser(in: uiMOC).domain = selfUserDomain
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

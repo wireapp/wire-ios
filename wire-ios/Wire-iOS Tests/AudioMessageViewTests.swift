@@ -20,7 +20,6 @@
 import XCTest
 
 extension MockMessage: AudioTrack {
-
     var title: String? {
         return .none
     }
@@ -52,7 +51,6 @@ extension MockMessage: AudioTrack {
 }
 
 final class AudioMessageViewTests: XCTestCase {
-
     var sut: AudioMessageView!
     var mediaPlaybackManager: MediaPlaybackManager!
     var userSession: UserSessionMock!

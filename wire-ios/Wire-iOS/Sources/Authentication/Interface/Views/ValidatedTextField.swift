@@ -21,7 +21,6 @@ import WireDesign
 import WireReusableUIComponents
 
 protocol TextFieldValidationDelegate: AnyObject {
-
     /// Delegate for validation. It is called when every time .editingChanged event fires
     ///
     /// - Parameters:
@@ -132,7 +131,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
          cornerRadius: CGFloat? = nil,
          setNewColors: Bool = false,
          style: TextFieldStyle) {
-
         textFieldValidator = TextFieldValidator()
         self.kind = kind
 
@@ -250,7 +248,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             confirmButton.setBackgroundImageColor(.clear, for: .normal)
             confirmButton.setBackgroundImageColor(.clear, for: .disabled)
         } else {
-
             switch kind {
             case .passcode, .password:
                 confirmButton.setIconColor(UIColor.Team.textColor, for: .normal)

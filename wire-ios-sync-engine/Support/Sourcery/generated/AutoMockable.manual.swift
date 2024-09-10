@@ -26,7 +26,6 @@ import AppKit
 @testable import WireSyncEngine
 
 public class MockMessageSenderInterface: MessageSenderInterface {
-
     // MARK: - Life cycle
 
     public init() {}
@@ -73,7 +72,6 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 }
 
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
-
     // MARK: - Life cycle
 
     public init() {}

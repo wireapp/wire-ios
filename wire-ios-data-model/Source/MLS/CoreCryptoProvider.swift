@@ -21,7 +21,6 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProviderProtocol {
-
     /// Retrieve the shared core crypto instance or create one if one does not yet exist.
     ///
     /// This function is safe to be called concurrently from multiple Tasks

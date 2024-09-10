@@ -19,7 +19,6 @@
 import Foundation
 
 protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
-
     associatedtype Object: ZMManagedObject
 
     /// Called when the `ModifiedKeyObjectSync` request an object to be synchronized
@@ -40,7 +39,6 @@ protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
  This only works for core data entities which inherit from `ZMManagedObject`.
  */
 class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
-
     let trackedKey: String
     let modifiedPredicate: NSPredicate?
     var pending: Set<Transcoder.Object> = Set()

@@ -19,7 +19,6 @@
 import WireProtos
 
 extension Availability {
-
     public init(proto: WireProtos.Availability) {
         switch proto.type {
         case .none:
@@ -35,7 +34,6 @@ extension Availability {
 }
 
 extension WireProtos.Availability {
-
     public init(_ availability: Availability) {
         self = WireProtos.Availability.with { populator in
             switch availability {

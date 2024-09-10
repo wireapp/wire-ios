@@ -21,7 +21,6 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<FetchSupportedProtocolsAction, FetchSupportedProtocolsActionHandler> {
-
     var userID: QualifiedID!
 
     override func setUp() {

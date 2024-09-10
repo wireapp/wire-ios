@@ -22,12 +22,10 @@ import WireDesign
 import WireSyncEngine
 
 protocol AppLockChangeWarningViewControllerDelegate: AnyObject {
-
     func appLockChangeWarningViewControllerDidDismiss()
 }
 
 final class AppLockChangeWarningViewController: UIViewController {
-
     // MARK: - Properties
 
     weak var delegate: AppLockChangeWarningViewControllerDelegate?

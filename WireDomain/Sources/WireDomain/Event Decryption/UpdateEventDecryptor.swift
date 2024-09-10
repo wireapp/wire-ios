@@ -23,7 +23,6 @@ import WireDataModel
 // sourcery: AutoMockable
 /// Decrypt the E2EE content within update events.
 protocol UpdateEventDecryptorProtocol {
-
     /// Decrypt events in the given event envelope.
     ///
     /// - Parameter eventEnvelope: An event envelope that contains events received from the server.
@@ -33,7 +32,6 @@ protocol UpdateEventDecryptorProtocol {
 }
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
-
     private let proteusMessageDecryptor: any ProteusMessageDecryptorProtocol
     private let context: NSManagedObjectContext
 

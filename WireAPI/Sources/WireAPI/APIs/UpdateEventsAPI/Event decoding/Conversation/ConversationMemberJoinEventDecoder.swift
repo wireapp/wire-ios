@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationMemberJoinEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMemberJoinEvent {
@@ -52,7 +51,6 @@ struct ConversationMemberJoinEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let users: [Conversation.Member]
     }
 }

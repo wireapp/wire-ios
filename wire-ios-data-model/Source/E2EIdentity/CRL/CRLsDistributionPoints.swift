@@ -19,7 +19,6 @@
 import Foundation
 
 public struct CRLsDistributionPoints: Equatable {
-
     public let urls: Set<URL>
 
     public init?(from stringArray: [String]?) {

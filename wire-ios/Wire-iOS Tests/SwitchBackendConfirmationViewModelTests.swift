@@ -20,7 +20,6 @@
 import XCTest
 
 final class SwitchBackendConfirmationViewModelTests: XCTestCase {
-
     private func createSUT(didConfirm: @escaping (Bool) -> Void) -> SwitchBackendConfirmationViewModel {
         SwitchBackendConfirmationViewModel(
             backendName: "www.backendName.com",

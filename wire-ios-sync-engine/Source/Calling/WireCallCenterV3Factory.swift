@@ -24,7 +24,6 @@ import WireDataModel
  */
 
 @objcMembers public class WireCallCenterV3Factory: NSObject {
-
     /// The class to use when creating a call center,
     public static var wireCallCenterClass: WireCallCenterV3.Type = WireCallCenterV3.self
 
@@ -48,7 +47,6 @@ import WireDataModel
                                  flowManager: FlowManagerType,
                                  analytics: AnalyticsType? = nil,
                                  transport: WireCallCenterTransport) -> WireCallCenterV3 {
-
         if let wireCallCenter = uiMOC.zm_callCenter {
             return wireCallCenter
         } else {

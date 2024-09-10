@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
-
     var senderName: String {
         guard let sender = senderUser else { return L10n.Localizable.Conversation.Status.someone }
         if sender.isSelfUser {

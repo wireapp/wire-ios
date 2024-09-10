@@ -20,9 +20,7 @@ import Foundation
 import XCTest
 
 class ZMAddressBookContactTests: XCTestCase {
-
     func testThatTwoContactsAreTheSame() {
-
         // given
         let name = "Nina"
         let emails = ["nina@example.com", "rocker88@example.com"]
@@ -43,7 +41,6 @@ class ZMAddressBookContactTests: XCTestCase {
     }
 
     func testThatTwoContactsAreNotTheSameBecauseEmailIsNotSame() {
-
         // given
         let name = "Nina"
         let emails = ["nina@example.com", "rocker88@example.com"]
@@ -66,7 +63,6 @@ class ZMAddressBookContactTests: XCTestCase {
     }
 
     func testThatTwoContactsAreNotTheSameBecausePhoneIsNotSame() {
-
         // given
         let name = "Nina"
         let emails = ["nina@example.com", "rocker88@example.com"]
@@ -89,7 +85,6 @@ class ZMAddressBookContactTests: XCTestCase {
     }
 
     func testThatTwoContactsAreNotTheSameBecauseNameIsNotSame() {
-
         // given
         let name = "Nina"
         let emails = ["nina@example.com", "rocker88@example.com"]

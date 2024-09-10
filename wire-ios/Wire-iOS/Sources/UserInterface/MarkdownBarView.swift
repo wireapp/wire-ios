@@ -27,7 +27,6 @@ protocol MarkdownBarViewDelegate: AnyObject {
 }
 
 final class MarkdownBarView: UIView {
-
     weak var delegate: MarkdownBarViewDelegate?
 
     private let stackView = UIStackView()
@@ -70,7 +69,6 @@ final class MarkdownBarView: UIView {
     }
 
      func setupViews() {
-
         stackView.axis = .horizontal
          stackView.distribution = .fillEqually
         stackView.alignment = .center
@@ -158,7 +156,6 @@ final class MarkdownBarView: UIView {
     // MARK: Actions
 
     @objc private func buttonTapped(sender: IconButton) {
-
         guard let markdown = markdown(for: sender) else { return }
 
         if sender.iconColor(for: .normal) != enabledStateIconColor {
@@ -213,9 +210,7 @@ final class MarkdownBarView: UIView {
 }
 
 extension MarkdownBarView: PopUpIconButtonDelegate {
-
     func popUpIconButton(_ button: PopUpIconButton, didSelectIcon icon: StyleKitIcon) {
-
         if button === headerButton {
             let markdown = icon.headerMarkdown ?? .h1
             delegate?.markdownBarView(self, didSelectMarkdown: markdown, with: button)

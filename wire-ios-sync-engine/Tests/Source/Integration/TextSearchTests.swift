@@ -28,7 +28,6 @@ private class MockSearchDelegate: TextSearchQueryDelegate {
 }
 
 class TextSearchTests: ConversationTestsBase {
-
     func testThatItFindsAMessageSendRemotely() {
         // Given
         XCTAssertTrue(login())

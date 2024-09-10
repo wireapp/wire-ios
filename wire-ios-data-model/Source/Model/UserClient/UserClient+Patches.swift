@@ -20,7 +20,6 @@ import Foundation
 import WireSystem
 
 extension UserClient {
-
     /// Migrate client sessions from using the client identifier only as session identifier
     /// to new client sessions  useing user identifier + client identifier as session identifier.
     /// These have less chances of collision.

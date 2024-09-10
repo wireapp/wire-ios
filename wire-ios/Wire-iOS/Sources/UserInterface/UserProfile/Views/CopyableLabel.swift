@@ -20,7 +20,6 @@ import UIKit
 
 /// This class is a drop-in replacement for UILabel which can be copied.
 final class CopyableLabel: UILabel {
-
     private let dimmedAlpha: CGFloat = 0.4
     private let dimmAnimationDuration: TimeInterval = 0.33
 

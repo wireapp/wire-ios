@@ -41,7 +41,6 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
 // MARK: - CameraKeyboardViewController
 
 class CameraKeyboardViewController: UIViewController {
-
     // MARK: - Properties
 
     private var permissions: PhotoPermissionsController!
@@ -311,7 +310,6 @@ class CameraKeyboardViewController: UIViewController {
 
         let limit = CGFloat.Image.maxSupportedLength
         if CGFloat(asset.pixelWidth) > limit || CGFloat(asset.pixelHeight) > limit {
-
             let options = PHImageRequestOptions()
             options.deliveryMode = .highQualityFormat
             options.isNetworkAccessAllowed = false
@@ -445,7 +443,6 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
         guard permissions.areCameraOrPhotoLibraryAuthorized else {
             return deniedAuthorizationCell(for: .cameraAndPhotos, collectionView: collectionView, indexPath: indexPath)
         }
@@ -523,7 +520,6 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         guard permissions.areCameraOrPhotoLibraryAuthorized else { return }
 
         switch CameraKeyboardSection(rawValue: UInt((indexPath as NSIndexPath).section))! {
@@ -599,7 +595,6 @@ extension CameraKeyboardViewController: WireCallCenterCallStateObserver {
 // MARK: - PHAsset
 
 extension PHAsset {
-
     func getVideoURL(completionHandler: @escaping ((_ responseURL: URL?) -> Void)) {
         guard mediaType == .video else {
             completionHandler(nil)

@@ -44,7 +44,6 @@ enum AudioRecordState {
 }
 
 final class AudioRecordViewController: UIViewController, AudioRecordBaseViewController {
-
     let buttonOverlay = AudioButtonOverlay()
     let topSeparator = UIView()
     let rightSeparator = UIView()
@@ -313,7 +312,6 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     private func updateRecordingState(_ state: AudioRecordState) {
-
         let visible = visibleViewsForState(state)
         let allViews = Set(view.subviews.flatMap { $0.subviews }) // Well, 2 levels 'all'
         let hidden = allViews.subtracting(visible)

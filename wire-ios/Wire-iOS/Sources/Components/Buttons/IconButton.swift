@@ -27,7 +27,6 @@ import WireDesign
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: - [AGIS] Get rid of this class as soon as we make all the appropriate changes to the original class
 class NonLegacyIconButton: IconButton {
-
     override var isSelected: Bool {
         didSet {
             applyStyle(.iconButtonStyle)
@@ -160,7 +159,6 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     func setTitleImageSpacing(_ titleImageSpacing: CGFloat, horizontalMargin: CGFloat = 0) {
-
         let isLeftToRight = UIView.userInterfaceLayoutDirection(for: .unspecified) == .leftToRight
 
         let inset = titleImageSpacing / 2.0
@@ -188,7 +186,6 @@ class IconButton: ButtonWithLargerHitArea {
                  for state: UIControl.State,
                  renderingMode: UIImage.RenderingMode = UIImage.RenderingMode.alwaysTemplate,
                  force: Bool = false) {
-
         setIcon(iconType, iconSize: size.rawValue, for: state, renderingMode: renderingMode, force: force)
     }
 

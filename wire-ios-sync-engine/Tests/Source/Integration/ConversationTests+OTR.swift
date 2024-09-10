@@ -20,7 +20,6 @@ import Foundation
 import WireTesting
 
 final class ConversationTestsOTR_Swift: ConversationTestsBase {
-
     func testThatItSendsFailedOTRMessageAfterMisingClientsAreFetchedButSessionIsNotCreated() {
         // GIVEN
         XCTAssertTrue(self.login())
@@ -568,7 +567,6 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         shouldChangeSecurityLevel: Bool,
         initialSecurityLevel: ZMConversationSecurityLevel,
         expectedSecurityLevel: ZMConversationSecurityLevel) {
-
         // GIVEN
         let expectedText = "The sky above the port was the color of "
         let message = GenericMessage(content: Text(content: expectedText), nonce: .create())

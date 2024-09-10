@@ -20,7 +20,6 @@ import UIKit
 
 /// Wraps an instance of `UIDevice` and conforms to `DeviceAbstraction`.
 public struct DeviceWrapper {
-
     var device: UIDevice
 
     public init(device: UIDevice) {
@@ -29,7 +28,6 @@ public struct DeviceWrapper {
 }
 
 extension DeviceWrapper: DeviceAbstraction {
-
     public var userInterfaceIdiom: UIUserInterfaceIdiom {
         device.userInterfaceIdiom
     }
@@ -44,7 +42,6 @@ extension DeviceWrapper: DeviceAbstraction {
 }
 
 public extension DeviceAbstraction where Self == DeviceWrapper {
-
     static var current: Self {
         .init(device: .current)
     }

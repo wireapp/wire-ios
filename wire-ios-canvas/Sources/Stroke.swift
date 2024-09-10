@@ -19,7 +19,6 @@
 import UIKit
 
 public struct Brush {
-
     public init(size: Float, color: UIColor) {
         self.size = size
         self.color = color
@@ -38,7 +37,6 @@ public struct Brush {
 }
 
 final class Stroke: Renderable {
-
     private var points: [CGPoint]
     private let minimumStrokeDistance = 0.1
     private let brush: Brush
@@ -122,7 +120,6 @@ final class Stroke: Renderable {
     }
 
     func controlsPoints(points: [CGPoint]) -> [(CGPoint, CGPoint)] {
-
         let points = [points.first!] + points + [points.last!]
         var controlPoints: [(CGPoint, CGPoint)] = []
 

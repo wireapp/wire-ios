@@ -19,7 +19,6 @@
 import Foundation
 
 struct RecurringAction {
-
     let id: String
     let interval: TimeInterval
     let perform: () -> Void

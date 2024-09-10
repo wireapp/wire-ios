@@ -22,7 +22,6 @@ class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {
 }
 
 extension ZMClientMessageTests_Reaction {
-
     // MARK: Helper Methods
 
     func insertMessage() -> ZMMessage {
@@ -70,7 +69,6 @@ extension ZMClientMessageTests_Reaction {
     }
 
     func testThatItAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
-
         let message = insertMessage()
         let event = updateEventForAddingReaction(to: message)
 
@@ -104,7 +102,6 @@ extension ZMClientMessageTests_Reaction {
     }
 
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithInvalidReaction() {
-
         let message = insertMessage()
         let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["TROP BIEN"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
@@ -138,7 +135,6 @@ extension ZMClientMessageTests_Reaction {
     }
 
     func testThatItRemovesAReactionWhenReceivingUpdateEventWithValidReaction() {
-
         let message = insertMessage()
         ZMMessage.addReaction("❤️", to: message)
         uiMOC.saveOrRollback()
@@ -157,7 +153,6 @@ extension ZMClientMessageTests_Reaction {
     }
 
     func testThatItUpdatesTheCategoryWhenRemovingAReaction() {
-
         // given
         let message = insertMessage()
         message.markAsSent()

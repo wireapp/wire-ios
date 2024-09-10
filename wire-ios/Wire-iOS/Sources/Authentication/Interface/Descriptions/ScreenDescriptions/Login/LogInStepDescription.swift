@@ -21,7 +21,6 @@ import WireDataModel
 
 /// An object holding the configuration of the login prefill.
 struct AuthenticationPrefilledCredentials: Equatable {
-
     /// The raw credentials value.
     let credentials: LoginCredentials
 
@@ -31,7 +30,6 @@ struct AuthenticationPrefilledCredentials: Equatable {
 
 /// An authentication step to ask the user for login credentials.
 final class LogInStepDescription: AuthenticationStepDescription {
-
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

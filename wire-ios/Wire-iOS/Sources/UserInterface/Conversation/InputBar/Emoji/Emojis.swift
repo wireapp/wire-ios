@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class EmojiDataSource: NSObject, UICollectionViewDataSource {
-
     // MARK: - Properties
 
     let cellProvider: CellProvider
@@ -161,17 +160,14 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 }
 
 extension EmojiDataSource {
-
     typealias CellProvider = (Emoji, IndexPath) -> UICollectionViewCell
 
     enum Update {
-
         case insert(Int)
         case reload(Int)
     }
 
     class Section {
-
         let id: EmojiSectionType
         var items: [Emoji]
 
@@ -205,7 +201,6 @@ extension EmojiDataSource {
 }
 
 enum EmojiSectionType: Int, CaseIterable {
-
     case recent
     case people
     case nature

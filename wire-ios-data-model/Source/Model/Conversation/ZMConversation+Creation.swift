@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     /// Fetch an existing conversation or create a new one if it doesn't already exist.
     ///
     /// - Parameters:

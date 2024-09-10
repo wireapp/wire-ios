@@ -19,14 +19,12 @@
 // MARK: - Calling
 
 extension ZMLocalNotification {
-
     convenience init?(callState: CallState, conversation: ZMConversation, caller: ZMUser, moc: NSManagedObjectContext) {
         guard let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation) else { return nil }
         self.init(builder: builder, moc: moc)
     }
 
     private class CallNotificationBuilder: NotificationBuilder {
-
         let callState: LocalNotificationType.CallState
         let caller: ZMUser
         let conversation: ZMConversation

@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 final class SessionManagerMessageRetentionTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

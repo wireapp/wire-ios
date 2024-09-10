@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol ZMEventConsumer: NSObjectProtocol {
-
     /// Process events received either through a live update (websocket / notification / notification stream)
     /// or through history download
     /// @param liveEvents true if the events were received through websocket / notifications / notification stream,
@@ -41,7 +40,6 @@ public protocol ZMEventConsumer: NSObjectProtocol {
 
 @objc
 public protocol ZMEventAsyncConsumer: NSObjectProtocol {
-
     /// Process events received either through a live update (websocket / notification / notification stream)
     /// or through history download
     func processEvents(_ events: [ZMUpdateEvent]) async

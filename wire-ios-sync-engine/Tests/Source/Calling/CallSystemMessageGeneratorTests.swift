@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class CallSystemMessageGeneratorTests: MessagingTest {
-
     var sut: WireSyncEngine.CallSystemMessageGenerator!
     var mockWireCallCenterV3: WireCallCenterV3Mock!
     var selfUserID: AVSIdentifier!

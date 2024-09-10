@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
-
     let syncProgress: SyncProgress
     let conversationIDsSync: PaginatedSync<Payload.PaginatedConversationIDList>
     let conversationQualifiedIDsSync: PaginatedSync<Payload.PaginatedQualifiedConversationIDList>
@@ -249,7 +248,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 }
 
 extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
-
     typealias T = ZMConversation
 
     func synchronize(_ object: ZMConversation, completion: @escaping () -> Void) {
@@ -294,7 +292,6 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
 }
 
 extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
-
     public func didFinishSyncingAllObjects() {
         guard
             syncProgress.currentSyncPhase == .fetchingConversations,
@@ -319,7 +316,6 @@ extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
 }
 
 extension ConversationRequestStrategy: ZMUpstreamTranscoder {
-
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
         return false
     }
@@ -418,7 +414,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
             let request: ZMTransportRequest
             switch apiVersion {
-
             case .v0:
                 request = ZMTransportRequest(path: "/conversations/\(conversationID)",
                                              method: .put,
@@ -456,7 +451,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             let request: ZMTransportRequest
 
             switch apiVersion {
-
             case .v0:
                 request = ZMTransportRequest(path: "/conversations/\(conversationID)/self",
                                              method: .put,
@@ -529,7 +523,6 @@ class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
-
         guard response.result != .permanentError else {
             if response.httpStatus == 404 {
                 WaitingGroupTask(context: context) { [self] in
@@ -653,7 +646,6 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
-
         guard response.result != .permanentError else {
             markConversationsAsFetched(identifiers)
 
@@ -696,7 +688,6 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
     private func deleteConversations(_ conversationIds: Set<QualifiedID>) async {
         for qualifiedID in conversationIds {
-
             let conversation: ZMConversation? = await context.perform { [context] in
                 let conversation = ZMConversation.fetch(
                     with: qualifiedID.uuid,
@@ -749,7 +740,6 @@ class ConversationByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
-
     public typealias T = UUID
 
     var fetchLimit: Int = 32
@@ -808,7 +798,6 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
-
     public typealias T = QualifiedID
 
     var fetchLimit: Int = 100
@@ -845,7 +834,6 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
-
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
@@ -879,7 +867,6 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 
     /// Query the backend again if a converation couldn't be fetched
     private func queryStatusForFailedConversations(_ conversations: [QualifiedID]) {
-
         for qualifiedID in conversations {
             let conversation = ZMConversation.fetchOrCreate(with: qualifiedID.uuid, domain: qualifiedID.domain, in: context)
             conversation.isPendingMetadataRefresh = true
@@ -889,7 +876,6 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 private extension Collection where Element == ZMConversation {
-
     func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
         return compactMap { conversation in
             if let qualifiedID = conversation.qualifiedID {

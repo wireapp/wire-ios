@@ -19,7 +19,6 @@
 import Foundation
 
 final class MigrateSenderClient {
-
     /// Populate senderClientID for `.decryptionFailed` system messages.
     ///
     /// For `.decryptionFailed` system messages we need to copy the `remoteIdentifier` of

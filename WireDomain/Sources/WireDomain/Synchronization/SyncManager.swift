@@ -21,7 +21,6 @@ import WireAPI
 import WireSystem
 
 protocol SyncManagerProtocol {
-
     /// Fetch events from the server and process all pending events.
 
     func performQuickSync() async throws
@@ -32,7 +31,6 @@ protocol SyncManagerProtocol {
 }
 
 final class SyncManager: SyncManagerProtocol {
-
     private(set) var syncState: SyncState = .suspended
     private var isSuspending = false
 

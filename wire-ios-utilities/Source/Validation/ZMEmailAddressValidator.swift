@@ -19,7 +19,6 @@
 import UIKit
 
 @objc public final class ZMEmailAddressValidator: NSObject, ZMPropertyValidator {
-
     static func normalizeEmailAddress(_ emailAddress: inout NSString?) -> Bool {
         var normalizedAddress = emailAddress?.lowercased as NSString?
         var charactersToTrim = CharacterSet.whitespaces
@@ -54,7 +53,6 @@ import UIKit
     }
 
     @discardableResult public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
-
         if ioValue == nil {
             return true
         }

@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockTransportSession {
-
     @objc
     public func processAPIVersionGetRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         // /api-version is the only unversioned endpoint.

@@ -17,7 +17,6 @@
 //
 
 public final class TeamDownloadRequestFactory {
-
     public static var teamPath: String {
         return "/teams"
     }

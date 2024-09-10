@@ -22,7 +22,6 @@ import WireRequestStrategySupport
 import XCTest
 
 final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
-
     private var coreDataHelper: CoreDataStackHelper!
 
     // need to decide on some api version, even though it should be not relevant for this test.

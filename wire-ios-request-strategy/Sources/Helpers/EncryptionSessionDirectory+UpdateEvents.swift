@@ -23,7 +23,6 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "cryptobox")
 
 extension EncryptionSessionsDirectory {
-
     func decryptData(
         _ encryptedData: Data,
         for sessionID: EncryptionSessionIdentifier

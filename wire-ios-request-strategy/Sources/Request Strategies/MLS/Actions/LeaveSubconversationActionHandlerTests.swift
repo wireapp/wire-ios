@@ -21,7 +21,6 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveSubconversationAction, LeaveSubconversationActionHandler> {
-
     let conversationID = UUID()
     let domain = String.randomDomain()
     let subconversationType = SubgroupType.conference

@@ -20,7 +20,6 @@ import Foundation
 import LocalAuthentication
 
 public final class AppLockController: AppLockType {
-
     // MARK: - Properties
 
     public weak var delegate: AppLockDelegate?
@@ -242,7 +241,6 @@ public final class AppLockController: AppLockType {
 
 @_spi(AppLockControllerState)
 extension AppLockController {
-
     func _setState(_ state: State) {
         self.state = state
     }

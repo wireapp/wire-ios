@@ -20,7 +20,6 @@
 import XCTest
 
 class LinkAttachmentDetectorTests: XCTestCase {
-
     var sut: LinkAttachmentDetector!
     var mockImageTask: MockURLSessionDataTask!
     var previewDownloader: MockPreviewDownloader!

@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireDesign
 
 final class UserBlockingReasonCell: UITableViewCell {
-
     // MARK: - Properties
 
     private let titleLabel = WebLinkTextView()
@@ -71,7 +70,6 @@ final class UserBlockingReasonCell: UITableViewCell {
 }
 
 private extension DownStyle {
-
     static var labelStyle: DownStyle {
         let style = DownStyle()
         style.baseFont = UIFont.systemFont(ofSize: 14)

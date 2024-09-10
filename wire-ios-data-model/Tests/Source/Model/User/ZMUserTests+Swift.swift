@@ -23,7 +23,6 @@ import Foundation
 // MARK: - Modified keys for profile picture upload
 
 final class ZMUserTests_Swift: ModelObjectsTests {
-
     override func tearDown() {
         BackendInfo.isFederationEnabled = false
         super.tearDown()
@@ -74,7 +73,6 @@ final class ZMUserTests_Swift: ModelObjectsTests {
 // MARK: - AssetV3 response parsing
 
 extension ZMUserTests_Swift {
-
     func assetPayload(previewId: String, completeId: String) -> NSArray {
         return [
             ["size": "preview", "type": "image", "key": previewId],
@@ -84,7 +82,6 @@ extension ZMUserTests_Swift {
 
     func testThatItDoesNotUpdateAssetsWhenThereAreLocalModifications() {
         syncMOC.performGroupedAndWait {
-
             // GIVEN
             let user = ZMUser.selfUser(in: self.syncMOC)
             let previewId = "some"
@@ -103,7 +100,6 @@ extension ZMUserTests_Swift {
 
     func testThatItIgnoreAssetsWithIllegalCharacters() {
         syncMOC.performGroupedAndWait {
-
             // GIVEN
             let user = ZMUser.selfUser(in: self.syncMOC)
             let previewId = "some"
@@ -273,7 +269,6 @@ extension ZMUserTests_Swift {
 // MARK: - AssetV3 request notifications
 
 extension ZMUserTests_Swift {
-
     func testThatItPostsPreviewRequestNotifications() {
         let noteExpectation = customExpectation(description: "PreviewAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
@@ -322,7 +317,6 @@ extension ZMUserTests_Swift {
 }
 
 extension ZMUser {
-
     @discardableResult
     static func insert(in moc: NSManagedObjectContext, id: UUID = .create(), name: String, handle: String? = nil, connectionStatus: ZMConnectionStatus = .accepted) -> ZMUser {
         let user = ZMUser.insertNewObject(in: moc)
@@ -339,7 +333,6 @@ extension ZMUser {
 // MARK: - Predicates
 
 extension ZMUserTests_Swift {
-
     func testPredicateFilteringConnectedUsersByHandle() {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "yyy", connectionStatus: .accepted)
@@ -420,7 +413,6 @@ extension ZMUserTests_Swift {
 // MARK: - Filename
 
 extension ZMUserTests_Swift {
-
     /// check the generated filename matches several critirias and a regex pattern
     ///
     /// - Parameters:
@@ -517,7 +509,6 @@ extension ZMUserTests_Swift {
 // MARK: - Broadcast Recipients
 
 extension ZMUserTests_Swift {
-
     func testThatItReturnsAllKnownTeamUsers() {
         // given
         let selfTeam = createTeam(in: uiMOC)
@@ -833,7 +824,6 @@ extension ZMUserTests_Swift {
 // MARK: - Account deletion
 
 extension ZMUserTests_Swift {
-
     func testThatUserIsRemovedFromAllConversationsWhenAccountIsDeleted() {
         // given
         let sut = createUser(in: uiMOC)
@@ -873,7 +863,6 @@ extension ZMUserTests_Swift {
 // MARK: - Active conversations
 
 extension ZMUserTests_Swift {
-
     func testActiveConversationsForSelfUser() {
         // given
         let sut = ZMUser.selfUser(in: uiMOC)
@@ -994,7 +983,6 @@ extension ZMUserTests_Swift {
 // MARK: - Verifying user
 
 extension ZMUserTests_Swift {
-
     func testThatUserIsVerified_WhenSelfUserAndUserIsTrusted() {
         // GIVEN
         let user: ZMUser = self.userWithClients(count: 2, trusted: true)
@@ -1029,7 +1017,6 @@ extension ZMUserTests_Swift {
 // MARK: - Connections
 
 extension ZMUserTests_Swift {
-
     func testThatConnectSendsAConnectToUserAction() {
         // given
         let user = createUser(in: uiMOC)

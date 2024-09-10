@@ -93,7 +93,6 @@ extension FLAnimatedImage: MediaAsset {
 }
 
 extension UIImageView: MediaAssetView {
-
     var imageData: Data? {
         get {
             return image?.imageData

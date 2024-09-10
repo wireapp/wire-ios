@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class RenameGroupSectionController: NSObject, CollectionViewSectionController {
-
     private var validName: String?
     private var conversation: GroupDetailsConversationType
     private var renameCell: GroupDetailsRenameCell?
@@ -98,7 +97,6 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
 }
 
 extension RenameGroupSectionController: ZMConversationObserver {
-
     func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         guard changeInfo.securityLevelChanged || changeInfo.nameChanged else { return }
 
@@ -109,7 +107,6 @@ extension RenameGroupSectionController: ZMConversationObserver {
 }
 
 extension RenameGroupSectionController: SimpleTextFieldDelegate {
-
     func textFieldReturnPressed(_ textField: SimpleTextField) {
         guard let value = textField.value else { return }
 

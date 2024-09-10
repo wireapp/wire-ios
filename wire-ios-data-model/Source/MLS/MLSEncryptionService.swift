@@ -21,7 +21,6 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol MLSEncryptionServiceInterface {
-
     /// Encrypts a message for the given group.
     ///
     /// - Parameters:
@@ -42,7 +41,6 @@ public protocol MLSEncryptionServiceInterface {
 /// A class responsible for encrypting messages for MLS groups.
 
 public final class MLSEncryptionService: MLSEncryptionServiceInterface {
-
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -62,7 +60,6 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     // MARK: - Message encryption
 
     public enum MLSMessageEncryptionError: Error {
-
         case failedToEncryptMessage
     }
 

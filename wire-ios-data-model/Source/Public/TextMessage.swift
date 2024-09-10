@@ -21,7 +21,6 @@ import WireLinkPreview
 
 @objc(ZMTextMessage) @objcMembers
 final class TextMessage: ZMMessage, TextMessageData {
-
     // swiftlint:disable:next static_over_final_class
     override class func entityName() -> String { "TextMessage" }
 

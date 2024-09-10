@@ -19,7 +19,6 @@
 import Foundation
 
 extension IntegrationTest {
-
     func remotelyInsert(text: String, from senderClient: MockUserClient, into conversation: MockConversation) {
         remotelyInsert(content: Text(content: text), from: senderClient, into: conversation)
     }

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPISupport
 
 final class APIServiceTests: XCTestCase {
-
     var sut: APIService!
     var backendURL: URL!
     var authenticationStorage: InMemoryAuthenticationStorage!
@@ -158,7 +157,6 @@ final class APIServiceTests: XCTestCase {
 }
 
 private enum Scaffolding {
-
     static let getRequest = try! URLRequestBuilder(path: "/foo")
         .withMethod(.get)
         .withAcceptType(.json)

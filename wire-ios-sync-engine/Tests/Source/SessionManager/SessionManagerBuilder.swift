@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 struct SessionManagerBuilder {
-
     var maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts
     var jailbreakDetector: JailbreakDetectorProtocol = MockJailbreakDetector()
     var dispatchGroup: ZMSDispatchGroup = ZMSDispatchGroup(label: "SessionManagerBuilder.internal")

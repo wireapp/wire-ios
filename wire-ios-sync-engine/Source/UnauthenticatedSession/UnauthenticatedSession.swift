@@ -39,7 +39,6 @@ private let log = ZMSLog(tag: "UnauthenticatedSession")
 
 @objcMembers
 public class UnauthenticatedSession: NSObject {
-
     /// **accountId** will be set if the unauthenticated session is associated with an existing account
     public internal(set) var accountId: UUID?
     public let groupQueue: DispatchGroupQueue
@@ -104,14 +103,12 @@ public class UnauthenticatedSession: NSObject {
 }
 
 extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
-
     var isAllowedToCreateNewAccount: Bool {
         return delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 }
 
 extension UnauthenticatedSession: URLActionProcessor {
-
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
     }
@@ -127,7 +124,6 @@ extension UnauthenticatedSession: TearDownCapable {
 // MARK: - UserInfoParser
 
 extension UnauthenticatedSession: UserInfoParser {
-
     public func accountExistsLocally(from info: UserInfo) -> Bool {
         let account = Account(userName: "", userIdentifier: info.identifier)
         guard let delegate else { return false }

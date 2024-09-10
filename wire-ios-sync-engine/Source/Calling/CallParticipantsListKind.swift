@@ -19,7 +19,6 @@
 import Foundation
 
 public enum CallParticipantsListKind {
-
     /// All the active participants, including the real time active speakers
 
     case all
@@ -30,7 +29,6 @@ public enum CallParticipantsListKind {
 }
 
 extension CallParticipantsListKind {
-
     func state(ofActiveSpeaker activeSpeaker: AVSActiveSpeakersChange.ActiveSpeaker) -> ActiveSpeakerState {
         switch self {
         case .all where activeSpeaker.audioLevelNow > 0,

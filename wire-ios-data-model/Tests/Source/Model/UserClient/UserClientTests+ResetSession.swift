@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 class UserClientTests_ResetSession: DiskDatabaseTest {
-
     func testThatDecryptionFailedSystemMessageIsUpdated_WhenSessionIsReset() throws {
         // given
         let selfUser = ZMUser.selfUser(in: moc)

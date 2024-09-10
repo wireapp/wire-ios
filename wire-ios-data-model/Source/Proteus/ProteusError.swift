@@ -19,7 +19,6 @@
 import Foundation
 
 public enum ProteusError: Int, Error, Equatable {
-
     /// An internal storage error occurred.
     ///
     /// An error occurred while loading or peristing key material. The
@@ -162,7 +161,6 @@ public enum ProteusError: Int, Error, Equatable {
 }
 
 extension ProteusError: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         return String(describing: self)
     }

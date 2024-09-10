@@ -37,7 +37,6 @@ enum TeamSource: Int {
 }
 
 extension URL {
-
     var appendingLocaleParameter: URL {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             return self
@@ -69,7 +68,6 @@ extension URL {
 // MARK: - Wire URLs
 
 extension URL {
-
     static var selfUserProfileLink: URL? {
         BackendEnvironment.selfUserProfileLink
     }

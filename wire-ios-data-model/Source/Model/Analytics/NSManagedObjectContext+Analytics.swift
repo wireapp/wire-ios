@@ -21,7 +21,6 @@ import Foundation
 private let analyticsUserInfoKey = "AnalyticsUserInfoKey"
 
 public extension NSManagedObjectContext {
-
     /// Set when initializing the user session from the UI, used for easier tracking on SE
     @objc var analytics: AnalyticsType? {
         get {

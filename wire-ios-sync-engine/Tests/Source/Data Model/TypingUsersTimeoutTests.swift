@@ -19,7 +19,6 @@
 @testable import WireSyncEngine
 
 class TypingUsersTimeoutTests: MessagingTest {
-
     private typealias TypingUsersTimeout = WireSyncEngine.TypingUsersTimeout
 
     private var sut: TypingUsersTimeout!

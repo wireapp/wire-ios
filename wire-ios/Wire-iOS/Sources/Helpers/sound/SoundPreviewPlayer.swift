@@ -20,7 +20,6 @@ import avs
 import Foundation
 
 final class SoundPreviewPlayer {
-
     fileprivate var mediaManager: AVSMediaManager
     fileprivate var stopTimer: Timer?
 

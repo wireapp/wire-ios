@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 extension AddBotError {
-
     typealias PeoplePickerServicesLocale = L10n.Localizable.Peoplepicker.Services.AddService
 
     var localizedTitle: String {

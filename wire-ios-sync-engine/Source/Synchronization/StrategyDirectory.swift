@@ -22,7 +22,6 @@ import WireRequestStrategy
 
 @objc
 public protocol StrategyDirectoryProtocol {
-
     var eventConsumers: [ZMEventConsumer] { get }
     var eventAsyncConsumers: [ZMEventAsyncConsumer] { get }
     var requestStrategies: [RequestStrategy] { get }
@@ -31,7 +30,6 @@ public protocol StrategyDirectoryProtocol {
 
 @objcMembers
 public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
-
     let strategies: [Any]
 
     public let requestStrategies: [RequestStrategy]
@@ -55,7 +53,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         searchUsersCache: SearchUsersCache?
     ) {
-
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
             applicationStatusDirectory: applicationStatusDirectory,
@@ -137,7 +134,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
 
         let strategies: [Any] = [
-
             UserClientRequestStrategy(
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,

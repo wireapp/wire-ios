@@ -21,7 +21,6 @@ import Foundation
 import WireDataModel
 
 public protocol CRLsDistributionPointsObserving {
-
     func startObservingNewCRLsDistributionPoints(
         from publisher: AnyPublisher<CRLsDistributionPoints, Never>
     )

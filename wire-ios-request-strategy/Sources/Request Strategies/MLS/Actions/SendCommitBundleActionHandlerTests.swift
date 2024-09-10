@@ -20,7 +20,6 @@
 import XCTest
 
 class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundleAction, SendCommitBundleActionHandler> {
-
     let commitBundle = Data("bundle".utf8)
 
     override func setUp() {

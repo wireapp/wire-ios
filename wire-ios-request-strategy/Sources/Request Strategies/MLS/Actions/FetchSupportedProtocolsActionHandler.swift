@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class FetchSupportedProtocolsActionHandler: ActionHandler<FetchSupportedProtocolsAction> {
-
     // MARK: - Request
 
     override func request(

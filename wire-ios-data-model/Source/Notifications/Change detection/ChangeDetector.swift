@@ -19,7 +19,6 @@
 import Foundation
 
 protocol ChangeDetector {
-
     /// Inspect the given objects and store detected changes in local state.
 
     func detectChanges(for objects: ModifiedObjects)

@@ -20,7 +20,6 @@ import Foundation
 
 /// An authentication step to ask the user to log in again.
 final class ReauthenticateStepDescription: AuthenticationStepDescription {
-
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

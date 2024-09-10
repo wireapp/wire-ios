@@ -27,7 +27,6 @@ enum GuestLinkType {
 private typealias GuestRoom = L10n.Localizable.GuestRoom
 
 extension UIAlertController {
-
     static func checkYourConnection() -> UIAlertController {
         let controller = UIAlertController(
             title: GuestRoom.Error.Generic.title,

@@ -29,7 +29,6 @@ typealias HTMLDocument = xmlDocPtr
 typealias HTMLElement = xmlNodePtr
 
 extension UnsafeMutablePointer where Pointee == xmlDoc {
-
     /// Tries to create a new HTML document.
     init?(xmlString: String) {
         let options = Int32(HTML_PARSE_NOWARNING.rawValue) | Int32(HTML_PARSE_NOERROR.rawValue) | Int32(HTML_PARSE_RECOVER.rawValue)
@@ -56,7 +55,6 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
 }
 
 extension UnsafeMutablePointer where Pointee == xmlNode {
-
     /// The name of the HTML tag.
     var tagName: HTMLStringBuffer {
         return HTMLStringBuffer(unowned: pointee.name)

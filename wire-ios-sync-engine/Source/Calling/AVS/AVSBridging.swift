@@ -23,7 +23,6 @@ import Foundation
  */
 
 protocol AVSValue {
-
     /// The type of the value in AVS APIs.
     associatedtype AVSType
 
@@ -75,7 +74,6 @@ extension Date: AVSValue {
 }
 
 extension UUID: AVSValue {
-
     init?(rawValue: UnsafePointer<Int8>?) {
         self.init(cString: rawValue)
     }
@@ -88,7 +86,6 @@ extension UUID: AVSValue {
 }
 
 extension String: AVSValue {
-
     init?(rawValue: UnsafePointer<Int8>) {
         self.init(cString: rawValue)
     }
@@ -106,7 +103,6 @@ extension String: AVSValue {
 // MARK: - Decoding
 
 extension AVSWrapper {
-
     @discardableResult
     static func withCallCenter(_ contextRef: UnsafeMutableRawPointer?, _ block: (WireCallCenterV3) -> Void) -> Int32 {
         guard let contextRef else { return EINVAL }

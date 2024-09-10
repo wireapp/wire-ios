@@ -19,7 +19,6 @@
 import Foundation
 
 struct URLRequestBuilder {
-
     private var request: URLRequest
 
     init(path: String) throws {
@@ -74,7 +73,6 @@ struct URLRequestBuilder {
 }
 
 extension URLRequestBuilder {
-
     func postJSONPayload(
         _ payload: some Encodable,
         encoder: JSONEncoder = .defaultEncoder

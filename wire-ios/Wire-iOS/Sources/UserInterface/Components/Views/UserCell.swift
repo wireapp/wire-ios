@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
-
     // MARK: - Properties
 
     // This property should in the long run replace the `user: UserType` property
@@ -364,7 +363,6 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 // MARK: - UserCell + configure
 
 extension UserCell {
-
     /// Updates the cell with the provided information.
     /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this value.
     func configure(
@@ -439,7 +437,6 @@ extension UserCell {
 extension UserCell: UserCellSubtitleProtocol {}
 
 extension UserCell {
-
     private func subtitle(for user: UserType) -> NSAttributedString? {
         if user.isServiceUser, let service = user as? SearchServiceUser {
             subtitle(forServiceUser: service)

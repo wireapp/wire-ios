@@ -21,7 +21,6 @@ import XCTest
 @testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {
-
     private var httpRequestSnapshotHelper: HTTPRequestSnapshotHelper!
     private var apiSnapshotHelper: APISnapshotHelper<any ConversationsAPI>!
 

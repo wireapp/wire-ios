@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 class ContactsSectionController: SearchSectionController {
-
     var contacts: [UserType] = []
     var selection: UserSelection? {
         didSet {
@@ -110,7 +109,6 @@ class ContactsSectionController: SearchSectionController {
 }
 
 extension ContactsSectionController: UserSelectionObserver {
-
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {
         collectionView?.reloadData()
     }

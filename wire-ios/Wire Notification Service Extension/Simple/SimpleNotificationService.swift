@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireTransport
 
 final class SimpleNotificationService: UNNotificationServiceExtension, Loggable {
-
     // MARK: - Types
 
     typealias ContentHandler = (UNNotificationContent) -> Void

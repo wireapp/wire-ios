@@ -19,7 +19,6 @@
 import WireDataModel
 
 extension ProfilePresenter: ProfileViewControllerDelegate {
-
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         guard let controller else { return }
 

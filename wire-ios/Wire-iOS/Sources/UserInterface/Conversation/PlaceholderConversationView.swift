@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class PlaceholderConversationView: UIView {
-
     // MARK: - Properties
 
     var shieldImageView: UIImageView!

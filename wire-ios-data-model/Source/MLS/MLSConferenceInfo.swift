@@ -21,9 +21,7 @@ import Foundation
 /// Represents the information about an MLS conference.
 
 public struct MLSConferenceInfo: Equatable {
-
     public struct Member: Equatable {
-
         public let id: MLSClientID
         public let isInSubconversation: Bool
 

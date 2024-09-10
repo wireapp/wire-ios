@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class MLSVerificationStatusTests: XCTestCase {
-
     typealias SUT = MLSVerificationStatus
 
     /// Ensures that the raw values, which are persited to the database, don't change, once the app has been published.

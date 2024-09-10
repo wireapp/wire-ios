@@ -21,7 +21,6 @@ import Foundation
 /// Configurations for various app features.
 
 public enum FeatureConfig: Equatable, Codable {
-
     /// Config for the *App Lock* feature.
     ///
     /// *App Lock* protects user content by locking the

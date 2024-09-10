@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ArchivedListViewControllerSnapshotTests: XCTestCase {
-
     private var userSessionMock: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!
 
@@ -40,7 +39,6 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
     }
 
     func testEmpty() {
-
         userSessionMock.mockConversationList = ConversationList(
             allConversations: [],
             filteringPredicate: .init(value: true),
@@ -53,7 +51,6 @@ final class ArchivedListViewControllerSnapshotTests: XCTestCase {
     }
 
     func testNonEmpty() {
-
         let fixture = CoreDataFixture()
         let modelHelper = ModelHelper()
         let selfUser = modelHelper.createSelfUser(in: fixture.coreDataStack.viewContext)

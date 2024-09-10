@@ -22,7 +22,6 @@ import WireAPI
 // sourcery: AutoMockable
 /// Process update events.
 protocol UpdateEventProcessorProtocol {
-
     /// Process an update event.
     ///
     /// Processing an event is the app's only chance to consume
@@ -34,7 +33,6 @@ protocol UpdateEventProcessorProtocol {
 }
 
 struct UpdateEventProcessor {
-
     let conversationEventProcessor: any ConversationEventProcessorProtocol
     let featureconfigEventProcessor: any FeatureConfigEventProcessorProtocol
     let federationEventProcessor: any FederationEventProcessorProtocol

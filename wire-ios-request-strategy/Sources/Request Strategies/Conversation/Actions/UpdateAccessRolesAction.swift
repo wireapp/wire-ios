@@ -19,7 +19,6 @@
 import Foundation
 
 public enum UpdateAccessRolesError: Error {
-
     case unknown
     case invalidOperation
     case accessDenied
@@ -28,7 +27,6 @@ public enum UpdateAccessRolesError: Error {
 }
 
 public class UpdateAccessRolesAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Void

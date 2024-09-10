@@ -41,7 +41,6 @@ class CompositeMessageItemContent: NSObject {
 // MARK: - TextMessageData
 
 extension CompositeMessageItemContent: TextMessageData {
-
     var messageText: String? {
         return text?.content.removingExtremeCombiningCharacters
     }
@@ -97,7 +96,6 @@ extension CompositeMessageItemContent: TextMessageData {
 // MARK: - ButtonMessageData
 
 extension CompositeMessageItemContent: ButtonMessageData {
-
     var title: String? {
         return button?.text
     }

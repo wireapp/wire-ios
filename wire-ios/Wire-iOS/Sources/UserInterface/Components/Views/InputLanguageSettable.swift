@@ -24,7 +24,6 @@ protocol InputLanguageSettable {
 }
 
 extension TextView: InputLanguageSettable {
-
     var originalTextInputMode: UITextInputMode? {
         return super.textInputMode
     }

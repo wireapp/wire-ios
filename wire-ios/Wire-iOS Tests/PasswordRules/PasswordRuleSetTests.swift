@@ -20,7 +20,6 @@
 import XCTest
 
 class PasswordRuleSetTests: XCTestCase {
-
     var defaultRuleSet: PasswordRuleSet!
 
     override func setUp() {

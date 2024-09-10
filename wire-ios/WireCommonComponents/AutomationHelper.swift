@@ -163,7 +163,6 @@ public final class AutomationHelper: NSObject {
 // MARK: - Helpers
 
 protocol ArgumentsType {
-
     var flagPrefix: String { get }
 
     /// Argument strings
@@ -179,7 +178,6 @@ protocol ArgumentsType {
 // MARK: - default implementation
 
 extension ArgumentsType {
-
     var flagPrefix: String { return "--" }
 
     func hasFlag(_ name: String) -> Bool {
@@ -203,7 +201,6 @@ extension ArgumentsType {
 
 /// Command line arguments
 private struct CommandLineArguments: ArgumentsType {
-
     let arguments: Set<String>
 
     init() {
@@ -213,7 +210,6 @@ private struct CommandLineArguments: ArgumentsType {
 
 /// Arguments read from a file on disk
 private struct FileArguments: ArgumentsType {
-
     let arguments: Set<String>
 
     init?(url: URL) {

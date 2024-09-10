@@ -27,7 +27,6 @@ import WireSyncEngine
  */
 
 final class SelfProfileViewController: UIViewController {
-
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
     var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
@@ -69,7 +68,6 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession,
         accountSelector: AccountSelector?
     ) {
-
         self.userSession = userSession
         self.accountSelector = accountSelector
 
@@ -228,7 +226,6 @@ final class SelfProfileViewController: UIViewController {
 // MARK: - AccountSelectorViewDelegate
 
 extension SelfProfileViewController: AccountSelectorViewDelegate {
-
     func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
@@ -242,7 +239,6 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
 // MARK: - SettingsPropertyFactoryDelegate
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
-
     private var topViewController: UIViewController! {
         navigationController!.topViewController
     }

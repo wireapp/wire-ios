@@ -19,7 +19,6 @@
 import Foundation
 
 struct EARStorage {
-
     // MARK: - Properties
 
     private let storage: PrivateUserDefaults<Key>

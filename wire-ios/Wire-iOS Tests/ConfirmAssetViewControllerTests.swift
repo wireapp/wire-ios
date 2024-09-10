@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ConfirmAssetViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ConfirmAssetViewController!

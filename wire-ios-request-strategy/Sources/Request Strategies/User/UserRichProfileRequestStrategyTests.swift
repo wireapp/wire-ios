@@ -20,7 +20,6 @@
 import XCTest
 
 class UserRichProfileRequestStrategyTests: MessagingTestBase {
-
     var applicationStatus: MockApplicationStatus!
     var sut: UserRichProfileRequestStrategy!
 

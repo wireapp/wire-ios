@@ -21,7 +21,6 @@ import WireAPI
 /// Process user properties delete events.
 
 protocol UserPropertiesDeleteEventProcessorProtocol {
-
     /// Process a user properties delete event.
     ///
     /// - Parameter event: A user properties delete event.
@@ -30,7 +29,6 @@ protocol UserPropertiesDeleteEventProcessorProtocol {
 }
 
 struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorProtocol {
-
     func processEvent(_: UserPropertiesDeleteEvent) async throws {
         // TODO: [WPB-10198]
         assertionFailure("not implemented yet")

@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class LaunchImageViewControllerSnapshotTests: XCTestCase {
-
     var sut: LaunchImageViewController!
     private var snapshotHelper: SnapshotHelper!
 

@@ -27,7 +27,6 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 public protocol UserRepositoryProtocol {
-
     /// Fetch self user from the local store
 
     func fetchSelfUser() -> ZMUser
@@ -45,7 +44,6 @@ public protocol UserRepositoryProtocol {
 }
 
 public final class UserRepository: UserRepositoryProtocol {
-
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
 

@@ -19,7 +19,6 @@
 import Foundation
 
 extension UserType {
-
     func isFederating(with otherUser: UserType) -> Bool {
         guard
             let domain,

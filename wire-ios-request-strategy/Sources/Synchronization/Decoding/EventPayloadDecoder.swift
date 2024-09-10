@@ -23,7 +23,6 @@ enum EventPayloadDecoderError: Error {
 }
 
 struct EventPayloadDecoder {
-
     private let decoder: JSONDecoder
 
     init(decoder: JSONDecoder = .defaultDecoder) {

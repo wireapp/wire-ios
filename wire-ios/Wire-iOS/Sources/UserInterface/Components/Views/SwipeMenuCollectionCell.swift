@@ -76,7 +76,6 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
 
     private var userInteractionHorizontalOffset: CGFloat = 0 {
         didSet {
-
             if bounds.size.width == 0 {
                 return
             }
@@ -293,7 +292,6 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
     }
 
     override func updateConstraints() {
-
         if hasCreatedSwipeMenuConstraints {
             super.updateConstraints()
             return
@@ -356,7 +354,6 @@ extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
         var result = true
 
         if gestureRecognizer == revealDrawerGestureRecognizer {
-
             let offset = revealDrawerGestureRecognizer.translation(in: self)
             if swipeViewHorizontalConstraint?.constant == 0, offset.x < 0 {
                 result = false
@@ -385,13 +382,11 @@ extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
     /// - Returns: true if need to require failure of otherGestureRecognizer
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-
         return false
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-
         return true
     }
 }

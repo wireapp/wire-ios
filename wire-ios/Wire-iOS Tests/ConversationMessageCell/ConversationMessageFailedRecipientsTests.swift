@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationMessageFailedRecipientsTests: ConversationMessageSnapshotTestCase {
-
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {

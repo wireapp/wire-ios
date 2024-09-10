@@ -19,7 +19,6 @@
 import Foundation
 
 enum InvalidFeatureRemoval {
-
     /// We had an issue where we were creating more than one instance of
     /// `Feature` for a given name (there should be at most one). This patch
     /// is to delete all instances of `Feature` in order to have a clean start.

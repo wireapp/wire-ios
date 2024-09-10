@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockUser {
-
     /// For mocking filename(suffix:) function of ZMUser
     ///
     /// - Parameter suffix: a mocking input

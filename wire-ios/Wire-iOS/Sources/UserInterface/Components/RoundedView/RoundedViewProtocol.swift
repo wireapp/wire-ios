@@ -30,7 +30,6 @@ protocol RoundedViewProtocol: AnyObject {
 }
 
 extension RoundedViewProtocol {
-
     var shape: MaskShape {
         get {
             return roundedLayer.shape

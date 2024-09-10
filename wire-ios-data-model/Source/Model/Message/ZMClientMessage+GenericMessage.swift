@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMClientMessage {
-
     public var underlyingMessage: GenericMessage? {
         guard !isZombieObject else {
             return nil

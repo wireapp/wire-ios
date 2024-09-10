@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public class MockProteusProvider: ProteusProviding {
-
     public let mockProteusService: MockProteusServiceInterface
     public let mockKeyStore: SpyUserClientKeyStore
     public var useProteusService: Bool

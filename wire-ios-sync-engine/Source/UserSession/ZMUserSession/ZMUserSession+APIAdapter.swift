@@ -24,7 +24,6 @@ import WireSystem
 // purposes and should eventually be removed.
 
 private class HTTPClientImpl: HTTPClient {
-
     let transportSession: TransportSessionType
     let queue: GroupQueue
 
@@ -51,7 +50,6 @@ private class HTTPClientImpl: HTTPClient {
 }
 
 private extension HTTPRequest {
-
     func toZMTransportRequest() -> ZMTransportRequest {
         .init(
             path: path,
@@ -63,7 +61,6 @@ private extension HTTPRequest {
 }
 
 private extension HTTPRequest.Method {
-
     func toZMTransportRequestMethod() -> ZMTransportRequestMethod {
         switch self {
         case .delete:
@@ -81,7 +78,6 @@ private extension HTTPRequest.Method {
 }
 
 private extension ZMTransportResponse {
-
     func toHTTPResponse() -> HTTPResponse {
         return HTTPResponse(
             code: httpStatus,

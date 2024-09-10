@@ -33,7 +33,6 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 
 /// Decodes and stores events from various sources to be processed later
 @objcMembers public final class EventDecoder: NSObject {
-
     public typealias ConsumeBlock = (([ZMUpdateEvent]) -> Void)
 
     static var BatchSize: Int {
@@ -64,7 +63,6 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 // MARK: - Process events
 
 extension EventDecoder {
-
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
     /// it then saves the database and cryptobox
     ///
@@ -75,7 +73,6 @@ extension EventDecoder {
         var decryptedEvents: [ZMUpdateEvent] = []
 
         eventMOC.performGroupedBlockAndWait {
-
             self.storeReceivedPushEventIDs(from: events)
             let filteredEvents = self.filterAlreadyReceivedEvents(from: events)
 
@@ -188,7 +185,6 @@ extension EventDecoder {
 // MARK: - List of already received event IDs
 
 extension EventDecoder {
-
     /// create event ID store if needed
     fileprivate func createReceivedPushEventIDsStoreIfNecessary() {
         if self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as? [String] == nil {
@@ -247,7 +243,6 @@ extension EventDecoder {
 }
 
 @objc extension EventDecoder: PreviouslyReceivedEventIDsCollection {
-
     /// Discards the list of already received events
     public func discardListOfAlreadyReceivedPushEventIDs() {
         self.eventMOC.performGroupedBlockAndWait {

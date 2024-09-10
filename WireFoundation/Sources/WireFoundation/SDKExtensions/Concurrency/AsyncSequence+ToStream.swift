@@ -19,7 +19,6 @@
 import Foundation
 
 public extension AsyncSequence {
-
     /// Convert the async sequence to an asynchronous stream.
     ///
     /// - Returns: An `AsyncThrowingStream` of the same element.

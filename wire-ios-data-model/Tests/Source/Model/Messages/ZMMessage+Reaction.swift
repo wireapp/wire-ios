@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMMessage_Reaction: BaseZMClientMessageTests {
-
     func testThatAddingAReactionAddsAReactionGenericMessage_fromUI() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()

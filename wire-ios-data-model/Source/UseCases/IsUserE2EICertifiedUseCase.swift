@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 
 public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
-
     private let schedule: NSManagedObjectContext.ScheduledTaskType
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let featureRepository: FeatureRepositoryInterface
@@ -90,7 +89,6 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 }
 
 extension IsUserE2EICertifiedUseCase {
-
     enum Error: Swift.Error {
         case usersManagedObjectContextNotSet
         case conversationsManagedObjectContextNotSet

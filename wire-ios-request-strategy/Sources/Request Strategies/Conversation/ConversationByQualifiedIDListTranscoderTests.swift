@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
-
     // MARK: - Request generation
 
     func testRequestGeneration_V1() throws {

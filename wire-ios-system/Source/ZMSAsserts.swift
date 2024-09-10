@@ -24,7 +24,6 @@ public func fatal(
     file: StaticString = #file,
     line: UInt = #line
 ) -> Never {
-
     let output = NSString(format: "ASSERT: [%s:%d] <%s> %s", "\(file)", Int32(line), "Swift assertion", message) as String
 
     // report error to datadog or other loggers

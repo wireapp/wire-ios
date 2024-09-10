@@ -24,7 +24,6 @@ import WireTransport
 @testable import Wire
 
 final class SettingsTableViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: SettingsTableViewController!

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
-
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let userId = UUID()
     private let domain = "example.com"

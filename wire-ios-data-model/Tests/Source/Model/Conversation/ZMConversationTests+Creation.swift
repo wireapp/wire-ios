@@ -20,9 +20,7 @@ import Foundation
 @testable import WireDataModel
 
 final class ZMConversationTests_Creation: ZMConversationTestsBase {
-
     func testThatItCreatesParticipantsWithTheGivenRoleForAllParticipants() {
-
         // given
         let team = Team.insertNewObject(in: self.uiMOC)
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", team: team)
@@ -45,7 +43,6 @@ final class ZMConversationTests_Creation: ZMConversationTestsBase {
     }
 
     func testThatItCreatesConversationAndIncludesSelfUser() {
-
         // given
         let team = Team.insertNewObject(in: self.uiMOC)
         let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", team: team)

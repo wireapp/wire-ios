@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class AppStateCalculatorTests: XCTestCase {
-
     private var sut: AppStateCalculator!
     private var delegate: MockAppStateCalculatorDelegate!
 
@@ -48,7 +47,6 @@ final class AppStateCalculatorTests: XCTestCase {
     // MARK: - Tests AppState Cases
 
     func testThatAppStateChanges_OnDidBlacklistCurrentVersion() {
-
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerDidBlacklistCurrentVersion(reason: .appVersionBlacklisted)
@@ -59,7 +57,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidJailbreakCurrentVersion() {
-
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerDidBlacklistJailbrokenDevice()
@@ -70,7 +67,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidFailToLoadDatabase() {
-
         enum DBError: Error {
             case migrationError
         }
@@ -85,7 +81,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnRetryStart() {
-
         // WHEN
         sut.applicationDidBecomeActive()
         sut.sessionManagerAsksToRetryStart()
@@ -96,7 +91,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnWillMigrateAccount() {
-
         // GIVEN
         let account = Account(userName: "dummy", userIdentifier: UUID())
         let selectedAccount = Account(userName: "selectedDummy", userIdentifier: UUID())
@@ -112,7 +106,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnSessionManagerWillLogout() {
-
         // GIVEN
         let error = NSError(userSessionErrorCode: UserSessionErrorCode.unknownError, userInfo: nil)
         sut.applicationDidBecomeActive()
@@ -126,7 +119,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidFailToLogin() {
-
         // GIVEN
         let error = NSError(userSessionErrorCode: UserSessionErrorCode.invalidCredentials, userInfo: nil)
         sut.applicationDidBecomeActive()
@@ -152,7 +144,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnSessionLockChange() {
-
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
@@ -167,7 +158,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnUserAuthenticationDidComplete() {
-
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -195,7 +185,6 @@ final class AppStateCalculatorTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-
         // GIVEN
         let userSession = authenticated ? UserSessionMock() : nil
         sut.applicationDidBecomeActive()
@@ -217,7 +206,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidCompleteInitialSync() {
-
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -231,7 +219,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnWillEnrollCertificate() {
-
         // GIVEN
         sut.applicationDidBecomeActive()
 
@@ -243,7 +230,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidUpdateCertificate() {
-
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()
@@ -258,7 +244,6 @@ final class AppStateCalculatorTests: XCTestCase {
     // MARK: - Tests AppState Changes
 
     func testApplicationDontTransit_WhenAppStateDontChanges() {
-
         // GIVEN
         sut.applicationDidBecomeActive()
         sut.testHelper_setAppState(.blacklisted(reason: .appVersionBlacklisted))
@@ -273,7 +258,6 @@ final class AppStateCalculatorTests: XCTestCase {
 
     // Quarantined
     func testApplicationTransit_WhenAppStateChanges() {
-
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
@@ -291,7 +275,6 @@ final class AppStateCalculatorTests: XCTestCase {
     // MARK: - Tests When App Become Active
 
     func testThatAppStateDoesntChange_OnDidReportLockChange_BeforeAppBecomeActive() {
-
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
@@ -305,7 +288,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatAppStateChanges_OnDidReportLockChange_AfterAppHasBecomeActive() {
-
         // GIVEN
         let userSession = UserSessionMock()
         userSession.isLocked = true
@@ -320,7 +302,6 @@ final class AppStateCalculatorTests: XCTestCase {
     }
 
     func testThatItDoesntTransitionAwayFromBlacklisted_IfThereIsNoCurrentAPIVersion() {
-
         // GIVEN
         let userSession = UserSessionMock()
         sut.applicationDidBecomeActive()

@@ -19,11 +19,9 @@
 import Foundation
 
 public final class FetchSupportedProtocolsAction: EntityAction {
-
     public typealias Result = Set<MessageProtocol>
 
     public enum Failure: Error, Equatable {
-
         case endpointUnavailable
         case invalidParameters
         case invalidResponse

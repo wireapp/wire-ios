@@ -25,7 +25,6 @@ import WireSyncEngine
  */
 
 final class LegalHoldDisclosureController: UserObserving {
-
     enum DisclosureState: Equatable {
         /// No legal hold status is being disclosed.
         case none

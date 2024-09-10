@@ -20,14 +20,12 @@ import UIKit
 import WireSystem
 
 protocol CollectionViewSectionController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
     var isHidden: Bool { get }
 
     func prepareForUse(in collectionView: UICollectionView?)
 }
 
 final class SectionCollectionViewController: NSObject {
-
     var collectionView: UICollectionView? {
         didSet {
             collectionView?.dataSource = self
@@ -61,7 +59,6 @@ final class SectionCollectionViewController: NSObject {
 }
 
 extension SectionCollectionViewController: UICollectionViewDelegate {
-
     func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
         guard visibleSections.indices.contains(indexPath.section) else { return true }
 
@@ -88,7 +85,6 @@ extension SectionCollectionViewController: UICollectionViewDelegate {
 }
 
 extension SectionCollectionViewController: UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return visibleSections.count
     }
@@ -123,7 +119,6 @@ extension SectionCollectionViewController: UICollectionViewDataSource {
 }
 
 extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return visibleSections[section].collectionView?(collectionView, layout: collectionViewLayout, referenceSizeForHeaderInSection: section) ?? .zero
     }

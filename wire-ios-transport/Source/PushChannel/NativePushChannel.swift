@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 final class NativePushChannel: NSObject, PushChannelType {
-
     var clientID: String? {
         didSet {
             WireLogger.pushChannel.debug("Setting client ID")
@@ -220,7 +219,6 @@ final class NativePushChannel: NSObject, PushChannelType {
 }
 
 extension NativePushChannel: ZMTimerClient {
-
     func timerDidFire(_ timer: ZMTimer!) {
         WireLogger.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
@@ -233,7 +231,6 @@ extension NativePushChannel: ZMTimerClient {
 }
 
 extension NativePushChannel: URLSessionWebSocketDelegate {
-
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         WireLogger.pushChannel.info("Push channel did open with protocol \(`protocol` ?? "n/a")")
 
@@ -248,7 +245,6 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 }
 
 extension NativePushChannel: URLSessionDataDelegate {
-
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         WireLogger.pushChannel.error("Websocket open connection task did fail: \(error.map({ String(describing: $0) }) ?? "n/a" )")
 
@@ -259,7 +255,6 @@ extension NativePushChannel: URLSessionDataDelegate {
                     task: URLSessionTask,
                     didReceive challenge: URLAuthenticationChallenge,
                     completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-
         let protectionSpace = challenge.protectionSpace
 
         guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {

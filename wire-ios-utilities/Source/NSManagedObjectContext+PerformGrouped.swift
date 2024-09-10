@@ -19,15 +19,12 @@
 import CoreData
 
 extension NSManagedObjectContext {
-
     static private let timeout: TimeInterval = 10
 
     @discardableResult @available(*, noasync)
     public func performGroupedAndWait<T>(_ block: () -> T) -> T {
-
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return performAndWait {
-
             let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 dispatchGroupContext?.leave(groups)
@@ -39,10 +36,8 @@ extension NSManagedObjectContext {
 
     @discardableResult
     public func performGrouped<T>(_ block: @escaping () -> T) async -> T {
-
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return await perform {
-
             let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 self.dispatchGroupContext?.leave(groups)
@@ -54,10 +49,8 @@ extension NSManagedObjectContext {
 
     @discardableResult @available(*, noasync)
     public func performGroupedAndWait<T>(_ block: () throws -> T) throws -> T {
-
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return try performAndWait {
-
             let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 dispatchGroupContext?.leave(groups)
@@ -71,10 +64,8 @@ extension NSManagedObjectContext {
     public func performGrouped<T>(
         _ execute: @escaping () throws -> T
     ) async throws -> T {
-
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         return try await perform {
-
             let tp = TimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 self.dispatchGroupContext?.leave(groups)
@@ -91,7 +82,6 @@ extension NSManagedObjectContext {
  We call `NSManagedObjectContext/enterAllGroupsExceptSecondary()` before the Task and leave the groups at the end.
  */
 public struct WaitingGroupTask {
-
     let context: NSManagedObjectContext
 
     public init(context: NSManagedObjectContext) {

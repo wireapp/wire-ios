@@ -21,7 +21,6 @@ import WireSyncEngine
 import Ziphy
 
 final class ZiphySession: ZiphyURLRequester {
-
     private let userSession: UserSession
 
     init(userSession: UserSession) {

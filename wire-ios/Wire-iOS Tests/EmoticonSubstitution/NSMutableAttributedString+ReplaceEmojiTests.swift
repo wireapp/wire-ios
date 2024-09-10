@@ -20,7 +20,6 @@
 import XCTest
 
 final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
-
     func testThatReplaceEmojiAtTheEndWithoutExcludedRange() {
         // GIVEN
         // length = 2

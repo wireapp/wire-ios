@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ProfileFooterViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -47,7 +46,6 @@ final class ProfileFooterViewTests: XCTestCase {
     // MARK: - Unit Test
 
     func testThatItOnlyAllowsEligibleActionsAsKey() {
-
         // WHEN: the first action is eligible
         sut.configure(with: [.openOneToOne, .archive])
         XCTAssertEqual(sut.leftAction, .openOneToOne)

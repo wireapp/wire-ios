@@ -20,7 +20,6 @@
 import XCTest
 
 class RichAssetFileTypeTests: XCTestCase {
-
     func testThatItParsesWalletPassCorrectly() {
         assertFileType("application/vnd.apple.pkpass", .walletPass)
     }

@@ -19,7 +19,6 @@
 import UserNotifications
 
 public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
-
     private var userNotificationCenter: UNUserNotificationCenter
 
     public var delegate: UNUserNotificationCenterDelegate? {
@@ -74,7 +73,6 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
 // MARK: - UserNotificationCenterAbstraction + wrapper(_:)
 
 extension UserNotificationCenterAbstraction where Self == UserNotificationCenterWrapper {
-
     public static func wrapper(_ userNotificationCenter: UNUserNotificationCenter) -> Self {
         .init(userNotificationCenter: userNotificationCenter)
     }

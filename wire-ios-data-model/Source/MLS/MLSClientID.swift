@@ -21,7 +21,6 @@ import WireTransport
 
 /// An ID representing a identifying a single user client.
 public struct MLSClientID: Equatable, Hashable {
-
     // MARK: - Properties
 
     public var userID: String
@@ -102,7 +101,6 @@ public struct MLSClientID: Equatable, Hashable {
 }
 
 extension MLSClientID: CustomStringConvertible {
-
     public var description: String {
         rawValue
     }

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class LastEventIDRepositoryTests: XCTestCase {
-
     var sut: LastEventIDRepository!
     var userID: UUID!
     var userDefaults: UserDefaults!

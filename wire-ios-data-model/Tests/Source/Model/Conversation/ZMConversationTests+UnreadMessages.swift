@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
-
     func testThatItCalculatesLastUnreadMessages() {
         syncMOC.performGroupedAndWait {
             // given

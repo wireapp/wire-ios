@@ -20,9 +20,7 @@ import Foundation
 import WireDataModel
 
 extension AppLockController.LegacyConfig {
-
     private struct Container: Decodable {
-
         let legacyAppLockConfig: AppLockController.LegacyConfig?
     }
 

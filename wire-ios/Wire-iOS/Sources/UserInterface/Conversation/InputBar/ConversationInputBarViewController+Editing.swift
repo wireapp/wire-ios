@@ -22,7 +22,6 @@ import WireSyncEngine
 private let endEditingNotificationName = "ConversationInputBarViewControllerShouldEndEditingNotification"
 
 extension ConversationInputBarViewController {
-
     func editMessage(_ message: ZMConversationMessage) {
         guard let text = message.textMessageData?.messageText else { return }
         mode = .textInput
@@ -73,7 +72,6 @@ extension ConversationInputBarViewController {
 }
 
 extension ConversationInputBarViewController: InputBarEditViewDelegate {
-
     func inputBarEditView(_ editView: InputBarEditView, didTapButtonWithType buttonType: EditButtonType) {
         switch buttonType {
         case .undo: inputBar.undo()

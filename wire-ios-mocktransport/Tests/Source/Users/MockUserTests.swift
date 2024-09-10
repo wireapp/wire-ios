@@ -20,7 +20,6 @@ import Foundation
 @testable import WireMockTransport
 
 class MockUserTests: MockTransportSessionTests {
-
     var team: MockTeam!
     var selfUser: MockUser!
     var conversation: MockConversation!

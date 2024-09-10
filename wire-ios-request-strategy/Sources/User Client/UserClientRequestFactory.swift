@@ -19,7 +19,6 @@
 import Foundation
 
 public class UserClientRequestFactory {
-
     public init() {}
 
     func deleteClientRequest(

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class MLSUserIDTests: XCTestCase {
-
     func test_ItLowercasesComponents() throws {
         // When
         let id = try XCTUnwrap(MLSUserID(userID: "FOO", domain: "BAR"))

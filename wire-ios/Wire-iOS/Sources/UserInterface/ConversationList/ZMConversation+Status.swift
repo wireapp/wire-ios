@@ -131,7 +131,6 @@ extension StatusMessageType {
     ]
 
     init?(message: ZMConversationMessage) {
-
         if message.isText, let textMessage = message.textMessageData {
             if textMessage.isMentioningSelf {
                 self = .mention
@@ -309,7 +308,6 @@ final class CallingMatcher: ConversationStatusMatcher {
     }
 
     static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
-
         guard let state else {
             return nil
         }
@@ -332,7 +330,6 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
-
         guard let message = status.messagesRequiringAttention.reversed().first(where: {
             $0.isComposite
         }) else {
@@ -374,7 +371,6 @@ final class TypingMatcher: ConversationStatusMatcher {
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
-
         let statusString: NSAttributedString
         if status.isGroup {
             let typingUsersString = conversation.typingUsers.compactMap(\.name).joined(separator: ", ")
@@ -420,7 +416,6 @@ final class SilencedMatcher: ConversationStatusMatcher {
 }
 
 extension ConversationStatus {
-
     var showingAllMessages: Bool {
         return mutedMessageTypes == .none
     }
@@ -565,7 +560,6 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
     }
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
-
         if status.hasSelfMention {
             return .mention
         } else if status.hasSelfReply {
@@ -620,7 +614,6 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
            let systemMessage = message.systemMessageData,
            let sender = message.senderUser,
            !sender.isSelfUser {
-
             if systemMessage.userTypes.contains(where: { ($0 as? UserType)?.isSelfUser == true }) {
                 let fullName = sender.name ?? ""
                 let result = L10n.Localizable.Conversation.Status.youWasAdded(fullName) && type(of: self).regularStyle
@@ -632,12 +625,10 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
 
     private func removedString(for messages: [ZMConversationMessage],
                                in conversation: MatcherConversation) -> NSAttributedString? {
-
         if let message = messages.last,
            let systemMessage = message.systemMessageData,
            let sender = message.senderUser,
            !sender.isSelfUser {
-
             if systemMessage.userTypes.contains(where: { ($0 as? UserType)?.isSelfUser == true }) {
                 return L10n.Localizable.Conversation.Status.youWereRemoved && type(of: self).regularStyle
             }
@@ -758,7 +749,6 @@ extension ConversationStatus {
     }
 
     func appliedMatcherForIcon(for conversation: MatcherConversation) -> ConversationStatusMatcher? {
-
         for matcher in allMatchers.filter({ $0.isMatching(with: self) }) {
             let icon = matcher.icon(with: self, conversation: conversation)
             switch icon {
@@ -791,7 +781,6 @@ extension ConversationStatus {
 }
 
 extension ZMConversation {
-
     var status: ConversationStatus {
         let messagesRequiringAttention = estimatedUnreadCount > 0 ? unreadMessages : []
 

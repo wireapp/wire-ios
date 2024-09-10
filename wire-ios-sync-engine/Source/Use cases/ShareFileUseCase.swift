@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol ShareFileUseCaseProtocol {
-
     /// Share the debug report with the given conversations
     ///
     /// - Parameters:
@@ -35,7 +34,6 @@ public protocol ShareFileUseCaseProtocol {
 }
 
 public struct ShareFileUseCase: ShareFileUseCaseProtocol {
-
     private let contextProvider: ContextProvider
 
     public init(contextProvider: ContextProvider) {

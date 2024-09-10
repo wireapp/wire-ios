@@ -21,7 +21,6 @@ import WireTransport
 
 extension Payload {
     struct UpdateConverationMemberLeave: CodableEventData {
-
         static var eventType: ZMUpdateEventType { .conversationMemberLeave }
 
         let userIDs: [UUID]?

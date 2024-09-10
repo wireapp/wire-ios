@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class StartUIInviteActionBar: UIView {
-
     var bottomEdgeConstraint: NSLayoutConstraint!
 
     private(set) var inviteButton: ZMButton!

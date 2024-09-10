@@ -23,7 +23,6 @@ import Foundation
 var debug_searchResultAddressBookOverride: AddressBookAccessor?
 
 extension SearchResult {
-
     /// Creates a new search result with the same results and additional
     /// results obtained by searching through the address book with the same query
     public func extendWithContactsFromAddressBook(_ query: String, contextProvider: ContextProvider) -> SearchResult {
@@ -87,7 +86,6 @@ extension SearchResult {
 
     /// Returns users that are linked to the given address book contacts
     private func contactsThatAreAlsoUsers(contacts: [ZMAddressBookContact], managedObjectContext: NSManagedObjectContext) -> (users: [ZMUser], nonMatchedContacts: [ZMAddressBookContact]) {
-
         guard !contacts.isEmpty else {
             return (users: [], nonMatchedContacts: [])
         }

@@ -22,7 +22,6 @@ import WireLinkPreview
 import XCTest
 
 final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
-
     var mockOtherUser: MockUserType!
     var message: MockMessage!
 

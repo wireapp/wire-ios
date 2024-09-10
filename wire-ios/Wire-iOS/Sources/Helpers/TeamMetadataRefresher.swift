@@ -24,7 +24,6 @@ import WireSyncEngine
 /// It ensures the trigger is not made more than once within a specified time interval.
 
 final class TeamMetadataRefresher {
-
     // MARK: - Properties
 
     /// The minimum interval of time between consecutive refreshes. Defaults to 24 hours.

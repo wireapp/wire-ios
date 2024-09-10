@@ -19,7 +19,6 @@
 import Foundation
 
 public extension Account {
-
     /// Delete the keychain items associated with the account.
 
     func deleteKeychainItems() {

@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

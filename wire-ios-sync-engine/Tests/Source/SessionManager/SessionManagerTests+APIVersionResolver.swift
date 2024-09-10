@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 final class SessionManagerAPIVersionResolverTests: IntegrationTest {
-
     func testThatDatabaseIsMigrated_WhenFederationIsEnabled() throws {
         // GIVEN
 
@@ -89,7 +88,6 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 }
 
 private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
-
     var didCallDidPerformFederationMigration: Bool = false
     var expectation: XCTestExpectation?
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {

@@ -20,7 +20,6 @@ import Foundation
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
-
     /// Storage of the user's preferred notification sounds.
 
     public static var storage: UserDefaults = .standard

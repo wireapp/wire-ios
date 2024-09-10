@@ -19,7 +19,6 @@
 import Foundation
 
 final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
-
     var team: Team!
     var otherTeam: Team!
     var teamConversation1: ZMConversation!

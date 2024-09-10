@@ -43,7 +43,6 @@ struct LabelPayload: Codable, Equatable {
 }
 
 public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventConsumer, ZMSingleRequestTranscoder {
-
     fileprivate let syncStatus: SyncStatus
 
     fileprivate var slowSync: ZMSingleRequestSync!

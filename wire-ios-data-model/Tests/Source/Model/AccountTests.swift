@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class AccountTests: XCTestCase {
-
     func testThatItCanSerializeAnAccountToDisk() throws {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")

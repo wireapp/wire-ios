@@ -22,7 +22,6 @@ import WireTransport
 import XCTest
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
-
     typealias RequestPayload = Payload.NewConversation
     typealias ResponsePayload = Payload.Conversation
     typealias ErrorResponse = CreateGroupConversationActionHandler.ErrorResponse

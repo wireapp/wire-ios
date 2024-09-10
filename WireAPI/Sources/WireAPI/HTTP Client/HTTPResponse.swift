@@ -21,7 +21,6 @@ import Foundation
 /// A http response that is received from a server.
 
 public struct HTTPResponse {
-
     /// The status code.
 
     public var code: Int

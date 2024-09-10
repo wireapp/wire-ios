@@ -23,7 +23,6 @@ import WireSyncEngine
 extension Int: Differentiable { }
 extension String: Differentiable { }
 extension AnyConversationMessageCellDescription: Differentiable {
-
     typealias DifferenceIdentifier = String
 
     var differenceIdentifier: String {
@@ -335,7 +334,6 @@ final class ConversationTableViewDataSource: NSObject {
         // 3. Get the index path of the message that should stay displayed
         if let newestMessageBeforeReload,
            let sectionIndex = self.index(of: newestMessageBeforeReload) {
-
             // 4. Get the frame of that message
             let indexPathRect = tableView.rect(forSection: sectionIndex)
 
@@ -353,7 +351,6 @@ final class ConversationTableViewDataSource: NSObject {
 }
 
 extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
-
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         // no-op
     }
@@ -392,7 +389,6 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
 }
 
 extension ConversationTableViewDataSource: UITableViewDataSource {
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return currentSections.count
     }
@@ -455,14 +451,12 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 }
 
 extension ConversationTableViewDataSource: ConversationMessageSectionControllerDelegate {
-
     func messageSectionController(_ controller: ConversationMessageSectionController, didRequestRefreshForMessage message: ZMConversationMessage) {
         reloadSections(newSections: calculateSections(updating: controller))
     }
 }
 
 extension ConversationTableViewDataSource {
-
     func messagePrevious(to message: ZMConversationMessage, at index: Int) -> ZMConversationMessage? {
         guard (index + 1) < messages.count else {
             return nil
@@ -536,7 +530,6 @@ extension ConversationTableViewDataSource {
 }
 
 extension Date {
-
   func isInSameMinute(asDate date: Date) -> Bool {
     let calendar = Calendar.current
     let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: self)

@@ -19,7 +19,6 @@
 import UIKit
 
 extension ConversationInputBarViewController {
-
     private typealias Shortcut = L10n.Localizable.Conversation.InputBar.Shortcut
 
     override var keyCommands: [UIKeyCommand]? {

@@ -20,7 +20,6 @@
 import XCTest
 
 final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
-
     var mockSelfUser: MockUserType!
     var mockOtherUser: MockUserType!
 
@@ -141,7 +140,6 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     // MARK: - Invite Guests
 
     func testThatItRendersNewConversationCellWithParticipantsAndName_AllowGuests() {
-
         let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .many, allowGuests: true)
         verify(message: message)
     }

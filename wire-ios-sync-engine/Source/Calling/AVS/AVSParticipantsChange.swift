@@ -19,12 +19,10 @@
 import Foundation
 
 public struct AVSParticipantsChange: Codable {
-
     let convid: String
     let members: [Member]
 
     public struct Member: Codable {
-
         let userid: String
         let clientid: String
         let aestab: AudioState

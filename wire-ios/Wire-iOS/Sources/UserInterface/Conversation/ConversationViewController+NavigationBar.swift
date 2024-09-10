@@ -24,7 +24,6 @@ import WireSyncEngine
 // MARK: - Update left navigator bar item when size class changes
 
 extension ConversationViewController {
-
     typealias IconColors = SemanticColors.Icon
     typealias ButtonColors = SemanticColors.Button
     typealias CallActions = L10n.Localizable.Call.Actions
@@ -243,11 +242,8 @@ extension ConversationViewController {
 }
 
 extension ConversationViewController: CollectionsViewControllerDelegate {
-
     func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
-
         switch action {
-
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {
                 self.contentViewController.scroll(to: message) { _ in
@@ -269,14 +265,12 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 }
 
 extension ConversationViewController: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateRightNavigationItemsButtons()
     }
 }
 
 extension ZMConversation {
-
     /// Whether there is an incoming or inactive incoming call that can be joined.
     var canJoinCall: Bool {
         return voiceChannel?.state.canJoinCall ?? false
@@ -292,7 +286,6 @@ extension ZMConversation {
 }
 
 extension CallState {
-
     var canJoinCall: Bool {
         switch self {
         case .incoming: return true

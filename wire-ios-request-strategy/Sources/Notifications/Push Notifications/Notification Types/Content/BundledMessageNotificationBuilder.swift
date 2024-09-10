@@ -19,7 +19,6 @@
 import Foundation
 
 final class BundledMessagesNotificationBuilder: NotificationBuilder {
-
     var notificationType: LocalNotificationType {
         return .bundledMessages
     }

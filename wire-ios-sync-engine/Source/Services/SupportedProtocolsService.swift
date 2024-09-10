@@ -22,12 +22,10 @@ import WireRequestStrategy
 
 // sourcery: AutoMockable
 public protocol SupportedProtocolsServiceInterface {
-
     func calculateSupportedProtocols() -> Set<MessageProtocol>
 }
 
 public final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
-
     // MARK: - Properties
 
     private let featureRepository: FeatureRepositoryInterface
@@ -156,7 +154,6 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 // MARK: -
 
 private extension UserClient {
-
     var isActiveMLSClient: Bool {
         return hasMLSIdentity && isRecentlyActive
     }

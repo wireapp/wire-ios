@@ -40,7 +40,6 @@ func XCTAssertArrayEqual(_ descriptions: [Any], _ expectedDescriptions: [Any], f
 }
 
 class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
-
     var userSession: UserSessionMock!
 
     override func setUp() {
@@ -66,7 +65,6 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
                 file: StaticString = #file,
                 testName: String = #function,
                 line: UInt = #line) {
-
         let createSut: () -> UIView = {
             // prevent cache exist and loading image immediately
             if !waitForImagesToLoad {

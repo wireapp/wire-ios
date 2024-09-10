@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUserSession {
-
     public func application(_ application: ZMApplication, didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]) {
         startEphemeralTimers()
     }
@@ -51,7 +50,6 @@ extension ZMUserSession {
 
     @objc
     public func applicationWillEnterForeground(_ note: Notification?) {
-
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()
         deleteOldEphemeralMessages()

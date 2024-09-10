@@ -19,7 +19,6 @@
 import UIKit
 
 class ConversationCreateSectionController: NSObject, CollectionViewSectionController {
-
     typealias CreationCell = (DetailsCollectionViewCell & ConversationCreationValuesConfigurable)
 
     var values: ConversationCreationValues
@@ -57,7 +56,6 @@ extension ConversationCreateSectionController: ConversationCreationValuesConfigu
 }
 
 extension ConversationCreateSectionController {
-
     // MARK: - Data Source
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

@@ -23,7 +23,6 @@ import Foundation
  */
 
 public struct ZiphyAnimatedImage: Codable {
-
     public let url: URL
     public let width: ZiphyInt
     public let height: ZiphyInt

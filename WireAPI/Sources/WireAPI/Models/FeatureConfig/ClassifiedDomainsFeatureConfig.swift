@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *Classified Domains* feature.
 
 public struct ClassifiedDomainsFeatureConfig: Equatable, Codable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus

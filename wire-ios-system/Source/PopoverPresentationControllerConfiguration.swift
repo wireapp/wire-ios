@@ -20,7 +20,6 @@ import UIKit
 
 /// Wraps the infos about how a popover should be presented.
 public enum PopoverPresentationControllerConfiguration {
-
     case barButtonItem(_ barButtonItem: UIBarButtonItem)
     case sourceView(sourceView: UIView, sourceRect: CGRect)
 
@@ -43,7 +42,6 @@ public enum PopoverPresentationControllerConfiguration {
 // MARK: - UIViewController + configurePopoverPresentationController
 
 extension UIViewController {
-
     /// Sets the required properties for presenting the popover presentation controller, if it's non-`nil`.
     /// (`sourceView` and `sourceRect`, or `barButtonItem`)
     /// - Returns: `true` if the poover controller has been confiugured, `false` if `popoverPresentationController` is `nil`.
@@ -51,11 +49,9 @@ extension UIViewController {
     public func configurePopoverPresentationController(
         using configuration: PopoverPresentationControllerConfiguration
     ) -> Bool {
-
         guard let popoverPresentationController else { return false }
 
         switch configuration {
-
         case .barButtonItem(let barButtonItem):
             popoverPresentationController.barButtonItem = barButtonItem
 

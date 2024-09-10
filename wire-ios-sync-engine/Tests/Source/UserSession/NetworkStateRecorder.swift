@@ -20,7 +20,6 @@
 
 @objc
 public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver {
-
     // MARK: Properties
 
     private var _stateChanges: [NetworkState] = []

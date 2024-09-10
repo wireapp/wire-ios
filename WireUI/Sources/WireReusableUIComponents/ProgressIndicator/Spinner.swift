@@ -20,7 +20,6 @@ import SwiftUI
 import WireDesign
 
 public final class Spinner: UIView {
-
     public var color: UIColor = .white {
         didSet { updateSpinnerIcon() }
     }

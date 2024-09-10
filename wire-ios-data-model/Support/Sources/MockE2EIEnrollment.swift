@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 
 class MockE2EIEnrollment: E2eiEnrollmentProtocol {
-
     // MARK: - directoryResponse
 
     var mockDirectoryResponse: ((Data) async throws -> AcmeDirectory)?

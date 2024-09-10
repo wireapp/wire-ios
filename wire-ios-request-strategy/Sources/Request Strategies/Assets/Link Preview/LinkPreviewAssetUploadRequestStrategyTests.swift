@@ -25,7 +25,6 @@ import XCTest
 // MARK: - Tests setup
 
 class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
-
     fileprivate var sut: LinkPreviewAssetUploadRequestStrategy!
     fileprivate var mockApplicationStatus: MockApplicationStatus!
 
@@ -125,7 +124,6 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
 // MARK: - Tests
 
 extension LinkPreviewAssetUploadRequestStrategyTests {
-
     func testThatItCreatesRequestForProcessedLinkPreview() {
         syncMOC.performGroupedAndWait {
             // GIVEN
@@ -279,7 +277,6 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
 }
 
 extension LinkPreviewAssetUploadRequestStrategyTests {
-
     func testThatItUpdatesEphemeralMessageWithAssetKeyAndToken() {
         // GIVEN
         let assetId = "id123"

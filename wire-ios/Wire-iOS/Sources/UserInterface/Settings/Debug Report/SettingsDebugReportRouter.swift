@@ -22,7 +22,6 @@ import WireReusableUIComponents
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportRouterProtocol {
-
     /// Presents the mail composer with the debug report
 
     @MainActor func presentMailComposer()
@@ -44,7 +43,6 @@ protocol SettingsDebugReportRouterProtocol {
 }
 
 final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtocol {
-
     // MARK: - Properties
 
     weak var viewController: UIViewController?
@@ -62,7 +60,6 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
         destinations: [ZMConversation],
         debugReport: ShareableDebugReport
     ) {
-
         let shareViewController = ShareViewController<ZMConversation, ShareableDebugReport>(
             shareable: debugReport,
             destinations: destinations,
@@ -110,7 +107,6 @@ final class SettingsDebugReportRouter: NSObject, SettingsDebugReportRouterProtoc
 }
 
 extension SettingsDebugReportRouter: MFMailComposeViewControllerDelegate {
-
     func mailComposeController(
         _ controller: MFMailComposeViewController,
         didFinishWith result: MFMailComposeResult,

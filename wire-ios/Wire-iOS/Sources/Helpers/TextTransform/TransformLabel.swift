@@ -23,7 +23,6 @@ import UIKit
  */
 
 final class TransformLabel: UILabel {
-
     override var accessibilityValue: String? {
         get {
             return attributedText?.string ?? text

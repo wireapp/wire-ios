@@ -19,7 +19,6 @@
 import Foundation
 
 public struct SyncMLSOneToOneConversationAction: EntityAction {
-
     public typealias Result = MLSGroupID
     public typealias Failure = SyncMLSOneToOneConversationActionError
 
@@ -39,7 +38,6 @@ public struct SyncMLSOneToOneConversationAction: EntityAction {
 }
 
 public enum SyncMLSOneToOneConversationActionError: Error, Equatable {
-
     case endpointUnavailable
     case invalidDomain
     case invalidResponse

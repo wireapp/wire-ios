@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class CompositeMessageItemContentTests: BaseCompositeMessageTests {
-
     func testThatButtonTouchActionInsertsMessageInConversationIfNoneIsSelected() {
         // GIVEN
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(), compositeItemText()))

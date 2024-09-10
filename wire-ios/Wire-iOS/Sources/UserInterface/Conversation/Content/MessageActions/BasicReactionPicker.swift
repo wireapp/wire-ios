@@ -63,7 +63,6 @@ final class BasicReactionPicker: UIView {
 }
 
 private extension BasicReactionPicker {
-
     func setupViews() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.text = L10n.Localizable.Content.Message.reactions

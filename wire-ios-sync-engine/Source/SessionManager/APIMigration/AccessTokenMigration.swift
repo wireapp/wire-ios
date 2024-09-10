@@ -30,7 +30,6 @@ protocol AccessTokenRenewing {
 }
 
 class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
-
     let version: APIVersion = .v3
 
     private var continuation: CheckedContinuation<Void, Swift.Error>?

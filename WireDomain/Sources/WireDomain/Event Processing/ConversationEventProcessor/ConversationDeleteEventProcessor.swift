@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation delete events.
 
 protocol ConversationDeleteEventProcessorProtocol {
-
     /// Process a conversation delete event.
     ///
     /// - Parameter event: A conversation delete event.
@@ -30,7 +29,6 @@ protocol ConversationDeleteEventProcessorProtocol {
 }
 
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
-
     func processEvent(_: ConversationDeleteEvent) async throws {
         // TODO: [WPB-10167]
         assertionFailure("not implemented yet")

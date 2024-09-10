@@ -19,7 +19,6 @@
 import Foundation
 
 enum ChangeEmailError: LocalizedError {
-
     case invalidEmail
 
     var errorDescription: String? {

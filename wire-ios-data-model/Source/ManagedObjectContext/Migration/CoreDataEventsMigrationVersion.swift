@@ -19,7 +19,6 @@
 import Foundation
 
 enum CoreDataEventsMigrationVersion: String, CoreDataMigrationVersion {
-
     private enum Constant {
         static let dataModelPrefix = "ZMEventModel"
         static let modelDirectory = "ZMEventModel.momd"

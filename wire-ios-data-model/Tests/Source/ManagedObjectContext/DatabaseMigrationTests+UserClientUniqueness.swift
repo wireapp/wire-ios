@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
-
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
     private let bundle = Bundle(for: ZMManagedObject.self)
@@ -85,7 +84,6 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         with identifier: String,
         in context: NSManagedObjectContext
     ) throws -> [UserClient] {
-
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, identifier)
         fetchRequest.fetchLimit = 2

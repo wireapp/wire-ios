@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class SketchToolbar: UIView {
-
     let containerView = UIView()
     let leftButton: UIButton!
     let rightButton: UIButton!
@@ -29,7 +28,6 @@ final class SketchToolbar: UIView {
     let separatorLine = UIView()
 
     init(buttons: [UIButton]) {
-
         guard buttons.count >= 2 else {  fatalError("SketchToolbar needs to be initialized with at least two buttons") }
 
         var unassignedButtons = buttons

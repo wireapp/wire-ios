@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class ConversationTests_DraftMessage: ZMConversationTestsBase {
-
     override func setUp() {
         super.setUp()
 

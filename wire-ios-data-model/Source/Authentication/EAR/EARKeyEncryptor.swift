@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol EARKeyEncryptorInterface {
-
     func encryptDatabaseKey(
         _ databaseKey: Data,
         publicKey: SecKey
@@ -33,7 +32,6 @@ protocol EARKeyEncryptorInterface {
 }
 
 struct EARKeyEncryptor: EARKeyEncryptorInterface {
-
     private var databaseKeyAlgorithm: SecKeyAlgorithm {
         return .eciesEncryptionCofactorX963SHA256AESGCM
     }

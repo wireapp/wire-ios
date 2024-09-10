@@ -26,14 +26,12 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 protocol ConnectionsRepositoryProtocol {
-
     /// Pull self team metadata frmo the server and store locally.
 
     func pullConnections() async throws
 }
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
-
     private let connectionsAPI: any ConnectionsAPI
     private let context: NSManagedObjectContext
 

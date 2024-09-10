@@ -19,7 +19,6 @@
 import Foundation
 
 protocol UserSessionLogoutDelegate: AnyObject {
-
     /// Invoked when the user successfully logged out
     func userDidLogout(accountId: UUID)
 

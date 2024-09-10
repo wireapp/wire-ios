@@ -20,7 +20,6 @@
 import XCTest
 
 final class String_FingerprintTests: XCTestCase {
-
     func testGivenEmptyStringAndUsingFingerPrintSpacesWhenSplitStringIntoLinesThenValidIsReturned() {
         let testText = ""
         XCTAssertEqual(testText, testText.splitStringIntoLines(charactersPerLine: 10))

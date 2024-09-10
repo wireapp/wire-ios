@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
-
     // MARK: - Properties
 
     private let topSeparator = UIView()

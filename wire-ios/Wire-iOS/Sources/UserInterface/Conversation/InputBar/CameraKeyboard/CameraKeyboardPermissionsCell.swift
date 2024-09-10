@@ -28,7 +28,6 @@ enum DeniedAuthorizationType {
 }
 
 final class CameraKeyboardPermissionsCell: UICollectionViewCell {
-
     // MARK: - Properties
 
     let settingsButton = ZMButton(
@@ -109,7 +108,6 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     // MARK: - UI Constraints
 
     private func createConstraints(deniedAuthorization: DeniedAuthorizationType) {
-
         [
             containerView,
             descriptionLabel,
@@ -137,7 +135,6 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     }
 
     private func createConstraintsForPermissionsAlert() -> [NSLayoutConstraint] {
-
         if cameraIcon.superview != nil {
             cameraIcon.removeFromSuperview()
         }
@@ -153,7 +150,6 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
     }
 
     private func createConstraintsForOngoingCallAlert() -> [NSLayoutConstraint] {
-
         if settingsButton.superview != nil {
             settingsButton.removeFromSuperview()
         }

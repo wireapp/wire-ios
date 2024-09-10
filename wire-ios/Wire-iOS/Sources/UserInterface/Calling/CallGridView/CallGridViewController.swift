@@ -110,7 +110,6 @@ final class CallGridViewController: UIViewController {
         configuration: CallGridViewControllerInput,
         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance()
     ) {
-
         self.configuration = configuration
         self.mediaManager = mediaManager
         self.voiceChannel = voiceChannel
@@ -140,7 +139,6 @@ final class CallGridViewController: UIViewController {
     // MARK: - Setup
 
     private func setupViews() {
-
         gridView.dataSource = self
         gridView.gridViewDelegate = self
         view.addSubview(gridView)
@@ -500,7 +498,6 @@ final class CallGridViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 
 extension CallGridViewController: UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -570,7 +567,6 @@ extension CallGridViewController {
 
 extension EditableUserType {
     var selfStreamId: AVSClient {
-
         guard
             let selfUser = ZMUser.selfUser(),
             let clientId = selfUser.selfClient()?.remoteIdentifier
@@ -583,7 +579,6 @@ extension EditableUserType {
 }
 
 extension CGSize {
-
     static let floatingPreviewSmall = CGSize(width: 108, height: 144)
     static let floatingPreviewLarge = CGSize(width: 150, height: 200)
 
@@ -600,7 +595,6 @@ extension CGSize {
 }
 
 extension Notification.Name {
-
     static let videoGridVisibilityChanged = Notification.Name(rawValue: "VideoGridVisibilityChanged")
 }
 

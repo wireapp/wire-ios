@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 class CallParticipantDetailsViewTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
     private var sut: CallParticipantDetailsView!
 

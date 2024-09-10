@@ -24,7 +24,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class UserClientTests: ZMBaseManagedObjectTest {
-
     override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -128,7 +127,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatTrustingClientsRemovesThemFromIgnoredClientList() {
-
         let client = clientWithTrustedClientCount(0, ignoredClientCount: 2, missedClientCount: 0)
 
         let ignoredClient = client.ignoredClients.first!
@@ -140,7 +138,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatIgnoringClientsRemovesThemFromTrustedList() {
-
         let client = clientWithTrustedClientCount(2, ignoredClientCount: 1, missedClientCount: 0)
 
         let trustedClient = client.trustedClients.first!
@@ -431,7 +428,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItAsksForMoreWhenRunningOutOfPrekeys() {
-
         self.syncMOC.performGroupedAndWait {
             // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
@@ -446,7 +442,6 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItDoesntAskForMoreWhenItStillHasPrekeys() {
-
         self.syncMOC.performGroupedAndWait {
             // given
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
@@ -486,7 +481,6 @@ extension UserClientTests {
 }
 
 extension UserClientTests {
-
     func testThatSelfClientIsTrusted() {
         // given & when
         let selfClient = self.createSelfClient()
@@ -549,9 +543,7 @@ extension UserClientTests {
 // MARK: SignalingStore
 
 extension UserClientTests {
-
     func testThatItDeletesExistingSignalingKeys() {
-
         // given
         let selfClient = createSelfClient()
         selfClient.apsVerificationKey = Data()
@@ -569,7 +561,6 @@ extension UserClientTests {
     }
 
     func testThatItSetsKeysNeedingToBeSynced() {
-
         // given
         let selfClient = createSelfClient()
 
@@ -585,7 +576,6 @@ extension UserClientTests {
 // MARK: Capabilities
 
 extension UserClientTests {
-
     func testThatItSetsKeysNeedingToBeSynced_Capabilities() {
         // given
         let selfClient = createSelfClient()
@@ -602,7 +592,6 @@ extension UserClientTests {
 // MARK: fetchFingerprintOrPrekeys
 
 extension UserClientTests {
-
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient() {
         // given
         _ = createSelfClient()
@@ -795,7 +784,6 @@ extension UserClientTests {
 // MARK: - Update from payload
 
 extension UserClientTests {
-
     func testThatItUpdatesDeviceClassFromPayload() {
         // given
         let allCases: [DeviceClass] = [.desktop, .phone, .tablet, .legalHold]
@@ -840,7 +828,6 @@ extension UserClientTests {
 // MARK: - Session Identifier
 
 extension UserClientTests {
-
     func testThatItReturnsCorrectSessionIdentifier_WhenSessionNeedsMigration() {
         // given
         let user = createUser(in: uiMOC)
@@ -1022,7 +1009,6 @@ extension UserClientTests {
 // MARK: - MLS Public Keys
 
 extension UserClientTests {
-
     func test_SettingNewMLSPublicKeys_MarksClientAsNeedingToUploadMLSPublicKeys() {
         // Given
         let client = UserClient.insertNewObject(in: self.uiMOC)
@@ -1057,7 +1043,6 @@ extension UserClientTests {
 // MARK: - Proteus
 
 extension UserClientTests {
-
     func test_GivenDeveloperFlagProteusViaCoreCryptoEnabled_ItUsesCoreKrypto() async {
         // GIVEN
         let context = self.syncMOC

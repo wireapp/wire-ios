@@ -20,9 +20,7 @@
 import XCTest
 
 final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
-
     func testThatMakingRequestAddsPendingRequest() {
-
         // given
         let path = "foo/bar"
         let url = URL(string: path, relativeTo: nil)!
@@ -46,7 +44,6 @@ final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
     }
 
     func testThatAddingRequestStartsOperationLoop() {
-
         // given
         let exp = self.customExpectation(description: "new operation loop started")
         let token = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "RequestAvailableNotification"), object: nil, queue: nil) { _ in
@@ -66,7 +63,6 @@ final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
     }
 
     func testThatAddingRequestIsMadeOnSyncThread() {
-
         // given
         let url = URL(string: "foo/bar", relativeTo: nil)!
         let callback: (Data?, URLResponse?, Error?) -> Void = { _, _, _ in }

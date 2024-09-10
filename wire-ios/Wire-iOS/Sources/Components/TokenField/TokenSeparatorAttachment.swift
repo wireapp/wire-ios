@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
-
     let token: Token<NSObjectProtocol>
 
     typealias ViewColors = SemanticColors.View

@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class LabelDownstreamRequestStrategyTests: MessagingTest {
-
     var sut: LabelDownstreamRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!

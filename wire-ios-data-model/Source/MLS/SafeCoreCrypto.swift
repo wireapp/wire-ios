@@ -28,7 +28,6 @@ public protocol SafeCoreCryptoProtocol {
 }
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
-
     public enum CoreCryptoSetupFailure: Error, Equatable {
         case failedToGetClientIDBytes
     }

@@ -21,7 +21,6 @@ import WireDataModelSupport
 import XCTest
 
 final class GetMLSFeatureUseCaseTests: XCTestCase {
-
     private var mockRepository: MockFeatureRepositoryInterface!
 
     override func setUp() {

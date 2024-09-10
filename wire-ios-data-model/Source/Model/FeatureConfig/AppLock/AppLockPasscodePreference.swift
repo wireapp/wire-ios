@@ -23,7 +23,6 @@ import LocalAuthentication
 /// are permitted to be used to authenticate the app lock.
 
 public enum AppLockPasscodePreference {
-
     /// The device passcode is preferred, if available,
     /// otherwise use the custom passcode.
 

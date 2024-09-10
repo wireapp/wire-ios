@@ -48,7 +48,6 @@ internal protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
 }
 
 public final class UserProfileImageUpdateStatus: NSObject {
-
     fileprivate var log = ZMSLog(tag: "UserProfileImageUpdateStatus")
 
     internal enum ImageState {
@@ -242,7 +241,6 @@ extension UserProfileImageUpdateStatus {
 
 // Called from the UI to update a v3 image
 extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
-
     /// Starts the process of updating profile picture. 
     ///
     /// - Important: Expected to be run from UI thread
@@ -256,7 +254,6 @@ extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
 }
 
 extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
-
     public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
         syncMOC.performGroupedBlock {
             ProfileImageSize.allSizes.forEach {
@@ -284,7 +281,6 @@ extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
 }
 
 extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
-
     /// Checks if there are assets that needs to be deleted
     ///
     /// - Returns: true if there are assets that needs to be deleted

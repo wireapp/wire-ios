@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class TwoLineTitleView: UIView {
-
     let titleLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
                                      color: SemanticColors.Label.textDefault)

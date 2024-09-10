@@ -22,7 +22,6 @@ import Foundation
 @testable import WireDataModelSupport
 
 class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
-
     var sut: UpdateMLSGroupVerificationStatusUseCaseProtocol!
     var e2eIVerificationStatusService: MockE2EIVerificationStatusServiceInterface!
     var mockFeatureRepository: MockFeatureRepositoryInterface!

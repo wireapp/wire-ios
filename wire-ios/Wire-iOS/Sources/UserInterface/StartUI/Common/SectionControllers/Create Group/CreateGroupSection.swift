@@ -19,7 +19,6 @@
 import UIKit
 
 final class CreateGroupSection: NSObject, CollectionViewSectionController {
-
     enum Row {
         case createGroup
         case createGuestRoom

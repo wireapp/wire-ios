@@ -25,7 +25,6 @@ protocol PulsingIconImageStyle {
 }
 
 class PulsingIconImageView: IconImageView {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         NotificationCenter.default.addObserver(

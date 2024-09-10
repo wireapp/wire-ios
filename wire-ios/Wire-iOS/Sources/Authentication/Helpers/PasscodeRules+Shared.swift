@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 extension PasswordRuleSet {
-
     static let passwordRuleSetLogger = WireLogger(tag: "password-rule-set")
 
     /// The shared rule set.

@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 class ButtonWithLargerHitArea: DynamicFontButton {
-
     // MARK: - Properties
 
     var hitAreaPadding = CGSize.zero

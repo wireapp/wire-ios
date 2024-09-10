@@ -27,7 +27,6 @@ public protocol KeychainItem {
 }
 
 public enum Keychain {
-
     public enum KeychainError: Error {
         case failedToStoreItemInKeychain(OSStatus)
         case failedToFetchItemFromKeychain(OSStatus?)

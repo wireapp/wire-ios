@@ -21,7 +21,6 @@ import WireRequestStrategySupport
 import XCTest
 
 final class FeatureConfigRequestStrategyTests: MessagingTestBase {
-
     // MARK: - Properties
 
     var sut: FeatureConfigRequestStrategy!

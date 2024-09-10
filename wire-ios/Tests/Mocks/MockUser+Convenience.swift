@@ -24,7 +24,6 @@
  */
 
 extension MockUser {
-
     /**
      * Creates a self-user with the specified name and team membership.
      * - parameter name: The name of the user.

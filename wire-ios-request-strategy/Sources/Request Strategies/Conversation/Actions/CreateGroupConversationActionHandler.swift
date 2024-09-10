@@ -20,11 +20,9 @@ import Foundation
 import WireDataModel
 
 public final class CreateGroupConversationAction: EntityAction {
-
     public typealias Result = NSManagedObjectID
 
     public enum Failure: Error, Equatable {
-
         case invalidBody
         case mlsNotEnabled
         case nonEmptyMemberList
@@ -81,7 +79,6 @@ public final class CreateGroupConversationAction: EntityAction {
 }
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
-
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: MLSEventProcessor(context: context),
         removeLocalConversation: removeLocalConversationUseCase
@@ -231,11 +228,9 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 }
 
 extension CreateGroupConversationActionHandler {
-
     // MARK: - Error response
 
     struct ErrorResponse: Codable {
-
         var unreachable_backends: [String]?
         var non_federating_backends: [String]?
     }

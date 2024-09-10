@@ -19,9 +19,7 @@
 import Foundation
 
 extension Payload {
-
     enum ConnectionStatus: String, Codable, CaseIterable {
-
         case accepted = "accepted"
         case blocked = "blocked"
         case pending = "pending"
@@ -74,7 +72,6 @@ extension Payload {
     }
 
     struct Connection: Codable, EventData {
-
         enum CodingKeys: String, CodingKey {
             case from
             case to
@@ -103,7 +100,6 @@ extension Payload {
     }
 
     struct ConnectionRequest: Codable {
-
         enum CodingKeys: String, CodingKey {
             case userID = "user"
             case name
@@ -114,7 +110,6 @@ extension Payload {
     }
 
     struct PaginatedLocalConnectionList: Codable, Paginatable {
-
         enum CodingKeys: String, CodingKey {
             case connections
             case hasMore = "has_more"
@@ -129,7 +124,6 @@ extension Payload {
     }
 
     struct PaginatedConnectionList: Codable, Paginatable {
-
         enum CodingKeys: String, CodingKey {
             case connections
             case pagingState = "paging_state"

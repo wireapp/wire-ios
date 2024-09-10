@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
-
     typealias ServicesOptionCell = L10n.Localizable.GroupDetails.ServicesOptionsCell
 
     var isOn = false {

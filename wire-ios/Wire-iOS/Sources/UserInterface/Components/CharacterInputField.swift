@@ -32,7 +32,6 @@ protocol TextContainer: AnyObject {
 /// Custom input field implementation. Allows entering the characters from @c characterSet up to @c maxLength characters
 /// Allows pasting the text.
 final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
-
     typealias ViewColors = SemanticColors.View
 
     fileprivate var storage = String() {

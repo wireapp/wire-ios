@@ -44,7 +44,6 @@ final class MockTeam: TeamType {
 }
 
 final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     var userSession: UserSessionMock!

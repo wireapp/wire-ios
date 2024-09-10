@@ -20,7 +20,6 @@
 import XCTest
 
 final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
-
     var helper: DatabaseMigrationHelper!
 
     override func setUpWithError() throws {

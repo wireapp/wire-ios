@@ -172,7 +172,6 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         let path: String
         switch apiVersion {
-
         case .v0:
             path = "/assets/v3/\(assetId)"
 

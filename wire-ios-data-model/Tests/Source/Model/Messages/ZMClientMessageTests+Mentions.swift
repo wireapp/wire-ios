@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
-
     func createMessage(text: String, mentions: [ Mention]) -> ZMClientMessage {
         let text = Text(content: text, mentions: mentions, linkPreviews: [])
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)

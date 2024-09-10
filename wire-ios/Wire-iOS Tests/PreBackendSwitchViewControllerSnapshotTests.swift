@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: PreBackendSwitchViewController!

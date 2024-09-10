@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public extension ZMAccessTokenHandler {
-
     func logDebug(_ message: String) {
         WireLogger.authentication.debug(message)
     }

@@ -21,7 +21,6 @@ import Foundation
 /// An event where the conversation's name was changed.
 
 public struct ConversationRenameEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

@@ -19,7 +19,6 @@
 import UIKit
 
 extension String {
-
     func split(every: Int) -> [String] {
         return stride(from: 0, to: count, by: every).map { i in
             let start = index(startIndex, offsetBy: i)

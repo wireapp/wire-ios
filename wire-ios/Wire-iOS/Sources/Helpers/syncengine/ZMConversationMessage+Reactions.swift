@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
-
     var canAddReaction: Bool {
         guard let conversation = conversationLike else {
             return false

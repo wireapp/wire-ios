@@ -20,7 +20,6 @@
 import XCTest
 
 class AssetsPreprocessorTests: MessagingTestBase {
-
     var sut: AssetsPreprocessor!
     var conversation: ZMConversation!
 

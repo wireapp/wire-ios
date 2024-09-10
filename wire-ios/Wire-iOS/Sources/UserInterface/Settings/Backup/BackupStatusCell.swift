@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class BackupStatusCell: UITableViewCell {
-
     let descriptionLabel: DynamicFontLabel = {
         let label = DynamicFontLabel(fontSpec: .normalRegularFont,
                                      color: SemanticColors.Label.textDefault)

@@ -19,7 +19,6 @@
 import UIKit
 
 extension ConversationListViewController {
-
     func setState(_ state: ConversationListState,
                   animated: Bool,
                   completion: Completion? = nil) {
@@ -30,7 +29,6 @@ extension ConversationListViewController {
         self.state = state
 
         switch state {
-
         case .conversationList:
             view.alpha = 1
 
@@ -63,7 +61,6 @@ extension ConversationListViewController {
 }
 
 extension ConversationListViewController {
-
     func show(
         _ viewController: UIViewController,
         animated: Bool,

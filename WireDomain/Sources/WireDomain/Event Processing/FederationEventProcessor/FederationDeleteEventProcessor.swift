@@ -21,7 +21,6 @@ import WireAPI
 /// Process federation delete events.
 
 protocol FederationDeleteEventProcessorProtocol {
-
     /// Process a federation delete event.
     ///
     /// - Parameter event: A federation delete event.
@@ -30,7 +29,6 @@ protocol FederationDeleteEventProcessorProtocol {
 }
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
-
     func processEvent(_: FederationDeleteEvent) async throws {
         // TODO: [WPB-10188]
         assertionFailure("not implemented yet")

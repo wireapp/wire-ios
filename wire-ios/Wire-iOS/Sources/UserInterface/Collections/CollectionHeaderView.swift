@@ -22,7 +22,6 @@ import WireDesign
 import WireSystem
 
 final class CollectionHeaderView: UICollectionReusableView {
-
     typealias Section = L10n.Localizable.Collections.Section
     typealias ConversationSearch = L10n.Accessibility.ConversationSearch
 

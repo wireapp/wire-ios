@@ -29,7 +29,6 @@ fileprivate extension String {
 typealias GroupParticipantsDetailConversation = GroupDetailsConversationType & StableRandomParticipantsProvider
 
 final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControllerDelegate, ZMConversationObserver {
-
     private var internalParticipants: [UserType]
     private var filterQuery: String?
 

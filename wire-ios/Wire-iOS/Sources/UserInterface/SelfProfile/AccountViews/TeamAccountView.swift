@@ -20,13 +20,11 @@ import UIKit
 import WireDataModel
 
 final class TeamAccountView: BaseAccountView {
-
     private let imageView: TeamImageView
     private var teamObserver: NSObjectProtocol!
     private var conversationListObserver: NSObjectProtocol!
 
     required init?(user: ZMUser?, account: Account, displayContext: DisplayContext) {
-
         if let content = user?.team?.teamImageViewContent ?? account.teamImageViewContent {
             imageView = TeamImageView(content: content, style: .big)
         } else {
@@ -107,9 +105,7 @@ final class TeamAccountView: BaseAccountView {
 }
 
 extension TeamAccountView: TeamObserver {
-
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
-
         if changeInfo.imageDataChanged {
             changeInfo.team.requestImage()
         }

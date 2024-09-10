@@ -56,7 +56,6 @@ public struct ZMConversationRemoteClientChangeSet: OptionSet {
 }
 
 extension ZMConversation {
-
     /// Contains current security level of conversation.
     /// Client should check this property to properly annotate conversation.
     @NSManaged public internal(set) var securityLevel: ZMConversationSecurityLevel
@@ -384,7 +383,6 @@ extension ZMConversation {
 // MARK: - Messages resend/expiration
 
 extension ZMConversation {
-
     public var isDegraded: Bool {
         switch messageProtocol {
         case .proteus, .mixed:
@@ -504,10 +502,8 @@ extension ZMConversation {
 // MARK: - HotFix
 
 extension ZMConversation {
-
     /// Replaces the first NewClient systemMessage for the selfClient with a UsingNewDevice system message
     @objc public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
-
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
 
@@ -534,7 +530,6 @@ extension ZMConversation {
 // MARK: - Appending system messages
 
 extension ZMConversation {
-
     fileprivate func appendNewIsSecureSystemMessage(cause: SecurityChangeCause) {
         switch cause {
         case .removedUsers(let users):
@@ -682,7 +677,6 @@ extension ZMConversation {
 // MARK: - Conversation participants status
 
 extension ZMConversation {
-
     /// Returns true if all participants are connected to the self user and all participants are trusted
     @objc
     public var allUsersTrusted: Bool {
@@ -741,7 +735,6 @@ extension ZMConversation {
 // MARK: - System messages
 
 extension ZMSystemMessage {
-
     /// Fetch the first system message in the conversation about "started to use this device"
     fileprivate static func fetchStartedUsingOnThisDeviceMessage(conversation: ZMConversation) -> ZMSystemMessage? {
         guard let selfClient = ZMUser.selfUser(in: conversation.managedObjectContext!).selfClient() else { return nil }
@@ -758,7 +751,6 @@ extension ZMSystemMessage {
 }
 
 extension ZMMessage {
-
     /// True if the message is a "conversation degraded because of new client"
     /// system message
     fileprivate var isConversationNotVerifiedSystemMessage: Bool {

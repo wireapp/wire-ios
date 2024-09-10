@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 class ProtobufUtilitiesTests: BaseZMClientMessageTests {
-
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -36,7 +35,6 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     }
 
     func testThatItSetsAndReadsTheLoudness() {
-
         // given
         let loudness: [Float] = [0.8, 0.3, 1.0, 0.0, 0.001]
         let sut = WireProtos.Asset.Original(withSize: 200, mimeType: "audio/m4a", name: "foo.m4a", audioDurationInMillis: 1000, normalizedLoudness: loudness)
@@ -51,7 +49,6 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     }
 
     func testThatItDoesNotReturnTheLoudnessIfEmpty() {
-
         // given
         let sut = WireProtos.Asset.Original(withSize: 234, mimeType: "foo/bar", name: "boo.bar")
 
@@ -238,7 +235,6 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
 // MARK: - Using Swift protobuf API, Update assets
 
 extension ProtobufUtilitiesTests {
-
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndTokenAndDomain_SwiftProtobufAPI() {
         // given
         let (assetId, token, domain) = ("id", "token", "domain")

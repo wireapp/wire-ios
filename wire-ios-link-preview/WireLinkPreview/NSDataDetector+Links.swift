@@ -22,7 +22,6 @@ import Foundation
 public typealias URLWithRange = (URL: URL, range: NSRange)
 
 extension NSDataDetector {
-
     /// A data detector configured to detect only links.
     @objc public static var linkDetector: NSDataDetector? {
         return try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)

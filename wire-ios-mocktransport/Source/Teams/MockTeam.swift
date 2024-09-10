@@ -84,7 +84,6 @@ extension MockTeam {
 
     @objc
     public static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
-
         return  Set(["add_conversation_member",
                  "remove_conversation_member",
                  "modify_conversation_name",
@@ -98,7 +97,6 @@ extension MockTeam {
 
     @objc
     public static func createMemberActions(context: NSManagedObjectContext) -> Set<MockAction> {
-
         return  Set(["leave_conversation"].map { MockAction.insert(in: context, name: $0) })
     }
 }

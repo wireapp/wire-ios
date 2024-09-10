@@ -19,7 +19,6 @@
 import Foundation
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
@@ -86,7 +85,6 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
 // MARK: - Inserted object sync transcoder
 
 extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
-
     typealias Object = ZMClientMessage
 
     func insert(object: ZMClientMessage, completion: @escaping () -> Void) {
@@ -157,7 +155,6 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 // MARK: - Event processing
 
 extension ClientMessageRequestStrategy: ZMEventConsumer {
-
     public func processEvents(
         _ events: [ZMUpdateEvent],
         liveEvents: Bool,
@@ -203,7 +200,6 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
 // MARK: - Helpers
 
 private struct UpdateEventWithNonce {
-
     let event: ZMUpdateEvent
     let nonce: UUID
 }

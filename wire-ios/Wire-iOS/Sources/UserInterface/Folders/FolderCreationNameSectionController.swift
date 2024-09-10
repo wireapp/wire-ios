@@ -19,7 +19,6 @@
 import UIKit
 
 final class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
-
     typealias Cell = FolderCreationNameCell
 
     var isHidden: Bool {
@@ -66,7 +65,6 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
 }
 
 extension FolderCreationNameSectionController {
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 1
     }

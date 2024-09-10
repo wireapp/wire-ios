@@ -24,7 +24,6 @@ private extension CallStateMock {
 }
 
 struct CallInfoTestFixture {
-
     enum GroupSize: Int {
         case large = 10
         case small = 4

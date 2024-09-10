@@ -23,7 +23,6 @@ import Foundation
  */
 
 final class AuthenticationMissingUsernameErrorHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {

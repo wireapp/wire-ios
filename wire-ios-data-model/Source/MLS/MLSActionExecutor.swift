@@ -21,7 +21,6 @@ import Foundation
 import WireCoreCrypto
 
 public protocol MLSActionExecutorProtocol {
-
     /// Processes a welcome message.
     ///
     /// - Parameter message: The welcome message to process.
@@ -113,11 +112,9 @@ public protocol MLSActionExecutorProtocol {
 /// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
 
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
-
     // MARK: - Types
 
     enum Action {
-
         case addMembers([KeyPackage])
         case removeClients([ClientId])
         case updateKeyMaterial
@@ -404,7 +401,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 }
 
 extension MLSActionExecutor.Action: CustomDebugStringConvertible {
-
     var debugDescription: String {
         switch self {
         case .addMembers:

@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ScreenCurtainWindowTests: XCTestCase {
-
     var sut: ScreenCurtainWindow!
     var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!

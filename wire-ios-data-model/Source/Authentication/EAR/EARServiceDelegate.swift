@@ -19,7 +19,6 @@
 import class CoreData.NSManagedObjectContext
 
 public protocol EARServiceDelegate: AnyObject {
-
     /// Prepare for the migration of existing database content.
     ///
     /// When the migration can be started, invoke the `onReady` closure.

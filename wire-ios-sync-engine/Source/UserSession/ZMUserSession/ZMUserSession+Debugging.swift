@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 
 extension ZMUserSession {
-
     /// Parses and execute a debug command, which is expected to be
     /// tokenized already (e.g. "print", "foobar")
     public func executeDebugCommand(
@@ -90,7 +89,6 @@ extension ZMUserSession {
 
 /// A debug command that can be invoked with arguments
 protocol DebugCommand {
-
     /// This is the keyword used to invoke the command
     var keyword: String { get }
 
@@ -109,7 +107,6 @@ protocol DebugCommand {
 }
 
 extension DebugCommand {
-
     /// Save any "state" that needs to be persisted. The state should
     /// only contain types can serialized in user defaults.
     func saveState(userSession: ZMUserSession, state: [String: Any]) {
@@ -120,7 +117,6 @@ extension DebugCommand {
 /// This is a mixin (implementation of a protocol that can be
 /// inherited to avoid having to rewrite all protocol methods and vars)
 private class DebugCommandMixin: DebugCommand {
-
     let keyword: String
 
     init(keyword: String) {
@@ -156,7 +152,6 @@ public enum DebugCommandResult {
 // MARK: - Command execution
 
 extension EncryptionSessionIdentifier {
-
     fileprivate init?(string: String) {
         let split = string.split(separator: "_")
         guard split.count == 2 else { return nil }
@@ -167,7 +162,6 @@ extension EncryptionSessionIdentifier {
 }
 
 private class DebugCommandLogEncryption: DebugCommandMixin {
-
     var currentlyEnabledLogs: Set<EncryptionSessionIdentifier> = Set()
 
     private var usage: String {
@@ -264,7 +258,6 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
 
 /// Show the user and client identifier
 private class DebugCommandShowIdentifiers: DebugCommandMixin {
-
     init() {
         super.init(keyword: "showIdentifier")
     }
@@ -292,7 +285,6 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
 
 /// Show commands
 private class DebugCommandHelp: DebugCommandMixin {
-
     init() {
         super.init(keyword: "help")
     }
@@ -309,7 +301,6 @@ private class DebugCommandHelp: DebugCommandMixin {
 
 /// Debug variables
 private class DebugCommandVariables: DebugCommandMixin {
-
     init() {
         super.init(keyword: "variables")
     }

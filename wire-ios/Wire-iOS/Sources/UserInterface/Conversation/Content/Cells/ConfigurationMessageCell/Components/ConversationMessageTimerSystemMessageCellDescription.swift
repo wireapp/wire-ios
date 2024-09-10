@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationMessageTimerSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
     typealias IconColors = SemanticColors.Icon

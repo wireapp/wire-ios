@@ -19,7 +19,6 @@
 import Foundation
 
 struct CacheFileRelocator {
-
     // whitelisted files, so the FileRelocator doesn't consider to check these system files.
     // - com.apple.nsurlsessiond is used by the system as cache while sharing an item.
     // - .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)

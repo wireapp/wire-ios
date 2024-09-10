@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationCreateOptionsCell: RightIconDetailsCell {
-
     // MARK: - Properties
 
     var expanded = false

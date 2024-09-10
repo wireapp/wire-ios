@@ -21,7 +21,6 @@ import WireSyncEngine
 import XCTest
 
 class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
-
     var sut = AuthenticationEmailVerificationRequiredErrorHandler()
 
     func testThatItHandlesTheEventWhenErrorAndStepAreCorrect() throws {

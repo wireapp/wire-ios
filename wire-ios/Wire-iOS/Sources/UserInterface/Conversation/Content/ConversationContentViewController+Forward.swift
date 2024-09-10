@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 extension ZMConversation: ShareDestination {
-
     var showsGuestIcon: Bool {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
@@ -35,7 +34,6 @@ extension ZMConversation: ShareDestination {
 }
 
 extension ShareDestination where Self: ConversationAvatarViewConversation {
-
     var avatarView: UIView? {
         let avatarView = ConversationAvatarView()
         avatarView.configure(context: .conversation(conversation: self))
@@ -44,7 +42,6 @@ extension ShareDestination where Self: ConversationAvatarViewConversation {
 }
 
 extension Array where Element == ZMConversation {
-
     // Should be called inside ZMUserSession.shared().perform block
     func forEachNonEphemeral(_ block: (ZMConversation) -> Void) {
         forEach {
@@ -68,7 +65,6 @@ extension ZMMessage: Shareable {
     }
 
     func forward(to: [AnyObject]) {
-
         let conversations = to as! [ZMConversation]
 
         if isText {
@@ -135,7 +131,6 @@ extension ZMConversationMessage {
 // MARK: - popover apperance update
 
 extension ConversationContentViewController {
-
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
@@ -149,7 +144,6 @@ extension ConversationContentViewController {
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
-
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }

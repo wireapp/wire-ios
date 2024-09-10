@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class OneOnOneMigratorTests: XCTestCase {
-
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var coreDataStack: CoreDataStack!

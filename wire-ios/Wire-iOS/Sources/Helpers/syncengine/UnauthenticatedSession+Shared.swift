@@ -20,9 +20,7 @@ import Foundation
 import WireSyncEngine
 
 extension UnauthenticatedSession {
-
     static var sharedSession: UnauthenticatedSession? {
-
         return AppDelegate.shared.unauthenticatedSession
     }
 }

@@ -20,7 +20,6 @@
 import XCTest
 
 final class ColorSchemeControllerTests: XCTestCase {
-
     var sut: ColorSchemeController!
     var originalColorScheme: Any! = nil
     var originalVariant: ColorSchemeVariant!

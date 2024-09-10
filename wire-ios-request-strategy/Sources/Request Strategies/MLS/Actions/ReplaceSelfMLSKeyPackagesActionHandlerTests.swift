@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<ReplaceSelfMLSKeyPackagesAction, ReplaceSelfMLSKeyPackagesActionHandler> {
-
     let clientId = UUID().transportString()
     let keyPackages = ["a2V5IHBhY2thZ2UgZGF0YQo="]
     let ciphersuite = MLSCipherSuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519

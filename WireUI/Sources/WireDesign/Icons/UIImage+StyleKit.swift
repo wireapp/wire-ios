@@ -19,7 +19,6 @@
 import UIKit
 
 public extension StyleKitIcon {
-
     /**
      * Creates an image of the icon, with specified size and color.
      * - parameter size: The desired size of the image.
@@ -42,7 +41,6 @@ public extension StyleKitIcon {
 }
 
 public extension UIImage {
-
     /**
      * Creates an image with the specified icon, size and color.
      * - parameter icon: The icon to display.
@@ -81,7 +79,6 @@ public extension UIImage {
 }
 
 public extension UIImageView {
-
     /**
      * Sets the image of the image view to the given icon, size and color.
      * - parameter icon: The icon to display.

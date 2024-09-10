@@ -19,9 +19,7 @@
 import XCTest
 
 class ConversationTests_Participants: ConversationTestsBase {
-
     func testThatAddingAndRemovingAParticipantToAConversationSendsOutChangeNotifications() async throws {
-
         // given
         XCTAssert(login())
 

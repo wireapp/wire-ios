@@ -21,7 +21,6 @@ import UIKit
 // MARK: - ReactionCollectionViewCell
 
 final class ReactionCollectionViewCell: UICollectionViewCell {
-
     // MARK: - Properties
 
     private var reactionToggleButton = ReactionToggle()

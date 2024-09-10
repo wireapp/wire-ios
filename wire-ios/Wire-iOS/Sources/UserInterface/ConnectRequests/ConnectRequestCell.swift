@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 final class ConnectRequestCell: UITableViewCell {
-
     var acceptBlock: (() -> Void)?
     var ignoreBlock: (() -> Void)?
 

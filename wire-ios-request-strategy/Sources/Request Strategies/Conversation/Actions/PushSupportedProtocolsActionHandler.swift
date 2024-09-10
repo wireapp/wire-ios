@@ -19,7 +19,6 @@
 import Foundation
 
 final class PushSupportedProtocolsActionHandler: ActionHandler<PushSupportedProtocolsAction> {
-
     // MARK: - Request
 
     override func request(

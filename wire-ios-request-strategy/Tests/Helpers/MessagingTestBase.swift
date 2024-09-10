@@ -22,7 +22,6 @@ import WireDataModel
 import WireTesting
 
 class MessagingTestBase: ZMTBaseTest {
-
     var groupConversation: ZMConversation!
     fileprivate(set) var oneToOneConversation: ZMConversation!
     fileprivate(set) var oneToOneConnection: ZMConnection!
@@ -111,7 +110,6 @@ class MessagingTestBase: ZMTBaseTest {
 // MARK: - Messages 
 
 extension MessagingTestBase {
-
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
     func decryptedUpdateEventFromOtherClient(
         text: String,
@@ -134,7 +132,6 @@ extension MessagingTestBase {
         source: ZMUpdateEventSource = .pushNotification,
         eventDecoder: EventDecoder
     ) async throws -> ZMUpdateEvent {
-
         let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
         let innerPayload = await syncMOC.perform { [self] in
             ["recipient": selfClient.remoteIdentifier!,
@@ -159,7 +156,6 @@ extension MessagingTestBase {
         source: ZMUpdateEventSource = .pushNotification,
         eventDecoder: EventDecoder
     ) async throws -> ZMUpdateEvent {
-
         let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
         // Note: [F] added info to make it ZMSLog SafeTypes happy - this event conversation.otr-asset-add is deprecated
         let innerPayload = await syncMOC.perform { [self] in
@@ -251,7 +247,6 @@ extension MessagingTestBase {
         source: ZMUpdateEventSource,
         type: String
     ) -> ZMUpdateEvent {
-
         let payload = [
             "type": type,
             "from": otherUser.remoteIdentifier!.transportString(),
@@ -284,7 +279,6 @@ extension MessagingTestBase {
                                   line: UInt = #line,
                                   file: StaticString = #file
         ) -> GenericMessage? {
-
         guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
             return nil
@@ -315,7 +309,6 @@ extension MessagingTestBase {
 // MARK: - Internal data provisioning
 
 extension MessagingTestBase {
-
     func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.domain = owningDomain
@@ -439,7 +432,6 @@ extension MessagingTestBase {
 
     /// Creates an encryption context in a temp folder and creates keys
     fileprivate func setupUsersAndClients() {
-
         self.otherUser = self.createUser(alsoCreateClient: true)
         self.otherClient = self.otherUser.clients.first!
         self.thirdUser = self.createUser(alsoCreateClient: true)
@@ -470,7 +462,6 @@ extension MessagingTestBase {
 // MARK: - Internal helpers
 
 extension MessagingTestBase {
-
     func setupTimers() {
         syncMOC.performGroupedAndWait {
             syncMOC.zm_createMessageObfuscationTimer()
@@ -494,7 +485,6 @@ extension MessagingTestBase {
 // MARK: - Contexts
 
 extension MessagingTestBase {
-
     override var allDispatchGroups: [ZMSDispatchGroup] {
         return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
     }
@@ -511,7 +501,6 @@ extension MessagingTestBase {
 // MARK: - Cache cleaning
 
 extension MessagingTestBase {
-
     private var cacheFolder: URL {
         return FileManager.default.randomCacheURL!
     }
@@ -563,7 +552,6 @@ extension MessagingTestBase {
                                   data: Any,
                                   time: Date?,
                                   from: ZMUser) -> NSMutableDictionary? {
-
         return ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
                 "data": data,
                 "from": from.remoteIdentifier.transportString(),
@@ -578,7 +566,6 @@ extension MessagingTestBase {
                                   data: Any,
                                   time: Date?,
                                   fromID: UUID) -> NSMutableDictionary? {
-
         return ["conversation": conversationID.transportString(),
                 "qualified_conversation": [
                     "id": conversationID.transportString(),

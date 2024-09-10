@@ -19,7 +19,6 @@
 import UIKit
 
 class BottomSheetContainerViewController: UIViewController {
-
     // MARK: - Configuration
 
     struct BottomSheetConfiguration: Equatable {
@@ -230,7 +229,6 @@ class BottomSheetContainerViewController: UIViewController {
 }
 
 extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
-
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if let otherGestureView = otherGestureRecognizer.view as? UIScrollView,
            otherGestureView.contentOffset.y > 0.0 {

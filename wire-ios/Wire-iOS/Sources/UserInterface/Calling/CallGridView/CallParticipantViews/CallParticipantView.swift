@@ -21,7 +21,6 @@ import UIKit
 import WireSyncEngine
 
 final class CallParticipantView: BaseCallParticipantView {
-
     // MARK: - Public Properties
 
     var isPaused = false {

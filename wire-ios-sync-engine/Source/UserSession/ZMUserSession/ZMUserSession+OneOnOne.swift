@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMUserSession {
-
     /// Create a new team one on one with another user.
     ///
     /// - Parameters:

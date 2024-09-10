@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
-
     typealias Object = MockEntity
 
     var objectsAskedToBeInserted: [MockEntity] = []
@@ -39,7 +38,6 @@ class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
 }
 
 class InsertedObjectSyncTests: ZMTBaseTest {
-
     var moc: NSManagedObjectContext!
     var transcoder: MockInsertedObjectSyncTranscoder!
     var sut: InsertedObjectSync<MockInsertedObjectSyncTranscoder>!

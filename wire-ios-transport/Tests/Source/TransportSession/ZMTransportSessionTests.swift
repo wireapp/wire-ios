@@ -22,7 +22,6 @@ import WireTransport
 
 @objcMembers
 public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
-
     public var observerCount = 0
     public func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
         observerCount += 1

@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

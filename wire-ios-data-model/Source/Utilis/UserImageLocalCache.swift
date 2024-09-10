@@ -58,7 +58,6 @@ extension NSManagedObjectContext {
 // MARK: Cache
 
 @objcMembers open class UserImageLocalCache: NSObject {
-
     fileprivate let log = ZMSLog(tag: "UserImageCache")
 
     /// Cache for large user profile image
@@ -70,7 +69,6 @@ extension NSManagedObjectContext {
     /// Create UserImageLocalCache
     /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
     public init(location: URL? = nil) {
-
         let largeUserImageCacheName = "largeUserImages"
         let smallUserImageCacheName = "smallUserImages"
 

@@ -31,7 +31,6 @@ final class FakeAuthenticationStatus: AuthenticationStatusProvider {
 }
 
 class BaseSharingSessionTests: BaseTest {
-
     var sharingSession: SharingSession!
     var moc: NSManagedObjectContext!
 
@@ -49,7 +48,6 @@ class BaseSharingSessionTests: BaseTest {
 }
 
 class BaseTest: ZMTBaseTest {
-
     var authenticationStatus: FakeAuthenticationStatus!
     var accountIdentifier: UUID!
     var coreDataStack: CoreDataStack!

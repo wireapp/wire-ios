@@ -21,7 +21,6 @@ import Foundation
  /// A struct containing a token to validate login requests
  /// received via url schemes.
 public struct CompanyLoginVerificationToken: Codable, Equatable {
-
     /// The unique identifier of the token.
     let uuid: UUID
     /// The creation date of the token.
@@ -55,7 +54,6 @@ public func == (lhs: CompanyLoginVerificationToken, rhs: CompanyLoginVerificatio
 }
 
 public extension CompanyLoginVerificationToken {
-
     private static let defaultsKey = "CompanyLoginVerificationTokenDefaultsKey"
 
     /// Returns the currently stored verification token.

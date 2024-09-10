@@ -52,7 +52,6 @@ extension CallState {
 // MARK: - CallTopOverlayController
 
 final class CallTopOverlayController: UIViewController {
-
     // MARK: - Properties
 
     private let durationLabel = UILabel()

@@ -19,13 +19,11 @@
 import Foundation
 
 public class UploadSelfMLSKeyPackagesAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Void
 
     public enum Failure: LocalizedError, Equatable {
-
         case emptyParameters
         case endpointUnavailable
         case mlsProtocolError

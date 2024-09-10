@@ -19,12 +19,10 @@
 import Foundation
 
 protocol UnauthenticatedSessionStatusDelegate: AnyObject {
-
     var isAllowedToCreateNewAccount: Bool { get }
 }
 
 class CompanyLoginURLActionProcessor: URLActionProcessor {
-
     private weak var delegate: UnauthenticatedSessionStatusDelegate?
     private var authenticationStatus: ZMAuthenticationStatus
 

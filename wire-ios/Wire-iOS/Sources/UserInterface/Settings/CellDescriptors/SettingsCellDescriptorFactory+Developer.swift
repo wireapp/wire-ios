@@ -20,7 +20,6 @@ import Foundation
 import SwiftUI
 
 extension SettingsCellDescriptorFactory {
-
     var developerGroup: SettingsCellDescriptorType {
         typealias ExternalScreen = SettingsExternalScreenCellDescriptor
         typealias Toggle = SettingsPropertyToggleCellDescriptor

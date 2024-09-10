@@ -35,7 +35,6 @@ protocol EphemeralKeyboardViewControllerDelegate: AnyObject {
 // MARK: - EphemeralKeyboardViewController
 
 final class EphemeralKeyboardViewController: UIViewController {
-
     // MARK: - Properties
 
     weak var delegate: EphemeralKeyboardViewControllerDelegate?
@@ -147,7 +146,6 @@ final class EphemeralKeyboardViewController: UIViewController {
 // MARK: - UIPickerViewDelegate & UIPickerViewDataSource
 
 extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return 35
     }

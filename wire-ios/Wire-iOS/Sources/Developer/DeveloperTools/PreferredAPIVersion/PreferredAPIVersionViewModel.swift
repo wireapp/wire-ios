@@ -21,25 +21,21 @@ import WireSyncEngine
 import WireTransport
 
 final class PreferredAPIVersionViewModel: ObservableObject {
-
     // MARK: - Models
 
     struct Section: Identifiable {
-
         let id = UUID()
         let header: String
         let items: [Item]
     }
 
     struct Item: Identifiable {
-
         let id = UUID()
         let title: String
         let value: Value
     }
 
     enum Value: Equatable {
-
         case noPreference
         case apiVersion(APIVersion)
 
@@ -53,7 +49,6 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     }
 
     enum Event {
-
         case itemTapped(Item)
     }
 

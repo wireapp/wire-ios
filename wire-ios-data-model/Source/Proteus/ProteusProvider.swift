@@ -26,7 +26,6 @@ public typealias KeyStorePerformAsyncBlock<T> = ((UserClientKeysStore) async thr
 public typealias ProteusServicePerformAsyncBlock<T> = ((ProteusServiceInterface) async throws -> T)
 
 public protocol ProteusProviding {
-
     func perform<T>(
         withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
@@ -41,7 +40,6 @@ public protocol ProteusProviding {
 }
 
 public class ProteusProvider: ProteusProviding {
-
     private let proteusService: ProteusServiceInterface?
     private let keyStore: UserClientKeysStore?
     private let proteusViaCoreCrypto: Bool
@@ -69,17 +67,13 @@ public class ProteusProvider: ProteusProviding {
         withProteusService proteusServiceBlock: ProteusServicePerformBlock<T>,
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T {
-
         if let proteusService, proteusViaCoreCrypto {
-
           return try proteusServiceBlock(proteusService)
 
         } else if let keyStore, !proteusViaCoreCrypto {
-
             // remove comment once implementation of proteus via core crypto is done
             return try keyStoreBlock(keyStore)
         } else {
-
             WireLogger.coreCrypto.error("can't access any proteus cryptography service")
             fatal("can't access any proteus cryptography service")
         }
@@ -89,17 +83,13 @@ public class ProteusProvider: ProteusProviding {
         withProteusService proteusServiceBlock: ProteusServicePerformAsyncBlock<T>,
         withKeyStore keyStoreBlock: KeyStorePerformAsyncBlock<T>
     ) async rethrows -> T {
-
         if let proteusService, proteusViaCoreCrypto {
-
             return try await proteusServiceBlock(proteusService)
 
         } else if let keyStore, !proteusViaCoreCrypto {
-
             // remove comment once implementation of proteus via core crypto is done
             return try await keyStoreBlock(keyStore)
         } else {
-
             WireLogger.coreCrypto.error("can't access any proteus cryptography service")
             fatal("can't access any proteus cryptography service")
         }

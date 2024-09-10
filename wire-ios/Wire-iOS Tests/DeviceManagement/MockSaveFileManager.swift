@@ -20,7 +20,6 @@ import Foundation
 @testable import Wire
 
 final class MockSaveFileManager: SaveFileActions {
-
     var saveValueIsCalled: ((String, String, String) -> Void)?
 
     func save(value: String, fileName: String, type: String) {

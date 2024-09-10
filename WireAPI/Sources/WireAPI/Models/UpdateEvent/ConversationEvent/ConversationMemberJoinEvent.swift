@@ -21,7 +21,6 @@ import Foundation
 /// An event where some participants were added to a conversation.
 
 public struct ConversationMemberJoinEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

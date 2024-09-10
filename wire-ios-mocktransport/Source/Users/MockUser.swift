@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class MockUser: NSManagedObject {
-
     public enum LegalHoldState: Equatable {
         case enabled
         case pending(MockPendingLegalHoldClient)
@@ -107,7 +106,6 @@ extension MockUser {
 // MARK: - Legal Hold
 
 extension MockUser {
-
     public var legalHoldState: LegalHoldState {
         if userClients.any(\.isLegalHoldDevice) {
             return .enabled
@@ -122,9 +120,7 @@ extension MockUser {
 // MARK: - Broadcasting
 
 extension MockUser {
-
     @objc public var connectionsAndTeamMembers: Set<MockUser> {
-
         let acceptedUsers: (Any) -> MockUser? = { connection in
             guard let connection = connection as? MockConnection, MockConnection.status(from: connection.status) == .accepted else { return nil }
             return connection.to == self ? connection.from : connection.to
@@ -186,7 +182,6 @@ extension MockUser {
 // MARK: - Transport data
 
 extension MockUser {
-
     @objc public var selfUserTransportData: ZMTransportData {
         return selfUserData as ZMTransportData
     }
@@ -266,7 +261,6 @@ extension MockUser {
 
     @objc
     public var mockPushEventForChangedValues: MockPushEvent? {
-
         let changedValues = self.changedValues()
 
         if changedValues.keys.contains(#keyPath(MockUser.isAccountDeleted)) {
@@ -305,7 +299,6 @@ extension MockUser {
 // MARK: - Participant Roles
 
 extension MockUser {
-
     @objc public func role(in conversation: MockConversation) -> MockRole? {
         return participantRoles.first(where: { $0.conversation == conversation })?.role
     }

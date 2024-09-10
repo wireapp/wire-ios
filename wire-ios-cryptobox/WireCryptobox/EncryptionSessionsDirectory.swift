@@ -21,7 +21,6 @@ import WireSystem
 import WireUtilities
 
 @objc enum EncryptionSessionError: Int {
-
     case unknown, encryptionFailed, decryptionFailed
 
     internal var userInfo: [String: AnyObject] {
@@ -50,7 +49,6 @@ class _CBoxSession: PointerWrapper {}
 /// It maintains an in-memory cache of encryption sessions with other clients
 /// that is persisted to disk as soon as it is deallocated.
 public final class EncryptionSessionsDirectory: NSObject {
-
     /// Used for testing only. If set to true,
     /// will not try to validate with the generating context
     var debug_disableContextValidityCheck = false
@@ -183,9 +181,7 @@ public protocol EncryptionSessionManager {
 }
 
 extension EncryptionSessionsDirectory: EncryptionSessionManager {
-
     public func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier) {
-
         let previousSessionIdentifier = EncryptionSessionIdentifier(fromLegacyV1Identifier: previousIdentifier)
         // this scopes guarantee that `old` is released
         repeat {
@@ -218,7 +214,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     }
 
     public func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws {
-
         // validate
         guard let prekeyData = Data(base64Encoded: base64PreKeyString, options: []) else {
             fatal("String is not base64 encoded from client: \(identifier)")
@@ -383,7 +378,6 @@ public protocol PrekeyGeneratorType {
 // MARK: - Prekeys
 
 extension EncryptionSessionsDirectory: PrekeyGeneratorType {
-
     /// Generates one prekey of the given ID. If the prekey exists already,
     /// it will replace that prekey
     /// - returns: base 64 encoded string
@@ -448,7 +442,6 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
 // MARK: - Fingerprint
 
 extension _CBox {
-
     /// Local fingerprint
     fileprivate var localFingerprint: Data {
         var vectorBacking: OpaquePointer?
@@ -471,7 +464,6 @@ extension _CBox {
 /// after it has been closed, and there is no easy way to ensure that sessions are always closed.
 /// By hiding the implementation inside this file, only code in this file has the chance to screw up!
 class EncryptionSession {
-
     /// Whether this session has changes that require saving
     var hasChanges: Bool
 
@@ -535,7 +527,6 @@ class EncryptionSession {
 // MARK: - Logging
 
 extension EncryptionSession {
-
     func logSessionAndCyphertext(
         reason: SanitizedString,
         data: Data
@@ -583,7 +574,6 @@ public protocol Decryptor: AnyObject {
 }
 
 extension EncryptionSessionsDirectory: Encryptor, Decryptor {
-
     public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: recipientIdentifier) else {
@@ -606,7 +596,6 @@ extension EncryptionSessionsDirectory: Encryptor, Decryptor {
 }
 
 extension EncryptionSession {
-
     /// Decrypts data using the session. This function modifies the session
     /// and it should be saved later
     fileprivate func decrypt(_ cypher: Data) throws -> Data {
@@ -671,7 +660,6 @@ extension EncryptionSession {
 // MARK: - Fingerprint
 
 extension _CBoxSession {
-
     /// Returns the remote fingerprint associated with a session
     fileprivate var remoteFingerprint: Data {
         var backingVector: OpaquePointer?
@@ -686,7 +674,6 @@ extension _CBoxSession {
 // MARK: - Backing files
 
 extension EncryptionSession {
-
     /// Returns the expected path of the session file, given the root folder
     fileprivate static func expectedPath(root: URL, for identifier: EncryptionSessionIdentifier) -> URL {
         return root.appendingPathComponent("sessions").appendingPathComponent(identifier.rawValue)
@@ -699,7 +686,6 @@ extension EncryptionSession {
 }
 
 extension EncryptionSessionsDirectory {
-
     /// Returns the file path where the session with the given identifier would be saved
     fileprivate func filePath(for identifier: EncryptionSessionIdentifier) -> URL {
         return EncryptionSession.expectedPath(root: self.generatingContext.path, for: identifier)
@@ -709,7 +695,6 @@ extension EncryptionSessionsDirectory {
 // MARK: - Session identifier
 
 public struct EncryptionSessionIdentifier: Hashable, Equatable {
-
     public let userId: String
     public let clientId: String
     public let domain: String

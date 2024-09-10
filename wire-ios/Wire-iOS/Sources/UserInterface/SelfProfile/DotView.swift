@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 final class DotView: UIView {
-
     private let circleView = ShapeView()
     private let centerView = ShapeView()
     private var userObserver: NSObjectProtocol!
@@ -106,7 +105,6 @@ final class DotView: UIView {
 
 extension DotView: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         guard changeInfo.trustLevelChanged ||
               changeInfo.clientsChanged ||
               changeInfo.accentColorValueChanged ||

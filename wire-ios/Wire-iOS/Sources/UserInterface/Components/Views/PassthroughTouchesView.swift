@@ -36,7 +36,6 @@ final class PassthroughTouchesView: UIView {
         }
 
         for subview in subviews {
-
             // Don’t consider hidden subviews in hit testing
             if subview.isHidden || subview.alpha == 0 {
                 continue

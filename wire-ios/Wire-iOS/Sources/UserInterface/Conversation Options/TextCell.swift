@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class TextCell: UITableViewCell, CellConfigurationConfigurable {
-
     private let container = UIView()
     private let label = CopyableLabel()
 

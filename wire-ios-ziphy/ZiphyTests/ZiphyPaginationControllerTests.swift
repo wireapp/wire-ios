@@ -20,7 +20,6 @@ import XCTest
 @testable import Ziphy
 
 class ZiphyPaginationControllerTests: XCTestCase {
-
     var paginationController: ZiphyPaginationController!
 
     override func setUp() {

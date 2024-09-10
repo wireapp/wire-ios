@@ -22,7 +22,6 @@ import Foundation
 /// with another backend.
 
 public struct FederationDeleteEvent: Equatable, Codable {
-
     /// The domain of the backend that is no longer
     /// federating with the self backend.
 

@@ -24,7 +24,6 @@ import WireDesign
 // MARK: - InputBarConversation Extension
 
 extension InputBarConversation {
-
     // Properties
 
     var timeoutImage: UIImage? {

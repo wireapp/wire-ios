@@ -22,7 +22,6 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol E2EIServiceInterface {
-
     func getDirectoryResponse(directoryData: Data) async throws -> AcmeDirectory
     func getNewAccountRequest(nonce: String) async throws -> Data
     func setAccountResponse(accountData: Data) async throws
@@ -48,7 +47,6 @@ public protocol E2EIServiceInterface {
 
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
 public final class E2EIService: E2EIServiceInterface {
-
     // MARK: - Properties
 
     private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>

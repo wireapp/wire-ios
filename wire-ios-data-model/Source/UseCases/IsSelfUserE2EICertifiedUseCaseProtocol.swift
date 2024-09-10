@@ -19,7 +19,6 @@
 // sourcery: AutoMockable
 /// Determines if the self-user has a valid E2EI certificate on all clients.
 public protocol IsSelfUserE2EICertifiedUseCaseProtocol {
-
     /// Returns `true` if all clients of the self-user have valid E2EI certificates.
     func invoke() async throws -> Bool
 }

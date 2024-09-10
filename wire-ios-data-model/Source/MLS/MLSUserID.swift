@@ -21,7 +21,6 @@ import Foundation
 /// A qualified id for MLS users.
 
 public struct MLSUserID {
-
     // MARK: - Properties
 
     public let rawValue: String
@@ -29,7 +28,6 @@ public struct MLSUserID {
     // MARK: - Life cycle
 
     public init?(rawValue: String) {
-
         let components = rawValue.split(
             separator: "@",
             omittingEmptySubsequences: false

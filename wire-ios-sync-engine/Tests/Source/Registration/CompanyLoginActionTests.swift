@@ -20,7 +20,6 @@
 import XCTest
 
 final class CompanyLoginActionTests: XCTestCase {
-
     var userDefaults: UserDefaults!
     var currentToken: CompanyLoginVerificationToken!
 

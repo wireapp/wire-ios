@@ -24,7 +24,6 @@ import WireDesign
 typealias GroupConversationCellConversation = Conversation & StableRandomParticipantsProvider
 
 final class GroupConversationCell: UICollectionViewCell {
-
     let avatarSpacer = UIView()
     let avatarView = ConversationAvatarView()
     let titleLabel = UILabel()

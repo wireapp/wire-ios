@@ -21,7 +21,6 @@ import Foundation
 /// How users can join a conversation.
 
 public enum ConversationAccessMode: String, Codable {
-
     /// Used in one-to-one and self conversations where no one else can
     /// be added or removed.
 

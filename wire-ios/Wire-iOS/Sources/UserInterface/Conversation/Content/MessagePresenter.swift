@@ -88,7 +88,6 @@ final class MessagePresenter: NSObject {
         if !preview || documentInteractionController?.presentPreview(animated: true) == false,
            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
            let view = targetViewController?.view {
-
             documentInteractionController?.presentOptionsMenu(from: rect, in: view, animated: true)
         }
     }
@@ -120,7 +119,6 @@ final class MessagePresenter: NSObject {
     // MARK: - File
 
     func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
-
         if !message.isFileDownloaded() {
             message.fileMessageData?.requestFileDownload()
 
@@ -290,7 +288,6 @@ final class MessagePresenter: NSObject {
 }
 
 extension MessagePresenter: UIDocumentInteractionControllerDelegate {
-
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         return modalTargetController!
     }

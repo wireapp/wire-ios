@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSystem
 
 final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XCTestCase {
-
     private var sut: SupportedOrientationsDelegatingNavigationControllerDelegate!
 
     override func setUp() async throws {
@@ -35,7 +34,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
     @MainActor
     func testAllOrientationsSupported() {
-
         // Given
         let navigationViewController = UINavigationController(rootViewController: ViewController())
 
@@ -48,7 +46,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
     @MainActor
     func testOnlyUpsideDownSupported() {
-
         // Given
         let navigationViewController = UINavigationController(rootViewController: ViewController(.portraitUpsideDown))
 
@@ -61,7 +58,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
     @MainActor
     func testOnlyTheTopViewControllerIsConsidered() {
-
         // Given
         let navigationViewController = UINavigationController()
         navigationViewController.setViewControllers([ViewController(.portraitUpsideDown), ViewController(.landscape)], animated: false)
@@ -75,7 +71,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
     @MainActor
     func testAllSupportedWhenNoViewControllers() {
-
         // Given
         let navigationViewController = UINavigationController()
 
@@ -88,7 +83,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
     @MainActor
     func testDelegateIsSet() {
-
         // Given
         let navigationViewController = UINavigationController()
 
@@ -101,7 +95,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 
     @MainActor
     func testDelegateIsRetained() {
-
         // Given
         let navigationViewController = UINavigationController()
 
@@ -120,7 +113,6 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
 // MARK: - ViewController
 
 private final class ViewController: UIViewController {
-
     private var interfaceOrientations: UIInterfaceOrientationMask
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
 

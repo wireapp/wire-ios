@@ -148,7 +148,6 @@ extension NSAttributedString {
                                  with attributes: [NSAttributedString.Key: Any],
                                  upToWidth: CGFloat,
                                  totalMatches: UnsafeMutablePointer<Int>?) -> NSAttributedString {
-
         let attributedText = self.mutableCopy() as! NSMutableAttributedString
 
         let allRanges = (self.string as NSString).allRanges(of: query, options: [.caseInsensitive, .diacriticInsensitive])

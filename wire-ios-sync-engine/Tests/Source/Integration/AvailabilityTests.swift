@@ -19,7 +19,6 @@
 import XCTest
 
 final class AvailabilityTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

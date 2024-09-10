@@ -27,7 +27,6 @@ import XCTest
 @testable import WireDomain
 
 final class ConnectionsRepositoryTests: XCTestCase {
-
     var sut: ConnectionsRepository!
     var connectionsAPI: MockConnectionsAPI!
 

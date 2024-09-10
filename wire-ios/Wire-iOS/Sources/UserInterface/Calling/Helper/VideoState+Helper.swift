@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 extension VideoState {
-
     var toggledState: VideoState {
         return isSending ? .stopped : .started
     }

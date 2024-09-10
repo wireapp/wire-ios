@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 class ProtosTests: XCTestCase {
-
     func testTextMessageEncodingPerformance() {
         measure {
             for _ in 0..<1000 {

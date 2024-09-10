@@ -27,7 +27,6 @@ extension AssetRequestFactory {
 }
 
 final class SlowSyncTests_Swift: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

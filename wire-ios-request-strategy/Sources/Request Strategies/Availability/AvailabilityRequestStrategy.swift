@@ -19,7 +19,6 @@
 import Foundation
 
 public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-
     private let maximumBroadcastRecipients = 500
     private let context: NSManagedObjectContext
     private let modifiedKeysSync: ModifiedKeyObjectSync<AvailabilityRequestStrategy>
@@ -66,7 +65,6 @@ extension AvailabilityRequestStrategy: ModifiedKeyObjectSyncTranscoder {
 }
 
 extension AvailabilityRequestStrategy: ZMEventConsumer {
-
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard

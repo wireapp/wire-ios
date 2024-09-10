@@ -20,7 +20,6 @@ import UIKit
 import UserNotifications
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
-
     func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()
     }
@@ -31,7 +30,6 @@ extension ConversationListViewController: PermissionDeniedViewControllerDelegate
 }
 
 extension ConversationListViewController {
-
     private func closePushPermissionDeniedDialog() {
         guard pushPermissionDeniedViewController === presentedViewController else {
             return assertionFailure()
@@ -41,7 +39,6 @@ extension ConversationListViewController {
     }
 
     func showPermissionDeniedViewController() {
-
         let viewController = PermissionDeniedViewController.pushDeniedViewController()
         viewController.delegate = self
         viewController.modalPresentationStyle = .fullScreen

@@ -20,7 +20,6 @@ import Foundation
 import WireImages
 
 public final class UserProfileImageOwner: NSObject, ZMImageOwner {
-
     static var imageFormats: [ZMImageFormat] {
         return [.medium, .profile]
     }

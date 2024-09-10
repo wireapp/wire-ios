@@ -60,7 +60,6 @@ public final class DataBuffer: NSObject {
 }
 
 @objcMembers public final class NetworkSocket: NSObject {
-
     // MARK: - Public API
 
     public let url: URL

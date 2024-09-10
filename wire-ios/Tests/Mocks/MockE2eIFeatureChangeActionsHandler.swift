@@ -19,7 +19,6 @@
 import Foundation
 
 final class MockE2eIFeatureChangeActionsHandler: FeatureChangeActions {
-
     func enrollCertificate() {}
 
     func postponeReminder() {}

@@ -22,7 +22,6 @@ import Foundation
 /// another user was updated.
 
 public struct UserConnectionEvent: Equatable, Codable {
-
     /// The name of the other user.
 
     public let userName: String

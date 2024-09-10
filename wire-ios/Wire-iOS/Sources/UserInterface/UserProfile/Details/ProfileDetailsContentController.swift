@@ -25,7 +25,6 @@ import WireSyncEngine
  */
 
 protocol ProfileDetailsContentControllerDelegate: AnyObject {
-
     /// Called when the profile details change.
     func profileDetailsContentDidChange()
 
@@ -41,7 +40,6 @@ final class ProfileDetailsContentController: NSObject,
                                              UITableViewDataSource,
                                              UITableViewDelegate,
                                              UserObserving {
-
     /**
      * The type of content that can be displayed in the profile details.
      */
@@ -151,7 +149,6 @@ final class ProfileDetailsContentController: NSObject,
 
     /// Updates the content for the current configuration.
     private func updateContent() {
-
         switch conversation?.conversationType ?? .group {
         case .group:
             let groupAdminEnabled = conversation.map(user.isGroupAdmin) ?? false

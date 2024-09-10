@@ -53,7 +53,6 @@ extension RandomGeneratorFromData {
 
 extension Array {
     func shuffled(with generator: RandomGenerator) -> Array {
-
         var workingCopyIndices = [Int](indices)
         var resultIndices = [Int]()
         forEach { _ in
@@ -98,7 +97,6 @@ enum Mode: Equatable {
 }
 
 extension Mode {
-
     /// create a Mode for different cases
     ///
     /// - Parameters:
@@ -159,7 +157,6 @@ final class ConversationAvatarView: UIView {
 
     private var conversation: ConversationAvatarViewConversation? = .none {
         didSet {
-
             guard let conversation else {
                 self.clippingView.subviews.forEach { $0.isHidden = true }
                 return

@@ -38,7 +38,6 @@ extension Notification.Name {
 }
 
 final class AppDelegate: UIResponder, UIApplicationDelegate {
-
     // MARK: - Private Property
 
     private lazy var voIPPushManager: VoIPPushManager = {
@@ -106,7 +105,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
@@ -145,7 +143,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
@@ -287,7 +284,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 // MARK: - Private Helpers
 
 private extension AppDelegate {
-
     private func setupWindowAndRootViewController() {
         mainWindow.rootViewController = LaunchScreenViewController()
         mainWindow.makeKeyAndVisible()
@@ -301,7 +297,6 @@ private extension AppDelegate {
     }
 
     private func createAppRootRouter(_ launchOptions: LaunchOptions) {
-
         guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }

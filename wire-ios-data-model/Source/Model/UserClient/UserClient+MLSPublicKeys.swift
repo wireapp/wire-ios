@@ -19,7 +19,6 @@
 import Foundation
 
 extension UserClient {
-
     // MARK: - Keys
 
     public static let mlsPublicKeysKey = "mlsPublicKeys"
@@ -93,9 +92,7 @@ extension UserClient {
 }
 
 extension UserClient {
-
     public struct MLSPublicKeys: Codable, Equatable {
-
         enum CodingKeys: String, CodingKey {
             case ed25519
             case ed448

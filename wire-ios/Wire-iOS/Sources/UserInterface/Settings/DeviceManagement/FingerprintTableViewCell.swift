@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
-
     // MARK: - Properties
 
     let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
@@ -108,7 +107,6 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
                 attributes: [.font: fingerprintLabelMonoFont, .foregroundColor: fingerprintLabel.textColor],
                 boldAttributes: [.font: fingerprintLabelBoldMonoFont, .foregroundColor: fingerprintLabel.textColor],
                 uppercase: false) {
-
                     fingerprintLabel.attributedText = attributedFingerprint
                     spinner.stopAnimating()
         } else {

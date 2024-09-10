@@ -26,7 +26,6 @@ import XCTest
 @testable import Wire
 
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
-
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
 
     var allowGuests: Bool
@@ -67,7 +66,6 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
 // MARK: - ConversationOptionsViewControllerTests
 
 final class ConversationOptionsViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var mockConversation: MockConversation!
@@ -380,7 +378,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     }
 
     func testThatItRendersLoading() {
-
         // Given
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         let viewModel = makeViewModel(config: config)

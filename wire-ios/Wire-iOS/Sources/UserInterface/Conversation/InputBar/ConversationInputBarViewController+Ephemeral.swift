@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 extension ConversationInputBarViewController {
-
     @discardableResult
     func createEphemeralKeyboardViewController() -> EphemeralKeyboardViewController {
         let ephemeralKeyboardViewController = EphemeralKeyboardViewController(conversation: conversation as? ZMConversation)
@@ -106,7 +105,6 @@ extension ConversationInputBarViewController {
 }
 
 private extension MessageDestructionTimeoutValue {
-
     var accessibilityValue: String? {
         typealias Conversation = L10n.Accessibility.Conversation
 
@@ -136,7 +134,6 @@ private extension MessageDestructionTimeoutValue {
 }
 
 extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDelegate {
-
     func ephemeralKeyboardWantsToBeDismissed(_ keyboard: EphemeralKeyboardViewController) {
         toggleEphemeralKeyboardVisibility()
     }
@@ -155,7 +152,6 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
 }
 
 extension ConversationInputBarViewController {
-
     var ephemeralState: EphemeralState {
         var state = EphemeralState.none
 

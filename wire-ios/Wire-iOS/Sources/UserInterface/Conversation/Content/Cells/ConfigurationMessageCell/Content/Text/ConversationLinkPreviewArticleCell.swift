@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
-
     struct Configuration {
         let textMessageData: TextMessageData
         let showImage: Bool

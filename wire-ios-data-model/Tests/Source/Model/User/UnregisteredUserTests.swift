@@ -21,9 +21,7 @@ import XCTest
 @testable import WireDataModel
 
 final class UnregisteredUserTests: XCTestCase {
-
     func testThatItReturnsCompletedWhenUserIsComplete_Email() {
-
         // GIVEN
         let user = UnregisteredUser()
 

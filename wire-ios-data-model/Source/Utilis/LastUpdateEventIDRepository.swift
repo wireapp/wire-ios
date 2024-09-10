@@ -21,14 +21,12 @@ import Foundation
 // sourcery: AutoMockable
 @objc
 public protocol LastEventIDRepositoryInterface {
-
     func fetchLastEventID() -> UUID?
     func storeLastEventID(_ id: UUID?)
 }
 
 @objc
 public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterface {
-
     // MARK: - Properties
 
     private let storage: PrivateUserDefaults<Key>

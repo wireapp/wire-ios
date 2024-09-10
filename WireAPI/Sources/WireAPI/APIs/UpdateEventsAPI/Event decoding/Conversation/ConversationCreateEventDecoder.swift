@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationCreateEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationCreateEvent {
@@ -72,7 +71,6 @@ struct ConversationCreateEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let id: UUID?
         let qualifiedID: ConversationID?
         let teamID: UUID?
@@ -94,7 +92,6 @@ struct ConversationCreateEventDecoder {
         let lastEventTime: UTCTimeMillis?
 
         enum CodingKeys: String, CodingKey {
-
             case id
             case qualifiedID = "qualified_id"
             case teamID = "team"
@@ -118,12 +115,10 @@ struct ConversationCreateEventDecoder {
     }
 
     private struct Members: Decodable, ToAPIModelConvertible {
-
         let others: [Member]
         let selfMember: Member
 
         enum CodingKeys: String, CodingKey {
-
             case others
             case selfMember = "self"
         }
@@ -137,7 +132,6 @@ struct ConversationCreateEventDecoder {
     }
 
     struct Member: Decodable, ToAPIModelConvertible {
-
         let qualifiedID: QualifiedID?
         let id: UUID?
         let qualifiedTarget: QualifiedID?
@@ -152,7 +146,6 @@ struct ConversationCreateEventDecoder {
         let mutedReference: UTCTimeMillis?
 
         enum CodingKeys: String, CodingKey {
-
             case qualifiedID = "qualified_id"
             case id
             case qualifiedTarget = "qualified_target"

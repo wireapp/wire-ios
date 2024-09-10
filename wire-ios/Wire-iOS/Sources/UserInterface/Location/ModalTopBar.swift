@@ -25,7 +25,6 @@ protocol ModalTopBarDelegate: AnyObject {
 }
 
 final class ModalTopBar: UIView {
-
     let dismissButton = IconButton()
     typealias ViewColors = SemanticColors.View
 

@@ -23,7 +23,6 @@ import UIKit
 /// if needed.
 
 final class GridLayoutView: UIView {
-
     // MARK: - Properties
 
     var verticalSpacing: CGFloat = 4

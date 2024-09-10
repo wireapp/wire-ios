@@ -24,7 +24,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class MLSEventProcessorTests: MessagingTestBase {
-
     var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSServiceInterface!
     var conversationServiceMock: MockConversationServiceInterface!

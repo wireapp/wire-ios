@@ -21,7 +21,6 @@ import WireDesign
 import WireSyncEngine
 
 struct ShareableDebugReport: Shareable {
-
     // MARK: - Types
 
     typealias I = ZMConversation

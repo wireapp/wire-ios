@@ -24,7 +24,6 @@ import Foundation
  */
 
 struct AuthenticationPostRegistrationFields {
-
     /// The value the user provided for their marketing consent.
     let marketingConsent: Bool
 }

@@ -20,7 +20,6 @@ import Foundation
 import WireFoundation
 
 final class PushChannel: PushChannelProtocol {
-
     typealias Stream = AsyncThrowingStream<UpdateEventEnvelope, any Error>
 
     private let request: URLRequest

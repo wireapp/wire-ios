@@ -30,7 +30,6 @@ protocol CollectionCellMessageChangeDelegate: AnyObject {
 }
 
 class CollectionCell: UICollectionViewCell {
-
     var actionController: ConversationMessageActionController?
     var messageObserverToken: NSObjectProtocol? = .none
     weak var delegate: CollectionCellDelegate?
@@ -230,7 +229,6 @@ extension CollectionCell: ZMMessageObserver {
 }
 
 extension CollectionCell: MessageActionResponder {
-
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         delegate?.collectionCell(self, performAction: action)
     }

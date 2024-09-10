@@ -209,7 +209,6 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
 
 @objcMembers
 open class ZMUpdateEvent: NSObject {
-
     open var payload: [AnyHashable: Any]
     open var type: ZMUpdateEventType
     open var source: ZMUpdateEventSource
@@ -268,7 +267,6 @@ open class ZMUpdateEvent: NSObject {
     }
 
     class func eventsArray(with uuid: UUID, payloadArray: [Any]?, transient: Bool, source: ZMUpdateEventSource, pushStartingAt sourceThreshold: UUID?) -> [ZMUpdateEvent] {
-
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
             WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventId: uuid.transportString().redactedAndTruncated()], .safePublic)
             return []
@@ -310,7 +308,6 @@ open class ZMUpdateEvent: NSObject {
     }
 
     open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource, pushStartingAt threshold: UUID?) -> [ZMUpdateEvent]? {
-
         let dictionary = transportData.asDictionary()
         guard let uuidString = dictionary?["id"] as? String, let uuid = UUID(uuidString: uuidString) else { return nil }
         guard let payloadArray = dictionary?["payload"] as? [Any] else { return nil }
@@ -333,7 +330,6 @@ extension ZMUpdateEvent {
 }
 
 extension ZMUpdateEvent {
-
     override open func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMUpdateEvent else {
             return false

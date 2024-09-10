@@ -19,7 +19,6 @@
 import Foundation
 
 protocol OperationStateProvider {
-
     var operationState: SyncEngineOperationState { get }
 }
 

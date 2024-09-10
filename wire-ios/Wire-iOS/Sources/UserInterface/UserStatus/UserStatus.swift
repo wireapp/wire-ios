@@ -21,7 +21,6 @@ import WireDataModel
 /// The status of the user, consisting of its name,
 /// handle, availability and verification status.
 struct UserStatus {
-
     var name = ""
 
     var availability = Availability.none

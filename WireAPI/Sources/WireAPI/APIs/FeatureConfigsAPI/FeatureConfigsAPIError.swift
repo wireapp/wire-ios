@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `FeatureConfigsAPI`.
 
 public enum FeatureConfigsAPIError: Error {
-
     /// Insufficient permissions
 
     case insufficientPermissions

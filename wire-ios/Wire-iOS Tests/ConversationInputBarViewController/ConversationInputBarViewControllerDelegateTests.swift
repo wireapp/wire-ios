@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
-
     var coreDataFixture: CoreDataFixture!
     private var mockDelegate: MockDelegate!
     var sut: ConversationInputBarViewController!
@@ -76,7 +75,6 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 }
 
 private final class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
-
     var composedDrafts = [DraftMessage]()
 
     func conversationInputBarViewControllerDidComposeText(text: String,

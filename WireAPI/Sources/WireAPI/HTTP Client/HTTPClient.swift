@@ -21,7 +21,6 @@ import Foundation
 /// A object responsible for executing http requests.
 
 public protocol HTTPClient {
-
     /// Executes the given request.
     ///
     /// - Parameters:

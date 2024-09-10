@@ -21,7 +21,6 @@ import WireDataModel
 import WireTesting
 
 class StoreUpdateEventTests: MessagingTest {
-
     var account: Account!
     var publicKey: SecKey?
     var encryptionKeys: EncryptionKeys?
@@ -43,7 +42,6 @@ class StoreUpdateEventTests: MessagingTest {
     }
 
     func testThatYouCanCreateAnEvent() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -53,7 +51,6 @@ class StoreUpdateEventTests: MessagingTest {
 
         // when
         if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 2) {
-
             // then
             XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
             XCTAssertEqual(storedEvent.payload, event.payload as NSDictionary)
@@ -67,7 +64,6 @@ class StoreUpdateEventTests: MessagingTest {
     }
 
     func testThatItFetchesAllStoredEvents() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -93,7 +89,6 @@ class StoreUpdateEventTests: MessagingTest {
     }
 
     func testThatItOrdersEventsBySortIndex() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -117,7 +112,6 @@ class StoreUpdateEventTests: MessagingTest {
     }
 
     func testThatItReturnsOnlyDefinedBatchSize() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -150,7 +144,6 @@ class StoreUpdateEventTests: MessagingTest {
     }
 
     func testThatItReturnsHighestIndex() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -172,7 +165,6 @@ class StoreUpdateEventTests: MessagingTest {
     }
 
     func testThatItCanConvertAnEventToStoredEventAndBack() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()

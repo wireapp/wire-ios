@@ -31,7 +31,6 @@ extension UIViewController {
 // MARK: - UIView Extension
 
 extension UIView {
-
     func redrawAllFonts() {
         visitSubviews { view in
             guard let dynamicTypeCapableView = view as? DynamicTypeCapable else { return }

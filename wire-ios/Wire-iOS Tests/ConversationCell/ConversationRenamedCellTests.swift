@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationRenamedCellTests: ConversationMessageSnapshotTestCase {
-
     override func setUp() {
         super.setUp()
 

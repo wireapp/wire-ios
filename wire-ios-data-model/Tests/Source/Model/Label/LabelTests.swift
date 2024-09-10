@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class LabelTests: ZMBaseManagedObjectTest {
-
     func testThatFetchOrCreateFavoriteLabel_ReturnsLabelOfKindFavorite() {
         // given
         let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true)

@@ -20,7 +20,6 @@
 import XCTest
 
 final class EventProcessingTrackerTests: XCTestCase {
-
     var sut: EventProcessingTracker!
 
     override func setUp() {

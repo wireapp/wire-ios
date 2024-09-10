@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class PushTokenStorageTests: MessagingTestBase {
-
     private let userDefaultsSuiteName = "PushTokenStorageTests"
 
     // MARK: - Set up

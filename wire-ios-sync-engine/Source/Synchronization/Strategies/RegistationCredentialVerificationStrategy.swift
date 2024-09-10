@@ -30,7 +30,6 @@ final class RegistationCredentialVerificationStrategy: NSObject {
 }
 
 extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
-
     func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         let currentStatus = registrationStatus
         var payload: [String: Any]

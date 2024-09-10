@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers open class LinkMetadata: NSObject {
-
     public let originalURLString: String
     public let permanentURL: URL?
     public let resolvedURL: URL?

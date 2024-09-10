@@ -54,7 +54,6 @@ final class MockOwner {
 }
 
 final class SavableImageTests: XCTestCase {
-
     weak var sut: SavableImage!
     var imageData: Data!
     var image: UIImage!

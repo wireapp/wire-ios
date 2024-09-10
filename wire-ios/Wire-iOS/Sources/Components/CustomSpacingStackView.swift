@@ -19,7 +19,6 @@
 import UIKit
 
 final class CustomSpacingStackView: UIView {
-
     private var stackView: UIStackView
 
     /**
@@ -82,7 +81,6 @@ final class CustomSpacingStackView: UIView {
 }
 
 final class SpacingView: UIView {
-
     var size: CGFloat
 
     init(_ size: CGFloat) {

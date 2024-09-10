@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class BuildTypeTests: ZMTBaseTest {
-
     func testThatItParsesKnownBundleIDs() {
         // GIVEN
         let bundleIdsToTypes: [String: WireSyncEngine.BuildType] = ["com.wearezeta.zclient.ios": .production,

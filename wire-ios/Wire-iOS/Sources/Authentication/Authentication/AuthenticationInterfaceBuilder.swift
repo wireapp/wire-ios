@@ -29,7 +29,6 @@ typealias AuthenticationStepViewController = UIViewController & AuthenticationCo
  */
 
 final class AuthenticationInterfaceBuilder {
-
     /**
      * Returns the view controller that displays the interface of the authentication step.
      *

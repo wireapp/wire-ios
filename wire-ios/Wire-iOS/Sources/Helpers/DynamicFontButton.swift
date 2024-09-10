@@ -23,7 +23,6 @@ import WireDesign
 /// A helper class that provides the Button with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable protocol
 class DynamicFontButton: StylableButton, DynamicTypeCapable {
-
     // MARK: - Properties
 
     private let onRedrawFont: () -> UIFont?

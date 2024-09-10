@@ -61,7 +61,6 @@ private enum InputBarRowConstants {
 /// - Note: This class is intended for use as part of the `InputBar` and relies on the `InputBarConstants`
 ///         for consistent styling and layout metrics.
 final class InputBarButtonsView: UIView {
-
     typealias RowIndex = UInt
 
     private(set) var multilineLayout: Bool = false

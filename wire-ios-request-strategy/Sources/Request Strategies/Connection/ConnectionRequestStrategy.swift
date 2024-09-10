@@ -19,7 +19,6 @@
 import Foundation
 
 public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
-
     let eventsToProcess: [ZMUpdateEventType] = [
         .userConnection
     ]
@@ -46,7 +45,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         syncProgress: SyncProgress,
         oneOneOneResolver: OneOnOneResolverInterface
     ) {
-
         self.syncProgress = syncProgress
         self.localConnectionListSync =
         PaginatedSync<Payload.PaginatedLocalConnectionList>(basePath: "/connections",
@@ -163,7 +161,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 }
 
 extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
-
     typealias T = ZMConnection
 
     func synchronize(_ object: ZMConnection, completion: @escaping () -> Void) {
@@ -191,7 +188,6 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
 }
 
 extension ConnectionRequestStrategy: ZMEventConsumer {
-
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard

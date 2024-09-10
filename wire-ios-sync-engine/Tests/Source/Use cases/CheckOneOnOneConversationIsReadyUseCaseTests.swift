@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
-
     private var sut: CheckOneOnOneConversationIsReadyUseCase!
     private var coreDataStack: CoreDataStack!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!

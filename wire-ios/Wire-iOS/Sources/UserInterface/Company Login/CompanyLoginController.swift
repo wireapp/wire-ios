@@ -22,7 +22,6 @@ import WireSyncEngine
 import WireTransport
 
 protocol CompanyLoginControllerDelegate: AnyObject {
-
     /// The `CompanyLoginController` will never present any alerts on its own and will
     /// always ask its delegate to handle the actual presentation of the alerts.
     func controller(_ controller: CompanyLoginController, presentAlert: UIAlertController)
@@ -57,7 +56,6 @@ protocol CompanyLoginControllerDelegate: AnyObject {
 /// `SharedIdentitySessionRequestDetector` can be provided.
 ///
 final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
-
     weak var delegate: CompanyLoginControllerDelegate?
 
     var isAutoDetectionEnabled = true
@@ -174,7 +172,6 @@ extension CompanyLoginController {
         prefilledInput: String? = nil,
         error: UIAlertController.CompanyLoginError? = nil,
         ssoOnly: Bool = false) {
-
         // Do not repeatly show alert if exist
         guard ssoAlert == nil else { return }
 
@@ -270,7 +267,6 @@ extension CompanyLoginController {
 // MARK: - Automatic SSO flow
 
 extension CompanyLoginController {
-
     /// Fetches SSO code and starts flow automatically if code is returned on completion
     /// - Parameter promptOnError: Prompt the user for SSO code if there is an error fetching code
     func startAutomaticSSOFlow(promptOnError: Bool = true) {
@@ -346,7 +342,6 @@ extension CompanyLoginController {
 // MARK: - SSO code detection
 
 extension CompanyLoginController {
-
     func detectSSOCode() {
         internalDetectSSOCode(onlyNew: false)
     }

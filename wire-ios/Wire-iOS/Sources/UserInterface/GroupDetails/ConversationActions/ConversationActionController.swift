@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 final class ConversationActionController {
-
     enum Context {
         case list, details
     }
@@ -45,7 +44,6 @@ final class ConversationActionController {
     }
 
     func presentMenu(from sourceView: UIView, context: Context) {
-
         let actions: [ZMConversation.Action]
         switch context {
         case .details:
@@ -150,7 +148,6 @@ final class ConversationActionController {
     }
 
     func present(_ controller: UIViewController) {
-
         _ = currentContext.map {
             controller.configurePopoverPresentationController(using: $0)
         }

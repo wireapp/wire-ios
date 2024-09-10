@@ -22,7 +22,6 @@ import Foundation
 /// legalhold subject.
 
 public struct UserLegalholdRequestEvent: Equatable, Codable {
-
     /// The user id of the target legalhold subject.
 
     public let userID: UUID

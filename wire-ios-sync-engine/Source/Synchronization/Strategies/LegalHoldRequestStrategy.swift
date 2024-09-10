@@ -19,7 +19,6 @@
 import Foundation
 
 public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMEventConsumer {
-
     fileprivate let syncStatus: SyncStatus
     fileprivate var singleRequstSync: ZMSingleRequestSync!
 

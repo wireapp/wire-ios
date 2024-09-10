@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class FolderCreationNameCell: UICollectionViewCell {
-
     let textField = SimpleTextField()
 
     override init(frame: CGRect) {

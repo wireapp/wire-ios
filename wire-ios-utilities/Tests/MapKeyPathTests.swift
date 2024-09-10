@@ -35,7 +35,6 @@ private struct Office: Equatable {
 }
 
 class MapKeyPathTests: XCTestCase {
-
     // MARK: - Optional
 
     func testOptionalMap() {

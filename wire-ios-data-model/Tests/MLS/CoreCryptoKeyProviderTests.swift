@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class CoreCryptoKeyProviderTests: XCTestCase {
-
     override func tearDown() {
         super.tearDown()
         try? KeychainManager.deleteItem(CoreCryptoKeychainItem())

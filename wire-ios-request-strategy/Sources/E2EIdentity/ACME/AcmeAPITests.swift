@@ -21,7 +21,6 @@ import Foundation
 import WireTransport
 
 final class AcmeAPITests: ZMTBaseTest {
-
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
     private let encoder: JSONEncoder = .defaultEncoder
@@ -285,7 +284,6 @@ final class AcmeAPITests: ZMTBaseTest {
 }
 
 class MockHttpClient: HttpClientCustom {
-
     var mockResponse: (Data, URLResponse)?
     var sentRequests: [URLRequest] = []
 
@@ -299,7 +297,6 @@ class MockHttpClient: HttpClientCustom {
 }
 
 private class MockAcmeResponse {
-
     func acmeDirectory() -> AcmeDirectoriesResponse {
         return AcmeDirectoriesResponse(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
                                        newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",

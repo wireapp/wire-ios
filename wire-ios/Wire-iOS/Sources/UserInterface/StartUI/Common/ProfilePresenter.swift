@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class ProfilePresenter: NSObject, ViewControllerDismisser {
-
     var profileOpenedFromPeoplePicker = false
     var keyboardPersistedAfterOpeningProfile = false
 

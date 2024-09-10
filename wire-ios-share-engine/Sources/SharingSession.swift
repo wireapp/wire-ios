@@ -23,14 +23,12 @@ import WireRequestStrategy
 import WireTransport
 
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
-
     func didFailToSend(_ message: ZMMessage) {
         // nop
     }
 }
 
 final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-
     let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {
@@ -51,7 +49,6 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 }
 
 final class AuthenticationStatus: AuthenticationStatusProvider {
-
     let transportSession: ZMTransportSession
 
     init(transportSession: ZMTransportSession) {
@@ -79,7 +76,6 @@ extension BackendEnvironmentProvider {
 }
 
 final class ApplicationStatusDirectory: ApplicationStatus {
-
     let transportSession: ZMTransportSession
 
     /// The authentication status used to verify a user is authenticated
@@ -137,7 +133,6 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 /// - warning: creating multiple sessions in the same process
 /// is not supported and will result in undefined behaviour
 public final class SharingSession {
-
     /// The failure reason of a `SharingSession` initialization
     /// - NeedsMigration: The database needs a migration which is only done in the main app
     /// - LoggedOut: No user is logged in
@@ -221,7 +216,6 @@ public final class SharingSession {
         sharedUserDefaults: UserDefaults,
         minTLSVersion: String?
     ) throws {
-
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
         let coreDataStack = CoreDataStack(account: Account(userName: "", userIdentifier: accountIdentifier),
@@ -292,7 +286,6 @@ public final class SharingSession {
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
     ) throws {
-
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
@@ -342,7 +335,6 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults
     ) throws {
-
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
         let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
 
@@ -429,7 +421,6 @@ public final class SharingSession {
     }
 
     private func setupCaches(at cachesDirectory: URL) {
-
         let userImageCache = UserImageLocalCache(location: cachesDirectory)
         userInterfaceContext.zm_userImageCache = userImageCache
         syncContext.zm_userImageCache = userImageCache
@@ -473,7 +464,6 @@ extension SharingSession: LinkPreviewDetectorType {
 // MARK: - Helper
 
 fileprivate extension ConversationList {
-
     var writeableConversations: [Conversation] {
         items.filter { !$0.isReadOnly }
     }

@@ -18,7 +18,6 @@
 
 /// An optionSet indicates a user's permissions
 public struct Permissions: OptionSet {
-
     public let rawValue: Int64
 
     public init(rawValue: Int64) {
@@ -58,7 +57,6 @@ public struct Permissions: OptionSet {
 // MARK: - Debugging
 
 extension Permissions: CustomDebugStringConvertible {
-
     private static let descriptions: [Permissions: String] = [
         .createConversation: "CreateConversation",
         .deleteConversation: "DeleteConversation",
@@ -135,7 +133,6 @@ extension Permissions: Hashable {
 }
 
 extension Member {
-
     @objc public func setTeamRole(_ role: TeamRole) {
         permissions = role.permissions
     }

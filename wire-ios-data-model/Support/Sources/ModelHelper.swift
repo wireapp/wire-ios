@@ -22,7 +22,6 @@ import WireDataModel
 /// A helper object to make it easy to create and relate model objects.
 
 public struct ModelHelper {
-
     public init() {}
 
     // MARK: - Users

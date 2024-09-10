@@ -20,7 +20,6 @@ import Foundation
 import WireSystem
 
 extension Team: ObjectInSnapshot {
-
     static public var observableKeys: Set<String> {
         return [
             #keyPath(Team.name),
@@ -36,7 +35,6 @@ extension Team: ObjectInSnapshot {
 }
 
 @objcMembers public class TeamChangeInfo: ObjectChangeInfo {
-
     static func changeInfo(for team: Team, changes: Changes) -> TeamChangeInfo? {
         return TeamChangeInfo(object: team, changes: changes)
     }
@@ -66,7 +64,6 @@ extension Team: ObjectInSnapshot {
 }
 
 extension TeamChangeInfo {
-
     // MARK: Registering TeamObservers
 
     /// Adds an observer for a team

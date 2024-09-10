@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
-
     var transportSession: TestUnauthenticatedTransportSession!
     var sut: UnauthenticatedSession!
     var mockDelegate: MockUnauthenticatedSessionDelegate!

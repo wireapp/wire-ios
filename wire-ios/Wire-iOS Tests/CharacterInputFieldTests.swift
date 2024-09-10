@@ -37,7 +37,6 @@ final class TestCharacterInputFieldDelegate: NSObject, CharacterInputFieldDelega
 }
 
 final class CharacterInputFieldTests: XCTestCase {
-
     private var sut: CharacterInputField! = nil
     private var delegate: TestCharacterInputFieldDelegate! = nil
 

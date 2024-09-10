@@ -20,9 +20,7 @@ import Foundation
 @testable import Wire
 
 extension ___VARIABLE_productName:identifier___Module {
-
     final class MockInteractor: ___VARIABLE_productName:identifier___InteractorPresenterInterface {
-
         // MARK: - Metrics
 
         var requests = [Request]()

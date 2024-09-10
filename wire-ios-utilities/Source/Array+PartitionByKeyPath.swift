@@ -19,7 +19,6 @@
 import Foundation
 
 extension Array {
-
     public func partition<Key>(by keyPath: KeyPath<Element, Key?>) -> [Key: [Element]] {
         return reduce(into: [:], { result, element in
             if let key = element[keyPath: keyPath] {

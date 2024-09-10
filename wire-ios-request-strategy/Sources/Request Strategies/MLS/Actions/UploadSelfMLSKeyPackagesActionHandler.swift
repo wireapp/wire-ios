@@ -19,7 +19,6 @@
 import Foundation
 
 class UploadSelfMLSKeyPackagesActionHandler: ActionHandler<UploadSelfMLSKeyPackagesAction> {
-
     // MARK: - Methods
 
     override func request(for action: UploadSelfMLSKeyPackagesAction, apiVersion: APIVersion) -> ZMTransportRequest? {

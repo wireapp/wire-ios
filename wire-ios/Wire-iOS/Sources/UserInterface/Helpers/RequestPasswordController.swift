@@ -19,7 +19,6 @@
 import UIKit
 
 final class RequestPasswordController {
-
     typealias Callback = (_ password: String?) -> Void
 
     enum RequestPasswordContext {
@@ -41,7 +40,6 @@ final class RequestPasswordController {
     init(context: RequestPasswordContext,
          callback: @escaping Callback,
          inputValidation: InputValidation? = nil) {
-
         self.callback = callback
         self.inputValidation = inputValidation
 

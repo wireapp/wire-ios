@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class WaveFormView: UIView {
-
     private let visualizationView = SCSiriWaveformView()
     private let leftGradient = GradientView()
     private let rightGradient = GradientView()

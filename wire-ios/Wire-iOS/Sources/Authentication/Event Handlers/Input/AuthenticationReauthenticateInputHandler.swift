@@ -26,7 +26,6 @@ private let zmLog = ZMSLog(tag: "AuthenticationReauthenticateInputHandler")
  */
 
 final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {

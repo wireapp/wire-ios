@@ -26,7 +26,6 @@ public extension Notification.Name {
 }
 
 extension ZMAssetClientMessage {
-
     func deleteContent() {
         managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
 

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class DummyServiceUser: NSObject, ServiceUser {
-
     func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
     }
 

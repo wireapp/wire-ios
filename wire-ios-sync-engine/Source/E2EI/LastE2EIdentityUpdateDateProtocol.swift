@@ -20,14 +20,12 @@ import Foundation
 
 @objc
 public protocol LastE2EIdentityUpdateDateRepositoryInterface {
-
     func fetchLastAlertDate() -> Date?
     func storeLastAlertDate(_ date: Date?)
 }
 
 @objc
 public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentityUpdateDateRepositoryInterface {
-
     // MARK: - Properties
 
     private let storage: PrivateUserDefaults<Key>

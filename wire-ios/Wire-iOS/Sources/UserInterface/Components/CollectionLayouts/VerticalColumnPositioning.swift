@@ -26,7 +26,6 @@ import UIKit
  */
 
 struct VerticalColumnPositioning {
-
     /// The height of the content displayed in the container.
     private(set) var contentHeight: CGFloat
 
@@ -64,7 +63,6 @@ struct VerticalColumnPositioning {
      */
 
     mutating func insertItem(ofSize itemSize: CGSize, at indexPath: IndexPath) {
-
         // Compute the position of the item to add
 
         let itemVerticalSpacing = rows.count < context.numberOfColumns ? 0 : context.interItemSpacing
@@ -92,7 +90,6 @@ struct VerticalColumnPositioning {
     }
 
     private var nextColumn: Int {
-
         var smallestColumn: Int = 0
 
         for i in 0 ..< context.numberOfColumns {

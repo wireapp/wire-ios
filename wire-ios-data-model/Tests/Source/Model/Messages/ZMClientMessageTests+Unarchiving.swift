@@ -20,9 +20,7 @@ import WireDataModel
 import WireTesting
 
 class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
-
     func testThatItUnarchivesAConversationWhenItWasNotCleared() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -41,7 +39,6 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
     }
 
     func testThatItDoesNotUnarchiveASilencedConversation() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -61,7 +58,6 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
     }
 
     func testThatItDoesNotUnarchiveAClearedConversation_TimestampForMessageIsOlder() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -89,7 +85,6 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
     }
 
     func testThatItUnarchivesAClearedConversation_TimestampForMessageIsNewer() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()

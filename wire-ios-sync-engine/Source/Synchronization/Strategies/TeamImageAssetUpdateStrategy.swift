@@ -22,12 +22,10 @@ import WireRequestStrategy
 /// TeamImageAssetUpdateStrategy is responsible for downloading the image associated with a team
 
 public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMDownstreamTranscoder {
-
     fileprivate var downstreamRequestSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate var observer: Any!
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,

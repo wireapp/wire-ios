@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension NSManagedObjectContext {
-
     @objc
     public func tearDownCryptoStack() {
         proteusProvider.perform(

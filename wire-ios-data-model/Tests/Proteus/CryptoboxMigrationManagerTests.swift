@@ -24,7 +24,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
-
     var sut: CryptoboxMigrationManager!
     var mockFileManager: MockFileManagerInterface!
     var proteusViaCoreCryptoFlag: DeveloperFlag!

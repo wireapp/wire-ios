@@ -97,7 +97,6 @@ final class LinkInteractionTextView: UITextView {
 }
 
 extension LinkInteractionTextView: UITextViewDelegate {
-
     func textView(_ textView: UITextView,
                   shouldInteractWith textAttachment: NSTextAttachment,
                   in characterRange: NSRange,
@@ -151,9 +150,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
 // MARK: - UITextDragDelegate
 
 extension LinkInteractionTextView: UITextDragDelegate {
-
     func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
-
         func isMentionLink(_ attributeTuple: (NSAttributedString.Key, Any)) -> Bool {
             return attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention.mentionScheme
         }

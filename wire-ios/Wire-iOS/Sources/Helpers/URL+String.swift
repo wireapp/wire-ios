@@ -56,7 +56,6 @@ extension URL {
 }
 
 extension String {
-
     // MARK: - URL Formatting
 
     var removingPrefixWWW: String {

@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension Collection where Iterator.Element: UserType {
-
     func searchForMentions(withQuery query: String) -> [UserType] {
         let usersToSearch = filter { !$0.isSelfUser && !$0.isServiceUser }
 
@@ -53,7 +52,6 @@ extension Collection where Iterator.Element: UserType {
 }
 
 private extension UserType {
-
     var nameTokens: [String] {
         return name?.components(separatedBy: CharacterSet.alphanumerics.inverted) ?? []
     }

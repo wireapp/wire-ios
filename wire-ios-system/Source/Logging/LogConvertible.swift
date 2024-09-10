@@ -17,12 +17,10 @@
 //
 
 public protocol LogConvertible {
-
     var logDescription: String { get }
 }
 
 extension String: LogConvertible {
-
     public var logDescription: String {
         return self
     }

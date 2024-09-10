@@ -39,7 +39,6 @@ extension UserDefaults {
 private let zmLog = ZMSLog(tag: "UserDefaults")
 
 private final class SuiteCleanUp {
-
     private let suiteName: String
 
     init(_ suiteName: String) {
@@ -47,7 +46,6 @@ private final class SuiteCleanUp {
     }
 
     deinit {
-
         // remove all values
         UserDefaults.standard.removePersistentDomain(forName: suiteName)
 

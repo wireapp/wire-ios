@@ -19,11 +19,9 @@
 import Foundation
 
 public struct PushToken: Equatable {
-
     // MARK: - Types
 
     public enum TokenType: Int, Codable {
-
         case standard
         case voip
 
@@ -66,7 +64,6 @@ public struct PushToken: Equatable {
 // MARK: - Codable
 
 extension PushToken: Codable {
-
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         deviceToken = try container.decode(Data.self, forKey: .deviceToken)
@@ -78,7 +75,6 @@ extension PushToken: Codable {
     }
 
     enum CodingKeys: String, CodingKey {
-
         case deviceToken
         case appIdentifier
         case transportType

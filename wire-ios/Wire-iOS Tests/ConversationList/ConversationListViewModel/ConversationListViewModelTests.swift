@@ -56,7 +56,6 @@ final class MockConversationListViewModelDelegate: NSObject, ConversationListVie
 }
 
 final class ConversationListViewModelTests: XCTestCase {
-
     var sut: ConversationListViewModel!
     var mockUserSession: UserSessionMock!
     var mockConversationListViewModelDelegate: MockConversationListViewModelDelegate!

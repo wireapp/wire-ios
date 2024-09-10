@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class CanvasViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: CanvasViewController!

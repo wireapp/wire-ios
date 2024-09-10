@@ -23,7 +23,6 @@ import WireDesign
 import WireLinkPreview
 
 final class ArticleView: UIView {
-
     // MARK: - Styling
 
     private let containerColor: UIColor = SemanticColors.View.backgroundCollectionCell
@@ -221,7 +220,6 @@ final class ArticleView: UIView {
 // MARK: - UIContextMenuInteractionDelegate
 
 extension ArticleView: UIContextMenuInteractionDelegate {
-
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         return delegate?.linkPreviewContextMenu(view: self)
     }
@@ -236,7 +234,6 @@ extension ArticleView: UIContextMenuInteractionDelegate {
 }
 
 extension LinkMetadata {
-
     /// Returns a `URL` that can be openened using `openURL()` on `UIApplication` or `nil` if no openable `URL` could be created.
     var openableURL: URL? {
         let application = UIApplication.shared

@@ -20,13 +20,11 @@ import Foundation
 import WireDataModel
 
 public class RemovePushTokenAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Void
 
     public enum Failure: LocalizedError, SafeForLoggingStringConvertible {
-
         case tokenDoesNotExist
         case unknown(status: Int)
 

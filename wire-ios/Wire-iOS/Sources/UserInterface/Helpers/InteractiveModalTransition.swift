@@ -70,7 +70,6 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
 }
 
 final class ModalPresentationViewController: UIViewController, UIViewControllerTransitioningDelegate {
-
     fileprivate unowned let viewController: UIViewController
     fileprivate let dimView = UIView()
 

@@ -24,7 +24,6 @@ import Foundation
  */
 
 public enum CallClosedReason: Int32 {
-
     /// Ongoing call was closed by remote or self user
     case normal
     /// Incoming call was canceled by remote

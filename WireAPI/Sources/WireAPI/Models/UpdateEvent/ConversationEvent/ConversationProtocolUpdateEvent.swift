@@ -21,7 +21,6 @@ import Foundation
 /// An event where the message protocol was updated in a conversation.
 
 public struct ConversationProtocolUpdateEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

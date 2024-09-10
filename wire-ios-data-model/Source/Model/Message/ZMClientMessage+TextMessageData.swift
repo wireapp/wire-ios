@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMClientMessage: TextMessageData {
-
     @NSManaged public var quote: ZMMessage?
 
     public var quoteMessage: ZMConversationMessage? {

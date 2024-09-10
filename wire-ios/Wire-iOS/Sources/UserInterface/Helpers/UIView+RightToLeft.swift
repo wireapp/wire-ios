@@ -19,14 +19,12 @@
 import UIKit
 
 fileprivate extension CGAffineTransform {
-
     static var verticallyMirrored: CGAffineTransform {
         return CGAffineTransform(scaleX: -1, y: 1)
     }
 }
 
 extension UIView {
-
     func applyRTLTransformIfNeeded() {
         transform = isRightToLeft ? .verticallyMirrored : .identity
     }

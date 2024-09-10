@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class Analytics: NSObject {
-
     var provider: AnalyticsProvider?
 
     private var callingTracker: AnalyticsCallingTracker?
@@ -114,7 +113,6 @@ extension Analytics: AnalyticsType {
 }
 
 extension Analytics: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard
             changeInfo.user.isSelfUser,

@@ -23,11 +23,9 @@ import WireSyncEngine
 import WireTransport
 
 final class Job: NSObject, Loggable {
-
     // MARK: - Types
 
     enum InitializationError: Error {
-
         case invalidEnvironment
     }
 

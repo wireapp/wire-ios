@@ -19,7 +19,6 @@
 import UIKit
 
 final class RotationAwareNavigationController: UINavigationController {
-
     override var shouldAutorotate: Bool {
         if let topController = self.viewControllers.last {
             return topController.shouldAutorotate

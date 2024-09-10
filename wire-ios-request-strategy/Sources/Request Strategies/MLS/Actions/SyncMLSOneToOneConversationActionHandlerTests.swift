@@ -21,7 +21,6 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 final class SyncMLSOneToOneConversationActionHandlerTests: ActionHandlerTestBase<SyncMLSOneToOneConversationAction, SyncMLSOneToOneConversationActionHandler> {
-
     var qualifiedID: QualifiedID!
 
     override func setUp() {

@@ -20,7 +20,6 @@ import WireSyncEngine
 
 // sourcery: AutoMockable
 public protocol AccountSelector {
-
     var currentAccount: Account? { get }
 
     func switchTo(account: Account)
@@ -28,7 +27,6 @@ public protocol AccountSelector {
 }
 
 extension AccountSelector {
-
     public func switchTo(account: Account) {
         switchTo(account: account, completion: .none)
     }

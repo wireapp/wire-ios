@@ -58,7 +58,6 @@ public func == (lhs: InviteResult, rhs: InviteResult) -> Bool {
 public typealias InviteCompletionHandler = (InviteResult) -> Void
 
 public class TeamInvitationStatus: NSObject {
-
     fileprivate var pendingInvitations: [String: InviteCompletionHandler] = [:]
     fileprivate var processedInvitations: [String: InviteCompletionHandler] = [:]
 

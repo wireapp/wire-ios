@@ -24,7 +24,6 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
     Action: BaseFetchMLSGroupInfoAction,
     Handler: BaseFetchMLSGroupInfoActionHandler<Action>
 >: ActionHandlerTestBase<Action, Handler> {
-
     let domain = "example.com"
     let conversationId = UUID()
 

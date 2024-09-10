@@ -19,7 +19,6 @@
 import Foundation
 
 extension UpdateEventDecodingProxy {
-
     init(
         eventType: ConversationEventType,
         from decoder: any Decoder

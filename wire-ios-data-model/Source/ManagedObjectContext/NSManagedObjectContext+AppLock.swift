@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSManagedObjectContext {
-
     /// Whether the applock feature is enabled.
 
     internal(set) public var isAppLockEnabled: Bool {

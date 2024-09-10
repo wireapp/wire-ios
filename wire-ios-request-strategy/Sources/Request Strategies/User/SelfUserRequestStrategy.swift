@@ -19,7 +19,6 @@
 import Foundation
 
 public final class SelfUserRequestStrategy: AbstractRequestStrategy {
-
     // MARK: - Properties
 
     private let actionSync: EntityActionSync
@@ -30,7 +29,6 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-
         actionSync = EntityActionSync(actionHandlers: [PushSupportedProtocolsActionHandler(context: managedObjectContext)])
 
         super.init(

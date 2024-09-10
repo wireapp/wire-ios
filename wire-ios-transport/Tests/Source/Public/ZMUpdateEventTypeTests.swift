@@ -19,7 +19,6 @@
 import XCTest
 
 final class ZMUpdateEventTypeTests: XCTestCase {
-
     typealias Sut = ZMUpdateEventType
 
     func testRawValuesOfDeletedCasesArentReused() {

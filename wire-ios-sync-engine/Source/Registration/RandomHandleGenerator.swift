@@ -23,10 +23,8 @@ private let maximumUserHandleLength = 21
 private let minimumUserHandleLength = 2
 
 struct RandomHandleGenerator {
-
     /// Generate somes possible handles for the given display name
     static func generatePossibleHandles(displayName: String, alternativeNames: Int) -> [String] {
-
         let normalized = displayName.normalizedForUserHandle.validHandle // this might be nil. if it is, we generate an extra one
         let alternativeNames = randomWordsCombinations(count: normalized == nil ? alternativeNames + 1 : alternativeNames)
 
@@ -52,7 +50,6 @@ struct RandomHandleGenerator {
 // MARK: - Random generation
 
 extension RandomHandleGenerator {
-
     /// Generates some random combinations of words
     fileprivate static func randomWordsCombinations(count: Int) -> [String] {
         let list1 = self.loadWords(file: "random1", ext: "txt")
@@ -72,7 +69,6 @@ extension RandomHandleGenerator {
 }
 
 extension String {
-
     /// Returns an array with self with digits from 1 to 9 appended
     func appendAllDigits() -> [String] {
         return (1..<10).map { self + "\($0)" }
@@ -95,7 +91,6 @@ extension String {
 // MARK: - Helpers
 
 extension RandomHandleGenerator {
-
     /// Load a list of words from a file
     fileprivate static func loadWords(file: String, ext: String) -> [String] {
         let bundle = Bundle(for: ZMUserSession.self)
@@ -114,7 +109,6 @@ extension RandomHandleGenerator {
 }
 
 extension Array {
-
     /// Pick a random element from the array
     fileprivate var random: Element? {
         guard self.count > 1 else {
@@ -129,7 +123,6 @@ extension Array {
 // MARK: - String normalization
 
 extension String {
-
     /// Normalized user handle form
     public var normalizedForUserHandle: String {
         return self.translitteratedToLatin

@@ -19,7 +19,6 @@
 import WireDataModel
 
 extension ConversationListChangeInfo {
-
     public static func add(
         observer: ZMConversationListObserver,
         for list: ConversationList,

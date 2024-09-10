@@ -21,21 +21,17 @@ import OSLog
 import UserNotifications
 
 extension Loggable {
-
     var logger: os.Logger {
-
         return os.Logger(category: String(describing: type(of: self))
 )
     }
 }
 
 protocol Loggable {
-
     var logger: os.Logger { get }
 }
 
 extension os.Logger {
-
     private static var subsystem = "simple nse"
 
     init(category: String) {
@@ -44,7 +40,6 @@ extension os.Logger {
 }
 
 extension OSLogInterpolation {
-
     mutating func appendInterpolation(_ request: UNNotificationRequest) {
         appendInterpolation(String(request.identifier), align: .none, privacy: .public)
     }

@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 extension UIAlertController {
-
     static func availabilityExplanation(_ availability: Availability) -> UIAlertController {
         typealias AvailabilityReminderLocale = L10n.Localizable.Availability.Reminder
         let title: String

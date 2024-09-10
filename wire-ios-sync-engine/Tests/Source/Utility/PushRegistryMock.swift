@@ -22,7 +22,6 @@ import PushKit
 @testable import WireSyncEngine
 
 final class PushPayloadMock: PKPushPayload {
-
     let mockDictionaryPayload: [AnyHashable: Any]
 
     init(dictionaryPayload: [AnyHashable: Any]) {
@@ -37,7 +36,6 @@ final class PushPayloadMock: PKPushPayload {
 }
 
 final class PushCredentialsMock: PKPushCredentials {
-
     let mockToken: Data
     let mockType: PKPushType
 
@@ -59,11 +57,9 @@ final class PushCredentialsMock: PKPushCredentials {
 
 @objcMembers
 final class PushRegistryMock: PKPushRegistry {
-
     var mockPushToken: Data?
 
     func mockIncomingPushPayload(_ payload: [AnyHashable: Any], completion: (() -> Void)? = nil) {
-
         delegate?.pushRegistry!(self, didReceiveIncomingPushWith: PushPayloadMock(dictionaryPayload: payload), for: .voIP, completion: {
             completion?()
         })

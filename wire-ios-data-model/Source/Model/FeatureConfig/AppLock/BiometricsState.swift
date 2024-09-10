@@ -20,13 +20,11 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol BiometricsStateProtocol {
-
    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
    func persistState()
 }
 
 final class BiometricsState: BiometricsStateProtocol {
-
     private let UserDefaultsDomainStateKey = "DomainStateKey"
 
     var lastPolicyDomainState: Data? {

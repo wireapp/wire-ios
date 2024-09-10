@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 extension ZClientViewController: AppLockChangeWarningViewControllerDelegate {
-
     func appLockChangeWarningViewControllerDidDismiss() {
         try? userSession.deleteAppLockPasscode()
     }

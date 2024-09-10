@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `SelfUserAPI`.
 
 public struct SelfUserAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.

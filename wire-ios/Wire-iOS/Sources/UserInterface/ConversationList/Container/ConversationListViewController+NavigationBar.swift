@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 extension ConversationListViewController {
-
     func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ViewModel) {
         updateAccountView()
     }
@@ -213,7 +212,6 @@ extension ConversationListViewController {
 // MARK: - UserStatusViewControllerDelegate
 
 extension ConversationListViewController: UserStatusViewControllerDelegate {
-
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
         guard viewController === userStatusViewController else { return }
 
@@ -227,7 +225,6 @@ extension ConversationListViewController: UserStatusViewControllerDelegate {
 // MARK: - wrapInAvatarSizeContainer
 
 extension UIView {
-
     func wrapInAvatarSizeContainer() -> UIView {
         let container = UIView()
         container.addSubview(self)

@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 protocol EmojiRepositoryInterface {
-
     func emojis(for category: EmojiCategory) -> [Emoji]
     func emoji(for id: String) -> Emoji?
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID])
@@ -28,7 +27,6 @@ protocol EmojiRepositoryInterface {
 }
 
 final class EmojiRepository: EmojiRepositoryInterface {
-
     // MARK: - Properties
 
     private let allEmojiData: [Emoji]
@@ -103,7 +101,6 @@ final class EmojiRepository: EmojiRepositoryInterface {
 }
 
 private extension EmojiRepository {
-
     static func loadAllFromDisk() -> [Emoji] {
         guard let url = Bundle.main.url(forResource: "emojis", withExtension: "json") else {
             logger.error("failed to load emojis: emojis.json file not found")

@@ -20,9 +20,7 @@ import avs
 import Foundation
 
 extension AVSWrapper {
-
     enum Handler {
-
         typealias StringPtr = UnsafePointer<Int8>?
         typealias VoidPtr = UnsafeMutableRawPointer?
         typealias ContextRef = VoidPtr

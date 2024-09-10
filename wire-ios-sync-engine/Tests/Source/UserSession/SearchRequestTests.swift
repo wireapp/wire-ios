@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 class SearchRequestTests: MessagingTest {
-
     func testThatItTruncatesTheQuery() {
         // given
         let croppedString = "f".padding(toLength: 200, withPad: "o", startingAt: 0)

@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationMissedCallSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label

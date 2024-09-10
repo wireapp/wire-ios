@@ -20,7 +20,6 @@ import Foundation
 @testable import WireRequestStrategy
 
 class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
-
     var sut: UserClientByQualifiedUserIDTranscoder!
     let id1 = QualifiedID(uuid: .create(), domain: "foo.com")
     let id2 = QualifiedID(uuid: .create(), domain: "bar.com")

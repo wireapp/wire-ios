@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct SwitchBackendView: View {
-
     // MARK: - Properties
 
     @StateObject
@@ -59,7 +58,6 @@ struct SwitchBackendView: View {
 // MARK: - Previews
 
 struct SwitchBackendView_Previews: PreviewProvider {
-
     static var previews: some View {
         SwitchBackendView(viewModel: SwitchBackendViewModel())
     }

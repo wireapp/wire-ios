@@ -19,7 +19,6 @@
 import Foundation
 
 struct TransferApplockKeychain {
-
     static func migrateKeychainItems(in moc: NSManagedObjectContext) {
         migrateIsAppLockActiveState(in: moc)
         migrateAppLockPasscode(in: moc)
@@ -62,7 +61,6 @@ struct TransferApplockKeychain {
 }
 
 private extension Bundle {
-
     var sharedContainerURL: URL? {
         return appGroupIdentifier.map(FileManager.sharedContainerDirectory)
     }

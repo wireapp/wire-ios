@@ -30,7 +30,6 @@ enum MessageKey: String {
 }
 
 extension ZMMessage: ObjectInSnapshot {
-
     @objc public class var observableKeys: Set<String> {
         return [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated)]
     }
@@ -41,7 +40,6 @@ extension ZMMessage: ObjectInSnapshot {
 }
 
 extension ZMAssetClientMessage {
-
     public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.transferState),
@@ -58,7 +56,6 @@ extension ZMAssetClientMessage {
 }
 
 extension ZMClientMessage {
-
     public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedPreview),
@@ -75,7 +72,6 @@ extension ZMClientMessage {
 }
 
 extension ZMImageMessage {
-
     public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMImageMessage.mediumData),
@@ -86,7 +82,6 @@ extension ZMImageMessage {
 }
 
 extension ZMSystemMessage {
-
     public class override var observableKeys: Set<String> {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMSystemMessage.childMessages),
@@ -96,7 +91,6 @@ extension ZMSystemMessage {
 }
 
 @objcMembers public final class MessageChangeInfo: ObjectChangeInfo {
-
     static let UserChangeInfoKey = "userChanges"
     static let ReactionChangeInfoKey = "reactionChanges"
     static let ButtonStateChangeInfoKey = "buttonStateChanges"
@@ -212,7 +206,6 @@ extension ZMSystemMessage {
 }
 
 extension MessageChangeInfo {
-
     /// Adds a ZMMessageObserver to the specified message
     /// To observe messages and their users (senders, systemMessage users), observe the conversation window instead
     /// Messages observed with this call will not contain information about user changes

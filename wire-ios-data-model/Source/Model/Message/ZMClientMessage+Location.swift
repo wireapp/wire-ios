@@ -28,7 +28,6 @@ public protocol LocationMessageData: NSObjectProtocol {
 }
 
 extension ZMClientMessage: LocationMessageData {
-
     public override var locationMessageData: LocationMessageData? {
         guard let content = underlyingMessage?.content else {
             return nil
@@ -66,7 +65,6 @@ extension ZMClientMessage: LocationMessageData {
 }
 
 public extension LocationMessageData {
-
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(
             latitude: CLLocationDegrees(latitude),

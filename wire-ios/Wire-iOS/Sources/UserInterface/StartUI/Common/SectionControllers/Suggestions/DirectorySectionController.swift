@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class DirectorySectionController: SearchSectionController {
-
     var suggestions: [ZMSearchUser] = []
     weak var delegate: SearchSectionControllerDelegate?
     var token: AnyObject?
@@ -99,7 +98,6 @@ final class DirectorySectionController: SearchSectionController {
 }
 
 extension DirectorySectionController: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged else { return }
 

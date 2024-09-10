@@ -31,7 +31,6 @@ protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter,
 }
 
 class GroupDetailsSectionController: NSObject, CollectionViewSectionController {
-
     var isHidden: Bool {
         return false
     }

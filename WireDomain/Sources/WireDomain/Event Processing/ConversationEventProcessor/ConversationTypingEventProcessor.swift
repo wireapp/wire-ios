@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation typing events.
 
 protocol ConversationTypingEventProcessorProtocol {
-
     /// Process a conversation typing event.
     ///
     /// - Parameter event: A conversation typing event.
@@ -30,7 +29,6 @@ protocol ConversationTypingEventProcessorProtocol {
 }
 
 struct ConversationTypingEventProcessor: ConversationTypingEventProcessorProtocol {
-
     func processEvent(_: ConversationTypingEvent) async throws {
         // TODO: [WPB-10178]
         assertionFailure("not implemented yet")

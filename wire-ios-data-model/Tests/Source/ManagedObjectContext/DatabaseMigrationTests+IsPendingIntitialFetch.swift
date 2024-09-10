@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
-
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let migrationHelper = DatabaseMigrationHelper()

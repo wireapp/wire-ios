@@ -21,7 +21,6 @@ import WireDataModel
 import XCTest
 
 class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSConversationGroupInfoAction, FetchMLSConversationGroupInfoActionHandler> {
-
     override func setUp() {
         super.setUp()
         action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)

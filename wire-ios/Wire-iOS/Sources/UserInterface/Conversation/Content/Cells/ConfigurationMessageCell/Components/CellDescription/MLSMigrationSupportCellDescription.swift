@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class MLSMigrationSupportCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
@@ -64,7 +63,6 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     }
 
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
-
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, WireURLs.shared.appOnItunes.absoluteString),
             style: .systemMessage
@@ -74,7 +72,6 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
     }
 
     private static func makeMLSNotSupportedMessageForOtherUser(username: String) -> NSAttributedString? {
-
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByOtherUser(username, username),
             style: .systemMessage

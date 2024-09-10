@@ -48,7 +48,6 @@ public final class ZMSLogEntry: NSObject {
 ///
 @objc
 public final class ZMSLog: NSObject {
-
     public typealias LogHook = (_ level: ZMLogLevel, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
         _ level: ZMLogLevel,
@@ -85,7 +84,6 @@ public final class ZMSLog: NSObject {
 // MARK: - Emit logs
 
 public extension ZMSLog {
-
     func safePublic(
         _ message: @autoclosure () -> SanitizedString,
         level: ZMLogLevel = .info,
@@ -123,7 +121,6 @@ public extension ZMSLog {
 //     zmLog.error("foo: \(foo)")
 // }
 public extension ZMSLog {
-
     /// Executes the closure only if the log level is Warning or higher
     func ifWarn(_ closure: () -> Void) {
         if ZMLogLevel.warn.rawValue <= ZMSLog.getLevel(tag: tag).rawValue {
@@ -154,7 +151,6 @@ public extension ZMSLog {
 /// Opaque token to unregister observers
 @objc(ZMSLogLogHookToken)
 public final class LogHookToken: NSObject {
-
     /// Internal identifier
     fileprivate let token: UUID
 
@@ -167,7 +163,6 @@ public final class LogHookToken: NSObject {
 // MARK: - Hooks (log observing)
 
 public extension ZMSLog {
-
     /// Notify all hooks of a new log
     fileprivate static func notifyHooks(
         level: ZMLogLevel,
@@ -216,7 +211,6 @@ public extension ZMSLog {
 // MARK: - Internal stuff
 
 extension ZMSLog {
-
     @objc public static func logWithLevel(_ level: ZMLogLevel, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
         let entry = ZMSLogEntry(text: message(), timestamp: Date())
         logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)

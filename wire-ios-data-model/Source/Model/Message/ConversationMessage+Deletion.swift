@@ -36,7 +36,6 @@ extension ZMConversation {
 }
 
 extension ZMMessage {
-
     // NOTE: This is a free function meant to be called from Obj-C because you can't call protocol extension from it
     @objc public static func hideMessage(_ message: ZMConversationMessage) {
         // when deleting ephemeral, we must delete for everyone (only self & sender will receive delete message)

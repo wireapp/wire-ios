@@ -19,9 +19,7 @@
 import Foundation
 
 extension Payload {
-
     struct ConversationMember: CodableEventData {
-
         struct Service: Codable {
             let id: UUID
             let provider: UUID

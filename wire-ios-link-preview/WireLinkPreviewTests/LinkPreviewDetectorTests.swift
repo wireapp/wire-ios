@@ -20,7 +20,6 @@
 import XCTest
 
 class LinkPreviewDetectorTests: XCTestCase {
-
     var sut: LinkPreviewDetector!
     var mockImageTask: MockURLSessionDataTask!
     var imageDownloader: MockImageDownloader!

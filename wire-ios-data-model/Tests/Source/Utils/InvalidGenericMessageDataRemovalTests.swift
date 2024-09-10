@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
-
     func testThatItDoesNotRemoveValidGenericMessageData() throws {
         // Given
         let conversation = createConversation()

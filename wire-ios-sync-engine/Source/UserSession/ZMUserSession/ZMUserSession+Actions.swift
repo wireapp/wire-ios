@@ -19,11 +19,9 @@
 import Foundation
 
 @objc extension ZMUserSession {
-
     // MARK: - Foreground Actions
 
     public func acceptConnectionRequest(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-
         guard let senderID = userInfo.senderID,
               let sender = ZMUser.fetch(with: senderID, in: managedObjectContext),
               let conversation = sender.oneOnOneConversation
@@ -36,7 +34,6 @@ import Foundation
     }
 
     public func acceptCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-
         guard let conversation = userInfo.conversation(in: managedObjectContext) else { return }
 
         defer {
@@ -52,7 +49,6 @@ import Foundation
     }
 
     func showContent(for userInfo: NotificationUserInfo) {
-
         guard let conversation = userInfo.conversation(in: managedObjectContext) else {
             sessionManager?.showConversationList(in: self)
             return
@@ -119,7 +115,6 @@ import Foundation
 
             self.messageReplyObserver = nil
             self.syncManagedObjectContext.performGroupedBlock {
-
                 let conversationOnSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 if result == .failed {
                     Logging.push.safePublic("failed to reply via push notification action")
@@ -162,7 +157,6 @@ import Foundation
     }
 
     public func handleTrackingOnCallNotification(with userInfo: NotificationUserInfo) {
-
         guard
             let conversation = userInfo.conversation(in: managedObjectContext),
             let conversationId = conversation.avsIdentifier,

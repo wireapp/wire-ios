@@ -60,7 +60,6 @@ enum UserTypeIconStyle: String, IconImageStyle {
 }
 
 extension UserTypeIconStyle {
-
     init(
         conversation: GroupDetailsConversationType?,
         user: UserType,

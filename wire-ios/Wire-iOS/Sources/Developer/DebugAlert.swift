@@ -24,7 +24,6 @@ import WireSystem
 
 /// Presents debug alerts
 final class DebugAlert {
-
     private struct Action {
         let text: String
         let type: UIAlertAction.Style
@@ -72,7 +71,6 @@ final class DebugAlert {
         title: String = "DEBUG MESSAGE",
         cancelText: String? = "Cancel"
     ) {
-
         guard Bundle.developerModeEnabled else { return }
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false), !isShown else { return }
         isShown = true
@@ -144,7 +142,6 @@ final class DebugAlert {
 
 /// Sends debug logs by email
 final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
-
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
 

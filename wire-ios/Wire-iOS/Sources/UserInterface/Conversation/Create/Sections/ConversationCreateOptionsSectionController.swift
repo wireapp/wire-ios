@@ -19,7 +19,6 @@
 import UIKit
 
 final class ConversationCreateOptionsSectionController: ConversationCreateSectionController {
-
     typealias Cell = ConversationCreateOptionsCell
 
     var tapHandler: ((Bool) -> Void)?
@@ -30,7 +29,6 @@ final class ConversationCreateOptionsSectionController: ConversationCreateSectio
 }
 
 extension ConversationCreateOptionsSectionController {
-
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         self.cell = cell

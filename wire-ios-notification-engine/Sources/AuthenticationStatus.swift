@@ -20,7 +20,6 @@ import Foundation
 import WireRequestStrategy
 
 final class AuthenticationStatus: AuthenticationStatusProvider {
-
     // MARK: - Properties
 
     let transportSession: ZMTransportSession

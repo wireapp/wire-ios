@@ -116,7 +116,6 @@ final class FileBackupExcluderOperation: LaunchSequenceOperation {
 // MARK: - BackendInfoOperation
 
 final class BackendInfoOperation: LaunchSequenceOperation {
-
     func execute() {
         BackendInfo.storage = .applicationGroup
 
@@ -128,14 +127,12 @@ final class BackendInfoOperation: LaunchSequenceOperation {
 }
 
 final class FontSchemeOperation: LaunchSequenceOperation {
-
     func execute() {
         FontScheme.shared.configure(with: UIApplication.shared.preferredContentSizeCategory)
     }
 }
 
 final class VoIPPushHelperOperation: LaunchSequenceOperation {
-
     func execute() {
         VoIPPushHelper.storage = .applicationGroup
     }
@@ -148,7 +145,6 @@ final class VoIPPushHelperOperation: LaunchSequenceOperation {
 /// build, but it's better to be sure.
 
 final class CleanUpDebugStateOperation: LaunchSequenceOperation {
-
     func execute() {
         guard !Bundle.developerModeEnabled else { return }
 

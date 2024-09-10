@@ -33,7 +33,6 @@ final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
         let maxCellWidth = self.collectionView!.bounds.size.width - self.sectionInset.left - self.sectionInset.right
 
         for attributes: UICollectionViewLayoutAttributes in oldAttributes {
-
             guard attributes.representedElementCategory == .cell else {
                 newAttributes.append(attributes)
 

@@ -24,7 +24,6 @@ import WireSystem
  */
 
 final class PerformanceDebugger {
-
     /// The shared debugger.
     static let shared = PerformanceDebugger()
 

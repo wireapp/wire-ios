@@ -21,7 +21,6 @@ import Foundation
 /// A type representing the possible timeout values.
 
 public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
-
     case none
     case tenSeconds
     case fiveMinutes
@@ -90,7 +89,6 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
 }
 
 public extension MessageDestructionTimeoutValue {
-
     static var all: [Self] {
         return [
             .none,

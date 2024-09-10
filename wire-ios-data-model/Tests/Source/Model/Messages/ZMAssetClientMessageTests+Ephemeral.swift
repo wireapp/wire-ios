@@ -22,7 +22,6 @@ import WireTesting
 @testable import WireDataModel
 
 class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
-
     override func setUp() {
         super.setUp()
         deletionTimer?.isTesting = true
@@ -57,7 +56,6 @@ class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
 // MARK: Sending
 
 extension ZMAssetClientMessageTests_Ephemeral {
-
     func testThatItInsertsAnEphemeralMessageForAssets() {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
@@ -200,7 +198,6 @@ extension ZMAssetClientMessageTests_Ephemeral {
 // MARK: Receiving
 
 extension ZMAssetClientMessageTests_Ephemeral {
-
     func testThatItStartsATimerForImageAssetMessagesIfTheMessageIsAMessageOfTheOtherUser() throws {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)

@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol StaleMLSKeyDetectorProtocol {
-
     /// The number of days before a key is considered stale.
 
     var refreshIntervalInDays: UInt { get set }
@@ -41,7 +40,6 @@ public protocol StaleMLSKeyDetectorProtocol {
 /// It relies on Core Data for storage.
 
 public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
-
     // MARK: - Constants
 
     public static var keyMaterialRefreshIntervalInDays: UInt {

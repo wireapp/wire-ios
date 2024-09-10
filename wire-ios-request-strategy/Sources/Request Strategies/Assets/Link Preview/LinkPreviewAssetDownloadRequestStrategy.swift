@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrategy {
-
     private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
@@ -125,14 +124,12 @@ import Foundation
 }
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource {
-
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [assetDownstreamObjectSync]
     }
 }
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
-
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         guard let message = object as? ZMClientMessage else { fatal("Unable to generate request for \(object.safeForLoggingDescription)") }
         guard let linkPreview = message.underlyingMessage?.linkPreviews.first else {

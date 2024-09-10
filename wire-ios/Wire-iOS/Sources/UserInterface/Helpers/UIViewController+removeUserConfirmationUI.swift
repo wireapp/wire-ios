@@ -21,7 +21,6 @@ import UIKit
 import WireDataModel
 
 extension UIViewController {
-
     /// Present an action sheet for user removal confirmation
     /// Notice: if the participant is not in the conversation, the action sheet still shows.
     ///
@@ -35,7 +34,6 @@ extension UIViewController {
         sender: UIView,
         dismisser: ViewControllerDismisser? = nil
     ) {
-
         let alertController = UIAlertController.remove(participant) { [weak self] remove in
             guard let self, remove else { return }
 

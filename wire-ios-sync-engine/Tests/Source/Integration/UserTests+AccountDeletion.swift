@@ -19,7 +19,6 @@
 import XCTest
 
 class UserTests_AccountDeletion: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

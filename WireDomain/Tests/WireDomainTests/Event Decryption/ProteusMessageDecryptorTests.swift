@@ -25,7 +25,6 @@ import XCTest
 @testable import WireDomainSupport
 
 final class ProteusMessageDecryptorTests: XCTestCase {
-
     var sut: ProteusMessageDecryptor!
     var proteusService: MockProteusServiceInterface!
 
@@ -346,7 +345,6 @@ final class ProteusMessageDecryptorTests: XCTestCase {
 }
 
 private enum Scaffolding {
-
     static let localDomain = "local.com"
 
     static let selfUserID = UserID(uuid: UUID(), domain: localDomain)

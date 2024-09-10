@@ -20,7 +20,6 @@
 import XCTest
 
 class ChangedIndexesTests: ZMBaseManagedObjectTest {
-
     // MARK: CollectionView
 
     func testThatItCalculatesInsertsAndDeletesBetweenSets() {
@@ -37,7 +36,6 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCalculatesMovesCorrectly() {
-
         // given
         let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
         let endState = WireDataModel.OrderedSetState(array: ["A", "F", "D", "C", "E"])
@@ -70,7 +68,6 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCalculatesMovesCorrectly_2() {
-
         // given
         let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
         let endState = WireDataModel.OrderedSetState(array: ["A", "D", "E", "F", "C"])
@@ -170,7 +167,6 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
     // MARK: TableView
 
     func testThatItCalculatesMovesCorrectly_tableView() {
-
         // given
         let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
         let endState = WireDataModel.OrderedSetState(array: ["A", "F", "D", "C", "E"])
@@ -202,7 +198,6 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCalculatesMovesCorrectly_2_tableView() {
-
         // given
         let startState = WireDataModel.OrderedSetState(array: ["A", "B", "C", "D", "E"])
         let endState = WireDataModel.OrderedSetState(array: ["A", "D", "E", "F", "C"])

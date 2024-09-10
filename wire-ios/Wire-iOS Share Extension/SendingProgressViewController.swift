@@ -23,7 +23,6 @@ import WireShareEngine
 import WireSystem
 
 final class SendingProgressViewController: UIViewController {
-
     enum ProgressMode {
         case preparing, sending
     }

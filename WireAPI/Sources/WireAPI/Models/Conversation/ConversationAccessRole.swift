@@ -21,7 +21,6 @@ import Foundation
 /// Which users are allowed to be participants in a conversation.
 
 public enum ConversationAccessRole: String, Codable {
-
     /// Members of the owning team.
 
     case teamMember = "team_member"

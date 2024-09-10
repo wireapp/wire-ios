@@ -28,7 +28,6 @@ enum NetworkStatusViewState {
 
 // sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
-
     /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is created but not yet appear, if didChangeHeight called with animated = true.
     var shouldAnimateNetworkStatusView: Bool { get set }
 
@@ -47,9 +46,7 @@ protocol NetworkStatusViewDelegate: AnyObject {
 // MARK: - default implementation of didChangeHeight, animates the layout process
 
 extension NetworkStatusViewDelegate where Self: UIViewController {
-
     func didChangeHeight(_ networkStatusView: NetworkStatusView, animated: Bool, state: NetworkStatusViewState) {
-
         guard shouldAnimateNetworkStatusView else { return }
 
         if animated {
@@ -63,7 +60,6 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
 }
 
 final class NetworkStatusView: UIView {
-
     let connectingView: BreathLoadingBar
     private let offlineView: OfflineBar
     private var _state: NetworkStatusViewState = .online
@@ -239,7 +235,6 @@ final class NetworkStatusView: UIView {
 }
 
 extension NetworkStatusView: BreathLoadingBarDelegate {
-
     func animationDidStarted() {
         delegate?.didChangeHeight(self, animated: true, state: state)
     }

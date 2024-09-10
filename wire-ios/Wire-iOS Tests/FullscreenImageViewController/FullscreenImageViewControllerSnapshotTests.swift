@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

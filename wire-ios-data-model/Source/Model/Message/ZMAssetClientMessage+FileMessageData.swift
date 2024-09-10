@@ -22,7 +22,6 @@ import MobileCoreServices
 // MARK: - ZMFileMessageData
 
 @objc public protocol ZMFileMessageData: NSObjectProtocol {
-
     /// MIME type of the file being transfered (implied from file extension)
     var mimeType: String? { get }
 
@@ -105,13 +104,11 @@ import MobileCoreServices
 }
 
 extension ZMAssetClientMessage: ZMFileMessageData {
-
     /// Notification name for canceled file upload
     public static let didCancelFileDownloadNotificationName = Notification.Name(rawValue: "ZMAssetClientMessageDidCancelFileDownloadNotification")
 
     // MIME type of the file being transfered (implied from file extension)
     public var mimeType: String? {
-
         guard let asset = underlyingMessage?.assetData else {
             return nil
         }
@@ -197,7 +194,6 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var thumbnailAssetID: String? {
-
         get {
             guard fileMessageData != nil else { return nil }
             guard let assetData = genericMessage(dataType: .thumbnail)?.assetData,
@@ -351,9 +347,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 }
 
 extension ZMAssetClientMessage {
-
     public func cancelTransfer() {
-
         switch transferState {
         case .uploading:
             expire()

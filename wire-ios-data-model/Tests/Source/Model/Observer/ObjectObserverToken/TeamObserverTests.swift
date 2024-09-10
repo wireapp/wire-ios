@@ -20,7 +20,6 @@
 import XCTest
 
 class TestTeamObserver: NSObject, TeamObserver {
-
     var notifications = [TeamChangeInfo]()
 
     func clearNotifications() {
@@ -33,7 +32,6 @@ class TestTeamObserver: NSObject, TeamObserver {
 }
 
 class TeamObserverTests: NotificationDispatcherTestBase {
-
     var teamObserver: TestTeamObserver!
 
     override func setUp() {
@@ -55,7 +53,6 @@ class TeamObserverTests: NotificationDispatcherTestBase {
     }
 
     func checkThatItNotifiesTheObserverOfAChange(_ team: Team, modifier: (Team) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
-
         // given
         self.uiMOC.saveOrRollback()
 

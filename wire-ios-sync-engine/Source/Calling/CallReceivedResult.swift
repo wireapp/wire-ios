@@ -24,7 +24,6 @@ import Foundation
  */
 
 public enum CallError: Int32 {
-
     /// Impossible to receive a call due to incompatible protocol (e.g. older versions)
     case unknownProtocol
 

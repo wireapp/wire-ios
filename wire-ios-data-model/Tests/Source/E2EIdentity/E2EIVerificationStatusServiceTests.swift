@@ -22,7 +22,6 @@ import Foundation
 @testable import WireDataModelSupport
 
 class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
-
     var sut: E2EIVerificationStatusService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!

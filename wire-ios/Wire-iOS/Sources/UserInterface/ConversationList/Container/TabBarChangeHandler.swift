@@ -30,7 +30,6 @@ import WireUIFoundation
 ///
 /// - Warning: This solution is only temporary and should be removed in the ongoing navigation overhaul. [WPB-6647]
 final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
-
     enum PrincipleTab {
         case conversations
         case folders

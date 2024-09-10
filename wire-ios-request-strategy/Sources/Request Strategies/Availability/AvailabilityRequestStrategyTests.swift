@@ -21,7 +21,6 @@ import WireRequestStrategySupport
 import XCTest
 
 class AvailabilityRequestStrategyTests: MessagingTestBase {
-
     var messageSender: MockMessageSenderInterface!
     var sut: AvailabilityRequestStrategy!
 
@@ -59,7 +58,6 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
 
     func testThatItBroadcastWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
         syncMOC.performGroupedAndWait {
-
             // given
             self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 
@@ -100,7 +98,6 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
 
     func testThatItUpdatesAvailabilityFromUpdateEvent() throws {
         try syncMOC.performGroupedAndWait {
-
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             _ = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: syncMOC) // create self conversation

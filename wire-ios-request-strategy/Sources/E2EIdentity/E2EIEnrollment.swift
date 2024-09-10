@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 
 public protocol E2EIEnrollmentInterface {
-
     /// Get a nonce for creating an account.
     func getACMENonce() async throws -> String
 
@@ -93,7 +92,6 @@ public protocol E2EIEnrollmentInterface {
 
 /// This class implements the steps of the E2EI certificate enrollment process.
 public final class E2EIEnrollment: E2EIEnrollmentInterface {
-
     private let acmeApi: AcmeAPIInterface
     private let acmeDirectory: AcmeDirectory
     private let apiProvider: APIProviderInterface
@@ -199,7 +197,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 
             guard let oidcChallenge = challenges[.OIDC],
                   let dpopChallenge = challenges[.DPoP] else {
-
                 throw E2EIRepositoryFailure.failedToGetChallenges
             }
 
@@ -404,7 +401,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 }
 
 enum E2EIRepositoryFailure: Error {
-
     case missingNonce(_ underlyingError: Error)
     case failedToCreateAcmeAccount(_ underlyingError: Error)
     case failedToCreateNewOrder(_ underlyingError: Error)
@@ -425,7 +421,6 @@ enum E2EIRepositoryFailure: Error {
 }
 
 public struct ChallengeResponse: Codable, Equatable {
-
     var type: String
     var url: String
     var status: String
@@ -435,7 +430,6 @@ public struct ChallengeResponse: Codable, Equatable {
 }
 
 public struct AccessTokenResponse: Decodable, Equatable {
-
     var expiresIn: Int
     var token: String
     var type: String
@@ -448,14 +442,12 @@ public struct AccessTokenResponse: Decodable, Equatable {
 }
 
 public struct AuthorizationResult {
-
     var oidcAuthorization: NewAcmeAuthz
     var dpopAuthorization: NewAcmeAuthz
     var nonce: String
 }
 
 public struct AcmeAuthorization {
-
     var nonce: String
     var location: String?
     var response: Data

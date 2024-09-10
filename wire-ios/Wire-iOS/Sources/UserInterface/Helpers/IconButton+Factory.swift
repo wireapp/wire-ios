@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension IconButton {
-
     static let width: CGFloat = 64
     static let height: CGFloat = 64
 
@@ -47,7 +46,6 @@ extension IconButton {
     }
 
     static func sendButton() -> IconButton {
-
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
         let sendButton = IconButton(

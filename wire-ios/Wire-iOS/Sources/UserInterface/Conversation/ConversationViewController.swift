@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
-
     let mainCoordinator: MainCoordinating
     private let visibleMessage: ZMConversationMessage?
 
@@ -86,7 +85,6 @@ final class ConversationViewController: UIViewController {
     var updateLeftNavigationBarItemsTask: Task<Void, Never>?
 
     var participantsController: UIViewController? {
-
         var viewController: UIViewController?
 
         switch conversation.conversationType {
@@ -474,7 +472,6 @@ final class ConversationViewController: UIViewController {
 // MARK: - InvisibleInputAccessoryViewDelegate
 
 extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
-
     // WARNING: DO NOT TOUCH THIS UNLESS YOU KNOW WHAT YOU ARE DOING
     func invisibleInputAccessoryView(_ invisibleInputAccessoryView: InvisibleInputAccessoryView, superviewFrameChanged frame: CGRect?) {
         // Adjust the input bar distance from bottom based on the invisibleAccessoryView
@@ -482,7 +479,6 @@ extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
 
         // On iOS 8, the frame goes to zero when the accessory view is hidden
         if frame?.equalTo(.zero) == false {
-
             let convertedFrame = view.convert(invisibleInputAccessoryView.superview?.frame ?? .zero, from: invisibleInputAccessoryView.superview?.superview)
 
             // We have to use intrinsicContentSize here because the frame may not have actually been updated yet

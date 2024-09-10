@@ -19,9 +19,7 @@
 import Foundation
 
 public enum VoIPPushHelper {
-
     enum Key: String {
-
         case isCallKitAvailable
         case loadedUserSessions
         case isAVSReady

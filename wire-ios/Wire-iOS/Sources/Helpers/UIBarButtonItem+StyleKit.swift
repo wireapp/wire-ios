@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension UIBarButtonItem {
-
     typealias IconColors = SemanticColors.Icon
 
     convenience init(icon: StyleKitIcon,

@@ -50,7 +50,6 @@ typealias URLRequestSuccessHandler = (_ data: Data) throws -> Void
  */
 
 final class URLRequestPromise: CancelableTask {
-
     let requester: ZiphyURLRequester
 
     /// The unique identifier of the request in the requester. You need to

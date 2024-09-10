@@ -35,7 +35,6 @@ extension Item: SafeForLoggingStringConvertible {
 }
 
 class SanitizedStringTests: XCTestCase {
-
     var item: Item!
 
     override func setUp() {
@@ -73,7 +72,6 @@ class SanitizedStringTests: XCTestCase {
 }
 
 extension SanitizedStringTests {
-
     func testString() {
         let sut = "some"
         let value = SafeValueForLogging(sut)

@@ -25,7 +25,6 @@ import UIKit
 ///  "<usage>.<context/role>.<state?>"
 /// The last part is optional
 public enum SemanticColors {
-
     public enum Switch {
         public static let backgroundOnStateEnabled = UIColor(light: .green600Light, dark: .green700Dark)
         public static let backgroundOffStateEnabled = UIColor(light: .gray70, dark: .gray70)
@@ -276,7 +275,6 @@ public enum SemanticColors {
 }
 
 private extension UIColor {
-
     convenience init(light: ColorResource, dark: ColorResource) {
         self.init { traits in
             .init(resource: traits.userInterfaceStyle == .dark ? dark : light)

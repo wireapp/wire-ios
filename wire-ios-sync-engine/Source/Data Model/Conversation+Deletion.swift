@@ -34,7 +34,6 @@ public enum ConversationDeletionError: Error {
 }
 
 extension ZMConversation {
-
     /// Delete a conversation remotely and locally for everyone
     ///
     /// Only team conversations can be deleted.
@@ -61,7 +60,6 @@ extension ZMConversation {
             guard let contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
 
             if response.httpStatus == 200 {
-
                 let conversation = ZMConversation.fetch(
                         with: conversationId,
                         domain: nil,
@@ -105,7 +103,6 @@ extension ZMConversation {
 }
 
 struct ConversationDeletionRequestFactory {
-
     static func requestForDeletingTeamConversation(_ conversation: ZMConversation) -> ZMTransportRequest? {
         guard
             let apiVersion = BackendInfo.apiVersion,

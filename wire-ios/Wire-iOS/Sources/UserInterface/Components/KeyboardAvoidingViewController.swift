@@ -19,7 +19,6 @@
 import UIKit
 
 class KeyboardAvoidingViewController: UIViewController {
-
     let viewController: UIViewController
     var disabledWhenInsidePopover = false
 

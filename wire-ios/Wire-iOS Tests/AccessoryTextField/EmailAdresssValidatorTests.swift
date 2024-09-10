@@ -20,7 +20,6 @@
 import XCTest
 
 final class EmailAdresssValidatorTests: XCTestCase {
-
     func testThatValidEmailsPassValidation() {
         // GIVEN
         let validEmailAddresses =

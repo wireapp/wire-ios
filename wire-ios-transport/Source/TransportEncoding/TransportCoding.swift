@@ -17,7 +17,6 @@
 //
 
 public protocol TransportCoding {
-
     /// String representation of a value which can be sent to the API.
     func transportString() -> String
 

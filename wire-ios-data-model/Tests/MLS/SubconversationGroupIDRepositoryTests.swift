@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class SubconversationGroupIDRepositoryTests: XCTestCase {
-
     func test_StoreAndFetchGroupID() async throws {
         // Given
         let sut = SubconversationGroupIDRepository()

@@ -22,7 +22,6 @@ import WireDataModelSupport
 @testable import WireSyncEngine
 
 final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
-
     var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(
         for account: WireDataModel.Account,
@@ -49,7 +48,6 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 }
 
 final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
-
     private var activityManager: MockBackgroundActivityManager!
     private var factory: BackgroundActivityFactory!
 

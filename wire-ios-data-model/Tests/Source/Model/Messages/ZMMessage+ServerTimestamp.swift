@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMMessage {
-
     func updateServerTimestamp(with timeInterval: TimeInterval) {
         serverTimestamp = Date(timeIntervalSince1970: timeInterval)
     }

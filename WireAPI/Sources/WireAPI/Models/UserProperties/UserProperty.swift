@@ -22,7 +22,6 @@ import Foundation
 /// share self user settings across devices.
 
 public enum UserProperty: Equatable, Codable {
-
     /// Whether the self user has enabled read receipts.
 
     case areReadReceiptsEnabled(Bool)
@@ -41,11 +40,9 @@ public enum UserProperty: Equatable, Codable {
 }
 
 public extension UserProperty {
-
     /// The user property key.
 
     enum Key: String {
-
         /// Wire receipt mode
 
         case wireReceiptMode = "WIRE_RECEIPT_MODE"

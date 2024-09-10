@@ -22,7 +22,6 @@ import WireDataModel
 /// Directory of various conversation lists
 /// This object is expected to be used on the UI context only
 @objcMembers public class TopConversationsDirectory: NSObject {
-
     fileprivate let uiMOC: NSManagedObjectContext
     fileprivate let syncMOC: NSManagedObjectContext
     fileprivate static let topConversationSize = 25
@@ -44,7 +43,6 @@ import WireDataModel
 private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
 @objc extension TopConversationsDirectory {
-
     public func refreshTopConversations() {
         syncMOC.performGroupedBlock {
             let conversations = self.fetchOneOnOneConversations()
@@ -100,17 +98,14 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 // MARK: – Observation
 
 @objc public protocol TopConversationsDirectoryObserver {
-
     @objc func topConversationsDidChange()
 }
 
 struct TopConversationsDirectoryNotification: SelfPostingNotification {
-
     static let notificationName = NSNotification.Name(rawValue: "TopConversationsDirectoryNotification")
 }
 
 extension TopConversationsDirectory {
-
     @objc(addObserver:) public func add(observer: TopConversationsDirectoryObserver) -> Any {
         return NotificationInContext.addObserver(name: TopConversationsDirectoryNotification.notificationName, context: uiMOC.notificationContext) { [weak observer] _ in
             observer?.topConversationsDidChange()
@@ -119,7 +114,6 @@ extension TopConversationsDirectory {
 }
 
 fileprivate extension ZMConversation {
-
     static var predicateForActiveOneOnOneConversations: NSPredicate {
         let oneOnOnePredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.conversationType), ZMConversationType.oneOnOne.rawValue)
         let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.oneOnOneUser.connection.status), ZMConnectionStatus.accepted.rawValue)

@@ -21,7 +21,6 @@ import WireAPI
 /// Process federation connection removed events.
 
 protocol FederationConnectionRemovedEventProcessorProtocol {
-
     /// Process a federation connection removed event.
     ///
     /// - Parameter event: A federation connection removed event.
@@ -30,7 +29,6 @@ protocol FederationConnectionRemovedEventProcessorProtocol {
 }
 
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
-
     func processEvent(_: FederationConnectionRemovedEvent) async throws {
         // TODO: [WPB-10187]
         assertionFailure("not implemented yet")

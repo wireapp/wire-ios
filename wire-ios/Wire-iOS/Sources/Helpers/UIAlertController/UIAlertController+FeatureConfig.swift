@@ -20,19 +20,16 @@ import Foundation
 import WireSyncEngine
 
 protocol FeatureChangeAcknowledger {
-
     func acknowledgeChange(for featureName: Feature.Name)
 }
 
 extension FeatureRepository: FeatureChangeAcknowledger {
-
     func acknowledgeChange(for featureName: Feature.Name) {
         setNeedsToNotifyUser(false, for: featureName)
     }
 }
 
 extension UIAlertController {
-
     private typealias Strings = L10n.Localizable.FeatureConfig
 
     class func fromFeatureChange(_ change: FeatureRepository.FeatureChange,
@@ -106,7 +103,6 @@ extension UIAlertController {
         message: String,
         onOK: @escaping () -> Void
     ) -> UIAlertController {
-
         let alert = UIAlertController(
             title: Strings.Alert.genericTitle,
             message: message,

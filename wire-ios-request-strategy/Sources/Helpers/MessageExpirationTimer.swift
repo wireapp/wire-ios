@@ -19,7 +19,6 @@
 import Foundation
 
 public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
-
     let localNotificationsDispatcher: PushMessageHandler
     let entityNames: [String]
     let filter: NSPredicate?
@@ -86,7 +85,6 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
                 $0.expire()
                 $0.managedObjectContext?.enqueueDelayedSave()
             } else {
-
                 if super.startTimerIfNeeded(for: $0, fireDate: expirationDate, userInfo: [:]) {
                     logWithMessage("starting timer for message", message: $0)
                 }

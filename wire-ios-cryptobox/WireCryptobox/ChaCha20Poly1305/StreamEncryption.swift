@@ -19,9 +19,7 @@
 import Foundation
 
 public extension ChaCha20Poly1305 {
-
     final class StreamEncryption {
-
         private static let bufferSize = 1024 * 1024
 
         public enum EncryptionError: Error {
@@ -48,7 +46,6 @@ public extension ChaCha20Poly1305 {
         }
 
         internal struct Header {
-
             enum Field: Int {
                 case platform = 4
                 case emptySpace = 1
@@ -88,7 +85,6 @@ public extension ChaCha20Poly1305 {
             let uuidHash: [UInt8]
 
             init(buffer: [UInt8]) throws {
-
                 var salt: [UInt8] = [UInt8](repeating: 0, count: Field.salt.rawValue)
                 var hash: [UInt8] = [UInt8](repeating: 0, count: Field.uuidHash.rawValue)
 
@@ -180,7 +176,6 @@ public extension ChaCha20Poly1305 {
 
         /// ChaCha20 Key
         internal struct Key {
-
             fileprivate let buffer: [UInt8]
 
             /// Generate a key from a passphrase.
@@ -219,7 +214,6 @@ public extension ChaCha20Poly1305 {
         /// - Returns: number of encrypted bytes written to the output stream
         @discardableResult
         public static func encrypt(input: InputStream, output: OutputStream, passphrase: Passphrase) throws -> Int {
-
             try initializeSodium()
 
             input.open()
@@ -315,7 +309,6 @@ public extension ChaCha20Poly1305 {
         /// - Returns: number of decrypted bytes written to the output stream.
         @discardableResult
         public static func decrypt(input: InputStream, output: OutputStream, passphrase: Passphrase) throws -> Int {
-
             try initializeSodium()
 
             input.open()

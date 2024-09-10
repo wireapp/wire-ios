@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationCreateServicesCell: IconToggleCell {
-
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "toggle.newgroup.allowservices"

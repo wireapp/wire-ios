@@ -22,7 +22,6 @@ import WireAPI
 /// Process feature config update events.
 
 protocol FeatureConfigEventProcessorProtocol {
-
     /// Process a feature config update event.
     ///
     /// Processing an event is the app's only chance to consume
@@ -34,7 +33,6 @@ protocol FeatureConfigEventProcessorProtocol {
 }
 
 struct FeatureConfigEventProcessor {
-
     let updateEventProcessor: any FeatureConfigUpdateEventProcessorProtocol
 
     func processEvent(_ event: FeatureConfigEvent) async throws {

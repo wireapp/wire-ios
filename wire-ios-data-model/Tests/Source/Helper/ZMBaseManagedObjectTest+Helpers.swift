@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMBaseManagedObjectTest {
-
     @discardableResult
     func createConversation(in moc: NSManagedObjectContext, with participants: [ZMUser] = [], role: Role? = nil) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)

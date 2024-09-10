@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
     typealias System = L10n.Localizable.Content.System
 
@@ -72,7 +71,6 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
 }
 
 private extension Array where Element == String {
-
     var hasSelfDomain: Bool {
         return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }

@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationGuestLinksFeatureConfigDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> ConversationGuestLinksFeatureConfig {

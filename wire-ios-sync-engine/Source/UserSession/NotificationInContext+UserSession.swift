@@ -23,7 +23,6 @@ import WireDataModel
 private let typingNotificationUsersKey = "typingUsers"
 
 extension ZMConversation {
-
     @objc
     public func addTypingObserver(_ observer: ZMTypingChangeObserver) -> Any {
         return NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
@@ -46,14 +45,12 @@ extension ZMConversation {
 }
 
 @objc public protocol ZMTypingChangeObserver: NSObjectProtocol {
-
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType])
 }
 
 // MARK: - Encryption at rest
 
 public struct DatabaseEncryptionLockNotification: SelfPostingNotification {
-
     static var notificationName: Notification.Name = Notification.Name("DatabaseEncryptionLockNotification")
 
     var databaseIsEncrypted: Bool

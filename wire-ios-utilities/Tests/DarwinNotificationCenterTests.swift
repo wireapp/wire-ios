@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 class DarwinNotificationCenterTests: XCTestCase {
-
     func testThatItInvokesHandlers() {
         // given
         let sut = DarwinNotificationCenter.shared

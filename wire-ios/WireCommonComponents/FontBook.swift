@@ -19,7 +19,6 @@
 import SwiftUI
 
 extension UIFont {
-
 //     Constants for weight values
 //     Those values come directly from the system
 //     DON"T MODIFY THOSE VALUES

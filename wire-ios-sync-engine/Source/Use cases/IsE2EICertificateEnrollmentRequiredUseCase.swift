@@ -24,7 +24,6 @@ public protocol IsE2EICertificateEnrollmentRequiredProtocol {
 }
 
 final public class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificateEnrollmentRequiredProtocol {
-
     // MARK: - Properties
 
     private let isE2EIdentityEnabled: Bool

@@ -47,7 +47,6 @@ private extension UILabel {
  */
 
 final class MessageToolboxView: UIView {
-
     /// The object receiving events.
     weak var delegate: MessageToolboxViewDelegate?
 
@@ -134,7 +133,6 @@ final class MessageToolboxView: UIView {
     }
 
     private func setupViews() {
-
         messageFailureView.tapHandler = { [weak self] _ in
             self?.resendMessage()
         }
@@ -235,7 +233,6 @@ final class MessageToolboxView: UIView {
         }
 
         switch dataSource.content {
-
         case .callList(let callListString):
             self.detailsLabel.attributedText = callListString
             self.detailsLabel.isHidden = false
@@ -310,7 +307,6 @@ final class MessageToolboxView: UIView {
 // MARK: - Tap Gesture
 
 extension MessageToolboxView: UIGestureRecognizerDelegate {
-
     @objc
     func onTapContent(_ sender: UITapGestureRecognizer!) {
         if let displayMode = preferredDetailsDisplayMode() {

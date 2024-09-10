@@ -19,7 +19,6 @@
 import Foundation
 
 struct UserConnectionEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserConnectionEvent {
@@ -48,12 +47,10 @@ struct UserConnectionEventDecoder {
     }
 
     private struct UserPayload: Decodable {
-
         let name: String
     }
 
     private struct ConnectionPayload: Decodable {
-
         let from: UUID?
         let to: UUID?
         let qualifiedTo: QualifiedID?

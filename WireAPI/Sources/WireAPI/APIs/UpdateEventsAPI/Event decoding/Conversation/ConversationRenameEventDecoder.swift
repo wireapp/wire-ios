@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationRenameEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationRenameEvent {
@@ -52,7 +51,6 @@ struct ConversationRenameEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let name: String
     }
 }

@@ -19,7 +19,6 @@
 import Foundation
 
 class FileManager_CryptoboxTests: XCTestCase {
-
     func testThatItReturnsTheCryptoboxPath() {
         // given
         let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
@@ -55,7 +54,6 @@ class FileManager_CryptoboxTests: XCTestCase {
 }
 
 class FileManager_CacheTests: XCTestCase {
-
     func testThatItReturnsTheCachesDirectory_WithAccountId() {
         // given
         let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!

@@ -32,7 +32,6 @@ public protocol AcmeAPIInterface {
 
 /// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
 public class AcmeAPI: NSObject, AcmeAPIInterface {
-
     // MARK: - Properties
 
     private let rootCertificatePath = "roots.pem"
@@ -51,7 +50,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     }
 
     public func getACMEDirectory() async throws -> Data {
-
         guard let acmeDirectory = URL(string: acmeDiscoveryPath) else {
             throw NetworkError.errorEncodingRequest
         }
@@ -64,7 +62,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     }
 
     public func getACMENonce(path: String) async throws -> String {
-
         guard let url = URL(string: path) else {
             throw NetworkError.errorEncodingRequest
         }
@@ -202,7 +199,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     }
 
     private struct Challenge: Codable, Equatable {
-
         var type: String
         var url: String
         var status: String
@@ -211,12 +207,10 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     }
 
     private struct AuthorizationResponse: Decodable {
-
         var challenges: [AuthorizationChallenge]
     }
 
     private struct AuthorizationChallenge: Decodable {
-
         var type: AuthorizationChallengeType
     }
 }
@@ -243,12 +237,10 @@ private enum Constant {
 }
 
 public protocol HttpClientCustom {
-
     func send(_ request: URLRequest) async throws -> (Data, URLResponse)
 }
 
 public class HttpClientE2EI: NSObject, HttpClientCustom {
-
     private let urlSession: URLSession
 
     public override init() {

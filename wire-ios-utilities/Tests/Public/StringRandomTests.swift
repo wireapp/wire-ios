@@ -20,7 +20,6 @@
 import XCTest
 
 final class StringRandomTests: XCTestCase {
-
     func test_randomAlphanumerical_withLenghtZero() {
         // given
         // when

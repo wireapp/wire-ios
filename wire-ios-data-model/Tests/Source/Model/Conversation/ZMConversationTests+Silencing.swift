@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMConversationTests_Silencing: ZMConversationTestsBase {
-
     func testThatSilencingUpdatesProperties() {
         // given
         let timestamp = Date()

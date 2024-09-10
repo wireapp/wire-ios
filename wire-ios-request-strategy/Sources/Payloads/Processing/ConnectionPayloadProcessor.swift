@@ -19,7 +19,6 @@
 import Foundation
 
 final class ConnectionPayloadProcessor {
-
     func processPayload(
         _ payload: Payload.UserConnectionEvent,
         in context: NSManagedObjectContext

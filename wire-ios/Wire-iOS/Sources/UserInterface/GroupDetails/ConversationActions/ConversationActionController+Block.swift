@@ -54,7 +54,6 @@ enum BlockResult {
 }
 
 extension ConversationActionController {
-
     func requestBlockResult(for conversation: ZMConversation, handler: @escaping (BlockResult) -> Void) {
         guard let user = conversation.connectedUser else { return }
         let controller = UIAlertController(title: BlockResult.title(for: user), message: nil, preferredStyle: .actionSheet)

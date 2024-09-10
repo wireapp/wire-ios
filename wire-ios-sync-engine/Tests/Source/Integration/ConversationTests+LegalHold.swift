@@ -20,7 +20,6 @@
 import XCTest
 
 class ConversationTests_LegalHold: ConversationTestsBase {
-
     func testThatItInsertsLegalHoldSystemMessage_WhenDiscoveringLegalHoldClientOnSending() {
         // given
         XCTAssertTrue(login())

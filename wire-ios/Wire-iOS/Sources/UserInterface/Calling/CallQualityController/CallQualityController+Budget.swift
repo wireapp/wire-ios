@@ -22,7 +22,6 @@ let UserDefaultLastCallSurveyDate = "LastCallSurveyDate"
 let CallSurveyMuteInterval: TimeInterval = Calendar.secondsInDays(3)
 
 extension CallQualityController {
-
     /// Updates the date when the survey was last shown.
     static func updateLastSurveyDate(_ date: Date) {
         UserDefaults.standard.set(date.timeIntervalSinceReferenceDate, forKey: UserDefaultLastCallSurveyDate)

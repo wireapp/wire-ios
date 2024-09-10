@@ -23,7 +23,6 @@ import Foundation
  */
 
 enum PasswordValidationResult: Equatable {
-
     /// The password is valid.
     case valid
 
@@ -31,7 +30,6 @@ enum PasswordValidationResult: Equatable {
     case invalid(violations: [Violation])
 
     enum Violation: Equatable {
-
         /// The password is too short.
         case tooShort
 

@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     public func appendSessionResetSystemMessage(user: ZMUser, client: UserClient, at timestamp: Date) {
         appendSystemMessage(type: .sessionReset,
                             sender: user,
@@ -72,7 +71,6 @@ extension ZMConversation {
 
         // Fill out team specific properties if the conversation was created in the self user team
         if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team, team == selfUserTeam {
-
             let members = selfUserTeam.members.compactMap { $0.user }
             let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
 
@@ -245,7 +243,6 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
         user: ZMUser
     ) {
-
         guard let context = self.managedObjectContext else { return }
 
         self.appendSystemMessage(
@@ -260,7 +257,6 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForOtherUser(
         user: ZMUser
     ) {
-
         guard let context = self.managedObjectContext else { return }
 
         self.appendSystemMessage(

@@ -20,7 +20,6 @@
 import XCTest
 
 final class Data_ImageTypeTests: XCTestCase {
-
     var sut: Data!
 
     override func tearDown() {
@@ -38,7 +37,6 @@ final class Data_ImageTypeTests: XCTestCase {
     }
 
     func testThatItDoesNotIdentifyJPEG() {
-
         // given
         sut = dataInTestBundleNamed("identicon.png")
 

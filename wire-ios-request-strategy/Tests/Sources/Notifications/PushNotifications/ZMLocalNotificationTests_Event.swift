@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
-
     let EventConversationDelete = "conversation.delete"
     let EventConversationCreate = "conversation.create"
     let EventNewConnection = "user.contact-join"
@@ -61,7 +60,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func alertBody(_ conversation: ZMConversation, aSender: ZMUser) -> String? {
-
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
@@ -76,7 +74,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func note(_ conversation: ZMConversation, aSender: ZMUser) -> ZMLocalNotification? {
-
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
@@ -159,7 +156,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - User Connections
 
     func testThatItCreatesNewConnectionNotification() {
-
         // given
         syncMOC.performGroupedAndWait {
             let senderID = UUID.create()
@@ -220,7 +216,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateAConnectionAcceptedNotificationForAWrongStatus() {
-
         // given
         syncMOC.performGroupedAndWait {
             let status = "blablabla"

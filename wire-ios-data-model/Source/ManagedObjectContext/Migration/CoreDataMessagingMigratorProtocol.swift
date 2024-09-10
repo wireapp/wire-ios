@@ -21,7 +21,6 @@ import Foundation
 // sourcery: AutoMockable
 /// Use for testing import backup
 protocol CoreDataMessagingMigratorProtocol {
-
     func requiresMigration(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) -> Bool
     func migrateStore(at storeURL: URL, toVersion version: CoreDataMessagingMigrationVersion) throws
 }

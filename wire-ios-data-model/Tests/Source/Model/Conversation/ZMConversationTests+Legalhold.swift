@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMConversationTests_Legalhold: ZMConversationTestsBase {
-
     // MARK: - Update legal hold on client changes
 
     func testThatLegalholdIsActivatedForUser_WhenLegalholdClientIsDiscovered() {

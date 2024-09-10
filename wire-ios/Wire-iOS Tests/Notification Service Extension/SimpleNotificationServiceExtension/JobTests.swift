@@ -20,7 +20,6 @@
 import XCTest
 
 class JobTests: XCTestCase {
-
     var mockNetworkSession: MockNetworkSession!
     var mockAccessAPIClient: MockAccessAPIClient!
     var mockNotificationsAPIClient: MockNotificationsAPIClient!
@@ -179,7 +178,6 @@ class JobTests: XCTestCase {
 }
 
 final class MockNetworkSession: NetworkSessionProtocol {
-
     var accessToken: AccessToken?
     var isAuthenticated = true
 
@@ -209,7 +207,6 @@ final class MockNetworkSession: NetworkSessionProtocol {
 }
 
 final class MockAccessAPIClient: AccessAPIClientProtocol {
-
     var mockFetchAccessToken: (() async throws -> AccessToken)?
 
     func fetchAccessToken() async throws -> AccessToken {
@@ -222,7 +219,6 @@ final class MockAccessAPIClient: AccessAPIClientProtocol {
 }
 
 final class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
-
     var mockFetchEvent: ((UUID) async throws -> ZMUpdateEvent)?
 
     func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent {

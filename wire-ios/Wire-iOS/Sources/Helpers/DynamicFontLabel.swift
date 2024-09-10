@@ -23,7 +23,6 @@ import WireDesign
 /// A helper class that provides the label with Dynamic Type Support
 /// by conforming to the DynamicTypeCapable Protocol.
 class DynamicFontLabel: UILabel, DynamicTypeCapable {
-
     // MARK: - Properties
 
     private let onRedrawFont: () -> UIFont?

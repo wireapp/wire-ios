@@ -34,7 +34,6 @@ import Foundation
 
 @objc(ZMMessageConfirmation) @objcMembers
 open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
-
     @NSManaged open var type: MessageConfirmationType
     @NSManaged open var serverTimestamp: Date?
     @NSManaged open var message: ZMMessage
@@ -60,7 +59,6 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     /// It can have 2 types: Delivered and Read depending on the confirmation type
     @discardableResult
     public static func createMessageConfirmations(_ confirmation: Confirmation, conversation: ZMConversation, updateEvent: ZMUpdateEvent) -> [ZMMessageConfirmation] {
-
         let type = MessageConfirmationType.convert(confirmation.type)
 
         guard

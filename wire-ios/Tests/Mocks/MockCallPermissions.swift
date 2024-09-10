@@ -27,7 +27,6 @@ extension MediaState.SpeakerState {
 }
 
 final class MockCallPermissions: CallPermissionsConfiguration {
-
     var isPendingAudioPermissionRequest: Bool = true
     var isPendingVideoPermissionRequest: Bool = true
 
@@ -50,7 +49,6 @@ final class MockCallPermissions: CallPermissionsConfiguration {
 // MARK: - Factories
 
 extension MockCallPermissions {
-
     static var videoDeniedForever: MockCallPermissions {
         let permissions = MockCallPermissions()
         permissions.canAcceptVideoCalls = false
@@ -76,9 +74,7 @@ extension MockCallPermissions {
 // MARK: - Utilities
 
 extension CallPermissionsConfiguration {
-
     func mediaStateIfAllowed(_ preferredState: MediaState) -> MediaState {
-
         if case .sendingVideo = preferredState {
             guard canAcceptVideoCalls else {
                 return .notSendingVideo(speakerState: .deselectedCanBeToggled)

@@ -21,7 +21,6 @@ import Foundation
 /// Service information for a bot.
 
 public struct Service: Equatable, Codable {
-
     /// The service's id.
 
     public let id: UUID

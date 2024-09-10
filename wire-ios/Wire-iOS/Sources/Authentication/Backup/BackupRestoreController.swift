@@ -33,7 +33,6 @@ protocol BackupRestoreControllerDelegate: AnyObject {
 private let zmLog = ZMSLog(tag: "Backup")
 
 final class BackupRestoreController: NSObject {
-
     // There are some external apps that users can use to transfer backup files, which can modify
     // their attachments and change the underscore with a dash. This is the reason we accept 2 types
     // of file extensions: 'ios_wbu' and 'ios-wbu'.

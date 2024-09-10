@@ -21,7 +21,6 @@ import Foundation
 /// Represents all possible legalhold status for a user.
 
 public enum LegalholdStatus {
-
     /// Legalhold is active for the user.
 
     case enabled

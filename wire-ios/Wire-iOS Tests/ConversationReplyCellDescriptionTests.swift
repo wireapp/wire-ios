@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
-
     func testThatItDisplaysNameOfOriginalSender() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Hello")

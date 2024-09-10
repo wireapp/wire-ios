@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 extension MLSConferenceInfo {
-
     public static func random() -> Self {
         .init(
             epoch: .random(in: (.min)...(.max)),
@@ -30,7 +29,6 @@ extension MLSConferenceInfo {
 }
 
 extension MLSConferenceInfo.Member {
-
     public static func random() -> Self {
         .init(
             id: .random(),

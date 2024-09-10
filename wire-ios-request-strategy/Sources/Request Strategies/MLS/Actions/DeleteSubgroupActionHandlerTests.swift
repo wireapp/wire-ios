@@ -21,7 +21,6 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgroupAction, DeleteSubgroupActionHandler> {
-
     let conversationID = UUID()
     let domain = "example.com"
     let subgroupType = SubgroupType.conference

@@ -24,7 +24,6 @@ import WireTesting
 @testable import WireSyncEngineSupport
 
 final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
-
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
 

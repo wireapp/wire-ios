@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConnection {
-
     @objc public static let invalidateTopConversationCacheNotificationName = Notification.Name("ZMInvalidateTopConversationCacheNotificationName")
 
     @objc public func invalidateTopConversationCache() {

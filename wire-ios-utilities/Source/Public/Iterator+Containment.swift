@@ -17,7 +17,6 @@
 //
 
 public extension IteratorProtocol {
-
     mutating func any(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         guard let current = next() else { return false }
         return try predicate(current) || any(predicate)

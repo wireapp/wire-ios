@@ -19,6 +19,5 @@
 import Foundation
 
 public protocol AppLockDelegate: AnyObject {
-
     func appLockDidOpen(_ appLock: AppLockType)
 }

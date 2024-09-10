@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class AddressBookSearchTests: MessagingTest {
-
     var sut: WireSyncEngine.AddressBookSearch!
     var addressBook: MockAddressBook!
 
@@ -41,9 +40,7 @@ class AddressBookSearchTests: MessagingTest {
 // MARK: - Search query
 
 extension AddressBookSearchTests {
-
     func testThatItSearchesByNameWithMatch() {
-
         // given
         addressBook.contacts = [
             MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"], phoneNumbers: []),
@@ -60,7 +57,6 @@ extension AddressBookSearchTests {
     }
 
     func testThatItSearchesByNameWithMatchExcludingIdentifiers() {
-
         // given
         let identifier = "233124"
         addressBook.contacts = [
@@ -78,7 +74,6 @@ extension AddressBookSearchTests {
     }
 
     func testThatItSearchesByNameWithNoMatch() {
-
         // given
         addressBook.contacts = [
             MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"], phoneNumbers: []),

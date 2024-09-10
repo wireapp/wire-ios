@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 protocol MLSConversationParticipantsServiceInterface {
-
     func addParticipants(
         _ users: [ZMUser],
         to conversation: ZMConversation
@@ -39,7 +38,6 @@ enum MLSConversationParticipantsError: Error, Equatable {
 }
 
 struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInterface {
-
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
@@ -49,7 +47,6 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
     // MARK: - Life cycle
 
     init?(context: NSManagedObjectContext) {
-
         guard let syncContext = context.performAndWait({ context.zm_sync }) else {
             return nil
         }
@@ -81,7 +78,6 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         _ users: [ZMUser],
         to conversation: ZMConversation
     ) async throws {
-
         let (qualifiedID, groupID) = await context.perform {
             (conversation.qualifiedID, conversation.mlsGroupID)
         }
@@ -96,22 +92,18 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from: )) }
 
         do {
-
             try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
 
         } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
-
             let failedUsers = await context.perform {
                 users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
             }
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 
         } catch SendCommitBundleAction.Failure.nonFederatingDomains(domains: let domains) {
-
             throw FederationError.nonFederatingDomains(domains)
 
         } catch SendCommitBundleAction.Failure.unreachableDomains(domains: let domains) {
-
             throw FederationError.unreachableDomains(domains)
 
         } catch {
@@ -124,7 +116,6 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         _ user: ZMUser,
         from conversation: ZMConversation
     ) async throws {
-
         let (qualifiedID, groupID, userID) = await context.perform {
             (conversation.qualifiedID, conversation.mlsGroupID, user.qualifiedID)
         }

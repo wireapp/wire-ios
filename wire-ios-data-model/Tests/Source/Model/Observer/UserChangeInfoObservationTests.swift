@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
-
     let UserClientsKey = "clients"
 
     enum UserInfoChangeKey: String, CaseIterable {
@@ -267,7 +266,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
-
         // given
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         self.setEmailAddress("foo@example.com", on: user)
@@ -285,7 +283,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesUserForClientStartsTrusting() {
-
         // given
         let user = ZMUser.selfUser(in: self.uiMOC)
         let client = UserClient.insertNewObject(in: self.uiMOC)
@@ -307,7 +304,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesUserForClientStartsIgnoring() {
-
         // given
         let user = ZMUser.selfUser(in: self.uiMOC)
         let client = UserClient.insertNewObject(in: self.uiMOC)
@@ -331,7 +327,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItUpdatesClientObserversWhenClientIsAdded() {
-
         // given
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         let selfClient = UserClient.insertNewObject(in: self.uiMOC)
@@ -352,7 +347,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItUpdatesClientObserversWhenClientIsRemoved() {
-
         // given
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         let selfClient = UserClient.insertNewObject(in: self.uiMOC)
@@ -378,7 +372,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItUpdatesClientObserversWhenClientsAreFaultedAndNewClientIsAdded() {
-
         // given
         var objectID: NSManagedObjectID!
         var syncMOCUser: ZMUser!
@@ -414,7 +407,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItUpdatesClientObserversWhenClientsAreFaultedAndNewClientIsAddedSameContext() {
-
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
         XCTAssertEqual(user.clients.count, 0)
@@ -443,7 +435,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesTrustChangeForClientsAddedAfterSubscribing() {
-
         // given
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let selfClient = UserClient.insertNewObject(in: uiMOC)

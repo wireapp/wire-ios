@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 extension SelfUser {
-
     // MARK: - Helper method
 
     /// setup self user as a team member if providing teamID with the name Tarja Turunen
@@ -35,7 +34,6 @@ extension SelfUser {
 // MARK: - ConversationImagesViewControllerTests
 
 final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

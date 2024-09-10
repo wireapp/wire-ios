@@ -23,7 +23,6 @@ import WireUtilities
 private let zmLog = ZMSLog(tag: "UI")
 
 final class ExtensionBackupExcluder: BackupExcluder {
-
     private static let filesToExclude: [FileInDirectory] = [
         (.libraryDirectory, "Cookies/Cookies.binarycookies"),
         (.libraryDirectory, ".")

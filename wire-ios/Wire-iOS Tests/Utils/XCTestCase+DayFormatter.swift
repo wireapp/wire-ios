@@ -26,7 +26,6 @@ extension Message {
 }
 
 extension XCTestCase {
-
     class func resetDayFormatter() {
         let locale = Locale(identifier: "en_US")
         WRDateFormatter.thisYearFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEEdMMMM", options: 0, locale: locale)

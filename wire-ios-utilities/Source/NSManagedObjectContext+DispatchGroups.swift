@@ -19,7 +19,6 @@
 import CoreData
 
 public extension NSManagedObjectContext {
-
     /// Enter all dispatch groups except the 2nd standard dispatch group.
     ///
     /// Should be used instead of `enterAllGroups` when it's desired to wait for Tasks to complete in tests since

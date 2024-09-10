@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
-
     var dispatcher: NotificationDispatcher!
     var team: Team!
     var otherTeam: Team!

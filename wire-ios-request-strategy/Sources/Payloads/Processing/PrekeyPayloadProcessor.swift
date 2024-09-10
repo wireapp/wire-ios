@@ -28,7 +28,6 @@ public protocol PrekeyPayloadProcessorInterface {
 }
 
 public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
-
     public init() {
     }
 
@@ -103,7 +102,6 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
 }
 
 private extension UserClient {
-
     /// Creates session and update missing clients and messages that depend on those clients
 
     func establishSessionAndUpdateMissingClients(
@@ -142,7 +140,6 @@ private extension UserClient {
 }
 
 extension Payload.ClientListByQualifiedUserID {
-
     func fetchUsers(in context: NSManagedObjectContext) -> [ZMUser] {
         return flatMap { domain, userClientsByUserID in
             return userClientsByUserID.compactMap { userID, _ -> ZMUser? in

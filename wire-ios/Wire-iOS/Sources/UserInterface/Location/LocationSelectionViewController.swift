@@ -23,14 +23,12 @@ import WireDataModel
 import WireDesign
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
-
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)
 
     func locationSelectionViewControllerDidCancel(_ viewController: LocationSelectionViewController)
 }
 
 final class LocationSelectionViewController: UIViewController {
-
     // MARK: - Constants
 
     enum LayoutConstants {
@@ -208,9 +206,7 @@ final class LocationSelectionViewController: UIViewController {
 // MARK: - LocationSendViewControllerDelegate
 
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
-
     func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool) {
-
         sendControllerHeightConstraint?.isActive = isActive
 
         if isActive {
@@ -235,7 +231,6 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
 // MARK: - Modal Top Bar Delegate
 
 extension LocationSelectionViewController: ModalTopBarDelegate {
-
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
         delegate?.locationSelectionViewControllerDidCancel(self)
     }
@@ -244,7 +239,6 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
 // MARK: - Map Manager Delegate
 
 extension LocationSelectionViewController: MapViewControllerDelegate {
-
     func mapViewController(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
         if !userShowedInitially {
             userShowedInitially = true
@@ -265,7 +259,6 @@ extension LocationSelectionViewController: MapViewControllerDelegate {
 // MARK: - AppLocation Manager Delegate
 
 extension LocationSelectionViewController: AppLocationManagerDelegate {
-
     func didUpdateLocations(_ locations: [CLLocation]) {
         guard let newLocation = locations.first else { return }
 
@@ -276,7 +269,6 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
     }
 
     func didFailWithError(_ error: Error) {
-
         let alertController = UIAlertController(
             title: L10n.Localizable.Location.Error.Alert.title,
             message: L10n.Localizable.Location.Error.Alert.description,

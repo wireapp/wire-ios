@@ -21,7 +21,6 @@ import Foundation
 /// Used to identify a participant in a call.
 
 public struct AVSClient: Hashable {
-
     public let userId: String
     public let clientId: String
     public var isMemberOfSubconversation = false
@@ -69,9 +68,7 @@ public struct AVSClient: Hashable {
 }
 
 extension AVSClient: Codable {
-
     enum CodingKeys: String, CodingKey {
-
         case userId = "userid"
         case clientId = "clientid"
         case isMemberOfSubconversation = "in_subconv"
@@ -86,7 +83,6 @@ extension AVSClient: Codable {
 }
 
 extension AVSClient {
-
     public var avsIdentifier: AVSIdentifier {
         AVSIdentifier.from(string: userId)
     }

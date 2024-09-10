@@ -19,7 +19,6 @@
 import UIKit
 
 final class ConversationCreateErrorSectionController: NSObject, CollectionViewSectionController {
-
     typealias Cell = ConversationCreateErrorCell
 
     weak var errorCell: Cell?

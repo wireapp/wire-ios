@@ -21,7 +21,6 @@ import WireDataModelSupport
 import XCTest
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
-
     func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
         // given
         let userId = NSUUID.create()!

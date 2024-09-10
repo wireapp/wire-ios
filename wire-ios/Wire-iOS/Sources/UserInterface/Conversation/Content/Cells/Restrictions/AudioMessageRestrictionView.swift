@@ -19,7 +19,6 @@
 import UIKit
 
 final class AudioMessageRestrictionView: BaseMessageRestrictionView {
-
     // MARK: - Life cycle
 
     init() {

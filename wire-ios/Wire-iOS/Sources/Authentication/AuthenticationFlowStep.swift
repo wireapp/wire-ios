@@ -21,7 +21,6 @@ import WireSyncEngine
 
 /// The context that caused the user to not have a complete history.
 enum NoHistoryContext {
-
     /// The user signed into this device for the first time.
     case newDevice
 
@@ -31,7 +30,6 @@ enum NoHistoryContext {
 
 /// Steps of the authentication flow.
 indirect enum AuthenticationFlowStep: Equatable {
-
     // Initial Steps
     case start
     case landingScreen

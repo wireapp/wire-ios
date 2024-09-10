@@ -22,9 +22,7 @@ import WireDataModel
 import WireSyncEngine
 
 extension AppLockModule {
-
     final class Interactor: InteractorInterface {
-
         // MARK: - Properties
 
         weak var presenter: AppLockPresenterInteractorInterface!
@@ -48,7 +46,6 @@ extension AppLockModule {
             authenticationType: AuthenticationTypeProvider = AuthenticationTypeDetector(),
             applicationStateProvider: ApplicationStateProvider = UIApplication.shared
         ) {
-
             self.userSession = userSession
             self.authenticationType = authenticationType
             self.applicationStateProvider = applicationStateProvider
@@ -92,7 +89,6 @@ extension AppLockModule {
 // MARK: - Execute request
 
 extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
-
     func executeRequest(_ request: AppLockModule.Request) {
         switch request {
         case .initiateAuthentication(requireActiveApp: true) where applicationState != .active:

@@ -24,7 +24,6 @@ import WireLinkPreview
 import WireUtilities
 
 extension NSAttributedString {
-
     static var paragraphStyle: NSParagraphStyle = {
         return defaultParagraphStyle()
     }()
@@ -131,7 +130,6 @@ extension NSAttributedString {
 
     @objc
     static func format(message: TextMessageData, isObfuscated: Bool) -> NSAttributedString {
-
         var plainText = message.messageText ?? ""
 
         guard !isObfuscated else {
@@ -174,7 +172,6 @@ extension NSAttributedString {
 }
 
 extension NSMutableAttributedString {
-
     func replaceEmoticons(excluding excludedRanges: [Range<Int>]) {
         beginEditing(); defer { endEditing() }
 
@@ -216,7 +213,6 @@ extension NSMutableAttributedString {
 }
 
 private extension String {
-
     mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
         return mentions.sorted(by: {
             return $0.range.location > $1.range.location
@@ -234,9 +230,7 @@ private extension String {
 }
 
 private extension IndexSet {
-
     init(integersIn range: Range<IndexSet.Element>, excluding: [Range<IndexSet.Element>]) {
-
         var excludedIndexSet = IndexSet()
         var includedIndexSet = IndexSet()
 

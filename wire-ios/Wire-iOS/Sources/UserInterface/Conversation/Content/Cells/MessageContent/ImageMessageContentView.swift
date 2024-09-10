@@ -19,7 +19,6 @@
 import UIKit
 
 final class ImageContentView: UIView {
-
     var imageView = ImageResourceView()
     var imageAspectConstraint: NSLayoutConstraint?
     var imageWidthConstraint: NSLayoutConstraint

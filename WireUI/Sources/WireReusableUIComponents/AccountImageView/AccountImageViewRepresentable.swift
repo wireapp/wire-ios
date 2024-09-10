@@ -19,7 +19,6 @@
 import SwiftUI
 
 public struct AccountImageViewRepresentable: UIViewRepresentable {
-
     private let accountImage: UIImage
     private let isTeamAccount: Bool
     private let availability: Availability?
@@ -46,7 +45,6 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 }
 
 extension AccountImageViewRepresentable {
-
     init(
         _ accountImage: UIImage,
         _ isTeamAccount: Bool,

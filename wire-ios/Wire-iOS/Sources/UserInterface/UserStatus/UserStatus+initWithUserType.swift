@@ -19,7 +19,6 @@
 import WireDataModel
 
 extension UserStatus {
-
     init(
         user: UserType,
         isE2EICertified: Bool

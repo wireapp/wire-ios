@@ -23,9 +23,7 @@ private let zmLog = ZMSLog(tag: "PushNotificationStatus")
 
 @objcMembers
 open class PushNotificationStatus: NSObject {
-
     public enum FetchError: Error {
-
         case invalidEventID
         case alreadyFetchedEvent
         case unknown

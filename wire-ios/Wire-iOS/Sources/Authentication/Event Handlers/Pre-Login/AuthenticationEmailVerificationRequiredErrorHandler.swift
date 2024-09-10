@@ -24,7 +24,6 @@ import WireSyncEngine
  */
 
 final class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: NSError) -> [AuthenticationCoordinatorAction]? {

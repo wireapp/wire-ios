@@ -20,7 +20,6 @@
  import XCTest
 
  final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
-
     override func setUp() {
         DeveloperFlag.proteusViaCoreCrypto.enable(false, storage: .temporary())
         BackendInfo.domain = nil
@@ -36,7 +35,6 @@
  // MARK: - Payload creation
 
 extension ClientMessageTests_OTR_Legacy {
-
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
             // Given
@@ -491,9 +489,7 @@ extension ClientMessageTests_OTR_Legacy {
 // MARK: - Session identifier
 
 extension ClientMessageTests_OTR_Legacy {
-
     func testThatItUsesTheProperSessionIdentifier() {
-
         // GIVEN
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.remoteIdentifier = UUID.create()
@@ -512,7 +508,6 @@ extension ClientMessageTests_OTR_Legacy {
 // MARK: - Helper
 
  extension ClientMessageTests_OTR_Legacy {
-
     /// Returns a string large enough to have to be encoded in an external message
     fileprivate var stringLargeEnoughToRequireExternal: String {
         var text = "Hello"

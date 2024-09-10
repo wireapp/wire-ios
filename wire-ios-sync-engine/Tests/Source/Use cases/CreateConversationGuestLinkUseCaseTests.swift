@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
-
     // MARK: - Properties
 
     private let coreDataStackHelper = CoreDataStackHelper()
@@ -85,7 +84,6 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     // MARK: - Unit Tests
 
     func testThatLinkGenerationSucceeds() async {
-
         await syncContext.perform { [self] in
             // GIVEN
             configureRoleAndAccessForConversation()
@@ -110,7 +108,6 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     }
 
     func testThatLinkGenerationSucceeds_LegacyMode() async {
-
         await syncContext.perform { [self] in
             // GIVEN
             configureRoleAndAccessForConversation(legacyAccessMode: true)
@@ -136,7 +133,6 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     }
 
     func testThatLinkGenerationFails() async {
-
         await syncContext.perform { [self] in
 
             let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .failure(.unknown), context: syncContext.notificationContext)

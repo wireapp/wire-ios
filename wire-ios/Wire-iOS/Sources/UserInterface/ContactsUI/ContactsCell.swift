@@ -155,7 +155,6 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     private func configureSubviews() {
-
         setUp()
 
         separator.translatesAutoresizingMaskIntoConstraints = false
@@ -174,7 +173,6 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     private func createConstraints() {
-
         let buttonMargin: CGFloat = 16
 
         NSLayoutConstraint.activate([
@@ -225,11 +223,9 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
 extension ContactsCell: UserCellSubtitleProtocol { }
 
 extension ContactsCell {
-
     typealias ContactsUIActionButton = L10n.Localizable.ContactsUi.ActionButton
 
     enum Action {
-
         case open
         case invite
 

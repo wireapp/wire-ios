@@ -24,7 +24,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class RecurringActionServiceTests: XCTestCase {
-
     var userDefaults: UserDefaults!
     var dateProvider: MockCurrentDateProviding!
     var sut: RecurringActionService!

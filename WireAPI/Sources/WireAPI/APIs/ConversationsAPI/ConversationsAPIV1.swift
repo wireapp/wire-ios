@@ -52,7 +52,6 @@ class ConversationsAPIV1: ConversationsAPIV0 {
 // MARK: -
 
 private struct PaginatedConversationIDsV1: Decodable, ToAPIModelConvertible {
-
     enum CodingKeys: String, CodingKey {
         case conversationIDs = "qualified_conversations"
         case pagingState = "paging_state"

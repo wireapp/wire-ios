@@ -20,7 +20,6 @@ import Foundation
 import WireRequestStrategy
 
 class DeepLinkURLActionProcessor: URLActionProcessor {
-
     var contextProvider: ContextProvider
     var transportSession: TransportSessionType
     var eventProcessor: ConversationEventProcessorProtocol
@@ -121,7 +120,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         password: String?,
         delegate: PresentationDelegate
     ) {
-
         ZMConversation.join(
             key: key,
             code: code,
@@ -162,7 +160,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     }
 
     private func handleOpenConversation(id: UUID, delegate: PresentationDelegate?) {
-
         let viewContext = contextProvider.viewContext
 
         guard let conversation = ZMConversation.fetch(with: id, domain: nil, in: viewContext) else {
@@ -175,7 +172,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     }
 
     private func handleOpenUserProfile(id: UUID, delegate: PresentationDelegate?) {
-
         let viewContext = contextProvider.viewContext
 
         if let user = ZMUser.fetch(with: id, domain: nil, in: viewContext) {

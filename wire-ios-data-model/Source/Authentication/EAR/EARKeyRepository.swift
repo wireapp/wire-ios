@@ -22,7 +22,6 @@ import Security
 
 // sourcery: AutoMockable
 protocol EARKeyRepositoryInterface {
-
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey
     func deletePublicKey(description: PublicEARKeyDescription) throws
@@ -36,7 +35,6 @@ protocol EARKeyRepositoryInterface {
 
 /// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
 final class EARKeyRepository: EARKeyRepositoryInterface {
-
     private var keyCache = [String: SecKey]()
 
     // MARK: - Life cycle

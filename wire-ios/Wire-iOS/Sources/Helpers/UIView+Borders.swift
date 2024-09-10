@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 extension UIView {
-
     func addBorder(
         for anchor: Anchor,
         color: UIColor = SemanticColors.View.backgroundSeparatorCell,

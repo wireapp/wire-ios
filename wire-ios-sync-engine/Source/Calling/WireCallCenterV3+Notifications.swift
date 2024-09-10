@@ -89,7 +89,6 @@ struct WireCallCenterActiveSpeakersNotification: SelfPostingNotification {
 // MARK: - Call state observer
 
 public protocol WireCallCenterCallStateObserver: AnyObject {
-
     /**
      Called when the callState changes in a conversation
  
@@ -146,7 +145,6 @@ public struct WireCallCenterCallErrorNotification: SelfPostingNotification {
 // MARK: - CallParticipantObserver
 
 public protocol WireCallCenterCallParticipantObserver: AnyObject {
-
     /**
      Called when a participant of the call joins / leaves or when their call state changes
  
@@ -157,7 +155,6 @@ public protocol WireCallCenterCallParticipantObserver: AnyObject {
 }
 
 public struct WireCallCenterCallParticipantNotification: SelfPostingNotification {
-
     static let notificationName = Notification.Name("VoiceChannelParticipantNotification")
 
     let conversationId: AVSIdentifier
@@ -171,7 +168,6 @@ public protocol VoiceGainObserver: AnyObject {
 }
 
 public class VoiceGainNotification: SelfPostingNotification {
-
     static let notificationName = Notification.Name("VoiceGainNotification")
     static let userInfoKey = notificationName.rawValue
 
@@ -187,7 +183,6 @@ public class VoiceGainNotification: SelfPostingNotification {
 }
 
 extension WireCallCenterV3 {
-
     // MARK: - Observer
 
     public class func addCallErrorObserver(observer: WireCallCenterCallErrorObserver, userSession: ZMUserSession) -> Any {
@@ -220,7 +215,6 @@ extension WireCallCenterV3 {
                let conversation = ZMConversation.fetch(with: note.conversationId.identifier,
                                                        domain: note.conversationId.domain,
                                                        in: context) {
-
                 observer?.callCenterDidChange(callState: note.callState, conversation: conversation, caller: caller, timestamp: note.messageTime, previousCallState: note.previousCallState)
             }
         }
@@ -257,7 +251,6 @@ extension WireCallCenterV3 {
                                          domain: note.callerId.domain,
                                          in: context),
                note.conversationId == conversation.avsIdentifier {
-
                 observer?.callCenterDidChange(callState: note.callState, conversation: conversation, caller: caller, timestamp: note.messageTime, previousCallState: note.previousCallState)
             }
         }
@@ -280,7 +273,6 @@ extension WireCallCenterV3 {
                let conversation = ZMConversation.fetch(with: note.conversationId.identifier,
                                                        domain: note.conversationId.domain,
                                                        in: context) {
-
                 observer?.callCenterMissedCall(conversation: conversation, caller: caller, timestamp: note.timestamp, video: note.video)
             }
         }
@@ -298,7 +290,6 @@ extension WireCallCenterV3 {
                let conversation = ZMConversation.fetch(with: note.conversationId.identifier,
                                                        domain: note.conversationId.domain,
                                                        in: context) {
-
                 observer?.callCenterMissedCall(conversation: conversation, caller: caller, timestamp: note.timestamp, video: note.video)
             }
         }

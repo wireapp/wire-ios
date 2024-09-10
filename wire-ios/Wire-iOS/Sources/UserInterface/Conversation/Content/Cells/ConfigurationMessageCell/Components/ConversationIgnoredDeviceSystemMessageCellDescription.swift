@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationNewDeviceSystemMessageCell
     let configuration: View.Configuration
 
@@ -45,7 +44,6 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         data: ZMSystemMessageData,
         user: UserType
     ) {
-
         let title = ConversationIgnoredDeviceSystemMessageCellDescription.makeAttributedString(
             systemMessage: data,
             user: user
@@ -65,7 +63,6 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
         systemMessage: ZMSystemMessageData,
         user: UserType
     ) -> NSAttributedString {
-
         typealias SystemMessageLocale = L10n.Localizable.Content.System
         let string: String
         let link = View.userClientURL.absoluteString

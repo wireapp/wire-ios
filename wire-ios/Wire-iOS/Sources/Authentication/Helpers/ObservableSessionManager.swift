@@ -25,7 +25,6 @@ import WireSyncEngine
  */
 
 protocol ObservableSessionManager: SessionManagerType {
-
     var loginDelegate: LoginDelegate? { get set }
 
     func markNetworkSessionsAsReady(_ ready: Bool)

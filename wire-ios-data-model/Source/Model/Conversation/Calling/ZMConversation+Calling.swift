@@ -17,7 +17,6 @@
 //
 
 public extension ZMConversation {
-
     @discardableResult
     @objc func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date, relevantForStatus: Bool = true) -> ZMSystemMessage {
         let associatedMessage = associatedSystemMessage(of: .missedCall, sender: user)
@@ -55,7 +54,6 @@ public extension ZMConversation {
 }
 
 public extension ZMSystemMessage {
-
     func addChild(_ message: ZMSystemMessage) {
         mutableSetValue(forKey: #keyPath(ZMSystemMessage.childMessages)).add(message)
         message.visibleInConversation = nil

@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationCreationControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: ConversationCreationController!

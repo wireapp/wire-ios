@@ -24,7 +24,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
-
     private let domain = "example.domain.com"
     private let groupID = MLSGroupID.random()
     private let connectedState = CallParticipantState.connected(

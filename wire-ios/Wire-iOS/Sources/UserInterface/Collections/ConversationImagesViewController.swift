@@ -23,7 +23,6 @@ import WireSyncEngine
 typealias DismissAction = (_ completion: Completion?) -> Void
 
 final class ConversationImagesViewController: UIViewController {
-
     typealias ButtonColors = SemanticColors.Button
 
     let collection: AssetCollectionWrapper
@@ -444,7 +443,6 @@ extension ConversationImagesViewController: ScreenshotProvider {
 
 extension ConversationImagesViewController: AssetCollectionDelegate {
     func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
-
         for messageCategory in messages {
             let conversationMessages = messageCategory.value as [ZMConversationMessage]
 
@@ -460,7 +458,6 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
 }
 
 extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
-
     func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
         return .portrait
     }
@@ -503,7 +500,6 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
         if let currentController = self.currentController,
            finished,
            completed {
-
             self.currentMessage = currentController.message
             self.buttonsBar.buttons = createControlsBarButtons()
         }
@@ -511,7 +507,6 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
 }
 
 extension ConversationImagesViewController: MenuVisibilityController {
-
     var menuVisible: Bool {
         return buttonsBar.isHidden && separator.isHidden
     }
@@ -535,7 +530,6 @@ extension ConversationImagesViewController: MenuVisibilityController {
 }
 
 extension ConversationImagesViewController {
-
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     override var previewActionItems: [UIPreviewActionItem] {
         return currentActionController?.previewActionItems ?? []
@@ -545,7 +539,6 @@ extension ConversationImagesViewController {
 // MARK: - Helper
 
 extension UIView {
-
     func fadeAndHide(_ hide: Bool, duration: TimeInterval = 0.2, options: UIView.AnimationOptions = UIView.AnimationOptions()) {
         if !hide {
             alpha = 0

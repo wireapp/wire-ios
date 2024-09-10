@@ -19,14 +19,12 @@
 import Foundation
 
 class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
-
     // MARK: - Methods
 
     override func request(
         for action: ActionHandler<RemovePushTokenAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         return ZMTransportRequest(
             path: "/push/tokens/\(action.deviceToken)",
             method: .delete,

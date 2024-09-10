@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 extension ContactsViewController: ContactsDataSourceDelegate {
-
     func dataSource(_ dataSource: ContactsDataSource, cellFor user: UserType, at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(ofType: ContactsCell.self, for: indexPath)
         cell.user = user

@@ -19,7 +19,6 @@
 import Foundation
 
 enum UserEventCodingKeys: String, CodingKey {
-
     case client
     case user
     case id

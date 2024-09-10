@@ -19,7 +19,6 @@
 import UIKit
 
 final class SplitViewControllerTransitionContext: NSObject, UIViewControllerContextTransitioning {
-
     var completionBlock: ((_ didComplete: Bool) -> Void)?
     var isAnimated = false
     var isInteractive = false
@@ -57,7 +56,6 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
     }
 
     func view(forKey key: UITransitionContextViewKey) -> UIView? {
-
         let transitionContextViewControllerKey: UITransitionContextViewControllerKey
         switch key {
         case .to:

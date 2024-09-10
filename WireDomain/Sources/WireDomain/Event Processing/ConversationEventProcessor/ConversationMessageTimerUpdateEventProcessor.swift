@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation message timer update events.
 
 protocol ConversationMessageTimerUpdateEventProcessorProtocol {
-
     /// Process a conversation message timer update event.
     ///
     /// - Parameter event: A conversation message timer update event.
@@ -30,7 +29,6 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
 }
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
-
     func processEvent(_: ConversationMessageTimerUpdateEvent) async throws {
         // TODO: [WPB-10171]
         assertionFailure("not implemented yet")

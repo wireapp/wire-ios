@@ -19,7 +19,6 @@
 import Foundation
 
 class StringKeyPathTests: ZMBaseManagedObjectTest {
-
     func testThatItCreatesASimpleKeyPath() {
         let sut = StringKeyPath.keyPathForString("name")
         XCTAssertEqual(sut.rawValue, "name")

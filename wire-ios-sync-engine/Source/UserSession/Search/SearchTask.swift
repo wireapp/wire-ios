@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 public class SearchTask {
-
     public enum Task {
         case search(searchRequest: SearchRequest)
         case lookup(userId: UUID)
@@ -146,7 +145,6 @@ public class SearchTask {
 }
 
 extension SearchTask {
-
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
          guard case .lookup(let userId) = task else { return }
@@ -336,7 +334,6 @@ extension SearchTask {
 }
 
 extension SearchTask {
-
     func performUserLookup() {
         guard
             case .lookup(let userId) = task,
@@ -383,7 +380,6 @@ extension SearchTask {
 }
 
 extension SearchTask {
-
     func performRemoteSearch() {
         guard
             let apiVersion = BackendInfo.apiVersion,
@@ -500,7 +496,6 @@ extension SearchTask {
     }
 
     static func fetchTeamMembershipRequest(teamID: UUID, teamMemberIDs: [UUID], apiVersion: APIVersion) -> ZMTransportRequest {
-
         let path = "/teams/\(teamID.transportString())/get-members-by-ids-using-post"
         let payload = [
             "user_ids": teamMemberIDs.map { $0.transportString() }
@@ -518,7 +513,6 @@ extension SearchTask {
 }
 
 extension SearchTask {
-
     func performRemoteSearchForTeamUser() {
         guard
             let apiVersion = BackendInfo.apiVersion,
@@ -611,7 +605,6 @@ extension SearchTask {
 }
 
 extension SearchTask {
-
     func performRemoteSearchForServices() {
         guard
             let apiVersion = BackendInfo.apiVersion,
@@ -674,7 +667,6 @@ extension SearchTask {
 }
 
 extension ZMSearchUser {
-
     public var hasEmptyName: Bool {
         guard let name else {
             return true

@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMClientMessage: EncryptionAtRestMigratable {
-
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
     func migrateTowardEncryptionAtRest(

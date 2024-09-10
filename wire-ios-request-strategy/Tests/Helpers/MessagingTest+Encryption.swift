@@ -22,11 +22,9 @@ import WireTesting
 import XCTest
 
 extension MessagingTestBase {
-
     /// Encrypts a message from the given client to the self user. 
     /// It will create a session between the two if needed
     public func encryptedMessageToSelf(message: GenericMessage, from sender: UserClient) -> Data {
-
         let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
         if selfClient.user!.remoteIdentifier == nil {
             selfClient.user!.remoteIdentifier = UUID()
@@ -59,7 +57,6 @@ extension MessagingTestBase {
     /// exists already
     @objc(establishSessionFromSelfToClient:)
     public func establishSessionFromSelf(to client: UserClient) {
-
         // this makes sure the client has remote identifier
         _ = self.encryptionContext(for: client)
 
@@ -91,7 +88,6 @@ extension MessagingTestBase {
 
     /// Decrypts a message that was sent from self to a given user
     public func decryptMessageFromSelf(cypherText: Data, to client: UserClient) -> Data? {
-
         let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
         var plainText: Data?
         self.encryptionContext(for: client).perform { session in
@@ -114,7 +110,6 @@ extension MessagingTestBase {
 }
 
 extension MessagingTestBase {
-
     /// Delete all other clients encryption contexts
     func deleteAllOtherEncryptionContexts() {
         try? FileManager.default.removeItem(at: self.otherClientsEncryptionContextsURL)

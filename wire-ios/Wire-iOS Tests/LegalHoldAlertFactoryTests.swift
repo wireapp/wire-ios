@@ -20,7 +20,6 @@
 import XCTest
 
 final class LegalHoldAlertFactoryTests: XCTestCase {
-
     var user: MockUserType!
 
     override func setUp() {

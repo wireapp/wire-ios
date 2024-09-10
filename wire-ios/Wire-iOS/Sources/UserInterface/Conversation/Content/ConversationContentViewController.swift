@@ -28,7 +28,6 @@ private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
 final class ConversationContentViewController: UIViewController {
-
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation
     var bottomMargin: CGFloat = 0 {
@@ -334,7 +333,6 @@ final class ConversationContentViewController: UIViewController {
         let message = dataSource.messages[indexPath.section] as? ZMMessage
 
         if message == dataSource.selectedMessage {
-
             // If this cell is already selected, deselect it.
             dataSource.selectedMessage = nil
             dataSource.deselect(indexPath: indexPath)
@@ -489,7 +487,6 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
 }
 
 private extension UIAlertController {
-
     static func showErrorAlertWithLink(title: String,
                                        message: String) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)

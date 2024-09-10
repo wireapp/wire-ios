@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 final class InvalidDomainRemovalTests: DiskDatabaseTest {
-
     private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     func testAllUsersWithInvalidDomainIsRemoved() throws {

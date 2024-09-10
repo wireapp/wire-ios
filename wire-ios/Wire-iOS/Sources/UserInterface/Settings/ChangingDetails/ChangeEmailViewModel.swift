@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 final class ChangeEmailViewModel {
-
     // MARK: - Properties
 
     private weak var userProfile: UserProfile?

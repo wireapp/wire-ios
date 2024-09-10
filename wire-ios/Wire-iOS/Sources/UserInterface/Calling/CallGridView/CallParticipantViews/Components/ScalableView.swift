@@ -19,7 +19,6 @@
 import UIKit
 
 final class ScalableView: UIView, UIGestureRecognizerDelegate {
-
     let pinchGesture = UIPinchGestureRecognizer()
     let panGesture = UIPanGestureRecognizer()
 

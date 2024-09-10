@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationActionController {
-
     func openMoveToFolder(for conversation: ZMConversation) {
         guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
         let folderPicker = FolderPickerViewController(conversation: conversation, directory: directory)
@@ -31,9 +30,7 @@ extension ConversationActionController {
 }
 
 extension ConversationActionController: FolderPickerViewControllerDelegate {
-
     func didPickFolder(_ folder: LabelType, for conversation: ZMConversation) {
-
         userSession.enqueue {
             conversation.moveToFolder(folder)
         }

@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 protocol IncomingRequestFooterViewDelegate: AnyObject {
-
     /// Called when the user accepts or denies a connection request.
     func footerView(_ footerView: IncomingRequestFooterView, didRespondToRequestWithAction action: IncomingConnectionAction)
 }
@@ -30,7 +29,6 @@ protocol IncomingRequestFooterViewDelegate: AnyObject {
  */
 
 class IncomingRequestFooterView: UIView {
-
     let titleLabel = UILabel()
     let acceptButton = LegacyButton(fontSpec: .smallSemiboldFont)
     let ignoreButton = LegacyButton(fontSpec: .smallSemiboldFont)

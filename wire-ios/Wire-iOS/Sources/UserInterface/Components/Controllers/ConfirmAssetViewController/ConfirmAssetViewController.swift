@@ -350,7 +350,6 @@ final class ConfirmAssetViewController: UIViewController {
             let imageSize: CGSize = mediaAsset.size
 
             if let imagePreviewView {
-
             constraints += [
                 // dimension
                 imagePreviewView.heightAnchor.constraint(equalTo: imagePreviewView.widthAnchor, multiplier: imageSize.height / imageSize.width),

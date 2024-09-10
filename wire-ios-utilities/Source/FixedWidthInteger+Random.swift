@@ -19,7 +19,6 @@
 import Foundation
 
 public extension FixedWidthInteger {
-
     private var abs: Self {
         if self < 0 {
             return 0 - self
@@ -33,7 +32,6 @@ public extension FixedWidthInteger {
     /// modulo bias free.
     ///
     static func secureRandomNumber(upperBound: Self) -> Self {
-
         assert(upperBound != 0 && upperBound != Self.min, "Upper bound should not be zero or equal to the minimum possible value")
 
         var random: Self

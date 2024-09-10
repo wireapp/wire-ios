@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
-
     /// The identifier which uniquely idenitifies the user in its domain
     var remoteIdentifier: UUID! { get }
 
@@ -239,7 +238,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
 @objc
 public protocol UserConnections {
-
     ///  Whether the user has been blocked by the self user
     var isBlocked: Bool { get }
 

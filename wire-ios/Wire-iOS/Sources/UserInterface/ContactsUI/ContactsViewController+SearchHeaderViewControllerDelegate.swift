@@ -17,7 +17,6 @@
 //
 
 extension ContactsViewController: SearchHeaderViewControllerDelegate {
-
     func searchHeaderViewController(
         _ searchHeaderViewController: SearchHeaderViewController,
         updatedSearchQuery query: String

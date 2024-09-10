@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationAccessUpdateEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationAccessUpdateEvent {
@@ -48,13 +47,11 @@ struct ConversationAccessUpdateEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let accessModes: Set<ConversationAccessMode>
         let legacyAccessRole: ConversationAccessRoleLegacy?
         let accessRoles: Set<ConversationAccessRole>?
 
         enum CodingKeys: String, CodingKey {
-
             case accessModes = "access"
             case legacyAccessRole = "access_role"
             case accessRoles = "access_role_v2"

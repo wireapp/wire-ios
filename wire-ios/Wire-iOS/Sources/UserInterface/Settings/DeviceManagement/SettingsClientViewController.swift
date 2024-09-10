@@ -35,7 +35,6 @@ final class SettingsClientViewController: UIViewController,
                                           UITableViewDataSource,
                                           UserClientObserver,
                                           ClientColorVariantProtocol {
-
     private static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     private static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
     private static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"
@@ -118,7 +117,6 @@ final class SettingsClientViewController: UIViewController,
            navController.viewControllers.count > 0,
             navController.viewControllers[0] == self,
            self.navigationItem.rightBarButtonItem == nil {
-
             let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
@@ -190,7 +188,6 @@ final class SettingsClientViewController: UIViewController,
     // MARK: - UITableViewDelegate, UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
-
         if self.userClient == userSession.selfUserClient {
             return 2
         } else {
@@ -201,7 +198,6 @@ final class SettingsClientViewController: UIViewController,
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let clientSection = ClientSection(rawValue: section) else { return 0 }
         switch clientSection {
-
         case .info:
             return 1
         case .fingerprintAndVerify:
@@ -221,7 +217,6 @@ final class SettingsClientViewController: UIViewController,
         guard let clientSection = ClientSection(rawValue: (indexPath as NSIndexPath).section) else { return UITableViewCell() }
 
         switch clientSection {
-
         case .info:
             if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
                 cell.selectionStyle = .default
@@ -306,7 +301,6 @@ final class SettingsClientViewController: UIViewController,
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         guard let clientSection = ClientSection(rawValue: section) else { return .none }
         switch clientSection {
-
         case .fingerprintAndVerify:
             return L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle
         case .resetSession:
@@ -346,7 +340,6 @@ final class SettingsClientViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, canPerformAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-
         if action == #selector(UIResponder.copy(_:)) {
             return true
         } else {

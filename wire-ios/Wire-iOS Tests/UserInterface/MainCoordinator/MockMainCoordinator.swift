@@ -21,7 +21,6 @@ import WireDataModel
 @testable import Wire
 
 final class MockMainCoordinator: MainCoordinating {
-
     func openConversation(
         _ conversation: ZMConversation,
         focusOnView focus: Bool,
@@ -51,6 +50,5 @@ final class MockMainCoordinator: MainCoordinating {
 // MARK: - MainCoordinating + mock
 
 extension MainCoordinating where Self == MockMainCoordinator {
-
     static var mock: Self { .init() }
 }

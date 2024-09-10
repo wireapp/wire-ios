@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable {
-
     // MARK: - Properties
 
     private let leftIconView = UIImageView()

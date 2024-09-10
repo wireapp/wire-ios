@@ -21,7 +21,6 @@ import Foundation
 private var zmLog = ZMSLog(tag: "SearchUserObserverCenter")
 
 extension NSManagedObjectContext {
-
     static let SearchUserObserverCenterKey = "SearchUserObserverCenterKey"
 
     @objc public var searchUserObserverCenter: SearchUserObserverCenter {
@@ -38,7 +37,6 @@ extension NSManagedObjectContext {
 }
 
 public class SearchUserSnapshot {
-
     /// Keys that we want to be notified for
     static let observableKeys: [String] = [#keyPath(ZMSearchUser.name),
                                             #keyPath(ZMSearchUser.completeImageData),
@@ -101,7 +99,6 @@ public class SearchUserSnapshot {
 }
 
 @objcMembers public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
-
     /// Map of searchUser remoteID to snapshot
     internal var snapshots: [UUID: SearchUserSnapshot] = [:]
 

@@ -21,7 +21,6 @@ import Foundation
 @testable import WireDataModel
 
 final class ZMConversationListTests_OneOnOne: ZMBaseManagedObjectTest {
-
     func testThatItReturnsAllOneOnOneConversations() throws {
         // Given
         let selfUser = ZMUser.selfUser(in: uiMOC)

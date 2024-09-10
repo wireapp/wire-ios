@@ -19,11 +19,9 @@
 import Foundation
 
 public class BaseFetchMLSGroupInfoAction: EntityAction {
-
     public typealias Result = Data
 
     public enum Failure: Error, Equatable {
-
         case endpointUnavailable
         case noConversation
         case missingGroupInfo

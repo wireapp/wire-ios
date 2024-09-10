@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 final class ProfileViewControllerViewModelTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ProfileViewControllerViewModel!

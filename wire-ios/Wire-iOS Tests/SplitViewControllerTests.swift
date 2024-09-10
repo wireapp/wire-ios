@@ -26,7 +26,6 @@ final class MockSplitViewControllerDelegate: NSObject, SplitViewControllerDelega
 }
 
 final class SplitViewControllerTests: XCTestCase {
-
     var sut: SplitViewController!
     var mockParentViewController: UIViewController!
     var mockSplitViewControllerDelegate: MockSplitViewControllerDelegate!

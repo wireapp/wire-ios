@@ -22,7 +22,6 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
-
     var requestPasswordController: RequestPasswordController?
 
     private lazy var activityIndicator = {

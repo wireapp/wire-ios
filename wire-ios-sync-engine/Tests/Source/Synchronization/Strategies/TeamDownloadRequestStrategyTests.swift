@@ -21,7 +21,6 @@ import WireTesting
 @testable import WireSyncEngine
 
 final class TeamDownloadRequestStrategyTests: MessagingTest {
-
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
@@ -307,7 +306,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItRemovesAMemberThatIsNotSelfUser() async {
-
         let teamId = UUID.create()
         let userId = UUID.create()
 

@@ -21,7 +21,6 @@ import WireAPI
 /// Process team member leave events.
 
 protocol TeamMemberLeaveEventProcessorProtocol {
-
     /// Process a team member leave event.
     ///
     /// - Parameter event: A team member leave event.
@@ -30,7 +29,6 @@ protocol TeamMemberLeaveEventProcessorProtocol {
 }
 
 struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
-
     func processEvent(_: TeamMemberLeaveEvent) async throws {
         // TODO: [WPB-10185]
         assertionFailure("not implemented yet")

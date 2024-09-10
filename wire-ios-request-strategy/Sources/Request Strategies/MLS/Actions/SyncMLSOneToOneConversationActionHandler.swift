@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneToOneConversationAction> {
-
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: MLSEventProcessor(context: context),
         removeLocalConversation: RemoveLocalConversationUseCase()
@@ -117,7 +116,6 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
 }
 
 private extension Payload.Conversation {
-
     mutating func addMissingMember(userID: QualifiedID) {
         guard
             let selfMember = members?.selfMember,

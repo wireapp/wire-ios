@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireDesign
 
 final class AssetCell: UICollectionViewCell {
-
     let imageView = UIImageView()
     let durationView = UILabel()
 

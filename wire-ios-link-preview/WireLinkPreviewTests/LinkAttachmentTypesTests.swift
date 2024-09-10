@@ -20,7 +20,6 @@
 import XCTest
 
 class LinkAttachmentTypesTests: XCTestCase {
-
     func testThatItEncodesAndDecodesWithNSCoder() {
         // GIVEN
         let youtube = LinkAttachment(type: .youTubeVideo, title: "iPhone X - Reveal", permalink: URL(string: "https://www.youtube.com/watch?v=sRIQsy2PGyM")!,

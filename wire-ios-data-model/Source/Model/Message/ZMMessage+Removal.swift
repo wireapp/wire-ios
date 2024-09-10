@@ -21,7 +21,6 @@ import Foundation
 private let zmLog = ZMSLog(tag: "ZMMessage")
 
 extension ZMMessage {
-
     func removePendingDeliveryReceipts() {
         // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the backend
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {

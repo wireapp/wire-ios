@@ -21,7 +21,6 @@ import WireAPI
 /// Process user legalhold disable events.
 
 protocol UserLegalholdDisableEventProcessorProtocol {
-
     /// Process a user legalhold disable event.
     ///
     /// - Parameter event: A user legalhold disable event.
@@ -30,7 +29,6 @@ protocol UserLegalholdDisableEventProcessorProtocol {
 }
 
 struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorProtocol {
-
     func processEvent(_: UserLegalholdDisableEvent) async throws {
         // TODO: [WPB-10194]
         assertionFailure("not implemented yet")

@@ -24,7 +24,6 @@ protocol ImageDownloaderType {
 }
 
 final class ImageDownloader: NSObject, ImageDownloaderType {
-
     typealias ImageData = Data
 
     let workerQueue: OperationQueue
@@ -74,7 +73,6 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
 }
 
 extension HTTPURLResponse {
-
     var contentTypeImage: Bool {
         let contentTypeKey = HeaderKey.contentType.rawValue
         guard let contentType = allHeaderFields[contentTypeKey] as? String ?? allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }

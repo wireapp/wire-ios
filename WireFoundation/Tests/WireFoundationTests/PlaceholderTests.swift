@@ -21,6 +21,5 @@ import XCTest
 @testable import WireFoundation
 
 final class PlaceholderTests: XCTestCase {
-
     func testNothing() {}
 }

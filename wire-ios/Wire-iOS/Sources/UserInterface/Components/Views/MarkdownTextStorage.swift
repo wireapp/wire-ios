@@ -24,7 +24,6 @@ extension NSAttributedString.Key {
 }
 
 class MarkdownTextStorage: NSTextStorage {
-
     private let storage = NSTextStorage()
 
     override var string: String { return storage.string }

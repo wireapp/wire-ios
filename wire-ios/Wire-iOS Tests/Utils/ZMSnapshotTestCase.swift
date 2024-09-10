@@ -22,7 +22,6 @@ import WireCommonComponents
 import XCTest
 
 class ZMSnapshotTestCase: XCTestCase {
-
     var uiMOC: NSManagedObjectContext!
     var coreDataStack: CoreDataStack!
 

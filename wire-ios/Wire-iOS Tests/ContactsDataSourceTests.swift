@@ -21,7 +21,6 @@ import UIKit
 import XCTest
 
 final class ContactsDataSourceTests: XCTestCase {
-
     var dataSource: ContactsDataSource!
 
     override func setUp() {

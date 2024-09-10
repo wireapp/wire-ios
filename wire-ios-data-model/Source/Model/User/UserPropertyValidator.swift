@@ -17,13 +17,11 @@
 //
 
 public struct UserPropertyValidator: UserPropertyValidating {
-
     public init() {}
 
     // Name
 
     public func validate(name: inout String?) throws -> Bool {
-
         var mutableName: Any? = name
 
         try ExtremeCombiningCharactersValidator.validateCharactersValue(&mutableName)

@@ -20,7 +20,6 @@
 import XCTest
 
 class ImageDownloaderTests: XCTestCase {
-
     var sut: ImageDownloader!
     var mockSession: MockURLSession!
 

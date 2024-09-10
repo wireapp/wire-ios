@@ -39,7 +39,6 @@ enum MaskShape {
 
 /// A layer whose corners are rounded with a continuous mask (“squircle“).
 final class ContinuousMaskLayer: CALayer {
-
     // MARK: - Properties
 
     override var cornerRadius: CGFloat {

@@ -21,7 +21,6 @@ import Foundation
 /// An event concerning users.
 
 public enum UserEvent: Equatable, Codable {
-
     /// The self user has added a new client.
 
     case clientAdd(UserClientAddEvent)

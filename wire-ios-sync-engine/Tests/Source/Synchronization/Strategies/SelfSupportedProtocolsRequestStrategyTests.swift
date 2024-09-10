@@ -25,7 +25,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
-
     // the api version is just required to build and not influence the tests
     private let defaultAPIVersion: APIVersion = .v5
 

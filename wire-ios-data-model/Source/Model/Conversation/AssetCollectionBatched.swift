@@ -34,7 +34,6 @@ public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
 /// It first fetches all objects that have previously categorized and then performs one fetch request with fetchBatchSize set. CoreData returns an array  proxy to us that is populated with objects as we iterate through the array. Core Data will get rid of objects again, as they’re no longer accessed.
 /// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it finished categorizing all objects
 public class AssetCollectionBatched: NSObject, ZMCollection {
-
     private unowned var delegate: AssetCollectionDelegate
     private var assets: [CategoryMatch: [ZMMessage]]?
     private let conversation: ZMConversation?
@@ -243,7 +242,6 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
 }
 
 extension AssetCollectionBatched {
-
     static func messageMap(messages: [ZMMessage], matchingCategories: [CategoryMatch]) -> [CategoryMatch: [ZMMessage]] {
         precondition(messages.count > 0, "messages should contain at least one value")
         let messagesByFilter = AssetCollectionBatched.categorize(messages: messages, matchingCategories: matchingCategories)

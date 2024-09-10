@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 final class DeveloperFlagsViewModel: ObservableObject {
-
     // MARK: - State
 
     var flags = DeveloperFlag.allCases.sorted {

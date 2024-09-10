@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 final class CallController: NSObject {
-
     // MARK: - Public Implentation
 
     weak var router: ActiveCallRouterProtocol?
@@ -143,13 +142,11 @@ final class CallController: NSObject {
 // MARK: - WireCallCenterCallStateObserver
 
 extension CallController: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState,
                              conversation: ZMConversation,
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
-
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {

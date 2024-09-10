@@ -22,7 +22,6 @@ import WireDataModelSupport
 import XCTest
 
 final class BiometricsStateTests: XCTestCase {
-
     private var sut: BiometricsState!
 
     let state1 = Data([1])

@@ -38,7 +38,6 @@ extension ZMConversation {
 }
 
 extension ZMConversation {
-
     /// Returns a list of the most recent messages in the conversation, ordered from most recent to oldest.
     @objc public func lastMessages(limit: Int = 256) -> [ZMMessage] {
         guard let managedObjectContext else { return [] }

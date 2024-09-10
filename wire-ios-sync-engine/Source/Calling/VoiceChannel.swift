@@ -36,7 +36,6 @@ public enum CaptureDevice: Int {
 public protocol VoiceChannel: CallProperties, CallActions, CallActionsInternal, CallObservers {}
 
 public protocol CallProperties: NSObjectProtocol {
-
     var state: CallState { get }
 
     var conversation: ZMConversation? { get }
@@ -67,7 +66,6 @@ public protocol CallProperties: NSObjectProtocol {
 }
 
 public protocol CallActions: NSObjectProtocol {
-
     func mute(_ muted: Bool, userSession: ZMUserSession)
     func join(video: Bool, userSession: ZMUserSession) -> Bool
     func leave(userSession: ZMUserSession, completion: (() -> Void)?)
@@ -77,13 +75,11 @@ public protocol CallActions: NSObjectProtocol {
 
 @objc
 public protocol CallActionsInternal: NSObjectProtocol {
-
     func join(video: Bool) -> Bool
     func leave()
 }
 
 public protocol CallObservers: NSObjectProtocol {
-
     /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should be active.
     func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any
 

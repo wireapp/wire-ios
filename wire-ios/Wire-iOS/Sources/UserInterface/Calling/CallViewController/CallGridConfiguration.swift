@@ -20,7 +20,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
-
     fileprivate static let maxActiveSpeakers: Int = 4
 
     let floatingStream: Stream?
@@ -53,7 +52,6 @@ extension CallParticipant {
 }
 
 extension VoiceChannel {
-
     // MARK: - Stream Arrangment
 
     typealias StreamArrangment = (preview: Stream?, grid: [Stream])

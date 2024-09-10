@@ -22,7 +22,6 @@ import WireSyncEngine
 /// The subclasses of BaseAccountView must conform to AccountViewType,
 /// otherwise `init?(account: Account, user: ZMUser? = nil)` returns nil
 class BaseAccountView: UIView {
-
     var autoUpdateSelection = true
 
     let imageViewContainer = UIView()
@@ -182,7 +181,6 @@ enum DisplayContext {
 // MARK: - ZMConversationListObserver Conformance
 
 extension BaseAccountView: ZMConversationListObserver {
-
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateAppearance()
     }
@@ -195,7 +193,6 @@ extension BaseAccountView: ZMConversationListObserver {
 // MARK: - UserObserving Conformance
 
 extension BaseAccountView: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             updateAppearance()
@@ -206,7 +203,6 @@ extension BaseAccountView: UserObserving {
 // MARK: - TeamType Extension
 
 extension TeamType {
-
     var teamImageViewContent: TeamImageView.Content? {
         return TeamImageView.Content(imageData: imageData, name: name)
     }
@@ -215,7 +211,6 @@ extension TeamType {
 // MARK: - Account Extension
 
 extension Account {
-
     var teamImageViewContent: TeamImageView.Content? {
         return TeamImageView.Content(imageData: teamImageData, name: teamName)
     }

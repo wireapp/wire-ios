@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 
 class NSPersistentStoreMetadataTests: ZMBaseManagedObjectTest {
-
     override var shouldUseInMemoryStore: Bool {
         return false
     }
@@ -32,9 +31,7 @@ class NSPersistentStoreMetadataTests: ZMBaseManagedObjectTest {
 }
 
 extension NSPersistentStoreMetadataTests {
-
     func testThatItStoresMetadataInMemory() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -47,7 +44,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatItDeletesMetadataFromMemory() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -61,7 +57,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatMetadataAreNotPersisted() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -75,7 +70,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatItPersistsMetadataWhenSaving() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -90,7 +84,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatItDiscardsMetadataWhenRollingBack() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -108,7 +101,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatItDeletesAlreadySetMetadataInMemory() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -123,7 +115,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatItDiscardsDeletesAlreadySetMetadataInMemory() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -139,7 +130,6 @@ extension NSPersistentStoreMetadataTests {
     }
 
     func testThatItDeletesAlreadySetMetadataFromStore() {
-
         // GIVEN
         let data = "foo"
         let key = "boo"
@@ -159,9 +149,7 @@ extension NSPersistentStoreMetadataTests {
 // MARK: - What can be saved
 
 extension NSPersistentStoreMetadataTests {
-
     func checkThatItCanSave<T: Equatable & SwiftPersistableInMetadata>(data: T, file: StaticString = #file, line: UInt = #line) {
-
         // GIVEN
         let key = "boo"
         self.uiMOC.setPersistentStoreMetadata(data, key: key)

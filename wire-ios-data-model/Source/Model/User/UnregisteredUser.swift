@@ -26,7 +26,6 @@ import WireFoundation
 ///
 /// You then use it to register the user with the backend.
 public class UnregisteredUser {
-
     public var unverifiedEmail = ""
     public var verificationCode: String?
     public var name: String?
@@ -73,7 +72,6 @@ public class UnregisteredUser {
 // MARK: - Equatable
 
 extension UnregisteredUser: Equatable {
-
     public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {
         return lhs.unverifiedEmail == rhs.unverifiedEmail
             && lhs.verificationCode == rhs.verificationCode

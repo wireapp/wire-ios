@@ -27,20 +27,17 @@ public protocol GetE2eIdentityCertificatesUseCaseProtocol {
 }
 
 final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
-
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let syncContext: NSManagedObjectContext
 
     public init(coreCryptoProvider: CoreCryptoProviderProtocol,
                 syncContext: NSManagedObjectContext) {
-
         self.coreCryptoProvider = coreCryptoProvider
         self.syncContext = syncContext
     }
 
     public func invoke(mlsGroupId: MLSGroupID,
                        clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
-
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let clientIds = clientIds.compactMap { $0.rawValue.data(using: .utf8) }
         let identities = try await getWireIdentity(coreCrypto: coreCrypto,
@@ -73,10 +70,8 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     // values so we perform additional validation.
 
     private func validateUserHandleAndName(for identities: [WireIdentity]) async -> [(WireIdentity, E2EIdentityCertificateStatus)] {
-
         var validatedIdentities = [(WireIdentity, E2EIdentityCertificateStatus)]()
         for identity in identities {
-
             // The identity is valid according to CoreCrypto.
             guard identity.status == .valid else {
                 validatedIdentities.append((identity, identity.status.e2eIdentityStatus))
@@ -122,7 +117,6 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
 }
 
 private extension DeviceStatus {
-
     var e2eIdentityStatus: E2EIdentityCertificateStatus {
         switch self {
         case .valid:

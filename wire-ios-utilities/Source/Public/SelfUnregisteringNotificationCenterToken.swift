@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 public final class SelfUnregisteringNotificationCenterToken: NSObject {
-
     private let notificationCenter: NotificationCenter
     private let token: NSObjectProtocol
 

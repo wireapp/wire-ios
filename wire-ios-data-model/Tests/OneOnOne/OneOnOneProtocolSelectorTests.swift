@@ -20,7 +20,6 @@
 import XCTest
 
 final class OneOnOneProtocolSelectorTests: ZMBaseManagedObjectTest {
-
     var sut: OneOnOneProtocolSelector!
 
     override func setUp() {

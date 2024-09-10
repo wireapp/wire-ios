@@ -21,7 +21,6 @@ import Foundation
 /// An event where a conversation was deleted.
 
 public struct ConversationDeleteEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

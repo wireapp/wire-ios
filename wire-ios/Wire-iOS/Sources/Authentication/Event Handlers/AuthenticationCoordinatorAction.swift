@@ -108,7 +108,6 @@ struct AuthenticationProxyCredentialsInput {
 }
 
 extension AuthenticationCoordinatorAction {
-
     static var presentCustomBackendAlert: Self {
         typealias Alert = L10n.Localizable.Landing.CustomBackend.Alert
 

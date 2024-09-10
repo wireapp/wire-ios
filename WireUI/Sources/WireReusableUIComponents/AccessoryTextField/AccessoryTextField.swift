@@ -20,13 +20,11 @@ import UIKit
 import WireDesign
 
 open class AccessoryTextField: UITextField, DynamicTypeCapable {
-
     public func redrawFont() {
         font = textFieldAttributes.textFont.font
     }
 
     public struct Attributes {
-
         var textFont: FontSpec
         let textColor: UIColor
         let placeholderFont: FontSpec

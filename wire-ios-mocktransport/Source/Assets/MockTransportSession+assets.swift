@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockTransportSession {
-
     // V3
 
     @objc(processAssetV3DeleteWithKey:apiVersion:)

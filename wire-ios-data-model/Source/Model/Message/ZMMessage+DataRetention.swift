@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMMessage {
-
     class func predicateForMessagesOlderThan(_ date: Date) -> NSPredicate {
         return NSPredicate(format: "%K < %@", ZMMessageServerTimestampKey, date as NSDate)
     }

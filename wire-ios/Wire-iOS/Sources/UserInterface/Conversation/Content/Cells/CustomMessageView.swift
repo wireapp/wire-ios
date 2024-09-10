@@ -68,7 +68,6 @@ final class CustomMessageView: UIView {
 // MARK: - UITextViewDelegate
 
 extension CustomMessageView: UITextViewDelegate {
-
     func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         UIApplication.shared.open(url)
         return false

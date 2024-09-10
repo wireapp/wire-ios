@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
-
     private var sut: ___VARIABLE_productName:identifier___Module.Router!
 
     override func setUp() {

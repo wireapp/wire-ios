@@ -20,11 +20,9 @@
 import XCTest
 
 class EncryptionContextTests: XCTestCase {
-
     /// This test verifies that the critical section (in usingSessions)
     /// can not be entered at the same time on two different EncryptionContext
     func testThatItBlockWhileUsingSessionsOnTwoDifferentObjects() {
-
         // GIVEN
         let tempDir = createTempFolder()
 
@@ -47,7 +45,6 @@ class EncryptionContextTests: XCTestCase {
 
         // queue 1 will enter critical section and wait there until told to complete
         queue1.async {
-
             // entering the critical section
             EncryptionContext(path: tempDir).perform { _ in
                 queue1EnteredCriticalSection = true
@@ -61,7 +58,6 @@ class EncryptionContextTests: XCTestCase {
 
         // queue 2 will try to enter critical section, but should block (because of queue 1)
         queue2.async {
-
             // make sure queue 1 is in the right place (critical section) before attempting to enter critical section
             context2CanEnterSemaphore.wait()
             EncryptionContext(path: tempDir).perform { _ in
@@ -93,7 +89,6 @@ class EncryptionContextTests: XCTestCase {
     }
 
     func testThatItDoesNotBlockWhileUsingSessionsMultipleTimesOnTheSameObject() {
-
         // GIVEN
         let tempDir = createTempFolder()
 
@@ -117,7 +112,6 @@ class EncryptionContextTests: XCTestCase {
     }
 
     func testThatItReceivesTheSameSessionStatusWithNestedPerform() {
-
         // GIVEN
         let tempDir = createTempFolder()
 
@@ -145,7 +139,6 @@ class EncryptionContextTests: XCTestCase {
     }
 
     func testThatItSafelyEncryptDecryptDuringNestedPerform() {
-
         // GIVEN
         let tempDir = createTempFolder()
 
@@ -172,7 +165,6 @@ class EncryptionContextTests: XCTestCase {
     }
 
     func testThatItDoesNotReceivesTheSameSessionStatusIfDonePerforming() {
-
         // GIVEN
         let tempDir = createTempFolder()
 
@@ -204,9 +196,7 @@ class EncryptionContextTests: XCTestCase {
 // MARK: - Logging
 
 extension EncryptionContextTests {
-
     func testThatItSetsExtendedLoggingOnSessions() {
-
         // GIVEN
         let identifier = EncryptionSessionIdentifier(domain: "example.com", userId: "user", clientId: "foo")
         let tempDir = createTempFolder()
@@ -222,7 +212,6 @@ extension EncryptionContextTests {
     }
 
     func testThatItDoesSetExtendedLoggingOnSessions() {
-
         // GIVEN
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
@@ -234,7 +223,6 @@ extension EncryptionContextTests {
     }
 
     func testThatItDoesNotLogEncryptionWhenRemovingExtendedLogging() {
-
         // GIVEN
         let identifier = EncryptionSessionIdentifier(domain: "example.com", userId: "user", clientId: "foo")
         let tempDir = createTempFolder()
@@ -251,7 +239,6 @@ extension EncryptionContextTests {
     }
 
     func testThatItDoesNotLogEncryptionWhenRemovingAllExtendedLogging() {
-
         // GIVEN
         let identifier = EncryptionSessionIdentifier(domain: "example.com", userId: "user", clientId: "foo")
         let tempDir = createTempFolder()

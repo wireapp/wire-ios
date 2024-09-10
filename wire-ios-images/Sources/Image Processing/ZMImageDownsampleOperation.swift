@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 extension ZMImageDownsampleOperation {
-
     @objc
     func createImageProperties(uti: String, imageSize: CGSize) -> ZMIImageProperties? {
         guard let mimeType = UTIHelper.convertToMime(uti: uti) else {

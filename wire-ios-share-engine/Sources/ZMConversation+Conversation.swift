@@ -22,7 +22,6 @@ import WireRequestStrategy
 import WireUtilities
 
 extension ZMConversation: Conversation {
-
     public var name: String? { return displayName }
 
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
@@ -68,7 +67,6 @@ extension ZMConversation: Conversation {
 }
 
 public struct ConversationDegradationInfo {
-
     public let conversation: Conversation
     public let users: Set<ZMUser>
 
@@ -79,7 +77,6 @@ public struct ConversationDegradationInfo {
 }
 
 final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapable {
-
     let callback: (ConversationDegradationInfo) -> Void
     let conversation: ZMConversation
     private var observer: Any?

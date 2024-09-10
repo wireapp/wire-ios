@@ -20,7 +20,6 @@
 import XCTest
 
 extension XCTestCase {
-
     private func generatePublicPrivateKey() -> (SecKey, SecKey) {
         var publicKeySec, privateKeySec: SecKey?
         var error: Unmanaged<CFError>?

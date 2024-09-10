@@ -25,7 +25,6 @@ import WireSyncEngine
 import WireUIFoundation
 
 final class ZClientViewController: UIViewController {
-
     private let account: Account
     let userSession: UserSession
 
@@ -488,7 +487,6 @@ final class ZClientViewController: UIViewController {
     /// - Returns: In the first case, YES is returned, otherwise NO.
     @discardableResult
     private func attemptToLoadLastViewedConversation(withFocus focus: Bool, animated: Bool) -> Bool {
-
         if let currentAccount = SessionManager.shared?.accountManager.selectedAccount {
             if let conversation = Settings.shared.lastViewedConversation(for: currentAccount) {
                 select(conversation: conversation, focusOnView: focus, animated: animated)
@@ -530,7 +528,6 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupAppearance() {
-
         let labelColor: UIColor
         labelColor = .label
 
@@ -648,7 +645,6 @@ final class ZClientViewController: UIViewController {
     }
 
     private func createTopViewConstraints() {
-
         topOverlayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topOverlayContainer)
 
@@ -670,7 +666,6 @@ final class ZClientViewController: UIViewController {
     }
 
     private func updateSplitViewTopConstraint() {
-
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
         if isRegularContainer, topOverlayViewController == nil {
@@ -774,9 +769,7 @@ final class ZClientViewController: UIViewController {
 // MARK: - ZClientViewController + SplitViewControllerDelegate
 
 extension ZClientViewController: SplitViewControllerDelegate {
-
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-
         return splitViewController.rightViewController != nil &&
         splitViewController.leftViewController == conversationListViewController.tabBarController &&
         conversationListViewController.state == .conversationList &&

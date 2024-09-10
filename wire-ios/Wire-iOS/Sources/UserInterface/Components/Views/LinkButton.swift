@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class LinkButton: DynamicFontButton {
-
     func setup(title: String) {
         let attributes: [NSAttributedString.Key: Any] = [
             .font: FontSpec.normalRegularFont.font!,

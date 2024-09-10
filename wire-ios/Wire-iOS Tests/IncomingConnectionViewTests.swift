@@ -26,7 +26,6 @@ import XCTest
 // MARK: - IncomingConnectionViewTests
 
 final class IncomingConnectionViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private let sutBackgroundColor = SemanticColors.View.backgroundDefault
@@ -112,7 +111,6 @@ final class IncomingConnectionViewTests: XCTestCase {
 // MARK: - UIView extension
 
 private extension UIView {
-
     func layoutForTest(in size: CGSize = .init(width: 375, height: 667)) -> UIView {
         let fittingSize = systemLayoutSizeFitting(size)
         frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)

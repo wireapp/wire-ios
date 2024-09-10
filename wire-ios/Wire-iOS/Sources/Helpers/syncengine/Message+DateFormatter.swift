@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension Message {
-
     static var shortTimeFormatter: DateFormatter = {
         var shortTimeFormatter = DateFormatter()
         shortTimeFormatter.dateStyle = .none

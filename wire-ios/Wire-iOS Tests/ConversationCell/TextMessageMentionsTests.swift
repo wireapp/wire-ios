@@ -24,7 +24,6 @@ import XCTest
 // MARK: - Mentions
 
 final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
-
     // MARK: - Properties
 
     var otherUser: MockUserType!

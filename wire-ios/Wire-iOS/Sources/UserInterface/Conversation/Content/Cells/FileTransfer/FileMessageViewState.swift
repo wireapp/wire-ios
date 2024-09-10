@@ -29,7 +29,6 @@ enum ProgressViewType {
 typealias FileMessageViewViewsState = (progressViewType: ProgressViewType?, playButtonIcon: StyleKitIcon?, playButtonBackgroundColor: UIColor?)
 
 enum FileMessageViewState {
-
     case unavailable
 
     case uploading /// only for sender

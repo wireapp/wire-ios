@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 
 extension NSManagedObjectContext {
-
     private static let AccountDirectoryURLKey = "AccountDirectoryURLKey"
 
     public var accountDirectoryURL: URL? {
@@ -77,7 +76,6 @@ extension NSManagedObjectContext {
 }
 
 public extension FileManager {
-
     @objc static let keyStoreFolderPrefix = "otr"
 
     /// Returns the URL for the keyStore
@@ -99,7 +97,6 @@ public enum UserClientKeyStoreError: Error {
 /// A storage for cryptographic keys material
 @objc(UserClientKeysStore) @objcMembers
 open class UserClientKeysStore: NSObject {
-
     /// Maximum possible ID for prekey
     public static let MaxPreKeyID: UInt16 = UInt16.max - 1
 

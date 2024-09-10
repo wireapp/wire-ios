@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct E2EI: Codable {
-
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.
@@ -45,7 +43,6 @@ public extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-
             public let acmeDiscoveryUrl: String?
             public let verificationExpiration: UInt
             public let crlProxy: String?
@@ -66,7 +63,6 @@ public extension Feature {
 }
 
 public extension Feature.E2EI {
-
     var isEnabled: Bool {
         return status == .enabled
     }

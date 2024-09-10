@@ -20,9 +20,7 @@ import Foundation
 @testable import Wire
 
 extension ___VARIABLE_productName:identifier___Module {
-
     final class MockRouter: ___VARIABLE_productName:identifier___RouterPresenterInterface {
-
         // MARK: - Metrics
 
         var actions = [Action]()

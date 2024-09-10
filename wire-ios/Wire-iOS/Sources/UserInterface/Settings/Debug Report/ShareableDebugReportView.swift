@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 class ShareableDebugReportView: UIView {
-
     // MARK: - Constants
 
     private enum LayoutConstants {
@@ -123,7 +122,6 @@ class ShareableDebugReportView: UIView {
     // MARK: - Interface
 
     func configure(with fileMetadata: ZMFileMetadata) {
-
         let ext = (fileMetadata.filename as NSString).pathExtension
         let dot = String.MessageToolbox.middleDot
         let fileSize = ByteCountFormatter.string(

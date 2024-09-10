@@ -210,7 +210,6 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 // MARK: - Helpers
 
 extension SettingsPropertyName {
-
     var settingsPropertyLabelText: String {
         typealias Settings = L10n.Localizable.Self.Settings
         typealias Notifications = Settings.Notifications

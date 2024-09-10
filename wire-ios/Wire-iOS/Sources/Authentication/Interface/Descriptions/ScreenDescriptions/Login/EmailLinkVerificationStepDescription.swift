@@ -19,7 +19,6 @@
 import UIKit
 
 final class EmailLinkVerificationStepDescription: AuthenticationStepDescription {
-
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

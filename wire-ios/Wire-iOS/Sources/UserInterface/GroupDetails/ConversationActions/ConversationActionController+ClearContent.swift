@@ -53,7 +53,6 @@ enum ClearContentResult {
 }
 
 extension ConversationActionController {
-
     func requestClearContentResult(for conversation: ZMConversation, handler: @escaping (ClearContentResult) -> Void) {
         let controller = UIAlertController(title: ClearContentResult.title, message: nil, preferredStyle: .actionSheet)
         ClearContentResult.options(for: conversation) .map { $0.action(handler) }.forEach(controller.addAction)

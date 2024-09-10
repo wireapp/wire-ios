@@ -20,7 +20,6 @@ import Foundation
 
 extension Payload {
     struct UpdateConversationMLSWelcome: Codable {
-
         enum CodingKeys: String, CodingKey {
             case id = "conversation"
             case qualifiedID = "qualified_conversation"

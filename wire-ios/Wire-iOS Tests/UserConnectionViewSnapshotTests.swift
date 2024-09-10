@@ -24,7 +24,6 @@ import XCTest
 // MARK: - Helper
 
 extension UIView {
-
     func layoutForTest(in size: CGSize = CGSize(width: 320, height: 480)) {
         let fittingSize = self.systemLayoutSizeFitting(size)
         self.frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
@@ -38,7 +37,6 @@ extension UIView {
 // MARK: - UserConnectionViewSnapshotTests
 
 final class UserConnectionViewSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

@@ -20,7 +20,6 @@
 import XCTest
 
 class UITextView_ReplaceTests: XCTestCase {
-
     var sut: UITextView!
 
     override func setUp() {

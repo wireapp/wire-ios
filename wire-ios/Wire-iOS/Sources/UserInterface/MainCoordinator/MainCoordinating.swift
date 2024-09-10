@@ -19,7 +19,6 @@
 import WireDataModel
 
 protocol MainCoordinating {
-
     func openConversation(
         _ conversation: ZMConversation,
         focusOnView focus: Bool,

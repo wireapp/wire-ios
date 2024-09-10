@@ -21,9 +21,7 @@ import WireUtilities
 import XCTest
 
 class AddressBookEntryTests: ZMBaseManagedObjectTest {
-
     func testThatItReturnsTrackedKeys() {
-
         // GIVEN
         let entry = AddressBookEntry.insertNewObject(in: self.uiMOC)
 
@@ -35,7 +33,6 @@ class AddressBookEntryTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCreatesEntryFromContact() {
-
         // GIVEN
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         let contact = CNMutableContact()

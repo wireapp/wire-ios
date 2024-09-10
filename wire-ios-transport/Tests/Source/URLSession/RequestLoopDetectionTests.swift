@@ -21,9 +21,7 @@ import XCTest
 @testable import WireTransport
 
 final class RequestLoopDetectionTests: XCTestCase {
-
     func testThatItDetectsALoopWithOneRepeatedRequest() {
-
         // given
         var triggered = false
         let path = "foo.com"
@@ -44,7 +42,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDoesNotDetectsALoopWithOneRepeatedRequestIfMoreThan5MinutesApart() {
-
         // given
         let path = "foo.com"
         let hash = "13"
@@ -62,7 +59,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDoesNotDetectsALoopWithOneRepeatedRequesInsertedAtWrongTime() {
-
         // given
         let path = "foo.com"
         let hash = "12"
@@ -80,7 +76,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDoesNotDetectsALoopIfPathIsNotSame() {
-
         // given
         let hash = "14"
         let sut = RequestLoopDetection { _ in
@@ -94,7 +89,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDoesNotDetectsALoopIfHashIsNotSame() {
-
         // given
         let sut = RequestLoopDetection { _ in
             XCTFail()
@@ -107,7 +101,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDetectsALoopWithOneRepeatedRequestOnlyOnceEveryThreshold() {
-
         // given
         let path = "foo.com"
         var triggerCount = 0
@@ -128,7 +121,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDetectsMultipleLoopsFromDifferentURLs() {
-
         // given
         let paths = ["foo.com", "bar.de", "baz.org"]
         var triggeredURLs: [String] = []
@@ -149,7 +141,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDetectsMultipleLoopsFromDifferentHashes() {
-
         // given
         let path = "foo.com"
         var triggered = 0
@@ -169,7 +160,6 @@ final class RequestLoopDetectionTests: XCTestCase {
     }
 
     func testThatItDoesNotStoreMoreThan2000URLs() {
-
         // given
         let path = "MyURL.com"
         var triggered = false

@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class URLActionRouterTests: XCTestCase {
-
     // MARK: Presenting Alerts
 
     func testThatAlertIsPresented_WhenCanDisplayAlertsReturnsTrue() {
@@ -135,7 +134,6 @@ final class URLActionRouterTests: XCTestCase {
 }
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
-
     func updateActiveCallPresentationState() { }
 
     func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?) { }
@@ -147,7 +145,6 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 }
 
 final class MockURLActionRouterDelegate: URLActionRouterDelegate {
-
     var didCallWillShowCompanyLoginError: Bool = false
     func urlActionRouterWillShowCompanyLoginError() {
         didCallWillShowCompanyLoginError = true
@@ -160,7 +157,6 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 }
 
 final class TestableURLActionRouter: URLActionRouter {
-
     var presentedAlert: UIAlertController?
     override func internalPresentAlert(_ alert: UIAlertController) {
         presentedAlert = alert

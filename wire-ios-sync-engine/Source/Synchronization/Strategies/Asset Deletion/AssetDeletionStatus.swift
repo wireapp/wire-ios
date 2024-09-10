@@ -27,7 +27,6 @@ private let log = ZMSLog(tag: "AssetDeletion")
 }
 
 public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
-
     private var provider: DeletableAssetIdentifierProvider
     private var identifiersInProgress = Set<String>()
     private let queue: GroupQueue

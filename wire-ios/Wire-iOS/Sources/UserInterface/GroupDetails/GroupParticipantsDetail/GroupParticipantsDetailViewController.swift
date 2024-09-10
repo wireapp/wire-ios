@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class GroupParticipantsDetailViewController: UIViewController {
-
     private let mainCoordinator: MainCoordinating
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let searchViewController = SearchHeaderViewController(userSelection: .init())
@@ -188,7 +187,6 @@ final class GroupParticipantsDetailViewController: UIViewController {
 }
 
 extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
-
     func presentDetails(for user: UserType) {
         guard let conversation = viewModel.conversation as? ZMConversation else { return }
 
@@ -210,7 +208,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
     }
 
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
-
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
             conversation: viewModel.conversation,
@@ -224,14 +221,12 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
 }
 
 extension GroupParticipantsDetailViewController: ViewControllerDismisser {
-
     func dismiss(viewController: UIViewController, completion: (() -> Void)?) {
         navigationController?.popViewController(animated: true, completion: completion)
     }
 }
 
 extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
-
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
         dismiss(animated: true) {
             self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)

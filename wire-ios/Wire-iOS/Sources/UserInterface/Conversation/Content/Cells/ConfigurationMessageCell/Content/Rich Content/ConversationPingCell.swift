@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationPingCell: ConversationIconBasedCell, ConversationMessageCell {
-
     typealias AnimationBlock = (_ animationBlock: Any, _ reps: Int) -> Void
     var animationBlock: AnimationBlock?
     var isAnimationRunning = false
@@ -53,7 +52,6 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
     func animate() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-
             if !self.canAnimationContinue(for: self.configuration?.message) {
                 return
             }
@@ -65,13 +63,11 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 
     func createAnimationBlock() -> AnimationBlock {
-
         let animationBlock: AnimationBlock = { [weak self] otherBlock, reps in
             guard let self else { return }
             self.imageView.alpha = 1.0
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05, execute: {
-
                 if !self.canAnimationContinue(for: self.configuration?.message) {
                     return
                 }
@@ -114,11 +110,9 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 
     func willDisplay() {
-
         if let conversation = configuration?.message?.conversationLike,
            let lastMessage = conversation.lastMessage,
            let message = configuration?.message, lastMessage.isEqual(message) {
-
             if message.isKnock {
                 startAnimation()
             }

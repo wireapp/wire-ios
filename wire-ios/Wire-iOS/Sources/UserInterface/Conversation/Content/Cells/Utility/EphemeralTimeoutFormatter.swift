@@ -19,10 +19,8 @@
 import UIKit
 
 final class EphemeralTimeoutFormatter {
-
     /// A formatter to produce a string with day in full style and hour/minute in positional style
     fileprivate final class DayFormatter {
-
         /// hour formatter with no second unit
         private let hourFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
@@ -44,7 +42,6 @@ final class EphemeralTimeoutFormatter {
         /// - Parameter timeInterval: timeInterval to convert
         /// - Returns: formatted string
         func string(from interval: TimeInterval) -> String? {
-
             guard let dayString = dayFormatter.string(from: interval),
                 let hourString = hourFormatter.string(from: interval) else {
                     return nil

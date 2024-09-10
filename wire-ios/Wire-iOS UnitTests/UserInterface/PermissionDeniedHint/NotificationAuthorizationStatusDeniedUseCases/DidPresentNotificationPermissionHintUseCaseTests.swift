@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
-
     private var mockDateProvider: MockCurrentDateProviding!
     private var userDefaults: UserDefaults!
     private var sut: DidPresentNotificationPermissionHintUseCase<MockCurrentDateProviding>!
@@ -44,7 +43,6 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
     }
 
     func testDateIsStored() throws {
-
         // When
         sut.invoke()
 

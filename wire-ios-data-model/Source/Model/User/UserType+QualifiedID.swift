@@ -20,7 +20,6 @@ import Foundation
 import WireTransport
 
 public extension UserType {
-
     var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,

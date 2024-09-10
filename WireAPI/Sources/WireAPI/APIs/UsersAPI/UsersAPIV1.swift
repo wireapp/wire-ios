@@ -19,7 +19,6 @@
 import Foundation
 
 class UsersAPIV1: UsersAPIV0 {
-
     override var apiVersion: APIVersion {
         .v1
     }

@@ -45,7 +45,6 @@ extension ConversationType {
 }
 
 extension ZMConversation {
-
     var analyticsTypeString: String? {
         return ConversationType.type(self)?.analyticsTypeString
     }
@@ -80,7 +79,6 @@ extension ZMConversation {
     }
 
     var guestAttributes: [String: Any] {
-
         let numGuests = sortedActiveParticipants.filter({
             $0.isGuest(in: self)
         }).count

@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class ConversationInputBarButtonState {
-
     var sendButtonEnabled: Bool {
         let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
         return hasText || (disableSendButton == false && !markingDown)
@@ -65,7 +64,6 @@ final class ConversationInputBarButtonState {
                 syncedMessageDestructionTimeout: Bool,
                 isEphemeralSendingDisabled: Bool,
                 isEphemeralTimeoutForced: Bool) {
-
         self.textLength = textLength
         self.editing = editing
         self.markingDown = markingDown

@@ -57,7 +57,6 @@ protocol EmptySearchResultsViewDelegate: AnyObject {
 // MARK: - EmptySearchResultsView
 
 final class EmptySearchResultsView: UIView {
-
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Computed Properties

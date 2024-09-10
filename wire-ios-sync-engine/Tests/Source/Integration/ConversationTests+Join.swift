@@ -20,7 +20,6 @@
 import XCTest
 
 class ConversationTests_Join: ConversationTestsBase {
-
     // MARK: - Join conversation
 
     func testThatTheSelfUserJoinsAConversation_OnSuccessfulResponse() {

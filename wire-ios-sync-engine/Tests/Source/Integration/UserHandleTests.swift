@@ -21,7 +21,6 @@ import WireMockTransport
 @testable import WireSyncEngine
 
 class UserHandleTests: IntegrationTest {
-
     var userProfileStatusObserver: TestUserProfileUpdateObserver!
 
     var observerToken: Any?
@@ -45,7 +44,6 @@ class UserHandleTests: IntegrationTest {
     }
 
     func testThatItCanCheckThatAHandleIsAvailable() {
-
         // GIVEN
         let handle = "Oscar"
 
@@ -66,7 +64,6 @@ class UserHandleTests: IntegrationTest {
     }
 
     func testThatItCanCheckThatAHandleIsNotAvailable() {
-
         // GIVEN
         let handle = "Oscar"
 
@@ -91,7 +88,6 @@ class UserHandleTests: IntegrationTest {
     }
 
     func testThatItCanSetTheHandle() {
-
         // GIVEN
         let handle = "Evelyn"
 
@@ -120,7 +116,6 @@ class UserHandleTests: IntegrationTest {
 
     // FIXME: [WPB-5882] this test is flaky - [jacob]
     func disabled_testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
-
         // GIVEN
         let handle = "Evelyn"
 
@@ -145,7 +140,6 @@ class UserHandleTests: IntegrationTest {
     }
 
     func testThatItIsNotifiedWhenFailsToSetTheHandle() {
-
         // GIVEN
         let handle = "Evelyn"
 

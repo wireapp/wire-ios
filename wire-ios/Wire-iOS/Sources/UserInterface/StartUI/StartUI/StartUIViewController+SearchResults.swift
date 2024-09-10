@@ -42,12 +42,10 @@ extension StartUIViewController {
 }
 
 extension StartUIViewController: SearchResultsViewControllerDelegate {
-
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnUser user: UserType,
                                      indexPath: IndexPath,
                                      section: SearchResultsViewControllerSection) {
-
         if !user.isConnected, !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
@@ -58,7 +56,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didDoubleTapOnUser user: UserType,
                                      indexPath: IndexPath) {
-
         guard user.isConnected, !user.isBlocked else {
             return
         }
@@ -75,7 +72,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnSeviceUser user: ServiceUser) {
-
         let detail = ServiceDetailViewController(
             serviceUser: user,
             actionType: .openConversation,
@@ -158,7 +154,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 }
 
 extension StartUIViewController: ConversationCreationControllerDelegate {
-
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation

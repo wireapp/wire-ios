@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol UserClientAPI {
-
     func deleteUserClient(clientId: String, password: String) async throws
 }
 

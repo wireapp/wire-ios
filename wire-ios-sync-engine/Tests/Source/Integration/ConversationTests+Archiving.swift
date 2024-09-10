@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_Archiving: ConversationTestsBase {
-
     func checkThatItUnarchives(shouldUnarchive: Bool, isSilenced: Bool, mockConversation: MockConversation, session block: @escaping (MockTransportSessionObjectCreation) -> Void) {
         // given
         XCTAssertTrue(login())

@@ -29,7 +29,6 @@ import XCTest
 extension CryptoError: Error { }
 
 final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
-
     var sut: MLSService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!

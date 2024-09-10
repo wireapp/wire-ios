@@ -22,7 +22,6 @@ import WireMockTransport
 @testable import WireSyncEngine
 
 class PushChannelTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         self.createSelfUserAndConversation()

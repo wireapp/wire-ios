@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
-
     var authenticationCoordinator: AuthenticationCoordinator?
     let clientListController: RemoveClientsViewController
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
@@ -125,7 +124,6 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 // MARK: - ClientListViewControllerDelegate
 
 extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
-
     func finishedDeleting(_ clientListViewController: RemoveClientsViewController) {
         authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
     }

@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
-
     func testThatItSendsADeliveryConfirmationWhenReceivingAMessageInAOneOnOneConversation() {
         // given
         XCTAssert(login())

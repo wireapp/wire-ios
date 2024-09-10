@@ -21,7 +21,6 @@ import WireAPI
 /// Process user connection events.
 
 protocol UserConnectionEventProcessorProtocol {
-
     /// Process a user connection event.
     ///
     /// - Parameter event: A user connection event.
@@ -30,7 +29,6 @@ protocol UserConnectionEventProcessorProtocol {
 }
 
 struct UserConnectionEventProcessor: UserConnectionEventProcessorProtocol {
-
     func processEvent(_: UserConnectionEvent) async throws {
         // TODO: [WPB-10191]
         assertionFailure("not implemented yet")

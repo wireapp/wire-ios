@@ -37,7 +37,6 @@ public class ProxyRequest: NSObject {
 
 /// Keeps track of which requests to send to the backend
 @objcMembers public final class ProxiedRequestsStatus: NSObject {
-
     public typealias Request = (type: ProxiedRequestType, path: String, method: ZMTransportRequestMethod, callback: ((Data?, HTTPURLResponse?, NSError?) -> Void)?)
 
     private let requestCancellation: ZMRequestCancellation

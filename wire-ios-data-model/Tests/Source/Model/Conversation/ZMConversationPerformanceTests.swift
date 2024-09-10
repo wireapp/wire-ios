@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMConversationPerformanceTests: ZMConversationTestsBase {
-
     /// There are no true 1:1 conversations in teams, so we check to see if it
     /// should be considered a 1:1 depending on certain properties. This was
     /// previously expensive because the conversation participants were iterated

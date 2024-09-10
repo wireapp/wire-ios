@@ -21,7 +21,6 @@ import Foundation
 /// Records the passage of time since its creation. It also stores the callstack at creation time.
 @objc(ZMSTimePoint) @objcMembers
 public final class TimePoint: NSObject {
-
     private let callstack = [String]()
 
     /// If not zero, it will call @c warnIfLongerThanInteval with this value on dealloc

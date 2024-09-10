@@ -21,7 +21,6 @@ import Foundation
 /// Describes the apps synchronization state.
 
 enum SyncState {
-
     /// The app is fetching and processing all pending events.
 
     case quickSync(Task<Void, Error>)

@@ -63,7 +63,6 @@ fileprivate extension Article {
 // MARK: - GenericMessage
 
 extension GenericMessage: CustomStringConvertible {
-
     public var description: String {
         var message = self
         guard let content else {
@@ -84,7 +83,6 @@ extension GenericMessage: CustomStringConvertible {
 }
 
 extension GenericMessage: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         return "[\(safeTypeForLoggingDescription) \(safeIdForLoggingDescription)]"
     }
@@ -99,7 +97,6 @@ extension GenericMessage: SafeForLoggingStringConvertible {
 }
 
 extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         switch self {
         case .text:

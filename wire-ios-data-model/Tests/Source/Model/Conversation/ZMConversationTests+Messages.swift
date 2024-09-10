@@ -22,11 +22,8 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMConversationMessagesTests: ZMConversationTestsBase {
-
     func testThatWeCanInsertATextMessage() {
-
         self.syncMOC.performGroupedAndWait {
-
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -497,7 +494,6 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
     }
 
     func testThatWeCanInsertAnAudioMessage() {
-
         // given
         let fileName = "audio.m4a"
         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!

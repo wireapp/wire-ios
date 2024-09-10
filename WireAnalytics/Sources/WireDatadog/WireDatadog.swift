@@ -25,7 +25,6 @@ import DatadogTrace
 import UIKit
 
 public final class WireDatadog {
-
     private let applicationID: String
     private let buildVersion: String
     private let buildNumber: String

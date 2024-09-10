@@ -21,7 +21,6 @@ import Foundation
 import WireDataModelSupport
 
 final class UserImageLocalCacheTests: XCTestCase {
-
     private let coreDataStackHelper = CoreDataStackHelper()
 
     private var coreDataStack: CoreDataStack!
@@ -99,7 +98,6 @@ final class UserImageLocalCacheTests: XCTestCase {
     }
 
     func testThatItSetsSmallAndLargeUserImageForV3() throws {
-
         // given
         let largeData = try XCTUnwrap(Data("LARGE".utf8))
         let smallData = try XCTUnwrap(Data("SMALL".utf8))
@@ -114,7 +112,6 @@ final class UserImageLocalCacheTests: XCTestCase {
     }
 
     func testThatItPersistsSmallAndLargeUserImageForV3() throws {
-
         // given
         let largeData = try XCTUnwrap(Data("LARGE".utf8))
         let smallData = try XCTUnwrap(Data("SMALL".utf8))

@@ -20,7 +20,6 @@ import WireDataModel
 import WireFoundation
 
 extension AccentColor {
-
     var name: String {
         typealias AccentColor = L10n.Localizable.Self.Settings.AccountPictureGroup.AccentColor
         switch self {

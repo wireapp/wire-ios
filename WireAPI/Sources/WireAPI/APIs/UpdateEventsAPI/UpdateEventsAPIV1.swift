@@ -19,7 +19,6 @@
 import Foundation
 
 class UpdateEventsAPIV1: UpdateEventsAPIV0 {
-
     override var apiVersion: APIVersion {
         .v1
     }

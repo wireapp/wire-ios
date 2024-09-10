@@ -21,7 +21,6 @@ import Foundation
 private var zmLog = ZMSLog(tag: "DependencyKeyStore")
 
 struct Observable {
-
     private let affectingKeyStore: DependencyKeyStore
     let classIdentifier: String
     private let affectingKeys: [String: Set<String>]
@@ -60,7 +59,6 @@ struct Observable {
 /// Maps the observable keys to affectedKeys and vice versa
 /// You should create this only once
 class DependencyKeyStore {
-
     /// Keys that are needed to create a changeInfo
     let observableKeys: [String: Set<String>]
 

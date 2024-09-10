@@ -19,7 +19,6 @@
 import Foundation
 
 public enum MLSVerificationStatus: Int16 {
-
     // NOTE: we are starting from 1 to let 0 represent a missing value, since
     // CoreData doesn't support optional scalar values.
 

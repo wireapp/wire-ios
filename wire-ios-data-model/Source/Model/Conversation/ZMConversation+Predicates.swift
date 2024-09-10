@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     override open class func predicateForFilteringResults() -> NSPredicate {
         let selfType = ZMConversationType.init(rawValue: 1)!
         return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue) && \(#keyPath(ZMConversation.isDeletedRemotely)) == NO")
@@ -27,7 +26,6 @@ extension ZMConversation {
 
     @objc
     public class func predicate(forSearchQuery searchQuery: String, selfUser: ZMUser) -> NSPredicate! {
-
         let convoNameMatching = userDefinedNamePredicate(forSearch: searchQuery)
 
         let selfUserIsMember = NSPredicate(format: "%K == NULL OR (ANY %K.user == %@)", ZMConversationClearedTimeStampKey, ZMConversationParticipantRolesKey, selfUser)
@@ -101,7 +99,6 @@ extension ZMConversation {
 }
 
 extension String {
-
     var words: [String] {
         var words: [String] = []
         enumerateSubstrings(in: self.startIndex..., options: .byWords) { substring, _, _, _ in

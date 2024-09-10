@@ -24,10 +24,8 @@ import WireDatadog
 #endif
 
 extension WireAnalytics {
-
     /// Namespace for Datadog analytics.
     public enum Datadog {
-
         private static let shared: (any WireDatadogProtocol & LoggerProtocol)? = {
 #if canImport(WireDatadog)
             let builder = WireDatadogBuilder()

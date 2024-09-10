@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 
 extension UIAlertController {
-
     /// flag for preventing newsletter subscription dialog shows again in team creation workflow.
     /// (team create work flow: newsletter subscription dialog appears after email verification.
     /// email regisration work flow: newsletter subscription dialog appears after conversation list is displayed.)
@@ -82,7 +81,6 @@ extension UIAlertController {
 }
 
 private extension AuthenticationCoordinatorAlertAction {
-
     static var privacyPolicy: Self {
         Self.init(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
                   coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])

@@ -21,7 +21,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class RegistrationStatusTests: MessagingTest {
-
     var sut: RegistrationStatus!
     var delegate: MockRegistrationStatusDelegate!
     var email: String!

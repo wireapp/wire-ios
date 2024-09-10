@@ -33,7 +33,6 @@ protocol BottomSheetScrollingDelegate: AnyObject {
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
 final class CallingActionsView: UIView {
-
     weak var delegate: CallingActionsViewDelegate?
     weak var bottomSheetScrollingDelegate: BottomSheetScrollingDelegate? {
         didSet {
@@ -309,7 +308,6 @@ final class CallingActionsView: UIView {
 // MARK: - UILargeContentViewerInteractionDelegate
 
 extension CallingActionsView: UILargeContentViewerInteractionDelegate {
-
     func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
         let itemWidth = self.frame.width / CGFloat(establishedCallButtons.count)
         let position: Int = Int(itemAt.x / itemWidth)

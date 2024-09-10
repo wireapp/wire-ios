@@ -21,7 +21,6 @@ import WireSystem
 
 @objcMembers
 public class ZMClientMessage: ZMOTRMessage {
-
     public static let linkPreviewStateKey = "linkPreviewState"
     public static let linkPreviewKey = "linkPreview"
 
@@ -220,7 +219,6 @@ public class ZMClientMessage: ZMOTRMessage {
 }
 
 extension ZMClientMessage {
-
     public override var imageMessageData: ZMImageMessageData? {
         return nil
     }

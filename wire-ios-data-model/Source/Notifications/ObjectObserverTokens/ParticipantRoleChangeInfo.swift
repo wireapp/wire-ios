@@ -20,7 +20,6 @@ import Foundation
 import WireSystem
 
 extension ParticipantRole: ObjectInSnapshot {
-
     static public var observableKeys: Set<String> {
         return [
             #keyPath(ParticipantRole.role)]
@@ -33,7 +32,6 @@ extension ParticipantRole: ObjectInSnapshot {
 
 @objcMembers
 public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
-
     static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
 
     static func changeInfo(for participantRole: ParticipantRole, changes: Changes) -> ParticipantRoleChangeInfo? {

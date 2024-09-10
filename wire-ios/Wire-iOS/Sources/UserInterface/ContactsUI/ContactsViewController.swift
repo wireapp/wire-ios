@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class ContactsViewController: UIViewController {
-
     let dataSource = ContactsDataSource()
 
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
@@ -137,7 +136,6 @@ final class ContactsViewController: UIViewController {
     }
 
     private func setupStyle() {
-
         view.backgroundColor = .clear
 
         tableView.backgroundColor = .clear

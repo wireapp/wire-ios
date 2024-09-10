@@ -19,9 +19,7 @@
 import UIKit
 
 extension AppLockModule {
-
     final class Presenter: PresenterInterface {
-
         // MARK: - Properties
 
         var interactor: AppLockInteractorPresenterInterface!
@@ -33,7 +31,6 @@ extension AppLockModule {
 // MARK: - Handle result
 
 extension AppLockModule.Presenter: AppLockPresenterInteractorInterface {
-
     func handleResult(_ result: AppLockModule.Result) {
         switch result {
         case let .customPasscodeCreationNeeded(shouldInform):
@@ -61,7 +58,6 @@ extension AppLockModule.Presenter: AppLockPresenterInteractorInterface {
 // MARK: - Process event
 
 extension AppLockModule.Presenter: AppLockPresenterViewInterface {
-
     func processEvent(_ event: AppLockModule.Event) {
         switch event {
         // In iOS 14, it was found that 'viewDidAppear' may be invoked even when the app is in the background. To prevent re-authentication when the app is in the background, there is the 'requireActiveApp' parameter.
@@ -86,7 +82,6 @@ extension AppLockModule.Presenter: AppLockPresenterViewInterface {
 // MARK: - Helpers
 
 extension AppLockModule.Presenter {
-
     private func authenticate() {
         view.refresh(withModel: .authenticating)
         interactor.executeRequest(.evaluateAuthentication)

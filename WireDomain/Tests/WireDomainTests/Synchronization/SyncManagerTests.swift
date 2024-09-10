@@ -25,7 +25,6 @@ import XCTest
 @testable import WireDomainSupport
 
 final class SyncManagerTests: XCTestCase {
-
     private var sut: SyncManager!
     private var updateEventsRepository: MockUpdateEventsRepositoryProtocol!
     private var updateEventProcessor: MockUpdateEventProcessorProtocol!
@@ -285,7 +284,6 @@ final class SyncManagerTests: XCTestCase {
 }
 
 private enum Scaffolding {
-
     static let localDomain = "example.com"
     static let conversationID1 = ConversationID(uuid: UUID(), domain: localDomain)
     static let conversationID2 = ConversationID(uuid: UUID(), domain: localDomain)

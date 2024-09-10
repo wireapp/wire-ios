@@ -353,7 +353,6 @@ public extension Proteus_QualifiedNewOtrMessage {
          recipients: [Proteus_QualifiedUserEntry],
          missingClientsStrategy: MissingClientsStrategy,
          blob: Data? = nil ) {
-
         self = Proteus_QualifiedNewOtrMessage.with {
             $0.nativePush = nativePush
             $0.sender = sender.clientId
@@ -475,7 +474,6 @@ extension Text {
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
-
     public static func createReaction(
         emojis: Set<String>,
         messageID: UUID
@@ -502,7 +500,6 @@ extension WireProtos.Reaction {
 }
 
 public enum ProtosReactionFactory {
-
     public static func createReaction(
         emojis: Set<String>,
         messageID: UUID

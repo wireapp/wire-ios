@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 class ConversationIconBasedCell: UIView {
-
     let imageContainer = UIView()
     let imageView = UIImageView()
     let textLabel = WebLinkTextView()

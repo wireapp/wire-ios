@@ -20,7 +20,6 @@ import UIKit
 import WireReusableUIComponents
 
 extension BlockingActivityIndicator {
-
     convenience init(view: UIView) {
         self.init(
             view: view,

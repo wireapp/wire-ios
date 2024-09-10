@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationNotificationOptionsViewController: UIViewController {
-
     private var items: [MutedMessageTypes] = [.none, .regular, .all]
 
     private let conversation: ZMConversation
@@ -72,7 +71,6 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     }
 
     private func configureSubviews() {
-
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.backgroundColor = SemanticColors.View.backgroundDefault
@@ -86,7 +84,6 @@ final class ConversationNotificationOptionsViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -97,7 +94,6 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 // MARK: - Table View
 
 extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -107,7 +103,6 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
 
@@ -156,7 +151,6 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
     }
 
     private func updateMutedMessageTypes(_ types: MutedMessageTypes) {
-
         userSession.perform {
             self.conversation.mutedMessageTypes = types
         }
@@ -181,7 +175,6 @@ extension ConversationNotificationOptionsViewController: ZMConversationObserver 
 }
 
 extension MutedMessageTypes {
-
     var localizationKey: String? {
         switch self {
         case .none:         return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything

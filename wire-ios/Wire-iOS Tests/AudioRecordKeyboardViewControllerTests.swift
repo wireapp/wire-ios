@@ -39,7 +39,6 @@ final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
 }
 
 final class MockAudioRecorder: AudioRecorderType {
-
     var format: AudioRecorderFormat = .wav
     var state: AudioRecorderState = .initializing
     var fileURL: URL? = Bundle(for: MockAudioRecorder.self).url(forResource: "audio_sample", withExtension: "m4a")
@@ -95,7 +94,6 @@ final class MockAudioRecorder: AudioRecorderType {
 }
 
 final class AudioRecordKeyboardViewControllerTests: XCTestCase {
-
     var sut: AudioRecordKeyboardViewController!
     var audioRecorder: MockAudioRecorder!
     var mockDelegate: MockAudioRecordKeyboardDelegate!

@@ -20,7 +20,6 @@ import Foundation
 import WireTesting
 
 extension MockServiceUserType {
-
     /// Creates a service user with the specified name.
     ///
     /// - Parameters:

@@ -27,7 +27,6 @@ import WireUtilities
 /// https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/698908878/Use+case+remove+stale+participants+MLS
 
 class MLSConferenceStaleParticipantsRemover: Subscriber {
-
     typealias Input = MLSConferenceParticipantsInfo
     typealias Failure = Never
 
@@ -90,7 +89,6 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     // MARK: - Participants change handling
 
     private func process(input: MLSConferenceParticipantsInfo) async {
-
         guard let subconversationMembers = await subconversationMembers(for: input.subconversationID) else {
             return
         }
@@ -102,7 +100,6 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             )
 
             newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
-
                 guard let clientID = MLSClientID(callParticipant: $0) else {
                     return
                 }
@@ -220,7 +217,6 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 }
 
 private extension Array where Element == CallParticipant {
-
     func excludingParticipant(withID userID: AVSIdentifier) -> Self {
         filter {
             $0.userId != userID

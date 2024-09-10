@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 final class CallHapticsController {
-
     private var lastCallState: CallState?
     private var participants = Set<CallParticipant>()
     private var videoStates = [CallParticipant: Bool]()
@@ -90,7 +89,6 @@ final class CallHapticsController {
         }
 
         for (participant, wasSending) in videoStates {
-
             if let isSending = mappedNewVideoStates[participant.hashValue], isSending != wasSending {
                 Log.haptics.debug("triggering toggle video event")
                 hapticGenerator.trigger(event: .toggleVideo)

@@ -24,7 +24,6 @@ import UIKit
 /// all the components in the module.
 
 protocol ModuleInterface {
-
     associatedtype Interactor where Interactor: InteractorInterface
     associatedtype Presenter where Presenter: PresenterInterface
     associatedtype View where View: UIViewController & ViewInterface
@@ -36,7 +35,6 @@ protocol ModuleInterface {
 }
 
 extension ModuleInterface {
-
     static func assemble(interactor: Interactor, presenter: Presenter, view: View, router: Router) {
         interactor.presenter = (presenter as! Self.Interactor.PresenterInteractor)
         presenter.interactor = (interactor as! Self.Presenter.InteractorPresenter)
@@ -53,7 +51,6 @@ extension ModuleInterface {
 /// data requests from the presenter.
 
 protocol InteractorInterface: InteractorPresenterInterface {
-
     associatedtype PresenterInteractor
 
     /// A weak reference to the presenter.
@@ -68,7 +65,6 @@ protocol InteractorInterface: InteractorPresenterInterface {
 /// interactor or router.
 
 protocol PresenterInterface: PresenterInteractorInterface, PresenterViewInterface {
-
     associatedtype InteractorPresenter
     associatedtype ViewPresenter
     associatedtype RouterPresenter
@@ -92,7 +88,6 @@ protocol PresenterInterface: PresenterInteractorInterface, PresenterViewInterfac
 /// presenter, and 2) reporting ui events to the presenter.
 
 protocol ViewInterface: ViewPresenterInterface {
-
     associatedtype PresenterView
 
     /// A strong reference to the presenter.
@@ -105,7 +100,6 @@ protocol ViewInterface: ViewPresenterInterface {
 /// The module component responsible for navigation to other modules.
 
 protocol RouterInterface: RouterPresenterInterface {
-
     associatedtype View: UIViewController
 
     /// A weak reference to the view controller

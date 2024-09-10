@@ -21,7 +21,6 @@ import WireAPI
 /// Process feature config update events.
 
 protocol FeatureConfigUpdateEventProcessorProtocol {
-
     /// Process a feature config update event.
     ///
     /// - Parameter event: A feature config update event.
@@ -30,7 +29,6 @@ protocol FeatureConfigUpdateEventProcessorProtocol {
 }
 
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
-
     func processEvent(_: FeatureConfigUpdateEvent) async throws {
         // TODO: [WPB-10183]
         assertionFailure("not implemented yet")

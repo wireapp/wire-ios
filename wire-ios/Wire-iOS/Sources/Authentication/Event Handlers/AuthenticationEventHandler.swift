@@ -29,7 +29,6 @@ import Foundation
  */
 
 protocol AuthenticationEventHandler: AnyObject {
-
     /**
      * The type of context objects required to process the event.
      *

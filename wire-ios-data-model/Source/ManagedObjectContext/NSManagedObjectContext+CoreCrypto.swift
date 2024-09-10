@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSManagedObjectContext {
-
     private static let coreCryptoUserInfoKey = "CoreCryptoUserInfoKey"
 
     public var coreCrypto: SafeCoreCryptoProtocol? {

@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
-
     let managedObjectContext: NSManagedObjectContext
     let zmLog: ZMSLog
 

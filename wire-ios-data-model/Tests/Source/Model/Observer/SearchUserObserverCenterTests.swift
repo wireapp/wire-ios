@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 final class SearchUserObserverCenterTests: ModelObjectsTests {
-
     var sut: SearchUserObserverCenter!
 
     override func setUp() {

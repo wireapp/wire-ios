@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUserSession {
-
     func setupCertificateRevocationLists() {
         guard let mlsGroupVerification else {
             WireLogger.e2ei.error("requires 'mlsGroupVerification' to setup 'cRLsChecker'!", attributes: .safePublic)

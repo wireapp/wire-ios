@@ -20,7 +20,6 @@
 import XCTest
 
 class PreviewBlackListTests: XCTestCase {
-
     var hosts: [String]!
 
     override func setUp() {

@@ -20,12 +20,10 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol UpdateMLSGroupVerificationStatusUseCaseProtocol {
-
     func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws
 }
 
 public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-
     // MARK: - Properties
 
     private let e2eIVerificationStatusService: E2EIVerificationStatusServiceInterface
@@ -114,7 +112,6 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
 // MARK: - Append system messages
 
 private extension ZMConversation {
-
     func appendConversationVerifiedSystemMessage() {
         guard let context = managedObjectContext else {
             return

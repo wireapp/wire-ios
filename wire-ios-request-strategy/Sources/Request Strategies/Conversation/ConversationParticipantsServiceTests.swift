@@ -23,7 +23,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 class ConversationParticipantsServiceTests: MessagingTestBase {
-
     // MARK: - Properties
 
     var sut: ConversationParticipantsService!
@@ -413,7 +412,6 @@ private extension ConversationParticipantsServiceTests {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-
         XCTAssertEqual(
             mockProteusParticipantsService.addParticipantsTo_Invocations.count,
             2,

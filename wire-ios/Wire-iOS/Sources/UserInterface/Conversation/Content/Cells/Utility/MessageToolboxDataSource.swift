@@ -34,7 +34,6 @@ enum MessageToolboxContent: Equatable {
 }
 
 extension MessageToolboxContent: Comparable {
-
     /// Returns whether one content is located above or below the other.
     /// This is used to determine from which direction to slide, so that we can keep
     /// the animations logical.
@@ -59,7 +58,6 @@ extension MessageToolboxContent: Comparable {
 typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
 
 final class MessageToolboxDataSource {
-
     typealias ContentSystem = L10n.Localizable.Content.System
 
     /// The displayed message.
@@ -145,7 +143,6 @@ final class MessageToolboxDataSource {
     /// Create a timestamp list for all calls associated with a call system message
     private func makeCallList() -> NSAttributedString {
         if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty, let timestamp = timestampString(message) {
-
             let childrenTimestamps = childMessages
                 .compactMap { $0 as? ZMConversationMessage }
                 .sortedAscendingPrependingNil(by: \.serverTimestamp)

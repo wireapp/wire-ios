@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSString {
-
     @objc static func randomAlphanumerical(length: UInt) -> String {
         String.randomAlphanumerical(length: length)
     }

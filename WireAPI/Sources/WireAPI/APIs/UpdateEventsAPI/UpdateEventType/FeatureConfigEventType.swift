@@ -19,6 +19,5 @@
 import Foundation
 
 enum FeatureConfigEventType: String {
-
     case update = "feature-config.update"
 }

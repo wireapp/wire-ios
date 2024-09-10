@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class UnlockViewControllerTests: XCTestCase {
-
     var sut: UnlockViewController!
     private var snapshotHelper: SnapshotHelper!
 

@@ -20,7 +20,6 @@ import Foundation
 import WireSystem
 
 public enum LogFileDestination: CaseIterable, FileLoggerDestination {
-
     private static var cachesDirectory: URL? {
         FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }

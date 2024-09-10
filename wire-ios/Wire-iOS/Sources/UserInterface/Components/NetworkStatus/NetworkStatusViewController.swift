@@ -23,7 +23,6 @@ import WireSyncEngine
 typealias NetworkStatusBarDelegate = NetworkStatusViewControllerDelegate & NetworkStatusViewDelegate
 
 protocol NetworkStatusViewControllerDelegate: AnyObject {
-
     ///  return false if NetworkStatusViewController will not disapper in iPad regular mode with specific orientation.
     ///
     /// - networkStatusViewController: caller of this delegate method
@@ -33,7 +32,6 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
 }
 
 final class NetworkStatusViewController: UIViewController {
-
     weak var delegate: NetworkStatusBarDelegate? {
         didSet {
             networkStatusView.delegate = delegate
@@ -102,7 +100,6 @@ final class NetworkStatusViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-
         if let userSession = ZMUserSession.shared() {
             enqueue(state: viewState(from: userSession.networkState))
             networkStatusObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
@@ -180,7 +177,6 @@ final class NetworkStatusViewController: UIViewController {
 }
 
 extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
-
     func didChangeAvailability(newState: NetworkState) {
         enqueue(state: viewState(from: newState))
     }
@@ -223,7 +219,6 @@ extension NetworkStatusViewController {
 }
 
 extension NetworkStatusViewController: ApplicationStateObserving {
-
     func addObserverToken(_ token: NSObjectProtocol) {
         observersTokens.append(token)
     }

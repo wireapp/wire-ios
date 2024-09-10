@@ -23,7 +23,6 @@ import WireRequestStrategy
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
 class SwiftMockConversation: NSObject, Conversation {
-
     var isMLSConversationDegraded: Bool = false
     var isProteusConversationDegraded: Bool = false
 
@@ -83,7 +82,6 @@ class SwiftMockConversation: NSObject, Conversation {
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {
-
     var userDefinedName: String?
 
     var freeParticipantSlots: Int = 1
@@ -100,7 +98,6 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {
-
     var typingUsers: [UserType] = []
 
     var hasDraftMessage: Bool = false

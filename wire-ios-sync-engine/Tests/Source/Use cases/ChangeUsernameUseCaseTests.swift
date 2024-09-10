@@ -21,7 +21,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class ChangeUsernameUseCaseTests: XCTestCase {
-
     func testThatIt_requestsSettingHandle() async throws {
         // given
         let username = "username"

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 class BaseMessageRestrictionView: UIView {
-
     // MARK: - Properties
 
     let topLabel = UILabel()

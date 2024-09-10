@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `BackendInfoAPI`.
 
 public struct BackendInfoAPIBuilder {
-
     let apiService: any APIServiceProtocol
 
     /// Create a new builder.

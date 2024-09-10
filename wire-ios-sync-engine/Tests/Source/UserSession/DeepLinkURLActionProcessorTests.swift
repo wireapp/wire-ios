@@ -22,7 +22,6 @@ import WireDataModelSupport
 @testable import WireSyncEngine
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {
-
     var presentationDelegate: MockPresentationDelegate!
     var sut: WireSyncEngine.DeepLinkURLActionProcessor!
     var mockTransportSession: MockTransportSession!

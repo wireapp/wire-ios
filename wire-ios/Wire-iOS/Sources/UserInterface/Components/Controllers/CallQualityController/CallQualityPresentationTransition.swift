@@ -19,13 +19,11 @@
 import UIKit
 
 final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimatedTransitioning {
-
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.55
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-
         guard let callQualityVC = transitionContext.viewController(forKey: .to) as? CallQualityViewController else {
             return
         }

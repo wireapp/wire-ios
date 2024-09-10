@@ -49,7 +49,6 @@ enum LeaveResult: AlertResultConfiguration {
 }
 
 extension ConversationActionController {
-
     func handleLeaveResult(_ result: LeaveResult, for conversation: ZMConversation) {
         guard  case .leave(delete: let delete) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {

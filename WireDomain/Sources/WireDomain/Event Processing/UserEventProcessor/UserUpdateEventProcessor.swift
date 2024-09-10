@@ -21,7 +21,6 @@ import WireAPI
 /// Process user update events.
 
 protocol UserUpdateEventProcessorProtocol {
-
     /// Process a user update event.
     ///
     /// - Parameter event: A user update event.
@@ -30,7 +29,6 @@ protocol UserUpdateEventProcessorProtocol {
 }
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
-
     func processEvent(_: UserUpdateEvent) async throws {
         // TODO: [WPB-10200]
         assertionFailure("not implemented yet")

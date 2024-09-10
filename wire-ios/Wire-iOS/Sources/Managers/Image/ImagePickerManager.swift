@@ -31,7 +31,6 @@ extension UIImage {
 }
 
 class ImagePickerManager: NSObject {
-
     // MARK: - Properties
 
     private weak var viewController: UIViewController?
@@ -113,9 +112,7 @@ class ImagePickerManager: NSObject {
 }
 
  extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
      func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)
             return

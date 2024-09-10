@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class ProxyCredentialsViewController: UIViewController {
-
     typealias Credentials = L10n.Localizable.ProxyCredentials
 
     let backendURL: URL

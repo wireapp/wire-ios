@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversationMessage {
-
     /**
      * Requests to refetch the link attachments of messages received prior to
      * the persistent link attachments update.

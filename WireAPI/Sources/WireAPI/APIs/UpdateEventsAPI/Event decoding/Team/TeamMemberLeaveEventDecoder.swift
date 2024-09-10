@@ -19,7 +19,6 @@
 import Foundation
 
 struct TeamMemberLeaveEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<TeamEventCodingKeys>
     ) throws -> TeamMemberLeaveEvent {
@@ -40,11 +39,9 @@ struct TeamMemberLeaveEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let userID: UUID
 
         enum CodingKeys: String, CodingKey {
-
             case userID = "user"
         }
     }

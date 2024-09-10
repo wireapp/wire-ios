@@ -17,7 +17,6 @@
 //
 
 public extension WireLogger {
-
     static let apiMigration = WireLogger(tag: "api-migration")
     static let appState = WireLogger(tag: "AppState")
     static let appDelegate = WireLogger(tag: "AppDelegate")

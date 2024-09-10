@@ -19,7 +19,6 @@
 import UIKit
 
 final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitioning {
-
     let reverse: Bool
     let visualEffectView: UIVisualEffectView
     let crossfadingViews: [UIView]
@@ -37,10 +36,8 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-
         if let toView = transitionContext.view(forKey: UITransitionContextViewKey.to),
             let toViewController = transitionContext.viewController(forKey: .to) {
-
             toView.frame = transitionContext.finalFrame(for: toViewController)
             transitionContext.containerView.addSubview(toView)
         }

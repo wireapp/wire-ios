@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 extension ZMMessage {
-
     /// This function should be called everytime the
     /// message text of a message changes.
     @objc func updateNormalizedText() {
@@ -29,7 +28,6 @@ extension ZMMessage {
 }
 
 extension ZMClientMessage {
-
     /// Reccomputes the message's `normalizedText` property if the message
     /// has a message text, otherwise sets it to an empty String.
     override func updateNormalizedText() {
@@ -52,7 +50,6 @@ extension ZMClientMessage {
 }
 
 extension ZMClientMessage {
-
     /// Returns a predicate matching the search query components in the given array.
     /// If the input array is empty, this function returns a predicate always evaluating to `false`.
     /// - parameter queryComponents: The array of the search terms to match the normalized text against.
@@ -124,7 +121,6 @@ private let zmLog = ZMSLog(tag: "text search")
 /// This class should be used to perform a text search for messages in a conversation.
 /// Each instance can only be used to perform a search once. A running instance can be cancelled.
 public class TextSearchQuery: NSObject {
-
     private let uiMOC: NSManagedObjectContext
     private let syncMOC: NSManagedObjectContext
 
@@ -163,7 +159,6 @@ public class TextSearchQuery: NSObject {
         delegate: TextSearchQueryDelegate,
         configuration: TextSearchQueryFetchConfiguration = .init(notIndexedBatchSize: 200, indexedBatchSize: 200)
         ) {
-
         guard TextSearchQuery.isValid(query: query) else { return nil }
         guard let uiMOC = (conversation as? ZMConversation)?.managedObjectContext,
               let syncMOC = uiMOC.zm_sync else {

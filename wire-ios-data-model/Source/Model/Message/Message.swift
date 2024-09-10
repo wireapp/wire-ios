@@ -19,7 +19,6 @@
 import Foundation
 
 public extension ZMConversationMessage {
-
     /// Returns YES, if the message has text to display.
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo
     var isText: Bool {
@@ -99,7 +98,6 @@ public extension ConversationCompositeMessage {
 /// The `ZMConversationMessage` protocol can not be extended in Objective-C,
 /// thus this helper class provides access to commonly used properties.
 public class Message: NSObject {
-
     /// Returns YES, if the message has text to display.
     /// This also includes linkPreviews or links to soundcloud, youtube or vimeo
     @objc(isTextMessage:)

@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class ZMConversationTests_Transport: ZMConversationTestsBase {
-
     // MARK: Access Mode
 
     func testThatItUpdateAccessStatus() {
@@ -105,7 +104,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Roles
 
     func testThatItAssignsRoles_WhenNotInTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -135,7 +133,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItAssignsRoles_WhenInTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -171,7 +168,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItUpdatesRoles_WhenInTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
 
@@ -197,7 +193,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItAssignsSelfRole_WhenInTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -218,7 +213,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItAssignsSelfRole_WhenNotInTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -237,7 +231,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItRefetchesRoles_WhenSelfUserIsAssignedARole() {
-
         syncMOC.performGroupedAndWait {
             // given
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
@@ -258,7 +251,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
 }
 
 extension ZMConversation {
-
     fileprivate func participantForUser(_ user: ZMUser) -> ParticipantRole? {
         return self.participantForUser(id: user.remoteIdentifier!)
     }

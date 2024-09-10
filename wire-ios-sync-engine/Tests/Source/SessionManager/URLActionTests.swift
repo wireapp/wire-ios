@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class URLActionTests: ZMTBaseTest {
-
     // MARK: Company Login
 
     func testThatItParsesCompanyLoginLink() throws {

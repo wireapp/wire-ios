@@ -33,7 +33,6 @@ extension NSOrderedSet: Countable {}
 extension NSSet: Countable {}
 
 public class SnapshotCenter {
-
     private unowned var managedObjectContext: NSManagedObjectContext
     internal var snapshots: [NSManagedObjectID: Snapshot] = [:]
 

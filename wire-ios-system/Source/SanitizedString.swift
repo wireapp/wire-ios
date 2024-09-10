@@ -33,7 +33,6 @@ extension SanitizedString: ExpressibleByStringInterpolation {
 }
 
 extension SanitizedString: StringInterpolationProtocol {
-
     public init(literalCapacity: Int, interpolationCount: Int) {
         value = ""
     }
@@ -52,14 +51,12 @@ extension SanitizedString: StringInterpolationProtocol {
 }
 
 extension SanitizedString: CustomStringConvertible {
-
     public var description: String {
         value
     }
 }
 
 extension SanitizedString: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         value
     }

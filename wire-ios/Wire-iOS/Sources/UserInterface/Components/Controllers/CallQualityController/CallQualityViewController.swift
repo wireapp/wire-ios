@@ -30,7 +30,6 @@ protocol CallQualityViewControllerDelegate: AnyObject {
 // MARK: Call Quality View Controller
 
 final class CallQualityViewController: UIViewController, UIGestureRecognizerDelegate {
-
     let questionLabelText: String
     let callDuration: Int
 
@@ -82,7 +81,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     // MARK: Interface
 
     func createViews() {
-
         typealias QualitySurvey = L10n.Localizable.Calling.QualitySurvey
 
         self.scoreSelectorView = QualityScoreSelectorView(onScoreSet: { [weak self] score in
@@ -221,7 +219,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
 // MARK: Call Quality View
 
 final class CallQualityView: UIStackView {
-
     let scoreLabel = DynamicFontLabel(fontSpec: FontSpec.mediumRegularFont,
                                       color: SemanticColors.Label.textDefault)
     let scoreButton = ZMButton()
@@ -313,7 +310,6 @@ final class QualityScoreSelectorView: UIView {
     }
 
     override func layoutSubviews() {
-
         if traitCollection.horizontalSizeClass == .regular {
             scoreStackView.spacing = 24
         } else if let superviewWidth = superview?.frame.size.width {

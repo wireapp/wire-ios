@@ -20,7 +20,6 @@ import UIKit
 import WireSystem
 
 enum SettingsColorScheme: Int, CaseIterable {
-
     case light = 0
     case dark = 1
     case system = 2
@@ -82,7 +81,6 @@ enum SettingsColorScheme: Int, CaseIterable {
 }
 
 extension Settings {
-
     var colorSchemeVariant: ColorSchemeVariant {
         guard let string: String = self[.colorScheme] else {
             return SettingsColorScheme.defaultPreference.colorSchemeVariant

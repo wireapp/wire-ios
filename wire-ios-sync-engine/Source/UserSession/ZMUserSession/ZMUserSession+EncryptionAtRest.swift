@@ -30,12 +30,10 @@ public protocol UserSessionEncryptionAtRestInterface {
 }
 
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
-
     func prepareForMigration(for account: Account, onReady: @escaping (NSManagedObjectContext) throws -> Void)
 }
 
 extension ZMUserSession: UserSessionEncryptionAtRestInterface {
-
     /// Enable or disable encryption at rest.
     ///
     /// When toggling encryption at rest the existing database needs to be migrated. The migration happens
@@ -125,7 +123,6 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
 }
 
 extension ZMUserSession: EARServiceDelegate {
-
     public func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) {
         delegate?.prepareForMigration(
             for: coreDataStack.account,

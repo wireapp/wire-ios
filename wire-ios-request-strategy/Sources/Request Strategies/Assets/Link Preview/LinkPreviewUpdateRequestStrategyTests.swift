@@ -23,7 +23,6 @@ import XCTest
 import WireTransport
 
 class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
-
     private var sut: LinkPreviewUpdateRequestStrategy!
     private var mockMessageSender: MockMessageSenderInterface!
     private var applicationStatus: MockApplicationStatus!

@@ -29,7 +29,6 @@ extension UIApplicationShortcutItem {
 }
 
 final class QuickActionsManager: NSObject {
-
     // MARK: - Public Property
 
     var sessionManager: SessionManager?

@@ -21,7 +21,6 @@ import Foundation
 /// An event where the message timer of a conversation was updated.
 
 public struct ConversationMessageTimerUpdateEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

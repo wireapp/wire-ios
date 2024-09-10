@@ -20,7 +20,6 @@
 import XCTest
 
 final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
-
     var notifications = [ParticipantRoleChangeInfo]()
 
     func clearNotifications() {
@@ -33,7 +32,6 @@ final class TestParticipantRoleObserver: NSObject, ParticipantRoleObserver {
 }
 
 final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
-
     var observer: TestParticipantRoleObserver!
 
     override func setUp() {

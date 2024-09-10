@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
-
     override func tearDown() {
         super.tearDown()
         wipeCaches()
@@ -58,7 +57,6 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     }
 
     func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage() throws {
-
         // given
         let nonce = UUID()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
@@ -174,7 +172,6 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     }
 
     func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkMetadata, line: UInt = #line) {
-
         // given
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)

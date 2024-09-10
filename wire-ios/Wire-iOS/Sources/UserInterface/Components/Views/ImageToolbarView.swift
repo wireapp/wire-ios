@@ -25,7 +25,6 @@ enum ImageToolbarConfiguration {
 }
 
 final class ImageToolbarView: UIView {
-
     let buttonContainer = UIView()
     let sketchButton = IconButton()
     let emojiButton = IconButton()

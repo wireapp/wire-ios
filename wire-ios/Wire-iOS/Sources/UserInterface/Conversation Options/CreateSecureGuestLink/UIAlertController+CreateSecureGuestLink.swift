@@ -20,7 +20,6 @@ import Foundation
 import UIKit
 
 extension UIAlertController {
-
     typealias UIAlertControllerLocale = L10n.Localizable.General
 
     static func presentPasswordCopiedAlert(

@@ -19,7 +19,6 @@
 import Foundation
 
 final class RecentlyUsedEmojiSection: EmojiDataSource.Section {
-
     // MARK: - Properties
 
     private let capacity: Int

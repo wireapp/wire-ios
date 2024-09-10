@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 class GenericMessageTests_Hashing: XCTestCase {
-
     // MARK: - Text
 
     func testCorrectHashValueForText1() {

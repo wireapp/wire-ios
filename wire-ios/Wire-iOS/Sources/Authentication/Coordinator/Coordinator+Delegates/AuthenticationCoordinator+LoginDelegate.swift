@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 extension AuthenticationCoordinator: LoginDelegate {
-
     func loginCodeRequestDidFail(_ error: NSError) {
         eventResponderChain.handleEvent(ofType: .authenticationFailure(error as NSError))
     }

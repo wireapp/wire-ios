@@ -20,7 +20,6 @@ import UIKit
 
 // A custom UITextView with applied styles for the search bar.
 final class SearchTextView: TokenizedTextView {
-
     // MARK: - Properties
 
     private var style: SearchBarStyle?

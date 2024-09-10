@@ -20,7 +20,6 @@ import WireTransport
 
 @objc
 final class ZMMockURLSession: ZMURLSession {
-
     @objc var cancellationHandler: (() -> Void)?
 
     @objc static func createMockSession() -> ZMMockURLSession {
@@ -44,7 +43,6 @@ final class ZMMockURLSession: ZMURLSession {
 
 @objc
 final class ZMMockURLSessionDelegate: NSObject, ZMURLSessionDelegate {
-
     func urlSession(_ URLSession: ZMURLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         // no-op
     }

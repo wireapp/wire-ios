@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 extension UserType where Self: SelfLegalHoldSubject {
-
     /**
      * Creates the password input request to respond to a legal hold activation request from the team admin.
      * - parameter request: The legal hold request that the user received.

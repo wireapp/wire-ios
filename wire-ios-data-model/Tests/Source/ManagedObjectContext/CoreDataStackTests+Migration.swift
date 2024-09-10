@@ -19,7 +19,6 @@
 import XCTest
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
-
     enum TestError: Error {
         case somethingWentWrong
     }

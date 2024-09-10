@@ -19,9 +19,7 @@
 import Foundation
 
 enum CoreDataMigrationActionFactory {
-
     static func createPreMigrationAction<Version: CoreDataMigrationVersion>(for destinationVersion: Version) -> CoreDataMigrationAction? {
-
         if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
             return createPreMigrationAction(for: version)
         }
@@ -34,7 +32,6 @@ enum CoreDataMigrationActionFactory {
     }
 
     static func createPostMigrationAction<Version: CoreDataMigrationVersion>(for destinationVersion: Version) -> CoreDataMigrationAction? {
-
         if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
             return createPostMigrationAction(for: version)
         }

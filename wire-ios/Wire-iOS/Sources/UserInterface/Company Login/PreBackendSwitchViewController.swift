@@ -25,7 +25,6 @@ protocol PreBackendSwitchViewControllerDelegate: AnyObject {
 }
 
 final class PreBackendSwitchViewController: AuthenticationStepViewController {
-
     var authenticationCoordinator: AuthenticationCoordinator?
     var backendURL: URL?
 

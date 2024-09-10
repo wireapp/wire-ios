@@ -80,7 +80,6 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
 // MARK: - ConversationListCellTests
 
 final class ConversationListCellTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

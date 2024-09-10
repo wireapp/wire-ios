@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
-
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
@@ -86,7 +85,6 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var debuggingToolsSection: SettingsSectionDescriptor {
-
         let findUnreadConversationSection = SettingsSectionDescriptor(cellDescriptors: [
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,

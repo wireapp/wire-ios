@@ -21,9 +21,7 @@ import UIKit
 // The structure of this type corresponds to the Wire design system.
 
 public enum ColorTheme {
-
     public enum Base {
-
         public static let primary = UIColor(light: .blue500Light, dark: .blue500Dark)
         public static let onPrimary = UIColor(light: .white, dark: .black)
 
@@ -46,7 +44,6 @@ public enum ColorTheme {
     }
 
     public enum Backgrounds {
-
         public static let background = UIColor(light: .gray20, dark: .gray100)
         public static let onBackground = UIColor(light: .black, dark: .white)
 
@@ -64,9 +61,7 @@ public enum ColorTheme {
     }
 
     public enum Buttons {
-
         public enum Primary {
-
             public static let enabled = UIColor(light: .blue500Light, dark: .blue500Dark)
             public static let onEnabled = UIColor(light: .white, dark: .black)
 
@@ -81,7 +76,6 @@ public enum ColorTheme {
         }
 
         public enum Secondary {
-
             public static let enabled = UIColor(light: .white, dark: .gray90)
             public static let onEnabled = UIColor(light: .black, dark: .white)
             public static let enabledOutline = UIColor(light: .gray40, dark: .gray90)
@@ -100,7 +94,6 @@ public enum ColorTheme {
         }
 
         public enum Tertiary {
-
             public static let enabled = UIColor.clear
             public static let onEnabled = UIColor(light: .black, dark: .white)
 
@@ -118,13 +111,11 @@ public enum ColorTheme {
     }
 
     public enum Strokes {
-
         public static let outline = UIColor(light: .gray40, dark: .gray90)
         public static let dividersOutlineVariant = UIColor(light: .gray20, dark: .gray100)
     }
 
     public enum Classified {
-
         public static let positive = UIColor(light: .green50Light, dark: .green900Dark)
         public static let onPositive = UIColor(light: .green500Light, dark: .green500Dark)
 
@@ -138,7 +129,6 @@ public enum ColorTheme {
 }
 
 private extension UIColor {
-
     convenience init(light: ColorResource, dark: ColorResource) {
         self.init { traits in
             .init(resource: traits.userInterfaceStyle == .dark ? dark : light)

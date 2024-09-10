@@ -19,7 +19,6 @@
 import Foundation
 
 protocol PasscodeSetupViewControllerDelegate: AnyObject {
-
     func passcodeSetupControllerDidFinish()
     func passcodeSetupControllerWasDismissed()
 }

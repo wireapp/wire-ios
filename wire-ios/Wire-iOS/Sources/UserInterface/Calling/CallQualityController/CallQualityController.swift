@@ -25,7 +25,6 @@ import WireSyncEngine
  */
 
 class CallQualityController: NSObject {
-
     weak var router: CallQualityRouterProtocol?
 
     fileprivate var answeredCalls: [UUID: Date] = [:]
@@ -131,7 +130,6 @@ class CallQualityController: NSObject {
 // MARK: - Call State
 
 extension CallQualityController: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         guard canPresentCallQualitySurvey else { return }
         let eventDate = Date()
@@ -153,7 +151,6 @@ extension CallQualityController: WireCallCenterCallStateObserver {
 // MARK: - User Input
 
 extension CallQualityController: CallQualityViewControllerDelegate {
-
     func callQualityController(_ controller: CallQualityViewController, didSelect score: Int) {
         router?.dismissCallQualitySurvey { [weak self] in
             guard

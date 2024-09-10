@@ -20,7 +20,6 @@
 import XCTest
 
 final class GroupDetailsReceiptOptionsCellTests: CoreDataSnapshotTestCase {
-
     var sut: GroupDetailsReceiptOptionsCell!
     var conversation: ZMConversation!
 

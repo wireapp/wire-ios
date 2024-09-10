@@ -22,7 +22,6 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol CommitSending {
-
     /// Sends a commit bundle.
     ///
     /// - Parameters:
@@ -69,7 +68,6 @@ public protocol CommitSending {
 /// In case of failures, it will provide a recovery strategy to handle the failure.
 
 public actor CommitSender: CommitSending {
-
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -112,7 +110,6 @@ public actor CommitSender: CommitSending {
         _ bundle: CommitBundle,
         for groupID: MLSGroupID
     ) async throws -> [ZMUpdateEvent] {
-
         do {
             WireLogger.mls.info("sending commit bundle for group (\(groupID.safeForLoggingDescription))")
             let events = try await sendCommitBundle(bundle)
@@ -139,7 +136,6 @@ public actor CommitSender: CommitSending {
         _ bundle: CommitBundle,
         for groupID: MLSGroupID
     ) async throws -> [ZMUpdateEvent] {
-
         do {
             WireLogger.mls.info("sending external commit bundle for group (\(groupID.safeForLoggingDescription))")
             let events = try await sendCommitBundle(bundle)
@@ -237,7 +233,6 @@ public actor CommitSender: CommitSending {
 }
 
 private extension CommitError.RecoveryStrategy {
-
     init(from error: SendCommitBundleAction.Failure) {
         switch error {
         case .mlsClientMismatch:
@@ -253,7 +248,6 @@ private extension CommitError.RecoveryStrategy {
 }
 
 private extension ExternalCommitError.RecoveryStrategy {
-
     init(from error: SendCommitBundleAction.Failure) {
         switch error {
         case .mlsStaleMessage:
@@ -265,7 +259,6 @@ private extension ExternalCommitError.RecoveryStrategy {
 }
 
 extension CommitBundle {
-
     func transportData() -> Data {
         var data = Data()
         data.append(commit)

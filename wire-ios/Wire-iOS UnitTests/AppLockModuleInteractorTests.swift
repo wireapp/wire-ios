@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class AppLockModuleInteractorTests: XCTestCase {
-
     private var sut: AppLockModule.Interactor!
     private var presenter: AppLockModule.MockPresenter!
     private var session: UserSessionMock!

@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {
-
     /// The options to customize the appearance and behavior of the view.
     private let options: Options
 
@@ -358,7 +357,6 @@ final class ProfileHeaderViewController: UIViewController {
 
     /// The options to customize the appearance and behavior of the view.
     struct Options: OptionSet {
-
         let rawValue: Int
 
         /// Whether to hide the availability status of the user.
@@ -378,7 +376,6 @@ final class ProfileHeaderViewController: UIViewController {
 // MARK: - UserStatusViewControllerDelegate
 
 extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
-
     func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
         guard viewController === userStatusViewController else { return }
 
@@ -391,7 +388,6 @@ extension ProfileHeaderViewController: UserStatusViewControllerDelegate {
 // MARK: - ZMUserObserving
 
 extension ProfileHeaderViewController: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged {
             userStatus.name = changeInfo.user.name ?? ""
@@ -413,7 +409,6 @@ extension ProfileHeaderViewController: UserObserving {
 // MARK: - TeamObserver
 
 extension ProfileHeaderViewController: TeamObserver {
-
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
         if changeInfo.nameChanged {
             updateTeamLabel()

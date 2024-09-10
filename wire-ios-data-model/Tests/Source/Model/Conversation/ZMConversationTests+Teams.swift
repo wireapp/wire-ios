@@ -20,7 +20,6 @@
 import WireTesting
 
 final class ConversationTests_Teams: ZMConversationTestsBase {
-
     var team: Team!
     var user: ZMUser!
     var member: Member!

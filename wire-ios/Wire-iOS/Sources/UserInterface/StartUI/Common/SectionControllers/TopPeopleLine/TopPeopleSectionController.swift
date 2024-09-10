@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 final class TopPeopleSectionController: SearchSectionController {
-
     private var innerCollectionView: UICollectionView!
     private let innerCollectionViewController = TopPeopleLineCollectionViewController()
     private let topConversationsDirectory: TopConversationsDirectory!
@@ -44,7 +43,6 @@ final class TopPeopleSectionController: SearchSectionController {
     }
 
     func createInnerCollectionView() {
-
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 12
@@ -98,7 +96,6 @@ final class TopPeopleSectionController: SearchSectionController {
 }
 
 extension TopPeopleSectionController: TopConversationsDirectoryObserver {
-
     func topConversationsDidChange() {
         innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
         innerCollectionView.reloadData()
@@ -106,7 +103,6 @@ extension TopPeopleSectionController: TopConversationsDirectoryObserver {
 }
 
 extension TopPeopleSectionController: TopPeopleLineCollectionViewControllerDelegate {
-
     func topPeopleLineCollectionViewControllerDidSelect(_ conversation: ZMConversation) {
         delegate?.searchSectionController(self, didSelectConversation: conversation, at: IndexPath(row: 0, section: 0))
     }

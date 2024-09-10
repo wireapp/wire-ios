@@ -28,7 +28,6 @@ extension Message {
 }
 
 extension LocationMessageData {
-
     func openInMaps(with span: MKCoordinateSpan) {
         let launchOptions = [
             MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: coordinate),

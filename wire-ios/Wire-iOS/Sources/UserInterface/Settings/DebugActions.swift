@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 enum DebugActions {
-
     /// Shows an alert with the option to copy text to the clipboard
     static func alert(
         _ message: String,
@@ -47,7 +46,6 @@ enum DebugActions {
         let allConversations = uiMOC.fetchOrAssert(request: fetchRequest)
 
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
-
             let message = ["Found an unread conversation:",
                            "\(String(describing: convo.displayName))",
                         "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"

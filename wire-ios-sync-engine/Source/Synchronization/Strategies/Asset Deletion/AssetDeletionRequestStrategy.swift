@@ -20,7 +20,6 @@ import Foundation
 
 fileprivate extension AssetRequestFactory {
     static func request(for identifier: String, on queue: GroupQueue, apiVersion: APIVersion, block: @escaping ZMCompletionHandlerBlock) -> ZMTransportRequest? {
-
         let path: String
 
         switch apiVersion {
@@ -41,7 +40,6 @@ fileprivate extension AssetRequestFactory {
 }
 
 public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-
     private var requestSync: ZMSingleRequestSync!
     private let identifierProvider: AssetDeletionIdentifierProviderType
 

@@ -23,7 +23,6 @@ import WireDesign
 // MARK: - ReactionToggle
 
 final class ReactionToggle: UIControl {
-
     // MARK: - Properties
 
     typealias ButtonColors = SemanticColors.Button

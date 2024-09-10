@@ -19,7 +19,6 @@
 import Foundation
 
 class UsersAPIV0: UsersAPI, VersionedAPI {
-
     let httpClient: any HTTPClient
 
     init(httpClient: any HTTPClient) {
@@ -63,7 +62,6 @@ class UsersAPIV0: UsersAPI, VersionedAPI {
 }
 
 struct UserResponseV0: Decodable, ToAPIModelConvertible {
-
     let id: UserID
     let name: String
     let handle: String?
@@ -77,7 +75,6 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     let legalholdStatus: LegalholdStatusV0
 
     enum CodingKeys: String, CodingKey {
-
         case id = "qualified_id"
         case name
         case handle
@@ -110,11 +107,9 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
 }
 
 struct ListUsersRequestV0: Encodable {
-
     let qualifiedIDs: [QualifiedID]
 
     enum CodingKeys: String, CodingKey {
-
         case qualifiedIDs = "qualified_ids"
     }
 }
@@ -128,7 +123,6 @@ extension ListUsersResponseV0: ToAPIModelConvertible {
 }
 
 struct ServiceResponseV0: Decodable, ToAPIModelConvertible {
-
     let id: UUID
     let provider: UUID
 

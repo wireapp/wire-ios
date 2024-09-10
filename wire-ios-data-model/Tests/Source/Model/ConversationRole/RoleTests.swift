@@ -20,7 +20,6 @@
 import XCTest
 
 final class RoleTests: ZMBaseManagedObjectTest {
-
     let payload: [String: Any] = [
         "actions": [
             "add_conversation_member",

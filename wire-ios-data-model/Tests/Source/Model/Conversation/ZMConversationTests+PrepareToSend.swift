@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
-
     func testThatMessagesAddedToDegradedConversationAreExpiredAndFlaggedAsCauseDegradation() {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

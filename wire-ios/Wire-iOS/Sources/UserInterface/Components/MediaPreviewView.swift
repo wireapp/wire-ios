@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 
 final class MediaPreviewView: RoundedView {
-
     let playButton = IconButton()
     let titleLabel = UILabel()
     let providerImageView = UIImageView()

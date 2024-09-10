@@ -19,7 +19,6 @@
 import Foundation
 
 public struct E2EIClientID: Equatable, Hashable {
-
     // MARK: - Properties
 
     public let userID: String

@@ -20,7 +20,6 @@ import CallKit
 import Foundation
 
 struct CallHandle: Hashable {
-
     // MARK: - Properties
 
     let accountID: UUID

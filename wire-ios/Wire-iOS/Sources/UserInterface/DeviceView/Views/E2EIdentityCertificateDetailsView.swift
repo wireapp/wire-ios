@@ -153,7 +153,6 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     var body: some View {
-
         titleView
             .background(Color(uiColor: SemanticColors.View.backgroundDefault))
 

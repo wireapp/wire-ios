@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 extension ZClientViewController {
-
     func showAvailabilityBehaviourChangeAlertIfNeeded() {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")

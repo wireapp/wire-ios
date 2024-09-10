@@ -21,7 +21,6 @@ import WireCommonComponents
 import XCTest
 
 final class ConversationMessageSectionControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     var context: ConversationMessageContext!
@@ -57,7 +56,6 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     // MARK: - Tests
 
     func testThatItReturnsCellsInCorrectOrder_Normal() {
-
         // GIVEN
         let section = ConversationMessageSectionController(
             message: MockMessage(),

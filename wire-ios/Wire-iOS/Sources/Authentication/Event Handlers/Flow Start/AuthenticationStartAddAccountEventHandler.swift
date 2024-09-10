@@ -20,7 +20,6 @@ import Foundation
 
 /// Handles requests to add a new user account.
 final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {
-
     let featureProvider: AuthenticationFeatureProvider
     weak var statusProvider: AuthenticationStatusProvider?
 

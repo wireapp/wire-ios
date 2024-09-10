@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
-
     func testThatUnreadCountIsIncreased_ForContentTypes() {
         let contentTypes: [LocalNotificationContentType] = [.image,
                                                             .audio,

@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class MessagePresenterTests: XCTestCase {
-
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!
     var originalRootViewController: UIViewController!

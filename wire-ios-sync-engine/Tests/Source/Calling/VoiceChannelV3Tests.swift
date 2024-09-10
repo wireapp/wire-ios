@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class VoiceChannelV3Tests: MessagingTest {
-
     var wireCallCenterMock: WireCallCenterV3Mock?
     var conversation: ZMConversation?
     var sut: VoiceChannelV3!

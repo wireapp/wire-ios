@@ -19,7 +19,6 @@
 import XCTest
 
 class ZMConversationTests_Deletion: ZMConversationTestsBase {
-
     func testThatCachedAssetsAreDeleted_WhenConversationIsDeleted() {
         // GIVEN
         let sut = createConversation(in: uiMOC)

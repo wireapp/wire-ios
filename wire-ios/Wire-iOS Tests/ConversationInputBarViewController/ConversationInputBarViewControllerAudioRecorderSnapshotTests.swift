@@ -49,7 +49,6 @@ final class MockLongPressGestureRecognizer: UILongPressGestureRecognizer {
 // MARK: - ConversationInputBarViewControllerAudioRecorderSnapshotTests
 
 final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDataSnapshotTestCase {
-
     // MARK: - Properties
 
     var sut: ConversationInputBarViewController!

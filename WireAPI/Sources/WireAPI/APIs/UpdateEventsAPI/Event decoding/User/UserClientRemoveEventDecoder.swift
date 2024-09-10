@@ -19,7 +19,6 @@
 import Foundation
 
 struct UserClientRemoveEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserClientRemoveEvent {
@@ -32,7 +31,6 @@ struct UserClientRemoveEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let id: String
     }
 }

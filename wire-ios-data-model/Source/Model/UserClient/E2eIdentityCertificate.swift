@@ -32,7 +32,6 @@ public enum E2eIdentityCertificateConstants {
 }
 
 @objc public class E2eIdentityCertificate: NSObject {
-
     public var clientId: String
     public var details: String
     public var mlsThumbprint: String
@@ -78,7 +77,6 @@ public enum E2eIdentityCertificateConstants {
 }
 
 public extension E2eIdentityCertificate {
-
     private var isExpired: Bool {
         return expiryDate <= comparedDate.now
     }

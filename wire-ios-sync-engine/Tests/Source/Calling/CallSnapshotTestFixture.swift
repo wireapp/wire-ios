@@ -21,7 +21,6 @@ import Foundation
 
 struct CallSnapshotTestFixture {
     static func degradedCallSnapshot(conversationId: AVSIdentifier, user: ZMUser, callCenter: WireCallCenterV3) -> CallSnapshot {
-
         let callMember = AVSCallMember(client: AVSClient(userId: user.avsIdentifier, clientId: UUID().transportString()))
 
         let callParticipantSnapshot = CallParticipantsSnapshot(
@@ -54,7 +53,6 @@ struct CallSnapshotTestFixture {
         state: CallState = .established,
         activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker] = []
     ) -> CallSnapshot {
-
         let callParticipantsSnapshot = CallParticipantsSnapshot(
             conversationId: conversationId,
             members: clients.map { AVSCallMember(client: $0) },

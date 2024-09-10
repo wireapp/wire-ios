@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationActionController {
-
     func requestDeleteGroupResult(completion: @escaping (Bool) -> Void) {
         let alertController = UIAlertController.confirmController(
             title: L10n.Localizable.Conversation.DeleteRequestDialog.title,

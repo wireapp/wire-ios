@@ -21,7 +21,6 @@ import UIKit
 private let WireLastCachedKeyboardHeightKey = "WireLastCachedKeyboardHeightKey"
 
 extension UIView {
-
     /// Provides correct handling for animating alongside a keyboard animation
     class func animate(withKeyboardNotification notification: Notification?,
                        in view: UIView,
@@ -64,7 +63,6 @@ extension UIView {
     }
 
     class var lastKeyboardSize: CGSize {
-
         if let currentLastValue = UserDefaults.standard.object(forKey: WireLastCachedKeyboardHeightKey) as? String {
             var keyboardSize = NSCoder.cgSize(for: currentLastValue)
 

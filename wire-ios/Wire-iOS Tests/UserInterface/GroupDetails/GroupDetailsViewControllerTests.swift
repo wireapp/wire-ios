@@ -20,7 +20,6 @@
 import XCTest
 
 final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
-
     var sut: GroupDetailsFooterView!
     var coreDataFixture: CoreDataFixture!
 

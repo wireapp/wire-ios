@@ -22,7 +22,6 @@ import UIKit
 // MARK: - ReactionCollectionView
 
 final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
-
     // MARK: - Properties
 
     private var collectionViewHeight: CGFloat = 40
@@ -62,7 +61,6 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     }
 
     func createCollectionView() {
-
         collectionView.register(ReactionCollectionViewCell.self, forCellWithReuseIdentifier: "collectionCell")
         collectionView.delegate = self
         collectionView.dataSource = self

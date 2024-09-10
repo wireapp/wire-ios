@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class EmptySearchResultsViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -129,7 +128,6 @@ final class EmptySearchResultsViewTests: XCTestCase {
         searchingForServices: Bool,
         hasFilter: Bool
     ) -> EmptySearchResultsView {
-
         let sut = EmptySearchResultsView(
             isSelfUserAdmin: isSelfUserAdmin,
             isFederationEnabled: isFederationEnabled

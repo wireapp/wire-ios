@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 extension VideoGridPresentationMode {
-
     var title: String {
         typealias SwitchTo = L10n.Localizable.Call.Overlay.SwitchTo
 

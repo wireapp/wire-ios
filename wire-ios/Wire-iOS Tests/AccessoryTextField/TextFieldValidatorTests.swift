@@ -20,7 +20,6 @@
 import XCTest
 
 final class TextFieldValidatorTests: XCTestCase {
-
     var sut: TextFieldValidator!
 
     override func setUp() {

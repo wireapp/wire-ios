@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, TearDownCapable {
-
     var reachability: ReachabilityProvider & TearDownCapable { get }
 
     var pushChannel: ZMPushChannel { get }
@@ -60,7 +59,6 @@ extension ZMTransportSession: TransportSessionType {}
 
 @objc
 public extension ZMTransportSession {
-
     static func foregroundSessionConfiguration(minTLSVersion: String?) -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.ephemeral
 

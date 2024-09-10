@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIImage {
-
     /// Decode UIImage. This will prevent it from happening later in the rendering path.
 
     var decoded: UIImage? {
@@ -42,7 +41,6 @@ extension UIImage {
 }
 
 private extension CGContext {
-
     static func fromRawImage(_ rawImage: CGImage) -> CGContext? {
         return CGContext(data: nil,
                          width: rawImage.width,

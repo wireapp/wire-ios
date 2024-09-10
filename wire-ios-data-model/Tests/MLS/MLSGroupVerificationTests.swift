@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModel
 
 final class MLSGroupVerificationTests: XCTestCase {
-
     private let coreDataStackHelper = CoreDataStackHelper()
     private let modelHelper = ModelHelper()
 

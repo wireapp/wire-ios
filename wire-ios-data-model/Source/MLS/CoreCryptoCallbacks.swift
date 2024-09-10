@@ -22,7 +22,6 @@ import WireCoreCrypto
 typealias ConversationId = Data
 
 class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
-
     init() {}
 
     func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {

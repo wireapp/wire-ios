@@ -19,7 +19,6 @@
 import Foundation
 
 public extension NotificationDispatcher {
-
     /// Describes how the `NotificationDispatcher` should behave in relation to the
     /// expected work load (the number of database changes it must process).
     ///
@@ -28,7 +27,6 @@ public extension NotificationDispatcher {
     /// changes are made to the database, you may wish to switch to the `econmical` mode.
 
     enum OperationMode {
-
         /// Change detection is highly detailed and observers are notified frequently.
 
         case normal

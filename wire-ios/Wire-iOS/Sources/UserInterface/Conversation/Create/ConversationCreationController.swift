@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 protocol ConversationCreationControllerDelegate: AnyObject {
-
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
@@ -31,7 +30,6 @@ protocol ConversationCreationControllerDelegate: AnyObject {
 }
 
 final class ConversationCreationController: UIViewController {
-
     // MARK: - Properties
 
     typealias CreateGroupName = L10n.Localizable.Conversation.Create.GroupName
@@ -219,7 +217,6 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func setupNavigationBar() {
-
         setupNavigationBarTitle(CreateGroupName.title)
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
@@ -279,7 +276,6 @@ final class ConversationCreationController: UIViewController {
 // MARK: - AddParticipantsConversationCreationDelegate
 
 extension ConversationCreationController: AddParticipantsConversationCreationDelegate {
-
     func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction) {
         switch action {
         case .updatedUsers(let users):
@@ -413,7 +409,6 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 // MARK: - SimpleTextFieldDelegate
 
 extension ConversationCreationController: SimpleTextFieldDelegate {
-
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
         errorSection.clearError()
         switch value {
@@ -436,7 +431,6 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
 // MARK: - Handlers
 
 extension ConversationCreationController {
-
     private func optionsTapped(expanded: Bool) {
         guard let collectionView = collectionViewController.collectionView else {
             return
@@ -471,7 +465,6 @@ extension ConversationCreationController {
 }
 
 extension ConversationCreationController {
-
     func presentEncryptionProtocolPicker(
         sender: UIView,
         _ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void

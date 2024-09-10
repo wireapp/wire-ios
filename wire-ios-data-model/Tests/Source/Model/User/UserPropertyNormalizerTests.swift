@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class UserPropertyNormalizerTests: XCTestCase {
-
     var sut: UserPropertyNormalizer!
 
     override func setUp() {
@@ -33,7 +32,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItValidatesTheUserName() {
-
         // GIVEN
         let validName = "Maria"
         let longName = "Ro" + String(repeating: "x", count: 200) + "y"
@@ -46,7 +44,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItValidatesTheEmail() {
-
         // GIVEN
         let validEmail = "anette@foo.bar"
         let invalidEmail = "kathrine@"
@@ -57,7 +54,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItValidatesThePhoneNumber() {
-
         // GIVEN
         let validPhone = "+4912345678"
         let invalidPhone = "+49" + String(repeating: "0", count: 100)
@@ -68,7 +64,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItDoesNotValidateAPhoneNumberWithLettersWithTheRightError() {
-
         // GIVEN
         let phoneWithLetters = "+49abcdefg"
         let shortPhoneWithLetters = "ab"
@@ -83,7 +78,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItDoesNotValidateAShortPhoneNumberWithTheRightError() {
-
         // GIVEN
         let shortPhone = "+49"
 
@@ -95,7 +89,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItDoesNotValidateALongPhoneNumberWithTheRightError() {
-
         // GIVEN
         let longPhone = "+4900000002132131241241234234"
 
@@ -107,7 +100,6 @@ final class UserPropertyNormalizerTests: XCTestCase {
     }
 
     func testThatItNormalizesThePhoneNumber() {
-
         // GIVEN
         let phoneNumber = "+49(123)45.6-78"
 

@@ -20,9 +20,7 @@ import Foundation
 import WireDataModel
 
 extension ConversationListViewController.ViewModel: ProfileViewControllerDelegate {
-
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-
         controller?.dismiss(animated: true) {
             ZClientViewController.shared?.select(
                 conversation: conversation,

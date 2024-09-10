@@ -162,7 +162,6 @@ final class FileTransferView: UIView, TransferView {
         actionButton.isUserInteractionEnabled = true
 
         switch fileMessageData.transferState {
-
         case .uploading:
             if fileMessageData.size == 0 { fallthrough }
             let statusText = L10n.Localizable.Content.File.uploading.localizedUppercase && labelFont && labelTextBlendedColor

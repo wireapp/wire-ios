@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class NetworkStatusViewSnapshotTests: XCTestCase {
-
     private var sut: NetworkStatusView!
     private var mockContainer: MockNetworkStatusViewDelegate!
 

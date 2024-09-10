@@ -68,7 +68,6 @@ protocol InputBarConversation {
 typealias InputBarConversationType = InputBarConversation & TypingStatusProvider & ConversationLike
 
 extension ZMConversation: InputBarConversation {
-
     var isSelfDeletingMessageSendingDisabled: Bool {
         guard let context = managedObjectContext else { return false }
         let feature = FeatureRepository(context: context).fetchSelfDeletingMesssages()
@@ -122,7 +121,6 @@ extension ZMConversation: VoiceChannelProvider {}
 extension ZMConversation: CanManageAccessProvider {}
 
 extension ZMConversation: GroupDetailsConversation {
-
     var syncedMessageDestructionTimeout: TimeInterval {
         return messageDestructionTimeoutValue(for: .groupConversation).rawValue
     }
@@ -135,7 +133,6 @@ extension ZMConversation: GroupDetailsConversation {
 }
 
 extension GroupDetailsConversation {
-
     var isVerified: Bool {
         switch messageProtocol {
         case .proteus, .mixed:

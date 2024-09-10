@@ -19,7 +19,6 @@
 import Foundation
 
 final class MetaStreamContainer {
-
     var bytes = Data()
 
     var stringContent: String? {

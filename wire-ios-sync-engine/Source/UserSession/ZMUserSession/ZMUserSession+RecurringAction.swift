@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMUserSession {
-
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
         .init(id: #function, interval: .oneDay) { [weak self] in
             guard DeveloperFlag.enableMLSSupport.isOn else { return }
@@ -40,7 +39,6 @@ extension ZMUserSession {
             // TODO: [WPB-6737] check why do we refreshData on main and block main thread here?
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait {
-
                 let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
@@ -57,7 +55,6 @@ extension ZMUserSession {
 
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait {
-
                 let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMConversation.entityName())
                 fetchRequest.predicate = ZMConversation.predicateForConversationsArePendingToRefreshMetadata()
 
@@ -76,7 +73,6 @@ extension ZMUserSession {
 
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait {
-
                 guard let team = ZMUser.selfUser(in: context).team else { return }
                 team.refreshMetadata()
             }

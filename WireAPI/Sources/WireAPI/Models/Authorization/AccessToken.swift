@@ -22,7 +22,6 @@ import Foundation
 /// the backend.
 
 public struct AccessToken {
-
     /// The user id of whom the token belongs.
 
     public let userID: UUID

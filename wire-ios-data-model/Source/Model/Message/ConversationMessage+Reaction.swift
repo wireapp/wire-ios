@@ -19,13 +19,11 @@
 import Foundation
 
 extension ZMMessage {
-
     @discardableResult
     @objc public static func addReaction(
         _ reaction: String,
         to message: ZMConversationMessage
     ) -> ZMClientMessage? {
-
         guard reaction != "" else {
             return nil
         }

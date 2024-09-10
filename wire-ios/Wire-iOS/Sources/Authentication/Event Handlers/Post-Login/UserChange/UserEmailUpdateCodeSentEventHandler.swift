@@ -19,7 +19,6 @@
 import Foundation
 
 final class UserEmailUpdateCodeSentEventHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {

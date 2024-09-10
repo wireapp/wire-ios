@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationMLSWelcomeEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMLSWelcomeEvent {

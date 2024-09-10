@@ -29,7 +29,6 @@ extension ZMConversation {
 }
 
 extension ZMOTRMessage {
-
     @objc(unarchiveIfNeeded:)
     func unarchiveIfNeeded(_ conversation: ZMConversation) {
         if let clearedTimestamp = conversation.clearedTimeStamp,
@@ -44,7 +43,6 @@ extension ZMOTRMessage {
     }
 
     private func unarchiveIfCurrentUserIsMentionedOrQuoted(_ conversation: ZMConversation) {
-
         if conversation.isArchived,
             let sender = self.sender,
             !sender.isSelfUser,

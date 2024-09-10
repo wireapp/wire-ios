@@ -25,7 +25,6 @@ import UserNotifications
  */
 
 public protocol UserNotificationCenter: AnyObject {
-
     /// The object that processes incoming notifications and actions.
     var delegate: UNUserNotificationCenterDelegate? { get set }
 
@@ -49,7 +48,6 @@ public protocol UserNotificationCenter: AnyObject {
 }
 
 extension UNUserNotificationCenter: UserNotificationCenter {
-
     public func removeAllNotifications(withIdentifiers identifiers: [String]) {
         removePendingNotificationRequests(withIdentifiers: identifiers)
         removeDeliveredNotifications(withIdentifiers: identifiers)

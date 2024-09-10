@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockTransportSession {
-
     @objc(processGetFeatureConfigsRequest:)
     public func processGetFeatureConfigsRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         let payload: [String: Any] = [

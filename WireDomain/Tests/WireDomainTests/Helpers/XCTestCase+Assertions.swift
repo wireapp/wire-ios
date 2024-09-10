@@ -19,7 +19,6 @@
 import XCTest
 
 extension XCTestCase {
-
     /// Assert that a collection is of a certain size.
     ///
     /// - Parameters:

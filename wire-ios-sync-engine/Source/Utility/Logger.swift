@@ -20,7 +20,6 @@ import Foundation
 import OSLog
 
 public struct Logger {
-
     private typealias LogHandler = (String) -> Void
 
     private var logger: Any?
@@ -39,7 +38,6 @@ public struct Logger {
         subsystem: String,
         category: String
     ) {
-
         if isDebugLoggingEnabled {
             let logger = os.Logger(
                 subsystem: subsystem,

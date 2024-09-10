@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class PasscodeSetupViewControllerTests: XCTestCase {
-
     // MARK: Properties
 
     var sut: PasscodeSetupViewController!

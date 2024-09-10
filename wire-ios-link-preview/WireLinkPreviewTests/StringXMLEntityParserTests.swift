@@ -20,7 +20,6 @@
 import XCTest
 
 final class StringXMLEntityParserTests: XCTestCase {
-
     func testThatItIgnoresEmptyString() {
         // given 
         let string = ""

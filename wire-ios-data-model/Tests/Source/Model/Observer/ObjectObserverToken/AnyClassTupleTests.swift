@@ -20,9 +20,7 @@ import Foundation
 import XCTest
 
 class AnyClassTupleTests: ZMBaseManagedObjectTest {
-
     func testThatTwoTuplesAreEqual() {
-
         // given
         let classOfObject: AnyClass = AnyClassTupleTests.self
         let tuple1 = AnyClassTuple<String>(classOfObject: classOfObject, secondElement: "Foo")
@@ -33,7 +31,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
     }
 
     func testThatTwoTuplesHaveTheSameHash() {
-
         // given
         let classOfObject: AnyClass = AnyClassTupleTests.self
         let tuple1 = AnyClassTuple<String>(classOfObject: classOfObject, secondElement: "Foo")
@@ -44,7 +41,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
     }
 
     func testThatTwoTuplesAreNotEqualOnString() {
-
         // given
         let classOfObject: AnyClass = AnyClassTupleTests.self
         let tuple1 = AnyClassTuple<String>(classOfObject: classOfObject, secondElement: "Foo")
@@ -55,7 +51,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
     }
 
     func testThatTwoTuplesDoNotHaveTheSameHashOnString() {
-
         // given
         let classOfObject: AnyClass = AnyClassTupleTests.self
         let tuple1 = AnyClassTuple<String>(classOfObject: classOfObject, secondElement: "Foo")
@@ -66,7 +61,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
     }
 
     func testThatTwoTuplesAreNotEqualOnClass() {
-
         // given
         let classOfObject: AnyClass = AnyClassTupleTests.self
         let tuple1 = AnyClassTuple<String>(classOfObject: classOfObject, secondElement: "Foo")
@@ -77,7 +71,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
     }
 
     func testThatTwoTuplesDoNotHaveTheSameHashOnClass() {
-
         // given
         let classOfObject: AnyClass = AnyClassTupleTests.self
         let tuple1 = AnyClassTuple<String>(classOfObject: classOfObject, secondElement: "Foo")

@@ -41,7 +41,6 @@ class RoundedBadge: UIButton {
     }
 
     private func createConstraints() {
-
         containedView.translatesAutoresizingMaskIntoConstraints = false
         translatesAutoresizingMaskIntoConstraints = false
 

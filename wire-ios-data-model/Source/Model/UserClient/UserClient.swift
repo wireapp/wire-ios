@@ -42,7 +42,6 @@ private let zmLog = ZMSLog(tag: "UserClient")
 
 @objcMembers
 public class UserClient: ZMManagedObject, UserClientType {
-
     @NSManaged public var type: DeviceType
     @NSManaged public var label: String?
     @NSManaged public var markedToDelete: Bool
@@ -385,7 +384,6 @@ public class UserClient: ZMManagedObject, UserClientType {
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 
 public extension UserClient {
-
     @objc static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
@@ -461,7 +459,6 @@ public extension UserClient {
 
         if let selfClient = selfUser.selfClient() {
             if client.remoteIdentifier != selfClient.remoteIdentifier, isNewClient {
-
                 if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
                     // swiftlint:disable:next todo_requires_jira_link
                     // TODO: Check this flag
@@ -518,7 +515,6 @@ public extension UserClient {
 // MARK: - Corrupted Session
 
 public extension UserClient {
-
     @objc var failedToEstablishSession: Bool {
         get {
             return managedObjectContext?.zm_failedToEstablishSessionStore?.contains(self) ?? false
@@ -536,7 +532,6 @@ public extension UserClient {
 // MARK: - SelfClient methods
 
 public extension UserClient {
-
     @objc func isSelfClient() -> Bool {
         guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
@@ -549,7 +544,6 @@ public extension UserClient {
     }
 
     @objc func missesClients(_ clients: Set<UserClient>) {
-
         zmLog.debug("Adding clients(\( clients.count)) to list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
@@ -651,7 +645,6 @@ public extension UserClient {
     ) -> Bool {
         var didEstablishSession = false
         managedObjectContext?.performAndWait {
-
             keystore.encryptionContext.perform { sessionsDirectory in
 
                 // Session is already established?
@@ -719,7 +712,6 @@ enum SecurityChangeType {
 // MARK: - Trusting
 
 extension UserClient {
-
     @objc public func trustClient(_ client: UserClient) {
         trustClients([client])
     }
@@ -812,7 +804,6 @@ extension UserClient {
 // MARK: - APSSignaling
 
 extension UserClient {
-
     public static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient()
         else { return }
@@ -829,7 +820,6 @@ extension UserClient {
 // MARK: - Update SelfClient Capability
 
 extension UserClient {
-
     public static func triggerSelfClientCapabilityUpdate(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return }
 
@@ -843,7 +833,6 @@ extension UserClient {
 // MARK: - Session identifier
 
 extension UserClient {
-
     /// Session identifier of the local cryptobox session with this client.
 
     public var sessionIdentifier: EncryptionSessionIdentifier? {
@@ -917,7 +906,6 @@ extension UserClient {
 // MARK: - Proteus Session ID
 
 extension UserClient {
-
     public var proteusSessionID: ProteusSessionID? {
         if needsSessionMigration {
             return proteusSessionID_V2

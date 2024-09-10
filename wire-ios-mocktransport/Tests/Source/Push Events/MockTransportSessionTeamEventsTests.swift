@@ -21,7 +21,6 @@ import XCTest
 @testable import WireMockTransport
 
 final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
-
     func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, team: MockTeam, data: [String: String] = [:], file: StaticString = #file, line: UInt = #line) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
     }

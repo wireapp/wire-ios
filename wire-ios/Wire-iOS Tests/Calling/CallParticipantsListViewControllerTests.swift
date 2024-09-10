@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class CallParticipantsListHelper {
-
     static func participants(count participantCount: Int,
                              videoState: VideoState? = nil,
                              microphoneState: MicrophoneState? = nil,
@@ -45,7 +44,6 @@ final class CallParticipantsListHelper {
 }
 
 final class CallParticipantsListViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

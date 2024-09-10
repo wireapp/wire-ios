@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 final class CallParticipantsSnapshot {
-
     // MARK: - Properties
 
     private unowned var callCenter: WireCallCenterV3
@@ -100,7 +99,6 @@ final class CallParticipantsSnapshot {
 }
 
 extension CallParticipantsSnapshot {
-
     // Remove duplicates see: https://wearezeta.atlassian.net/browse/ZIOS-8610
     private static func removeDuplicateMembers(_ members: [AVSCallMember]) -> OrderedSetState<AVSCallMember> {
         members

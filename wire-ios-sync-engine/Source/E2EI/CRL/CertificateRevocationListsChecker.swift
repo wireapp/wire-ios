@@ -25,7 +25,6 @@ public protocol CertificateRevocationListsChecking {
 }
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
-
     // MARK: - Properties
 
     private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
@@ -86,7 +85,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Public interface
 
     public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
-
         let newDistributionPoints = distributionPoints.urls.filter {
             !crlExpirationDatesRepository.crlExpirationDateExists(for: $0)
         }
@@ -95,7 +93,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     }
 
     public func checkExpiredCRLs() async {
-
         WireLogger.e2ei.info("checking expired CRLs")
 
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository

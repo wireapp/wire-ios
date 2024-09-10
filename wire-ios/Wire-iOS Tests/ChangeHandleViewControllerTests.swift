@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ChangeHandleViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -90,7 +89,6 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 }
 
 fileprivate extension UIViewController {
-
     func prepareForSettingsSnapshots() -> UIView {
         let navigationController = wrapInNavigationController(navigationControllerClass: NavigationController.self)
 

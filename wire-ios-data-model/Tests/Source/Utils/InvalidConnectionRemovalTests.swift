@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class InvalidConnectionRemovalTests: DiskDatabaseTest {
-
     func testThatItOnlyRemovesConnectionsToTheSelfUser() throws {
         // Given
         let selfUser = ZMUser.selfUser(in: moc)

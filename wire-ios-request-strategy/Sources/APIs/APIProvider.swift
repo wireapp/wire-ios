@@ -27,7 +27,6 @@ public protocol APIProviderInterface {
 }
 
 public struct APIProvider: APIProviderInterface {
-
     let httpClient: HttpClient
 
     public init(httpClient: HttpClient) {

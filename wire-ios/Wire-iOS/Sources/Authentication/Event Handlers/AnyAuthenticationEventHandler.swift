@@ -24,7 +24,6 @@ import WireUtilities
  */
 
 final class AnyAuthenticationEventHandler<Context> {
-
     /// The name of the handler.
     private(set) var name: String
 

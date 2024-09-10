@@ -19,7 +19,6 @@
 import Wire
 
 final class MockReadReceipt: ReadReceipt {
-
 	var user: ZMUser
 	var userType: UserType
     var serverTimestamp: Date?

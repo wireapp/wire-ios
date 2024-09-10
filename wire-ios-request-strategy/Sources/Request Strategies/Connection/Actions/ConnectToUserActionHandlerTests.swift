@@ -20,7 +20,6 @@
 import XCTest
 
 class ConnectToUserActionHandlerTests: MessagingTestBase {
-
     var sut: ConnectToUserActionHandler!
 
     override func setUp() {
@@ -74,7 +73,6 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     // MARK: - Request Processing
 
     func testThatItParsesAllKnownConnectionToUserErrorResponses() {
-
         let errorResponses: [(ConnectToUserError, ZMTransportResponse)] = [
             (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit, apiVersion: .v0)),
             (.noIdentity, responseFailure(code: 403, label: .noIdentity, apiVersion: .v0)),

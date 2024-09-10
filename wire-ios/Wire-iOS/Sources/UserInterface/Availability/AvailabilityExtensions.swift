@@ -26,7 +26,6 @@ enum AvailabilityLabelStyle: Int {
 }
 
 extension Availability {
-
     var localizedName: String {
         switch self {
         case .none:

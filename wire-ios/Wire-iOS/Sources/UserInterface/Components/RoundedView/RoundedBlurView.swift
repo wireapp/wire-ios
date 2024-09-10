@@ -19,7 +19,6 @@
 import UIKit
 
 class RoundedBlurView: RoundedView {
-
     let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
 
     init() {

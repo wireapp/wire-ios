@@ -24,7 +24,6 @@ import WireDataModel
 
 extension ZMConversation {
     static func createOtherUserConversation(moc: NSManagedObjectContext, otherUser: ZMUser) -> ZMConversation {
-
         let otherUserConversation = ZMConversation.insertNewObject(in: moc)
         otherUserConversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: moc), otherUser])
 

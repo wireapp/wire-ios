@@ -20,7 +20,6 @@ import Foundation
 @testable import Wire
 
 final class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
-
     var requestedClients: [AVSClient]?
 
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {

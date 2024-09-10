@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 enum AvailabilityStringBuilder {
-
     static func titleForUser(
         name: String,
         availability: Availability,
@@ -32,7 +31,6 @@ enum AvailabilityStringBuilder {
         style: AvailabilityLabelStyle,
         color: UIColor? = nil
     ) -> NSAttributedString? {
-
         let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
         var title: String
         var color = color

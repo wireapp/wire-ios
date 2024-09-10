@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol ConversationParticipantsServiceInterface {
-
     func addParticipants(
         _ users: [ZMUser],
         to conversation: ZMConversation
@@ -57,7 +56,6 @@ extension Error {
 }
 
 public class ConversationParticipantsService: ConversationParticipantsServiceInterface {
-
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
@@ -117,7 +115,6 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         _ users: [ZMUser],
         to conversation: ZMConversation
     ) async throws {
-
         let messageProtocol = await context.perform { conversation.messageProtocol }
 
         switch messageProtocol {
@@ -146,7 +143,6 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         _ users: [ZMUser],
         to conversation: ZMConversation
     ) async throws {
-
         guard let mlsParticipantsService else {
             throw ConversationParticipantsError.missingMLSParticipantsService
         }
@@ -154,14 +150,12 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         do {
             try await mlsParticipantsService.addParticipants(users, to: conversation)
         } catch MLSConversationParticipantsError.failedToClaimKeyPackages(users: let failedUsers) {
-
             guard !failedUsers.isEmpty else {
                 return Flow.addParticipants.checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
             }
 
             let users = Set(users)
             if failedUsers != users {
-
                 // Operation was aborted because some users didn't have key packages
                 // We filter them out and retry once
                 Flow.addParticipants.checkpoint(description: "retrying failedUsers begin")
@@ -200,7 +194,6 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             let unreachableUsers = await context.perform { users.belongingTo(domains: domains) }
 
             if unreachableUsers.isEmpty {
-
                 /// Backend is not able to determine which users are unreachable.
                 /// We just insert a message and do not attempt to retry
 

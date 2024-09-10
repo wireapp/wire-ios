@@ -21,7 +21,6 @@ import WireDataModelSupport
 import XCTest
 
 final class TransferAppLockKeychainTests: DiskDatabaseTest {
-
     var appLock: AppLockController!
 
     override func setUp() {

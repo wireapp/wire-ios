@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SessionManagerAccountDeletionTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()
@@ -133,7 +132,6 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
 }
 
 class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictionFailure: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

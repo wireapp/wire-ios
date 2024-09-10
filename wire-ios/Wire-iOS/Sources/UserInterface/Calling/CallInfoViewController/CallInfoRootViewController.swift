@@ -27,7 +27,6 @@ protocol CallInfoRootViewControllerDelegate: CallingActionsViewDelegate {
 }
 
 final class CallInfoRootViewController: UIViewController, UINavigationControllerDelegate, CallInfoViewControllerDelegate, CallDegradationControllerDelegate {
-
     enum Context {
         case overview, participants
     }

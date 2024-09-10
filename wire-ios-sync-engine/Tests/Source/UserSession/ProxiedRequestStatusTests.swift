@@ -19,7 +19,6 @@
 import XCTest
 
 class MockRequestCancellation: NSObject, ZMRequestCancellation {
-
     var canceledTasks: [ZMTaskIdentifier] = []
 
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) {
@@ -28,7 +27,6 @@ class MockRequestCancellation: NSObject, ZMRequestCancellation {
 }
 
 class ProxiedRequestsStatusTests: MessagingTest {
-
     fileprivate var sut: ProxiedRequestsStatus!
     fileprivate var mockRequestCancellation: MockRequestCancellation!
 

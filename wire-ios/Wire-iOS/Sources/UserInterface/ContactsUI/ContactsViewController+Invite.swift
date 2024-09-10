@@ -23,7 +23,6 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 extension ContactsViewController {
-
     private var canInviteByEmail: Bool {
         return ZMAddressBookContact.canInviteLocallyWithEmail()
     }
@@ -148,12 +147,10 @@ extension ContactsViewController {
     }
 
     private enum InvitationError: Error {
-
         case canNotSend(MessageType)
         case noContactInformation
 
         enum MessageType {
-
             case email, sms, any
 
             var messageKey: String {

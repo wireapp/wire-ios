@@ -23,12 +23,10 @@ import WireSystem
 import WireUtilities
 
 protocol OAuthUseCaseInterface {
-
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
 }
 
 class OAuthUseCase: OAuthUseCaseInterface {
-
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
     private var targetViewController: () -> UIViewController
@@ -139,7 +137,6 @@ class OAuthUseCase: OAuthUseCaseInterface {
 }
 
 enum OAuthError: Error {
-
     case failedToSendAuthorizationRequest(_ underlyingError: Error)
     case failedToRetrieveConfiguration(_ underlyingError: Error)
     case missingRequestParameters

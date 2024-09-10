@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
-
     // MARK: - Properties
 
     private let coreDataStackHelper = CoreDataStackHelper()
@@ -74,7 +73,6 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     // MARK: Unit Tests
 
     func testGuestEnablementSucceeds() async {
-
         await syncContext.perform { [self] in
             // GIVEN
             setUpRoleAndAction()
@@ -123,7 +121,6 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     }
 
     func testServicesEnablementSucceeds() async {
-
         await syncContext.perform { [self] in
             // GIVEN
             setUpRoleAndAction()
@@ -150,7 +147,6 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     }
 
     func testServicesEnablementFails_WithInsufficientPermissions() async {
-
         await syncContext.perform { [self] in
             // GIVEN
             let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)

@@ -20,7 +20,6 @@
 import XCTest
 
 class WirelessExpirationTimeFormatterTests: XCTestCase {
-
     func testExpirationTimeFormatting_LargerThan2Hours() {
         assert(remainingTime: 12_000, expected: "4h left")
     }

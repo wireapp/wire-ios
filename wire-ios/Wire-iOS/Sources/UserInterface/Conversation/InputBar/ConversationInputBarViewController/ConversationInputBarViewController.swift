@@ -34,7 +34,6 @@ enum ConversationInputBarViewControllerMode {
 
 final class ConversationInputBarViewController: UIViewController,
                                                 UIPopoverPresentationControllerDelegate {
-
     let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     let conversation: InputBarConversationType
@@ -281,7 +280,6 @@ final class ConversationInputBarViewController: UIViewController,
                         setupClosure: () -> UIViewController) {
                 if inputController == nil ||
                     inputController != viewController {
-
                     let newViewController: UIViewController
 
                     if let viewController {
@@ -457,7 +455,6 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
-
         guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
@@ -769,7 +766,6 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - notification center
 
     private func setupNotificationCenter() {
-
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidHideNotification,
                                                object: nil,
                                                queue: .main) { [weak self] _ in
@@ -809,7 +805,6 @@ final class ConversationInputBarViewController: UIViewController,
 // MARK: - GiphySearchViewControllerDelegate
 
 extension ConversationInputBarViewController: GiphySearchViewControllerDelegate {
-
     func giphySearchViewController(
         _ giphySearchViewController: GiphySearchViewController,
         didSelectImageData imageData: Data,
@@ -838,7 +833,6 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
 // MARK: - UIImagePickerControllerDelegate
 
 extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
-
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: check this is still necessary on iOS 13?
     private func statusBarBlinksRedFix() {
@@ -851,7 +845,6 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-
         let checker = PrivacyWarningChecker(conversation: conversation) {
             self.process(picker: picker, info: info)
         }
@@ -894,7 +887,6 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         statusBarBlinksRedFix()
 
         parent?.dismiss(animated: true) {
-
             if self.shouldRefocusKeyboardAfterImagePickerDismiss {
                 self.shouldRefocusKeyboardAfterImagePickerDismiss = false
                 self.mode = .camera
@@ -928,7 +920,6 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
 extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
-
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
                                                          onConfirm: {[weak self] editedImage in
                                                             self?.dismiss(animated: false)

@@ -29,7 +29,6 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 
 @objcMembers
 public final class ZMUserSession: NSObject {
-
     // MARK: Properties
 
     private let appVersion: String
@@ -725,7 +724,6 @@ public final class ZMUserSession: NSObject {
 // MARK: - ZMNetworkStateDelegate
 
 extension ZMUserSession: ZMNetworkStateDelegate {
-
     public func didReceiveData() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isNetworkOnline = true
@@ -779,7 +777,6 @@ extension ZMUserSession: UpdateEventProcessor {
 // MARK: - ZMSyncStateDelegate
 
 extension ZMUserSession: ZMSyncStateDelegate {
-
     public func didStartSlowSync() {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.isPerformingSync = true
@@ -834,7 +831,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         let selfClient = ZMUser.selfUser(in: syncContext).selfClient()
         if selfClient?.hasRegisteredMLSClient == true {
-
             WaitingGroupTask(context: syncContext) { [self] in
                 // these operations are not dependent and should not be executed in same do/catch
                 do {
@@ -1031,7 +1027,6 @@ extension ZMUserSession: URLActionProcessor {
 // MARK: - ContextProvider
 
 extension ZMUserSession: ContextProvider {
-
     public var account: Account {
         return coreDataStack.account
     }

@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation rename events.
 
 protocol ConversationRenameEventProcessorProtocol {
-
     /// Process a conversation rename event.
     ///
     /// - Parameter event: A conversation rename event.
@@ -30,7 +29,6 @@ protocol ConversationRenameEventProcessorProtocol {
 }
 
 struct ConversationRenameEventProcessor: ConversationRenameEventProcessorProtocol {
-
     func processEvent(_: ConversationRenameEvent) async throws {
         // TODO: [WPB-10177]
         assertionFailure("not implemented yet")

@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class LegalHoldDetailsViewController: UIViewController {
-
     private let collectionView = UICollectionView(forGroupedSections: ())
     private let collectionViewController: SectionCollectionViewController
     private let conversation: LegalHoldDetailsConversation
@@ -110,7 +109,6 @@ final class LegalHoldDetailsViewController: UIViewController {
     }
 
     private func setupViews() {
-
         view.addSubview(collectionView)
 
         collectionView.contentInsetAdjustmentBehavior = .never
@@ -137,7 +135,6 @@ final class LegalHoldDetailsViewController: UIViewController {
 }
 
 extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionControllerDelegate {
-
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType) {
         guard let viewer = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")

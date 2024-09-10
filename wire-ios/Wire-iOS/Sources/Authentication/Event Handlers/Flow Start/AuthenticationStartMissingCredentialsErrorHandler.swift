@@ -19,7 +19,6 @@
 import Foundation
 
 final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {

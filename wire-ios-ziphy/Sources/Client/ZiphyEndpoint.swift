@@ -23,7 +23,6 @@ import Foundation
  */
 
 enum ZiphyEndpoint: String {
-
     case search
     case random
     case trending

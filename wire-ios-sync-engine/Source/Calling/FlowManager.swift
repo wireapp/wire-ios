@@ -20,7 +20,6 @@ import avs
 import Foundation
 
 public protocol FlowManagerType {
-
     func setVideoCaptureDevice(_ device: CaptureDevice, for conversationId: AVSIdentifier)
 }
 
@@ -46,7 +45,6 @@ public class FlowManager: NSObject, FlowManagerType {
 // MARK: - AVSFlowManagerDelegate
 
 extension FlowManager: AVSFlowManagerDelegate {
-
     public static func logMessage(_ msg: String!) {
         // no-op
     }

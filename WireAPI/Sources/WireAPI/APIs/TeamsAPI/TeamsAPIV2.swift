@@ -19,7 +19,6 @@
 import Foundation
 
 class TeamsAPIV2: TeamsAPIV1 {
-
     override var apiVersion: APIVersion {
         .v2
     }
@@ -44,7 +43,6 @@ class TeamsAPIV2: TeamsAPIV1 {
 }
 
 struct TeamResponseV2: Decodable, ToAPIModelConvertible {
-
     let id: UUID
     let name: String
     let creator: UUID
@@ -56,7 +54,6 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
     let splashScreen: String?
 
     enum CodingKeys: String, CodingKey {
-
         case id
         case name
         case creator

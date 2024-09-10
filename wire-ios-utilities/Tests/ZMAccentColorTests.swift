@@ -22,7 +22,6 @@ import XCTest
 @testable import WireUtilities
 
 final class ZMAccentColorTests: XCTestCase {
-
     func testTwoInstancesAreEqual() {
         let amber0: ZMAccentColor = .amber
         let amber1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)

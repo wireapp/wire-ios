@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 class BaseCallParticipantView: OrientableView {
-
     // MARK: - Public Properties
 
     var stream: Stream {

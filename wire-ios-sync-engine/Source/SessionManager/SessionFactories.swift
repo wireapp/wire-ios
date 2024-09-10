@@ -20,7 +20,6 @@ import avs
 import WireDataModel
 
 open class AuthenticatedSessionFactory {
-
     let appVersion: String
     let mediaManager: MediaManagerType
     let flowManager: FlowManagerType
@@ -123,7 +122,6 @@ open class AuthenticatedSessionFactory {
 // MARK: -
 
 open class UnauthenticatedSessionFactory {
-
     var environment: BackendEnvironmentProvider
     var reachability: Reachability
 

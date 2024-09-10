@@ -21,7 +21,6 @@ import WireMockTransport
 @testable import WireSyncEngine
 
 class UserProfileImageV3Tests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

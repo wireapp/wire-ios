@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
-
     func testThatItInsertsANewConversation() {
         // given
         let user1 = createUser()

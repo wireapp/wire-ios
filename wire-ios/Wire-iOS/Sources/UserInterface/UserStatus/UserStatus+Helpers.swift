@@ -20,14 +20,12 @@ import UIKit
 import WireDesign
 
 extension UserStatus {
-
     func title(
         color: UIColor,
         includeAvailability: Bool,
         includeVerificationStatus: Bool,
         appendYouSuffix: Bool
     ) -> NSAttributedString? {
-
         if includeAvailability || includeVerificationStatus {
             return AvailabilityStringBuilder.titleForUser(
                 name: name,

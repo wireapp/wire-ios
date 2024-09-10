@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class UserClientCell: SeparatorCollectionViewCell {
-
     enum EdgeInsetConstants {
         static let small: CGFloat = 2.0
         static let medium: CGFloat = 4.0

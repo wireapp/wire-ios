@@ -24,7 +24,6 @@ import XCTest
 // MARK: - MessageActionsViewControllerTests
 
 final class MessageActionsViewControllerTests: XCTestCase {
-
     // MARK: - setUp
 
     override func setUp() {
@@ -140,7 +139,6 @@ final class MessageActionsViewControllerTests: XCTestCase {
 // MARK: - UIView extension
 
 fileprivate extension UIView {
-
     func containsBasicReactionPicker() -> Bool {
         if self.subviews.contains(
             where: { $0.isKind(of: BasicReactionPicker.self) }

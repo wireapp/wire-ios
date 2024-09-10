@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SessionManagerBackupTests: IntegrationTest {
-
     override var useInMemoryStore: Bool {
         return false
     }
@@ -270,7 +269,6 @@ final class SessionManagerBackupTests: IntegrationTest {
         file: StaticString = #file,
         line: UInt = #line
     ) -> Result<URL, Error> {
-
         var result: Result<URL, Error> = .failure(TestError.uninitialized)
         sessionManager?.backupActiveAccount(password: password) { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
@@ -283,7 +281,6 @@ final class SessionManagerBackupTests: IntegrationTest {
         file: StaticString = #file,
         line: UInt = #line
         ) -> Result<Void, Error> {
-
         var result: Result<Void, Error> = .failure(TestError.uninitialized)
         sessionManager?.restoreFromBackup(at: url, password: password) { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

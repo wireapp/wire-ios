@@ -21,7 +21,6 @@ import SnapshotTesting
 import XCTest
 
 final class SearchGroupSelectorSnapshotTests: XCTestCase {
-
     var sut: SearchGroupSelector!
 
     override func tearDown() {

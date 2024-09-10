@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `PushChannelAPI`.
 
 public enum PushChannelAPIError: Error {
-
     /// A submitted request is invalid.
 
     case invalidRequest

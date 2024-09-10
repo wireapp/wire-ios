@@ -31,7 +31,6 @@ public protocol IdentifierObjectSyncTranscoder: AnyObject {
 }
 
 public protocol IdentifierObjectSyncDelegate: AnyObject {
-
     func didFinishSyncingAllObjects()
     func didFailToSyncAllObjects()
 }
@@ -39,7 +38,6 @@ public protocol IdentifierObjectSyncDelegate: AnyObject {
 /// Class for syncing objects based on an identifier.
 
 public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: NSObject, ZMRequestGenerator {
-
     fileprivate let managedObjectContext: NSManagedObjectContext
     fileprivate var pending: Set<Transcoder.T> = Set()
     fileprivate var downloading: Set<Transcoder.T> = Set()

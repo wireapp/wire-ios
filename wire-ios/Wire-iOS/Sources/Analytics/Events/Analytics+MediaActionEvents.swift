@@ -21,7 +21,6 @@ import WireSyncEngine
 let conversationMediaCompleteActionEventName = "contributed"
 
 extension Analytics {
-
     func tagReacted(in conversation: ZMConversation) {
         var attributes = conversation.ephemeralTrackingAttributes
         attributes["message_action"] = "reaction"

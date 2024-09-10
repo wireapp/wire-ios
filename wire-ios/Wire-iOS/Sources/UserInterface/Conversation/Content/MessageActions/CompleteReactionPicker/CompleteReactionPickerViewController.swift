@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class CompleteReactionPickerViewController: UIViewController {
-
     // MARK: - Properties
 
     weak var delegate: EmojiPickerViewControllerDelegate?
@@ -170,7 +169,6 @@ final class CompleteReactionPickerViewController: UIViewController {
 // MARK: - EmojiSectionViewControllerDelegate
 
 extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelegate {
-
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
@@ -187,7 +185,6 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]

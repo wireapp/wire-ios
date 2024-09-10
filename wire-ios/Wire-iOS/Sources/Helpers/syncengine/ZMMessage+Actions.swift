@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension ZMConversationMessage {
-
     var mediaShareRestrictionManager: MediaShareRestrictionManager {
         return MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
     }

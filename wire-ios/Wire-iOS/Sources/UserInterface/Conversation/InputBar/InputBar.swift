@@ -104,7 +104,6 @@ private struct InputBarConstants {
 }
 
 final class InputBar: UIView {
-
     typealias ConversationInputBar = L10n.Localizable.Conversation.InputBar
 
     private let inputBarVerticalInset: CGFloat = 34
@@ -360,7 +359,6 @@ final class InputBar: UIView {
     }
 
     func placeholderText(for state: InputBarState) -> NSAttributedString? {
-
         var placeholder = NSAttributedString(string: ConversationInputBar.placeholder)
 
         if inputBarState.isEphemeral {
@@ -459,7 +457,6 @@ final class InputBar: UIView {
     }
 
      func updateColors() {
-
         backgroundColor = backgroundColor(forInputBarState: inputBarState)
         buttonRowSeparator.backgroundColor = isEditing ? editingSeparatorColor : writingSeparatorColor
 
@@ -522,7 +519,6 @@ final class InputBar: UIView {
 }
 
 extension InputBar {
-
     @objc func textViewTextDidChange(_ notification: Notification) {
         updateEditViewState()
     }

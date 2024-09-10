@@ -24,7 +24,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class MockLinkDetector: LinkPreviewDetectorType {
-
     var nextResult = [LinkMetadata]()
     var downloadLinkPreviewsCallCount: Int = 0
     var excludedRanges: [NSRange] = []
@@ -37,7 +36,6 @@ final class MockLinkDetector: LinkPreviewDetectorType {
 }
 
 class LinkPreviewPreprocessorTests: MessagingTestBase {
-
     var sut: LinkPreviewPreprocessor!
     var mockDetector: MockLinkDetector!
 
@@ -84,7 +82,6 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
 }
 
 extension LinkPreviewPreprocessorTests {
-
     func testThatItOnlyProcessesMessagesWithLinkPreviewState_WaitingToBeProcessed() {
         [ZMLinkPreviewState.done, .downloaded, .processed, .uploaded, .waitingToBeProcessed].forEach {
             assertThatItProcessesMessageWithLinkPreviewState($0, shouldProcess: $0 == .waitingToBeProcessed)
@@ -122,7 +119,6 @@ extension LinkPreviewPreprocessorTests {
         var message: ZMClientMessage!
 
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let URL = "http://www.example.com"
             self.mockDetector.nextResult = [LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)]
@@ -146,7 +142,6 @@ extension LinkPreviewPreprocessorTests {
     func testThatItSetsTheStateToDoneIfNoPreviewsAreReturned() {
         var message: ZMClientMessage!
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             message = self.createMessage()
 
@@ -165,7 +160,6 @@ extension LinkPreviewPreprocessorTests {
         var message: ZMClientMessage!
 
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
@@ -232,12 +226,10 @@ extension LinkPreviewPreprocessorTests {
 // MARK: - Ephemeral
 
 extension LinkPreviewPreprocessorTests {
-
     func testThatItReturnsAnEphemeralMessageAfterPreProcessingAnEphemeral() {
         var message: ZMClientMessage!
         var preview: LinkMetadata!
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let URL = "http://www.example.com"
             preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
@@ -268,7 +260,6 @@ extension LinkPreviewPreprocessorTests {
     func testThatItDoesNotUpdateMessageWhenMessageHasBeenObfuscatedAndSetsPreviewStateToDone() {
         var message: ZMClientMessage!
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let URL = "http://www.example.com"
             let preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)

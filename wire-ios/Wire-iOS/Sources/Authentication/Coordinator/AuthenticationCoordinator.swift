@@ -25,7 +25,6 @@ import WireSyncEngine
  */
 
 protocol AuthenticationCoordinatorDelegate: AnyObject {
-
     /**
      * The coordinator finished authenticating the user.
      */
@@ -44,7 +43,6 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
  */
 
 final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
-
     /// The handle to the OS log for authentication events.
     let log = ZMSLog(tag: "Authentication")
 
@@ -176,7 +174,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 // MARK: - State Management
 
 extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
-
     func stateDidChange(
         _ newState: AuthenticationFlowStep,
         mode: AuthenticationStateController.StateChangeMode
@@ -219,7 +216,6 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
 // MARK: - Event Handling
 
 extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreatedSessionObserver {
-
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
         currentPostRegistrationFields().map(sendPostRegistrationFields)
@@ -411,7 +407,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 // MARK: - External Input
 
 extension AuthenticationCoordinator {
-
     /**
      * Call this method when the application becomes unauthenticated and that the user
      * needs to authenticate.
@@ -451,7 +446,6 @@ extension AuthenticationCoordinator {
 // MARK: - Actions
 
 extension AuthenticationCoordinator {
-
     // MARK: - State
 
     /// Unwinds the state.

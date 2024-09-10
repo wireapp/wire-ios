@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireUtilities
 
 final class NotificationService: UNNotificationServiceExtension {
-
     // MARK: - Properties
 
     let simpleService = SimpleNotificationService()

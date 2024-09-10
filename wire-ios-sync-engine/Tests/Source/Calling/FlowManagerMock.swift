@@ -22,7 +22,6 @@ import Foundation
 
 @objcMembers
 public class FlowManagerMock: NSObject, FlowManagerType {
-
     public var callConfigContext: UnsafeRawPointer?
     public var callConfigHttpStatus: Int = 0
     public var callConfig: Data?

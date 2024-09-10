@@ -23,7 +23,6 @@ import Foundation
 /// the client.
 
 public enum UpdateEvent: Equatable, Codable {
-
     /// A conversation event.
 
     case conversation(ConversationEvent)

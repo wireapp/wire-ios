@@ -27,7 +27,6 @@ import Foundation
  */
 
 public protocol LinkAttachmentDetectorType {
-
     /**
      * Downloads the link attachment, including their images, for links contained in the text.
      * The preview data is generated from the [Open Graph](http://ogp.me) information contained in the head of the html of the link.
@@ -52,7 +51,6 @@ public protocol LinkAttachmentDetectorType {
  */
 
 public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType {
-
     private let linkDetector: NSDataDetector? = NSDataDetector.linkDetector
     private let previewDownloader: PreviewDownloaderType
     private let workerQueue: OperationQueue

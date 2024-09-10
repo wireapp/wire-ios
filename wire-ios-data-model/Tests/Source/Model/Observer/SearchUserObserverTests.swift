@@ -21,9 +21,7 @@ import Foundation
 import WireDataModelSupport
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
-
     private final class TestSearchUserObserver: UserObserving {
-
         var receivedChangeInfo: [UserChangeInfo] = []
 
         func userDidChange(_ changeInfo: UserChangeInfo) {
@@ -45,7 +43,6 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesTheObserverOfASmallProfilePictureChange() {
-
         // given
         let remoteID = UUID()
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
@@ -64,7 +61,6 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesTheObserverOfASmallProfilePictureChangeIfTheInternalUserUpdates() {
-
         // given
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.remoteIdentifier = UUID()
@@ -87,7 +83,6 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
-
         // given
         let remoteID = UUID()
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
@@ -104,7 +99,6 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesObserversWhenConnectingToASearchUserThatHasNoLocalUser() {
-
         // given
         let remoteID = UUID()
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)

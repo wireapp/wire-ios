@@ -21,7 +21,6 @@ import Foundation
 @testable import WireDataModel
 
 class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
-
     func testSystemMessageWhenCreatingConversationWithNoName() {
         syncMOC.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

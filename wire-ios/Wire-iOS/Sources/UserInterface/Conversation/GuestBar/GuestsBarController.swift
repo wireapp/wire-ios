@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireDesign
 
 final class GuestsBarController: UIViewController {
-
     // MARK: Properties
 
     enum State: Equatable {

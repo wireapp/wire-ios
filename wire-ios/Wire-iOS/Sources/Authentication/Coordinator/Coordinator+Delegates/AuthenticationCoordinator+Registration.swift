@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 extension AuthenticationCoordinator: RegistrationStatusDelegate {
-
     /// Called when registration fails.
     func userRegistrationFailed(with error: Error) {
         eventResponderChain.handleEvent(ofType: .registrationError(error as NSError))

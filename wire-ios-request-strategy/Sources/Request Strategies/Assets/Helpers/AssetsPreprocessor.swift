@@ -26,7 +26,6 @@ import Foundation
  
  */
 @objcMembers public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
-
     /// Group to track preprocessing operations
     fileprivate let processingGroup: ZMSDispatchGroup
 
@@ -112,7 +111,6 @@ import Foundation
 }
 
 extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
-
     public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
         guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else { return }
 
@@ -139,7 +137,6 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
 
 /// Adapter which implements the ZMImageOwner protcol because it requires an NSObject
 class AssetImageOwnerAdapter: NSObject, ZMImageOwner {
-
     let asset: AssetType
 
     init(asset: AssetType) {

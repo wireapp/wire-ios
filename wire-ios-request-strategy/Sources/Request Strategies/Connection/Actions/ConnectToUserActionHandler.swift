@@ -19,7 +19,6 @@
 import Foundation
 
 class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
-
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
@@ -53,7 +52,6 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     }
 
     func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
-
         let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")
@@ -69,11 +67,9 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<ConnectToUserAction>.Action) {
-
         var action = action
 
         guard response.result == .success else {
-
             guard let failure = Payload.ResponseFailure(response, decoder: decoder) else {
                 action.notifyResult(.failure(.unknown))
                 return

@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 public final class ProgressSpinner: UIView {
-
     private var didBecomeActiveNotificationToken: (any NSObjectProtocol)?
     private var didEnterBackgroundNotificationToken: (any NSObjectProtocol)?
 
@@ -168,7 +167,6 @@ public final class ProgressSpinner: UIView {
 }
 
 extension ProgressSpinner: CAAnimationDelegate {
-
     public func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if hidesWhenStopped {
             isHidden = true

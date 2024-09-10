@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationMemberLeaveEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMemberLeaveEvent {
@@ -53,12 +52,10 @@ struct ConversationMemberLeaveEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let userIDs: Set<UserID>
         let reason: ConversationMemberLeaveReason?
 
         enum CodingKeys: String, CodingKey {
-
             case userIDs = "qualified_user_ids"
             case reason
         }

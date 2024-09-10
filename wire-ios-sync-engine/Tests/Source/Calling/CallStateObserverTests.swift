@@ -22,7 +22,6 @@ import WireUtilitiesSupport
 @testable import WireSyncEngine
 
 class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
-
     var sut: CallStateObserver!
     var sender: ZMUser!
     var senderUI: ZMUser!
@@ -95,7 +94,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     func testThatMissedCallMessageIsAppendedForCanceledCallByReceiver() {
-
         // when
         let firstCallState: CallState = .incoming(video: false, shouldRing: false, degraded: false)
         sut.callCenterDidChange(callState: firstCallState, conversation: conversationUI, caller: senderUI, timestamp: nil, previousCallState: nil)
@@ -113,7 +111,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     func testThatMissedCallMessageIsAppendedForCanceledCallBySender() {
-
         // when
         sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false, degraded: false), conversation: conversationUI, caller: senderUI, timestamp: nil, previousCallState: nil)
         sut.callCenterDidChange(callState: .terminating(reason: .canceled), conversation: conversationUI, caller: senderUI, timestamp: nil, previousCallState: nil)
@@ -132,7 +129,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     func testThatMissedCallMessageIsNotAppendedForCallsOtherCallStates() {
-
         // given
         let ignoredCallStates: [CallState] = [.terminating(reason: .answeredElsewhere),
                                                .terminating(reason: .lostMedia),
@@ -157,7 +153,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     func testThatMissedCallMessageIsAppendedForMissedCalls() {
-
         // given when
         sut.callCenterMissedCall(conversation: conversationUI, caller: senderUI, timestamp: Date(), video: false)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -305,7 +300,6 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     func testThatMissedCallMessageAndNotificationIsAppendedForGroupCallNotJoined() {
-
         self.syncMOC.performGroupedAndWait {
             // given
             self.conversation.conversationType = .group

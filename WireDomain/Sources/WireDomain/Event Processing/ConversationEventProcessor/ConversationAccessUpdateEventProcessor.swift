@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation access update events.
 
 protocol ConversationAccessUpdateEventProcessorProtocol {
-
     /// Process a conversation access update event.
     ///
     /// - Parameter event: A conversation access update event.
@@ -30,7 +29,6 @@ protocol ConversationAccessUpdateEventProcessorProtocol {
 }
 
 struct ConversationAccessUpdateEventProcessor: ConversationAccessUpdateEventProcessorProtocol {
-
     func processEvent(_: ConversationAccessUpdateEvent) async throws {
         // TODO: [WPB-10164]
         assertionFailure("not implemented yet")

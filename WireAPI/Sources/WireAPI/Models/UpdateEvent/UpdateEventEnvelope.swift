@@ -21,7 +21,6 @@ import Foundation
 /// A container for update events.
 
 public struct UpdateEventEnvelope: Equatable, Codable {
-
     /// The id of the event envelope.
 
     public let id: UUID

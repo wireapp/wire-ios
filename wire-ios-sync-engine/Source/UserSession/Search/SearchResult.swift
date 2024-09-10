@@ -36,7 +36,6 @@ public struct SearchResult {
 }
 
 extension SearchResult {
-
     public init?(
         payload: [AnyHashable: Any],
         query: SearchRequest.Query,
@@ -152,7 +151,6 @@ extension SearchResult {
     }
 
     func copy(on context: NSManagedObjectContext) -> SearchResult {
-
         let copiedConversations = conversations.compactMap {
             context.object(with: $0.objectID) as? ZMConversation
         }

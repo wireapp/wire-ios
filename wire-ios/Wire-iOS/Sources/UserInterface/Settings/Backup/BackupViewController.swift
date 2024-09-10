@@ -20,7 +20,6 @@ import UIKit
 import WireReusableUIComponents
 
 final class BackupViewController: UIViewController {
-
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []
     private let backupSource: BackupSource
@@ -77,7 +76,6 @@ final class BackupViewController: UIViewController {
 // MARK: - UITableViewDataSource & UITableViewDelegate
 
 extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
-
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
@@ -100,7 +98,6 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Backup Logic
 
 private extension BackupViewController {
-
     func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
             guard let self, let password = result else { return }

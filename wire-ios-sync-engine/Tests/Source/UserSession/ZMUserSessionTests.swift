@@ -24,7 +24,6 @@ import WireTesting
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
-
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
         XCTAssertNotNil(self.sut.syncManagedObjectContext)

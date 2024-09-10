@@ -30,7 +30,6 @@ public enum EventConversation {
 }
 
 class EventDecoderTest: MessagingTestBase {
-
     var sut: EventDecoder!
     var mockMLSService = MockMLSServiceInterface()
     var lastEventIDRepository = MockLastEventIDRepositoryInterface()
@@ -62,7 +61,6 @@ class EventDecoderTest: MessagingTestBase {
 // MARK: - Processing events
 
 extension EventDecoderTest {
-
     func testThatItProcessesEvents() async throws {
         // given
         var didCallBlock = false
@@ -157,7 +155,6 @@ extension EventDecoderTest {
     }
 
     func testThatItProcessesInBatches() async throws {
-
         EventDecoder.testingBatchSize = 2
         var callCount = 0
 
@@ -315,9 +312,7 @@ extension EventDecoderTest {
 // MARK: - Already seen events
 
 extension EventDecoderTest {
-
     func testThatItProcessesEventsWithDifferentUUIDWhenThroughPushEventsFirst() async throws {
-
         // given
         let pushProcessed = self.customExpectation(description: "Push event processed")
 
@@ -351,7 +346,6 @@ extension EventDecoderTest {
     }
 
     func testThatItDoesProcessEventsWithSameUUIDWhenThroughPushEventsFirst() async throws {
-
         // given
         let pushProcessed = self.customExpectation(description: "Push event processed")
         let uuid = UUID.create()
@@ -388,7 +382,6 @@ extension EventDecoderTest {
     }
 
     func testThatItProcessesEventsWithSameUUIDWhenThroughPushEventsFirstAndDiscarding() async throws {
-
         // given
         let pushProcessed = self.customExpectation(description: "Push event processed")
         let uuid = UUID.create()
@@ -427,7 +420,6 @@ extension EventDecoderTest {
 // MARK: - Proteus via Core Crypto Event Decryption
 
 extension EventDecoderTest {
-
     func test_ProteusEventDecryption() async throws {
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         let mockProteusService = MockProteusServiceInterface()

@@ -19,7 +19,6 @@
 import Foundation
 
 public enum DeveloperFlag: String, CaseIterable {
-
     public static var storage = UserDefaults.standard
 
     case enableMLSSupport
@@ -116,7 +115,6 @@ public enum DeveloperFlag: String, CaseIterable {
 }
 
 private final class DeveloperFlagsDefault {
-
     static func isEnabled(for bundleKey: String) -> Bool {
         return Bundle(for: self).infoForKey(bundleKey) == "1"
     }

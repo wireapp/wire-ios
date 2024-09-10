@@ -38,7 +38,6 @@ enum CanvasViewControllerEditMode: UInt {
 // MARK: - CanvasViewController
 
 final class CanvasViewController: UIViewController, UINavigationControllerDelegate {
-
     // MARK: - Properties
 
     weak var delegate: CanvasViewControllerDelegate?
@@ -134,7 +133,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     }
 
     func configureButtons() {
-
         typealias Sketch = L10n.Accessibility.Sketch
         let hitAreaPadding = CGSize(width: 16, height: 16)
 
@@ -263,7 +261,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
     }
 
     func select(editMode: CanvasViewControllerEditMode, animated: Bool) {
-
         switch editMode {
         case .draw:
             hideEmojiKeyboard(animated: animated)
@@ -280,7 +277,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
 // MARK: - CanvasDelegate
 
 extension CanvasViewController: CanvasDelegate {
-
     func canvasDidChange(_ canvas: Canvas) {
         sendButton.isEnabled = canvas.hasChanges
         navigationItem.leftBarButtonItem?.isEnabled = canvas.hasChanges
@@ -291,7 +287,6 @@ extension CanvasViewController: CanvasDelegate {
 // MARK: - EmojiKeyboardViewControllerDelegate
 
 extension CanvasViewController: EmojiPickerViewControllerDelegate {
-
     func showEmojiKeyboard(animated: Bool) {
         guard !isEmojiKeyboardInTransition, let emojiKeyboardView = emojiKeyboardViewController.view else { return }
 
@@ -339,7 +334,6 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
         }
 
         if animated {
-
             isEmojiKeyboardInTransition = true
 
             UIView.animate(withDuration: 0.25,
@@ -361,7 +355,6 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
     func emojiPickerDeleteTapped() {}
 
     func emojiPickerDidSelectEmoji(_ emoji: Emoji) {
-
         let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 82)]
 
         if let image = emoji.value.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
@@ -375,7 +368,6 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
 // MARK: - UIImagePickerControllerDelegate
 
 extension CanvasViewController: UIImagePickerControllerDelegate {
-
     @objc func pickImage() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -383,13 +375,11 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-
         defer {
             picker.dismiss(animated: true, completion: nil)
         }
 
         guard let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
-
             return
         }
 
@@ -406,7 +396,6 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
 // MARK: - SketchColorPickerControllerDelegate
 
 extension CanvasViewController: SketchColorPickerControllerDelegate {
-
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor) {
         canvas.brush = Brush(size: Float(controller.brushWidth(for: color)), color: color)
     }

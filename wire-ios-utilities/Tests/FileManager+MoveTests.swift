@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class FileManagerMoveTests: XCTestCase {
-
     override func setUp() {
         super.setUp()
         self.wipeDirectories()
@@ -34,7 +33,6 @@ class FileManagerMoveTests: XCTestCase {
     }
 
     func testThatItMovesOneFolder() throws {
-
         // GIVEN
         let files = [
             "foo/bar/x.dat",
@@ -55,7 +53,6 @@ class FileManagerMoveTests: XCTestCase {
     }
 
     func testThatItMovesOneFolderOverAnExistingOne() throws {
-
         // GIVEN
         let filesToMove = [
             "foo/bar/x.dat",
@@ -126,9 +123,7 @@ class FileManagerMoveTests: XCTestCase {
 // MARK: Copy
 
 extension FileManagerMoveTests {
-
     func testThatItCopiesOneFolder() throws {
-
         // GIVEN
         let files = [
             "foo/bar/x.dat",
@@ -149,7 +144,6 @@ extension FileManagerMoveTests {
     }
 
     func testThatItCopiesOneFolderOverAnExistingOne() throws {
-
         // GIVEN
         let filesToMove = [
             "foo/bar/x.dat",
@@ -217,7 +211,6 @@ extension FileManagerMoveTests {
 }
 
 extension FileManagerMoveTests {
-
     var tempFolder1: URL {
         return URL(fileURLWithPath: NSTemporaryDirectory() + "/FimeManagerMoveTests/1")
     }

@@ -30,7 +30,6 @@ public enum OptionalComparison {
     /// `nil` is  considered as smaller than any value.
     /// If both parameters are `nil`, the method returns `false`.
     public static func prependingNilAscending<T: Comparable>(lhs: T?, rhs: T?) -> Bool {
-
         if lhs == nil, rhs == nil {
             return false
         }

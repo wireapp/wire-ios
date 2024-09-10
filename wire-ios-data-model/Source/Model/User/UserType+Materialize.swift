@@ -19,7 +19,6 @@
 import Foundation
 
 extension Sequence where Element: UserType {
-
     /// Materialize a sequence of UserType into concrete ZMUser instances.
     ///
     /// - parameter context: NSManagedObjectContext on which users should be created.
@@ -37,7 +36,6 @@ extension Sequence where Element: UserType {
 }
 
 extension UserType {
-
     public func materialize(in context: NSManagedObjectContext) -> ZMUser? {
         return [self].materialize(in: context).first
     }
@@ -58,7 +56,6 @@ extension UserType {
 }
 
 extension Sequence where Element: ZMSearchUser {
-
     fileprivate func createLocalUsers(in context: NSManagedObjectContext) {
         let nonExistingUsers = filter { $0.user == nil }
             .map { (userID: $0.remoteIdentifier, teamID: $0.teamIdentifier, domain: $0.domain) }

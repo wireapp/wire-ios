@@ -23,7 +23,6 @@ import simd
 import XCTest
 
 class PatchApplicatorTests: ZMBaseManagedObjectTest {
-
     var patchCountByVersion = [Int: Int]()
     var sut: PatchApplicator<TestPatch>!
 
@@ -154,7 +153,6 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
 }
 
 struct TestPatch: DataPatchInterface {
-
     static var allCases = [TestPatch]()
 
     var version: Int

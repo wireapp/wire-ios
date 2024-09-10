@@ -20,7 +20,6 @@ import WireRequestStrategySupport
 import XCTest
 
 final class SessionEstablisherTests: MessagingTestBase {
-
     func testThatNetworkErrorsArePropagated_whenEstablishingSession() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: 0)
@@ -101,7 +100,6 @@ final class SessionEstablisherTests: MessagingTestBase {
     }
 
     struct Arrangement {
-
         struct Scaffolding {
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
             static let prekey = Payload.Prekey(key: "prekey123", id: nil)

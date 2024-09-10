@@ -20,7 +20,6 @@
 import XCTest
 
 class RemoveParticipantActionHandlerTests: MessagingTestBase {
-
     var sut: RemoveParticipantActionHandler!
     var user: ZMUser!
     var service: ZMUser!
@@ -100,7 +99,6 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     // MARK: - Request Processing
 
     func testThatItParsesAllKnownRemoveParticipantErrorResponses() {
-
         let errorResponses: [(ConversationRemoveParticipantError, ZMTransportResponse)] = [
             (ConversationRemoveParticipantError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (ConversationRemoveParticipantError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
@@ -157,7 +155,6 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessesMemberLeaveEventInTheResponse_Bots() throws {
-
         syncMOC.performGroupedAndWait {
             // given
             conversation.addParticipantAndUpdateConversationState(user: service, role: nil)
@@ -197,7 +194,6 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItUpdatesClearedTimestamp_WhenSelfUserIsRemoved() {
-
         let memberLeaveTimestamp = Date().addingTimeInterval(1000)
 
         self.syncMOC.performGroupedAndWait {

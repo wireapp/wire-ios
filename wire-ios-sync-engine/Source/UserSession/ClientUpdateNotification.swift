@@ -26,7 +26,6 @@ import WireDataModel
 }
 
 @objc public class ZMClientUpdateNotification: NSObject {
-
     private static let name = Notification.Name(rawValue: "ZMClientUpdateNotification")
 
     private static let clientObjectIDsKey = "clientObjectIDs"

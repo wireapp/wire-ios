@@ -20,7 +20,6 @@ import WireTransport
 import XCTest
 
 final class NetworkSessionTests: XCTestCase {
-
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!
 
@@ -181,7 +180,6 @@ final class NetworkSessionTests: XCTestCase {
 }
 
 final class MockCookieStorage: CookieProvider {
-
     var isAuthenticated: Bool = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
@@ -190,7 +188,6 @@ final class MockCookieStorage: CookieProvider {
 }
 
 final class URLSessionMock: URLRequestable {
-
     var mockedResponse = (Data(), URLResponse())
 
     private(set) var calledRequest: URLRequest?

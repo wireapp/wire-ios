@@ -21,7 +21,6 @@ import Foundation
 // MARK: Base class for observer / change info
 
 public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
-
     var changeInfos: [String: NSObject?] { get set }
 
     init(object: NSObject)
@@ -32,7 +31,6 @@ public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
 }
 
 open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
-
     let object: NSObject
 
     open var changedKeys = Set<String>()
@@ -66,7 +64,6 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
 }
 
 extension ObjectChangeInfo {
-
     static func changeInfo(for object: NSObject, changes: Changes) -> ObjectChangeInfo? {
         switch object {
         case let object as ZMConversation:  return ConversationChangeInfo.changeInfo(for: object, changes: changes)

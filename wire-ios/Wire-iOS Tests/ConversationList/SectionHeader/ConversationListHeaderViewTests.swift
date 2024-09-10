@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationListHeaderViewTests: XCTestCase {
-
     var sut: ConversationListHeaderView!
 
     override func setUp() {

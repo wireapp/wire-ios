@@ -23,7 +23,6 @@ import class WireCommonComponents.NetworkStatus
 
 // TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
-
     var isCallingSupported: Bool {
         return localParticipants.count > 1
     }
@@ -88,7 +87,6 @@ extension ZMConversation {
     }
 
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
-
         typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
 
         guard let sessionManager = SessionManager.shared else {
@@ -100,7 +98,6 @@ extension ZMConversation {
         let reachability = sessionManager.environment.reachability
         let networkInfo = NetworkInfo(serverConnection: reachability)
         if networkInfo.qualityType() == .type2G {
-
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,

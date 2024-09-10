@@ -21,6 +21,5 @@ import Foundation
 /// Errors to throw from test code.
 
 struct TestError: Error {
-
     let message: String
 }

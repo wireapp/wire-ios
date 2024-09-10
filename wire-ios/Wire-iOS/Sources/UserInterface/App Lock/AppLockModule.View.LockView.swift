@@ -21,9 +21,7 @@ import WireDesign
 import WireSystem
 
 extension AppLockModule.View {
-
     final class LockView: UIView {
-
         // MARK: - Properties
 
         var actionRequested: Completion?

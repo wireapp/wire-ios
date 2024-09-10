@@ -24,7 +24,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class MLSConversationParticipantsServiceTests: MessagingTestBase {
-
     // MARK: - Properties
 
     var sut: MLSConversationParticipantsService!

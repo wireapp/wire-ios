@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 struct TextFieldStyle {
-
     typealias TextFieldColors = SemanticColors.SearchBar
 
     var borderColorSelected: UIColor {
@@ -39,9 +38,7 @@ struct TextFieldStyle {
 }
 
 extension UITextField: Stylable {
-
     func applyStyle(_ style: TextFieldStyle) {
-
         textColor = style.textColor
         backgroundColor = style.backgroundColor
 

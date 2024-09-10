@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMConversation {
-
     private var hasIncompleteMetadataForGroup: Bool {
         guard let name = userDefinedName else {
             return true
@@ -48,7 +47,6 @@ extension ZMConversation {
 }
 
 extension UserType {
-
     var hasEmptyName: Bool {
         guard let name else {
             return true

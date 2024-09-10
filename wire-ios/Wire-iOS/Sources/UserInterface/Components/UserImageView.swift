@@ -20,7 +20,6 @@ import WireSyncEngine
 
 /// A view that displays the avatar for a remote user.
 class UserImageView: AvatarImageView, UserObserving {
-
     // MARK: - Interface Properties
 
     /// The size of the avatar.

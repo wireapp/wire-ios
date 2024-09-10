@@ -25,7 +25,6 @@ import WireTransport
 import XCTest
 
 class ConversationRequestStrategyTests: MessagingTestBase {
-
     var sut: ConversationRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
@@ -429,7 +428,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func fetchConversationsDuringSlowSync(notFound: [QualifiedID] = [],
                                           failed: [QualifiedID] = []) {
         syncMOC.performGroupedAndWait {
-
             // when
             let request = self.sut.nextRequest(for: self.apiVersion)!
 
@@ -461,7 +459,6 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     func successfulResponse(request: Payload.QualifiedUserIDList,
                             notFound: [QualifiedID],
                             failed: [QualifiedID]) -> ZMTransportResponse {
-
         let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain) })
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)
         let payloadData = payload.payloadData()!

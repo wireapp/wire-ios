@@ -20,7 +20,6 @@
 import WireTesting
 
 class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
-
     // MARK: - Helpers
 
     func noteForParticipantAdded(_ conversation: ZMConversation, aSender: ZMUser, otherUsers: Set<ZMUser>) -> ZMLocalNotification? {
@@ -38,7 +37,6 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     // MARK: - Tests
 
     func testThatItDoesNotCreateANotificationForConversationRename() {
-
         // given
         let payload = [
             "from": sender.remoteIdentifier!.transportString(),
@@ -59,7 +57,6 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesANotificationForParticipantAdd_Self() {
-
         //    "push.notification.member.join.self" = "%1$@ added you";
         //    "push.notification.member.join.self.noconversationname" = "%1$@ added you to a conversation";
 
@@ -89,7 +86,6 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationWhenTheUserLeaves() {
-
         // given
         let event = createMemberLeaveUpdateEvent(UUID.create(), conversationID: self.groupConversation.remoteIdentifier!, users: [otherUser1], senderID: otherUser1.remoteIdentifier)
 
@@ -101,7 +97,6 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesANotificationForParticipantRemove_Self() {
-
         //    "push.notification.member.leave.self" = "%1$@ removed you from %2$@";
         //    "push.notification.member.leave.self.noconversationname" = "%1$@ removed you from a conversation";
 

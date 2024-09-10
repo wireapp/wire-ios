@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol ConversationServiceInterface {
-
     func createGroupConversation(
         name: String?,
         users: Set<ZMUser>,
@@ -52,7 +51,6 @@ public protocol ConversationServiceInterface {
 }
 
 public enum ConversationCreationFailure: Error {
-
     case missingPermissions
     case missingSelfClientID
     case conversationNotFound
@@ -62,7 +60,6 @@ public enum ConversationCreationFailure: Error {
 }
 
 public final class ConversationService: ConversationServiceInterface {
-
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
@@ -185,7 +182,6 @@ public final class ConversationService: ConversationServiceInterface {
         users: Set<ZMUser>,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
     ) {
-
         internalCreateGroupWithRetryIfNeeded(
             teamID: nil,
             name: name,
@@ -207,7 +203,6 @@ public final class ConversationService: ConversationServiceInterface {
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
         completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
-
             func createGroup(
                 withUsers users: Set<ZMUser>,
                 completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void

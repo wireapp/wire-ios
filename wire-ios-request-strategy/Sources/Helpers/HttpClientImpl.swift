@@ -20,7 +20,6 @@ import WireSystem
 import WireTransport
 
 public struct HttpClientImpl: HttpClient {
-
     let transportSession: any TransportSessionType
     let queue: any GroupQueue
 

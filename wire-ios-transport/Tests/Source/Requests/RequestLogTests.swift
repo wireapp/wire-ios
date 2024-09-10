@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class RequestLogTests: XCTestCase {
-
     func testParsingEndpoint() throws {
         let request = NSURLRequest(url: URL(string: "https://prod-nginz-https.wire.com/v2/access")!)
         guard let sut: RequestLog = .init(request) else {

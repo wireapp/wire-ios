@@ -19,7 +19,6 @@
 import Foundation
 
 class TypingUsersTimeout: NSObject {
-
     private var timeouts = [Key: Date]()
 
     var firstTimeout: Date? {

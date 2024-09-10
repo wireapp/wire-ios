@@ -458,7 +458,6 @@ extension UserProfileImageUpdateStatusTests {
 // MARK: - Image upload status
 
 extension UserProfileImageUpdateStatusTests {
-
     func testThatItReturnsImageToUploadOnlyWhenInUploadState() {
         syncMOC.performGroupedAndWait {
             // GIVEN

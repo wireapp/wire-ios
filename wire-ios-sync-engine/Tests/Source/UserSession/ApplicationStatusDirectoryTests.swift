@@ -22,7 +22,6 @@ import WireDataModelSupport
 @testable import WireSyncEngine
 
 class ApplicationStatusDirectoryTests: MessagingTest {
-
     var sut: ApplicationStatusDirectory!
 
     override func setUp() {
@@ -76,7 +75,6 @@ class ApplicationStatusDirectoryTests: MessagingTest {
 }
 
 extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
-
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) {
         // no-op
     }

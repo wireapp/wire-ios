@@ -19,7 +19,6 @@
 import Foundation
 
 public struct UpdateConversationProtocolAction: EntityAction {
-
     // MARK: - Properties
 
     public var qualifiedID: QualifiedID
@@ -38,19 +37,16 @@ public struct UpdateConversationProtocolAction: EntityAction {
 }
 
 extension UpdateConversationProtocolAction {
-
     // MARK: - Types
 
     public typealias Result = Void
 
     public enum Failure: Equatable, Error {
-
         case endpointUnavailable
         case api(APIFailure)
         case unknown
 
         public enum APIFailure: String, CaseIterable, Equatable {
-
             // 400
             case invalidBody
             case mlsMigrationCriteriaNotSatisfied = "mls-migration-criteria-not-satisfied"

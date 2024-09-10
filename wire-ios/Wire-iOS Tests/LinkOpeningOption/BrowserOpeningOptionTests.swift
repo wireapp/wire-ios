@@ -20,7 +20,6 @@
 import XCTest
 
 final class BrowserOpeningOptionTests: XCTestCase {
-
     override func tearDown() {
         Settings.shared.reset()
         super.tearDown()

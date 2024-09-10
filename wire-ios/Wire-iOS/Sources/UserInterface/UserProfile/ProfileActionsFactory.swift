@@ -102,7 +102,6 @@ protocol ProfileActionsFactoryProtocol {
  */
 
 final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
-
     // MARK: - Environmemt
 
     /// The user that is displayed in the profile details.
@@ -179,7 +178,6 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
     }
 
     private func makeActionsList(isOneOnOneReady: Bool) -> [ProfileAction] {
-
         // Do nothing if the user was deleted
         if user.isAccountDeleted {
             return []
@@ -281,7 +279,6 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 }
 
 extension UserType {
-
     var canBeUnblocked: Bool {
         switch blockState {
         case .blockedMissingLegalholdConsent:

@@ -21,11 +21,9 @@ import Foundation
 import XCTest
 
 class ExpiringActivityTests: XCTestCase {
-
     let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])
 
     func testThatTaskIsCancelled_WhenActivityExpires() async throws {
-
         // given
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
@@ -52,7 +50,6 @@ class ExpiringActivityTests: XCTestCase {
     }
 
     func testThatTaskIsCancelled_WhenActivityIsNotAllowedToBegin() async throws {
-
         // given
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
@@ -76,7 +73,6 @@ class ExpiringActivityTests: XCTestCase {
     }
 
     func testThatTaskEndsWithoutError_WhenActivityCompletes() async throws {
-
         // given
         let api = MockExpiringActivityAPI()
         let sut = ExpiringActivityManager(api: api)
@@ -99,7 +95,6 @@ class ExpiringActivityTests: XCTestCase {
 }
 
 private class MockExpiringActivityAPI: ExpiringActivityInterface {
-
     typealias MethodCall = (_ reason: String, _ block: @escaping @Sendable (Bool) -> Void) -> Void
 
     var method: MethodCall?

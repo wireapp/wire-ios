@@ -25,7 +25,6 @@ import Foundation
  */
 
 protocol DataTask: AnyObject {
-
     /// The unique identifier of the task within its session.
     var taskIdentifier: Int { get }
 
@@ -44,7 +43,6 @@ protocol DataTask: AnyObject {
  */
 
 protocol DataTaskSession: AnyObject {
-
     /// Creates a data request task for the given URL.
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask
 }
@@ -54,7 +52,6 @@ protocol DataTaskSession: AnyObject {
 extension URLSessionDataTask: DataTask {}
 
 extension URLSession: DataTaskSession {
-
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         return dataTask(with: url, completionHandler: completionHandler)
     }

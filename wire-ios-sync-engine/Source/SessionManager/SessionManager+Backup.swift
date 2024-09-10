@@ -25,7 +25,6 @@ import ZipArchive
 private let zmLog = ZMSLog(tag: "SessionManager")
 
 extension SessionManager {
-
     static private let workerQueue = DispatchQueue(label: "history-backup")
 
     // MARK: - Export
@@ -206,7 +205,6 @@ private enum BackupFileExtensions: String, CaseIterable {
 }
 
 fileprivate extension BackupMetadata {
-
     static let nameAppName = "Wire"
     static let nameFileName = "Backup"
     static let fileExtension = BackupFileExtensions.fileExtensionWithUnderscore.rawValue

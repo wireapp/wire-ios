@@ -21,7 +21,6 @@ import WireDataModel
 
 @objc
 public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextChangeTracker {
-
     let lastReadKey = "lastReadServerTimeStamp"
     let clearedKey = "clearedTimeStamp"
 

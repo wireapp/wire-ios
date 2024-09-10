@@ -32,7 +32,6 @@ private class MockAction: EntityAction, Equatable {
 }
 
 private class TestActionHandler: ActionHandler<MockAction> {
-
     var calledRequestForAction: Bool = false
     override func request(for action: ActionHandler<MockAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         calledRequestForAction = true
@@ -46,7 +45,6 @@ private class TestActionHandler: ActionHandler<MockAction> {
 }
 
 class ActionHandlerTests: MessagingTestBase {
-
     private var sut: TestActionHandler!
 
     override func setUp() {

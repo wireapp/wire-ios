@@ -23,7 +23,6 @@ import WireTransport
 @testable import WireSyncEngine
 
 final class SearchTaskTests: DatabaseTest {
-
     var teamIdentifier: UUID!
 
     private var mockTransportSession: MockTransportSession!
@@ -86,7 +85,6 @@ final class SearchTaskTests: DatabaseTest {
     }
 
     func testThatItFindsASingleUnconnectedUserByHandle() {
-
         // given
         let remoteResultArrived = customExpectation(description: "received remote result")
 
@@ -113,7 +111,6 @@ final class SearchTaskTests: DatabaseTest {
     }
 
     func testThatItReturnsNothingWhenSearchingForSelfUserByHandle() {
-
         // given
         var selfUserID: UUID!
 
@@ -148,7 +145,6 @@ final class SearchTaskTests: DatabaseTest {
     // MARK: Contacts Search
 
     func testThatItFindsASingleUser() {
-
         // given
         let resultArrived = customExpectation(description: "received result")
         let user = createConnectedUser(withName: "userA")

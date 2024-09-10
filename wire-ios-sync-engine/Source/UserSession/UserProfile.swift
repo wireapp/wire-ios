@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 @objc public protocol UserProfile {
-
     /// Requests email change
     /// The email will need to be verified externally
     /// - throws: if the email is not already set, or if empty email is passed

@@ -24,7 +24,6 @@ import WireShareEngine
 private let cellReuseIdentifier = "AccountCell"
 
 final class AccountSelectionViewController: UITableViewController {
-
     private var accounts: [Account]
     private var current: Account?
 

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireShareEngine
 
 final class SharingSessionTests: BaseSharingSessionTests {
-
     func createConversation(type: ZMConversationType, archived: Bool) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: moc), role: nil)

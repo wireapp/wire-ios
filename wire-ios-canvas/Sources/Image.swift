@@ -19,7 +19,6 @@
 import UIKit
 
 final class Image: Editable {
-
     let image: UIImage
     var scale: CGFloat {
         didSet {

@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct MLS: Codable {
-
         // MARK: - Properties
 
         /// Whether MLS is availble to the user.
@@ -45,7 +43,6 @@ public extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-
             /// The ids of users who have the option to create new MLS groups.
 
             public let protocolToggleUsers: [UUID]
@@ -92,7 +89,6 @@ public extension Feature {
             }
 
             public enum MessageProtocol: String, Codable {
-
                 case proteus
                 case mls
                 case mixed

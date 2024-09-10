@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol FetchShareableConversationsUseCaseProtocol {
-
     /// Fetches all non-archived conversations in which the user is an active member.
     /// Including groups and 1:1s.
     ///
@@ -31,7 +30,6 @@ public protocol FetchShareableConversationsUseCaseProtocol {
 }
 
 public class FetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {
-
     private let contextProvider: ContextProvider
 
     public init(contextProvider: ContextProvider) {

@@ -24,7 +24,6 @@ import WireDataModel
 
 @objc
 final class FakeGroupQueue: NSObject, GroupQueue {
-
     var dispatchGroup: ZMSDispatchGroup? {
         nil
     }
@@ -35,7 +34,6 @@ final class FakeGroupQueue: NSObject, GroupQueue {
 }
 
 final class AssetDeletionStatusTests: MessagingTest {
-
     private var sut: AssetDeletionStatus!
     fileprivate var identifierProvider: DeletableAssetIdentifierProvider!
 
@@ -157,7 +155,6 @@ private final class IdentifierProvider: NSObject, DeletableAssetIdentifierProvid
 }
 
 private final class MockRequestAvailableObserver: NSObject, RequestAvailableObserver {
-
     private let requestAvailable: () -> Void
 
     init(requestAvailable: @escaping () -> Void) {

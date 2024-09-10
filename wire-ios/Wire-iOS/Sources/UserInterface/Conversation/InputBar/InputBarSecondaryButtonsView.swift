@@ -22,7 +22,6 @@ import UIKit
 // only one of the views will be in the view hierarchy at a time.
 //
 final class InputBarSecondaryButtonsView: UIView {
-
     let editBarView: InputBarEditView
     let markdownBarView: MarkdownBarView
 
@@ -38,7 +37,6 @@ final class InputBarSecondaryButtonsView: UIView {
     }
 
     private func setView(_ newView: UIView) {
-
         // only if newView isnt already a subview
         guard !newView.isDescendant(of: self) else { return }
 

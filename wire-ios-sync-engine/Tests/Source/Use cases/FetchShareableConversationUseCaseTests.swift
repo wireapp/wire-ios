@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class FetchShareableConversationUseCaseTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: FetchShareableConversationsUseCase!

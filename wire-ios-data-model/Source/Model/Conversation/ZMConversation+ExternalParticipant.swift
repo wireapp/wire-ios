@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     static let externalParticipantsStateKey = "externalParticipantsState"
 
     /**

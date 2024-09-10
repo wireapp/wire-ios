@@ -25,7 +25,6 @@ import UIKit
  */
 
 public final class CompanyLoginRequestDetector: NSObject {
-
     /**
      * A struct that describes the result of a login code detection operation..
      */

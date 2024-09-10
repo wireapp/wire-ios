@@ -25,7 +25,6 @@ import XCTest
 // MARK: - MockDestination
 
 final class MockDestination: NSObject, ShareDestination {
-
     var isUnderLegalHold: Bool
 
     var showsGuestIcon: Bool
@@ -54,7 +53,6 @@ final class MockDestination: NSObject, ShareDestination {
 // MARK: - ShareDestinationCellTests
 
 final class ShareDestinationCellTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -357,7 +355,6 @@ final class ShareDestinationCellTests: XCTestCase {
 // MARK: - Helper
 
 fileprivate extension UITableViewCell {
-
     func prepareForSnapshotWithCellSelected() -> UITableView {
         let view = prepareForSnapshots()
         view.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)

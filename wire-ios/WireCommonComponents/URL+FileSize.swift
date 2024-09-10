@@ -19,7 +19,6 @@
 import Foundation
 
 extension URL {
-
     /// return nil if can not obtain the file size from URL
     public var fileSize: UInt64? {
         guard let attributes: [FileAttributeKey: Any] = try? FileManager.default.attributesOfItem(atPath: path) else { return nil }

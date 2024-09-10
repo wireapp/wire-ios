@@ -19,7 +19,6 @@
 import Foundation
 
 extension UserDefaults {
-
     public func value<KeyType: NativelySupportedUserDefaultsKey>(for key: KeyType) -> KeyType.ValueType? {
         value(forKey: key.rawValue) as? KeyType.ValueType
     }

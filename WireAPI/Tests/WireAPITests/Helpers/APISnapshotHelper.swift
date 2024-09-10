@@ -23,7 +23,6 @@ import XCTest
 /// A helper object to make snapshotting API requests easier.
 
 struct APISnapshotHelper<API> {
-
     enum Failure: Error {
         case noRequestGenerated
     }

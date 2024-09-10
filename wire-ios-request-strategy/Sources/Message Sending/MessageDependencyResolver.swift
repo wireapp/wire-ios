@@ -29,7 +29,6 @@ public enum MessageDependencyResolverError: Error, Equatable {
 }
 
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
-
     public init(context: NSManagedObjectContext) {
         self.context = context
     }
@@ -37,7 +36,6 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
     let context: NSManagedObjectContext
 
     public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
-
         func dependenciesAreResolved() async throws -> Bool {
             let isSecurityLevelDegraded = await self.context.perform {
                 message.conversation?.isDegraded == true

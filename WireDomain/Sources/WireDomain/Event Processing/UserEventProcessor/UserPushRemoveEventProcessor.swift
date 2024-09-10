@@ -21,14 +21,12 @@ import WireAPI
 /// Process user push remove events.
 
 protocol UserPushRemoveEventProcessorProtocol {
-
     /// Process a user push remove event.
 
     func processEvent() async throws
 }
 
 struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
-
     func processEvent() async throws {
         // TODO: [WPB-10199]
         assertionFailure("not implemented yet")

@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 
 extension MockUserType: SelfLegalHoldSubject {
-
     var legalHoldStatus: UserLegalHoldStatus {
         if isUnderLegalHold {
             return .enabled

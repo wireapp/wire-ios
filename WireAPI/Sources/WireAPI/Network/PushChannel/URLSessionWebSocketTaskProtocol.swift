@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol URLSessionWebSocketTaskProtocol {
-
     var isOpen: Bool { get }
 
     func resume()
@@ -36,7 +35,6 @@ protocol URLSessionWebSocketTaskProtocol {
 }
 
 extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
-
     var isOpen: Bool {
         closeCode == .invalid
     }

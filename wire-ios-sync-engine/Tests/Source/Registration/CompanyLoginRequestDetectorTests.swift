@@ -21,7 +21,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class CompanyLoginRequestDetectorTests: XCTestCase {
-
     var pasteboard: MockPasteboard!
     var detector: CompanyLoginRequestDetector!
 

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
-
     override func setUp() {
         selfUserInTeam = true
         super.setUp()

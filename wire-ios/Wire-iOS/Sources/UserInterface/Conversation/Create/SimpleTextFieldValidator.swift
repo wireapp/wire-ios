@@ -27,7 +27,6 @@ protocol SimpleTextFieldValidatorDelegate: AnyObject {
 }
 
 final class SimpleTextFieldValidator: NSObject {
-
     weak var delegate: SimpleTextFieldValidatorDelegate?
 
     enum ValidationError {
@@ -50,7 +49,6 @@ final class SimpleTextFieldValidator: NSObject {
                                                     maximumStringLength: 64,
                                                     maximumByteLength: 256)
         } catch let stringValidationError as NSError {
-
             switch stringValidationError.code {
             case ZMManagedObjectValidationErrorCode.tooLong.rawValue:
                 return .tooLong
@@ -63,7 +61,6 @@ final class SimpleTextFieldValidator: NSObject {
 }
 
 extension SimpleTextFieldValidator: UITextFieldDelegate {
-
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let oldValue = textField.text as NSString?
         let result = oldValue?.replacingCharacters(in: range, with: string) ?? ""

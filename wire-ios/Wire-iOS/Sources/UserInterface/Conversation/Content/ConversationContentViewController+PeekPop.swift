@@ -23,10 +23,8 @@ import WireDataModel
 private var lastPreviewURL: URL?
 
 extension ConversationContentViewController: UIViewControllerPreviewingDelegate {
-
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-
         let cellLocation = view.convert(location, to: tableView)
 
         guard let cellIndexPath = tableView.indexPathForRow(at: cellLocation),
@@ -65,7 +63,6 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-
         // If the previewed item is an image, show the previously hidden controls.
         if let imagesViewController = viewControllerToCommit as? ConversationImagesViewController {
             imagesViewController.isPreviewing = false

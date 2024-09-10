@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
-
     let conversation: ZMConversation
     let actionController: ConversationActionController
     fileprivate var contentViewController: ConversationContentViewController

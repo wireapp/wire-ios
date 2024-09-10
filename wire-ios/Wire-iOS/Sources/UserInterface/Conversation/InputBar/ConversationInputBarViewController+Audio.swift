@@ -26,7 +26,6 @@ import WireSyncEngine
 // MARK: Audio Button
 
 extension ConversationInputBarViewController {
-
     func setupCallStateObserver() {
         if !ProcessInfo.processInfo.isRunningTests,
            let userSession = ZMUserSession.shared() {
@@ -201,7 +200,6 @@ extension ConversationInputBarViewController {
 }
 
 extension ConversationInputBarViewController: AudioRecordViewControllerDelegate {
-
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController) {
         self.hideAudioRecordViewController()
     }
@@ -213,7 +211,6 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
     }
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
-
         let checker = PrivacyWarningChecker(conversation: self.conversation) { [weak self] in
             self?.uploadFile(at: recordingURL as URL)
 
@@ -224,7 +221,6 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 }
 
 extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         let isRecording = audioRecordKeyboardViewController?.isRecording
 

@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
-
     typealias EventPayload = [AnyHashable: Any]
 
     // MARK: - Methods
@@ -29,7 +28,6 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
         for action: SendMLSMessageAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         var action = action
 
         guard apiVersion >= .v5 else {
@@ -86,7 +84,6 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 }
 
 extension SendMLSMessageAction.Failure {
-
     init?(from response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (201, _):

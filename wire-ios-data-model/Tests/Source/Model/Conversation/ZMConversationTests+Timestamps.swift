@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
-
     // MARK: - Unread Count
 
     func testThatLastUnreadKnockDateIsSetWhenMessageInserted() {
@@ -160,7 +159,6 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() throws {
-
         // given
         try syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
@@ -186,7 +184,6 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedAfterCallingtTheCalculateLastUnreadMessages() {
-
         // given
         syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -215,7 +212,6 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     }
 
     func testThatClearedTimestampIsNotUpdatedToAnOlderTimestamp() {
-
         let timestamp = Date()
         let olderTimestamp = timestamp.addingTimeInterval(-100)
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -422,9 +418,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     // MARK: - Relevant Messages
 
     func testThatNotRelevantMessagesDoesntCountTowardsUnreadMessagesAmount() {
-
         syncMOC.performGroupedAndWait {
-
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
 

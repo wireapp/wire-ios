@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class MockTeamConversationEvent: NSObject {
-
     public enum Kind: String {
         case create = "team.conversation-create"
         case delete = "team.conversation-delete"

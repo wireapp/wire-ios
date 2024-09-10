@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class MockPushEvent: NSObject {
-
     public let payload: ZMTransportData
     public let uuid: UUID
     public let timestamp = NSDate()

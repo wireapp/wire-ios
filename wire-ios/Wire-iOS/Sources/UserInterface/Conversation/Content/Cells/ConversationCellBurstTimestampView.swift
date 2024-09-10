@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationCellBurstTimestampView: UIView {
-
     let unreadDot = UIView()
     private let label: UILabel = UILabel()
 
@@ -81,7 +80,6 @@ final class ConversationCellBurstTimestampView: UIView {
     }
 
     private func createConstraints() {
-
         [
             self,
             label,

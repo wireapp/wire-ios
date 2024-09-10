@@ -24,7 +24,6 @@ import Foundation
 /// with the corresponding private EAR key.
 
 public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
-
     private enum Constant {
         static let labelPublicPrimary = "public"
         static let labelPublicSecondary = "secondary-public"

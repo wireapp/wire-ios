@@ -26,7 +26,6 @@ final class MockCompositeMessageData: NSObject, CompositeMessageData {
 }
 
 final class MockTextMessageData: NSObject, TextMessageData {
-
     var messageText: String? = ""
     var backingLinkPreview: LinkMetadata?
     var imageData: Data?
@@ -139,7 +138,6 @@ extension MockPassFileMessageData: MockFileMessageDataType { }
 extension MockFileMessageData: MockFileMessageDataType { }
 
 final class MockPassFileMessageData: NSObject, ZMFileMessageData {
-
     var mimeType: String? = "application/vnd.apple.pkpass"
     var size: UInt64 = 1024 * 1024 * 2
     var transferState: AssetTransferState = .uploaded
@@ -287,7 +285,6 @@ final class MockKnockMessageData: NSObject, ZMKnockMessageData {
 }
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
-
     var mockOriginalSize: CGSize = .zero
     var mockImageData = Data()
     var mockImageDataIdentifier = String()

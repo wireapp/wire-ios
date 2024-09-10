@@ -21,7 +21,6 @@ import SnapshotTesting
 import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
-
     private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {
         APISnapshotHelper { httpClient, apiVersion in
             UpdateEventsAPIBuilder(httpClient: httpClient)
@@ -239,7 +238,6 @@ final class UpdateEventsAPITests: XCTestCase {
     // MARK: - Helpers
 
     enum Scaffolding {
-
         static let selfClientID = "abcd1234"
         static let eventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!
         static let lastUpdateEventID = UUID(uuidString: "d7f7f946-c4da-4300-998d-5aeba8affeee")!

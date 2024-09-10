@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 @objc extension ZMOperationLoop {
-
     public var currentAPIVersion: APIVersionWrapper? {
         guard let current = BackendInfo.apiVersion else { return nil }
         return .init(value: current)
@@ -34,7 +33,6 @@ import WireDataModel
 
 @objc
 public class APIVersionWrapper: NSObject {
-
     @objc
     public var value: APIVersion
 

@@ -17,7 +17,6 @@
 //
 
 extension ZMUserSession: SecurityClassificationProviding {
-
     public func classification(
         users: [UserType],
         conversationDomain: String?

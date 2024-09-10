@@ -17,7 +17,6 @@
 //
 
 class SlowSyncTestsTeams: IntegrationTest {
-
     func mockMember(_ mockMember: MockMember, isEqualTo member: Member) -> Bool {
         return mockMember.user.identifier == member.user?.remoteIdentifier?.transportString()
             && mockMember.team.identifier == member.team?.remoteIdentifier?.transportString()

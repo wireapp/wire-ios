@@ -21,7 +21,6 @@ import Foundation
 /// The various types of conversations.
 
 public enum ConversationType: Int, Codable {
-
     /// A conversation with many participants.
 
     case group = 0

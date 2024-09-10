@@ -26,7 +26,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class MLSDecryptionServiceTests: ZMConversationTestsBase {
-
     var sut: MLSDecryptionService!
     var mockMLSActionExecutor: MockMLSActionExecutor!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
@@ -93,7 +92,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
     }
 
     func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async throws {
-
         // Given
         let groupID = MLSGroupID.random()
         let messageBytes = Data.random().bytes
@@ -350,7 +348,6 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
 }
 
 extension WireIdentity {
-
     static func withBasicCredentials() -> Self {
         .init(
             clientId: "",

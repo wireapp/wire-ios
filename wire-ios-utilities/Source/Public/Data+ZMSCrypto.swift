@@ -22,7 +22,6 @@ import Foundation
 
 /// Advanced Encryption Standard errors
 public enum AESError: Error {
-
     /// The key length is incorrect
     case keySizeError
 
@@ -32,7 +31,6 @@ public enum AESError: Error {
 
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
 public extension Data {
-
     init?(hexString: String) {
         guard let decodedData = hexString.zmHexDecodedData() else {
             return nil
@@ -90,7 +88,6 @@ public extension Data {
     }
 
     func zmEncryptPrefixingPlainTextIV(key: Data) throws -> Data {
-
         let keyLength = key.count
         guard keyLength == kCCKeySizeAES256 else {
             throw AESError.keySizeError
@@ -143,7 +140,6 @@ public extension Data {
 }
 
 private extension Range where Index == Int {
-
     func chunked(by chunkSize: Int) -> [Self] {
         guard chunkSize > 0 else { return [] }
 

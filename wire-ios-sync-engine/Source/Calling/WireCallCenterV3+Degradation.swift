@@ -19,7 +19,6 @@
 import Foundation
 
 extension WireCallCenterV3 {
-
     func callDidDegrade(conversationId: AVSIdentifier, degradedUser: ZMUser) {
         closeCall(conversationId: conversationId, reason: .securityDegraded)
 

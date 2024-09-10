@@ -29,7 +29,6 @@ public enum ContextType: String {
 }
 
 extension NSManagedObjectContext {
-
     var type: ContextType {
         if self.zm_isSyncContext {
             return .Sync
@@ -45,7 +44,6 @@ extension NSManagedObjectContext {
 }
 
 extension ZMUserSession {
-
     public typealias SaveFailureCallback = (_ metadata: [String: Any], _ type: ContextType, _ error: NSError, _ userInfo: [String: Any]) -> Void
 
     /// Register a handle for monitoring when one of the manage object contexts fails

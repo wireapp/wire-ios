@@ -19,7 +19,6 @@
 import Foundation
 
 struct UserUpdateEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<UserEventCodingKeys>
     ) throws -> UserUpdateEvent {
@@ -41,7 +40,6 @@ struct UserUpdateEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let userID: UUID
         let accentColorID: Int?
         let name: String?
@@ -52,7 +50,6 @@ struct UserUpdateEventDecoder {
         let supportedProtocols: Set<MessageProtocol>?
 
         enum CodingKeys: String, CodingKey {
-
             case userID = "id"
             case accentColorID = "accent_id"
             case name

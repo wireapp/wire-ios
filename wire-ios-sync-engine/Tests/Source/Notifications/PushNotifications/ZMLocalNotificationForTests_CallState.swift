@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class ZMLocalNotificationTests_CallState: MessagingTest {
-
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 
     var sender: ZMUser!
@@ -52,7 +51,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testIncomingAudioCall() {
-
         // given
         let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 
@@ -69,7 +67,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testIncomingAudioCall_WithAvailabilityAway() {
-
         // given
         syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -85,7 +82,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testIncomingAudioCall_WithAllMutedConversation() {
-
         // given
         syncMOC.performGroupedAndWait {
             self.conversation.mutedMessageTypes = .all
@@ -100,7 +96,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testIncomingAudioCall_ShouldRing_False() {
-
         // given
         let state: CallState = .incoming(video: false, shouldRing: false, degraded: false)
 
@@ -111,7 +106,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testIncomingVideoCall() {
-
         // given
         let state: CallState = .incoming(video: true, shouldRing: true, degraded: false)
 
@@ -128,7 +122,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testIncomingVideoCall_ShouldRing_False() {
-
         // given
         let state: CallState = .incoming(video: true, shouldRing: false, degraded: false)
 
@@ -155,7 +148,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testCallClosedReasonsWhichShouldBeIgnored() {
-
         // given
         let ignoredCallClosedReasons: [CallClosedReason] = [.answeredElsewhere, .normal]
 
@@ -171,7 +163,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testMissedCall() {
-
         // given
         let state: CallState = .terminating(reason: .timeout)
 
@@ -208,7 +199,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
         self.syncMOC.performGroupedAndWait {
-
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
@@ -229,7 +219,6 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
-
         // given
         let state: CallState = .incoming(video: false, shouldRing: true, degraded: false)
 

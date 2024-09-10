@@ -24,7 +24,6 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 // MARK: - Dependent objects
 
 extension ZMOTRMessage: OTREntity {
-
     public var context: NSManagedObjectContext {
         return managedObjectContext!
     }
@@ -60,16 +59,13 @@ extension ZMOTRMessage: OTREntity {
 
 /// Message that can block following messages
 @objc private protocol BlockingMessage {
-
     /// If true, no other messages should be sent until this message is sent
     var shouldBlockFurtherMessages: Bool { get }
 }
 
 extension ZMMessage {
-
     /// Which object this message depends on when sending
     @objc public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-
         // conversation not created yet on the BE?
         guard let conversation = self.conversation else { return nil }
 
@@ -100,7 +96,6 @@ extension ZMMessage {
         for previousMessage in conversation.lastMessages() {
             if let currentTimestamp = self.serverTimestamp,
                 let previousTimestamp = previousMessage.serverTimestamp {
-
                 // to old?
                 let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
                 if tooOld {
@@ -123,7 +118,6 @@ extension ZMMessage {
 }
 
 extension ZMMessage: BlockingMessage {
-
     var shouldBlockFurtherMessages: Bool {
         return self.deliveryState == .pending && !self.isExpired
     }

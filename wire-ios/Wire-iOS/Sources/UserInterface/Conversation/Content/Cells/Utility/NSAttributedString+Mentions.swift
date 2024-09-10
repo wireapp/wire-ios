@@ -22,7 +22,6 @@ import WireDataModel
 private let log = ZMSLog(tag: "Mentions")
 
 struct TextMarker<A> {
-
     let replacementText: String
     let token: String
     let value: A
@@ -35,7 +34,6 @@ struct TextMarker<A> {
 }
 
 extension TextMarker {
-
     func range(in string: String) -> Range<Int>? {
         return Range((string as NSString).range(of: token))
     }
@@ -54,7 +52,6 @@ extension Mention {
 }
 
 extension URL {
-
     var isMention: Bool {
         return scheme == Mention.mentionScheme
     }
@@ -69,7 +66,6 @@ extension URL {
 }
 
 extension NSMutableAttributedString {
-
     static private func mention(for user: UserType, name: String, link: URL, suggestedAttributes: [NSAttributedString.Key: Any] = [:]) -> NSAttributedString {
         let color: UIColor
         let backgroundColor: UIColor
@@ -114,7 +110,6 @@ extension NSMutableAttributedString {
 
     func highlight(mentions: [TextMarker<(Mention)>],
                    paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle) {
-
         mentions.forEach { textObject in
             let mentionRange = mutableString.range(of: textObject.token)
 

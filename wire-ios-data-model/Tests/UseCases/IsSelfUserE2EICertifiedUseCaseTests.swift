@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
-
     private var selfUser: ZMUser!
     private var selfMLSConversation: ZMConversation!
     private var mockIsUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!

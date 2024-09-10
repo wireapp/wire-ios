@@ -21,7 +21,6 @@ import Foundation
 /// Storage for authentication primitives.
 
 public protocol AuthenticationStorage {
-
     /// Store an access token.
     ///
     /// - Parameter accessToken: The token to store.

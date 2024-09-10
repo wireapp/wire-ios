@@ -20,7 +20,6 @@ import WireDataModel
 @testable import WireSyncEngine
 
 class AssetDeletionRequestStrategyTests: MessagingTest {
-
     private var sut: AssetDeletionRequestStrategy!
     private var mockApplicationStatus: MockApplicationStatus!
     fileprivate var mockIdentifierProvider: MockIdentifierProvider!
@@ -134,7 +133,6 @@ extension AssetDeletionRequestStrategyTests {
 // MARK: - Helper
 
 private class MockIdentifierProvider: AssetDeletionIdentifierProviderType {
-
     var nextIdentifier: String?
     var deletedIdentifiers = [String]()
     var failedToDeleteIdentifiers = [String]()

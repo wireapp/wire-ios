@@ -24,7 +24,6 @@ import WireRequestStrategy
 private let pushLog = ZMSLog(tag: "Push")
 
 protocol PushRegistry {
-
     var delegate: PKPushRegistryDelegate? { get set }
     var desiredPushTypes: Set<PKPushType>? { get set }
 
@@ -36,7 +35,6 @@ extension PKPushRegistry: PushRegistry {}
 // MARK: - UNUserNotificationCenterDelegate
 
 @objc extension SessionManager: UNUserNotificationCenterDelegate {
-
     // Called by the OS when the app receieves a notification while in the
     // foreground.
     public func userNotificationCenter(_ center: UNUserNotificationCenter,
@@ -87,7 +85,6 @@ extension PKPushRegistry: PushRegistry {}
         var foundSession: Bool = false
         self.backgroundUserSessions.forEach { accountId, backgroundSession in
             if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
-
                 self.select(account, completion: { _ in
                     completion()
                 })
@@ -103,7 +100,6 @@ extension PKPushRegistry: PushRegistry {}
 }
 
 extension SessionManager {
-
     public func showConversation(
         _ conversation: ZMConversation,
         at message: ZMConversationMessage? = nil,
@@ -130,7 +126,6 @@ extension SessionManager {
 }
 
 extension SessionManager {
-
     var shouldProcessLegacyPushes: Bool {
         return requiredPushTokenType == .voip
     }

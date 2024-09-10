@@ -19,7 +19,6 @@
 import Foundation
 
 public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-
     let managedObjectContext: NSManagedObjectContext
     let modifiedKeysSync: ModifiedKeyObjectSync<LinkPreviewUpdateRequestStrategy>
     let messageSender: MessageSenderInterface
@@ -32,7 +31,6 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
 
     public init(managedObjectContext: NSManagedObjectContext,
                 messageSender: MessageSenderInterface) {
-
         let modifiedPredicate = Self.linkPreviewIsUploadedPredicate(context: managedObjectContext)
         self.modifiedKeysSync = ModifiedKeyObjectSync(trackedKey: ZMClientMessage.linkPreviewStateKey,
                                                       modifiedPredicate: modifiedPredicate)
@@ -51,7 +49,6 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
 }
 
 extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
-
     typealias Object = ZMClientMessage
 
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {

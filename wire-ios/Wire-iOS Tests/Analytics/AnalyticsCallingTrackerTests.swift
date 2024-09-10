@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper {
-
     var sut: AnalyticsCallingTracker!
     var analytics: Analytics!
     var coreDataFixture: CoreDataFixture!

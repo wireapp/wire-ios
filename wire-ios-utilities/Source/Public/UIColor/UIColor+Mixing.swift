@@ -18,7 +18,6 @@
 import UIKit
 
 extension UIColor {
-
     fileprivate func mix(value0: CGFloat, value1: CGFloat, progress: CGFloat) -> CGFloat {
         return value0 * (1 - progress) + value1 * progress
     }
@@ -31,7 +30,6 @@ extension UIColor {
     /// - Returns: the mixed color
     @objc
     public func mix(_ color: UIColor, amount progress: CGFloat) -> UIColor {
-
         let component0 = components
         let component1 = color.components
 

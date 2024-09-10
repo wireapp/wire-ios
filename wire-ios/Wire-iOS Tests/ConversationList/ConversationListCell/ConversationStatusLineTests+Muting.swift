@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class ConversationStatusLineTests_Muting: CoreDataSnapshotTestCase {
-
     override func setUp() {
         selfUserInTeam = true
         super.setUp()

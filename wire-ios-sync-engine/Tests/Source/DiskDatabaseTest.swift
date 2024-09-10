@@ -20,7 +20,6 @@ import WireDataModel
 import WireTesting
 
 final class DiskDatabaseTest: DatabaseTest {
-
     override var useInMemoryDatabase: Bool {
         return false
     }

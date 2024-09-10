@@ -24,7 +24,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 class E2EIKeyPackageRotatorTests: MessagingTestBase {
-
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCommitSender: MockCommitSending!

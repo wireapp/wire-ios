@@ -23,7 +23,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTestHelper {
-
     var coreDataFixture: CoreDataFixture!
     var client: UserClient!
     var mockSession: UserSessionMock!
@@ -102,7 +101,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
 }
 
 extension E2eIdentityCertificate {
-
     static func mock(
         with certificateDetails: String = .mockCertificate,
         status: E2EIdentityCertificateStatus = .valid,

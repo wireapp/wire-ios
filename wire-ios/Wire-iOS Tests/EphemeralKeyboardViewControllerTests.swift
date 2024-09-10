@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
-
     var sut: EphemeralKeyboardViewController!
     var conversation: ZMConversation!
     private var snapshotHelper: SnapshotHelper!
@@ -55,7 +54,6 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 }
 
 fileprivate extension UIViewController {
-
     func prepareForSnapshots() -> UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
 

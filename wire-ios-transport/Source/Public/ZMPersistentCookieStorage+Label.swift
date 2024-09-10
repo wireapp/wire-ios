@@ -20,7 +20,6 @@ import UIKit
 
 @objcMembers
 public final class CookieLabel: NSObject {
-
     private static var _label: CookieLabel?
     public static var _testOverrideLabel: CookieLabel?
 

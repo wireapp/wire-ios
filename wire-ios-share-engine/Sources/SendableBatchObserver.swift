@@ -19,7 +19,6 @@
 import Foundation
 
 public final class SendableBatchObserver {
-
     public let sendables: [Sendable]
 
     public var sentHandler: (() -> Void)?

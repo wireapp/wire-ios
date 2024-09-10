@@ -20,7 +20,6 @@ import WireDataModel
 import XCTest
 
 final class ZMSearchUserTests_Connections: ModelObjectsTests {
-
     func testThatConnectSendsAConnectToUserNotification() {
         // given
         let searchUser = ZMSearchUser(

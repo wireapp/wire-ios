@@ -31,7 +31,6 @@ public protocol LAContextStorable: AnyObject {
 // that we could not afford in this case.
 
 public final class LAContextStorage: LAContextStorable {
-
     public var context: LAContext? {
         get {
             return internalQueue.sync { internalContext }

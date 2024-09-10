@@ -19,7 +19,6 @@
 import Foundation
 
 final class MockAnalytics: NSObject, AnalyticsType {
-
     var eventAttributes = [String: [String: NSObject]]()
 
     public func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {

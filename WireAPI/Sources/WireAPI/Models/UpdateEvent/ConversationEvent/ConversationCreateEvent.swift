@@ -21,7 +21,6 @@ import Foundation
 /// An event where a new conversation was created.
 
 public struct ConversationCreateEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

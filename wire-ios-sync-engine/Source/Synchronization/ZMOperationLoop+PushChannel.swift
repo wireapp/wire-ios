@@ -20,7 +20,6 @@ import Foundation
 import WireAPI
 
 extension ZMOperationLoop: ZMPushChannelConsumer {
-
     public func pushChannelDidReceive(_ data: Data) {
         if isDeveloperModeEnabled {
             // TODO: [WPB-9612] remove event decoding monitoring.

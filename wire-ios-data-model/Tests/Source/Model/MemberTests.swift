@@ -20,7 +20,6 @@
 import WireTesting
 
 class MemberTests: ZMConversationTestsBase {
-
     func testThatItStoresThePermissionsOfAMember() {
         // given
         let sut = Member.insertNewObject(in: uiMOC)
@@ -158,7 +157,6 @@ class MemberTests: ZMConversationTestsBase {
 // MARK: - Transport
 
 extension MemberTests {
-
     func testThatItUpdatesAMemberWithResponsePayload() {
         syncMOC.performAndWait {
             // given

@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `APIService`.
 
 public enum APIServiceError: Error {
-
     /// An enqueued url request is invalid.
 
     case invalidRequest

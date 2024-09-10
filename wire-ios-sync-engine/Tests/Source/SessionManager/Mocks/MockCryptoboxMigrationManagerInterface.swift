@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerInterface {
-
     // MARK: - Life cycle
 
     public init() {}

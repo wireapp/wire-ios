@@ -19,7 +19,6 @@
 import Foundation
 
 class PushChannelAPIImpl: PushChannelAPI {
-
     let pushChannelService: any PushChannelServiceProtocol
 
     init(pushChannelService: any PushChannelServiceProtocol) {

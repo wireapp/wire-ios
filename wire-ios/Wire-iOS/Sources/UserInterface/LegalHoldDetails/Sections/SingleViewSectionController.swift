@@ -19,7 +19,6 @@
 import UIKit
 
 final class CollectionViewCellAdapter: UICollectionViewCell {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
@@ -51,7 +50,6 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
 }
 
 final class SingleViewSectionController: NSObject, CollectionViewSectionController {
-
     fileprivate var view: UIView
 
     init(view: UIView) {

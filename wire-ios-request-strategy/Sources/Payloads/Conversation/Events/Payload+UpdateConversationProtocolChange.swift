@@ -21,7 +21,6 @@ import WireTransport
 
 extension Payload {
     struct UpdateConversationProtocolChange: CodableEventData {
-
         enum CodingKeys: String, CodingKey {
             case messageProtocol = "protocol"
         }

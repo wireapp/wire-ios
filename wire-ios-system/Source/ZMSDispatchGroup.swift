@@ -20,7 +20,6 @@ import Foundation
 
 @objc(ZMSDispatchGroup) @objcMembers
 public final class ZMSDispatchGroup: NSObject {
-
     let label: String
 
     private let group: DispatchGroup

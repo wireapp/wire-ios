@@ -24,7 +24,6 @@ import WireFoundation
 // sourcery: AutoMockable
 /// Access update events.
 protocol UpdateEventsRepositoryProtocol {
-
     /// Pull pending events from the server, decrypt if needed, and store locally.
     ///
     /// Pending events are events that have been buffered by the server while
@@ -79,7 +78,6 @@ protocol UpdateEventsRepositoryProtocol {
 }
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
-
     private let selfClientID: String
     private let updateEventsAPI: any UpdateEventsAPI
     private let pushChannel: any PushChannelProtocol

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class GenericMessageTests: XCTestCase {
-
     func testThatConsidersTextMessageTypeAsKnownMessage() {
         let textMessageType = GenericMessage(content: Text(content: "hello"))
         XCTAssertTrue(textMessageType.knownMessage)

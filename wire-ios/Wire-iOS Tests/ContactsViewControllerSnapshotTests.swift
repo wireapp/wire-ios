@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ContactsViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: ContactsViewController!

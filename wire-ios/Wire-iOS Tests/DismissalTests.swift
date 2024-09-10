@@ -20,7 +20,6 @@
 import XCTest
 
 final class DismissalTests: XCTestCase {
-
     var sut: UIViewController!
 
     override func setUp() {
@@ -59,7 +58,6 @@ final class DismissalTests: XCTestCase {
         presentViewController(sut) {
             // WHEN
             self.dismissViewController(self.sut) {
-
                 // THEN
                 XCTAssertFalse(self.sut.canBeDismissed)
                 dismissalExpectation.fulfill()

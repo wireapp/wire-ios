@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension UserChangeInfo {
-
     // MARK: - Registering an observer for a user
 
     /// Adds an observer for a user conforming to UserType. You must hold on to the token until you want to stop

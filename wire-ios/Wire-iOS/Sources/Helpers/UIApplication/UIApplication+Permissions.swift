@@ -21,7 +21,6 @@ import UIKit
 import WireCommonComponents
 
 extension UIApplication: ApplicationProtocol {
-
     class func wr_requestOrWarnAboutMicrophoneAccess(_ grantedHandler: @escaping (_ granted: Bool) -> Void) {
         let audioPermissionsWereNotDetermined = AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined
 

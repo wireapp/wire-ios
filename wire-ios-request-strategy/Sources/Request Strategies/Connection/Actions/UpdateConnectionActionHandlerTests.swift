@@ -20,7 +20,6 @@
 import XCTest
 
 class UpdateConnectionActionHandlerTests: MessagingTestBase {
-
     var sut: UpdateConnectionActionHandler!
 
     override func setUp() {
@@ -76,7 +75,6 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Request Processing
 
     func testThatItParsesAllKnownConnectionUpdateErrorResponses() {
-
         let errorResponses: [(UpdateConnectionError, ZMTransportResponse)] = [
             (.connectionLimitReached, responseFailure(code: 403, label: .connectionLimit, apiVersion: .v0)),
             (.noIdentity, responseFailure(code: 403, label: .noIdentity, apiVersion: .v0)),

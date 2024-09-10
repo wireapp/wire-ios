@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ContactsCellSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ContactsCell!

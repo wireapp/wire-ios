@@ -22,7 +22,6 @@ import XCTest
 @testable import WireReusableUIComponents
 
 final class BlockingActivityIndicatorTests: XCTestCase {
-
     private typealias SUT = BlockingActivityIndicator
     private var sut: SUT!
 
@@ -178,7 +177,6 @@ final class BlockingActivityIndicatorTests: XCTestCase {
 }
 
 private extension BlockingActivityIndicator {
-
     convenience init(view: UIView) {
         self.init(
             view: view,
@@ -190,7 +188,6 @@ private extension BlockingActivityIndicator {
 // TODO: [WPB-10368] remove this temporary extension once XCTestCase+waitForPredicate.swift has been moved to a Swift package and is accessible from WireUI
 
 private extension XCTestCase {
-
     func wait(
         forConditionToBeTrue predicate: @escaping @autoclosure () -> Bool,
         timeout seconds: TimeInterval

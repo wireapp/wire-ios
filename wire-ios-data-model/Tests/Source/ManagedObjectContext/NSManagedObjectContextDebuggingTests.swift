@@ -19,9 +19,7 @@
 import Foundation
 
 final class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
-
     func testThatItInvokesCallbackWhenFailedToSave() {
-
         // GIVEN
         self.makeChangeThatWillCauseRollback()
         let expectation = self.customExpectation(description: "callback invoked")
@@ -49,7 +47,6 @@ private let longString = (0..<50)
     }
 
 extension NSManagedObjectContextDebuggingTests {
-
     func makeChangeThatWillCauseRollback() {
         let user = ZMUser.selfUser(in: self.uiMOC)
         // this user name is too long and will fail validation

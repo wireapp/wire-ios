@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class AVSClientTests: XCTestCase {
-
     func testThatItSupportsAVSIdentifier() {
         // Given
         let avsIdentifier = AVSIdentifier(identifier: UUID(), domain: "wire.com")

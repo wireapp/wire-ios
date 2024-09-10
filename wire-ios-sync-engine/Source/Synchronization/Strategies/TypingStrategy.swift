@@ -25,7 +25,6 @@ let StoppedKey = "stopped"
 let StartedKey = "started"
 
 @objc extension ZMConversation {
-
     // Used for handling remote notifications
     public static let typingNotificationName = Notification.Name(rawValue: "ZMTypingNotification")
 
@@ -34,7 +33,6 @@ let StartedKey = "started"
 }
 
 public struct TypingEvent {
-
     let date: Date
     let objectID: NSManagedObjectID
     let isTyping: Bool
@@ -57,7 +55,6 @@ public struct TypingEvent {
 }
 
 class TypingEventQueue {
-
     /// conversations with their current isTyping state
     var conversations: [NSManagedObjectID: Bool] = [:]
 
@@ -104,7 +101,6 @@ class TypingEventQueue {
 }
 
 public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventConsumer {
-
     fileprivate var typing: Typing!
     fileprivate let typingEventQueue = TypingEventQueue()
     fileprivate var tornDown: Bool = false
@@ -263,7 +259,6 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
 }
 
 extension TypingStrategy {
-
     public static func notifyTranscoderThatUser(isTyping: Bool, in conversation: ZMConversation) {
         let userInfo = [IsTypingKey: NSNumber(value: isTyping)]
         NotificationInContext(

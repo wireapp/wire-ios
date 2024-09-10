@@ -31,7 +31,6 @@ protocol CallPermissionsConfiguration {
 }
 
 extension CallPermissionsConfiguration {
-
     var isAudioDisabledForever: Bool {
         return canAcceptAudioCalls == false && isPendingAudioPermissionRequest == false
     }

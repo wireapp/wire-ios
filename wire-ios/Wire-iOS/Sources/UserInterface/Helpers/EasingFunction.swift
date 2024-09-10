@@ -23,7 +23,6 @@ import UIKit
  */
 
 extension EasingFunction {
-
     var timingFunction: CAMediaTimingFunction {
         switch self {
         case .linear: return CAMediaTimingFunction(controlPoints: 0.250, 0.250, 0.750, 0.750)

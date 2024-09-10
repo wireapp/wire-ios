@@ -21,7 +21,6 @@ import Foundation
 import WireTesting
 
 class SessionManagerURLActionsTests: IntegrationTest {
-
     var presentationDelegate: MockPresentationDelegate!
 
     override func setUp() {

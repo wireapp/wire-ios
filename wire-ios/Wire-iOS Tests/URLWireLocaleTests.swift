@@ -20,7 +20,6 @@
 import XCTest
 
 class URLWireLocaleTests: XCTestCase {
-
     func testThatLocaleParameterGetsAppended() {
         // GIVEN
         let url = URL(string: "https://wire.com")!

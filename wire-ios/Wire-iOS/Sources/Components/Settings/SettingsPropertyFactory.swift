@@ -114,7 +114,6 @@ final class SettingsPropertyFactory {
     }
 
     func property(_ propertyName: SettingsPropertyName) -> SettingsProperty {
-
         switch propertyName {
         // Profile
         case .profileName:

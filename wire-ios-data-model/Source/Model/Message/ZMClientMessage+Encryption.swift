@@ -26,7 +26,6 @@ public let ZMFailedToCreateEncryptedMessagePayloadString = "💣"
 // MARK: - Encrypted data for recipients
 
 public protocol EncryptedPayloadGenerator {
-
     typealias Payload = (data: Data, strategy: MissingClientsStrategy)
 
     /// Produces a payload with encrypted data and the strategy to use to handle missing clients.
@@ -48,7 +47,6 @@ public protocol EncryptedPayloadGenerator {
 /// The various strategies give a hint to the backend of how we want to handle missing clients.
 
 public enum MissingClientsStrategy: Equatable {
-
     /// Fail the request if there is any missing client.
 
     case doNotIgnoreAnyMissingClient
@@ -65,7 +63,6 @@ public enum MissingClientsStrategy: Equatable {
 
 // FUTUREWORK: remove this code duplication (it's duplicated on ZMAssetClientMessage)
 extension ZMClientMessage {
-
     func updateUnderlayingMessageBeforeSending(in context: NSManagedObjectContext) {
         if conversation?.conversationType == .oneOnOne {
             // Update expectsReadReceipt flag to reflect the current user setting
@@ -94,7 +91,6 @@ extension ZMClientMessage {
 }
 
 extension ZMAssetClientMessage {
-
     func updateUnderlayingMessageBeforeSending(in context: NSManagedObjectContext) {
         if conversation?.conversationType == .oneOnOne {
             // Update expectsReadReceipt flag to reflect the current user setting
@@ -125,7 +121,6 @@ extension ZMAssetClientMessage {
 // MARK: - Proteus
 
 extension ZMClientMessage: EncryptedPayloadGenerator {
-
     public func encryptForTransport() async -> Payload? {
         guard
             let context = managedObjectContext,
@@ -161,7 +156,6 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
 }
 
 extension ZMAssetClientMessage: EncryptedPayloadGenerator {
-
     public func encryptForTransport() async -> Payload? {
         guard
             let context = managedObjectContext,
@@ -196,7 +190,6 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 }
 
 extension GenericMessage {
-
     public func encryptForProteus(for recipients: [ZMUser: Set<UserClient>],
                                   with missingClientsStrategy: MissingClientsStrategy,
                                   externalData: Data? = nil,
@@ -205,7 +198,6 @@ extension GenericMessage {
 }
 
 extension GenericMessage {
-
     /// This method needs to be async because CoreCrypto methods need to be async and it uses Proteus
     private typealias EncryptionFunction = (ProteusSessionID, Data) async throws -> Data?
     /// This is legacy encryption for CryptoBox - non async
@@ -218,7 +210,6 @@ extension GenericMessage {
         useQualifiedIdentifiers: Bool = false,
         externalData: Data? = nil
     ) async -> EncryptedPayloadGenerator.Payload? {
-
         let selfUser = await context.perform { ZMUser.selfUser(in: context) }
         let (users, missingClientsStrategy) = await context.perform { recipientUsersForMessage(in: conversation, selfUser: selfUser) }
         let recipients = await context.perform { users.mapToDictionary { $0.clients } }
@@ -353,7 +344,6 @@ extension GenericMessage {
         useQualifiedIdentifiers: Bool = false,
         in context: NSManagedObjectContext
     ) async -> Data? {
-
         let selfClient = await context.perform {
             let user = ZMUser.selfUser(in: context).selfClient()
             if user?.remoteIdentifier != nil {
@@ -367,7 +357,6 @@ extension GenericMessage {
 
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
-
             let message = await proteusMessage(
                 selfClient,
                 selfDomain: selfDomain,
@@ -640,7 +629,6 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_QualifiedUserEntry] {
-
         let recipientsByDomain = await context.perform {
             Dictionary(grouping: recipients) { element -> String in
                 element.key.domain ?? selfDomain
@@ -649,7 +637,6 @@ extension GenericMessage {
 
         var qualifiedUserEntries = [Proteus_QualifiedUserEntry]()
         for (domain, recipients) in recipientsByDomain {
-
             var userEntries = [Proteus_UserEntry]()
             for (user, clients) in recipients {
                 guard await context.perform({ !user.isAccountDeleted }) else { continue }
@@ -709,7 +696,6 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_UserEntry] {
-
         var userEntries = [Proteus_UserEntry]()
         for (user, clients) in recipients {
             guard await context.perform({ !user.isAccountDeleted }) else { continue }
@@ -759,7 +745,6 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_ClientEntry] {
-
         let filteredClientEntries = await context.perform {
             userClients.compactMap {
                 if $0 != selfClient {
@@ -989,7 +974,6 @@ extension GenericMessage {
 // MARK: - External
 
 extension GenericMessage {
-
     /// Returns a message with recipients, with the content stored externally, and a strategy to handle missing clients.
 
     private func encryptForTransportWithExternalDataBlob(for conversation: ZMConversation, in context: NSManagedObjectContext) async -> EncryptedPayloadGenerator.Payload? {
@@ -1086,7 +1070,6 @@ extension GenericMessage {
 /// A type that can generate payloads encrypted via mls.
 
 public protocol MLSEncryptedPayloadGenerator {
-
     typealias EncryptionFunction = (Data) async throws -> Data
 
     /// Encrypts data via MLS for sending to the backend.
@@ -1104,13 +1087,11 @@ public protocol MLSEncryptedPayloadGenerator {
 }
 
 public enum MLSEncryptedPayloadGeneratorError: Error {
-
     case noContext
     case noUnencryptedData
 }
 
 extension ZMClientMessage: MLSEncryptedPayloadGenerator {
-
     public func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data {
         guard let context = managedObjectContext else {
             throw MLSEncryptedPayloadGeneratorError.noContext
@@ -1130,7 +1111,6 @@ extension ZMClientMessage: MLSEncryptedPayloadGenerator {
 }
 
 extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
-
     public func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data {
         guard let context = managedObjectContext else {
             throw MLSEncryptedPayloadGeneratorError.noContext
@@ -1150,7 +1130,6 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
 }
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
-
     public func encryptForTransport(using encrypt: MLSEncryptedPayloadGenerator.EncryptionFunction) async throws -> Data {
         let unencryptedData = try unencryptedData()
         return try await encrypt(unencryptedData)

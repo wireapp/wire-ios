@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
-
     var sut: FolderCreationController!
     var coreDataFixture: CoreDataFixture!
     private var snapshotHelper: SnapshotHelper!
@@ -47,7 +46,6 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
     }
 
     func testForEditingTextField() {
-
         sut.loadViewIfNeeded()
         sut.beginAppearanceTransition(false, animated: false)
         sut.endAppearanceTransition()

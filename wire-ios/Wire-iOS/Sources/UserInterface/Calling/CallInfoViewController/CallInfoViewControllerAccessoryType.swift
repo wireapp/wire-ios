@@ -19,7 +19,6 @@
 import WireDataModel
 
 enum CallInfoViewControllerAccessoryType: Equatable {
-
     case none
     case avatar(HashBoxUser)
     case participantsList(CallParticipantsList)

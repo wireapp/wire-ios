@@ -29,7 +29,6 @@ protocol UserProfilePayloadProcessing {
 }
 
 final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
-
     /// Update all user entities with the data from the user profiles.
     ///
     /// - parameter context: `NSManagedObjectContext` on which the update should be performed.
@@ -177,7 +176,6 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 }
 
 private extension Payload.UserProfile.MessageProtocol {
-
     var dataModelMessageProtocol: MessageProtocol {
         switch self {
         case .proteus:

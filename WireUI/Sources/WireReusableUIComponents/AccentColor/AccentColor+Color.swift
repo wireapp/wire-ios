@@ -20,7 +20,6 @@ import SwiftUI
 import WireFoundation
 
 public extension AccentColor {
-
     var color: Color {
         Color(uiColor: uiColor)
     }

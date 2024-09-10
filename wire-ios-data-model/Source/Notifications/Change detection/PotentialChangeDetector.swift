@@ -19,7 +19,6 @@
 import Foundation
 
 class PotentialChangeDetector: ChangeDetector {
-
     // MARK: - Private properties
 
     private var modifiedObjects = ModifiedObjects()

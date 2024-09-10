@@ -30,7 +30,6 @@ extension ObserverType {
 }
 
 final class MockUserObserver: UserObserving {
-
     var notifications = [UserChangeInfo]()
 
     func clearNotifications() {
@@ -43,7 +42,6 @@ final class MockUserObserver: UserObserving {
 }
 
 class MessageObserver: NSObject, ZMMessageObserver {
-
     var token: NSObjectProtocol?
 
     override init() {}
@@ -64,7 +62,6 @@ class MessageObserver: NSObject, ZMMessageObserver {
 }
 
 class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
-
     var token: NSObjectProtocol?
     var notifications: [NewUnreadMessagesChangeInfo] = []
 
@@ -81,7 +78,6 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
 }
 
 final class ConversationObserver: NSObject, ZMConversationObserver {
-
     var token: NSObjectProtocol?
 
     func clearNotifications() {
@@ -103,7 +99,6 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
 }
 
 @objcMembers class ConversationListChangeObserver: NSObject, ZMConversationListObserver {
-
     public var notifications = [ConversationListChangeInfo]()
     public var observerCallback: ((ConversationListChangeInfo) -> Void)?
     unowned var conversationList: ConversationList

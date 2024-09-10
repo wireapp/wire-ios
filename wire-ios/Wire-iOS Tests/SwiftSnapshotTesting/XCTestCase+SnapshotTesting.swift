@@ -29,7 +29,6 @@ private let perceptualPrecision: Float = 0.98
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
-
     func verifyInWidths(matching value: UIView,
                         widths: Set<CGFloat>,
                         snapshotBackgroundColor: UIColor,
@@ -97,7 +96,6 @@ extension XCTestCase {
 }
 
 extension XCTestCase {
-
     func snapshotDirectory(file: StaticString = #file) -> String {
         let fileName = "\(file)"
         let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
@@ -141,7 +139,6 @@ extension XCTestCase {
                 file: StaticString = #file,
                 testName: String = #function,
                 line: UInt = #line) {
-
         let failure = verifySnapshot(matching: value,
                                      as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
                                      named: name,
@@ -155,7 +152,6 @@ extension XCTestCase {
 }
 
 extension Snapshotting where Value == UIAlertController, Format == UIImage {
-
     /// A snapshot strategy for comparing UIAlertController views based on pixel equality.
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
     static var image: Snapshotting<UIAlertController, UIImage> {
@@ -178,7 +174,6 @@ extension UIView {
 }
 
 extension XCTestCase {
-
     // MARK: - verify in different width helper
 
     func containerView(with view: UIView, snapshotBackgroundColor: UIColor?) -> UIView {
@@ -259,7 +254,6 @@ extension XCTestCase {
                         file: StaticString = #file,
                         testName: String = #function,
                         line: UInt = #line) {
-
         for width in widths {
             verifyInWidth(createSut: createSut,
                           width: width,
@@ -278,7 +272,6 @@ extension XCTestCase {
                         file: StaticString = #file,
                         testName: String = #function,
                         line: UInt = #line) {
-
         for width in widths {
             verifyInWidth(createSut: createSut,
                           width: width,
@@ -323,7 +316,6 @@ extension XCTestCase {
                        file: StaticString = #file,
                        testName: String = #function,
                        line: UInt = #line) {
-
         verifyInWidth(createSut: {
             createSut().view
         },

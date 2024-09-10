@@ -22,7 +22,6 @@ import Foundation
 
 @objcMembers
 public class MockAVSWrapper: AVSWrapperType {
-
     public var isMuted: Bool = false
 
     public var startCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool)?
@@ -108,7 +107,6 @@ public class MockAVSWrapper: AVSWrapperType {
 }
 
 final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
-
     public let mockAVSWrapper: MockAVSWrapper
 
     public required init(userId: AVSIdentifier, clientId: String, avsWrapper: AVSWrapperType? = nil, uiMOC: NSManagedObjectContext, flowManager: FlowManagerType, analytics: AnalyticsType? = nil, transport: WireCallCenterTransport) {
@@ -119,7 +117,6 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
 
 @objcMembers
 public class WireCallCenterV3Mock: WireCallCenterV3 {
-
     public let mockAVSWrapper: MockAVSWrapper
 
     var mockMembers: [AVSCallMember] {

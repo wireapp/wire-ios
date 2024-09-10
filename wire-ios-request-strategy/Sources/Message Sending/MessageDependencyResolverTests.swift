@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class MessageDependencyResolverTests: MessagingTestBase {
-
     func testThatGivenMessageWithoutDependencies_thenDontWait() async throws {
         // given
         let message = GenericMessageEntity(
@@ -118,7 +117,6 @@ final class MessageDependencyResolverTests: MessagingTestBase {
     }
 
     struct Arrangement {
-
         struct Scaffolding {
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
             static let prekey = Payload.Prekey(key: "prekey123", id: nil)

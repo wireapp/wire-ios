@@ -21,7 +21,6 @@ import WireDesign
 import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
-
     private let mainCoordinator: MainCoordinating
     private let collectionViewController: SectionCollectionViewController
     private let conversation: GroupDetailsConversationType
@@ -160,7 +159,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     func computeVisibleSections() -> [CollectionViewSectionController] {
-
         var sections = [CollectionViewSectionController]()
 
         let renameGroupSectionController = RenameGroupSectionController(conversation: conversation, userSession: userSession)
@@ -175,7 +173,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
 
         if !participants.isEmpty {
-
             let admins = participants.filter { $0.isGroupAdmin(in: conversation) }
             let members = participants.filter { !$0.isGroupAdmin(in: conversation) }
 
@@ -363,7 +360,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 }
 
 extension GroupDetailsViewController {
-
     private var legalholdItem: UIBarButtonItem {
         let item = UIBarButtonItem(icon: .legalholdactive, target: self, action: #selector(presentLegalHoldDetails))
         item.setLegalHoldAccessibility()
@@ -387,7 +383,6 @@ extension GroupDetailsViewController {
 // MARK: - Conversation verification status
 
 private extension GroupDetailsViewController {
-
     var verificationStatus: NSAttributedString? {
         guard conversation.isVerified else {
             return nil
@@ -474,7 +469,6 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
 }
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
-
     func presentDetails(for user: UserType) {
         guard let conversation = conversation as? ZMConversation else { return }
 
@@ -526,7 +520,6 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
 }
 
 extension ZMConversation {
-
     func refetchParticipantsIfNeeded() {
         for user in sortedOtherParticipants where user.isPendingMetadataRefresh {
             user.refreshData()

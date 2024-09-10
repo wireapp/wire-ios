@@ -22,7 +22,6 @@ import Foundation
 /// properties was deleted.
 
 public struct UserPropertiesDeleteEvent: Equatable, Codable {
-
     /// The property key that was deleted.
 
     public let key: String

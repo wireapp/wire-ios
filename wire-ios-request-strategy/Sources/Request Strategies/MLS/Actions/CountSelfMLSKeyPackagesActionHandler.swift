@@ -19,14 +19,12 @@
 import Foundation
 
 class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackagesAction> {
-
     // MARK: - Methods
 
     override func request(
         for action: ActionHandler<CountSelfMLSKeyPackagesAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         var action = action
 
         guard apiVersion >= .v5 else {
@@ -74,7 +72,6 @@ class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackage
 }
 
 extension CountSelfMLSKeyPackagesActionHandler {
-
     // MARK: - Payload
 
     struct ResponsePayload: Codable {

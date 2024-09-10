@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
-
     var sut: StaleMLSKeyDetector!
 
     // MARK: - Setup

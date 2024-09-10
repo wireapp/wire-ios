@@ -20,7 +20,6 @@ import WireTesting
 import XCTest
 
 class NSData_ZMSCryptoTests: XCTestCase {
-
     /// Key to use to read the test data
     var sampleKey: Data {
         return Data(base64Encoded: "A5NEu/TETPw0XT2G4EUNVB4ZRDmi05wetFJEucHmlXI=", options: NSData.Base64DecodingOptions())!
@@ -48,9 +47,7 @@ class NSData_ZMSCryptoTests: XCTestCase {
 // MARK: - Encryption with plaintext IV
 
 extension NSData_ZMSCryptoTests {
-
     func testThatItEncryptsAndDecryptsData_plaintextIV() throws {
-
         // given
         let data = self.sampleDecryptedImageData
         let key = self.sampleKey
@@ -69,7 +66,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatTheEncodedDataIsDifferentEveryTime_plaintextIV() throws {
-
         // given
         var generatedDataSet = Set<Data>()
         let sampleData = self.sampleDecryptedImageData
@@ -83,7 +79,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItDecryptsAndroidImage_plaintextIV() {
-
         // given
         let encryptedImage = self.sampleEncryptedImageData
         let expectedDecryptedImage = self.sampleDecryptedImageData
@@ -108,9 +103,7 @@ extension NSData_ZMSCryptoTests {
 // MARK: - Encrypted IV
 
 extension NSData_ZMSCryptoTests {
-
     func testThatItEncryptsAndDecryptsData_encryptedIV() {
-
         // given
         let data = self.sampleDecryptedImageData
         let key = self.sampleKey
@@ -129,7 +122,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatTheEncodedDataIsDifferentEveryTime_encryptedIV() {
-
         // given
         var generatedDataSet = Set<Data>()
         let sampleData = self.sampleDecryptedImageData
@@ -146,9 +138,7 @@ extension NSData_ZMSCryptoTests {
 // MARK: - Random data generation
 
 extension NSData_ZMSCryptoTests {
-
     func testThatItGeneratesRandomDataWithTheRightSize() {
-
         // positive data
         XCTAssertEqual(Data.secureRandomData(length: 128).count, 128)
         XCTAssertEqual(Data.secureRandomData(length: 12).count, 12)
@@ -175,7 +165,6 @@ extension NSData_ZMSCryptoTests {
 // MARK: - Hashing
 
 extension NSData_ZMSCryptoTests {
-
     var samplePlainData: Data {
         let text = "A HMAC is a small set of data that helps authenticate the nature of message; it protects the integrity and the authenticity of the message."
         return text.data(using: String.Encoding.utf8, allowLossyConversion: true)!
@@ -202,7 +191,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItCalculatesTheMD5Digest() {
-
         // given
         let data = samplePlainData
 
@@ -214,7 +202,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItCalculatesTheSHA256Digest() {
-
         // given
         let data = samplePlainData
 
@@ -226,7 +213,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItCalculatesTheHMACSHA256Digest() {
-
         // given
         let data = samplePlainData
 
@@ -238,7 +224,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatTheSHAOfTheTestImageMatches() {
-
         // given
         let data = sampleEncryptedImageData
 
@@ -250,7 +235,6 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItCalculatesSHA256AsAndroid() {
-
         // given
         let dataPath = Bundle(for: type(of: self)).path(forResource: "data_to_hash", ofType: "enc")
         let inputData = try! Data(contentsOf: URL(fileURLWithPath: dataPath!))
@@ -276,7 +260,6 @@ extension NSData_ZMSCryptoTests {
 // MARK: - Hex encoding
 
 extension NSData_ZMSCryptoTests {
-
     func testThatDataCanBeEncodedIntoHexString() {
         // given
         let array: [UInt8] = Array(0...255)
@@ -302,7 +285,6 @@ extension NSData_ZMSCryptoTests {
 // MARK: - Hex decoding
 
 extension NSData_ZMSCryptoTests {
-
     func testThatHexStringCanBeDecodedIntoData() {
         // given
         let hexString = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f" +

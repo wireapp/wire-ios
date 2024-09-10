@@ -80,7 +80,6 @@ public enum ValidationError: Equatable {
 }
 
 public protocol CompanyLoginRequesterDelegate: AnyObject {
-
     /**
      * The login requester asks the user to verify their identity on the given website.
      *
@@ -96,7 +95,6 @@ public protocol CompanyLoginRequesterDelegate: AnyObject {
  */
 
 public class CompanyLoginRequester {
-
     /// The URL scheme that where the callback will be provided.
     public let callbackScheme: String
 

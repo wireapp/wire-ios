@@ -21,7 +21,6 @@ import Foundation
 @testable import WireAPI
 
 extension URLRequest {
-
     func mockResponse(
         statusCode: HTTPStatusCode,
         jsonResourceName: String

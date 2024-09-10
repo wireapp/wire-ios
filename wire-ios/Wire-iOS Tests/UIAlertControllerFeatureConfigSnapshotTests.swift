@@ -21,7 +21,6 @@ import SnapshotTesting
 import XCTest
 
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
-
     private func createSut(for featureChange: FeatureRepository.FeatureChange) -> UIAlertController? {
         let result = UIAlertController.fromFeatureChange(featureChange,
                                                          acknowledger: MockFeatureChangeAcknowledger())
@@ -53,7 +52,6 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 }
 
 private final class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
-
     func acknowledgeChange(for featureName: Feature.Name) {
         // no op
     }

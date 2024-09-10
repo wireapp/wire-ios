@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCase {
-
     var message: MockMessage!
     var mockSelfUser: MockUserType!
 

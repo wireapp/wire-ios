@@ -24,7 +24,6 @@ protocol CallParticipantsListViewControllerDelegate: AnyObject {
 }
 
 final class CallParticipantsListViewController: UIViewController, UICollectionViewDelegateFlowLayout {
-
     private let cellHeight: CGFloat = 56
     private var topConstraint: NSLayoutConstraint?
     weak var delegate: CallParticipantsListViewControllerDelegate?

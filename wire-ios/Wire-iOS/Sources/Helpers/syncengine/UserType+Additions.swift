@@ -19,7 +19,6 @@
 import WireDataModel
 
 extension UserType {
-
     var canSeeServices: Bool {
         #if ADD_SERVICE_DISABLED
         return false

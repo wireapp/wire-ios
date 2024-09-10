@@ -22,7 +22,6 @@ private let zmLog = ZMSLog(tag: "Feature")
 
 @objcMembers
 public class Feature: ZMManagedObject {
-
     // MARK: - Types
 
     // IMPORTANT
@@ -31,7 +30,6 @@ public class Feature: ZMManagedObject {
     // of these cases may lead to a corrupt database.
 
     public enum Name: String, Codable, CaseIterable {
-
         case appLock
         case conferenceCalling
         case fileSharing
@@ -45,7 +43,6 @@ public class Feature: ZMManagedObject {
     }
 
     public enum Status: String, Codable {
-
         case enabled
         case disabled
     }
@@ -129,7 +126,6 @@ public class Feature: ZMManagedObject {
 
     public static func fetch(name: Name,
                              context: NSManagedObjectContext) -> Feature? {
-
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         fetchRequest.predicate = NSPredicate(format: "nameValue == %@", name.rawValue)
         fetchRequest.fetchLimit = 2
@@ -151,7 +147,6 @@ public class Feature: ZMManagedObject {
         in context: NSManagedObjectContext,
         changes: @escaping (Feature) -> Void
     ) {
-
         // There should be at most one instance per feature, so only allow modifications
         // on a single context to avoid race conditions.
         assert(context.zm_isSyncContext, "Modifications of `Feature` can only occur on the sync context")

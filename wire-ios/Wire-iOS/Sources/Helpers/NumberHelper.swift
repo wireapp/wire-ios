@@ -33,7 +33,6 @@ extension CGFloat {
 // MARK: Decibel Normalization
 
 extension Float {
-
     /**
       Calculates a nomrlaized value between 0 and 1 
       when called on  a `decibel` value, see:

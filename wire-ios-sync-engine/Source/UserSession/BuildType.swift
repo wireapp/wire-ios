@@ -19,7 +19,6 @@
 import WireSystem
 
 enum BuildType: Equatable {
-
     case production
     case alpha
     case beta

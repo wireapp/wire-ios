@@ -21,7 +21,6 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 
 final class UserClientEventConsumerTests: RequestStrategyTestBase {
-
     var sut: UserClientEventConsumer!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
     var clientUpdateStatus: ZMMockClientUpdateStatus!
@@ -78,7 +77,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         label: String = "device label",
         time: Date = Date(timeIntervalSince1970: 12345)
     ) -> ZMTransportData {
-
         return [
             "client": [
                 "id": clientId,
@@ -100,7 +98,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     func testThatItAddsAnIgnoredSelfUserClientWhenReceivingAPush() async {
-
         // given
         let clientId = "94766bd92f56923d"
         let clientLabel = "iPhone 23sd Plus Air Pro C"
@@ -149,7 +146,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     func testThatItAddsASelfUserClientWhenDownloadingAClientEvent() async {
-
         // given
         let clientId = "94766bd92f56923d"
         var selfUser: ZMUser! = nil
@@ -179,7 +175,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     func testThatItDoesNotAddASelfUserClientWhenReceivingAPushIfTheClientExistsAlready() async {
-
         // given
         var selfUser: ZMUser!
         var existingClient: UserClient!

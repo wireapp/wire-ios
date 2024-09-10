@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMMessage: SwiftConversationMessage {
-
     public var failedToSendReason: MessageSendFailure? {
         guard
             isExpired,

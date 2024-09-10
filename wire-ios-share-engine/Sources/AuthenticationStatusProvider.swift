@@ -23,6 +23,5 @@ enum AuthenticationState {
 }
 
 protocol AuthenticationStatusProvider {
-
     var state: AuthenticationState { get }
 }

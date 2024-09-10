@@ -25,7 +25,6 @@ import Foundation
 /// is required.
 
 struct UTCTime: Codable {
-
     let date: Date
 
     init(from decoder: any Decoder) throws {

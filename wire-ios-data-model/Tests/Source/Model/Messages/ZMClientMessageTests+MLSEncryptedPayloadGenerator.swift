@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessageTests {
-
     override func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto

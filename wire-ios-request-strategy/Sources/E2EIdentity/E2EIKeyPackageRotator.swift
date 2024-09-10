@@ -23,7 +23,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {
-
     func rotateKeysAndMigrateConversations(
         enrollment: E2eiEnrollmentProtocol,
         certificateChain: String
@@ -31,7 +30,6 @@ public protocol E2EIKeyPackageRotating {
 }
 
 public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
-
     // MARK: - Types
 
     enum Error: Swift.Error {
@@ -84,7 +82,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         enrollment: E2eiEnrollmentProtocol,
         certificateChain: String
     ) async throws {
-
         // We need to cast this to `E2eiEnrollment` because we only have access
         // to the protocol it conforms to (E2eiEnrollmentProtocol),
         // but the `e2eiRotateAll` function below expects the `E2eiEnrollment` type
@@ -127,7 +124,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     // MARK: - Helpers
 
     private func replaceKeyPackages(rotateBundle: RotateBundle) async throws {
-
         guard let clientID = await context.perform({ [self] in
             ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
         }) else {

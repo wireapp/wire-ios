@@ -20,9 +20,7 @@ import Foundation
 import WireSyncEngine
 
 final class DeepLinksViewModel: ObservableObject {
-
     enum Error: LocalizedError {
-
         case invalidLink
 
         var errorDescription: String? {

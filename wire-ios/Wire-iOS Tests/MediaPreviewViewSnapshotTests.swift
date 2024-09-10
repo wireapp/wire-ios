@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class MediaPreviewViewSnapshotTests: XCTestCase {
-
     private var sut: MediaPreviewView!
     private var snapshotHelper: SnapshotHelper!
 

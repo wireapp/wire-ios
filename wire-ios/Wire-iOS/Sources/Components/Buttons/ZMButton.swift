@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ZMButton: LegacyButton {
-
     var style: ButtonStyle?
 
     convenience init(

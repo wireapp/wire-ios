@@ -19,7 +19,6 @@
 import Foundation
 
 class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
-
     func testThatItReturnsAPIVersionInfo() {
         // Given
         let path = "/api-version"

@@ -20,7 +20,6 @@
 import XCTest
 
 final class EphemeralTimeoutFormatterTests: XCTestCase {
-
     let secondsInYear: TimeInterval = 31536000
 
     var sut: EphemeralTimeoutFormatter!

@@ -20,7 +20,6 @@ import UIKit
 import WireFoundation
 
 extension UITraitEnvironment {
-
     var isHorizontalSizeClassRegular: Bool {
         return traitCollection.horizontalSizeClass == .regular
     }

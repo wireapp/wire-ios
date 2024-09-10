@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 class AtomicIntegerTests: XCTestCase {
-
     func testThatItIncrementsNumber() {
         // GIVEN
         let atomicNumber = ZMAtomicInteger(integer: 10)

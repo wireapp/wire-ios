@@ -19,7 +19,6 @@
 import UIKit
 
 struct TopOverlayPresenter: TopOverlayPresenting {
-
     var mainWindow: UIWindow
 
     private var zClientViewController: ZClientViewController? {

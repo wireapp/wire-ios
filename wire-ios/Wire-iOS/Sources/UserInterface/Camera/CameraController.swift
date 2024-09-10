@@ -23,7 +23,6 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 final class CameraController {
-
     private(set) var currentCamera: SettingsCamera
 
     var previewLayer: AVCaptureVideoPreviewLayer!
@@ -217,7 +216,6 @@ final class CameraController {
      * callback.
      */
     func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
-
         // For iPad split/slide over mode, the session is not running.
         guard session.isRunning else { return }
         let currentOrientation = AVCaptureVideoOrientation.current
@@ -248,7 +246,6 @@ final class CameraController {
      * one unique delegate object responsible.
      */
     private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
-
         private let settings: AVCapturePhotoSettings
         private let handler: (PhotoResult) -> Void
         private let completion: () -> Void
@@ -278,7 +275,6 @@ final class CameraController {
 }
 
 private extension AVCaptureVideoOrientation {
-
     /// The video orientation matches against first the device orientation,
     /// then the interface orientation. Must be called on the main thread.
     static var current: AVCaptureVideoOrientation {

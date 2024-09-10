@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class UnlockViewController: UIViewController {
-
     typealias Callback = (_ passcode: String?) -> Void
 
     // MARK: - Properties
@@ -127,7 +126,6 @@ final class UnlockViewController: UIViewController {
 // MARK: - View creation
 
 extension UnlockViewController {
-
     private func setupViews() {
         view.backgroundColor = .black
 
@@ -190,7 +188,6 @@ extension UnlockViewController {
 // MARK: - Actions
 
 extension UnlockViewController {
-
     @objc
     private func onUnlockButtonPressed(sender: AnyObject?) {
         unlock()
@@ -215,7 +212,6 @@ extension UnlockViewController {
 // MARK: - PasscodeTextFieldDelegate
 
 extension UnlockViewController: PasscodeTextFieldDelegate {
-
     func textFieldValueChanged(_ value: String?) {
         errorLabel.text = " "
         if let isEmpty = value?.isEmpty {

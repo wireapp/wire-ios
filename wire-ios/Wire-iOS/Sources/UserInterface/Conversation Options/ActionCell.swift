@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ActionCell: UITableViewCell, CellConfigurationConfigurable {
-
     private let imageContainer = UIView()
     private let iconImageView = UIImageView()
     private let label = UILabel()

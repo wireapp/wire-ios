@@ -19,7 +19,6 @@
 import Foundation
 
 final class Emoji: Decodable {
-
     typealias ID = String
 
     let value: ID
@@ -73,7 +72,6 @@ final class Emoji: Decodable {
 }
 
 extension Emoji: Hashable {
-
     static func == (lhs: Emoji, rhs: Emoji) -> Bool {
         return lhs.value == rhs.value
     }
@@ -84,7 +82,6 @@ extension Emoji: Hashable {
 }
 
 extension Emoji.ID {
-
     static let like = "❤️"
     static let thumbsUp = "👍"
     static let thumbsDown = "👎"
@@ -93,7 +90,6 @@ extension Emoji.ID {
 }
 
 enum EmojiCategory: String, CaseIterable, Decodable {
-
     case smileysAndEmotion = "Smileys & Emotion"
     case peopleAndBody = "People & Body"
     case animalsAndNature = "Animals & Nature"

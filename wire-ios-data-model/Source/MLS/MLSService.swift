@@ -22,7 +22,6 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptionServiceInterface {
-
     // MARK: - Managing groups
 
     /// Creates a new group or subgroup with the given ID.
@@ -472,7 +471,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
 // This is only used in tests, so it should be removed.
 public protocol MLSServiceDelegate: AnyObject {
-
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
 }
@@ -494,7 +492,6 @@ public protocol MLSServiceDelegate: AnyObject {
 /// It uses the CoreCrypto framework to perform cryptographic operations, and interacts with core data and the backend
 
 public final class MLSService: MLSServiceInterface {
-
     // MARK: - Properties
 
     private weak var context: NSManagedObjectContext?
@@ -850,7 +847,6 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Add member
 
     public enum MLSAddMembersError: Error, Equatable {
-
         case noMembersToAdd
         case noInviteesToAdd
         case noManagedObjectContext
@@ -898,7 +894,6 @@ public final class MLSService: MLSServiceInterface {
         for users: [MLSUser],
         ciphersuite: MLSCipherSuite
     ) async throws -> [KeyPackage] {
-
         guard let context else {
             assertionFailure("MLSService.context is nil")
             return []
@@ -977,7 +972,6 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Key packages
 
     enum MLSKeyPackagesError: Error {
-
         case failedToGenerateKeyPackages
         case failedToUploadKeyPackages
         case failedToCountUnclaimedKeyPackages
@@ -1103,7 +1097,6 @@ public final class MLSService: MLSServiceInterface {
         keyPackages: [String],
         context: NotificationContext
     ) async throws {
-
         do {
             try await actionsProvider.uploadKeyPackages(
                 clientID: clientID,
@@ -1120,13 +1113,11 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Process welcome message
 
     public enum MLSWelcomeMessageProcessingError: Error {
-
         case failedToConvertMessageToBytes
         case failedToProcessMessage
     }
 
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
-
         logger.info("checking if group (\(groupID)) exists...")
         let result = try await coreCrypto.perform { coreCrypto in
             await coreCrypto.conversationExists(conversationId: groupID.data)
@@ -1206,7 +1197,6 @@ public final class MLSService: MLSServiceInterface {
         logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
 
         for conversationInfo in outOfSyncConversationInfos {
-
             await launchGroupRepairTaskIfNotInProgress(for: conversationInfo.mlsGroupId) {
                 do {
                     try await self.joinGroupAndAppendGapSystemMessage(
@@ -1359,7 +1349,6 @@ public final class MLSService: MLSServiceInterface {
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
     private func outOfSyncConversations(in context: NSManagedObjectContext) async throws -> [OutOfSyncConversationInfo] {
-
         let conversations = try await coreCrypto.perform { coreCrypto in
 
             let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
@@ -1566,7 +1555,6 @@ public final class MLSService: MLSServiceInterface {
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) -> (conversation: ZMConversation, qualifiedID: QualifiedID, groupID: MLSGroupID)? {
-
         var conversation: ZMConversation?
         var qualifiedID: QualifiedID?
 
@@ -1623,7 +1611,6 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Pending proposals
 
     enum MLSCommitPendingProposalsError: Error {
-
         case failedToCommitPendingProposals
     }
 
@@ -1775,7 +1762,6 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         operation: @escaping () async throws -> Void
     ) async throws {
-
         do {
             try await operation()
 
@@ -1814,7 +1800,6 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Subgroup
 
     public enum SubgroupFailure: Error {
-
         case missingNotificationContext
         case failedToFetchSubgroup
         case failedToCreateSubgroup
@@ -2085,7 +2070,6 @@ public final class MLSService: MLSServiceInterface {
             try ZMConversation.fetchAllTeamGroupConversations(messageProtocol: .proteus, in: context)
         }
         for conversation in groupConversations {
-
             let (qualifiedID, members) = await context.perform {
                 (conversation.qualifiedID, conversation.localParticipants.map { MLSUser(from: $0) })
             }
@@ -2120,7 +2104,6 @@ public final class MLSService: MLSServiceInterface {
                 _ = try await createGroup(for: mlsGroupID)
 
                 do {
-
                     // update keying material and send commit bundle to the backend
                     try await internalUpdateKeyMaterial(for: mlsGroupID)
 
@@ -2128,7 +2111,6 @@ public final class MLSService: MLSServiceInterface {
                     try await addMembersToConversation(with: members, for: mlsGroupID)
 
                 } catch SendMLSMessageAction.Failure.mlsStaleMessage {
-
                     logger.error("failed to migrate conversation \(qualifiedID): stale message")
 
                     // rollback: destroy/wipe group
@@ -2146,7 +2128,6 @@ public final class MLSService: MLSServiceInterface {
 // MARK: - Helper types
 
 public struct MLSUser: Equatable {
-
     public let id: UUID
     public let domain: String
     public let selfClientID: String?
@@ -2183,7 +2164,6 @@ public struct MLSUser: Equatable {
 }
 
 extension MLSUser: CustomStringConvertible {
-
     public var description: String {
         return "\(id)@\(domain)"
     }
@@ -2192,7 +2172,6 @@ extension MLSUser: CustomStringConvertible {
 // MARK: - Helper Extensions
 
 private extension TimeInterval {
-
     var nanoseconds: UInt64 {
         UInt64(self * 1_000_000_000)
     }
@@ -2200,7 +2179,6 @@ private extension TimeInterval {
 
 // sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
-
     /// Decodes event's payload and transform it to local model
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
     /// Process the events and perform a save on syncContext

@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIViewController {
-
     /// return the default supported interface orientations of a view controller
     /// return .all only if the idiom is .pad and size class is .regular
     var wr_supportedInterfaceOrientations: UIInterfaceOrientationMask {

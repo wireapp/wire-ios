@@ -26,7 +26,6 @@ typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
-
     func conversationListViewControllerViewModel(
         _ viewModel: ConversationListViewController.ViewModel,
         didUpdate selfUserStatus: UserStatus
@@ -50,7 +49,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 }
 
 extension ConversationListViewController {
-
     final class ViewModel: NSObject {
         weak var viewController: ConversationListContainerViewModelDelegate? {
             didSet {
@@ -123,9 +121,7 @@ extension ConversationListViewController {
 }
 
 extension ConversationListViewController.ViewModel {
-
     func setupObservers() {
-
         if let userSession = ZMUserSession.shared() {
             initialSyncObserverToken = NotificationInContext.addObserver(
                 name: .initialSync,
@@ -244,7 +240,6 @@ extension ConversationListViewController.ViewModel {
 }
 
 extension ConversationListViewController.ViewModel: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""

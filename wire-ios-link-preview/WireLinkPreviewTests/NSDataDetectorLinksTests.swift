@@ -20,7 +20,6 @@ import WireLinkPreview
 import XCTest
 
 class NSDataDetectorLinksTests: XCTestCase {
-
     var detector: NSDataDetector!
 
     override func setUp() {

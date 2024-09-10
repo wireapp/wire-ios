@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 struct ButtonStyle {
-
     typealias ButtonColors = SemanticColors.Button
 
     private(set) var normalStateColors: (background: UIColor, title: UIColor, border: UIColor?)

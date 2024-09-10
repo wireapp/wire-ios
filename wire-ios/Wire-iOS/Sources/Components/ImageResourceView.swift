@@ -21,7 +21,6 @@ import UIKit
 import WireDataModel
 
 final class ImageResourceView: FLAnimatedImageView {
-
     weak var delegate: ContextMenuDelegate?
 
     fileprivate var loadingView = ThreeDotsLoadingView()

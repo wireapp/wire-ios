@@ -19,7 +19,6 @@
 import Foundation
 
 extension Array {
-
     /// Shifts the array by the given amount
     /// Negatives shift left, positives shift right
     ///

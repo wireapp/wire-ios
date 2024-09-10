@@ -141,7 +141,6 @@ final class RegistrationStrategyTests: MessagingTest {
 // MARK: - error tests for team creation
 
 extension RegistrationStrategyTests: RegistrationStatusStrategyTestHelper {
-
     func handleResponse(response: ZMTransportResponse) {
         sut.didReceive(response, forSingleRequest: sut.registrationSync)
     }

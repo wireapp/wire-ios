@@ -21,7 +21,6 @@ import Foundation
 /// A wrapper class to simplify observation of Darwin Notifications.
 ///
 public final class DarwinNotificationCenter {
-
     public static var shared = DarwinNotificationCenter()
 
     public typealias Handler = () -> Void

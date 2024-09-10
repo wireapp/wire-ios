@@ -21,7 +21,6 @@ import SwiftUI
 /// The primary button style as defined in Wire's design system.
 
 struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
-
     func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .padding()

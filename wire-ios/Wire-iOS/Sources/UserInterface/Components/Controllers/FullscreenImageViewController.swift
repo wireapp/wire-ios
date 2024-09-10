@@ -329,7 +329,6 @@ final class FullscreenImageViewController: UIViewController {
 
     @objc
     private func dismissingPanGestureRecognizerPanned(_ panner: UIPanGestureRecognizer) {
-
         let translation = panner.translation(in: panner.view)
         let locationInView = panner.location(in: panner.view)
         let velocity = panner.velocity(in: panner.view)
@@ -518,7 +517,6 @@ final class FullscreenImageViewController: UIViewController {
         zmLog.debug("Setting selected: \(selected) animated: \(animated)")
 
         if selected {
-
             guard !isImageViewHightlighted else {
                 return
             }
@@ -550,7 +548,6 @@ final class FullscreenImageViewController: UIViewController {
             }
 
         } else {
-
             let removeLayerClosure: Completion = {
                 self.highlightLayer?.removeFromSuperlayer()
                 self.highlightLayer = nil
@@ -736,10 +733,8 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
 // MARK: - MessageActionResponder
 
 extension FullscreenImageViewController: MessageActionResponder {
-
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         switch action {
-
         case .showInConversation,
                 .reply:
             dismiss(animated: true) {
@@ -775,7 +770,6 @@ extension FullscreenImageViewController: MessageActionResponder {
 extension FullscreenImageViewController: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if ((changeInfo.transferStateChanged || changeInfo.imageChanged) && (message.imageMessageData?.imageData != nil)) || changeInfo.isObfuscatedChanged {
-
             updateForMessage()
         }
     }

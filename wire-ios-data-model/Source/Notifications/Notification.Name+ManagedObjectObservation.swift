@@ -19,7 +19,6 @@
 import Foundation
 
 extension Notification.Name {
-
     static let ConversationChange = Notification.Name("ZMConversationChangedNotification")
     static let MessageChange = Notification.Name("ZMMessageChangedNotification")
     static let UserChange = Notification.Name("ZMUserChangedNotification")

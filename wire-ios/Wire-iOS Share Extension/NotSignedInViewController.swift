@@ -19,7 +19,6 @@
 import UIKit
 
 final class NotSignedInViewController: UIViewController {
-
     var closeHandler: (() -> Void)?
 
     let messageLabel = UILabel()

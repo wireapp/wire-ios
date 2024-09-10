@@ -24,7 +24,6 @@ public protocol QuickSyncObserverInterface {
 }
 
 public final class QuickSyncObserver: QuickSyncObserverInterface {
-
     private let context: NSManagedObjectContext
     private let applicationStatus: ApplicationStatus
     private let notificationCenter: NotificationCenter = .default

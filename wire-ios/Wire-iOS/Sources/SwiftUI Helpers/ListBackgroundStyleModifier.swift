@@ -21,7 +21,6 @@ import WireDesign
 
 /// A view modifier that customizes the background style of a list, providing compatibility for different iOS versions.
 struct ListBackgroundStyleModifier: ViewModifier {
-
     /// This method modifies the content view to apply a custom background style.
     ///
     /// - Parameter content: The content view to be modified.

@@ -22,7 +22,6 @@ import WireTransport
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
 @objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
-
     private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
@@ -48,7 +47,6 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     }
 
     func registerForWhitelistingNotification() {
-
         self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                                        context: self.managedObjectContext.notificationContext,
                                                        object: nil) { [weak self] note in
@@ -120,12 +118,10 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 // MARK: - ZMDownstreamTranscoder
 
 extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
-
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage,
             let asset = assetClientMessage.underlyingMessage?.assetData,
             assetClientMessage.version >= 3 {
-
             let remote = asset.preview.remote
             let token = remote.hasAssetToken ? remote.assetToken : nil
             if let request = requestFactory.requestToGetAsset(withKey: remote.assetID, token: token, domain: remote.assetDomain, apiVersion: apiVersion) {

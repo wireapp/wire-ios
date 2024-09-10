@@ -20,14 +20,12 @@ import MapKit
 import WireDataModel
 
 extension CLLocationCoordinate2D {
-
     var location: CLLocation {
         return CLLocation(latitude: latitude, longitude: longitude)
     }
 }
 
 extension CLPlacemark {
-
     func formattedAddress(_ includeCountry: Bool) -> String? {
         let lines: [String]?
 
@@ -38,7 +36,6 @@ extension CLPlacemark {
 }
 
 extension MKMapView {
-
     var zoomLevel: Int {
         get {
             let float = log2(360 * (Double(frame.height / 256) / region.span.longitudeDelta))
@@ -66,14 +63,12 @@ extension MKCoordinateSpan {
 }
 
 extension LocationData {
-
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
     }
 }
 
 extension MKMapView {
-
     func locationData(name: String?) -> LocationData {
         return .locationData(
             withLatitude: Float(centerCoordinate.latitude),

@@ -20,7 +20,6 @@ import Foundation
 
 /// A service for creating push channel connections to a specific backend.
 public protocol PushChannelServiceProtocol {
-
     /// Create a new push channel.
     ///
     /// - Parameter request: A request for a web socket connection.
@@ -32,7 +31,6 @@ public protocol PushChannelServiceProtocol {
 /// A service for creating push channel connections to a specific backend.
 
 public final class PushChannelService: NSObject, PushChannelServiceProtocol {
-
     private let backendWebSocketURL: URL
     private let authenticationStorage: any AuthenticationStorage
     private var urlSession: URLSession!
@@ -97,7 +95,6 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
 }
 
 extension PushChannelService: URLSessionWebSocketDelegate {
-
     public func urlSession(
         _ session: URLSession,
         webSocketTask: URLSessionWebSocketTask,
@@ -118,7 +115,6 @@ extension PushChannelService: URLSessionWebSocketDelegate {
 }
 
 extension PushChannelService: URLSessionDataDelegate {
-
     public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,

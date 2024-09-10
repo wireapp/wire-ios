@@ -33,7 +33,6 @@ public let ZMReactionUsersValueKey      = "users"
 }
 
 @objcMembers open class Reaction: ZMManagedObject {
-
     @NSManaged var unicodeValue: String?
     @NSManaged var message: ZMMessage?
     @NSManaged var users: Set<ZMUser>

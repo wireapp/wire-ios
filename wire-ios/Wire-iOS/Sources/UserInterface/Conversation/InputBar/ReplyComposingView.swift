@@ -33,7 +33,6 @@ protocol ReplyComposingViewDelegate: AnyObject {
 
 fileprivate extension ZMConversationMessage {
     var accessibilityDescription: String {
-
         let contentDescriptionText: String
         let senderDescriptionText = senderUser?.name ?? ""
 

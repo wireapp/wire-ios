@@ -20,7 +20,6 @@ import Foundation
 
 extension SettingsCellDescriptorFactory {
     func dataUsagePermissionsGroup(isTeamMember: Bool) -> SettingsCellDescriptorType {
-
         var items: [SettingsSectionDescriptor] = []
 
         // show analytics toggle for team members only

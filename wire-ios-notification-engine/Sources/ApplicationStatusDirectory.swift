@@ -20,7 +20,6 @@ import Foundation
 import WireRequestStrategy
 
 final class ApplicationStatusDirectory: ApplicationStatus {
-
     // MARK: - Properties
 
     let transportSession: ZMTransportSession

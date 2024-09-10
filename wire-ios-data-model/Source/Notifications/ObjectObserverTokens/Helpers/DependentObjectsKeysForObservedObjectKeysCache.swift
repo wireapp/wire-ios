@@ -20,7 +20,6 @@ import Foundation
 
 /// Used to map keys
 struct DependentObjectsKeysForObservedObjectKeysCache {
-
     // keyPathsOnDependentObjectForKeyOnObservedObject : [displayName : [userDefinedName, user.name, connection.status]]
     // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName, relatedConnectionStatus, etc.]]
     //
@@ -30,7 +29,6 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
     static var cachedValues: [AnyClassTuple<KeySet>: DependentObjectsKeysForObservedObjectKeysCache] = [:]
 
     static func mappingForObject(_ observedObject: NSObject, keysToObserve: KeySet) -> DependentObjectsKeysForObservedObjectKeysCache {
-
         let tuple = AnyClassTuple(classOfObject: type(of: observedObject), secondElement: keysToObserve)
 
         if let cachedKeysToPathsToObserve = cachedValues[tuple] {
@@ -47,7 +45,6 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
             var objectKeysWithPathsToObserve: [StringKeyPath: KeySet] = [:]
 
             for keyPath in keyPaths {
-
                 if let (objectKey, pathToObserveInObject) = keyPath.decompose, let pathToObserve = pathToObserveInObject {
                     let previousPathToObserve = objectKeysWithPathsToObserve[objectKey] ?? KeySet()
                     objectKeysWithPathsToObserve[objectKey] = previousPathToObserve.union(KeySet(key: pathToObserve))

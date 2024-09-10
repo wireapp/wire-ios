@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
-
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: GroupDetailsViewController!
     private var mockConversation: MockGroupDetailsConversation!

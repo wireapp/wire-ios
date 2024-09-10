@@ -20,7 +20,6 @@
 import XCTest
 
 class TestUserClientObserver: NSObject, UserClientObserver {
-
     var receivedChangeInfo: [UserClientChangeInfo] = []
 
     func userClientDidChange(_ changes: UserClientChangeInfo) {
@@ -29,7 +28,6 @@ class TestUserClientObserver: NSObject, UserClientObserver {
 }
 
 class UserClientObserverTests: NotificationDispatcherTestBase {
-
     var clientObserver: TestUserClientObserver!
 
     override func setUp() {
@@ -48,7 +46,6 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
     ]
 
     func checkThatItNotifiesTheObserverOfAChange(_ userClient: UserClient, modifier: (UserClient) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
-
         // given
         self.uiMOC.saveOrRollback()
 

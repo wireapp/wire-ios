@@ -21,7 +21,6 @@ import WireDesign
 import WireSyncEngine
 
 final class NetworkConditionIndicatorView: UIView {
-
     private let label = UILabel()
 
     override var intrinsicContentSize: CGSize {

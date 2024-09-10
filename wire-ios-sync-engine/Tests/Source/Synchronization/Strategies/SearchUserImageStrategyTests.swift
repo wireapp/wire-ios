@@ -20,7 +20,6 @@ import WireDataModel
 @testable import WireSyncEngine
 
 final class SearchUserImageStrategyTests: MessagingTest {
-
     private let userRequestURL = "/users?ids="
 
     private var sut: SearchUserImageStrategy!

@@ -21,7 +21,6 @@ import Foundation
 /// User profile for self
 
 public struct SelfUser: Equatable {
-
     /// The unique id of the self user
 
     public let id: UUID

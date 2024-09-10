@@ -21,7 +21,6 @@ import WireTransport
 
 @objcMembers
 class RecordingMockTransportSession: NSObject, TransportSessionType {
-
     var pushChannel: ZMPushChannel
     var cookieStorage: ZMPersistentCookieStorage
     var requestLoopDetectionCallback: ((String) -> Void)?

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class AppLockIntegrationTests: IntegrationTest {
-
     private var appLock: MockAppLock!
 
     override func setUp() {

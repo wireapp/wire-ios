@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public final class PushTokenService: PushTokenServiceInterface {
-
     // MARK: - Properties
 
     public var localToken: PushToken? {
@@ -101,7 +100,6 @@ public final class PushTokenService: PushTokenServiceInterface {
 // MARK: - Interface
 
 public protocol PushTokenServiceInterface: AnyObject {
-
     var localToken: PushToken? { get }
 
     var onTokenChange: ((PushToken?) -> Void)? { get set }
@@ -124,7 +122,6 @@ public protocol PushTokenServiceInterface: AnyObject {
 }
 
 public extension PushTokenServiceInterface {
-
     func syncLocalTokenWithRemote(
         clientID: String,
         in context: NotificationContext
@@ -148,7 +145,6 @@ public extension PushTokenServiceInterface {
 // MARK: - Helpers
 
 extension PushToken.TokenType: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         switch self {
         case .standard:
@@ -163,7 +159,6 @@ extension PushToken.TokenType: SafeForLoggingStringConvertible {
 // MARK: - Async / Await
 
 extension EntityAction {
-
     /// Perform the action with the given result handler.
     ///
     /// - Parameters:

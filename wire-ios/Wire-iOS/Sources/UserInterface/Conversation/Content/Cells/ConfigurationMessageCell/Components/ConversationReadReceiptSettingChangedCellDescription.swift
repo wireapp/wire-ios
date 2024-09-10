@@ -53,7 +53,6 @@ struct ReadReceiptViewModel {
     }
 
     func attributedTitle() -> NSAttributedString? {
-
         var updateText: NSAttributedString?
 
         switch systemMessageType {

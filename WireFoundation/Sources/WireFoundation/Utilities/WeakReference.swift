@@ -19,7 +19,6 @@
 /// A wrapper around a `weak` object reference.
 /// An example use case would be to have a non-retaining array of references.
 public struct WeakReference<T: AnyObject> {
-
     public weak var reference: T?
 
     public init(reference: T) {

@@ -23,7 +23,6 @@ import WireTransport
 import XCTest
 
 final class ConnectionRequestStrategyTests: MessagingTestBase {
-
     var sut: ConnectionRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
@@ -336,7 +335,6 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func successfulResponse(request: Payload.PaginationStatus,
                             connections: [Payload.Connection]) -> ZMTransportResponse {
-
         let payload = Payload.PaginatedConnectionList(connections: connections,
                                                       pagingState: "",
                                                       hasMore: false)

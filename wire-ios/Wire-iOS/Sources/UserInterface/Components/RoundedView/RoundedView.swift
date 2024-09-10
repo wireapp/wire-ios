@@ -19,7 +19,6 @@
 import UIKit
 
 class RoundedView: UIView, RoundedViewProtocol {
-
     override static var layerClass: AnyClass {
         ContinuousMaskLayer.self
     }

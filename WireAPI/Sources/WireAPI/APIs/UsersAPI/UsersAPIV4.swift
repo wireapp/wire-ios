@@ -19,7 +19,6 @@
 import Foundation
 
 class UsersAPIV4: UsersAPIV3 {
-
     override var apiVersion: APIVersion {
         .v4
     }
@@ -55,7 +54,6 @@ class UsersAPIV4: UsersAPIV3 {
 }
 
 struct UserListResponseV4: Decodable, ToAPIModelConvertible {
-
     /// List of users which were found and succesfully retrieved.
 
     let found: [UserResponseV4]
@@ -70,7 +68,6 @@ struct UserListResponseV4: Decodable, ToAPIModelConvertible {
 }
 
 struct UserResponseV4: Decodable, ToAPIModelConvertible {
-
     let id: UserID
     let name: String
     let handle: String?
@@ -85,7 +82,6 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
     let legalholdStatus: LegalholdStatusV0
 
     enum CodingKeys: String, CodingKey {
-
         case id = "qualified_id"
         case name
         case handle

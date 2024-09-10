@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 extension UIButton {
-
     /// Set button icon
     ///
     /// - Parameters:

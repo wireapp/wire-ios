@@ -20,7 +20,6 @@
 import XCTest
 
 class ChaCha20AEADEncryptionTests: XCTestCase {
-
     private let context = Data.secureRandomData(length: 8)
 
     // MARK: - Helpers

@@ -21,9 +21,7 @@ import WireTesting
 @testable import WireDataModel
 
 class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
-
     func testThatItUpdatesLegalHoldStatusFlagForTextMessage() {
-
         // given
         var genericMessage = GenericMessage(content: Text(content: "foo"), nonce: UUID.create())
 
@@ -36,7 +34,6 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     }
 
     func testThatItUpdatesLegalHoldStatusFlagForReaction() {
-
         // given
         var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["🤠"], messageID: UUID.create()))
 
@@ -49,7 +46,6 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     }
 
     func testThatItUpdatesLegalHoldStatusFlagForKnock() {
-
         // given
         var genericMessage = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
 
@@ -62,7 +58,6 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     }
 
     func testThatItUpdatesLegalHoldStatusFlagForLocation() {
-
         // given
         let location = WireProtos.Location.with {
             $0.latitude = 0.0
@@ -79,7 +74,6 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     }
 
     func testThatItUpdatesLegalHoldStatusFlagForAsset() {
-
         // given
         var genericMessage = GenericMessage(content: WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123), nonce: UUID.create())
 
@@ -92,7 +86,6 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     }
 
     func testThatItUpdatesLegalHoldStatusFlagForEphemeral() {
-
         // given
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
         var genericMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: .tenSeconds)

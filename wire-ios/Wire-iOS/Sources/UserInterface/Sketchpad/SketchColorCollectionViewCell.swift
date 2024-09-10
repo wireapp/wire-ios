@@ -23,7 +23,6 @@ import WireDesign
 // MARK: - SketchColors Enum
 
 enum SketchColors: CaseIterable {
-
     typealias SketchColorValues = SemanticColors.DrawingColors
     typealias SketchColorName = L10n.Localizable.Drawing.Colors
 
@@ -143,7 +142,6 @@ struct SketchColor: Equatable {
 // MARK: - SketchColorCollectionViewCell
 
 final class SketchColorCollectionViewCell: UICollectionViewCell {
-
     // MARK: - Properties
 
     var titleLabel = DynamicFontLabel(fontSpec: .smallRegularFont,

@@ -20,12 +20,10 @@ import Foundation
 @testable import WireAPI
 
 struct HTTPClientMockError: Error {
-
     let message: String
 }
 
 final class HTTPClientMock: HTTPClient {
-
     private(set) var receivedRequests: [HTTPRequest] = []
 
     var receivedRequest: HTTPRequest? {
@@ -119,7 +117,6 @@ final class HTTPClientMock: HTTPClient {
 // MARK: - Predefined responses
 
 extension HTTPClientMock {
-
     struct PredefinedResponse {
         var resourceName: String
 

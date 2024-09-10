@@ -20,7 +20,6 @@ import WireDataModel
 import XCTest
 
 final class ZMSearchUserTests_TeamUser: ModelObjectsTests {
-
     func testThatSearchUserIsRecognizedAsTeamMember_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)

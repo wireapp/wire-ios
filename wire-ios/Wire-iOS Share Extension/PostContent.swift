@@ -23,7 +23,6 @@ import WireShareEngine
 
 /// Content that is shared on a share extension post attempt
 final class PostContent {
-
     /// Conversation to post to
     var target: Conversation?
 

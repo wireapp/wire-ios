@@ -22,7 +22,6 @@ import Foundation
 import WireTesting
 
 class ZMHotFixDirectoryTests: MessagingTest {
-
     func testThatOnlyTeamConversationsAreUpdated() {
         syncMOC.performGroupedAndWait {
             // given
@@ -109,7 +108,6 @@ class ZMHotFixDirectoryTests: MessagingTest {
 
     func testThatAllNewConversationSystemMessagesAreMarkedAsRead_WhenConversationWasNeverRead() {
         syncMOC.performGroupedAndWait {
-
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -127,7 +125,6 @@ class ZMHotFixDirectoryTests: MessagingTest {
 
     func testThatAllNewConversationSystemMessagesAreMarkedAsRead_WhenConversationWasReadEarlier() {
         syncMOC.performGroupedAndWait {
-
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -146,7 +143,6 @@ class ZMHotFixDirectoryTests: MessagingTest {
 
     func testThatAllNewConversationSystemMessagesAreMarkedAsRead_ButNotAnythingAfter() {
         syncMOC.performGroupedAndWait {
-
             // given
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = UUID()

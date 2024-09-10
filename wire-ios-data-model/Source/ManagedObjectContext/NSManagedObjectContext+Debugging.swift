@@ -21,7 +21,6 @@ import Foundation
 private let errorOnSaveCallbackKey = "zm_errorOnSaveCallback"
 
 extension NSManagedObjectContext {
-
     public typealias ErrorOnSaveCallback = (NSManagedObjectContext, NSError) -> Void
 
     // Callback invoked when an error is generated during save

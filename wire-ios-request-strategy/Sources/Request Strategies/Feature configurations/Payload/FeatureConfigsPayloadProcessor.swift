@@ -20,7 +20,6 @@ import Foundation
 import protocol WireDataModel.FeatureRepositoryInterface
 
 struct FeatureConfigsPayloadProcessor {
-
     private let decoder = JSONDecoder.defaultDecoder
 
     func processActionPayload(data: Data, repository: FeatureRepositoryInterface) throws {

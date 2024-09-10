@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
-
     var messagesByFilter = [[CategoryMatch: [ZMMessage]]]()
     var didCallDelegate = false
     var result: AssetFetchResult?
@@ -54,7 +53,6 @@ final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
 }
 
 final class AssetColletionTests: ModelObjectsTests {
-
     var sut: AssetCollection!
     var delegate: MockAssetCollectionDelegate!
     var conversation: ZMConversation!
@@ -234,7 +232,6 @@ final class AssetColletionTests: ModelObjectsTests {
         uiMOC.registeredObjects.forEach { uiMOC.refresh($0, mergeChanges: false) }
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-
             // when
             self.startMeasuring()
             self.sut = AssetCollection(conversation: self.conversation, matchingCategories: [self.defaultMatchPair], delegate: self.delegate)

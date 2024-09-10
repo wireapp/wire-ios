@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationTypingEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationTypingEvent {
@@ -46,12 +45,10 @@ struct ConversationTypingEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let status: TypingStatus
     }
 
     private enum TypingStatus: String, Decodable {
-
         case started
         case stopped
     }

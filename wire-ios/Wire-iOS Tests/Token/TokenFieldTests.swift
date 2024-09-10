@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class TokenFieldTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

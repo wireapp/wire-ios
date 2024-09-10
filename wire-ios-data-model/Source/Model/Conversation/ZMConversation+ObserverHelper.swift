@@ -19,7 +19,6 @@
 import Foundation
 
 class ConversationObserverToken: NSObject, ZMConversationObserver {
-
     let block: () -> Void
     let filter: (ConversationChangeInfo) -> Bool
     var token: NSObjectProtocol?

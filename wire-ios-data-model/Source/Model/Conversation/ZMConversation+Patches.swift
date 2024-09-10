@@ -64,7 +64,6 @@ extension ZMConversation {
         }
 
         for conversation in allConversations {
-
             let oldKey = "isSelfAnActiveMember"
             conversation.willAccessValue(forKey: oldKey)
             let isSelfAnActiveMember = (conversation.primitiveValue(forKey: oldKey) as! NSNumber).boolValue
@@ -120,7 +119,6 @@ extension ZMConversation {
     // in order to get which roles the users have. Additionally, we need to download the roles
     // definitions for teams and conversations.
     static func forceToFetchConversationRoles(in moc: NSManagedObjectContext) {
-
         // Mark group conversation membership to be refetched
         let selfUser = ZMUser.selfUser(in: moc)
 
@@ -146,7 +144,6 @@ extension ZMConversation {
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the `lastServerSyncedActiveParticipants`.
     // Those need to be migrated to the new relationship
     static func migrateUsersToParticipants(in moc: NSManagedObjectContext) {
-
         let oldKey = "lastServerSyncedActiveParticipants"
 
         let request = ZMConversation.sortedFetchRequest()

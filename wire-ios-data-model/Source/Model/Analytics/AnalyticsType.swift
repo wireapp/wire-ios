@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol AnalyticsType: NSObjectProtocol {
-
     func tagEvent(_ event: String)
     func tagEvent(_ event: String, attributes: [String: NSObject])
 
@@ -32,7 +31,6 @@ public protocol AnalyticsType: NSObjectProtocol {
 
 // Used for debugging only
 @objc public final class DebugAnalytics: NSObject, AnalyticsType {
-
     public func tagEvent(_ event: String) {
         print(Date(), "[ANALYTICS]", #function, event)
     }

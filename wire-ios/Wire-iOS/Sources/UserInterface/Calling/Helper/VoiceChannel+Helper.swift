@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 extension VoiceChannel {
-
     func toggleMuteState(userSession: ZMUserSession) {
         let toggled = !muted
         mute(toggled, userSession: userSession)

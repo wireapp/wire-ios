@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
-
     func redrawFont() {
         titleTextAttributes?[.font] = FontSpec.smallSemiboldFont.font!
     }
@@ -59,7 +58,6 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
 }
 
 extension UIViewController {
-
     func wrapInNavigationController(
         navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
         navigationBarClass: AnyClass? = DefaultNavigationBar.self

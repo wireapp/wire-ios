@@ -19,7 +19,6 @@
 import Foundation
 
 extension Decodable {
-
     /// Initialize object from JSON Data
     ///
     /// - parameter jsonData: JSON data as raw bytes
@@ -37,7 +36,6 @@ extension Decodable {
 }
 
 extension Decodable {
-
     /// Initialize object from a dictionary
     ///
     /// - parameter payload: Dictionary representing the object

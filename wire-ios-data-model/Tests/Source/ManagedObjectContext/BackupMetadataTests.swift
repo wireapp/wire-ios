@@ -19,7 +19,6 @@
 import XCTest
 
 class BackupMetadataTests: XCTestCase {
-
     var url: URL!
 
     override func setUp() {
@@ -132,7 +131,6 @@ class BackupMetadataTests: XCTestCase {
 // MARK: - Helper
 
 private class MockProvider: VersionProvider {
-
     var version: String
 
     init(version: String) {

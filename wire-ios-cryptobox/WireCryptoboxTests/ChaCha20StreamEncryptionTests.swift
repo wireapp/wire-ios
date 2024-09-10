@@ -22,7 +22,6 @@ import XCTest
 private typealias Sut = ChaCha20Poly1305.StreamEncryption
 
 class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
-
     func testThatWrittenFileHeaderCanBeRead() throws {
         // given
         let uuid = UUID()
@@ -80,7 +79,6 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 }
 
 class ChaCha20StreamEncryptionTests: XCTestCase {
-
     var directoryURL: URL!
 
     override func setUp() {
@@ -146,7 +144,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     // MARK: - Encryption
 
     func testThatEncryptionAndDecryptionWorks() throws {
-
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789"
@@ -161,7 +158,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatDecryptionWorks() throws {
-
         // given
         let expectedMessage = "123456789"
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!)
@@ -175,7 +171,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatEncryptionAndDecryptionWorks_ToDisk() throws {
-
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789"
@@ -190,7 +185,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatItThrowsWriteErrorWhenOutputStreamFailsWhileEncrypting() throws {
-
         // given
         let message = "123456789"
         let messageData = message.data(using: .utf8)!
@@ -212,7 +206,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     // MARK: - Decryption
 
     func testThatItThrowsReadErrorOnEmptyData() {
-
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let malformedMessageData = Data("".utf8)
@@ -233,7 +226,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatItThrowsMalformedHeaderOnBadData() {
-
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let malformedMessageData = Data("malformed12345678901234567890123456789012345678901234567890".utf8)
@@ -254,7 +246,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatItThrowsWriteErrorWhenOutputStreamFailsWhileDecrypting() {
-
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = Data("123456789".utf8)
@@ -275,7 +266,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatItThrowsMismatchingUUIDWhenDecryptingWithADifferentUUID() {
-
         // given
         let uuid1 = UUID()
         let uuid2 = UUID()
@@ -294,7 +284,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatItThrowsMalformedHeaderWhenDecryptingFileEncryptedOnDifferentPlatform() {
-
         // given
         let uuid1 = UUID()
         let uuid2 = UUID()
@@ -315,7 +304,6 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     }
 
     func testThatItThrowsMalformedHeaderWhenDecryptingFileEncryptedWithUnsupportedVersion() {
-
         // given
         let uuid1 = UUID()
         let uuid2 = UUID()

@@ -19,7 +19,6 @@
 import Foundation
 
 public extension UUID {
-
     func create() -> UUID {
         return UUID.create()
     }

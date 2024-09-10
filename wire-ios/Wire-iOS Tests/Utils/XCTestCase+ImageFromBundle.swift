@@ -19,7 +19,6 @@
 import XCTest
 
 extension XCTestCase {
-
     func dataInTestBundleNamed(_ name: String) -> Data {
         return try! Data(contentsOf: urlForResource(inTestBundleNamed: name))
     }
@@ -52,7 +51,6 @@ extension UIImage {
         inTestBundleNamed name: String,
         for aClass: AnyClass
     ) {
-
         let bundle = Bundle(for: aClass)
 
         let url = bundle.url(forResource: name, withExtension: "")

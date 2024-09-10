@@ -19,13 +19,11 @@
 import Foundation
 
 public class FetchBackendMLSPublicKeysAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = BackendMLSPublicKeys
 
     public enum Failure: LocalizedError, Equatable {
-
         case endpointUnavailable
         case malformedResponse
         case mlsNotEnabled

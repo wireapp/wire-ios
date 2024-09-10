@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
-
     private var snapshotHelper: SnapshotHelper!
     private var cell: GroupDetailsNotificationOptionsCell!
     private var conversation: ZMConversation!

@@ -26,7 +26,6 @@ enum ContentType {
 }
 
 class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
-
     func insertMessageWithLinkPreview(contentType: ContentType) -> ZMClientMessage {
         let nonce = UUID()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)

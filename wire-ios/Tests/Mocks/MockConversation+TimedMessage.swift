@@ -22,7 +22,6 @@ import WireDesign
 @testable import Wire
 
 extension MockConversation {
-
     var destructionEnabled: Bool {
         return false
     }

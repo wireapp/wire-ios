@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class MockCookieStorage: CookieProvider {
-
     var isAuthenticated: Bool = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
@@ -35,7 +34,6 @@ final class MockCookieStorage: CookieProvider {
 }
 
 final class ZMClientRegistrationStatusTests: MessagingTest {
-
     private var sut: ZMClientRegistrationStatus!
     private var mockCookieStorage: MockCookieStorage!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!

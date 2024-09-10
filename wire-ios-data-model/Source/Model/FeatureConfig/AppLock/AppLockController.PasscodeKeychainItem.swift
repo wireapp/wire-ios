@@ -19,9 +19,7 @@
 import Foundation
 
 extension AppLockController {
-
     struct PasscodeKeychainItem: KeychainItem {
-
         private enum Constant {
             static let legacyIdentifier = "com.wire.passcode"
         }

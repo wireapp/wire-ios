@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 final class ServicesSectionController: GroupDetailsSectionController {
-
     private weak var delegate: GroupDetailsSectionControllerDelegate?
     private let serviceUsers: [UserType]
     private let conversation: GroupDetailsConversationType

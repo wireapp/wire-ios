@@ -20,7 +20,6 @@
 import XCTest
 
 final class UserTypeTests_Materialize: ModelObjectsTests {
-
     func testThatWeCanMaterializeSearchUsers() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]

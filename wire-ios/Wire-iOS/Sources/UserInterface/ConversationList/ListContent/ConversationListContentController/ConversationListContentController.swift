@@ -26,7 +26,6 @@ private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
-
     private let mainCoordinator: MainCoordinating
 
     private(set) weak var zClientViewController: ZClientViewController?
@@ -144,7 +143,6 @@ final class ConversationListContentController: UICollectionViewController {
     // MARK: - section header
 
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             let section = indexPath.section
@@ -209,7 +207,6 @@ final class ConversationListContentController: UICollectionViewController {
     func selectInboxAndFocus(onView focus: Bool) -> Bool {
         // If there is anything in the inbox, select it
         if listViewModel.numberOfItems(inSection: 0) > 0 {
-
             focusOnNextSelection = focus
             selectModelItem(ConversationListViewModel.contactRequestsItem)
             return true
@@ -328,7 +325,6 @@ final class ConversationListContentController: UICollectionViewController {
             cell = labelCell
         } else if item is ZMConversation,
             let listCell = collectionView.dequeueReusableCell(withReuseIdentifier: CellReuseIdConversation, for: indexPath) as? ConversationListCell {
-
             listCell.delegate = self
             listCell.mutuallyExclusiveSwipeIdentifier = "ConversationList"
             listCell.conversation = item as? ZMConversation
@@ -364,7 +360,6 @@ extension ConversationListContentController: UICollectionViewDelegateFlowLayout 
 }
 
 extension ConversationListContentController: ConversationListViewModelDelegate {
-
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {
         guard let header = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: section)) as? ConversationListHeaderView else {
             return
@@ -443,7 +438,6 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 // MARK: iOS 12- peek pop
 
 extension ConversationListContentController: UIViewControllerPreviewingDelegate {
-
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         guard let previewViewController = viewControllerToCommit as? ConversationPreviewViewController else { return }

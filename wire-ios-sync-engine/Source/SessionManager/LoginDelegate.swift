@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol LoginDelegate: NSObjectProtocol {
-
     /// Invoked when requesting a login code for the phone failed
     @objc
     func loginCodeRequestDidFail(_ error: NSError)

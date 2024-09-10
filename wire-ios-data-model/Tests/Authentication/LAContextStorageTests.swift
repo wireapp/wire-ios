@@ -21,7 +21,6 @@ import LocalAuthentication
 import XCTest
 
 final class LAContextStorageTests: XCTestCase {
-
     func testContext_givenInit_thenContextIsNil() {
         // given
         let storage = LAContextStorage()

@@ -19,7 +19,6 @@
 import Foundation
 
 public extension NSPredicate {
-
     var inverse: NSPredicate {
         return NSCompoundPredicate(notPredicateWithSubpredicate: self)
     }

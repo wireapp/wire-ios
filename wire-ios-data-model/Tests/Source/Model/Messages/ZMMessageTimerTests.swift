@@ -21,7 +21,6 @@ import WireTransport
 import XCTest
 
 class ZMMessageTimerTests: BaseZMMessageTests {
-
     var sut: ZMMessageTimer!
 
     override func setUp() {

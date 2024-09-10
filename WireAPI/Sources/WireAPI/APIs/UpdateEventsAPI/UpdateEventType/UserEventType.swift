@@ -19,7 +19,6 @@
 import Foundation
 
 enum UserEventType: String {
-
     case clientAdd = "user.client-add"
     case clientRemove = "user.client-remove"
     case connection = "user.connection"

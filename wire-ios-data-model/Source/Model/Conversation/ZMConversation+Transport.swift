@@ -61,9 +61,7 @@ extension ZMConversationType: CustomDebugStringConvertible {
 }
 
 extension ZMConversation {
-
     public struct PayloadKeys {
-
         private init() {}
 
         public static let nameKey = "name"

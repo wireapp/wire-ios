@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension MessagePresenter {
-
     /// return a view controller for viewing image messge
     ///
     /// - Parameters:
@@ -36,7 +35,6 @@ extension MessagePresenter {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) -> UIViewController {
-
         guard let conversation = message.conversation else {
             fatal("Message has no conversation.")
         }

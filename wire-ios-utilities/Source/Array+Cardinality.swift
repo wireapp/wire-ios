@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Array {
-
     enum Cardinality {
-
         case zero
         case singular
         case plural

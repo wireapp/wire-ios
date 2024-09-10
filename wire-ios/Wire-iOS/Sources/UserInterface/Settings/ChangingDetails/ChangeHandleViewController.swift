@@ -22,7 +22,6 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 fileprivate extension UIView {
-
     func wiggle() {
         let animation = CAKeyframeAnimation()
         animation.keyPath = "position.x"
@@ -40,7 +39,6 @@ protocol ChangeHandleTableViewCellDelegate: AnyObject {
 }
 
 final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
-
     weak var delegate: ChangeHandleTableViewCellDelegate?
     let prefixLabel: UILabel = {
         let label = UILabel()
@@ -156,7 +154,6 @@ struct HandleValidation {
 /// a new handle. The `ChangeHandleViewController` uses this state
 /// to layout its interface.
 struct HandleChangeState {
-
     enum ValidationError: Error {
         case tooShort, tooLong, invalidCharacter, sameAsPrevious
     }
@@ -333,7 +330,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 }
 
 extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
-
     func tableViewCell(cell: ChangeHandleTableViewCell, shouldAllowEditingText text: String) -> Bool {
         do {
             // We validate the new handle and only allow the edit if
@@ -367,7 +363,6 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
 }
 
 extension ChangeHandleViewController: UserProfileUpdateObserver {
-
     func didCheckAvailiabilityOfHandle(handle: String, available: Bool) {
         guard handle == state.newHandle else { return }
         state.availability = available ? .available : .taken
@@ -412,7 +407,6 @@ extension ChangeHandleViewController: UserProfileUpdateObserver {
 }
 
 extension String {
-
     var isEqualToUnicodeName: Bool {
         return applyingTransform(.toUnicodeName, reverse: false) == self
     }

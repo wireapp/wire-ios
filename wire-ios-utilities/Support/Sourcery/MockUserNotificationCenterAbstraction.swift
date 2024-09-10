@@ -22,7 +22,6 @@ import WireUtilities
 // TODO [WPB-9200]: remove this file as soon as Sourcery correctly generates existential any for `requestAuthorizationCompletionHandler_Invocations`.
 
 public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstraction {
-
     // MARK: - Life cycle
 
     public init() {}

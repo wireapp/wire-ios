@@ -22,7 +22,6 @@ import WireSystem
 private let log = ZMSLog(tag: "link opening")
 
 enum BrowserOpeningOption: Int, LinkOpeningOption {
-
     case safari, chrome, firefox, snowhaze, brave
 
     typealias ApplicationOptionEnum = BrowserOpeningOption
@@ -55,7 +54,6 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
 }
 
 extension URL {
-
     func openAsLink() -> Bool {
         log.debug("Trying to open \"\(self)\" in thrid party browser")
         let saved = BrowserOpeningOption.storedPreference
@@ -89,7 +87,6 @@ extension URL {
 // MARK: - Private
 
 fileprivate extension UIApplication {
-
     var chromeInstalled: Bool {
         return canHandleScheme("googlechrome://")
     }
@@ -108,7 +105,6 @@ fileprivate extension UIApplication {
 }
 
 extension URL {
-
     var chromeURL: URL? {
         if absoluteString.contains("http://") {
             return URL(string: "googlechrome://\(absoluteString.replacingOccurrences(of: "http://", with: ""))")

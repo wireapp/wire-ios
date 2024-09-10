@@ -21,7 +21,6 @@ import WireAPI
 /// Process user client add events.
 
 protocol UserClientAddEventProcessorProtocol {
-
     /// Process a user client add event.
     ///
     /// - Parameter event: A user client add event.
@@ -30,7 +29,6 @@ protocol UserClientAddEventProcessorProtocol {
 }
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
-
     func processEvent(_: UserClientAddEvent) async throws {
         // TODO: [WPB-10189]
         assertionFailure("not implemented yet")

@@ -23,7 +23,6 @@ public enum ConversationListType {
 }
 
 public struct ConversationDirectoryChangeInfo {
-
     public var reloaded: Bool
     public var updatedLists: [ConversationListType]
     public var updatedFolders: Bool
@@ -36,12 +35,10 @@ public struct ConversationDirectoryChangeInfo {
 }
 
 public protocol ConversationDirectoryObserver: AnyObject {
-
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
 }
 
 public protocol ConversationDirectoryType {
-
     /// All folder created by the user
     var allFolders: [LabelType] { get }
 
@@ -58,7 +55,6 @@ public protocol ConversationDirectoryType {
 }
 
 extension ZMConversationListDirectory: ConversationDirectoryType {
-
     public func conversations(by type: ConversationListType) -> [ZMConversation] {
         switch type {
         case .archived:
@@ -99,7 +95,6 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
 }
 
 private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver {
-
     weak var observer: ConversationDirectoryObserver?
     var directory: ZMConversationListDirectory
 

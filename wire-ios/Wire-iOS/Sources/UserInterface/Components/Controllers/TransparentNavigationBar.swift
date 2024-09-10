@@ -31,7 +31,6 @@ extension TransparentBackgroundNavigationBar where Self: DefaultNavigationBar {
 }
 
 final class TransparentNavigationBar: DefaultNavigationBar, TransparentBackgroundNavigationBar {
-
     override func configureBackground() {
         configureTransparentBackground()
     }

@@ -19,7 +19,6 @@
 import Foundation
 
 final class MessageSendingStatusPayloadProcessor {
-
     /// Updates the reported client changes after an attempt to send the message
     ///
     /// - Parameter message: message for which the message sending status was created

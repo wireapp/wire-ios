@@ -23,7 +23,6 @@ import WireShareEngine
 private let cellReuseIdentifier = "ConversationCell"
 
 final class ConversationSelectionViewController: UITableViewController {
-
     private var allConversations: [Conversation]
     private var visibleConversations: [Conversation]
 

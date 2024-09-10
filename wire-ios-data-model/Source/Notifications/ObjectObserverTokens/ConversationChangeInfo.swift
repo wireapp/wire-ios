@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation: ObjectInSnapshot {
-
     @objc public static var observableKeys: Set<String> {
         return [
             #keyPath(ZMConversation.allMessages),
@@ -68,7 +67,6 @@ extension ZMConversation: ObjectInSnapshot {
 ////////////////////
 
 @objcMembers public final class ConversationChangeInfo: ObjectChangeInfo {
-
     public var isDeletedChanged: Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.isDeletedRemotely))
     }
@@ -230,7 +228,6 @@ extension ZMConversation: ObjectInSnapshot {
 }
 
 extension ConversationChangeInfo {
-
     /// Adds a ZMConversationObserver to the specified conversation
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forConversation:)
@@ -249,7 +246,6 @@ extension ConversationChangeInfo {
 
 /// Conversation degraded
 extension ConversationChangeInfo {
-
     @objc public var causedByConversationPrivacyChange: Bool {
         if mlsVerificationStatusChanged {
             return conversation.mlsVerificationStatus == .degraded && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty

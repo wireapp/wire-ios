@@ -19,7 +19,6 @@
 import Foundation
 
 struct ModifiedObjects {
-
     let updated: Set<ZMManagedObject>
     let refreshed: Set<ZMManagedObject>
     let inserted: Set<ZMManagedObject>

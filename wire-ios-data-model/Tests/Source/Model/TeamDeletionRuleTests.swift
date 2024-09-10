@@ -20,7 +20,6 @@
 import WireTesting
 
 class TeamDeletionRuleTests: BaseZMClientMessageTests {
-
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!

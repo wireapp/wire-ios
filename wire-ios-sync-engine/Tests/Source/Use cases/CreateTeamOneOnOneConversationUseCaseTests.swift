@@ -23,7 +23,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
-
     private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!
     private let modelHelper = ModelHelper()

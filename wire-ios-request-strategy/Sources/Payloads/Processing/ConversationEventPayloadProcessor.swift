@@ -24,7 +24,6 @@ enum ConversationEventPayloadProcessorError: Error {
 }
 
 struct ConversationEventPayloadProcessor {
-
     enum Source {
         case slowSync
         case eventStream
@@ -491,7 +490,6 @@ struct ConversationEventPayloadProcessor {
 
         var isInitialFetch = false
         let conversation = await context.perform {
-
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
@@ -523,7 +521,6 @@ struct ConversationEventPayloadProcessor {
 
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
         await context.perform {
-
             if isInitialFetch {
                 // we just got a new conversation, we display new conversation header
                 conversation.appendNewConversationSystemMessage(
@@ -841,7 +838,6 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) {
-
         guard let messageProtocolString = payload.messageProtocol else {
             WireLogger.eventProcessing.warn("message protocol is missing")
             return
@@ -1051,7 +1047,6 @@ struct ConversationEventPayloadProcessor {
 // MARK: - Payload parsing utils
 
 private extension ZMConversation {
-
     func fetchOrCreateRoleForConversation(name: String) -> Role {
         Role.fetchOrCreateRole(
             with: name,

@@ -23,7 +23,6 @@ import Foundation
  */
 
 enum CallQualitySurveyReview {
-
     /// The survey was not displayed.
     case notDisplayed(reason: IgnoreReason, duration: Int)
 

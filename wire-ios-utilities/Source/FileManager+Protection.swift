@@ -20,13 +20,11 @@ import Foundation
 import WireSystem
 
 public enum FileManagerError: Error {
-
     case failedToCreateDirectory(Error)
     case failedToSetProtection(Error)
 }
 
 extension FileManager {
-
     /// Creates a new directory if needed, sets the file protection 
     /// to `completeUntilFirstUserAuthentication` and excludes the URL from backups.
     ///
@@ -69,7 +67,6 @@ extension FileManager {
 }
 
 public extension URL {
-
     /// Sets the resource value to exclude this entry from backups
     func excludeFromBackup() throws {
         var mutableCopy = self

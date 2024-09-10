@@ -28,7 +28,6 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
         for action: SendCommitBundleAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         var action = action
 
         guard apiVersion >= .v5 else {
@@ -178,7 +177,6 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
     // MARK: - Error response
 
     struct FederationErrorResponse: Codable {
-
         var unreachableBackends: [String]?
         var nonFederatingBackends: [String]?
 

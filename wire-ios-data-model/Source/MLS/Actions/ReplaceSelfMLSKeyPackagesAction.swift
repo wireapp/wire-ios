@@ -24,7 +24,6 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
-
         case invalidParameters
         case invalidBodyOrCiphersuites
         case endpointUnavailable

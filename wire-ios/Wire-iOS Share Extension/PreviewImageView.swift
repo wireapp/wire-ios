@@ -45,7 +45,6 @@ enum PreviewDisplayMode {
  */
 
 final class PreviewImageView: UIImageView {
-
     private let detailsContainer = UIView()
     private let videoBadgeImageView = UIImageView()
     private let countLabel = UILabel()

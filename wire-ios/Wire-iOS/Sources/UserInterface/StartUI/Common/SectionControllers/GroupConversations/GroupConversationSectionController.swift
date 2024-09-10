@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 final class GroupConversationsSectionController: SearchSectionController {
-
     var groupConversations: [ZMConversation] = []
     var title: String = ""
     weak var delegate: SearchSectionControllerDelegate?

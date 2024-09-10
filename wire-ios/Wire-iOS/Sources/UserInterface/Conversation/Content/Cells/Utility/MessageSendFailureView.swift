@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireDesign
 
 final class MessageSendFailureView: UIView {
-
     // MARK: - Properties
 
     override var isHidden: Bool {
@@ -97,7 +96,6 @@ final class MessageSendFailureView: UIView {
 // MARK: - DownStyle extension
 
     extension DownStyle {
-
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()
         style.baseFont = FontSpec.mediumRegularFont.font!

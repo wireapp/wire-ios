@@ -21,7 +21,6 @@ import Foundation
 // sourcery: AutoMockable
 /// Make a direct connection to a server to receive update events.
 public protocol PushChannelProtocol {
-
     /// Open the push channel and start receiving update events.
     ///
     /// - Returns: An async stream of live update event envelopes.

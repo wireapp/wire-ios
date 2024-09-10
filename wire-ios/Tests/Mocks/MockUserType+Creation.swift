@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension MockUserType {
-
     /// Create a connected Mock user with name selfUser and red accent color
     /// - Returns: a mock user
     class func createDefaultSelfUser() -> MockUserType {

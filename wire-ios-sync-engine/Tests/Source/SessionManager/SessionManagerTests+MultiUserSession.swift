@@ -22,7 +22,6 @@ import WireTesting
 @testable import WireSyncEngine
 
 final class SessionManagerMultiUserSessionTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

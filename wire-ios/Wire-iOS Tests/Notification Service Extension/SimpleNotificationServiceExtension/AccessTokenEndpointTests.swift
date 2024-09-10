@@ -20,7 +20,6 @@
 import XCTest
 
 class AccessTokenEndpointTests: XCTestCase {
-
     // MARK: - Request generation
 
     func test_RequestGeneration() {

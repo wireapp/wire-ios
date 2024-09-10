@@ -21,7 +21,6 @@ import XCTest
 @testable import WireSystem
 
 final class ZMAssertionDumpFileTests: XCTestCase {
-
     override func setUpWithError() throws {
         let url = try AssertionDumpFile.url
         if FileManager.default.fileExists(atPath: url.path) {

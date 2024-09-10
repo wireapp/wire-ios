@@ -24,7 +24,6 @@ import Foundation
  */
 
 public struct ZiphyAnimatedImageList: Codable {
-
     fileprivate let images: [ZiphyImageType: ZiphyAnimatedImage]
 
     public init(images: [ZiphyImageType: ZiphyAnimatedImage]) {
@@ -56,7 +55,6 @@ public struct ZiphyAnimatedImageList: Codable {
 // MARK: - Sequence
 
 extension ZiphyAnimatedImageList: Sequence {
-
     public typealias RawValue = [ZiphyImageType: ZiphyAnimatedImage]
 
     /// Returns the image for the specified type.

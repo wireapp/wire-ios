@@ -21,7 +21,6 @@
 // MARK: - Participants
 
 extension ConversationObserverTests {
-
     func testThatItRecalculatesActiveParticipantsWhenIsSelfActiveUserKeyChanges() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

@@ -22,7 +22,6 @@ import WireSystem
 
 private let tag = "<ANALYTICS>:"
 final class AnalyticsConsoleProvider: NSObject {
-
     let zmLog = ZMSLog(tag: tag)
     var optedOut = false
 
@@ -64,7 +63,6 @@ extension AnalyticsConsoleProvider: AnalyticsProvider {
     }
 
     func tagEvent(_ event: String, attributes: [String: Any] = [:]) {
-
         let printableAttributes = attributes
 
         var loggingDict = [String: Any]()

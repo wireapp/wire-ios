@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class FolderPickerControllerSnapshotTests: XCTestCase {
-
     var directory: MockConversationDirectory!
     var mockConversation: MockConversation!
     private var snapshotHelper: SnapshotHelper!

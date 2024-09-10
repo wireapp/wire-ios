@@ -21,7 +21,6 @@ import PackagePlugin
 
 @main
 struct SourceryPlugin {
-
     private enum Constant {
         enum Environment {
             static let derivedSourcesDirectory = "DERIVED_SOURCES_DIR"
@@ -39,7 +38,6 @@ struct SourceryPlugin {
 // MARK: - BuildToolPlugin
 
 extension SourceryPlugin: BuildToolPlugin {
-
     func createBuildCommands(
         context: PackagePlugin.PluginContext,
         target: PackagePlugin.Target

@@ -19,7 +19,6 @@
 import Foundation
 
 @objc extension NSManagedObjectContext {
-
     private static let TypingUsersKey = "ZMTypingUsers"
 
     var typingUsers: TypingUsers? {

@@ -22,7 +22,6 @@ import WireUtilities
 // MARK: - Observer
 
 @objc public protocol UserProfileUpdateObserver: NSObjectProtocol {
-
     /// Invoked when the password could not be set on the backend
     @objc optional func passwordUpdateRequestDidFail()
 
@@ -67,14 +66,12 @@ enum UserProfileUpdateNotificationType {
 }
 
 struct UserProfileUpdateNotification: SelfPostingNotification {
-
     static let notificationName = NSNotification.Name(rawValue: "UserProfileUpdateNotification")
 
     let type: UserProfileUpdateNotificationType
 }
 
 extension UserProfileUpdateStatus {
-
     public func add(observer: UserProfileUpdateObserver) -> Any {
         Self.add(
             observer: observer,

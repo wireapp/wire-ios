@@ -19,7 +19,6 @@
 import XCTest
 
 class LegalHoldRequestStrategyTests: MessagingTest {
-
     var sut: LegalHoldRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
     var mockApplicationStatus: MockApplicationStatus!

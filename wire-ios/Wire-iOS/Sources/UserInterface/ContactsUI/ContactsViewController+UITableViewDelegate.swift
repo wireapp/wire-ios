@@ -19,7 +19,6 @@
 import UIKit
 
 extension ContactsViewController: UITableViewDelegate {
-
     func headerTitle(section: Int) -> String? {
         return dataSource.tableView(tableView, titleForHeaderInSection: section)
     }

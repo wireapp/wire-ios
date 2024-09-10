@@ -19,7 +19,6 @@
 import Foundation
 
 enum InvalidClientsRemoval {
-
     /// We had a situation where after merging duplicate users we were not disposing user clients
     /// and this lead to UserClient -> User relationship to be nil. This
     static func removeInvalid(in moc: NSManagedObjectContext) {

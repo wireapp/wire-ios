@@ -20,7 +20,6 @@
 import WireTesting
 
 private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
-
     var fetchedResults = [TextQueryResult]()
 
     fileprivate func textSearchQueryDidReceive(result: TextQueryResult) {
@@ -29,7 +28,6 @@ private class MockTextSearchQueryDelegate: TextSearchQueryDelegate {
 }
 
 class TextSearchQueryTests: BaseZMClientMessageTests {
-
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -588,7 +586,6 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         line: UInt = #line,
         messageModifier: ((ZMMessage) -> Void)? = nil
         ) {
-
         // Given
         let conversation = conversation ?? ZMConversation.insertNewObject(in: uiMOC)
         if conversation.remoteIdentifier == nil {

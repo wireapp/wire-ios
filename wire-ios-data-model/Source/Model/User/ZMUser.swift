@@ -22,7 +22,6 @@ import WireSystem
 import WireUtilities
 
 extension ZMUser: UserType {
-
     @objc
     public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
@@ -162,7 +161,6 @@ extension ZMUser: UserType {
 }
 
 public struct AssetKey {
-
     static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
 
     public init?(_ string: String) {
@@ -235,7 +233,6 @@ public extension Notification.Name {
 }
 
 extension ZMUser {
-
     @objc static public let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
     @objc static public let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
 
@@ -460,7 +457,6 @@ extension NSManagedObject: SafeForLoggingStringConvertible {
 }
 
 extension ZMUser {
-
     /// The initials e.g. "JS" for "John Smith"
     @objc public var initials: String? {
         return PersonName.person(withName: self.name ?? "", schemeTagger: nil).initials
@@ -468,7 +464,6 @@ extension ZMUser {
 }
 
 extension ZMUser: UserConnections {
-
     public func connect(completion: @escaping (Error?) -> Void) {
         ZMUser.selfUser(in: managedObjectContext!).sendConnectionRequest(to: self) { result in
             switch result {
@@ -481,7 +476,6 @@ extension ZMUser: UserConnections {
     }
 
     public enum AcceptConnectionError: Error {
-
         case invalidState
         case unableToSwitchToMLS
     }

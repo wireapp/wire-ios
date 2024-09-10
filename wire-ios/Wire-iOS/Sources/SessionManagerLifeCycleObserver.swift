@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 final class SessionManagerLifeCycleObserver {
-
     // MARK: - Public Property
 
     var sessionManager: SessionManager?
@@ -51,7 +50,6 @@ final class SessionManagerLifeCycleObserver {
 }
 
 extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
-
     // MARK: - SessionManagerCreatedSessionObserver
 
     func sessionManagerCreated(userSession: ZMUserSession) {

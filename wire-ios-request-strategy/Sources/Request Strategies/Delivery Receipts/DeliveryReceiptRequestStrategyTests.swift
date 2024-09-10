@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
-
     var mockApplicationStatus: MockApplicationStatus!
     var mockClientRegistrationStatus: MockClientRegistrationStatus!
     var mockMessageSender: MockMessageSenderInterface!
@@ -199,7 +198,6 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     func createTextUpdateEvent(from sender: ZMUser,
                                in conversation: ZMConversation,
                                timestamp: Date = Date()) -> ZMUpdateEvent {
-
         let message = GenericMessage(content: WireProtos.Text(content: "Hello World"))
         return createUpdateEvent(message: message, from: sender, in: conversation, timestamp: timestamp)
     }
@@ -208,7 +206,6 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
                            from sender: ZMUser,
                            in conversation: ZMConversation,
                            timestamp: Date = Date() ) -> ZMUpdateEvent {
-
         let dict: NSDictionary = [
             "recipient": self.selfClient.remoteIdentifier!,
             "sender": self.selfClient.remoteIdentifier!,

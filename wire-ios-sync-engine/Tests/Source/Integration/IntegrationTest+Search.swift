@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 extension IntegrationTest {
-
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()

@@ -25,7 +25,6 @@ import Foundation
 /// It reports the flow events via a `WireLogger` instance using a specified tag.
 
 open class Flow {
-
   // MARK: - Properties
 
   /// The name used to identify the flow in logs.
@@ -92,13 +91,11 @@ open class Flow {
   }
 
   struct GenericError: Error {
-
     let reason: String
   }
 }
 
 struct FlowLog: LogConvertible, Encodable {
-
     let name: String
     let event: Event
 

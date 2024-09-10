@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 final class DeveloperE2eiViewModel: ObservableObject {
-
     private var userSession: ZMUserSession? { ZMUserSession.shared() }
     private var crlExpirationDatesRepository: CRLExpirationDatesRepository? {
         guard let userSession else { return nil }

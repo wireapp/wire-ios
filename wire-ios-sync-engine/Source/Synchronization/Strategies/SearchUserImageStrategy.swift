@@ -17,7 +17,6 @@
 //
 
 final class SearchUserImageStrategy: AbstractRequestStrategy {
-
     private static let userPath = "/users?ids="
 
     fileprivate unowned var uiContext: NSManagedObjectContext
@@ -46,7 +45,6 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         managedObjectContext: NSManagedObjectContext,
         searchUsersCache: SearchUsersCache?
     ) {
-
         self.syncContext = managedObjectContext
         self.uiContext = managedObjectContext.zm_userInterface
         self.searchUsersCache = searchUsersCache
@@ -141,7 +139,6 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         if let key = size == .preview ? assetKeys.preview : assetKeys.complete {
             let path: String
             switch apiVersion {
-
             case .v0:
                 path = "/assets/v3/\(key)"
 
@@ -164,7 +161,6 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
     }
 
     func processAsset(response: ZMTransportResponse, for user: UUID, size: ProfileImageSize) {
-
         let tryAgain = response.result != .permanentError && response.result != .success
 
         switch size {

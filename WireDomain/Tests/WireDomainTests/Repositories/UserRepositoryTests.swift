@@ -26,7 +26,6 @@ import XCTest
 @testable import WireDomain
 
 class UserRepositoryTests: XCTestCase {
-
     var sut: UserRepository!
     var usersAPI: MockUsersAPI!
 

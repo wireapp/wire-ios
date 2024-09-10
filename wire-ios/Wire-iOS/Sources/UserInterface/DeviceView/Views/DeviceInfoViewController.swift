@@ -25,7 +25,6 @@ import WireDesign
 /// A customized hosting controller for `DeviceDetailsView` and `OtherUserDeviceDetailsView` in order to allow displaying
 /// a custom navigation item title view and a debug menu button in the navigation bar.
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
-
     private var viewModel: DeviceInfoViewModel { rootView.viewModel }
     private var cancellables = Set<AnyCancellable>()
 
@@ -35,7 +34,6 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
     }
 
     private func setupNavigationItemTitleObservation() {
-
         let certificatePublisher = viewModel.$e2eIdentityCertificate
         let isProtuesVerifiedPublisher = viewModel.$isProteusVerificationEnabled
         certificatePublisher.combineLatest(isProtuesVerifiedPublisher)
@@ -49,13 +47,11 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
         _ certificate: E2eIdentityCertificate?,
         _ isProteusVerified: Bool
     ) {
-
         let deviceName = NSMutableAttributedString(string: viewModel.title)
         if
             viewModel.isE2eIdentityEnabled,
             let certificate,
             let imageForStatus = certificate.status.uiImage {
-
             let attachment = NSTextAttachment(image: imageForStatus)
             attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageForStatus.size)
             deviceName.append(.init(string: " "))

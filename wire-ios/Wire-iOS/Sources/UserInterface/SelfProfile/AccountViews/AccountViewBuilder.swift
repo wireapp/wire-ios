@@ -19,13 +19,11 @@
 import WireDataModel
 
 struct AccountViewBuilder {
-
     var account: Account
     var user: ZMUser?
     var displayContext: DisplayContext
 
     func build() -> BaseAccountView {
-
         if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
             accountView
         } else {

@@ -21,35 +21,30 @@ import WireAPI
 import WireDataModel
 
 extension Collection<WireDataModel.QualifiedID> {
-
     func toAPIModel() -> [WireAPI.QualifiedID] {
         map { $0.toAPIModel() }
     }
 }
 
 extension WireDataModel.QualifiedID {
-
     func toAPIModel() -> WireAPI.QualifiedID {
         UserID(uuid: uuid, domain: domain)
     }
 }
 
 extension WireAPI.QualifiedID {
-
     func toDomainModel() -> WireDataModel.QualifiedID {
         WireDataModel.QualifiedID(uuid: uuid, domain: domain)
     }
 }
 
 extension Set<WireAPI.MessageProtocol> {
-
     func toDomainModel() -> Set<WireDataModel.MessageProtocol> {
         .init(map { $0.toDomainModel() })
     }
 }
 
 extension WireAPI.MessageProtocol {
-
     func toDomainModel() -> WireDataModel.MessageProtocol {
         switch self {
         case .mls: .mls

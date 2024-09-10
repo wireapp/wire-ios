@@ -20,7 +20,6 @@
 import XCTest
 
 class InvalidConversationRemovalTests: DiskDatabaseTest {
-
     func testThatItOnlyRemovesInvalidConversations() throws {
         // Given
         let user = createUser()

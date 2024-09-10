@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 enum ConversationActionType {
-
     case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave
 
     /// Some actions only involve the sender, others involve other users too.
@@ -70,7 +69,6 @@ extension ZMConversationMessage {
 }
 
 final class ParticipantsCellViewModel {
-
     private typealias NameList = ParticipantsStringFormatter.NameList
     static let showMoreLinkURL = NSURL(string: "action://show-all")!
 

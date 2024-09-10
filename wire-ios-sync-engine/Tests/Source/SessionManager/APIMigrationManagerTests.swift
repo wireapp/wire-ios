@@ -38,7 +38,6 @@ class APIMigrationMock: APIMigration {
 }
 
 final class APIMigrationManagerTests: MessagingTest {
-
     // MARK: - Verifying if migration is needed
 
     func test_itReturnsTrue_WhenMigrationIsNeeded() async {

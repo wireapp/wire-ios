@@ -20,9 +20,7 @@ import UIKit
 import WireDesign
 
 extension ConversationInputBarViewController {
-
     func configureMarkdownButton() {
-
         markdownButton.addTarget(self, action: #selector(markdownButtonTapped), for: .touchUpInside)
         markdownButton.setIcon(.markdownToggle, size: .tiny, for: .normal)
 
@@ -63,7 +61,6 @@ extension ConversationInputBarViewController {
 
     @objc
     private func markdownButtonTapped(_ sender: IconButton) {
-
         if !inputBar.isMarkingDown {
             inputBar.textView.becomeFirstResponder()
             inputBar.setInputBarState(.markingDown(ephemeral: ephemeralState), animated: true)

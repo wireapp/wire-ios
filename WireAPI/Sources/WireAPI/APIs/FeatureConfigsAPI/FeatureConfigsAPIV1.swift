@@ -19,7 +19,6 @@
 import Foundation
 
 class FeatureConfigsAPIV1: FeatureConfigsAPIV0 {
-
     override var apiVersion: APIVersion {
         .v1
     }
@@ -42,7 +41,6 @@ class FeatureConfigsAPIV1: FeatureConfigsAPIV0 {
 }
 
 struct FeatureConfigsResponseAPIV1: Decodable, ToAPIModelConvertible {
-
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
     let conferenceCalling: FeatureWithoutConfig
@@ -96,9 +94,7 @@ struct FeatureConfigsResponseAPIV1: Decodable, ToAPIModelConvertible {
 }
 
 extension FeatureConfigResponse {
-
     struct MLSV1: Decodable {
-
         let protocolToggleUsers: Set<UUID>
         let defaultProtocol: MessageProtocol
         let allowedCipherSuites: [MLSCipherSuite]

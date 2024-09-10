@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 extension ZMUser {
-
     /// Retrieves all users (excluding bots), having ZMConnectionStatusAccepted connection statuses.
     @objc static var predicateForConnectedNonBotUsers: NSPredicate {
         return predicateForUsers(withSearch: "", connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
@@ -99,7 +98,6 @@ extension ZMUser {
 // MARK: - Domain
 
 private extension NSPredicate {
-
     static func isHostedOnDomain(_ domain: String) -> NSPredicate {
         return NSPredicate(
             format: "%K == %@",

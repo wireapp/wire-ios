@@ -29,7 +29,6 @@ protocol PopUpIconButtonDelegate: AnyObject {
 }
 
 final class PopUpIconButton: IconButton {
-
     weak var delegate: PopUpIconButtonDelegate?
     var itemIcons: [StyleKitIcon] = []
 

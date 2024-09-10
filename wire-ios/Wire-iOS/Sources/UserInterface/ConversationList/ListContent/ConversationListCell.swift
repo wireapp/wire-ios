@@ -169,7 +169,6 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
         if let superview = menuDotsView.superview {
             let menuDotsViewEdges = [
-
                 superview.leadingAnchor.constraint(equalTo: menuDotsView.leadingAnchor),
                 superview.topAnchor.constraint(equalTo: menuDotsView.topAnchor),
                 superview.trailingAnchor.constraint(equalTo: menuDotsView.trailingAnchor),

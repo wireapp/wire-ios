@@ -23,7 +23,6 @@ import XCTest
 @testable import WireReusableUIComponents
 
 final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var viewController: UIViewController!

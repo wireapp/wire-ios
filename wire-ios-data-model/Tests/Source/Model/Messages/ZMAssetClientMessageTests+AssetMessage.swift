@@ -19,7 +19,6 @@
 import XCTest
 
 class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
-
     // MARK: Helpers
 
     var videoMetadataWithThumbnail: ZMVideoMetadata {

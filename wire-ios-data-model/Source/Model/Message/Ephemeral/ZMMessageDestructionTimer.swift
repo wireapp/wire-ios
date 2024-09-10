@@ -23,7 +23,6 @@ let MessageObfuscationTimerKey = "MessageObfuscationTimer"
 private let log = ZMSLog(tag: "ephemeral")
 
 public extension NSManagedObjectContext {
-
     @objc var zm_messageDeletionTimer: ZMMessageDestructionTimer? {
         precondition(zm_isUserInterfaceContext, "MessageDeletionTimerKey should be started only on the uiContext")
 
@@ -90,7 +89,6 @@ enum MessageDestructionType: String {
 }
 
 @objcMembers public class ZMMessageDestructionTimer: ZMMessageTimer {
-
     internal var isTesting: Bool = false
 
     override init(managedObjectContext: NSManagedObjectContext!) {

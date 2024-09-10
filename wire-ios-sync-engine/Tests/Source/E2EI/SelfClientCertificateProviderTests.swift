@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 class SelfClientCertificateProviderTests: MessagingTest {
-
     private var sut: SelfClientCertificateProvider!
     private var mockGetE2eIdentityCertificatesUseCase: MockGetE2eIdentityCertificatesUseCaseProtocol!
 

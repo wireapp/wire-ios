@@ -21,7 +21,6 @@ import Foundation
 import WireTransport
 
 class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPackageAction, ClaimMLSKeyPackageActionHandler> {
-
     private typealias Payload = ClaimMLSKeyPackageActionHandler.ResponsePayload
 
     let domain = "example.com"

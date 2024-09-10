@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 
 extension UIAlertController {
-
     class func cameraPermissionAlert(completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertController {
         permissionAlert(
             title: L10n.Localizable.Voice.Alert.CameraWarning.title,
@@ -48,7 +47,6 @@ extension UIAlertController {
         message: String,
         completion: ((UIAlertAction) -> Void)? = nil
     ) -> UIAlertController {
-
         let alert = UIAlertController(
             title: title,
             message: message,

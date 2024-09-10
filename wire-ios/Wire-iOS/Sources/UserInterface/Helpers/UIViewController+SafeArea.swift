@@ -21,7 +21,6 @@ import UIKit
 // TODO: [WPB-8778] remove the whole file
 
 extension UIViewController {
-
     @available(*, deprecated, message: "Will be removed")
     var safeBottomAnchor: NSLayoutYAxisAnchor {
         return self.view.safeAreaLayoutGuide.bottomAnchor
@@ -39,7 +38,6 @@ extension UIViewController {
 }
 
 extension UIView {
-
     @available(*, deprecated, message: "Will be removed")
     var safeAreaLayoutGuideOrFallback: UILayoutGuide {
         return safeAreaLayoutGuide

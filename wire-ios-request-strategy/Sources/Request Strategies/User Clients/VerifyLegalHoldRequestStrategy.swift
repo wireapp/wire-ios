@@ -23,7 +23,6 @@ import Foundation
 
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
-
     fileprivate let requestFactory = ClientMessageRequestFactory()
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
@@ -43,7 +42,6 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 }
 
 extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
-
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [self]
     }
@@ -114,7 +112,6 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
 }
 
 private class VerifyClientsParser: OTREntity {
-
     var context: NSManagedObjectContext
     let conversation: ZMConversation?
 

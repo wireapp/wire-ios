@@ -19,7 +19,6 @@
 import CoreLocation
 
 protocol AppLocationManagerDelegate: AnyObject {
-
     func didUpdateLocations(_ locations: [CLLocation])
 
     func didFailWithError(_ error: Error)
@@ -29,7 +28,6 @@ protocol AppLocationManagerDelegate: AnyObject {
 
 // sourcery: AutoMockable
 protocol AppLocationManagerProtocol: AnyObject {
-
     var delegate: AppLocationManagerDelegate? { get set }
 
     var authorizationStatus: CLAuthorizationStatus { get }
@@ -47,7 +45,6 @@ protocol AppLocationManagerProtocol: AnyObject {
 /// It conforms to the AppLocationManagerProtocol and CLLocationManagerDelegate protocols,
 /// providing an interface for requesting location authorization, updating locations, and managing location authorization status.
 final class AppLocationManager: NSObject, AppLocationManagerProtocol {
-
     // MARK: - Properties
 
     private let locationManager: CLLocationManager
@@ -88,7 +85,6 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
 // MARK: - CLLocationManagerDelegate
 
 extension AppLocationManager: CLLocationManagerDelegate {
-
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         delegate?.didUpdateLocations(locations)
     }

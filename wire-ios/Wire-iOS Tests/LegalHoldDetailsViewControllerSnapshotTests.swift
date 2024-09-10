@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: LegalHoldDetailsViewController!
@@ -55,7 +54,6 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     // MARK: - Helper method
 
     func setUpLegalHoldDetailsViewController(conversation: MockGroupDetailsConversation) -> () -> UIViewController {
-
         let createSut: () -> UIViewController = {
             self.sut = LegalHoldDetailsViewController(
                 conversation: conversation,

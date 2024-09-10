@@ -27,7 +27,6 @@ struct TeamListPayload: Decodable {
 }
 
 struct TeamPayload: Decodable {
-
     let identifier: UUID
     let name: String
     let creator: UUID
@@ -46,7 +45,6 @@ struct TeamPayload: Decodable {
 }
 
 extension TeamPayload {
-
     func createOrUpdateTeam(in managedObjectContext: NSManagedObjectContext) -> Team {
         let team = Team.fetchOrCreate(
             with: identifier,
@@ -74,7 +72,6 @@ extension TeamPayload {
 }
 
 fileprivate extension Team {
-
     static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
     }()
@@ -84,7 +81,6 @@ fileprivate extension Team {
 /// and for updating it when processing events or when manually requested.
 
 public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMEventConsumer, ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
-
     private (set) var downstreamSync: ZMDownstreamObjectSync!
     private (set) var slowSync: ZMSingleRequestSync!
 
@@ -264,7 +260,6 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
 // MARK: - Event
 
 fileprivate extension ZMUpdateEvent {
-
     var teamId: UUID? {
         (payload[TeamEventPayloadKey.team.rawValue] as? String).flatMap(UUID.init(transportString:))
     }
@@ -275,7 +270,6 @@ fileprivate extension ZMUpdateEvent {
 }
 
 private  enum TeamEventPayloadKey: String {
-
     case team
     case data
     case user
@@ -283,7 +277,6 @@ private  enum TeamEventPayloadKey: String {
 }
 
 struct TeamUpdateEventPayload: Decodable {
-
     let name: String?
     let icon: String?
     let iconKey: String?
@@ -296,7 +289,6 @@ struct TeamUpdateEventPayload: Decodable {
 }
 
 extension TeamUpdateEventPayload {
-
     func updateTeam(_ team: Team, in managedObjectContext: NSManagedObjectContext) {
         team.name = name
         team.pictureAssetId = icon

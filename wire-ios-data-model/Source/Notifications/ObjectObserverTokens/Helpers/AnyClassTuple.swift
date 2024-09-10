@@ -19,7 +19,6 @@
 import Foundation
 
 public struct AnyClassTuple<T: Hashable>: Hashable {
-
     public let classOfObject: AnyClass
     public let secondElement: T
 

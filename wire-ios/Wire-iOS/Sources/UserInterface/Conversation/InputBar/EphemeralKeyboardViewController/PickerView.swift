@@ -25,7 +25,6 @@ import UIKit
 /// views, which means that the behaviour could break in future iOS updates.
 
 final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
-
     // MARK: - Properties
 
     var selectorColor: UIColor?

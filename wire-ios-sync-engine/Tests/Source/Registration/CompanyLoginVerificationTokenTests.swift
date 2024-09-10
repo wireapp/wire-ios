@@ -20,7 +20,6 @@
 import XCTest
 
 final class CompanyLoginVerificationTokenTests: XCTestCase {
-
     var defaults: UserDefaults!
 
     override func setUp() {

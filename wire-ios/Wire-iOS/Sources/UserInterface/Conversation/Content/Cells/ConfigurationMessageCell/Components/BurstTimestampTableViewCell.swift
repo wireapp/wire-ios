@@ -28,7 +28,6 @@ struct BurstTimestampSenderMessageCellConfiguration {
 }
 
 final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = BurstTimestampSenderMessageCell
     let configuration: View.Configuration
 
@@ -51,7 +50,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
         context: ConversationMessageContext,
         accentColor: UIColor
     ) {
-
         self.configuration = View.Configuration(
             date: message.serverTimestamp ?? Date(),
             includeDayOfWeek: context.isFirstMessageOfTheDay,
@@ -67,7 +65,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 }
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
-
     private let timestampView: ConversationCellBurstTimestampView
     private var configuration: BurstTimestampSenderMessageCellConfiguration?
     private var timer: Timer?

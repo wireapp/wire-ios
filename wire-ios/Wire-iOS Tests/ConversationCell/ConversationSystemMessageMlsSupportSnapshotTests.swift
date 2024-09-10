@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessageSnapshotTestCase {
-
     // MARK: - Properties
 
     var mockConversation: SwiftMockConversation!

@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIViewController {
-
     /// Returns whether the view controller can be dismissed.
     var canBeDismissed: Bool {
         return presentedViewController != nil ||

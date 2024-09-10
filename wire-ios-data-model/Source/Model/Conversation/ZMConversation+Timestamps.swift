@@ -19,9 +19,7 @@
 import Foundation
 
 fileprivate extension ZMConversationMessage {
-
     var serverTimestampIncludingChildMessages: Date? {
-
         if let systemMessage = self as? ZMSystemMessage {
             return systemMessage.lastChildMessageDate
         }
@@ -31,7 +29,6 @@ fileprivate extension ZMConversationMessage {
 }
 
 fileprivate extension ZMMessage {
-
     static func isVisible(_ message: ZMMessage) -> Bool {
         if let systemMessage = message as? ZMSystemMessage, let parentMessage = systemMessage.parentMessage as? ZMMessage {
             return parentMessage.visibleInConversation != nil
@@ -42,7 +39,6 @@ fileprivate extension ZMMessage {
 }
 
 extension ZMConversation {
-
     // MARK: - Timestamps
 
     func updatePendingLastRead(_ timestamp: Date) {

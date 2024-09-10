@@ -196,7 +196,6 @@ extension ConversationContentViewController {
 // MARK: - UserClientObserver
 
 extension ConversationContentViewController: UserClientObserver {
-
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
         if changeInfo.sessionHasBeenReset {
             userClientToken = nil
@@ -208,7 +207,6 @@ extension ConversationContentViewController: UserClientObserver {
 // MARK: - SignatureObserver
 
 extension ConversationContentViewController: SignatureObserver {
-
     func willReceiveSignatureURL() {
         activityIndicator.start()
     }

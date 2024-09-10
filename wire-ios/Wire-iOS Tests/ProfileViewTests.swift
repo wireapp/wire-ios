@@ -25,7 +25,6 @@ import XCTest
 @testable import Wire
 
 final class ProfileViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

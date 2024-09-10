@@ -26,7 +26,6 @@ import WireSyncEngine
  */
 
 final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate {
-
     /**
      * The collection of view controllers displaying the content.
      */
@@ -268,7 +267,6 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
 // MARK: - MessageDetailsDataSourceObserver
 
 extension MessageDetailsViewController: MessageDetailsDataSourceObserver {
-
     func dataSourceDidChange(_ dataSource: MessageDetailsDataSource) {
         reloadData()
     }

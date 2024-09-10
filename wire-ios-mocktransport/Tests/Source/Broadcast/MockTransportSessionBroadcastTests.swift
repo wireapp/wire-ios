@@ -20,7 +20,6 @@
 import XCTest
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
-
     func testThatItReturnsMissingConnectedUsersWhenReceivingOTRMessage() {
         // given
         var selfUser: MockUser!

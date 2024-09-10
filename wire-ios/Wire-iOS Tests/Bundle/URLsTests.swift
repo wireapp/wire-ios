@@ -21,7 +21,6 @@ import WireCommonComponents
 import XCTest
 
 final class URLsTests: XCTestCase {
-
     func testUrlFileContainsAllKeys() throws {
         // Given
         guard let fileURL = Bundle.fileURL(for: "url", with: "json") else {

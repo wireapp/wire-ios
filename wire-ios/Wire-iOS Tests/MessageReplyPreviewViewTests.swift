@@ -26,7 +26,6 @@ import XCTest
 // MARK: - UIView extension
 
 extension UIView {
-
     fileprivate func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
         let container = ReplyRoundCornersView(containedView: self)
         container.translatesAutoresizingMaskIntoConstraints = false
@@ -39,7 +38,6 @@ extension UIView {
 // MARK: - MessageReplyPreviewViewTests
 
 final class MessageReplyPreviewViewTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

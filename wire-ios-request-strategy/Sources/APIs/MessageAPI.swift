@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol MessageAPI {
-
     func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
     func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
@@ -47,7 +46,6 @@ extension Payload.MessageSendingStatusV0 {
 }
 
 class MessageAPIV0: MessageAPI {
-
     open var apiVersion: APIVersion {
         .v0
     }
@@ -169,7 +167,6 @@ func mapFailureResponse(_ response: ZMTransportResponse) -> Error {
 }
 
 class MessageAPIV1: MessageAPIV0 {
-
     private let protobufContentType = "application/x-protobuf"
 
     override var apiVersion: APIVersion {
@@ -359,7 +356,6 @@ class MessageAPIV5: MessageAPIV4 {
     }
 
     override func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
-
         let request = ZMTransportRequest(
             path: "/mls/messages",
             method: .post,

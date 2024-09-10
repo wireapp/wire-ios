@@ -19,11 +19,9 @@
 import Foundation
 
 public final class LeaveSubconversationAction: EntityAction {
-
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
-
         case endpointUnavailable
         case invalidParameters
         case mlsNotEnabled

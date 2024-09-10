@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPI
 
 final class TeamsAPITests: XCTestCase {
-
     private var apiSnapshotHelper: APISnapshotHelper<any TeamsAPI>!
 
     // MARK: - Setup

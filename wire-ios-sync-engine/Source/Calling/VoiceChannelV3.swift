@@ -30,7 +30,6 @@ public enum VoiceChannelV3Error: LocalizedError {
 }
 
 public class VoiceChannelV3: NSObject, VoiceChannel {
-
     public var callCenter: WireCallCenterV3? {
         return self.conversation?.managedObjectContext?.zm_callCenter
     }
@@ -175,7 +174,6 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
 }
 
 extension VoiceChannelV3: CallActions {
-
     public func mute(_ muted: Bool, userSession: ZMUserSession) {
         if userSession.callNotificationStyle == .callKit {
             userSession.callKitManager?.requestMuteCall(in: conversation!, muted: muted)
@@ -215,7 +213,6 @@ extension VoiceChannelV3: CallActions {
 }
 
 extension VoiceChannelV3: CallActionsInternal {
-
     public func join(video: Bool) -> Bool {
         guard
             let conversation,
@@ -252,7 +249,6 @@ extension VoiceChannelV3: CallActionsInternal {
 }
 
 extension VoiceChannelV3: CallObservers {
-
     public func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any {
         return WireCallCenterV3.addNetworkQualityObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
     }

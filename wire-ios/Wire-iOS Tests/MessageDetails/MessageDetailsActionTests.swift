@@ -20,7 +20,6 @@
 import XCTest
 
 final class MessageDetailsActionTests: XCTestCase {
-
     override func setUp() {
         super.setUp()
         SelfUser.setupMockSelfUser()
@@ -118,7 +117,6 @@ final class MessageDetailsActionTests: XCTestCase {
     }
 
     private func withOneToOneMessage(belongsToTeam: Bool, _ block: @escaping (MockMessage) -> Void) {
-
         let message = MockMessageFactory.textMessage(withText: "Message")
         message.senderUser = SelfUser.provider?.providedSelfUser
         message.conversationLike = SwiftMockConversation()

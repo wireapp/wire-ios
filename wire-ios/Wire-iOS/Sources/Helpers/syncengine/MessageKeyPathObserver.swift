@@ -23,7 +23,6 @@ import WireSyncEngine
 ///
 /// The observer is active as long as the `MessageKeyPathObserver` instance is retained.
 final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
-
     typealias ChangedBlock = (_ message: ZMConversationMessage) -> Void
 
     private let keypath: KeyPath<MessageChangeInfo, Bool>

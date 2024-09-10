@@ -20,12 +20,10 @@ import Foundation
 import WireDataModel
 
 protocol ConversationCreationValuesConfigurable: AnyObject {
-
     func configure(with values: ConversationCreationValues)
 }
 
 final class ConversationCreationValues {
-
     // MARK: - Properties
 
     private var unfilteredParticipants: UserSet

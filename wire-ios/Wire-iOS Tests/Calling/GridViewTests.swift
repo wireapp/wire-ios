@@ -27,7 +27,6 @@ class OrientableViewMock: OrientableView {
 }
 
 class GridViewDelegateMock: GridViewDelegate {
-
     var page: Int = 0
 
     func gridView(_ gridView: GridView, didChangePageTo page: Int) {
@@ -36,7 +35,6 @@ class GridViewDelegateMock: GridViewDelegate {
 }
 
 final class GridViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -162,7 +160,6 @@ final class GridViewTests: XCTestCase {
 }
 
 extension GridViewTests: UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }

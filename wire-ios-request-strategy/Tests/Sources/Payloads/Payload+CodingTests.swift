@@ -23,7 +23,6 @@ import XCTest
 import WireTransport
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
-
     enum CodingKeys: CodingKey { }
 
     typealias InitCall = (Decoder, APIVersion)
@@ -66,7 +65,6 @@ private struct CodableObject: Codable {
 }
 
 class Payload_CodingTests: XCTestCase {
-
     var data: Data!
 
     override func setUp() {

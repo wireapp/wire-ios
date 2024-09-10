@@ -22,7 +22,6 @@ import WireTransport
 import XCTest
 
 final class ProxyCredentialsTests: ZMTBaseTest {
-
     func test_persist_storesInformationToTheKeychainDoesNotThrow() throws {
         // GIVEN
         let password = "12345"
@@ -83,7 +82,6 @@ final class ProxyCredentialsTests: ZMTBaseTest {
 // MARK: - Mock
 
 final class MockProxy: NSObject, ProxySettingsProvider {
-
     var host: String
     var port: Int
     var needsAuthentication: Bool

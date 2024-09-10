@@ -20,7 +20,6 @@
 import WireTesting
 
 class EventDecoderTest: MessagingTest {
-
     var sut: EventDecoder!
 
     override func setUp() {
@@ -45,9 +44,7 @@ class EventDecoderTest: MessagingTest {
 // MARK: - Processing events
 
 extension EventDecoderTest {
-
     func testThatItProcessesEvents() {
-
         var didCallBlock = false
 
         syncMOC.performGroupedBlock {
@@ -69,7 +66,6 @@ extension EventDecoderTest {
     }
 
     func testThatItProcessesEventsWithEncryptionKeys() {
-
         var didCallBlock = false
         let account = Account(userName: "John Doe", userIdentifier: UUID())
         let encryptionKeys = try? EncryptionKeys.createKeys(for: account)
@@ -93,7 +89,6 @@ extension EventDecoderTest {
     }
 
     func testThatItProcessesPreviouslyStoredEventsFirst() {
-
         EventDecoder.testingBatchSize = 1
         var callCount = 0
 
@@ -124,12 +119,10 @@ extension EventDecoderTest {
     }
 
     func testThatItProcessesInBatches() {
-
         EventDecoder.testingBatchSize = 2
         var callCount = 0
 
         syncMOC.performGroupedBlock {
-
             // given
             let event1 = self.eventStreamEvent()
             let event2 = self.eventStreamEvent()
@@ -160,11 +153,9 @@ extension EventDecoderTest {
     }
 
     func testThatItDoesNotProcessTheSameEventsTwiceWhenCalledSuccessively() {
-
         EventDecoder.testingBatchSize = 2
 
         syncMOC.performGroupedBlock {
-
             // given
             let event1 = self.eventStreamEvent()
             let event2 = self.eventStreamEvent()
@@ -267,11 +258,8 @@ extension EventDecoderTest {
 // MARK: - Already seen events
 
 extension EventDecoderTest {
-
     func testThatItProcessesEventsWithDifferentUUIDWhenThroughPushEventsFirst() {
-
         syncMOC.performGroupedBlockAndWait {
-
             // given
             let pushProcessed = self.expectation(description: "Push event processed")
             let pushEvent = self.pushNotificationEvent()
@@ -301,9 +289,7 @@ extension EventDecoderTest {
     }
 
     func testThatItDoesNotProcessesEventsWithSameUUIDWhenThroughPushEventsFirst() {
-
         syncMOC.performGroupedBlockAndWait {
-
             // given
             let pushProcessed = self.expectation(description: "Push event processed")
             let uuid = UUID.create()
@@ -335,9 +321,7 @@ extension EventDecoderTest {
     }
 
     func testThatItProcessesEventsWithSameUUIDWhenThroughPushEventsFirstAndDiscarding() {
-
         syncMOC.performGroupedBlockAndWait {
-
             // given
             let pushProcessed = self.expectation(description: "Push event processed")
             let uuid = UUID.create()

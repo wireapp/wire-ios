@@ -19,7 +19,6 @@
 import UIKit
 
 final class KeyboardBlockObserver: NSObject {
-
     struct ChangeInfo {
         enum Kind {
             case show, hide, change

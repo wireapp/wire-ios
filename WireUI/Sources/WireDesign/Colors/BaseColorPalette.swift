@@ -21,9 +21,7 @@ import UIKit
 // The structure of this type corresponds to the Wire design system.
 
 public enum BaseColorPalette {
-
     public enum LightUI {
-
         public enum MainColor {
             public static let blue500 = UIColor(resource: .blue500Light)
             public static let green500 = UIColor(resource: .green500Light)
@@ -48,7 +46,6 @@ public enum BaseColorPalette {
     }
 
     public enum DarkUI {
-
         public enum MainColor {
             public static let blue500 = UIColor(resource: .blue500Dark)
             public static let green500 = UIColor(resource: .green500Dark)

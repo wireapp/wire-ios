@@ -22,7 +22,6 @@ import SafariServices
 import WireSyncEngine
 
 struct SettingsCellDescriptorFactory {
-
     static let settingsDevicesCellIdentifier: String = "devices"
 
     var settingsPropertyFactory: SettingsPropertyFactory
@@ -64,7 +63,6 @@ struct SettingsCellDescriptorFactory {
     }
 
     func addAccountOrTeamCell() -> SettingsCellDescriptorType {
-
         let sessionManager = SessionManager.shared
 
         let presentationAction: () -> UIViewController? = {
@@ -215,7 +213,6 @@ struct SettingsCellDescriptorFactory {
     }
 
     func aboutSection() -> SettingsCellDescriptorType {
-
         let legalButton = SettingsExternalScreenCellDescriptor(
             title: L10n.Localizable.About.Legal.title,
             isDestructive: false,

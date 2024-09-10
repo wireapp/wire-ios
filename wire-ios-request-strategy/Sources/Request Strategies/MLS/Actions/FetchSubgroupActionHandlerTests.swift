@@ -21,7 +21,6 @@ import WireDataModel
 @testable import WireRequestStrategy
 
 class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction, FetchSubgroupActionHandler> {
-
     let domain = "example.com"
     let conversationId = UUID()
     let type = SubgroupType.conference

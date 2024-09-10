@@ -29,20 +29,17 @@ struct DeveloperToolsContext {
 }
 
 final class DeveloperToolsViewModel: ObservableObject {
-
     static var context: DeveloperToolsContext = DeveloperToolsContext()
 
     // MARK: - Models
 
     struct Section: Identifiable {
-
         let id = UUID()
         var header: String
         var items: [Item]
     }
 
     enum Item: Identifiable {
-
         case button(ButtonItem)
         case text(TextItem)
         case destination(DestinationItem)
@@ -62,28 +59,24 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     struct ButtonItem: Identifiable {
-
         let id = UUID()
         let title: String
         let action: () -> Void
     }
 
     struct TextItem: Identifiable {
-
         let id = UUID()
         let title: String
         let value: String
     }
 
     struct DestinationItem: Identifiable {
-
         let id = UUID()
         let title: String
         let makeView: () -> AnyView
     }
 
     enum Event {
-
         case dismissButtonTapped
         case itemTapped(Item)
         case itemCopyRequested(Item)
@@ -124,7 +117,6 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupSections() {
-
         setupContextualItems()
 
         setupActions()
@@ -403,7 +395,6 @@ final class DeveloperToolsViewModel: ObservableObject {
 }
 
 extension PushToken.TokenType: CustomStringConvertible {
-
     public var description: String {
         switch self {
         case .standard:
@@ -416,7 +407,6 @@ extension PushToken.TokenType: CustomStringConvertible {
 }
 
 extension PushToken: CustomDebugStringConvertible {
-
     public var debugDescription: String {
         return """
         token: \(deviceTokenString),

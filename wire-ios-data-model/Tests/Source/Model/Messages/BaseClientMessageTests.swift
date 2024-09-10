@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class BaseZMClientMessageTests: BaseZMMessageTests {
-
     var syncSelfUser: ZMUser!
     var syncUser1: ZMUser!
     var syncUser2: ZMUser!

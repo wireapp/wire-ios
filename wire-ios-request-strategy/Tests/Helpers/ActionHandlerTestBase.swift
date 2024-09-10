@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {
-
     typealias ValidationBlock = (Result<Action.Result, Action.Failure>) -> Bool
 
     var action: Action!
@@ -145,7 +144,6 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
 }
 
 extension ActionHandlerTestBase {
-
     struct DefaultEquatable: Equatable {}
 
     @discardableResult
@@ -218,7 +216,6 @@ extension ActionHandlerTestBase {
 }
 
 extension ActionHandlerTestBase where Action.Failure: Equatable {
-
     // MARK: Failures Assessment
 
     func test_itDoesntGenerateARequest(
@@ -282,7 +279,6 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
 }
 
 extension ActionHandlerTestBase {
-
     // MARK: Payload Encoding
 
     func transportData<Payload: Encodable>(for payload: Payload?) -> ZMTransportData? {
@@ -292,7 +288,6 @@ extension ActionHandlerTestBase {
 }
 
 extension ActionHandlerTestBase {
-
     // MARK: - Helpers
 
     private func expect(

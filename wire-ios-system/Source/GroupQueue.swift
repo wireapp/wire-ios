@@ -21,7 +21,6 @@ import Foundation
 /// Similar to a dispatch queue or NSOperationQueue.
 @objc(ZMSGroupQueue)
 public protocol GroupQueue: NSObjectProtocol {
-
     /// The underlying dispatch group that is used for `performGroupedBlock(_:)`.
     /// It can be used to associate a block with the receiver without running it on the receiver's queue.
     var dispatchGroup: ZMSDispatchGroup? { get }

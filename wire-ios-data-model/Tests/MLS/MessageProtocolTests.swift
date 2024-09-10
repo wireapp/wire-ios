@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class MessageProtocolTests: XCTestCase {
-
     /// Ensures these raw values never change.
     func testInt16Values() {
         XCTAssertEqual(MessageProtocol.proteus.int16Value, 0)

@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: ZMConversationListObserver {
-
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateNoConversationVisibility()
     }

@@ -137,7 +137,6 @@ private struct ParticipantsSectionViewModel {
 }
 
 extension UserCell {
-
     func configure(
         user: UserType,
         isE2EICertified: Bool,
@@ -164,7 +163,6 @@ extension UserCell {
 }
 
 final class ParticipantsSectionController: GroupDetailsSectionController {
-
     fileprivate weak var collectionView: UICollectionView? {
         didSet {
             guard let collectionView else { return }
@@ -276,7 +274,6 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
-
         guard
             viewModel.footerVisible,
             let footer = collectionView.dequeueFooter(for: IndexPath(item: 0, section: section)) as? SectionFooter
@@ -295,7 +292,6 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-
         guard kind == UICollectionView.elementKindSectionFooter else {
             return super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
         }
@@ -326,7 +322,6 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 }
 
 extension ParticipantsSectionController: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged else { return }
         collectionView?.reloadData()
@@ -334,7 +329,6 @@ extension ParticipantsSectionController: UserObserving {
 }
 
 private extension UICollectionView {
-
     func dequeueFooter(for indexPath: IndexPath) -> UICollectionReusableView {
         dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
                                          withReuseIdentifier: "SectionFooter",

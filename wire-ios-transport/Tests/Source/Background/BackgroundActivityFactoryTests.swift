@@ -22,7 +22,6 @@ import WireTesting
 import XCTest
 
 class BackgroundActivityFactoryTests: XCTestCase {
-
     var factory: BackgroundActivityFactory!
     var activityManager: MockBackgroundActivityManager!
 
@@ -237,7 +236,6 @@ class BackgroundActivityFactoryTests: XCTestCase {
 // MARK: - Helpers
 
 extension BackgroundActivityFactoryTests {
-
     private func simulateApplicationDidEnterBackground() {
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
@@ -248,7 +246,6 @@ extension BackgroundActivityFactoryTests {
 }
 
 extension BackgroundActivityFactory {
-
     @objc func reset() {
         currentBackgroundTask = nil
         activities.removeAll()

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 final class FeatureTests: ZMBaseManagedObjectTest {
-
     private var context: NSManagedObjectContext { syncMOC }
 
     // MARK: - Tests
@@ -193,7 +192,6 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 // MARK: - Helpers
 
 extension FeatureTests {
-
     func configData(enforced: Bool) -> Data {
         let json = """
           {
@@ -207,13 +205,11 @@ extension FeatureTests {
 }
 
 extension Feature {
-
     @discardableResult
     static func insert(name: Name,
                        status: Status,
                        config: Data?,
                        context: NSManagedObjectContext) -> Feature {
-
         let feature = Feature.insertNewObject(in: context)
         feature.name = name
         feature.status = status

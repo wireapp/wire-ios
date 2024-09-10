@@ -21,9 +21,7 @@ import Foundation
 import XCTest
 
 class RolesMigrationTests: DiskDatabaseTest {
-
     func testMarkingTeamsAndConversationForDownalod() {
-
         // Given
         let selfUser = ZMUser.selfUser(in: moc)
         let team = createTeam()
@@ -102,7 +100,6 @@ class RolesMigrationTests: DiskDatabaseTest {
     }
 
     func testMigratingUsers() {
-
         // Given
         let oldKey = "lastServerSyncedActiveParticipants"
         let user1 = ZMUser.insertNewObject(in: moc)

@@ -21,7 +21,6 @@ import Foundation
 /// URLActionProcessor has the capabillity of processing a URLAction
 
 protocol URLActionProcessor {
-
     /// Process an URL action
     ///
     /// - parameter urlAction: URLAction to process.
@@ -30,7 +29,6 @@ protocol URLActionProcessor {
 }
 
 extension SessionManager {
-
     /// React to the application being opened via a URL
     ///
     /// - parameter url: URL the application was launched with

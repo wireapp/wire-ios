@@ -26,7 +26,6 @@ import WireUtilities
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
 @objc public extension ZMUser {
-
     func fetchUserClients() {
         NotificationInContext(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
                               context: self.managedObjectContext!.notificationContext,
@@ -36,7 +35,6 @@ public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID
 
 @objc
 public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
-
     fileprivate static let needsToUpdateUserClientsNotificationName = Notification.Name("ZMNeedsToUpdateUserClientsNotification")
 
     fileprivate var userClientsObserverToken: Any?
@@ -51,7 +49,6 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
     private let entitySync: EntityActionSync
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-
         self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
         self.userClientByUserClientIDTranscoder = UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
         self.userClientByQualifiedUserIDTranscoder = UserClientByQualifiedUserIDTranscoder(managedObjectContext: managedObjectContext)
@@ -130,7 +127,6 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 }
 
 extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
-
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [self]
     }
@@ -210,7 +206,6 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
 }
 
 final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
-
     struct UserClientID: Hashable {
         let userId: UUID
         let clientId: String
@@ -271,7 +266,6 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscoder {
-
     public typealias T = QualifiedID
 
     weak var contextChangedTracker: ZMContextChangeTracker?
@@ -290,9 +284,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     struct RequestPayload: Codable, Equatable {
-
         enum CodingKeys: String, CodingKey {
-
             case qualifiedIDs = "qualified_users"
         }
 
@@ -346,9 +338,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
     }
 
     struct ResponsePayload: Codable {
-
         enum CodingKeys: String, CodingKey {
-
             case qualifiedUsers = "qualified_user_map"
         }
 
@@ -426,7 +416,6 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 }
 
 final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
-
     public typealias T = UUID
 
     var managedObjectContext: NSManagedObjectContext

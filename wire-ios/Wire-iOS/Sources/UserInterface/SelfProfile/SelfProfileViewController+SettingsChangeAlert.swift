@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension SelfProfileViewController {
-
     @discardableResult func presentUserSettingChangeControllerIfNeeded() -> Bool {
         if ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely ?? false {
             let currentValue = ZMUser.selfUser()!.readReceiptsEnabled

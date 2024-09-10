@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class RoundedBlurViewTests: XCTestCase {
-
     private var sut: RoundedBlurView!
     private var snapshotHelper: SnapshotHelper!
 

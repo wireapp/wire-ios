@@ -31,7 +31,6 @@ extension ZMConversationMessage {
 }
 
 class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
-
     var conversation: ZMConversation!
 
     override func setUp() {
@@ -52,7 +51,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesATextMessage() {
-
         // GIVEN
         let message = try! self.conversation.appendText(content: "ramble on!")
 
@@ -61,7 +59,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizeTimedMessages() {
-
         // GIVEN
         let otherUser = ZMUser.insertNewObject(in: self.conversation.managedObjectContext!)
         otherUser.remoteIdentifier = UUID.create()
@@ -75,7 +72,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesATextMessageWithLink() {
-
         // GIVEN
         let message = try! self.conversation.appendText(content: "ramble on https://en.wikipedia.org/wiki/Ramble_On here")
 
@@ -84,7 +80,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesALinkPreviewMessage() throws {
-
         // GIVEN
         let article = ArticleMetadata(
             originalURLString: "www.example.com/article/original",
@@ -103,7 +98,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesAnImageMessage() {
-
         // GIVEN
         let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
 
@@ -112,7 +106,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesAnImageMessage_WithoutData() {
-
         // GIVEN
         let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
         uiMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
@@ -122,7 +115,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesAGifImageMessage() {
-
         // GIVEN
         let data = self.data(forResource: "animated", extension: "gif")!
         let message = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
@@ -132,7 +124,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesKnocks() throws {
-
         // GIVEN
         let message = try self.conversation.appendKnock() as! ZMClientMessage
 
@@ -141,7 +132,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesFile() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")))
 
@@ -150,7 +140,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItDoesCategorizeAFailedToUploadFile_ExcludedFromCollection() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMAssetClientMessage
         message.transferState = .uploadingFailed
@@ -161,7 +150,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItDoesNotCategorizeACancelledToUploadFile_ExcludedFromCollection() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMAssetClientMessage
         message.transferState = .uploadingCancelled
@@ -172,7 +160,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesAudioFile() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMAudioMetadata(fileURL: self.fileURL(forResource: "audio", extension: "m4a"), duration: 12.2))
 
@@ -181,7 +168,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesVideoFile() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData()))
 
@@ -190,7 +176,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesLocation() throws {
-
         // GIVEN
         let message = try self.conversation.appendLocation(with: LocationData.locationData(withLatitude: 40.42, longitude: 50.2, name: "Fooland", zoomLevel: Int32(2)))
 
@@ -199,7 +184,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesV3Images() {
-
         // GIVEN
         let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
 
@@ -208,7 +192,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesSystemMessage() {
-
         // GIVEN
         let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: conversation.managedObjectContext!)
         message.systemMessageType = .conversationNameChanged
@@ -218,7 +201,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesLikedTextMessageWhenLikedBySelfUser() {
-
         // GIVEN
         let message = try! self.conversation.appendText(content: "ramble on!") as! ZMClientMessage
         message.delivered = true
@@ -231,7 +213,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesLikedFileMessageWhenLikedBySelfUser() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMAssetClientMessage
         message.delivered = true
@@ -244,7 +225,6 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItCategorizesLikedTextMessageWhenNotLikedBySelfUser() {
-
         // GIVEN
         let otherUser = ZMUser.insertNewObject(in: self.conversation.managedObjectContext!)
         otherUser.remoteIdentifier = UUID.create()
@@ -262,9 +242,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 // MARK: - Cache
 
 extension ZMMessageCategorizationTests {
-
     func testThatItComputesTheCachedCategoryLazily() {
-
         // GIVEN
         let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
         message.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
@@ -279,7 +257,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItUsedCachedCategoryValueIfPresent() {
-
         // GIVEN
         let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
         message.willChangeValue(forKey: ZMMessageCachedCategoryKey)
@@ -295,7 +272,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItComputestheCachedCategoryWhenAsked() {
-
         // GIVEN
         let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
         message.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
@@ -316,9 +292,7 @@ extension ZMMessageCategorizationTests {
 // MARK: - Fetch request
 
 extension ZMMessageCategorizationTests {
-
     func testThatItCreatesAFetchRequestToFetchText() {
-
         // GIVEN
         let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
@@ -350,7 +324,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCreatesAFetchRequestToFetchTextOrKnock() {
-
         // GIVEN
         let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
@@ -382,7 +355,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCreatesAFetchRequestToFetchLikedText() {
-
         // GIVEN
         let textMessage = try! self.conversation.appendText(content: "в ночной тиши") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
@@ -414,7 +386,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCreatesAFetchRequestToFetchLikedTextOrKnock() {
-
         // GIVEN
         let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
@@ -446,7 +417,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCreatesAFetchRequestToFetchTextExcludingLinksAndLiked() {
-
         // GIVEN
         let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
@@ -478,7 +448,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItFetchesFromAllConversations() {
-
         // GIVEN
         let otherConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         otherConversation.conversationType = .group
@@ -506,7 +475,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItFetchesFromASpecificConversations() {
-
         // GIVEN
         let otherConversation = ZMConversation.insertNewObject(in: self.uiMOC)
         otherConversation.conversationType = .group
@@ -537,9 +505,7 @@ extension ZMMessageCategorizationTests {
 // MARK: Categorization on insert
 
 extension ZMMessageCategorizationTests {
-
     func testThatItCategorizesAClientMessageOnInsert() {
-
         // when
         let message = try! self.conversation.appendText(content: "hey Jean!") as! ZMMessage
 
@@ -548,7 +514,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCategorizesALocationMessageOnInsert() throws {
-
         // when
         let message = try self.conversation.appendLocation(with: LocationData.locationData(withLatitude: 40.42, longitude: 50.2, name: "Fooland", zoomLevel: Int32(2))) as! ZMMessage
 
@@ -557,7 +522,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCategorizesAKnockMessageOnInsert() throws {
-
         // when
         let message = try self.conversation.appendKnock() as! ZMMessage
         // then
@@ -565,7 +529,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCategorizesAnImageMessageOnInsert() {
-
         // when
         let message = try! self.conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
 
@@ -574,7 +537,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCategorizesAVideoMessageOnInsert() {
-
         // when
         let message = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMMessage
 
@@ -584,7 +546,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCategorizesAnAudioFile() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMAudioMetadata(fileURL: self.fileURL(forResource: "audio", extension: "m4a"), duration: 12.2)) as! ZMMessage
 
@@ -594,7 +555,6 @@ extension ZMMessageCategorizationTests {
     }
 
     func testThatItCategorizesAFileOnInsert() {
-
         // GIVEN
         let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMMessage
 

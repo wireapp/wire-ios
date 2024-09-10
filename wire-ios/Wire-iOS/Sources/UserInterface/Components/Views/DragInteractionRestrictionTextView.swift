@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 
 class DragInteractionRestrictionTextView: TextView {
-
     convenience init() {
         self.init(frame: .zero)
 

@@ -21,7 +21,6 @@ import Foundation
 /// An event concerning conversations.
 
 public enum ConversationEvent: Equatable, Codable {
-
     /// A conversation's access settings were updated.
 
     case accessUpdate(ConversationAccessUpdateEvent)

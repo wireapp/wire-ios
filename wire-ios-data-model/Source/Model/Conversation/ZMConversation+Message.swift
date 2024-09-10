@@ -21,11 +21,9 @@ import Foundation
 private let log = ZMSLog(tag: "Conversations")
 
 extension ZMConversation {
-
     /// An error describing why a message couldn't be appended to the conversation.
 
     public enum AppendMessageError: LocalizedError, Equatable {
-
         case missingManagedObjectContext
         case malformedNonce
         case failedToProcessMessageData(reason: String)
@@ -143,7 +141,6 @@ extension ZMConversation {
                            replyingTo quotedMessage: ZMConversationMessage? = nil,
                            fetchLinkPreview: Bool = true,
                            nonce: UUID = UUID()) throws -> ZMConversationMessage {
-
         guard !(content as NSString).zmHasOnlyWhitespaceCharacters() else {
             throw AppendMessageError.messageIsEmpty
         }
@@ -281,7 +278,6 @@ extension ZMConversation {
         expires: Bool,
         prepareMessage: (ZMAssetClientMessage) -> Void
     ) throws -> ZMAssetClientMessage {
-
         let logAttributes: LogAttributes = [
             LogAttributesKey.conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
             LogAttributesKey.messageType: "asset"
@@ -338,7 +334,6 @@ extension ZMConversation {
                                     expires: Bool = true,
                                     hidden: Bool = false,
                                     configure: ((ZMClientMessage) -> Void)? = nil) throws -> ZMClientMessage {
-
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
@@ -407,7 +402,6 @@ extension ZMConversation {
 
 @objc
 extension ZMConversation {
-
     // MARK: - Objective-C compability methods
 
     @discardableResult @objc(appendMessageWithText:)
@@ -425,7 +419,6 @@ extension ZMConversation {
                             mentions: [Mention],
                             fetchLinkPreview: Bool,
                             nonce: UUID) -> ZMConversationMessage? {
-
         return try? appendText(content: content,
                                mentions: mentions,
                                fetchLinkPreview: fetchLinkPreview,
@@ -438,7 +431,6 @@ extension ZMConversation {
                             replyingTo quotedMessage: ZMConversationMessage?,
                             fetchLinkPreview: Bool,
                             nonce: UUID) -> ZMConversationMessage? {
-
         return try? appendText(content: content,
                                mentions: mentions,
                                replyingTo: quotedMessage,

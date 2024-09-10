@@ -19,7 +19,6 @@
 import Foundation
 
 public enum AppLockAuthenticationResult {
-
     /// User sucessfully authenticated.
     case granted
 

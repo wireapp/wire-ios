@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class TeamInvitationStatusTests: ZMTBaseTest {
-
     let exampleEmailAddress1 = "example1@test.com"
     let exampleEmailAddress2 = "example2@test.com"
 

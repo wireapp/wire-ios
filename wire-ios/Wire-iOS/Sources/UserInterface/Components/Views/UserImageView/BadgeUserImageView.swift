@@ -23,7 +23,6 @@ import WireSyncEngine
 
 /// A user image view that can display a badge on top for different connection states.
 final class BadgeUserImageView: UserImageView {
-
     /// The color of the badge.
     var badgeColor: UIColor = .white {
         didSet {
@@ -176,7 +175,6 @@ final class BadgeUserImageView: UserImageView {
 // MARK: - Compatibility
 
 extension BadgeUserImageView {
-
     var wr_badgeIconSize: CGFloat {
         get {
             return badgeIconSize.rawValue

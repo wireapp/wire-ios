@@ -21,7 +21,6 @@ import WireDataModel
 // MARK: - Calling
 
 public extension ZMLocalNotification {
-
     convenience init?(callState: LocalNotificationType.CallState, conversation: ZMConversation?, caller: ZMUser, moc: NSManagedObjectContext) {
         guard let conversation,
               let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation) else {
@@ -31,7 +30,6 @@ public extension ZMLocalNotification {
     }
 
     private class CallNotificationBuilder: NotificationBuilder {
-
         let callState: LocalNotificationType.CallState
         let caller: ZMUser
         let conversation: ZMConversation

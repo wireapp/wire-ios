@@ -23,7 +23,6 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         parent?.dismiss(animated: true) {
             if let imageData = image.pngData() {
-
                 self.userSession.enqueue({
                     do {
                         try self.conversation.appendImage(from: imageData)

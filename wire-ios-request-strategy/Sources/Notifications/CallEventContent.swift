@@ -19,9 +19,7 @@
 import Foundation
 
 public struct CallEventContent: Codable {
-
     public enum CodingKeys: String, CodingKey {
-
         case type
         case properties = "props"
         case callerUserID = "src_userid"
@@ -145,9 +143,7 @@ public struct CallEventContent: Codable {
 }
 
 extension CallEventContent {
-
     struct Properties: Codable {
-
         private let videosend: String
 
         var isVideo: Bool {
@@ -157,7 +153,6 @@ extension CallEventContent {
 }
 
 extension ZMUpdateEvent {
-
     var isCallEvent: Bool {
         return CallEventContent(from: self) != nil
     }

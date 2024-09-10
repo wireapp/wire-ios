@@ -24,7 +24,6 @@ import Foundation
 /// content in the database.
 
 public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
-
     // MARK: - Properties
 
     private var baseQuery = [CFString: Any]()

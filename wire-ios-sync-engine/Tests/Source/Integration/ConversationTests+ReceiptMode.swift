@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_ReceiptMode: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

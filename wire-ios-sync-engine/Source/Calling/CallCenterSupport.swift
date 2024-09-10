@@ -25,7 +25,6 @@ public typealias WireCallMessageToken = UnsafeMutableRawPointer
 /// The possible types of call.
 
 public enum AVSCallType: Int32 {
-
     case normal = 0
     case video = 1
     case audioOnly = 2
@@ -34,7 +33,6 @@ public enum AVSCallType: Int32 {
 /// Possible types of conversation in which calls can be initiated.
 
 public enum AVSConversationType: Int32 {
-
     case oneToOne = 0
     case group = 1
     case conference = 2
@@ -44,7 +42,6 @@ public enum AVSConversationType: Int32 {
  /// An object that represents a calling event.
 
 public struct CallEvent {
-
     let data: Data
     let currentTimestamp: Date
     let serverTimestamp: Date
@@ -62,7 +59,6 @@ public typealias CallConfigRequestCompletion = (String?, Int) -> Void
 /// An object that can perform requests on behalf of the call center.
 
 public protocol WireCallCenterTransport: AnyObject {
-
     /// Sends a calling message.
     ///
     /// - Parameters:

@@ -21,7 +21,6 @@ import Foundation
 /// An event where a user's team membership metadata was updated.
 
 public struct TeamMemberUpdateEvent: Equatable, Codable {
-
     /// The team id.
 
     public let teamID: UUID

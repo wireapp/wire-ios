@@ -28,7 +28,6 @@ import Foundation
 /// is turned on, because it is always available.
 
 public enum FeatureConfigStatus: String, Codable {
-
     case enabled
     case disabled
 }

@@ -22,7 +22,6 @@ import WireDataModel
 @testable import WireSyncEngine
 
 final class CallStateTestObserver: WireCallCenterCallStateObserver {
-
     var changes: [CallState] = []
     var token: Any?
 
@@ -44,7 +43,6 @@ final class CallStateTestObserver: WireCallCenterCallStateObserver {
 }
 
 final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
-
     var changes: [[(UUID, CallParticipantState)]] = []
     var token: Any?
 
@@ -58,7 +56,6 @@ final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
 }
 
 final class CallingV3Tests: IntegrationTest {
-
     var stateObserver: CallStateTestObserver!
     var participantObserver: CallParticipantTestObserver!
 
@@ -241,7 +238,6 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func testThatItSendsOutAllExpectedNotificationsWhenSelfUserCalls_OneOnOne() {
-
         // given
         XCTAssertTrue(login())
         stateObserver.observe(conversation: conversationUnderTest, context: userSession!.managedObjectContext)
@@ -286,7 +282,6 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func testThatItSendsOutAllExpectedNotificationsWhenSelfUserCalls_Group() {
-
         // no active users -> self is calling -> self connected to active channel -> no active users
 
         // given
@@ -451,7 +446,6 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func testThatItSendsANotificationIfIgnoringACallAndImmediatelyAcceptingIt() {
-
         // given
         XCTAssertTrue(login())
         stateObserver.observe(conversation: conversationUnderTest, context: userSession!.managedObjectContext)
@@ -616,7 +610,6 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func testThatCallIsTerminatedIfConversationSecurityDegrades() {
-
         // given
         XCTAssertTrue(login())
 
@@ -654,7 +647,6 @@ final class CallingV3Tests: IntegrationTest {
 // MARK: - SystemMessages
 
 extension CallingV3Tests {
-
     func fetchAllClients() {
         userSession?.perform {
             self.conversationUnderTest.appendMessage(withText: "foo") // make sure we have all clients
@@ -664,7 +656,6 @@ extension CallingV3Tests {
     }
 
     func testThatItCreatesASystemMessageWhenWeMissedACall() {
-
         // given
         XCTAssertTrue(login())
         let user = conversationUnderTest.connectedUser!
@@ -717,7 +708,6 @@ extension CallingV3Tests {
     }
 
     func testThatItCreatesAPerformedCallSystemMessageWhenTheCallIsEnded() {
-
         // given
         XCTAssertTrue(login())
         fetchAllClients()

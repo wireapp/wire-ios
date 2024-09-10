@@ -28,7 +28,6 @@ import XCTest
 // MARK: - CameraKeyboardViewControllerDelegateMock
 
 final class CameraKeyboardViewControllerDelegateMock: CameraKeyboardViewControllerDelegate {
-
     var cameraKeyboardWantsToOpenCameraRollHitCount: UInt = 0
     @objc func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
         cameraKeyboardWantsToOpenCameraRollHitCount += 1
@@ -70,7 +69,6 @@ private final class MockAssetLibrary: AssetLibrary {
 // MARK: - MockImageManager
 
 private final class MockImageManager: ImageManagerProtocol {
-
     func cancelImageRequest(_ requestID: PHImageRequestID) {
         // no op
     }
@@ -101,7 +99,6 @@ private final class CallingMockCameraKeyboardViewController: CameraKeyboardViewC
 // MARK: - CameraKeyboardViewControllerTests
 
 final class CameraKeyboardViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

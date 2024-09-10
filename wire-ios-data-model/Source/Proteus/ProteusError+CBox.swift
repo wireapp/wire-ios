@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 
 public extension ProteusError {
-
     init?(cboxResult: CBoxResult) {
         switch cboxResult {
         case CBOX_STORAGE_ERROR:

@@ -29,7 +29,6 @@ final class ClientListViewController: UIViewController,
                                 UITableViewDataSource,
                                 ClientUpdateObserver,
                                 ClientColorVariantProtocol {
-
     // MARK: SpinnerCapable
 
     var removalObserver: ClientRemovalObserver?
@@ -284,7 +283,6 @@ final class ClientListViewController: UIViewController,
         _ userClient: UserClient,
         credentials: UserEmailCredentials?
     ) {
-
         removalObserver = ClientRemovalObserver(
             userClientToDelete: userClient,
             delegate: self,
@@ -570,7 +568,6 @@ final class ClientListViewController: UIViewController,
 }
 
 extension ClientListViewController: EditingStateControllable {
-
     /// Sets the editing state of the ClientListViewController.
     /// This method is primarily used for testing purposes to directly
     /// control the editing state without user interaction.
@@ -602,7 +599,6 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
 }
 
 extension ClientListViewController: UserObserving {
-
     func userDidChange(_ note: UserChangeInfo) {
         if note.clientsChanged || note.trustLevelChanged {
             updateAllClients()

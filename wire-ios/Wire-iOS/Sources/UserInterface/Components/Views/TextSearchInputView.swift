@@ -144,7 +144,6 @@ final class TextSearchInputView: UIView {
 }
 
 extension TextSearchInputView: UITextViewDelegate {
-
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         guard let currentText = textView.text else {
             return true

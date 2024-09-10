@@ -20,7 +20,6 @@ import UIKit
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
 class AvatarImageView: UIView {
-
     // MARK: - Properties
 
     /// The avatar to display.
@@ -138,7 +137,6 @@ class AvatarImageView: UIView {
     /// Updates the displayed avatar.
     private func updateAvatar() {
         switch avatar {
-
         case .text where !allowsInitials:
             imageView.image = nil
             initialsLabel.text = nil
@@ -175,7 +173,6 @@ class AvatarImageView: UIView {
 
     /// The different, mutually-exclusive forms of avatars.
     enum Avatar: Equatable {
-
         case image(UIImage)
         case text(String)
 

@@ -36,7 +36,6 @@ enum CoreDataMigratorError: Error {
 }
 
 extension CoreDataMigratorError: LocalizedError {
-
     var errorDescription: String? {
         switch self {
         case .missingStoreURL:
@@ -62,7 +61,6 @@ extension CoreDataMigratorError: LocalizedError {
 }
 
 final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigratorProtocol {
-
     private let isInMemoryStore: Bool
 
     private var persistentStoreType: NSPersistentStore.StoreType {
@@ -90,7 +88,6 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
-
             let logMessage = "core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
             WireLogger.localStorage.info(logMessage, attributes: .safePublic)
 
@@ -261,7 +258,6 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
     }
 
     func runPostMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
-
         guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion) else { return }
 
         WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)

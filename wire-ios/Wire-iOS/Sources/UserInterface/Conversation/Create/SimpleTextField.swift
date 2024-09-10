@@ -28,7 +28,6 @@ protocol SimpleTextFieldDelegate: AnyObject {
 }
 
 final class SimpleTextField: UITextField, DynamicTypeCapable {
-
     // MARK: - Properties
 
     var attribute: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
@@ -120,7 +119,6 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     // MARK: - Placeholder
 
     func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
-
         return placeholder && attribute
     }
 
@@ -162,7 +160,6 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 // MARK: SimpleTextField Extension
 
 extension SimpleTextField: SimpleTextFieldValidatorDelegate {
-
     func textFieldValueChanged(_ text: String?) {
         let validator = SimpleTextFieldValidator()
         let newValue = { () -> SimpleTextField.Value in

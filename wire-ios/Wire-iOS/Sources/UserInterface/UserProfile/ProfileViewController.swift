@@ -42,7 +42,6 @@ extension ZMConversationType {
 }
 
 final class ProfileViewController: UIViewController {
-
     weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
@@ -135,7 +134,6 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
 
     private func bringUpConversationCreationFlow() {
-
         let controller = ConversationCreationController(
             preSelectedParticipants: viewModel.userSet,
             userSession: viewModel.userSession
@@ -293,7 +291,6 @@ extension ProfileViewController: ViewControllerDismisser {
 // MARK: - Footer View
 
 extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFooterViewDelegate {
-
     func footerView(_ footerView: IncomingRequestFooterView, didRespondToRequestWithAction action: IncomingConnectionAction) {
         switch action {
         case .accept:
@@ -526,7 +523,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
-
     func conversationCreationController(
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
@@ -543,7 +539,6 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
 }
 
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
-
     func setupNavigationItems() {
         let legalHoldItem: UIBarButtonItem? = viewModel.hasLegalHoldItem ? legalholdItem : nil
 

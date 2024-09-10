@@ -39,7 +39,6 @@ import WireUtilities
  */
 
 @objc public final class BackgroundActivityFactory: NSObject {
-
     /// Get the shared instance.
     @objc(sharedFactory)
     public static let shared: BackgroundActivityFactory = BackgroundActivityFactory()
@@ -215,7 +214,6 @@ import WireUtilities
 
     /// Ends the current background task.
     private func finishBackgroundTask() {
-
         let allTasksEndedHandlers = self.allTasksEndedHandlers
         self.allTasksEndedHandlers.removeAll()
         mainQueue.async {
@@ -228,7 +226,6 @@ import WireUtilities
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
             if let activityManager {
-
                 // We might get killed pretty soon, let's flush the logs
                 ZMSLog.sync()
                 activityManager.endBackgroundTask(currentBackgroundTask)

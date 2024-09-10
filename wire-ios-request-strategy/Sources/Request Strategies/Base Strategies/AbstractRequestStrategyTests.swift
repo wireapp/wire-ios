@@ -22,12 +22,10 @@ import XCTest
 @testable import WireRequestStrategy
 
 protocol TestableAbstractRequestStrategy: AnyObject {
-
     var mutableConfiguration: ZMStrategyConfigurationOption { get set }
 }
 
 class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractRequestStrategy {
-
     internal var mutableConfiguration: ZMStrategyConfigurationOption = []
 
     override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -40,7 +38,6 @@ class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractReques
 }
 
 class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrategy {
-
     internal var mutableConfiguration: ZMStrategyConfigurationOption = []
 
     override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -54,7 +51,6 @@ class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrat
 }
 
 class AbstractRequestStrategyTests: MessagingTestBase {
-
     let mockApplicationStatus = MockApplicationStatus()
 
     func checkAllPermutations(on sut: RequestStrategy & TestableAbstractRequestStrategy) {
@@ -63,7 +59,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
     }
 
     func checkRequirementsDependingOn_SynchronizationState(on sut: RequestStrategy & TestableAbstractRequestStrategy) {
-
         // online
 
         assertPass(withConfiguration: [.allowsRequestsWhileOnline],
@@ -198,7 +193,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
                     sut: RequestStrategy & TestableAbstractRequestStrategy,
                     file: StaticString = #file,
                     line: UInt = #line) {
-
         // given
         sut.mutableConfiguration = configuration
         mockApplicationStatus.mockOperationState = operationState
@@ -214,7 +208,6 @@ class AbstractRequestStrategyTests: MessagingTestBase {
                     sut: RequestStrategy & TestableAbstractRequestStrategy,
                     file: StaticString = #file,
                     line: UInt = #line) {
-
         // given
         sut.mutableConfiguration = configuration
         mockApplicationStatus.mockOperationState = operationState

@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMLocalNotificationTests: MessagingTest {
-
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 
     var sender: ZMUser!
@@ -208,7 +207,6 @@ class ZMLocalNotificationTests: MessagingTest {
     }
 
     func createMessageTimerUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = UUID.create(), timer: Int64 = 31536000, timestamp: Date = Date()) -> ZMUpdateEvent {
-
        let payload: [String: Any] = [
         "from": senderID.transportString(),
         "conversation": conversationID.transportString(),

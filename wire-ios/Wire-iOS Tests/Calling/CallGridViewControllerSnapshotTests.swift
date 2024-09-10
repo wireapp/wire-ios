@@ -42,7 +42,6 @@ struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
 }
 
 final class CallGridViewControllerSnapshotTests: XCTestCase {
-
     var sut: CallGridViewController!
     var mockVoiceChannel: MockVoiceChannel!
     var mediaManager: ZMMockAVSMediaManager!
@@ -218,7 +217,6 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     // MARK: - Hint update
 
     func testThat_ItUpdatesHint() {
-
         // Maximization
 
         assertHint(
@@ -325,7 +323,6 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 }
 
 extension CallGridViewControllerSnapshotTests {
-
     private func assertHint(input: HintTestCase.Input, output: HintTestCase.Output, file: StaticString = #file, line: UInt = #line) {
         mockHintView.didCallHideAndStopTimer = false
         mockHintView.hint = nil

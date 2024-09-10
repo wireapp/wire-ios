@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class CoreCryptoCallbacksTests: XCTestCase {
-
     func test_HardcodedValues() async {
         // Given
         let sut = CoreCryptoCallbacksImpl()

@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class RoundedSegmentedViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

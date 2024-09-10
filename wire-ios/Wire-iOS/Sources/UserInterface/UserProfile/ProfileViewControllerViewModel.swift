@@ -32,7 +32,6 @@ enum ProfileViewControllerContext {
 
 // sourcery: AutoMockable
 protocol ProfileViewControllerViewModeling {
-
     var classification: SecurityClassification? { get }
     var userSet: UserSet { get }
     var userSession: UserSession { get }
@@ -65,7 +64,6 @@ protocol ProfileViewControllerViewModeling {
 }
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
-
     // MARK: - Properties
 
     let user: UserType
@@ -318,11 +316,9 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 }
 
 extension ProfileViewControllerViewModel: UserObserving {
-
     // MARK: - User Changes
 
     func userDidChange(_ note: UserChangeInfo) {
-
         if note.legalHoldStatusChanged {
             viewModelDelegate?.setupNavigationItems()
         }

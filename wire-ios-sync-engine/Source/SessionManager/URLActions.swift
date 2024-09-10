@@ -19,7 +19,6 @@
 import Foundation
 
 public enum URLAction: Equatable {
-
     /// Connect to a service user (bot)
     case connectBot(serviceUser: ServiceUserData)
 
@@ -80,7 +79,6 @@ extension URLComponents {
 }
 
 extension URLAction {
-
     public init?(url: URL, validatingIn defaults: UserDefaults = .shared()) throws {
         guard let components = URLComponents(string: url.absoluteString),
             let host = components.host,
@@ -195,7 +193,6 @@ extension URLAction {
 }
 
 extension URLQueryItem.Key {
-
     static let conversationKey = "key"
     static let conversationCode = "code"
     static let password = "password"

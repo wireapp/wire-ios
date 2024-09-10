@@ -21,7 +21,6 @@ import WireDataModel
 import XCTest
 
 class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSSubconversationGroupInfoAction, FetchMLSSubconversationGroupInfoActionHandler> {
-
     let subgroupType: SubgroupType = .conference
 
     override func setUp() {

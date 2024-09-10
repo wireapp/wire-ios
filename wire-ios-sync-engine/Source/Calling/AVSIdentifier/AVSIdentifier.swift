@@ -29,7 +29,6 @@ public struct AVSIdentifier: Hashable, Equatable {
 }
 
 extension AVSIdentifier {
-
     public var serialized: String {
         var serializedIdentifier = identifier.transportString()
 

@@ -22,7 +22,6 @@ import WireRequestStrategy
 
 /// A conversation
 public protocol Conversation: SharingTarget {
-
     /// User defined name for a group conversation, or standard name
     var name: String? { get }
 

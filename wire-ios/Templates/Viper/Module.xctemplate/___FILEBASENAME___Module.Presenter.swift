@@ -19,9 +19,7 @@
 import Foundation
 
 extension ___VARIABLE_productName:identifier___Module {
-
     final class Presenter: PresenterInterface {
-
         // MARK: - Properties
 
         var interactor: ___VARIABLE_productName:identifier___InteractorPresenterInterface!
@@ -33,7 +31,6 @@ extension ___VARIABLE_productName:identifier___Module {
 // MARK: - Handle result
 
 extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_productName:identifier___PresenterInteractorInterface {
-
     func handleResult(_ result: ___VARIABLE_productName:identifier___Module.Result) {
         switch result {
         }
@@ -43,7 +40,6 @@ extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_pro
 // MARK: - Process event
 
 extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_productName:identifier___PresenterViewInterface {
-
     func processEvent(_ event: ___VARIABLE_productName:identifier___Module.Event) {
         switch event {
         case .viewDidLoad:

@@ -19,7 +19,6 @@
 import Foundation
 
 extension CoreDataStack {
-
     static let storeFileExtensions = ["", "-wal", "-shm"]
 
     /// Locations where Wire is or has historically been storing data.
@@ -50,7 +49,6 @@ extension CoreDataStack {
     /// Delete all files in directories where Wire has historically
     /// been storing data.
     private func clearStorage() throws {
-
         for location in storageLocations {
             try clearStoreFiles(in: location)
             try clearSessionStore(in: location)

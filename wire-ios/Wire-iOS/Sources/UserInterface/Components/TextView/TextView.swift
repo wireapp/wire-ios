@@ -30,7 +30,6 @@ protocol InformalTextViewDelegate: AnyObject {
 // Inspired by https://github.com/samsoffes/sstoolkit/blob/master/SSToolkit/SSTextView.m
 // and by http://derpturkey.com/placeholder-in-uitextview/
 class TextView: UITextView {
-
     weak var informalTextViewDelegate: InformalTextViewDelegate?
 
     var placeholder: String? {

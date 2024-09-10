@@ -63,7 +63,6 @@ extension UIAlertController {
 }
 
 extension ConversationActionController {
-
     func requestCancelConnectionRequestResult(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) {
         let controller = CancelConnectionRequestResult.controller(for: user, handler: handler)
         present(controller)

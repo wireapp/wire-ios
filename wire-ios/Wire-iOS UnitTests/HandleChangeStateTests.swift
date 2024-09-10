@@ -20,7 +20,6 @@
 import XCTest
 
 class HandleChangeStateTests: XCTestCase {
-
     // MARK: Validation Fail Tests
 
     func testFunctionThatHandleIsTooShort() {

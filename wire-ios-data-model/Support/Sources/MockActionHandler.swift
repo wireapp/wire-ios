@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
-
     public typealias Action = T
 
     private var results: [Result<Action.Result, Action.Failure>]

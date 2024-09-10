@@ -25,7 +25,6 @@ import WireRequestStrategySupport
 import WireTransportSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
-
     var mockSessionManager: MockSessionManager!
     var mockPushChannel: MockPushChannel!
     var mockEARService: MockEARServiceInterface!

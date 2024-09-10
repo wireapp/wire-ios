@@ -21,13 +21,11 @@ import Foundation
 // sourcery: AutoMockable
 /// Abstracts access to the system's pasteboard.
 public protocol Pasteboard: AnyObject {
-
     /// The text copied by the user, if any.
     var text: String? { get }
 }
 
 extension UIPasteboard: Pasteboard {
-
     public var text: String? {
         guard self.hasStrings else {
             return nil

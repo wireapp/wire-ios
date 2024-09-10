@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 public struct SetStateUpdate<T: Hashable> {
-
     public let newSnapshot: SetSnapshot<T>
     public let changeInfo: SetChangeInfo<T>
 
@@ -43,7 +42,6 @@ public protocol SetChangeInfoOwner {
 }
 
 open class SetChangeInfo<T: Hashable>: NSObject {
-
     let changeSet: ChangedIndexes<T>
     public let orderedSetState: OrderedSetState<T>
 
@@ -80,7 +78,6 @@ open class SetChangeInfo<T: Hashable>: NSObject {
 }
 
 public struct SetSnapshot<T: Hashable> {
-
     public let set: OrderedSetState<T>
     public let moveType: SetChangeMoveType
 
@@ -91,7 +88,6 @@ public struct SetSnapshot<T: Hashable> {
 
     // Returns the new state and the notification to send after some changes in messages
     public func updatedState(_ updatedObjects: Set<T>, observedObject: NSObject, newSet: OrderedSetState<T>) -> SetStateUpdate<T>? {
-
         if self.set == newSet, updatedObjects.count == 0 {
             return nil
         }

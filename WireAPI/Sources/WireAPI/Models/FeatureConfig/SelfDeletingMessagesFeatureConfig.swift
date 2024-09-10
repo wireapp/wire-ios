@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *Self Deleting Messages* feature.
 
 public struct SelfDeletingMessagesFeatureConfig: Equatable, Codable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus

@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireDesign
 
 struct DeviceDetailsView: View {
-
     typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
     @Environment(\.dismiss) private var dismiss

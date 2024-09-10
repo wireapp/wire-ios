@@ -62,7 +62,6 @@ extension ZMUser {
     func fetchConsent(for consentType: ConsentType,
                       on transportSession: TransportSessionType,
                       completion: @escaping CompletionFetch) {
-
         guard
             let apiVersion = BackendInfo.apiVersion,
             let context = managedObjectContext
@@ -106,7 +105,6 @@ extension ZMUser {
                     for consentType: ConsentType,
                     on transportSession: TransportSessionType,
                     completion: @escaping CompletionSet) {
-
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(ConsentRequestError.unknown))
         }

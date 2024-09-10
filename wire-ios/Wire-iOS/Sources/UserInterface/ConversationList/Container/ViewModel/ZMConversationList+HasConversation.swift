@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 extension ConversationList {
-
     static var hasConversations: Bool {
         guard let session = ZMUserSession.shared() else { return false }
 

@@ -21,7 +21,6 @@ import WireDataModel
 import WireRequestStrategy
 
 final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-
     // MARK: - Properties
 
     let context: NSManagedObjectContext

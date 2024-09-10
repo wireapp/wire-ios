@@ -20,7 +20,6 @@ import Foundation
 @testable import Wire
 
 class MockImageResource: NSObject, WireImageResource {
-
     var isAnimatedGIF: Bool = false
     var cacheIdentifier: String? = UUID().uuidString
 

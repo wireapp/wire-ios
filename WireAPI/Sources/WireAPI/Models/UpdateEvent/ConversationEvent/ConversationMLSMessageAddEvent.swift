@@ -21,7 +21,6 @@ import Foundation
 /// An event where an mls message was received in a conversation.
 
 public struct ConversationMLSMessageAddEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

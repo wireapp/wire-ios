@@ -19,7 +19,6 @@
 import SwiftUI
 
 public extension Color {
-
     static let primaryText = Color(
         uiColor: UIColor(
             light: .black,
@@ -71,7 +70,6 @@ public extension Color {
 }
 
 private extension UIColor {
-
     convenience init(light: ColorResource, dark: ColorResource) {
         self.init { traits in
             .init(resource: traits.userInterfaceStyle == .dark ? dark : light)

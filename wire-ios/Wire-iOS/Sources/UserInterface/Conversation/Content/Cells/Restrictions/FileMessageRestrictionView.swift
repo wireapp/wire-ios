@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class FileMessageRestrictionView: BaseMessageRestrictionView {
-
     // MARK: - Properties
 
     let fileBlockView: UIImageView = {

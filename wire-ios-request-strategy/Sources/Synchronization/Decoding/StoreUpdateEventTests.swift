@@ -20,9 +20,7 @@
 import WireTesting
 
 final class StoreUpdateEventTests: MessagingTestBase {
-
     struct Failure: Error {
-
         var description: String
 
         init(_ description: String) {

@@ -21,9 +21,7 @@ import LocalAuthentication
 @testable import Wire
 
 extension AppLockModule {
-
     final class MockSession {
-
         var methodCalls = MethodCalls()
 
         struct MethodCalls {

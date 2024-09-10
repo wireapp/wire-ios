@@ -19,7 +19,6 @@
 import UIKit
 
 final class Token<T: NSObjectProtocol>: Hashable {
-
     let representedObject: HashBox<T>
 
     let title: String

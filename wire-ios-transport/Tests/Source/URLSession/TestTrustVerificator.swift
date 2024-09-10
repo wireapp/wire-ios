@@ -20,7 +20,6 @@ import Foundation
 import WireTransport
 
 final class TestTrustVerificator: NSObject, URLSessionDelegate {
-
     var session: URLSession!
     var trustProvider: BackendTrustProvider!
     private let callback: (Bool) -> Void

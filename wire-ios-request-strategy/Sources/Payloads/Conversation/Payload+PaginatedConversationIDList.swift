@@ -20,7 +20,6 @@ import Foundation
 
 extension Payload {
     struct PaginatedConversationIDList: Codable, Paginatable {
-
         enum CodingKeys: String, CodingKey {
             case conversations
             case hasMore = "has_more"

@@ -19,7 +19,6 @@
 import UIKit
 
 final class ConversationEncryptionProtocolSectionController: ConversationCreateSectionController {
-
     typealias Cell = ConversationCreateEncryptionProtocolCell
 
     var tapAction: (_ sender: UIView) -> Void = { _ in }
@@ -33,7 +32,6 @@ final class ConversationEncryptionProtocolSectionController: ConversationCreateS
 }
 
 extension ConversationEncryptionProtocolSectionController {
-
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         self.cell = cell

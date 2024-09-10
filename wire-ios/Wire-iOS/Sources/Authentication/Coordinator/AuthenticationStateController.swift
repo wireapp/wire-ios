@@ -27,7 +27,6 @@ private let log = ZMSLog(tag: "Authentication")
  */
 
 protocol AuthenticationStateControllerDelegate: AnyObject {
-
     /**
      * Called when the current state changes in the state controller.
      * - parameter newState: The new state held by the state controller
@@ -44,7 +43,6 @@ protocol AuthenticationStateControllerDelegate: AnyObject {
  */
 
 final class AuthenticationStateController {
-
     enum RewindMilestone: Equatable {
         case createCredentials(_ user: UnregisteredUser)
     }

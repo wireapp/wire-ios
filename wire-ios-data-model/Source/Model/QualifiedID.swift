@@ -19,7 +19,6 @@
 import Foundation
 
 public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
-
     enum CodingKeys: String, CodingKey {
         case uuid = "id"
         case domain
@@ -45,7 +44,6 @@ extension QualifiedID: SafeForLoggingStringConvertible {
 }
 
 public extension ZMUser {
-
     var qualifiedID: QualifiedID? {
         guard
             let context = managedObjectContext,
@@ -60,7 +58,6 @@ public extension ZMUser {
 }
 
 public extension ZMConversation {
-
     var qualifiedID: QualifiedID? {
         guard
             let uuid = remoteIdentifier,
@@ -74,7 +71,6 @@ public extension ZMConversation {
 }
 
 public extension Collection where Element == ZMUser {
-
     var qualifiedUserIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
 
@@ -83,7 +79,6 @@ public extension Collection where Element == ZMUser {
 }
 
 public extension Collection where Element == ZMConversation {
-
     var qualifiedIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
 
@@ -92,7 +87,6 @@ public extension Collection where Element == ZMConversation {
 }
 
 public extension QualifiedID {
-
     static func random() -> QualifiedID {
         return QualifiedID(
             uuid: UUID(),

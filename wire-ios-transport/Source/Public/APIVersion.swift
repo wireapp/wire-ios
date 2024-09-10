@@ -22,7 +22,6 @@ import Foundation
 
 @objc
 public enum APIVersion: Int32 {
-
     case v0 = 0
     case v1 = 1
     case v2 = 2
@@ -39,7 +38,6 @@ extension APIVersion: CaseIterable {}
 // MARK: - Comparable
 
 extension APIVersion: Comparable {
-
     public static func < (lhs: Self, rhs: Self) -> Bool {
         return lhs.rawValue < rhs.rawValue
     }

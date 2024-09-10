@@ -19,7 +19,6 @@
 import Foundation
 
 public struct BackendMLSPublicKeys: Equatable {
-
     let removal: MLSPublicKeys
 
     public init(removal: MLSPublicKeys = .init()) {
@@ -45,7 +44,6 @@ public struct BackendMLSPublicKeys: Equatable {
     }
 
     public struct MLSPublicKeys: Equatable {
-
         let ed25519: Data?
         let ed448: Data?
         let p256: Data?

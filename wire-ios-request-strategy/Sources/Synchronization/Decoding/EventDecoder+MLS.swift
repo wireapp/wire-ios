@@ -19,7 +19,6 @@
 import Foundation
 
 extension EventDecoder {
-
     func processWelcomeMessage(
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
@@ -101,7 +100,6 @@ extension EventDecoder {
 
             var events = [ZMUpdateEvent]()
             for result in results {
-
                 switch result {
                 case .message(let decryptedData, let senderClientID):
                     if let event = updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID) {

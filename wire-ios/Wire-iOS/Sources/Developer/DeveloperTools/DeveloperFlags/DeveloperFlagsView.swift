@@ -20,7 +20,6 @@ import SwiftUI
 import WireUtilities
 
 struct DeveloperFlagsView: View {
-
     // MARK: - Properties
 
     @StateObject
@@ -56,7 +55,6 @@ struct DeveloperFlagsView: View {
 // MARK: - Previews
 
 struct DeveloperFlagsView_Previews: PreviewProvider {
-
     static var previews: some View {
         NavigationView {
             DeveloperFlagsView(viewModel: DeveloperFlagsViewModel())

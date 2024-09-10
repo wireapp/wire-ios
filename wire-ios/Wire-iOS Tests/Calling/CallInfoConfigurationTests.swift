@@ -25,7 +25,6 @@ func == (lhs: CallInfoViewControllerInput, rhs: CallInfoViewControllerInput) -> 
 }
 
 final class CallInfoConfigurationTests: ZMSnapshotTestCase {
-
     var mockUsers: [MockUserType]!
     var selfUser: ZMUser!
     var otherUser: ZMUser!
@@ -764,7 +763,6 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
     // MARK: - Mock ZMConversation
 
     private func createOneOnOneConversation(messageProtocol: MessageProtocol = .proteus) -> ZMConversation {
-
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = messageProtocol
         mockConversation.addParticipantAndUpdateConversationState(user: selfUser)
@@ -780,7 +778,6 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
     }
 
     private func createGroupConversation(messageProtocol: MessageProtocol = .proteus) -> ZMConversation {
-
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = messageProtocol
         mockConversation.remoteIdentifier = UUID.create()

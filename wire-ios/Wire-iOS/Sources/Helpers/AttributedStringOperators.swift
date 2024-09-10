@@ -115,7 +115,6 @@ func && (left: NSAttributedString, right: [NSAttributedString.Key: Any]) -> NSAt
 // MARK: - Helper Functions
 
 extension String {
-
     var attributedString: NSAttributedString {
         .init(string: self)
     }
@@ -216,7 +215,6 @@ extension String {
 }
 
 extension NSAttributedString {
-
     // Adds the attribtues to the given substring in self and returns the resulting String
     func addAttributes(_ attributes: [NSAttributedString.Key: AnyObject], toSubstring substring: String) -> NSAttributedString {
         let mutableSelf = NSMutableAttributedString(attributedString: self)
@@ -243,7 +241,6 @@ extension NSAttributedString {
 }
 
 extension NSMutableAttributedString {
-
     func addAttributes(_ attributes: [NSAttributedString.Key: AnyObject], to substring: String) {
         let substringRange = (string as NSString).range(of: substring)
 

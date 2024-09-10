@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class PrivateUserDefaultsTests: XCTestCase {
-
     var sut: PrivateUserDefaults<String>!
     var userID: UUID!
     let key = "foo"
@@ -96,7 +95,6 @@ final class PrivateUserDefaultsTests: XCTestCase {
 }
 
 extension String: DefaultsKey {
-
     public var rawValue: String {
         return self
     }

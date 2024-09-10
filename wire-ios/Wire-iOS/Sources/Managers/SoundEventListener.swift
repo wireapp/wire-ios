@@ -46,7 +46,6 @@ extension ZMConversationMessage {
 }
 
 final class SoundEventListener: NSObject {
-
     weak var userSession: ZMUserSession?
 
     static let SoundEventListenerIgnoreTimeForPushStart = 2.0
@@ -94,9 +93,7 @@ final class SoundEventListener: NSObject {
 }
 
 extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
-
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
-
         for message in changeInfo.messages {
             // Rules:
             // * Not silenced
@@ -127,7 +124,6 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 
     func didReceiveNewUnreadKnockMessages(_ changeInfo: NewUnreadKnockMessagesChangeInfo) {
         for message in changeInfo.messages {
-
             let isRecentMessage = (message.serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
             let isSilenced = message.isSilenced
             let isSentBySelfUser = message.senderUser?.isSelfUser ?? false
@@ -142,9 +138,7 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 }
 
 extension SoundEventListener: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
-
         guard let mediaManager = AVSMediaManager.sharedInstance(),
               let userSession,
               let callCenter = userSession.callCenter,
@@ -198,7 +192,6 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
 }
 
 extension SoundEventListener {
-
     @objc
     func applicationWillEnterForeground() {
         soundEventWatchDog.startIgnoreDate = Date()
@@ -218,7 +211,6 @@ extension SoundEventListener {
 }
 
 extension SoundEventListener: ZMNetworkAvailabilityObserver {
-
     func didChangeAvailability(newState: NetworkState) {
         guard UIApplication.shared.applicationState != .background else { return }
 

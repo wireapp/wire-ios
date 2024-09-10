@@ -24,7 +24,6 @@ private let zmLog = ZMSLog(tag: "EventDecoder")
 typealias ProteusDecryptionFunction = (ProteusSessionID, Data) async throws -> (didCreateNewSession: Bool, decryptedData: Data)?
 
 extension EventDecoder {
-
     /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
     /// decryption was needed) and information about the decryption result.
     func decryptProteusEventAndAddClient(
@@ -249,7 +248,6 @@ extension EventDecoder {
 }
 
 private extension ZMUpdateEvent {
-
     var recipientID: String? {
         return self.eventData?["recipient"] as? String
     }

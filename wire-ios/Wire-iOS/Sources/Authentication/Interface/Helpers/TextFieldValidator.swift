@@ -20,7 +20,6 @@ import UIKit
 import WireUtilities
 
 final class TextFieldValidator {
-
     var customValidator: ((String) -> ValidationError?)?
 
     enum ValidationError: Error, Equatable {
@@ -91,7 +90,6 @@ final class TextFieldValidator {
 }
 
 extension PasswordRuleSet {
-
     var textInputPasswordRules: UITextInputPasswordRules {
         return UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
     }

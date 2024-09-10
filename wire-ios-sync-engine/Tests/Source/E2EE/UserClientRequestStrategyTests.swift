@@ -28,7 +28,6 @@ import XCTest
 
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {
-
     public var didCallRegisterMLSClient: Bool = false
     public func didRegisterMLSClient(_ userClient: WireDataModel.UserClient) {
         didCallRegisterMLSClient = true
@@ -55,7 +54,6 @@ public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegis
 }
 
 final class UserClientRequestStrategyTests: RequestStrategyTestBase {
-
     var sut: UserClientRequestStrategy!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
     var mockClientRegistrationStatusDelegate: MockClientRegistrationStatusDelegate!
@@ -126,7 +124,6 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 // MARK: Inserting
 
 extension UserClientRequestStrategyTests {
-
     func createSelfClient(_ context: NSManagedObjectContext) -> UserClient {
         let selfClient = UserClient.insertNewObject(in: context)
         selfClient.remoteIdentifier = nil
@@ -155,7 +152,6 @@ extension UserClientRequestStrategyTests {
 
     func testThatItReturnsRequestForInsertedObject() {
         syncMOC.performGroupedAndWait {
-
             // given
             let prekeys = [(UInt16(1), "prekey1")]
             let lastResortPrekey = (ushort.max, "last-resort-prekey")
@@ -189,7 +185,6 @@ extension UserClientRequestStrategyTests {
 
     func testThatItDoesNotReturnRequestIfThereIsNoInsertedObject() {
         syncMOC.performGroupedAndWait {
-
             // given
             self.clientRegistrationStatus.isWaitingForLoginValue = true
             let client = self.createSelfClient(self.sut.managedObjectContext!)
@@ -207,7 +202,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItStoresTheRemoteIdentifierWhenUpdatingAnInsertedObject() {
-
         syncMOC.performGroupedAndWait {
             // given
             let client = self.createSelfClient(self.sut.managedObjectContext!)
@@ -234,7 +228,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItStoresTheLastGeneratedPreKeyIDWhenUpdatingAnInsertedObject() {
-
         var client: UserClient! = nil
         var maxID_before: UInt16! = nil
         let expectedMaxID: UInt16 = 1
@@ -266,7 +259,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItStoresTheSignalingKeysWhenUpdatingAnInsertedObject() {
-
         var client: UserClient! = nil
         syncMOC.performGroupedBlock {
             // given
@@ -295,7 +287,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItNotifiesObserversWhenUpdatingAnInsertedObject() {
-
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
@@ -318,7 +309,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItProcessFailedInsertResponseWithAuthenticationError_NoEmail() {
-
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
@@ -346,7 +336,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItProcessFailedInsertResponseWithAuthenticationError_HasEmail() {
-
         let emailAddress = "hello@example.com"
 
         syncMOC.performGroupedBlock {
@@ -385,7 +374,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItProcessFailedInsertResponseWithTooManyClientsError() {
-
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
@@ -423,7 +411,6 @@ extension UserClientRequestStrategyTests {
 // MARK: Updating
 
 extension UserClientRequestStrategyTests {
-
     func testThatPrekeysAreGeneratedBeforeRefillingPrekeys() {
         syncMOC.performGroupedAndWait {
             // given
@@ -449,7 +436,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItReturnsRequestIfNumberOfRemainingKeysIsLessThanMinimum() {
-
         syncMOC.performGroupedAndWait {
             // given
             let prekeys = [IdPrekeyTuple(id: 1, prekey: "prekey1")]
@@ -488,7 +474,6 @@ extension UserClientRequestStrategyTests {
 
     func testThatItDoesNotReturnsRequestIfNumberOfRemainingKeysIsLessThanMinimum_NoRemoteIdentifier() {
         syncMOC.performGroupedAndWait {
-
             // given
             self.clientRegistrationStatus.mockPhase = .registered
 
@@ -510,7 +495,6 @@ extension UserClientRequestStrategyTests {
 
     func testThatItDoesNotReturnRequestIfNumberOfRemainingKeysIsAboveMinimum() {
         syncMOC.performGroupedAndWait {
-
             // given
             self.clientRegistrationStatus.mockPhase = .registered
 
@@ -579,7 +563,6 @@ extension UserClientRequestStrategyTests {
 // MARK: Fetching Clients
 
 extension UserClientRequestStrategyTests {
-
     func  payloadForClients() -> ZMTransportData {
         let payload = [
             [
@@ -600,7 +583,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItNotifiesWhenFinishingFetchingTheClient() {
-
         syncMOC.performGroupedAndWait {
             // given
             self.clientUpdateStatus.mockPhase = .fetchingClients
@@ -621,7 +603,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatDeletesClientsThatWereNotInTheFetchResponse() {
-
         var selfUser: ZMUser!
         var selfClient: UserClient!
         var newClient: UserClient!
@@ -654,9 +635,7 @@ extension UserClientRequestStrategyTests {
 // MARK: Deleting
 
 extension UserClientRequestStrategyTests {
-
     func testThatItCreatesARequestToDeleteAClient_UpdateStatus() {
-
         syncMOC.performGroupedAndWait {
             // given
             self.clientRegistrationStatus.mockPhase = .unregistered
@@ -690,7 +669,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItDeletesAClientOnSuccess() {
-
         // given
         var client: UserClient!
 
@@ -718,9 +696,7 @@ extension UserClientRequestStrategyTests {
 // MARK: - Updating from push events
 
 extension UserClientRequestStrategyTests {
-
     func testThatItCreatesARequestForClientsThatNeedToUploadSignalingKeys() {
-
         var existingClient: UserClient! = nil
         syncMOC.performGroupedBlock {
             // given
@@ -760,7 +736,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItRetriesOnceWhenUploadSignalingKeysFails() {
-
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -805,7 +780,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItCreatesARequestForClientsThatNeedToUpdateCapabilities() {
-
         var existingClient: UserClient! = nil
         syncMOC.performGroupedBlock {
             // given
@@ -840,7 +814,6 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItRetriesOnceWhenUpdateCapabilitiesFails() {
-
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -928,7 +901,6 @@ extension UserClientRequestStrategyTests {
 }
 
 extension UserClientRequestStrategy {
-
     func notifyChangeTrackers(_ object: ZMManagedObject) {
         self.contextChangeTrackers.forEach { $0.objectsDidChange(Set([object])) }
     }

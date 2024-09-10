@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSMutableString {
-
     /// resolve emoticon shortcuts with given EmoticonSubstitutionConfiguration
     ///
     /// - Parameters:

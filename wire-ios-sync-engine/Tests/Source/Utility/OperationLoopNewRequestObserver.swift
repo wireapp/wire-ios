@@ -19,7 +19,6 @@
 import Foundation
 
 final class OperationLoopNewRequestObserver {
-
     var token: NSObjectProtocol?
     var notifications = [Notification]()
     fileprivate var notificationCenter = NotificationCenter.default

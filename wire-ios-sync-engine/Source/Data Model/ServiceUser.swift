@@ -132,7 +132,6 @@ public extension ServiceUserData {
 }
 
 public extension ServiceUser {
-
     func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
         guard let serviceUserData = self.serviceUserData else {
             fatal("Not a service user")
@@ -188,7 +187,6 @@ public extension ServiceUser {
     }
 
     func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
-
         createConversation(transportSession: userSession.transportSession,
                            eventProcessor: userSession.conversationEventProcessor,
                            contextProvider: userSession,
@@ -279,7 +277,6 @@ extension AddBotError {
 }
 
 public extension ZMConversation {
-
     func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         guard let serviceUserData = serviceUser.serviceUserData else {
             fatal("Not a service user")
@@ -301,7 +298,6 @@ public extension ZMConversation {
                       eventProcessor: ConversationEventProcessorProtocol,
                       contextProvider: ContextProvider,
                       completionHandler: @escaping (Result<Void, Error>) -> Void) {
-
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
             return

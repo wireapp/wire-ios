@@ -22,7 +22,6 @@ import WireUtilities
 
 // sourcery: AutoMockable
 public protocol ProteusToMLSMigrationCoordinating {
-
     /// Updates the migration status of group conversations.
     func updateMigrationStatus() async throws
 }
@@ -33,7 +32,6 @@ public protocol ProteusToMLSMigrationCoordinating {
 /// See <doc:MLS-Migration> for more information.
 
 public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating {
-
     // MARK: - Types
 
     enum MigrationStatus: Int {

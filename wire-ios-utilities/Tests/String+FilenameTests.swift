@@ -19,7 +19,6 @@
 import XCTest
 
 class String_FilenameTests: XCTestCase {
-
     func testShortUserNameToFileName() {
         // GIVEN
         let username = "John Smith"

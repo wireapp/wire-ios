@@ -19,7 +19,6 @@
 import Foundation
 
 struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
-
     let id: UUID
     let payload: [UpdateEventDecodingProxy]?
     let transient: Bool?

@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct FileSharing: Codable {
-
         // MARK: - Properties
 
         public let status: Status

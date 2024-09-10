@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct DeepLinksView: View {
-
     // MARK: - Properties
 
     @StateObject

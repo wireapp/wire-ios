@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 extension SessionManager.AccountError: LocalizedError {
-
     typealias SettingsAddAccountLocale = L10n.Localizable.Self.Settings.AddAccount.Error
 
     public var errorDescription: String? {
@@ -39,7 +38,6 @@ extension SessionManager.AccountError: LocalizedError {
 }
 
 extension SessionManager.SwitchBackendError: LocalizedError {
-
     typealias UrlActionSwitchBackendErrorLocale = L10n.Localizable.UrlAction.SwitchBackend.Error
 
     public var errorDescription: String? {
@@ -52,7 +50,6 @@ extension SessionManager.SwitchBackendError: LocalizedError {
     }
 
     public var failureReason: String? {
-
         typealias UrlActionSwitchBackendErrorLocale = L10n.Localizable.UrlAction.SwitchBackend.Error
 
         switch self {
@@ -65,7 +62,6 @@ extension SessionManager.SwitchBackendError: LocalizedError {
 }
 
 extension DeepLinkRequestError: LocalizedError {
-
     typealias UrlActionLocale = L10n.Localizable.UrlAction
 
     public var errorDescription: String? {
@@ -82,7 +78,6 @@ extension DeepLinkRequestError: LocalizedError {
     }
 
     public var failureReason: String? {
-
         typealias UrlActionLocale = L10n.Localizable.UrlAction
 
         switch self {
@@ -99,7 +94,6 @@ extension DeepLinkRequestError: LocalizedError {
 }
 
 extension CompanyLoginError: LocalizedError {
-
     public var errorDescription: String? {
         return L10n.Localizable.General.failure
     }
@@ -110,7 +104,6 @@ extension CompanyLoginError: LocalizedError {
 }
 
 extension ConmpanyLoginRequestError: LocalizedError {
-
     public var errorDescription: String? {
         switch self {
         case .invalidLink:
@@ -127,7 +120,6 @@ extension ConmpanyLoginRequestError: LocalizedError {
 }
 
 extension ConnectToUserError: LocalizedError {
-
     typealias ConnectionError = L10n.Localizable.Error.Connection
 
     public var errorDescription: String? {
@@ -145,7 +137,6 @@ extension ConnectToUserError: LocalizedError {
 }
 
 extension UpdateConnectionError: LocalizedError {
-
     typealias ConnectionError = L10n.Localizable.Error.Connection
 
     public var errorDescription: String? {

@@ -39,7 +39,6 @@ final class SolidButtonDescription: ValueSubmission {
 
 extension SolidButtonDescription: ViewDescriptor {
     func create() -> UIView {
-
         let button = IconButton(fontSpec: .buttonBigSemibold)
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true

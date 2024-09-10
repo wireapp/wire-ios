@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 final class SessionManagerPushTokenTests: IntegrationTest {
-
     override func setUp() {
         mockPushTokenService = MockPushTokenService()
         super.setUp()

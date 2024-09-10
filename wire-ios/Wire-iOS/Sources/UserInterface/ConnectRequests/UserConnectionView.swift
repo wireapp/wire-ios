@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class UserConnectionView: UIView, Copyable {
-
     convenience init(instance: UserConnectionView) {
         self.init(user: instance.user)
     }

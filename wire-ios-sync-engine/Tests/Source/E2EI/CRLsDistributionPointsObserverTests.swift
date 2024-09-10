@@ -23,7 +23,6 @@ import Foundation
 import XCTest
 
 class CRLsDistributionPointsObserverTests: XCTestCase {
-
     private var publisher: PassthroughSubject<CRLsDistributionPoints, Never>!
     private var sut: CRLsDistributionPointsObserver!
     private var mockCRLsChecker: MockCertificateRevocationListsChecking!

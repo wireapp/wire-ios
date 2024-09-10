@@ -31,7 +31,6 @@ class FileTransferTests_Swift: ConversationTestsBase {
                                                  insertBlock: @escaping (_ data: Data, _ conversation: MockConversation, _ from: MockUserClient, _ to: MockUserClient) -> Void,
                                                  nonce: UUID,
                                                  isEphemeral: Bool) -> ZMAssetClientMessage? {
-
         // given
         let selfClient = self.selfUser.clients.anyObject() as! MockUserClient
         let senderClient = self.user1.clients.anyObject()  as! MockUserClient
@@ -80,7 +79,6 @@ class FileTransferTests_Swift: ConversationTestsBase {
 // MARK: Asset V2 - Downloading
 
 extension FileTransferTests_Swift {
-
     func testThatItSendsTheRequestToDownloadAFile_WhenItHasTheAssetID() throws {
         // given
         XCTAssertTrue(self.login())
@@ -253,7 +251,6 @@ extension FileTransferTests_Swift {
 // MARK: Asset V3 - Receiving
 
 extension FileTransferTests_Swift {
-
     func testThatAFileUpload_AssetOriginal_MessageIsReceivedWhenSentRemotely_Ephemeral() {
         // given
         XCTAssertTrue(self.login())
@@ -493,7 +490,6 @@ extension FileTransferTests_Swift {
 // MARK: Downloading
 
 extension FileTransferTests_Swift {
-
     func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_Downloaded_AfterSuccesfullDecryption_V3() throws {
         // given
         XCTAssertTrue(self.login())

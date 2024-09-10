@@ -56,7 +56,6 @@ class _CBox: PointerWrapper {}
     The lock is relased.
  */
 public final class EncryptionContext: NSObject {
-
     /// What to do with modified sessions
     public enum ModifiedSessionsBehaviour {
         case save
@@ -117,7 +116,6 @@ public final class EncryptionContext: NSObject {
 // MARK: - Start and stop using sessions
 
 extension EncryptionContext {
-
     /// Access sessions and other data in this context. While the block is executed,
     /// no other process can use sessions from this context. If another process or thread is already
     /// using sessions from a context with the same path, this call will block until the other process
@@ -178,7 +176,6 @@ extension EncryptionContext {
 }
 
 extension EncryptionContext {
-
     /// Enables or disables extended logging for any message encrypted from or to
     /// a specific session.
     /// note: if the session is already cached in memory, this will apply from the

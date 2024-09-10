@@ -20,7 +20,6 @@
 import XCTest
 
 class KeychainManagerTests: XCTestCase {
-
     var account: Account!
 
     override func setUpWithError() throws {
@@ -34,7 +33,6 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testEncryptionKeyGenerateSuccessfully() throws {
-
         // Given
         let numberOfBytes: UInt = 32
 
@@ -70,7 +68,6 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testKeychainItemsStoreSuccessfully() throws {
-
         // Given I have generated a key
         let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
         let key = try KeychainManager.generateKey()
@@ -85,7 +82,6 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testKeychainItemsFetchedSuccessfully() throws {
-
         // Given I have generated a key and successfully stored it
         let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
         let key = try KeychainManager.generateKey()

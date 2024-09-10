@@ -23,7 +23,6 @@ typealias UserSessionInterface = UserSessionSwiftInterface & UserSessionAppLockI
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: delete
 protocol ZMUserSessionInterface: AnyObject {
-
     func perform(_ changes: @escaping () -> Void)
 
     func enqueue(_ changes: @escaping () -> Void)

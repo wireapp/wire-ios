@@ -20,7 +20,6 @@
 import XCTest
 
 final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
-
     // the api version is required to build and should not influence the tests
     private let minimumAPIVersion: APIVersion = .v5
 

@@ -24,7 +24,6 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
-
     func addClientsToConversation(conversationId: Data, keyPackages: [Data]) async throws -> WireCoreCrypto.MemberAddedMessages
 
     func clearPendingCommit(conversationId: Data) async throws

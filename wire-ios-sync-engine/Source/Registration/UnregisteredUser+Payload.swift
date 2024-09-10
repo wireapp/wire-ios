@@ -20,7 +20,6 @@ import WireDataModel
 import WireFoundation
 
 extension UnregisteredUser {
-
     /// The dictionary payload that contains the resources to transmit to the backend
     var payload: ZMTransportData {
         guard isComplete else {

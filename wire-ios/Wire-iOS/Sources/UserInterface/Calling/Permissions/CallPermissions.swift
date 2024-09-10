@@ -20,7 +20,6 @@ import AVFoundation
 import UIKit
 
 final class CallPermissions: CallPermissionsConfiguration {
-
     var isPendingAudioPermissionRequest: Bool {
         if UIDevice.isSimulator {
             // on iOS simulator microphone permissions are always granted by default

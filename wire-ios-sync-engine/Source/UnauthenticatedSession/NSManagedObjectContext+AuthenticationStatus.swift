@@ -22,7 +22,6 @@ private let cookieLabelKey = "ZMCookieLabel"
 private let registeredOnThisDeviceKey = "ZMRegisteredOnThisDevice"
 
 @objc extension NSManagedObjectContext {
-
     public var registeredOnThisDevice: Bool {
         get {
             return self.metadataBoolValueForKey(registeredOnThisDeviceKey)

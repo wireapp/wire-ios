@@ -18,7 +18,6 @@
 
 /// The result of a property normalization operation.
 public struct UserPropertyNormalizationResult<Value> {
-
     /// Whether the value is valid.
     public var isValid: Bool
 

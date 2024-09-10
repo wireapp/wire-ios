@@ -282,7 +282,6 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func setupNavigationItem() {
-
         // The label must be inset from the top due to navigation bar title alignment
         let titleViewWrapper = UIView()
         let titleView = ConversationTitleView(conversation: collection.conversation, interactive: false)
@@ -324,7 +323,6 @@ final class CollectionsViewController: UIViewController {
 
 extension CollectionsViewController: AssetCollectionDelegate {
     func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
-
         for messageCategory in messages {
             let conversationMessages = messageCategory.value
 
@@ -357,7 +355,6 @@ extension CollectionsViewController: AssetCollectionDelegate {
 }
 
 extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
     private func elements(for section: CollectionsSectionSet) -> [ZMConversationMessage] {
         switch section {
         case CollectionsSectionSet.images:
@@ -653,7 +650,6 @@ extension CollectionsViewController: UICollectionViewDataSourcePrefetching {
 
 extension CollectionsViewController: CollectionCellMessageChangeDelegate {
     func messageDidChange(_ cell: CollectionCell, changeInfo: MessageChangeInfo) {
-
         // Open the file when it is downloaded
         guard let message = selectedMessage,
               changeInfo.message == message,
@@ -687,14 +683,12 @@ extension CollectionsViewController: UIGestureRecognizerDelegate {
 // MARK: - Actions
 
 extension CollectionsViewController: MessageActionResponder {
-
     func perform(action: MessageAction, for message: ZMConversationMessage, view: UIView) {
         perform(action, for: message, source: view)
     }
 }
 
 extension CollectionsViewController: CollectionCellDelegate {
-
     func collectionCell(_ cell: CollectionCell, performAction action: MessageAction) {
         guard let message = cell.message else {
             fatal("Cell does not have a message: \(cell)")

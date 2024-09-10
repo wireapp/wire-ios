@@ -19,7 +19,6 @@
 import Foundation
 
 final class SetFullNameStepDescription: AuthenticationStepDescription {
-
     typealias TeamFullName = L10n.Localizable.Team.FullName
 
     let backButton: BackButtonDescription?

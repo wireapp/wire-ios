@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class SearchGroupSelector: UIView, TabBarDelegate {
-
     var onGroupSelected: ((SearchGroup) -> Void)?
 
     var group: SearchGroup = .people {

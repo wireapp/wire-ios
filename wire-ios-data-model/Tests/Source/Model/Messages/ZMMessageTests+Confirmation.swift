@@ -26,7 +26,6 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
 // MARK: - Sending confirmation messages
 
 extension ZMMessageTests_Confirmation {
-
     // MARK: Read receipts
 
     func testThatMessageExpectsReadConfirmation_InAGroup_WhenConversationHasReadReceiptsEnabled() {
@@ -160,9 +159,7 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Deletion
 
 extension ZMMessageTests_Confirmation {
-
     func testThatItCanDeleteAMessageThatWasConfirmed() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
@@ -297,7 +294,6 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Receiving confirmation messages
 
 extension ZMMessageTests_Confirmation {
-
     // MARK: Read receipts
 
     func testThatItUpdatesTheDeliveryStatus_WhenItReceivesReadConfirmation() {
@@ -447,7 +443,6 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Change notifications
 
 extension ZMMessageTests_Confirmation {
-
     func testThatItDoesNotUpdateTheDeliveryStatus_WhenTheSenderIsNotTheSelfUser() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -519,14 +514,12 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Helpers
 
 extension ZMMessageTests_Confirmation {
-
     func insertMessage(_ conversation: ZMConversation,
                        content: MessageCapable = Text(content: "foo"),
                        fromSender: ZMUser? = nil,
                        timestamp: Date = .init(),
                        moc: NSManagedObjectContext? = nil,
                        eventSource: ZMUpdateEventSource = .download) -> ZMMessage {
-
         let nonce = UUID.create()
         let genericMessage = GenericMessage(content: content, nonce: nonce)
         let messageEvent = createUpdateEvent(

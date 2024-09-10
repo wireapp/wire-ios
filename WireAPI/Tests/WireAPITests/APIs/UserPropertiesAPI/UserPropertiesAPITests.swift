@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPI
 
 final class UserPropertiesAPITests: XCTestCase {
-
     private var apiSnapshotHelper: APISnapshotHelper<any UserPropertiesAPI>!
 
     // MARK: - Setup

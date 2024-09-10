@@ -23,7 +23,6 @@ import WireCoreCrypto
 @testable import WireDataModel
 
 final class MockMLSActionExecutor: MLSActionExecutorProtocol {
-
     // Using a serial dispatch queue for thread safe access to the properties.
     // With `MLSActionExecutorProtocol.onEpochChanged` being declared async the
     // `MockMLSActionExecutor` could be declared as actor.

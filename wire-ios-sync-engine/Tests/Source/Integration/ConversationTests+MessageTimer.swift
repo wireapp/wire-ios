@@ -19,7 +19,6 @@
 import Foundation
 
 class ConversationMessageTimerTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

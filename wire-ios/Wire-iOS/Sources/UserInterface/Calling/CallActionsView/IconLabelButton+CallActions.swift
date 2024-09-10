@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension IconLabelButton {
-
     convenience init(callActionIcon: CallActionIconType, iconSize: StyleKitIcon.Size = .tiny) {
         self.init(input: callActionIcon, iconSize: iconSize)
     }
@@ -44,7 +43,6 @@ extension IconLabelButton {
 }
 
 extension CallingActionButton {
-
     convenience init(callingActionIcon: CallActionIconType) {
         self.init(input: callingActionIcon)
     }

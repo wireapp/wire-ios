@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
-
     case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
     case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
     case MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519 = 3
@@ -31,7 +30,6 @@ public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
 
     public var description: String {
         switch self {
-
         case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
             return "MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519"
         case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:

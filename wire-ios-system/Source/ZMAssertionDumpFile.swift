@@ -20,7 +20,6 @@ import Foundation
 
 @objc(ZMAssertionDumpFile) @objcMembers
 public final class AssertionDumpFile: NSObject {
-
     @available(*, unavailable)
     override public init() {
         fatalError()

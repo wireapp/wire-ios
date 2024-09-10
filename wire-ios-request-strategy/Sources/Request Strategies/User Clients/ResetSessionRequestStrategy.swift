@@ -19,14 +19,12 @@
 import Foundation
 
 public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
     fileprivate let messageSender: MessageSenderInterface
     fileprivate let managedObjectContext: NSManagedObjectContext
 
     public init(managedObjectContext: NSManagedObjectContext,
                 messageSender: MessageSenderInterface) {
-
         self.managedObjectContext = managedObjectContext
         self.keyPathSync = KeyPathObjectSync(entityName: UserClient.entityName(), \.needsToNotifyOtherUserAboutSessionReset)
         self.messageSender = messageSender
@@ -42,11 +40,9 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
 }
 
 extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
-
     typealias T = UserClient
 
     func synchronize(_ userClient: UserClient, completion: @escaping () -> Void) {
-
         guard let conversation = userClient.user?.oneToOneConversation else {
             return
         }

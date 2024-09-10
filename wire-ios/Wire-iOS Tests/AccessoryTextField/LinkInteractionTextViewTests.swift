@@ -21,7 +21,6 @@ import Down
 import XCTest
 
 final class LinkInteractionTextViewTests: XCTestCase {
-
     var sut: LinkInteractionTextView!
 
     override func setUp() {

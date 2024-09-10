@@ -20,7 +20,6 @@ import XCTest
 @testable import Ziphy
 
 final class ZiphTests: XCTestCase {
-
     var sut: Ziph!
 
     override func tearDown() {

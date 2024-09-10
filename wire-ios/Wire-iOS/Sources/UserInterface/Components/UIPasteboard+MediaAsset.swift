@@ -22,7 +22,6 @@ import MobileCoreServices
 import UniformTypeIdentifiers
 
 extension UIPasteboard {
-
     func pasteboardType(forMediaAsset mediaAsset: MediaAsset) -> String {
         if mediaAsset.isGIF {
             return UTType.gif.identifier

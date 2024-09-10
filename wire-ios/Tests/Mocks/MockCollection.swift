@@ -19,7 +19,6 @@
 @testable import Wire
 
 final class MockCollection: NSObject, ZMCollection {
-
     static let onlyImagesCategory = CategoryMatch(including: .image, excluding: .none)
     static let onlyVideosCategory = CategoryMatch(including: .video, excluding: .none)
     static let onlyFilesCategory = CategoryMatch(including: .file, excluding: .video)

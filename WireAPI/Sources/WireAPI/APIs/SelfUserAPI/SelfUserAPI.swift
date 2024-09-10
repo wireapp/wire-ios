@@ -21,7 +21,6 @@ import Foundation
 // sourcery: AutoMockable
 /// An API access object for endpoints concerning self user.
 public protocol SelfUserAPI {
-
     /// Get user details for self user
     /// - Returns: The self user.
 

@@ -22,7 +22,6 @@ import XCTest
 
 @objc
 final class FakeGroupQueue: NSObject, GroupQueue {
-
     var dispatchGroup: ZMSDispatchGroup? {
         nil
     }
@@ -35,7 +34,6 @@ final class FakeGroupQueue: NSObject, GroupQueue {
 // MARK: - Tests
 
 final class PushNotificationStatusTests: MessagingTestBase {
-
     var sut: PushNotificationStatus!
     var lastEventIDRepository: LastEventIDRepository!
 

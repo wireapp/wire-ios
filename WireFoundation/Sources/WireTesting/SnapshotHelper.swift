@@ -25,7 +25,6 @@ import XCTest
 /// Create variations of the snapshot behavior using the "with" methods.
 
 public struct SnapshotHelper {
-
     private var perceptualPrecision: Float = 0.98
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits

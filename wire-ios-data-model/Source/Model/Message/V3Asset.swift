@@ -25,7 +25,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 /// asset types (v2 image & file vs. v3 file) from ZMAssetClientMessage.
 /// It only includes methods in which these two versions differentiate.
 @objc public protocol AssetProxyType {
-
     var hasDownloadedFile: Bool { get }
     var hasDownloadedPreview: Bool { get }
 
@@ -176,7 +175,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 }
 
 extension V3Asset: AssetProxyType {
-
     public var hasDownloadedPreview: Bool {
         guard !isImage else { return false }
         return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)

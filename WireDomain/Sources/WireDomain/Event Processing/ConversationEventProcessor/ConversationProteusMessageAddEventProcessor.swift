@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation proteus message add events.
 
 protocol ConversationProteusMessageAddEventProcessorProtocol {
-
     /// Process a conversation proteus message add event.
     ///
     /// - Parameter event: A conversation proteus message add event.
@@ -30,7 +29,6 @@ protocol ConversationProteusMessageAddEventProcessorProtocol {
 }
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
-
     func processEvent(_: ConversationProteusMessageAddEvent) async throws {
         // TODO: [WPB-10174]
         assertionFailure("not implemented yet")

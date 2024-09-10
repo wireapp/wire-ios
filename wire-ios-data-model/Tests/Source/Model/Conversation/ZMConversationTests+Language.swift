@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class ZMConversationTests_Language: BaseZMMessageTests {
-
     func testThatItAllowsSettingLanguageOnConversation() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

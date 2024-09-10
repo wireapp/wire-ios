@@ -31,7 +31,6 @@ protocol CompanyLoginFlowHandlerDelegate: AnyObject {
  */
 
 final class CompanyLoginFlowHandler {
-
     /// The delegate of the flow handler.
     weak var delegate: CompanyLoginFlowHandlerDelegate?
 

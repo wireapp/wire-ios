@@ -47,7 +47,6 @@ protocol AudioTrackPlayerDelegate: AnyObject {
 }
 
 final class AudioTrackPlayer: NSObject, MediaPlayer {
-
     private let userSession: UserSession
 
     private var avPlayer: AVPlayer?

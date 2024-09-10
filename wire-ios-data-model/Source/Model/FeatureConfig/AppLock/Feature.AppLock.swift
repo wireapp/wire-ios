@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct AppLock: Codable {
-
         // MARK: - Properties
 
         public let status: Status
@@ -37,7 +35,6 @@ public extension Feature {
         // MARK: - Types
 
         public struct Config: Codable, Equatable {
-
             /// If `true` then app lock is mandatory and can not
             /// be disabled by by the user.
 

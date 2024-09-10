@@ -20,7 +20,6 @@
 import XCTest
 
 extension HTTPResponse {
-
     // MARK: Error
 
     static func mockError(

@@ -17,7 +17,6 @@
 //
 
 private extension Team {
-
     static var predicateForTeamRolesNeedingToBeUpdated: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey())
     }()
@@ -45,7 +44,6 @@ public final class TeamRolesDownloadRequestStrategy:
     ZMRequestGeneratorSource,
     ZMRequestGenerator,
     ZMDownstreamTranscoder {
-
     private(set) var downstreamSync: ZMDownstreamObjectSync!
     private unowned var syncStatus: SyncStatus
 

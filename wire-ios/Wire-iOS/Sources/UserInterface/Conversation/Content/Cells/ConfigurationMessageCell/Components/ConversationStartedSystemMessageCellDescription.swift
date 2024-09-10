@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
-
     typealias View = ConversationStartedSystemMessageCell
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label

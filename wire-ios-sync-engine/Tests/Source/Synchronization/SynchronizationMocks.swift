@@ -25,7 +25,6 @@ import WireDataModel
 
 @objcMembers
 public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrationDelegate, ZMRequestCancellation {
-
     public var taskCancellationDelegate: ZMRequestCancellation { return self }
     public var clientRegistrationDelegate: ClientRegistrationDelegate { return self }
 
@@ -72,7 +71,6 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
 }
 
 class MockAuthenticationStatus: ZMAuthenticationStatus {
-
     var mockPhase: ZMAuthenticationPhase
 
     init(delegate: ZMAuthenticationStatusDelegate,
@@ -179,7 +177,6 @@ class FakeCookieStorage: ZMPersistentCookieStorage {
 }
 
 public class MockSyncStatus: SyncStatus {
-
     var didCallFailCurrentSyncPhase = false
     var didCallFinishCurrentSyncPhase = false
 
@@ -203,7 +200,6 @@ public class MockSyncStatus: SyncStatus {
 }
 
 @objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
-
     var registeredUserClient: UserClient?
     var registeredMLSClient: UserClient?
     @objc public var didCallStartSlowSync = false
@@ -247,7 +243,6 @@ public class MockSyncStatus: SyncStatus {
 }
 
 @objc public class MockPushMessageHandler: NSObject, PushMessageHandler {
-
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
     }
@@ -257,7 +252,6 @@ public class MockSyncStatus: SyncStatus {
 
 @objcMembers
 public class MockEventConsumer: NSObject, ZMEventConsumer {
-
     public var eventsProcessed: [ZMUpdateEvent] = []
     public var processEventsCalled: Bool = false
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
@@ -288,7 +282,6 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 }
 
 @objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
-
     public var objectsDidChangeCalled: Bool = false
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
         objectsDidChangeCalled = true
@@ -309,7 +302,6 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 
 @objcMembers
 public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
-
     public var eventsProcessed: [ZMUpdateEvent] = []
     public var processEventsCalled: Bool = false
     public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
@@ -320,7 +312,6 @@ public class MockEventAsyncConsumer: NSObject, ZMEventAsyncConsumer {
 
 @objcMembers
 public class MockRequestStrategy: NSObject, RequestStrategy {
-
     public var mockRequestQueue: [ZMTransportRequest] = []
     public var mockRequest: ZMTransportRequest? {
         get {

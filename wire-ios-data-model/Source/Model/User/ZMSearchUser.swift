@@ -49,7 +49,6 @@ private enum AssetKind: String {
 }
 
 public struct SearchUserAssetKeys {
-
     public let preview: String?
     public let complete: String?
 
@@ -81,7 +80,6 @@ public struct SearchUserAssetKeys {
 }
 
 extension ZMSearchUser: SearchServiceUser {
-
     public var serviceIdentifier: String? {
         return remoteIdentifier?.transportString()
     }
@@ -479,7 +477,6 @@ public class ZMSearchUser: NSObject, UserType {
         contact: ZMAddressBookContact? = nil,
         searchUsersCache: SearchUsersCache?
     ) {
-
         let personName = PersonName.person(withName: name, schemeTagger: nil)
 
         self.internalName = name

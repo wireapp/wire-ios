@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `UserPropertiesAPI`.
 
 public struct UserPropertiesBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.

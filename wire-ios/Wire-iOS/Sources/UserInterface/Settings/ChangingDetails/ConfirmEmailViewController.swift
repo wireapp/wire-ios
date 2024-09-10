@@ -59,7 +59,6 @@ extension UITableView {
 // MARK: - ConfirmEmailViewController
 
 final class ConfirmEmailViewController: SettingsBaseTableViewController {
-
     // MARK: - Properties
 
     weak var delegate: ConfirmEmailDelegate?

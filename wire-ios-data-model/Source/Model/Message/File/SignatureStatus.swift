@@ -43,7 +43,6 @@ private let log = ZMSLog(tag: "Conversations")
 
 @objc
 public final class SignatureStatus: NSObject {
-
     @objc
     public enum ErrorYpe: Int {
         case noConsentURL
@@ -187,7 +186,6 @@ public extension SignatureStatus {
 // MARK: - DigitalSignatureNotification
 
 public class DigitalSignatureNotification: NSObject {
-
     // MARK: - State
 
     public enum State {

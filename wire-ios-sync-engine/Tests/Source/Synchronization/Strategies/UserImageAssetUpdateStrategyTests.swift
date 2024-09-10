@@ -57,7 +57,6 @@ class MockImageUpdateStatus: WireSyncEngine.UserProfileImageUploadStatusProtocol
 }
 
 class UserImageAssetUpdateStrategyTests: MessagingTest {
-
     var sut: WireSyncEngine.UserImageAssetUpdateStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var updateStatus: MockImageUpdateStatus!

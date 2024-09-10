@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase<CreateConversationGuestLinkAction, CreateConversationGuestLinkActionHandler> {
-
     // MARK: - Properties
 
     private var stack: CoreDataStack!

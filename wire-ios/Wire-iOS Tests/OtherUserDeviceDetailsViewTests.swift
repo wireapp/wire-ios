@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class OtherUserDeviceDetailsViewTests: XCTestCase {
-
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
@@ -201,7 +200,6 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
-
         let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,

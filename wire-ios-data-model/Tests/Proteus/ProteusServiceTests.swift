@@ -24,7 +24,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 class ProteusServiceTests: XCTestCase {
-
     struct MockError: Error, Equatable {}
 
     var mockCoreCrypto: MockCoreCryptoProtocol!
@@ -260,7 +259,6 @@ class ProteusServiceTests: XCTestCase {
 // MARK: - Helpers
 
 private extension ProteusSessionID {
-
     static func random() -> Self {
         ProteusSessionID(
             domain: .randomDomain(),

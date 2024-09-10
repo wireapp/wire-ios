@@ -23,7 +23,6 @@ import WireRequestStrategySupport
 import XCTest
 
 final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
-
     fileprivate var mockMessageSender: MockMessageSenderInterface!
     fileprivate var sut: AssetClientMessageRequestStrategy!
     fileprivate var imageData = mediumJPEGData()
@@ -61,7 +60,6 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         sender: ZMUser? = nil,
         line: UInt = #line
     ) -> ZMAssetClientMessage {
-
         let targetConversation = conversation ?? groupConversation!
         let message: ZMAssetClientMessage!
         if isImage {
@@ -211,7 +209,6 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForAnUploadedImageMessage_Ephemeral() {
-
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }

@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMClientMessage {
-
     func deleteContent() {
         cachedUnderlyingMessage = nil
         dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach {

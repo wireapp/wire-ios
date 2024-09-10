@@ -21,7 +21,6 @@ import WireCoreCrypto
 import WireDataModel
 
 public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
-
     var coreCrypto: MockCoreCryptoProtocol
 
     public init(coreCrypto: MockCoreCryptoProtocol = .init()) {

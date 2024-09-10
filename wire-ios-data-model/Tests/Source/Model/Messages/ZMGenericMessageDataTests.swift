@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMGenericMessageDataTests: ModelObjectsTests {
-
     // MARK: - Set Up
 
     override func setUp() {

@@ -27,9 +27,7 @@ protocol GroupOptionsSectionControllerDelegate: AnyObject {
 }
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
-
     private enum Option: Int, CaseIterable {
-
         case notifications = 0, guests, services, timeout
 
         func accessible(in conversation: GroupDetailsConversationType,
@@ -109,7 +107,6 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
         switch options[indexPath.row] {
         case .guests:
             delegate?.presentGuestOptions(animated: true)

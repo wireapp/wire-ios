@@ -19,7 +19,6 @@
 import Foundation
 
 public extension UUID {
-
     /// return a Data representation of this UUID
     var uuidData: Data {
         return withUnsafeBytes(of: uuid, Data.init(_:))

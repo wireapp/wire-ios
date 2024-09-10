@@ -43,7 +43,6 @@ extension Service {
 }
 
 final class ServiceDetailViewController: UIViewController {
-
     typealias Completion = (AddBotResult?) -> Void
 
     enum ActionType {
@@ -197,7 +196,6 @@ final class ServiceDetailViewController: UIViewController {
             }
             let serviceUser = self.service.serviceUser
             switch type {
-
             case let .addService(conversation):
                 conversation.add(serviceUser: serviceUser, in: userSession) { result in
 
@@ -241,7 +239,6 @@ final class ServiceDetailViewController: UIViewController {
 }
 
 fileprivate extension ZMButton {
-
     typealias PeoplePickerServices = L10n.Localizable.Peoplepicker.Services
 
     static func openServiceConversationButton() -> Self {

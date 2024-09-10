@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class BackupPasswordViewController: UIViewController {
-
     typealias ViewColors = SemanticColors.View
     typealias LabelColors = SemanticColors.Label
     typealias HistoryBackup = L10n.Localizable.Self.Settings.HistoryBackup
@@ -151,9 +150,7 @@ final class BackupPasswordViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 
 extension BackupPasswordViewController: UITextFieldDelegate {
-
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-
         if string.containsCharacters(from: .whitespaces) {
             return false
         }

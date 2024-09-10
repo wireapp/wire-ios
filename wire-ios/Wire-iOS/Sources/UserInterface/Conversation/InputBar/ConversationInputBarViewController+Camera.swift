@@ -32,7 +32,6 @@ final class StatusBarVideoEditorController: UIVideoEditorController {
 }
 
 extension ConversationInputBarViewController: CameraKeyboardViewControllerDelegate {
-
     func createCameraKeyboardViewController() -> CameraKeyboardViewController {
         guard let splitViewController = ZClientViewController.shared?.wireSplitViewController else {
             fatal("SplitViewController is not created")
@@ -206,7 +205,6 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func convertVideoAtPath(_ inputPath: String, completion: @escaping (_ success: Bool, _ resultPath: String?, _ duration: TimeInterval) -> Void) {
-
         let lastPathComponent = (inputPath as NSString).lastPathComponent
 
         let filename: String = ((lastPathComponent as NSString).deletingPathExtension as NSString).appendingPathExtension("mp4") ?? "video.mp4"
@@ -224,7 +222,6 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 }
 
 extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
-
     func videoEditorControllerDidCancel(_ editor: UIVideoEditorController) {
         editor.dismiss(animated: true, completion: .none)
     }
@@ -254,7 +251,6 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
 }
 
 extension ConversationInputBarViewController: CanvasViewControllerDelegate {
-
     func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
@@ -271,7 +267,6 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 // MARK: - CameraViewController
 
 extension ConversationInputBarViewController {
-
     func showCameraAndPhotos() {
         UIApplication.wr_requestVideoAccess { _ in
             if SecurityFlags.cameraRoll.isEnabled,

@@ -25,7 +25,6 @@ public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
-
     // MARK: - Properties
 
     private let featureRepository: FeatureRepositoryInterface
@@ -83,7 +82,6 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 }
 
 final class SnoozeTimeProvider {
-
     // MARK: - Properties
 
     private let dateProvider: CurrentDateProviding

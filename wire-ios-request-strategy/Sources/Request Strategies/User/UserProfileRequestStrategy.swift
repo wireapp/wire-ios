@@ -24,7 +24,6 @@ import Foundation
 /// - When a user is marked as `needsToBeUpdatedFromBackend`.
 ///
 public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObjectSyncDelegate {
-
     var isFetchingAllConnectedUsers: Bool = false
     let syncProgress: SyncProgress
 
@@ -39,7 +38,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 syncProgress: SyncProgress) {
-
         self.syncProgress = syncProgress
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
         self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
@@ -130,7 +128,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 }
 
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
-
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
         guard let apiVersion = BackendInfo.apiVersion else { return }
 
@@ -158,7 +155,6 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
 }
 
 extension UserProfileRequestStrategy: ZMEventConsumer {
-
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             switch event.type {
@@ -221,7 +217,6 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
 }
 
 class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
-
     public typealias T = UUID
 
     var fetchLimit: Int = 1600 / 25 // UUID as string is 24 + 1 for the comma
@@ -279,7 +274,6 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
-
     public typealias T = QualifiedID
 
     var fetchLimit: Int = 500
@@ -383,7 +377,6 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 private extension Collection where Element == ZMUser {
-
     func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
         return compactMap { user in
             if let qualifiedID = user.qualifiedID {

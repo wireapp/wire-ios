@@ -20,7 +20,6 @@ import Foundation
 import WireProtos
 
 extension UserClient {
-
     var hexRemoteIdentifier: UInt64 {
         let pointer = UnsafeMutablePointer<UInt64>.allocate(capacity: 1)
         defer { pointer.deallocate() }

@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `UpdateEventsAPI`.
 
 public enum UpdateEventsAPIError: Error {
-
     /// A request path is not invalid.
 
     case invalidPath

@@ -20,13 +20,11 @@ import UIKit
 import WireDataModel
 
 final class ConversationSystemMessageCellDescription {
-
     static func cells(
         for message: ZMConversationMessage,
         isCollapsed: Bool = true,
         buttonAction: Completion? = nil
     ) -> [AnyConversationMessageCellDescription] {
-
         guard let systemMessageData = message.systemMessageData,
               let sender = message.senderUser,
               let conversation = message.conversationLike
@@ -190,7 +188,6 @@ final class ConversationSystemMessageCellDescription {
 
         case .failedToAddParticipants:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {
-
                 let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(
                     failedUsers: users,
                     isCollapsed: isCollapsed,

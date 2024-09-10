@@ -21,7 +21,6 @@ import WireDataModel
 import XCTest
 
 class FederationTerminationManagerTests: MessagingTestBase {
-
     var sut: FederationTerminationManager!
     let defederatedDomain = "other.user.domain"
 
@@ -229,7 +228,6 @@ class FederationTerminationManagerTests: MessagingTestBase {
 }
 
 extension FederationTerminationManagerTests {
-
     /// Creates a group conversation with a user in given domain
     func createGroupConversation(with users: [ZMUser], hostedByDomain domain: String) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)

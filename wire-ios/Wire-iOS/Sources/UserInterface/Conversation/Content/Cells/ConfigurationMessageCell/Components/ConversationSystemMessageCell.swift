@@ -24,7 +24,6 @@ import WireDesign
 // MARK: - ConversationSystemMessageCell
 
 final class ConversationSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
     struct Configuration: Equatable {
         let icon: UIImage?
         let attributedText: NSAttributedString?

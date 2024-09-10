@@ -20,7 +20,6 @@
 import XCTest
 
 class VolatileDataTests: XCTestCase {
-
     typealias Byte = UInt8
 
     func testThatItCanStoreBytes() {

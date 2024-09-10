@@ -86,7 +86,6 @@ protocol AudioRecorderType: AnyObject {
 }
 
 final class AudioRecorder: NSObject, AudioRecorderType {
-
     let format: AudioRecorderFormat
     var state: AudioRecorderState = .initializing
 
@@ -356,11 +355,9 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     }
 
     func alertForRecording(error: RecordingError) -> UIAlertController? {
-
         var alertMessage: String?
 
         if error == .toMaxDuration {
-
             let duration = Int(ceil(self.maxRecordingDuration ?? 0))
             let (seconds, minutes) = (duration % 60, duration / 60)
             let durationLimit = String(format: "%d:%02d", minutes, seconds)
@@ -392,7 +389,6 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
 extension AudioRecorder: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-
         var recordedToMaxDuration = false
         let recordedToMaxSize = audioSizeIsCritical
 
@@ -424,7 +420,6 @@ extension AudioRecorder: AVAudioRecorderDelegate {
 // MARK: AVAvdioPlayerDelegate
 
 final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
-
     let playerDidFinishClosure: (Bool) -> Void
 
     init(playerDidFinishClosure: @escaping (Bool) -> Void) {
@@ -447,7 +442,6 @@ protocol PowerProvider {
 let minimumPower: Float = -160
 
 extension PowerProvider {
-
     func averagePowerForFirstActiveChannel() -> Float {
         for power in (0..<3).map(averagePower) where power != minimumPower {
             return power

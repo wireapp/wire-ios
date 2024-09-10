@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol OneOnOneProtocolSelectorInterface {
-
     func getProtocolForUser(
         with id: QualifiedID,
         in context: NSManagedObjectContext
@@ -28,19 +27,16 @@ public protocol OneOnOneProtocolSelectorInterface {
 }
 
 public enum OneOnOneProtocolSelectorError: Error {
-
     case userNotFound
 }
 
 public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
-
     public init() {}
 
     public func getProtocolForUser(
         with id: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MessageProtocol? {
-
         let commonProtocols = try await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
             let selfProtocols = selfUser.supportedProtocols

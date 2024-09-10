@@ -29,7 +29,6 @@ protocol IndexedListView {
 }
 
 extension IndexedListView {
-
     /**
      * Checks whether the indexed list view contains an item at the given index path.
      * - parameter indexPath: The index path to check.

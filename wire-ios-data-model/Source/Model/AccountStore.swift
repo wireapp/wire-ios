@@ -31,7 +31,6 @@ private let log = WireLogger(tag: "Accounts")
 ///         - 0F5771BB-2103-4E45-9ED2-E7E6B9D46C0F
 /// ```
 public final class AccountStore: NSObject {
-
     private static let directoryName = "Accounts"
     private let fileManager = FileManager.default
     private let directory: URL // The url to the directory in which accounts are stored in
@@ -134,7 +133,6 @@ public final class AccountStore: NSObject {
 }
 
 private extension Error {
-
     var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
     }

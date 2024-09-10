@@ -25,7 +25,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol ProteusServiceInterface {
-
     func establishSession(id: ProteusSessionID, fromPrekey: String) async throws
     func deleteSession(id: ProteusSessionID) async throws
     func sessionExists(id: ProteusSessionID) async -> Bool

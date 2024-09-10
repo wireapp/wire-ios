@@ -19,7 +19,6 @@
 /// Text styles defined in Wire's design system.
 
 public enum WireTextStyle {
-
     case largeTitle
     case h1
     case h2

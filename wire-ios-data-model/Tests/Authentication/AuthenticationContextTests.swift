@@ -22,7 +22,6 @@ import LocalAuthentication
 import XCTest
 
 final class AuthenticationContextTests: XCTestCase {
-
     // Executing `evaluatePolicy` triggers authentication prompt to the user
     // so we do not test the behavior in this unit test.
 

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class PotentialChangeDetectorTests: BaseZMMessageTests {
-
     typealias Sut = PotentialChangeDetector
 
     // MARK: - Helpers

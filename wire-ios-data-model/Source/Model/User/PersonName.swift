@@ -17,7 +17,6 @@
 //
 
 @objcMembers public class PersonName: NSObject {
-
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? PersonName else { return false }
         return self.components == other.components

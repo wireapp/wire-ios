@@ -17,7 +17,6 @@
 //
 
 extension SwiftMockConversation {
-
     static func oneOnOneConversation(
         otherUser: UserType = MockUser.mockUsers().first!
     ) -> SwiftMockConversation {

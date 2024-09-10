@@ -19,7 +19,6 @@
 import WireProtos
 
 extension MockTransportSession {
-
     @objc(missedClients:users:sender:onlyForUserId:)
     public func missedClients(_ recipients: [AnyHashable: Any]?,
                               users: Set<MockUser>,
@@ -162,7 +161,6 @@ extension MockTransportSession {
                                 recipients: [Proteus_UserEntry],
                                 senderClient: MockUserClient,
                                 createEventBlock: (MockUserClient, Data, Data) -> MockEvent) {
-
         let activeUsers = conversation.activeUsers.array as? [MockUser]
         guard let activeClients = activeUsers?.flatMap({ user in
             return user.userClients.compactMap { $0.identifier }

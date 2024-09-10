@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationListOnboardingHint: UIView {
-
     let messageLabel: UILabel = DynamicFontLabel(fontSpec: .largeLightFont, color: SemanticColors.Label.textDefault)
     let arrowView = UIImageView()
 

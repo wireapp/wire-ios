@@ -22,11 +22,9 @@ import Foundation
 /// in the database.
 
 public final class SyncConversationAction: EntityAction {
-
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
-
         case malformedRequestPayload
         case invalidBody
         case invalidResponsePayload

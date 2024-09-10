@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 class ArrayPartitionByKeyPathTests: XCTestCase {
-
     func testPartitionByOptionalValue() {
         // given
         let string1 = "hejsan"

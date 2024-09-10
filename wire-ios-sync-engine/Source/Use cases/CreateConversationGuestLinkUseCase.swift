@@ -19,7 +19,6 @@
 import Foundation
 
 public enum CreateConversationGuestLinkUseCaseError: Error {
-
     case invalidOperation
     case contextUnavailable
     case networkError(Error)
@@ -28,7 +27,6 @@ public enum CreateConversationGuestLinkUseCaseError: Error {
 
 // sourcery: AutoMockable
 public protocol CreateConversationGuestLinkUseCaseProtocol {
-
     func invoke(
         conversation: ZMConversation,
         password: String?,
@@ -37,7 +35,6 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
 }
 
 struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
-
     let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
 
     public func invoke(
@@ -45,7 +42,6 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         password: String?,
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
-
         if conversation.isLegacyAccessMode {
             setGuestsAndServicesUseCase.invoke(
                 conversation: conversation,

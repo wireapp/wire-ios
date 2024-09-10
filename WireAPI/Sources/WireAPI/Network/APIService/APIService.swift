@@ -25,7 +25,6 @@ import Foundation
 /// It may provide additional functionality, such as providing authentication
 /// headers if needed.
 public protocol APIServiceProtocol {
-
     /// Execute a request to the backend.
     ///
     /// - Parameters:
@@ -47,7 +46,6 @@ public protocol APIServiceProtocol {
 /// headers if needed.
 
 public final class APIService: APIServiceProtocol {
-
     private let backendURL: URL
     private let authenticationStorage: any AuthenticationStorage
     private let urlSession: URLSession

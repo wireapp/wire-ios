@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class UserTypeTests_Federation: ModelObjectsTests {
-
     func testThatUsersAreFederating_WhenBelongingToADifferentDomain() {
         // GIVEN
         let user: ZMUser = self.userWithClients(count: 2, trusted: true)

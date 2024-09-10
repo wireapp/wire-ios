@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
-
     // MARK: - Methods
 
     override func request(for action: FetchSubgroupAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -85,7 +84,6 @@ class FetchSubgroupActionHandler: ActionHandler<FetchSubgroupAction> {
 // MARK: Data structures
 
 extension FetchSubgroupActionHandler {
-
     struct Subgroup: Codable {
         enum CodingKeys: String, CodingKey {
             case cipherSuite = "cipher_suite"

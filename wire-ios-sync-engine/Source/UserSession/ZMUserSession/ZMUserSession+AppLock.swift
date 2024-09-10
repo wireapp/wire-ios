@@ -19,7 +19,6 @@
 import Foundation
 
 public protocol UserSessionAppLockInterface {
-
     var appLockController: AppLockType { get set }
 
     /// The current session lock, if any.
@@ -28,7 +27,6 @@ public protocol UserSessionAppLockInterface {
 }
 
 public extension UserSessionAppLockInterface {
-
     /// Whether the session is currently locked.
 
     var isLocked: Bool {
@@ -39,7 +37,6 @@ public extension UserSessionAppLockInterface {
 /// The various types of session locks, i.e reasons why the session is inaccessible.
 
 public enum SessionLock {
-
     /// The session is locked because the has been in the background for too long.
 
     case screen
@@ -50,12 +47,10 @@ public enum SessionLock {
 }
 
 protocol UserSessionAppLockDelegate: AnyObject {
-
     func userSessionDidUnlock(_ session: ZMUserSession)
 }
 
 extension ZMUserSession: AppLockDelegate {
-
     public func appLockDidOpen(_ appLock: AppLockType) {
         delegate?.userSessionDidUnlock(self)
     }

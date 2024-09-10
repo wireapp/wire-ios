@@ -19,7 +19,6 @@
 import Foundation
 
 extension SessionManager: UserSessionEncryptionAtRestDelegate {
-
     func prepareForMigration(
         for account: Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void

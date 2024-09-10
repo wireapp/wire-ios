@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class OfflineBar: UIView {
-
     private let offlineLabel: UILabel
     private lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: 0)
 

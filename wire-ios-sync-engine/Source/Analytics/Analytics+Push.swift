@@ -19,7 +19,6 @@
 import Foundation
 
 extension AnalyticsType {
-
     public func tagActionOnPushNotification(conversation: ZMConversation?, action: ConversationMediaAction) {
         guard let conversation else { return }
         var attributes = conversation.ephemeralTrackingAttributes
@@ -31,7 +30,6 @@ extension AnalyticsType {
 }
 
 public extension ZMConversation {
-
     @objc
     var ephemeralTrackingAttributes: [String: Any] {
         if let timeout = activeMessageDestructionTimeoutValue {
@@ -52,7 +50,6 @@ public extension ZMConversation {
 }
 
 extension ZMConversationType {
-
      var analyticsType: String {
         switch self {
         case .oneOnOne:

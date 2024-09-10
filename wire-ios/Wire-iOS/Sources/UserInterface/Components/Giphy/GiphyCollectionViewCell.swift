@@ -21,7 +21,6 @@ import UIKit
 import Ziphy
 
 final class GiphyCollectionViewCell: UICollectionViewCell {
-
     static let CellIdentifier = "GiphyCollectionViewCell"
 
     let imageView = FLAnimatedImageView()

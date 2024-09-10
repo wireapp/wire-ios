@@ -31,14 +31,12 @@ public typealias SendableMessage = ProteusMessage & MLSMessage
 
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {
-
     func sendMessage(message: any SendableMessage) async throws
 
     func broadcastMessage(message: any ProteusMessage) async throws
 }
 
 public final class MessageSender: MessageSenderInterface {
-
     public init (
         apiProvider: APIProviderInterface,
         clientRegistrationDelegate: ClientRegistrationDelegate,
@@ -295,7 +293,6 @@ public final class MessageSender: MessageSenderInterface {
 }
 
 private extension Payload.ClientListByQualifiedUserID {
-
     var qualifiedClientIDs: [QualifiedClientID] {
         var qualifiedClientIDs: [QualifiedClientID] = []
         for (domain, clientListByUserID) in self {

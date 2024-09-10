@@ -20,7 +20,6 @@
 import XCTest
 
 final class UITraitEnvironmentTests: XCTestCase {
-
     var sut: UITraitEnvironment!
     let compactMargins = HorizontalMargins(userInterfaceSizeClass: .compact)
     let regularMargins = HorizontalMargins(userInterfaceSizeClass: .regular)

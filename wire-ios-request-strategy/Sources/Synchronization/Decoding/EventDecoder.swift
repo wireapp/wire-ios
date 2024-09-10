@@ -25,7 +25,6 @@ private let zmLog = ZMSLog(tag: "EventDecoder")
 
 // sourcery: AutoMockable
 public protocol EventDecoderProtocol {
-
     func decryptAndStoreEvents(
         _ events: [ZMUpdateEvent],
         publicKeys: EARPublicKeys?
@@ -40,7 +39,6 @@ public protocol EventDecoderProtocol {
 
 /// Decodes and stores events from various sources to be processed later
 public final class EventDecoder: NSObject, EventDecoderProtocol {
-
     public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
 
     static var BatchSize: Int {
@@ -83,7 +81,6 @@ public final class EventDecoder: NSObject, EventDecoderProtocol {
 // MARK: - Process events
 
 extension EventDecoder {
-
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
     /// it then saves the database and cryptobox
     ///
@@ -345,7 +342,6 @@ extension EventDecoder {
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
     private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
-
         var (storedEvents, updateEvents) = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         await eventMOC.perform {
@@ -396,7 +392,6 @@ extension EventDecoder {
 // MARK: - List of already received event IDs
 
 extension EventDecoder {
-
     /// Filters out events that shouldn't be processed
     fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
         let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }

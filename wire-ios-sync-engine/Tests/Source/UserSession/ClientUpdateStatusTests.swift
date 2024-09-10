@@ -286,7 +286,6 @@ class ClientUpdateStatusTests: MessagingTest {
     }
 
     func testThatItResetsTheDeletionOfTheSelfClientAtInit() {
-
         // GIVEN
         // remove previous
         clientObserverToken = nil

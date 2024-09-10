@@ -19,7 +19,6 @@
 import UIKit
 
 final class SectionFooterView: UIView {
-
     let titleLabel = UILabel()
 
     override init(frame: CGRect) {
@@ -52,7 +51,6 @@ final class SectionFooterView: UIView {
 }
 
 final class SectionFooter: UICollectionReusableView {
-
     let footerView = SectionFooterView()
 
     var titleLabel: UILabel {
@@ -77,7 +75,6 @@ final class SectionFooter: UICollectionReusableView {
 }
 
 final class SectionTableFooter: UITableViewHeaderFooterView {
-
     let footerView = SectionFooterView()
 
     var titleLabel: UILabel {

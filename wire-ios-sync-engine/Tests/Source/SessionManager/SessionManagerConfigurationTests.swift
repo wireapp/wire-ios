@@ -19,7 +19,6 @@
 import XCTest
 
 class SessionManagerConfigurationTests: XCTestCase {
-
     func testItDecodesConfiguration() throws {
         // Given
         let json = """

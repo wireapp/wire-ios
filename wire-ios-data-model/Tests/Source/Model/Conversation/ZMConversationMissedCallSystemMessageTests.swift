@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase {
-
     // MARK: - Missed Call
 
     func testThatItInsertAMissedCallSystemMessage() {

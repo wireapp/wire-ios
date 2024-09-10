@@ -21,7 +21,6 @@ import Foundation
 @testable import WireDataModel
 
 class ParticipantRoleTests: ZMBaseManagedObjectTest {
-
     var user: ZMUser!
     var conversation: ZMConversation!
     var role: Role!

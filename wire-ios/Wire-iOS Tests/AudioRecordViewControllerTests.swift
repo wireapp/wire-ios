@@ -21,7 +21,6 @@ import avs
 import XCTest
 
 private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
-
     var cancelCallCount: UInt = 0
 
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController) {
@@ -34,7 +33,6 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
 }
 
 final class AudioRecordViewControllerTests: XCTestCase {
-
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
     var userSession: UserSessionMock!
@@ -61,7 +59,6 @@ final class AudioRecordViewControllerTests: XCTestCase {
     func verify(file: StaticString = #file,
                 testName: String = #function,
                 line: UInt = #line) {
-
         verifyInAllPhoneWidths(
             matching: sut.prepareForSnapshot(),
             file: file,

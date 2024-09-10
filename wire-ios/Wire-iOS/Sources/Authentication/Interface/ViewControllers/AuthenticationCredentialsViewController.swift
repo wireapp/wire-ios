@@ -31,7 +31,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
                                                      EmailPasswordTextFieldDelegate,
                                                      TextFieldValidationDelegate,
                                                      UITextFieldDelegate {
-
     typealias Registration = L10n.Localizable.Registration
     typealias TabBarStrings = L10n.Accessibility.TabBar
     weak var actioner: AuthenticationActioner?

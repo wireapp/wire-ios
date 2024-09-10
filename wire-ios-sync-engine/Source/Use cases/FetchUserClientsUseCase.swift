@@ -21,7 +21,6 @@ import WireDataModel
 import WireRequestStrategy
 
 public protocol FetchUserClientsUseCaseProtocol {
-
     func fetchUserClients(
         userIDs: Set<QualifiedID>,
         in context: NSManagedObjectContext
@@ -29,7 +28,6 @@ public protocol FetchUserClientsUseCaseProtocol {
 }
 
 public class FetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
-
     public init() {}
 
     public func fetchUserClients(

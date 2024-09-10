@@ -20,7 +20,6 @@ import WireDataModel
 import XCTest
 
 final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
-
     func testThatItReturnsPreviewsProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()

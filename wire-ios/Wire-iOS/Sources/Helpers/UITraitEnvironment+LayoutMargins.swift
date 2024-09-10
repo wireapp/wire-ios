@@ -45,7 +45,6 @@ extension UITraitEnvironment {
     }
 
     func conversationHorizontalMargins(windowWidth: CGFloat? = AppDelegate.shared.mainWindow?.frame.width) -> HorizontalMargins {
-
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 
         // On iPad 9.7 inch 2/3 mode, right view's width is  396pt, use the compact mode's narrower margin

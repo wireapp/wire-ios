@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 class StartUIIconCell: UICollectionViewCell {
-
     typealias CellColors = SemanticColors.View
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
 
@@ -91,7 +90,6 @@ class StartUIIconCell: UICollectionViewCell {
 }
 
 final class InviteTeamMemberCell: StartUIIconCell {
-
     override func setupViews() {
         super.setupViews()
         icon = .envelope
@@ -104,7 +102,6 @@ final class InviteTeamMemberCell: StartUIIconCell {
 }
 
 final class CreateGroupCell: StartUIIconCell {
-
     override func setupViews() {
         super.setupViews()
         icon = .createConversation
@@ -117,7 +114,6 @@ final class CreateGroupCell: StartUIIconCell {
 }
 
 final class CreateGuestRoomCell: StartUIIconCell {
-
     override func setupViews() {
         super.setupViews()
         icon = .guest
@@ -130,7 +126,6 @@ final class CreateGuestRoomCell: StartUIIconCell {
 }
 
 final class OpenServicesAdminCell: StartUIIconCell {
-
     override func setupViews() {
         super.setupViews()
         icon = .bot

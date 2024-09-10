@@ -20,7 +20,6 @@ import avs
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-
     var soundAlertGroup: SettingsCellDescriptorType {
         return SettingsGroupCellDescriptor(
             items: [alertsSection],

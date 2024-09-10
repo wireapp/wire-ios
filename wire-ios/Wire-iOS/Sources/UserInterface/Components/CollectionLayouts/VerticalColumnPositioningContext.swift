@@ -23,7 +23,6 @@ import UIKit
  */
 
 struct VerticalColumnPositioningContext {
-
     /// The width of the collection view container, minus insets.
     let contentWidth: CGFloat
 

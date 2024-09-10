@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
-
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)

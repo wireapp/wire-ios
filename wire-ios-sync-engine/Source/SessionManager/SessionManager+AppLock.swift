@@ -19,7 +19,6 @@
 import Foundation
 
 extension SessionManager: UserSessionAppLockDelegate {
-
     func userSessionDidUnlock(_ session: ZMUserSession) {
         performPostUnlockActionsIfPossible(for: session)
 

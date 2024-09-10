@@ -21,12 +21,10 @@ import CoreData
 @testable import WireDataModel
 
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
-
     private var context: NSManagedObjectContext { syncMOC }
 
     func testThatItCanInsertAKnock() throws {
         try context.performGroupedAndWait {
-
             // given
             let conversation = self.createConversationWithMessages(context: context)
             let selfUser = ZMUser.selfUser(in: context)

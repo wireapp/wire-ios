@@ -27,7 +27,6 @@ import WireUtilities
 @testable import WireSyncEngine
 
 final class UserClientRequestFactoryTests: MessagingTest {
-
     var sut: UserClientRequestFactory!
     var authenticationStatus: ZMAuthenticationStatus!
     var mockAuthenticationStatusDelegate: MockAuthenticationStatusDelegate!

@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var userSession: UserSessionMock!

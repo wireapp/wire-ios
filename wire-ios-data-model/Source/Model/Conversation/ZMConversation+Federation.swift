@@ -19,7 +19,6 @@
 import Foundation
 
 public extension ZMConversation {
-
     func isFederating(with user: UserType) -> Bool {
         guard
             let domain,
@@ -49,7 +48,6 @@ public extension ZMConversation {
 }
 
 private extension NSPredicate {
-
     static var isGroupConversation: NSPredicate {
         return hasConversationType(.group)
     }

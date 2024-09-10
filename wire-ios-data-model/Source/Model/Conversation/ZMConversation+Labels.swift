@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     @objc
     public var isFavorite: Bool {
         get {

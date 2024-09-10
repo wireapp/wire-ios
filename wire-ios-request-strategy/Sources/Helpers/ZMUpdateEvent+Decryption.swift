@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUpdateEvent {
-
     // MARK: MLS Message Events
 
     /// Creates a new instance of `ZMUpdateEvent` replacing the encrypted event data with the decrypted data passed as parameter

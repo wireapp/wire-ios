@@ -19,7 +19,6 @@
 import Foundation
 
 class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
-
     override var apiVersion: APIVersion {
         .v4
     }

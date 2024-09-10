@@ -27,7 +27,6 @@ enum ConversationLookupError: Error {
 }
 
 extension SessionManager: CallKitManagerDelegate {
-
     func lookupConversation(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void

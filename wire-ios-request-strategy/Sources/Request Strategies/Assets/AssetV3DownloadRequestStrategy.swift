@@ -22,7 +22,6 @@ import WireTransport
 private let zmLog = ZMSLog(tag: "Asset V3")
 
 @objcMembers public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
-
     private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
@@ -210,7 +209,6 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage {
-
             let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                 assetClientMessage.associatedTaskIdentifier = taskIdentifier
             }

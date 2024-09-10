@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation create events.
 
 protocol ConversationCreateEventProcessorProtocol {
-
     /// Process a conversation create event.
     ///
     /// - Parameter event: A conversation create event.
@@ -30,7 +29,6 @@ protocol ConversationCreateEventProcessorProtocol {
 }
 
 struct ConversationCreateEventProcessor: ConversationCreateEventProcessorProtocol {
-
     func processEvent(_: ConversationCreateEvent) async throws {
         // TODO: [WPB-10166]
         assertionFailure("not implemented yet")

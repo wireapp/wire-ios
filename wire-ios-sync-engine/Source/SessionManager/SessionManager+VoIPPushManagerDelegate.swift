@@ -20,7 +20,6 @@ import Foundation
 import PushKit
 
 extension SessionManager: VoIPPushManagerDelegate {
-
     // MARK: - Legacy voIP push
 
     public func processIncomingRealVoIPPush(
@@ -102,7 +101,6 @@ extension SessionManager: VoIPPushManagerDelegate {
 }
 
 private extension VoIPPushPayload {
-
     func caller(in context: NSManagedObjectContext) -> ZMUser? {
         return ZMUser.fetch(
             with: senderID,
@@ -121,7 +119,6 @@ private extension VoIPPushPayload {
 }
 
 private extension Dictionary where Key == AnyHashable, Value == Any {
-
     var stringIdentifier: String {
         guard
             let data = self["data"] as? [AnyHashable: Any],

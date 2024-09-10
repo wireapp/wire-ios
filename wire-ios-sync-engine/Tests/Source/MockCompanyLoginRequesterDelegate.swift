@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 class MockCompanyLoginRequesterDelegate: CompanyLoginRequesterDelegate {
-
     private let verificationBlock: (URL) -> Void
 
     init(verificationBlock: @escaping (URL) -> Void) {

@@ -21,7 +21,6 @@ import WireLinkPreview
 import XCTest
 
 class LinkPreview_ProtobufTests: XCTestCase {
-
     func testThatItCreatesAValidArticle_OldStyleProtos() {
         // given
         let protos = LinkPreview.with {

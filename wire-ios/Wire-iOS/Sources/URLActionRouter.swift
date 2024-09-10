@@ -27,7 +27,6 @@ extension Notification.Name {
 // MARK: - URLActionRouterDelegete
 
 protocol URLActionRouterDelegate: AnyObject {
-
     func urlActionRouterWillShowCompanyLoginError()
     func urlActionRouterCanDisplayAlerts() -> Bool
 }
@@ -45,7 +44,6 @@ private let zmLog = ZMSLog(tag: "UI")
 // MARK: - URLActionRouter
 
 class URLActionRouter: URLActionRouterProtocol {
-
     // MARK: - Public Properties
 
     private(set) var sessionManager: SessionManager?
@@ -141,7 +139,6 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 
 extension URLActionRouter: PresentationDelegate {
-
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
 
@@ -242,7 +239,6 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
-
         let alert = UIAlertController(title: title,
                                       message: message,
                                       preferredStyle: .alert)
@@ -300,9 +296,7 @@ extension URLActionRouter: PresentationDelegate {
 // MARK: - Errors
 
 private extension URLActionRouter {
-
     enum URLActionError: LocalizedError {
-
         private typealias AlertStrings = L10n.Localizable.UrlAction.JoinConversation.Error.Alert
 
         /// Could not join a conversation because it is full.

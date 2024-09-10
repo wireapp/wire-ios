@@ -37,7 +37,6 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-
         let containerView = transitionContext.containerView
 
         guard let toView = transitionContext.toView,

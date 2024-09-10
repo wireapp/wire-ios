@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class TopPeopleLineCollectionViewController: NSObject {
-
     var topPeople = [ZMConversation]()
 
     weak var delegate: TopPeopleLineCollectionViewControllerDelegate?
@@ -33,7 +32,6 @@ final class TopPeopleLineCollectionViewController: NSObject {
 // MARK: - Collection View Data Source
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return topPeople.count
     }
@@ -48,7 +46,6 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
 // MARK: - Collection View Delegate
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let conversation = self.conversation(at: indexPath)
         delegate?.topPeopleLineCollectionViewControllerDidSelect(conversation)
@@ -58,7 +55,6 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
 // MARK: - Flow Layout
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return .init(top: 6, left: 0, bottom: 0, right: 0)
     }

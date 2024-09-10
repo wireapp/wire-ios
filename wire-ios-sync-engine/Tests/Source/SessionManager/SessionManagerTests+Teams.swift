@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SessionManagerTeamsTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

@@ -19,7 +19,6 @@
 import WireDataModel
 
 extension MLSClientID {
-
     public static func random() -> Self {
         .init(
             userID: UUID().transportString(),

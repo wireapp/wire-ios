@@ -19,7 +19,6 @@
 import Foundation
 
 public final class PrivateUserDefaults<Key: DefaultsKey> {
-
     // MARK: - Properties
 
     let userID: UUID
@@ -47,7 +46,6 @@ public final class PrivateUserDefaults<Key: DefaultsKey> {
 }
 
 extension PrivateUserDefaults {
-
     public func setUUID(_ uuid: UUID?, forKey key: Key) {
         storage.set(uuid?.uuidString, forKey: scopeKey(key))
     }
@@ -95,17 +93,14 @@ extension PrivateUserDefaults {
 }
 
 public protocol DefaultsKey {
-
     var rawValue: String { get }
 }
 
 extension Never: DefaultsKey {
-
     public var rawValue: String { fatalError() }
 }
 
 extension PrivateUserDefaults where Key == Never {
-
     /// Removes all values for keys scoped to `userID` in `storage`.
 
     public static func removeAll(forUserID userID: UUID, in storage: UserDefaults) {

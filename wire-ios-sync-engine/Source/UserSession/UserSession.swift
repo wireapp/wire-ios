@@ -23,7 +23,6 @@ import WireDataModel
 /// An abstraction of the user session for use in the presentation
 /// layer.
 public protocol UserSession: AnyObject {
-
     // MARK: - Mixed properties and methods
 
     // swiftlint:disable:next todo_requires_jira_link

@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 public final class DispatchGroupQueue: NSObject, GroupQueue {
-
     let queue: DispatchQueue
     let dispatchGroupContext: DispatchGroupContext
 

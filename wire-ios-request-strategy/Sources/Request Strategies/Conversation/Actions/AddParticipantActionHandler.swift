@@ -19,7 +19,6 @@
 import Foundation
 
 extension ConversationAddParticipantsError {
-
    public init?(response: ZMTransportResponse) {
        switch (response.httpStatus, response.payloadLabel()) {
        case (403, "invalid-op"?): self = .invalidOperation
@@ -35,7 +34,6 @@ extension ConversationAddParticipantsError {
 }
 
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
-
     let decoder: JSONDecoder = .defaultDecoder
 
     private let eventProcessor: ConversationEventProcessorProtocol
@@ -201,11 +199,9 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 }
 
 extension AddParticipantActionHandler {
-
     // MARK: - Error response
 
     struct ErrorResponse: Codable {
-
         var unreachable_backends: [String]?
         var non_federating_backends: [String]?
     }

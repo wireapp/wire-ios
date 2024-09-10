@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation mls message add events.
 
 protocol ConversationMLSMessageAddEventProcessorProtocol {
-
     /// Process a conversation mls message add event.
     ///
     /// - Parameter event: A conversation mls message add event.
@@ -30,7 +29,6 @@ protocol ConversationMLSMessageAddEventProcessorProtocol {
 }
 
 struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventProcessorProtocol {
-
     func processEvent(_: ConversationMLSMessageAddEvent) async throws {
         // TODO: [WPB-10172]
         assertionFailure("not implemented yet")

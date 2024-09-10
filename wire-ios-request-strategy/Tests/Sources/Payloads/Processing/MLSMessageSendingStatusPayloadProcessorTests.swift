@@ -20,7 +20,6 @@
 import XCTest
 
 final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
-
     let domain = "example.com"
     var sut: MLSMessageSendingStatusPayloadProcessor!
 

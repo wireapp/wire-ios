@@ -21,7 +21,6 @@ import Foundation
 
 @objc
 public protocol MediaManagerType: AnyObject {
-
     func setUiStartsAudio(_ enabled: Bool)
     func startAudio()
     func setupAudioDevice()

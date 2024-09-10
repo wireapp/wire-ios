@@ -21,7 +21,6 @@ import Foundation
 @testable import Wire
 
 final class MockZMUserSession: NSObject, UserSessionInterface {
-
     func perform(_ changes: @escaping () -> Void) {
         changes()
     }

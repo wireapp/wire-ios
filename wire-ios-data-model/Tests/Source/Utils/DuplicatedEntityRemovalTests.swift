@@ -22,7 +22,6 @@ import WireTesting
 import XCTest
 
 final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
-
     func appendSystemMessage(conversation: ZMConversation,
                              type: ZMSystemMessageType,
                              sender: ZMUser,
@@ -32,7 +31,6 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
                              timestamp: Date?,
                              duration: TimeInterval? = nil
         ) -> ZMSystemMessage {
-
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -78,9 +76,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
 // MARK: - Merge tests
 
 extension DuplicatedEntityRemovalTests {
-
     func testThatItMergesTwoUserClients() {
-
         // GIVEN
         let user = createUser()
         let conversation = createConversation()
@@ -125,7 +121,6 @@ extension DuplicatedEntityRemovalTests {
 }
 
 extension Array where Element: ZMManagedObject {
-
     fileprivate var nonZombies: [Element] {
         return self.filter { !($0.isZombieObject || $0.isDeleted) }
     }

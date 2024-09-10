@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 class ResetSessionRequestStrategyTests: MessagingTestBase {
-
     var sut: ResetSessionRequestStrategy!
     var mockMessageSender: MockMessageSenderInterface!
 

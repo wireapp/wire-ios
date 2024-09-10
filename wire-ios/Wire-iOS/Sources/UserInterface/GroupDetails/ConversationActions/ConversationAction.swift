@@ -21,7 +21,6 @@ import WireDataModel
 
 extension ZMConversation {
     enum Action: Equatable {
-
         case deleteGroup
         case moveToFolder
         case removeFromFolder(folder: String)
@@ -140,7 +139,6 @@ extension ZMConversation {
 }
 
 extension ZMConversation.Action {
-
     fileprivate var isDestructive: Bool {
         switch self {
         case .remove,

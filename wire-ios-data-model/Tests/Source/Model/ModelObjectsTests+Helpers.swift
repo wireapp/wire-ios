@@ -19,7 +19,6 @@
 import Foundation
 
 extension ModelObjectsTests {
-
     // MARK: Users & Teams Members
 
     @discardableResult func createTeamAndMember(for user: ZMUser, with permissions: Permissions? = nil) -> (Team, Member) {

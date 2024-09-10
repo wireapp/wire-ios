@@ -32,7 +32,6 @@ final class ConversationGuestOptionsViewController: UIViewController,
                                                     UITableViewDelegate,
                                                     UITableViewDataSource,
                                                     ConversationGuestOptionsViewModelDelegate {
-
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
     private var guestLinkObserver: NSObjectProtocol?

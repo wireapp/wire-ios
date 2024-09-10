@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class MarkdownTextViewTests: XCTestCase {
-
     var sut: MarkdownTextView!
     var bar: MarkdownBarView!
     var style: DownStyle!

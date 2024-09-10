@@ -24,7 +24,6 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
-
     // The mock in this place is a workaround, because somewhere down the line the test funcs call
     // `func handle(...)` and this calls `sut.didFinishQuickSync()` and this calls `PushSupportedProtocolsAction`.
     // A proper solution and mocking requires a further refactoring.

@@ -19,7 +19,6 @@
 import Foundation
 
 public enum PushTokenStorage {
-
     private enum Keys: String {
         case pushToken = "PushToken"
     }

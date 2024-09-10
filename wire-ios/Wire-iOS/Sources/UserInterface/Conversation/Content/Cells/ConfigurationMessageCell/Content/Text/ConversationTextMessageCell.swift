@@ -22,7 +22,6 @@ import WireSyncEngine
 final class ConversationTextMessageCell: UIView,
                                          ConversationMessageCell,
                                          TextViewInteractionDelegate {
-
     struct Configuration: Equatable {
         let attributedText: NSAttributedString
         let isObfuscated: Bool
@@ -178,7 +177,6 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 // MARK: - Factory
 
 extension ConversationTextMessageCellDescription {
-
     static func cells(for message: ZMConversationMessage, searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
@@ -190,7 +188,6 @@ extension ConversationTextMessageCellDescription {
     static func cells(textMessageData: TextMessageData,
                       message: ZMConversationMessage,
                       searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
-
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed

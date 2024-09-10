@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class UserRichProfileIntegrationTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

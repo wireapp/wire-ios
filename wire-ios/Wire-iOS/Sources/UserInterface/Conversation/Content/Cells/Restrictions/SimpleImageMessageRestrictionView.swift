@@ -19,7 +19,6 @@
 import UIKit
 
 final class SimpleImageMessageRestrictionView: BaseMessageRestrictionView {
-
     // MARK: - Life cycle
 
     init() {

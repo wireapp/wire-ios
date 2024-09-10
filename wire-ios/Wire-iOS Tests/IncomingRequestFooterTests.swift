@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class IncomingRequestFooterTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -63,7 +62,6 @@ final class IncomingRequestFooterTests: XCTestCase {
 }
 
 private extension IncomingRequestFooterView {
-
     // MARK: - Helper Method
 
     func prepareForSnapshots() -> UIView {

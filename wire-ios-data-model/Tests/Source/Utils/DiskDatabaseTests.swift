@@ -22,7 +22,6 @@ import WireTesting
 import XCTest
 
 public class DiskDatabaseTest: ZMTBaseTest {
-
     var cacheURL: URL!
     var sharedContainerURL: URL!
     var accountId: UUID!
@@ -99,7 +98,6 @@ public class DiskDatabaseTest: ZMTBaseTest {
 }
 
 extension DiskDatabaseTest {
-
     func createClient(user: ZMUser) -> UserClient {
         let client = UserClient.insertNewObject(in: self.moc)
         client.user = user

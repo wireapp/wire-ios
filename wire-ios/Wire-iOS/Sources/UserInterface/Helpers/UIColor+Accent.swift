@@ -25,7 +25,6 @@ import WireSyncEngine
 private var overridenAccentColor: AccentColor?
 
 extension UIColor {
-
     class func indexedAccentColor() -> ZMAccentColor? {
         // priority 1: overriden color
         if overridenAccentColor != nil {

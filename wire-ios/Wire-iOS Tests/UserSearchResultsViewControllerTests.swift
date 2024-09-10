@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class UserSearchResultsViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: UserSearchResultsViewController!
@@ -83,7 +82,6 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testThatShowsResultsInConversationWithQuery() {
-
         let createSut: () -> UIViewController = {
             self.createSUT()
             self.sut.users = [self.selfUser, self.otherUser].searchForMentions(withQuery: "u")

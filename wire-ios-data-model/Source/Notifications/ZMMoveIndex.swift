@@ -17,7 +17,6 @@
 //
 
 @objcMembers public class ZMMovedIndex: NSObject {
-
     public let from: UInt
     public let to: UInt
 

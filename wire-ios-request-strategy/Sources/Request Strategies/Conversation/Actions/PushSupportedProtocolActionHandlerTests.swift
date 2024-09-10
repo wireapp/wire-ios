@@ -21,7 +21,6 @@ import WireDataModelSupport
 import XCTest
 
 final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<PushSupportedProtocolsAction, PushSupportedProtocolsActionHandler> {
-
     // MARK: - Properties
 
     private var stack: CoreDataStack!

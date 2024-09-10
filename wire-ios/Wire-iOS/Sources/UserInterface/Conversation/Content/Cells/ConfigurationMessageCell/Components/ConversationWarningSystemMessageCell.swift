@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
     private typealias LabelColors = SemanticColors.Label
     private typealias IconColors = SemanticColors.Icon
 

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class AudioButtonOverlay: UIView {
-
     // MARK: - AudioButtonOverlayButtonType
 
     enum AudioButtonOverlayButtonType {

@@ -33,7 +33,6 @@ private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
-
     // MARK: - Public Properties
 
     public var accountImage = UIImage() {
@@ -187,7 +186,6 @@ public final class AccountImageView: UIView {
 // MARK: - Convenience Init
 
 public extension AccountImageView {
-
     convenience init(
         accountImage: UIImage,
         isTeamAccount: Bool,
@@ -209,7 +207,6 @@ public extension AccountImageView {
 
 @available(iOS 16.0, *)
 struct AccountImageView_Previews: PreviewProvider {
-
     static var previews: some View {
         Group {
             ForEach([false, true], id: \.self) { isTeamAccount in
@@ -259,7 +256,6 @@ struct AccountImageView_Previews: PreviewProvider {
 }
 
 private extension View {
-
     func center() -> some View {
         VStack {
             Spacer()
@@ -274,7 +270,6 @@ private extension View {
 }
 
 private extension UIImage {
-
     static func from(solidColor color: UIColor) -> UIImage {
         UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
             color.setFill()

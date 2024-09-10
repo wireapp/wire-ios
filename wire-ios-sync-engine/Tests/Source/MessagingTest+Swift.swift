@@ -21,7 +21,6 @@ import WireTransport
 @testable import WireSyncEngine
 
 extension MessagingTest {
-
     @discardableResult
     func createSelfUser() -> ZMUser {
         let selfUser = ZMUser.selfUser(in: syncMOC)

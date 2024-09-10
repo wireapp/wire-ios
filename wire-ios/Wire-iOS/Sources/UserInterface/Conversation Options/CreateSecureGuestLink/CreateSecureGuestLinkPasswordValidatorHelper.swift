@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 class CreateSecureGuestLinkPasswordValidatorHelper {
-
     // MARK: - Properties
 
     typealias LabelColors = SemanticColors.Label

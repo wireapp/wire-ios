@@ -21,7 +21,6 @@ import WireAPI
 /// Process user delete events.
 
 protocol UserDeleteEventProcessorProtocol {
-
     /// Process a user delete event.
     ///
     /// - Parameter event: A user delete event.
@@ -30,7 +29,6 @@ protocol UserDeleteEventProcessorProtocol {
 }
 
 struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
-
     func processEvent(_: UserDeleteEvent) async throws {
         // TODO: [WPB-10193]
         assertionFailure("not implemented yet")

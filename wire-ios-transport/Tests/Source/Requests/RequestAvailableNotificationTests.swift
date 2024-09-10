@@ -20,7 +20,6 @@
 import XCTest
 
 @objc class NotificationObserver: NSObject, RequestAvailableObserver {
-
     var requestsAvailable = false
 
     func newRequestsAvailable() {
@@ -29,7 +28,6 @@ import XCTest
 }
 
 class RequestAvailableNotificationTests: XCTestCase {
-
     var sut = NotificationObserver()
 
     override func setUp() {
@@ -45,7 +43,6 @@ class RequestAvailableNotificationTests: XCTestCase {
     }
 
     func testObserverIsReceivingNotificationsAfterSubscribing() {
-
         // given
         RequestAvailableNotification.addObserver(sut)
 
@@ -57,7 +54,6 @@ class RequestAvailableNotificationTests: XCTestCase {
     }
 
     func testObserverIsNotReceivingNotificationsAfterUnsubscribing() {
-
         // given
         RequestAvailableNotification.addObserver(sut)
         RequestAvailableNotification.removeObserver(sut)

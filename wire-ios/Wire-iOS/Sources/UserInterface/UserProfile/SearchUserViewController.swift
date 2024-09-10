@@ -23,7 +23,6 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class SearchUserViewController: UIViewController {
-
     // MARK: - Properties
 
     private var searchDirectory: SearchDirectory!

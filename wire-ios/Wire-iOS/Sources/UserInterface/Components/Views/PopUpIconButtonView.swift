@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 class PopUpIconButtonView: UIView {
-
     var selectedIndex = 0
 
     private let button: PopUpIconButton
@@ -83,7 +82,6 @@ class PopUpIconButtonView: UIView {
     }
 
     override func draw(_ rect: CGRect) {
-
         guard let path = pathForOverlay(), let context = UIGraphicsGetCurrentContext() else { return }
 
         context.saveGState()
@@ -126,7 +124,6 @@ class PopUpIconButtonView: UIView {
     }
 
     private func pathForOverlay() -> UIBezierPath? {
-
         let rect = lowerRect
         let path = UIBezierPath()
 
@@ -280,7 +277,6 @@ class PopUpIconButtonView: UIView {
     }
 
     private func rectForItem(_ item: StyleKitIcon) -> CGRect? {
-
         let icons: [StyleKitIcon]
         switch expandDirection {
         case .left:     icons = button.itemIcons.reversed()
@@ -297,7 +293,6 @@ class PopUpIconButtonView: UIView {
     }
 
     func updateSelectionForPoint(_ point: CGPoint) {
-
         switch expandDirection {
         case .left:
             let selection = button.itemIcons.enumerated()

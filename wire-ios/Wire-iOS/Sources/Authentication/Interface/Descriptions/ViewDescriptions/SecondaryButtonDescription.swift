@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 
 final class SecondaryButtonDescription {
-
     var buttonTapped: (() -> Void)?
     let title: String
     let accessibilityIdentifier: String

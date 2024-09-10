@@ -22,7 +22,6 @@ import WireSyncEngine
 typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 
 extension UserType {
-
     var pov: PointOfView {
         return self.isSelfUser ? .secondPerson : .thirdPerson
     }

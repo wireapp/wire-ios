@@ -21,7 +21,6 @@ import Foundation
 /// Capabilities of a user client.
 
 public enum UserClientCapability: String, Codable {
-
     /// The client consents to being subject legalhold
     /// (directly or indirectly).
 

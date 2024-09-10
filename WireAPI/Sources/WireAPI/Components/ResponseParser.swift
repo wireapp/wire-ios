@@ -24,7 +24,6 @@ import Foundation
 /// success and failure results.
 
 struct ResponseParser<Success> {
-
     enum ParsingError: Error {
         case noParseBlocksDefined
         case noParseResult

@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 extension SessionManager: AccountSelector {
-
     public var currentAccount: Account? {
         accountManager.selectedAccount
     }

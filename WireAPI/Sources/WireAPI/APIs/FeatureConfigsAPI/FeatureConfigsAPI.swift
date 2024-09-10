@@ -19,7 +19,6 @@
 import Foundation
 
 public protocol FeatureConfigsAPI {
-
     /// Get all feature configs.
     /// - Returns: All the feature configs.
 

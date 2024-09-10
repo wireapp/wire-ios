@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 extension ZMUserSessionTestsBase {
-
     @objc
     public func createCallCenter() -> WireCallCenterV3Mock {
         let selfUser = ZMUser.selfUser(in: self.syncMOC)

@@ -37,7 +37,6 @@ public enum LinkAttachmentType: Int {
 
 @objc(ZMLinkAttachment)
 public final class LinkAttachment: NSObject, NSSecureCoding {
-
     public static var supportsSecureCoding = true
 
     /// The type of the attached media.
@@ -106,7 +105,6 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
 // MARK: - OpenGraph Data
 
 extension LinkAttachment {
-
     /// Tries to create the link attachment from OpenGraph data.
     convenience init?(openGraphData: OpenGraphData, detectedType: LinkAttachmentType, originalRange: NSRange) {
         switch detectedType {

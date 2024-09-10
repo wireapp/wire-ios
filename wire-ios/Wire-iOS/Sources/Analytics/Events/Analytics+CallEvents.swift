@@ -29,7 +29,6 @@ enum CallEvent {
 }
 
 extension CallEvent {
-
     var eventName: String {
         switch self {
         case .initiated: return "calling.initiated_call"
@@ -43,7 +42,6 @@ extension CallEvent {
 }
 
 extension Analytics {
-
     func tagCallQualityReview(_ feedback: CallQualitySurveyReview) {
         var attributes: [String: NSObject] = [:]
         attributes["label"] = feedback.label

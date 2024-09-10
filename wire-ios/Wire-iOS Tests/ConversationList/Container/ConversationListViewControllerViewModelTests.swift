@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class ConversationListViewControllerViewModelTests: XCTestCase {
-
     private var sut: ConversationListViewController.ViewModel!
     private var mockViewController: MockConversationListContainer!
     private var selfUser: MockUserType!

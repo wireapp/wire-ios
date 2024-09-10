@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class DeveloperOptionsController: UIViewController {
-
     /// Cells
     var tableCells: [UITableViewCell]!
     /// Map from UISwitch to the action it should perform. 
@@ -186,7 +185,6 @@ final class DeveloperOptionsController: UIViewController {
 }
 
 extension DeveloperOptionsController: UITableViewDataSource {
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableCells.count
     }

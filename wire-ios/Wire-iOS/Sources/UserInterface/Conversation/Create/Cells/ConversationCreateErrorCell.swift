@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationCreateErrorCell: UICollectionViewCell {
-
     let label = UILabel()
 
     override init(frame: CGRect) {

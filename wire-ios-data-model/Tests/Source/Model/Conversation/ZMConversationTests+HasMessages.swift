@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMConversationTests_HasMessages: ZMConversationTestsBase {
-
     func testThatItHasMessages_ReadButNotCleared() {
         // Given
         let sut = ZMConversation.insertNewObject(in: uiMOC)

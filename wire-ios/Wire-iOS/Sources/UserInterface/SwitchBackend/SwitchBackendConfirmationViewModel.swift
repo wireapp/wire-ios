@@ -21,7 +21,6 @@ import SwiftUI
 import WireSyncEngine
 
 final class SwitchBackendConfirmationViewModel {
-
     // MARK: - State
 
     let backendName: String
@@ -75,7 +74,6 @@ final class SwitchBackendConfirmationViewModel {
     // MARK: - Events
 
     enum Event {
-
         case userDidCancel
         case userDidConfirm
     }

@@ -27,7 +27,6 @@ protocol PasscodeSetupUserInterface: AnyObject {
 }
 
 final class PasscodeSetupViewController: UIViewController {
-
     enum Context {
         case forcedForTeam
         case createPasscode
@@ -179,7 +178,6 @@ final class PasscodeSetupViewController: UIViewController {
     }
 
     private func createConstraints() {
-
         [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
@@ -250,7 +248,6 @@ final class PasscodeSetupViewController: UIViewController {
     // MARK: - close button
 
     lazy var closeItem: UIBarButtonItem = {
-
         let closeItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
             self?.appLockSetupViewControllerDismissed()
@@ -319,7 +316,6 @@ extension PasscodeSetupViewController: PasscodeSetupUserInterface {
 // MARK: - UIAdaptivePresentationControllerDelegate
 
 extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate {
-
     func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
         appLockSetupViewControllerDismissed()
     }
@@ -335,7 +331,6 @@ extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate 
 }
 
 private extension DownStyle {
-
     static func infoLabelStyle(compact: Bool) -> DownStyle {
         let style = DownStyle()
         style.baseFont = compact ? FontSpec.smallRegularFont.font! : FontSpec.normalRegularFont.font!

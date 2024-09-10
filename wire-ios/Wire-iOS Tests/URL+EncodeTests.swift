@@ -20,7 +20,6 @@
 import XCTest
 
 final class URL_EncodeTests: XCTestCase {
-
     var sut: URL!
 
     override func setUp() {

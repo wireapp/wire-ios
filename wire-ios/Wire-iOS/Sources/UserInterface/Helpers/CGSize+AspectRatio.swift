@@ -32,7 +32,6 @@ extension UIDeviceOrientation {
 }
 
 extension CGSize {
-
     var aspectRatio: AspectRatio {
         if width < height {
             return .portrait

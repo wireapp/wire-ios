@@ -20,7 +20,6 @@ import UIKit
 import WireUtilities
 
 final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
-
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission {
         emailPasswordFieldDescription
@@ -66,7 +65,6 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 }
 
 extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
-
     func textFieldDidUpdateText(_ textField: EmailPasswordTextField) {
         (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField.passwordField.isInputValid
     }

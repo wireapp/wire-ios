@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class RegistrationTests: IntegrationTest {
-
     var delegate: TestRegistrationStatusDelegate!
     var registrationStatus: WireSyncEngine.RegistrationStatus? {
         return sessionManager?.unauthenticatedSession?.registrationStatus

@@ -19,7 +19,6 @@
 import XCTest
 
 class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
-
     func testThatMessageIsInserted_WhenNotIncludedInPrefetchResults() throws {
         // given
         let prefetchResults = ZMFetchRequestBatchResult()

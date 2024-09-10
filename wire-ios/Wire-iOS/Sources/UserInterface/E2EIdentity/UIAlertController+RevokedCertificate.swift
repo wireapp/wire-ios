@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIAlertController {
-
     static func revokedCertificateWarning(logOutActionHandler: @escaping () -> Void) -> UIAlertController {
         typealias Alert = L10n.Localizable.RevokedCertificate.Alert
 

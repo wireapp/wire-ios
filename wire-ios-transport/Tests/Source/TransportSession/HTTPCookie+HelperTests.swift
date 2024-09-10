@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class HTTPCookieHelperTests: XCTestCase {
-
     func testThatItCanCreateACookieFromAString() {
         // given
         let domain = ".example.com"

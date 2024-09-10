@@ -19,7 +19,6 @@
 import Foundation
 
 protocol CreateTeamOneOnOneConversationUseCaseProtocol {
-
     func invoke(
         with user: ZMUser,
         syncContext: NSManagedObjectContext
@@ -27,7 +26,6 @@ protocol CreateTeamOneOnOneConversationUseCaseProtocol {
 }
 
 public enum CreateTeamOneOnOneConversationError: Error {
-
     case userDoesNotExist
     case userIsNotOnSameTeam
     case missingUserQualifiedID
@@ -42,7 +40,6 @@ public enum CreateTeamOneOnOneConversationError: Error {
 /// on the currently supported protocols of the self and other users.
 
 struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseCaseProtocol {
-
     private typealias Error = CreateTeamOneOnOneConversationError
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface

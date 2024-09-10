@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class LeaveSubconversationActionHandler: ActionHandler<LeaveSubconversationAction> {
-
     // MARK: - Request
 
     override func request(

@@ -25,7 +25,6 @@ import WireSyncEngine
 
 // This class wraps the conversation content view controller in order to display the navigation bar on the top
 final class ConversationRootViewController: UIViewController {
-
     // MARK: - Properties
 
     let navBarContainer: UINavigationBarContainer
@@ -222,7 +221,6 @@ extension ConversationRootViewController: NetworkStatusBarDelegate {
 // MARK: - ZMConversation extension
 
 extension ZMConversation {
-
     /// Check if the conversation data is out of date, and in case update it.
     /// This in an opportunistic update of the data, with an on-demand strategy.
     /// Whenever the conversation is opened by the user, we check if anything is missing.

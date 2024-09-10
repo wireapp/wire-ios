@@ -23,7 +23,6 @@ import WireSyncEngine
 import WireUtilities
 
 final class CallParticipantDetailsView: RoundedBlurView {
-
     // MARK: - Properties
 
     typealias IconColors = SemanticColors.Icon

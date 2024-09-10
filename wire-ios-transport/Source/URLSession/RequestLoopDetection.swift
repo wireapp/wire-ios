@@ -22,7 +22,6 @@ import Foundation
 /// to detect suspicious request loops
 @objcMembers
 public final class RequestLoopDetection: NSObject {
-
     /// After this time, requests are purged from the list
     static let decayTimer: TimeInterval = 60 // 1 minute
 

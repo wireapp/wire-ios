@@ -21,7 +21,6 @@ import WireDataModel
 import WireRequestStrategy
 
 public class MockApplicationStatus: NSObject, ApplicationStatus {
-
     public var requestCancellation: ZMRequestCancellation {
         return self.mockTaskCancellationDelegate
     }
@@ -67,7 +66,6 @@ public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {
 }
 
 public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-
     public var deletionCalls: Int = 0
 
     /// Notify that the current client was deleted remotely
@@ -81,7 +79,6 @@ public class MockClientRegistrationStatus: NSObject, ClientRegistrationDelegate 
 }
 
 class MockPushMessageHandler: NSObject, PushMessageHandler {
-
     public func didFailToSend(_ message: ZMMessage) {
         failedToSend.append(message)
     }

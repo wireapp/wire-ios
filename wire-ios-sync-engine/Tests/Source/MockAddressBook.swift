@@ -21,7 +21,6 @@ import Foundation
 
 /// Fake to supply predefined AB hashes
 class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAccessor {
-
     /// Find contact by Id
     func contact(identifier: String) -> WireSyncEngine.ContactRecord? {
         return contacts.first { $0.localIdentifier == identifier }
@@ -78,7 +77,6 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 }
 
 struct MockAddressBookContact: WireSyncEngine.ContactRecord {
-
     static var incrementalLocalIdentifier = ZMAtomicInteger(integer: 0)
 
     var firstName = ""

@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMAssetClientMessage {
-
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
         return self.dataSet.lazy
             .compactMap { $0 as? ZMGenericMessageData }
@@ -118,7 +117,6 @@ extension ZMAssetClientMessage {
 
     /// Returns the generic message for the given representation
     func genericMessage(dataType: AssetClientMessageDataType) -> GenericMessage? {
-
         if self.fileMessageData != nil {
             switch dataType {
             case .fullAsset:

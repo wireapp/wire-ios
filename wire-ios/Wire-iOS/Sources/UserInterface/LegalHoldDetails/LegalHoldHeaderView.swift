@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class LegalHoldHeaderView: UIView {
-
     typealias LegalHoldHeader = L10n.Localizable.Legalhold.Header
     typealias LabelColors = SemanticColors.Label
 

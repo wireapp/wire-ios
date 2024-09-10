@@ -44,7 +44,6 @@ struct LabelStyle {
 }
 
 extension UILabel: Stylable {
-
     func applyStyle(_ style: LabelStyle) {
         backgroundColor = style.backgroundColor
         textColor = style.textColor

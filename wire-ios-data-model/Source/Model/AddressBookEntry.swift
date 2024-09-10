@@ -21,7 +21,6 @@ import Contacts
 import Foundation
 
 @objcMembers public class AddressBookEntry: ZMManagedObject {
-
     public enum Fields: String {
         case localIdentifier
         case user
@@ -50,7 +49,6 @@ import Foundation
 }
 
 extension AddressBookEntry {
-
     @objc(createFromContact:managedObjectContext:user:)
     static public func create(from contact: CNContact, managedObjectContext: NSManagedObjectContext, user: ZMUser? = nil) -> AddressBookEntry {
         let entry = AddressBookEntry.insertNewObject(in: managedObjectContext)

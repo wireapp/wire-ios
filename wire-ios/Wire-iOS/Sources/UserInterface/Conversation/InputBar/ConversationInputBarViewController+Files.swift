@@ -25,7 +25,6 @@ extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 private let zmLog = ZMSLog(tag: "ConversationInputBarViewController+Files")
 
 extension ConversationInputBarViewController {
-
     @discardableResult
     private func removeItem(atPath path: String) -> Bool {
         do {
@@ -95,7 +94,6 @@ extension ConversationInputBarViewController {
 
             impactFeedbackGenerator.prepare()
             ZMUserSession.shared()?.perform {
-
                 self.impactFeedbackGenerator.impactOccurred()
 
                 var conversationMediaAction: ConversationMediaAction = .fileTransfer

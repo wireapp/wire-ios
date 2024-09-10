@@ -34,7 +34,6 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
 // MARK: - CreateSecureGuestLinkViewModel
 
 final class CreateSecureConversationGuestLinkViewModel {
-
     enum UserInfoKeys {
         static let link = "link"
     }
@@ -69,7 +68,6 @@ final class CreateSecureConversationGuestLinkViewModel {
         for textField: ValidatedTextField,
         against confirmPasswordField: ValidatedTextField
     ) -> Bool {
-
         guard let enteredPassword = textField.text,
               !enteredPassword.isEmpty,
               textField.isValid,

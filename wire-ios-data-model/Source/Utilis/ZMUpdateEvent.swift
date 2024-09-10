@@ -126,7 +126,6 @@ extension ZMUpdateEvent {
     }
 
     public func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
-
         if let qualifiedUserIDs {
             if createIfNeeded {
                 return qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,

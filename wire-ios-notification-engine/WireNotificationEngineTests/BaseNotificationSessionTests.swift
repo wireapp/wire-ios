@@ -31,7 +31,6 @@ class FakeAuthenticationStatus: AuthenticationStatusProvider {
 }
 
 class BaseTest: ZMTBaseTest {
-
     var authenticationStatus: FakeAuthenticationStatus!
     var accountIdentifier: UUID!
     var coreDataStack: CoreDataStack!
@@ -164,7 +163,6 @@ class BaseTest: ZMTBaseTest {
     }
 
     func createNotificationSession() throws -> NotificationSession {
-
         try NotificationSession(
             coreDataStack: coreDataStack,
             transportSession: transportSession,

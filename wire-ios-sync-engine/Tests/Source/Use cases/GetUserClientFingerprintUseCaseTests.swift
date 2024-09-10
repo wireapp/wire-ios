@@ -128,7 +128,6 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     // MARK: - localFingerprint
 
     func test_itLoadsLocalFingerprint_ProteusViaCoreCryptoFlagEnabled() async {
-
         // GIVEN
         sut = createSut(proteusEnabled: true)
 

@@ -31,7 +31,6 @@ protocol CallEventHandlerProtocol {
 }
 
 final class CallEventHandler: CallEventHandlerProtocol {
-
     func reportIncomingVoIPCall(_ payload: [String: Any]) {
         WireLogger.calling.info("waking up main app to handle call event")
         CXProvider.reportNewIncomingVoIPPushPayload(payload) { error in
@@ -43,7 +42,6 @@ final class CallEventHandler: CallEventHandlerProtocol {
 }
 
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
-
     // MARK: - Properties
 
     var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
@@ -217,7 +215,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 // MARK: - Extensions
 
 extension UNNotificationContent {
-
     // With the "filtering" entitlement, we can tell iOS to not display a user notification by
     // passing empty content to the content handler.
     // See https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering

@@ -247,7 +247,6 @@ extension BlockerViewController: SendTechnicalReportPresenter {}
 // MARK: - Certificate enrollment
 
 extension BlockerViewController {
-
     private func enrollCertificateAction() async {
         do {
             try await enrollCertificate()

@@ -37,7 +37,6 @@ extension MockCallStatusViewInputType {
 }
 
 class CallStatusViewInputTypeTests: XCTestCase {
-
     func testShouldShowBitRateLabel() {
         var sut: CallStatusViewInputType
 

@@ -26,7 +26,6 @@ private let UserInfoCallStateKey = "ZMCallState"
 private let UserInfoHasChangesKey = "zm_userInfoHasChanges"
 
 extension NSManagedObjectContext {
-
     @objc public var zm_callState: ZMCallState {
         let oldState = self.userInfo[UserInfoCallStateKey] as? ZMCallState
         return oldState ?? { () -> ZMCallState in
@@ -72,7 +71,6 @@ extension NSManagedObjectContext {
 
 // This needs to be set to display the correct conversationListIndicator
 extension ZMConversation {
-
     internal var callState: ZMConversationCallState {
         return managedObjectContext!.zm_callState.stateForConversation(self)
     }
@@ -104,7 +102,6 @@ extension ZMConversation {
 
 @objc
 open class ZMCallState: NSObject, Sequence {
-
     fileprivate var conversationStates: [NSManagedObjectID: ZMConversationCallState] = [:]
 
     fileprivate var allObjectIDs: Set<NSManagedObjectID> {
@@ -160,7 +157,6 @@ open class ZMCallState: NSObject, Sequence {
 
 /// This is the call state for a specific conversation.
 open class ZMConversationCallState: NSObject {
-
     open var isCallDeviceActive: Bool = false
     open var isIgnoringCall: Bool = false
 
@@ -181,7 +177,6 @@ open class ZMConversationCallState: NSObject {
 }
 
 extension ZMCallState {
-
     /// returns true if one of the merged states changed due to the merge
     public func mergeChangesFromState(_ other: ZMCallState?) -> Set<NSManagedObjectID> {
         if let other {

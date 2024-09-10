@@ -24,7 +24,6 @@ import WireUtilities
 import XCTest
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
-
     private var apiVersion: APIVersion! {
         didSet {
             BackendInfo.apiVersion = apiVersion
@@ -40,7 +39,6 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 // MARK: - Client discovery
 
 extension ClientMessageRequestFactoryTests {
-
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {
         syncMOC.performGroupedAndWait {
             // GIVEN

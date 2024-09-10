@@ -24,13 +24,10 @@ import WireSyncEngine
 import WireSystem
 
 final class ConversationListViewModel: NSObject {
-
     typealias SectionIdentifier = String
 
     fileprivate struct Section: DifferentiableSection {
-
         enum Kind: Equatable, Hashable {
-
             /// for incoming requests
             case contactRequests
 
@@ -581,7 +578,6 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func saveState(state: State) {
-
         guard isFolderStatePersistenceEnabled,
               let jsonString = state.jsonString,
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
@@ -622,7 +618,6 @@ private let log = ZMSLog(tag: "ConversationListViewModel")
 
 extension ConversationListViewModel: ConversationDirectoryObserver {
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo) {
-
         if changeInfo.reloaded {
             // If the section was empty in certain cases collection view breaks down on the big amount of conversations,
             // so we prefer to do the simple reload instead.
@@ -643,7 +638,6 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
     }
 
     private func kind(of conversationListType: ConversationListType) -> Section.Kind? {
-
         let kind: Section.Kind?
 
         switch conversationListType {

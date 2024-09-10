@@ -19,7 +19,6 @@
 import SwiftUI
 
 extension Button {
-
     init(
         hapticFeedbackStyle: UINotificationFeedbackGenerator.FeedbackType,
         action: @escaping () -> Void,

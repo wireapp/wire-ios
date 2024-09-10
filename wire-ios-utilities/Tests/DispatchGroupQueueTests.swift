@@ -21,7 +21,6 @@ import WireTesting
 @testable import WireUtilities
 
 final class DispatchGroupQueueTests: ZMTBaseTest {
-
     var sut: DispatchGroupQueue!
 
     override func tearDown() {

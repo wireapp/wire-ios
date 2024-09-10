@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 final class ArchivedListViewController: UIViewController {
-
     private var collectionView: UICollectionView!
     private let cellReuseIdentifier = "ConversationListCellArchivedIdentifier"
     private let swipeIdentifier = "ArchivedList"
@@ -65,7 +64,6 @@ final class ArchivedListViewController: UIViewController {
     }
 
     private func setupNavigationItem() {
-
         let titleLabel = UILabel()
         titleLabel.text = L10n.Localizable.ArchivedList.title.capitalized
         titleLabel.font = FontSpec(.normal, .semibold).font
@@ -110,7 +108,6 @@ final class ArchivedListViewController: UIViewController {
     }
 
     private func setupEmptyPlaceholder() {
-
         let titleLabel = DynamicFontLabel(
             text: L10n.Localizable.ArchivedList.EmptyPlaceholder.headline + " 👻",
             style: .h3,
@@ -132,7 +129,6 @@ final class ArchivedListViewController: UIViewController {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stackView)
         NSLayoutConstraint.activate([
-
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
@@ -157,7 +153,6 @@ final class ArchivedListViewController: UIViewController {
 // MARK: - CollectionViewDelegate
 
 extension ArchivedListViewController: UICollectionViewDelegate {
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let conversation = viewModel[indexPath.row] else { return }
         delegate?.archivedListViewController(self, didSelectConversation: conversation)
@@ -167,7 +162,6 @@ extension ArchivedListViewController: UICollectionViewDelegate {
 // MARK: - CollectionViewDataSource
 
 extension ArchivedListViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -200,7 +194,6 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
 // MARK: - ArchivedListViewModelDelegate
 
 extension ArchivedListViewController: ArchivedListViewModelDelegate {
-
     func archivedListViewModel(
         _ model: ArchivedListViewModel,
         didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo,
@@ -222,7 +215,6 @@ extension ArchivedListViewController: ArchivedListViewModelDelegate {
 // MARK: - ConversationListCellDelegate
 
 extension ArchivedListViewController: ConversationListCellDelegate {
-
     func indexPath(for cell: ConversationListCell) -> IndexPath? {
         collectionView.indexPath(for: cell)
     }

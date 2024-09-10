@@ -83,7 +83,6 @@ extension ConversationInputBarViewController: UITextViewDelegate {
            text.containsCharacters(from: CharacterSet.newlinesAndTabulation),
            canInsertMention,
            currentDevice.userInterfaceIdiom == .pad || isMentionsViewKeyboardCollapsed {
-
             insertBestMatchMention()
             return false
         }

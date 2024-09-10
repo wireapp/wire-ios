@@ -20,7 +20,6 @@ import CoreData
 @testable import WireDataModel
 
 class ZMCallStateTests: ZMBaseManagedObjectTest {
-
     func testThatItReturnsTheSameStateForTheSameConversation() {
         // given
         let sut = ZMCallState()
@@ -46,7 +45,6 @@ class ZMCallStateTests: ZMBaseManagedObjectTest {
 // V3 Group calling
 
 extension ZMCallStateTests {
-
     func testThatItDoesMergeIsCallDeviceActive() {
         // given
         let mainSut = ZMConversationCallState()

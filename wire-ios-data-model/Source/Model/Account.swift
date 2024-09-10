@@ -28,7 +28,6 @@ extension Notification.Name {
 /// such as the accounts users name,
 /// team name if there is any, picture and uuid.
 public final class Account: NSObject, Codable {
-
     public var userName: String
     public var teamName: String?
     public let userIdentifier: UUID
@@ -101,7 +100,6 @@ public final class Account: NSObject, Codable {
 // MARK: - Serialization Helper
 
 extension Account {
-
     func write(to url: URL) throws {
         let encoder = JSONEncoder()
         let data = try encoder.encode(self)
@@ -119,7 +117,6 @@ extension Account {
 // MARK: - SafeForLoggingStringConvertible
 
 extension Account: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         userIdentifier.safeForLoggingDescription
     }

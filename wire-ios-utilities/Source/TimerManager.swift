@@ -19,7 +19,6 @@
 import Foundation
 
 public final class TimerManager<Identifier: Hashable> {
-
     public enum TimerError: Error {
         case timerAlreadyExists
         case timerNotFound

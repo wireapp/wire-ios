@@ -22,7 +22,6 @@ import XCTest
 @testable import WireReusableUIComponents
 
 final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
-
     typealias SUT = AvailabilityIndicatorView
 
     /// A container is needed because the availability indicator view has a border beyond its frame.

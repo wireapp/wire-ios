@@ -19,7 +19,6 @@
 import Foundation
 
 public enum ConnectionStatus: String, Codable, Equatable {
-
     /// The connection is complete and the conversation is in its normal state
 
     case accepted

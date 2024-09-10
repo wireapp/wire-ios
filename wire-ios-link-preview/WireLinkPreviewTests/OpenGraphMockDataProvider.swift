@@ -27,9 +27,7 @@ struct OpenGraphMockData {
 }
 
 final class OpenGraphMockDataProvider: NSObject {
-
     static func twitterData() -> OpenGraphMockData {
-
         let expected = OpenGraphData(
             title: "ericasadun on Twitter",
             type: "article",
@@ -49,7 +47,6 @@ final class OpenGraphMockDataProvider: NSObject {
     }
 
     static func twitterDataWithImages() -> OpenGraphMockData {
-
         let expected = OpenGraphData(
             title: "Ayaka Nonaka on Twitter",
             type: "article",
@@ -70,7 +67,6 @@ final class OpenGraphMockDataProvider: NSObject {
     }
 
     static func foursquareData() -> OpenGraphMockData {
-
         var expected = OpenGraphData(
             title: "NETA Mexican Street Food",
             type: "playfoursquare:venue",

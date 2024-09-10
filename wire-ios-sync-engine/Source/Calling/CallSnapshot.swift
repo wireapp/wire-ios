@@ -24,7 +24,6 @@ import Foundation
  */
 
 struct CallSnapshot {
-
     var qualifiedID: QualifiedID?
     var groupIDs: (parent: MLSGroupID, subconversation: MLSGroupID)?
 

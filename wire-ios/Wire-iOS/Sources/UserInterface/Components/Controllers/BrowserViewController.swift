@@ -21,7 +21,6 @@ import SafariServices
 import WireDesign
 
 final class BrowserViewController: SFSafariViewController {
-
     var completion: (() -> Void)?
     var onDismiss: (() -> Void)?
 

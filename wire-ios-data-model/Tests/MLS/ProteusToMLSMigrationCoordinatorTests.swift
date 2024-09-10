@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
-
     // MARK: - Properties
 
     var sut: ProteusToMLSMigrationCoordinator!
@@ -412,7 +411,6 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
     private func createUserAndGroupConversation(
         groupID: MLSGroupID = .random()
     ) async -> (ZMUser, ZMConversation) {
-
         return await syncMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.teamIdentifier = UUID()

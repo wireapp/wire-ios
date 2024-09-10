@@ -22,7 +22,6 @@ import WireCryptobox
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
 @objcMembers public final class DraftMessage: NSObject {
-
     /// The text of the message.
     public let text: String
     /// The mentiones contained in the text.
@@ -46,7 +45,6 @@ import WireCryptobox
 /// A serializable version of `DraftMessage` that conforms to `Codable` and
 /// holds on to a `StorableMention` values instead `Mention`.
 private final class StorableDraftMessage: NSObject, Codable {
-
     /// The text of the message to be stored.
     let text: String
     /// The mentiones contained in the text.
@@ -73,7 +71,6 @@ private final class StorableDraftMessage: NSObject, Codable {
 /// A serializable version of `Mention` that conforms to `Codable` and
 /// stores a user identifier instead of a whole `UserType` value.
 private struct StorableMention: Codable {
-
     /// The range of the mention.
     let range: NSRange
     /// The user identifier of the user being mentioned.
@@ -90,7 +87,6 @@ private struct StorableMention: Codable {
 /// A serializable version of `ZMMessage` that conforms to `Codable` and
 /// stores the message identifier instead of a whole `ZMMessage` value.
 private struct StorableQuote: Codable {
-
     /// The identifier for the message being quoted.
     let nonce: UUID?
 
@@ -105,7 +101,6 @@ private struct StorableQuote: Codable {
 // MARK: - Conversation Accessors
 
 @objc extension ZMConversation {
-
     private static let log = ZMSLog(tag: "EAR")
 
     /// Internal storage of the serialized `draftMessage`.
@@ -168,7 +163,6 @@ private struct StorableQuote: Codable {
 // MARK: - Storable Helper
 
 fileprivate extension UserType {
-
     // Private helper to get the user identifier for a `UserType`.
     var userIdentifier: UUID? {
         if let user = self as? ZMUser {
@@ -182,7 +176,6 @@ fileprivate extension UserType {
 }
 
 fileprivate extension Mention {
-
     /// The storable version of the object.
     var storable: StorableMention? {
         return user.userIdentifier.map {
@@ -192,7 +185,6 @@ fileprivate extension Mention {
 }
 
 fileprivate extension DraftMessage {
-
     /// The storable version of the object.
     var storable: StorableDraftMessage {
         return .init(text: text,

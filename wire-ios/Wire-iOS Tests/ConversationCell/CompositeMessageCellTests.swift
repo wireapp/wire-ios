@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
-
     typealias CellConfiguration = (MockMessage) -> Void
 
     var mockSelfUser: MockUserType!

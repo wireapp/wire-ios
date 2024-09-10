@@ -19,7 +19,6 @@
 import Foundation
 
 @objc extension ZMHotFixDirectory {
-
     public static func moveOrUpdateSignalingKeysInContext(_ context: NSManagedObjectContext) {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.apsVerificationKey == nil, selfClient.apsDecryptionKey == nil
         else { return }
@@ -86,7 +85,6 @@ import Foundation
     }
 
     public static func markAllNewConversationSystemMessagesAsRead(_ context: NSManagedObjectContext) {
-
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
@@ -103,7 +101,6 @@ import Foundation
             // Mark the first .newConversation system message as read if it's not already read.
             if let firstSystemMessage = messages.first as? ZMSystemMessage, firstSystemMessage.systemMessageType == .newConversation,
                let serverTimestamp = firstSystemMessage.serverTimestamp {
-
                 guard let lastReadServerTimeStamp = conversation.lastReadServerTimeStamp else {
                     // if lastReadServerTimeStamp is nil the conversation was never read
                     return conversation.lastReadServerTimeStamp = serverTimestamp

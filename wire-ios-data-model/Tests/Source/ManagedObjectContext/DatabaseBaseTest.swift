@@ -21,7 +21,6 @@ import Foundation
 import WireTesting
 
 class DatabaseBaseTest: ZMTBaseTest {
-
     var accountID: UUID = UUID.create()
 
     public static var applicationContainer: URL {
@@ -56,7 +55,6 @@ class DatabaseBaseTest: ZMTBaseTest {
 
     /// Create storage stack
     func createStorageStackAndWaitForCompletion(userID: UUID = UUID(), file: StaticString = #file, line: UInt = #line) -> CoreDataStack {
-
         // we use backgroundActivity during the setup so we need to mock it for tests
         let manager = MockBackgroundActivityManager()
         BackgroundActivityFactory.shared.activityManager = manager

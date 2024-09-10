@@ -19,7 +19,6 @@
 import Foundation
 
 enum CommitError: Error, Equatable {
-
     case failedToGenerateCommit
     case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
     case failedToMergeCommit
@@ -27,7 +26,6 @@ enum CommitError: Error, Equatable {
     case noPendingProposals
 
     enum RecoveryStrategy: Equatable {
-
         /// Perform a quick sync, then commit pending proposals.
         ///
         /// Core Crypto can automatically recover if it processes all
@@ -60,7 +58,6 @@ enum CommitError: Error, Equatable {
 }
 
 extension CommitError.RecoveryStrategy {
-
     /// Whether the pending commit should be discarded.
 
     var shouldDiscardCommit: Bool {

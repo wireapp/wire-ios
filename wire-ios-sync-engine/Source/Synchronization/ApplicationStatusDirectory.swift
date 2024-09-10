@@ -22,7 +22,6 @@ import WireRequestStrategy
 
 @objcMembers
 public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
-
     public let userProfileImageUpdateStatus: UserProfileImageUpdateStatus
     public let userProfileUpdateStatus: UserProfileUpdateStatus
     public let clientRegistrationStatus: ZMClientRegistrationStatus

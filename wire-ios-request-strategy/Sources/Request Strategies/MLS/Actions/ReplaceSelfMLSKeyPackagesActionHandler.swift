@@ -19,7 +19,6 @@
 import WireDataModel
 
 final class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLSKeyPackagesAction> {
-
     // MARK: - Methods
 
     override func request(for action: ReplaceSelfMLSKeyPackagesAction, apiVersion: APIVersion) -> ZMTransportRequest? {

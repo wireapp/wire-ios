@@ -35,7 +35,6 @@ struct CallInfo {
 private let zmLog = ZMSLog(tag: "Analytics")
 
 final class AnalyticsCallingTracker: NSObject {
-
     private static let conversationIdKey = "conversationId"
 
     let analytics: Analytics
@@ -75,13 +74,11 @@ final class AnalyticsCallingTracker: NSObject {
 // MARK: - WireCallCenterCallStateObserver
 
 extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState,
                              conversation: ZMConversation,
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
-
         let conversationId = conversation.remoteIdentifier!
 
         switch callState {
@@ -171,7 +168,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
             let screenSharingDate = screenSharingStartTimes[screenSharedParticipant.clientId],
             let conversationId = conversation.remoteIdentifier,
             let callInfo = callInfos[conversationId] {
-
             // When videoState == .stopped from a remote participant, tag the event if we found a record in screenSharingInfos set with matching clientId
             analytics.tag(callEvent: .screenSharing(duration: -screenSharingDate.timeIntervalSinceNow),
                           in: conversation,
@@ -183,7 +179,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
 }
 
 private extension CallClosedReason {
-
     var analyticsValue: String {
         switch self {
         case .canceled:

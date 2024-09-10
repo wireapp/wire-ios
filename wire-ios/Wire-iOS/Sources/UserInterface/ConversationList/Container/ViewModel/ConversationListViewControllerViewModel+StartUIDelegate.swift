@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
-
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
         guard let userID = user.qualifiedID else { return }
 
@@ -32,14 +31,12 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                 let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
 
                 if isReady {
-
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
                     guard let conversation else { return }
                     await openConversation(conversation)
 
                 } else {
-
                     // If the conversation should be using mls and is not established,
                     // or does not exits, then we open the user profile to let the user
                     // create the conversation

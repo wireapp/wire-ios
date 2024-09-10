@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMUserMentionsTest: XCTestCase {
-
     var selfUser: MockUserType!
     var otherUser: MockUserType!
     var serviceUser: MockUserType!

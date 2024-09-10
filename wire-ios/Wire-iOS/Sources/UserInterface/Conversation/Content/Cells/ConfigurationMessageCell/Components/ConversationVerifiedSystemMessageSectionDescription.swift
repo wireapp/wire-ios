@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
 
     let configuration: View.Configuration

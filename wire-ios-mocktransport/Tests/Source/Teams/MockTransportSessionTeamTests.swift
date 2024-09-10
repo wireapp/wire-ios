@@ -23,9 +23,7 @@ import XCTest
 // MARK: - Teams
 
 class MockTransportSessionTeamTests: MockTransportSessionTests {
-
     func checkThat(response: ZMTransportResponse?, contains teams: [MockTeam], hasMore: Bool = false, file: StaticString = #file, line: UInt = #line) {
-
         XCTAssertNotNil(response, "Response should not be empty", file: file, line: line)
         XCTAssertEqual(response?.httpStatus, 200, "Http status should be 200", file: file, line: line)
         XCTAssertNotNil(response?.payload, "Response should have payload", file: file, line: line)
@@ -163,7 +161,6 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
 // MARK: - Team permissions
 
 extension MockTransportSessionTeamTests {
-
     func testThatItReturnsErrorForNonExistingTeam() {
         // Given
         sut.performRemoteChanges { session in
@@ -252,7 +249,6 @@ extension MockTransportSessionTeamTests {
 // MARK: - Conversation
 
 extension MockTransportSessionTeamTests {
-
     func testThatTeamConversationCantBeDeleted_ByNonTeamUser() {
         // Given
         var team: MockTeam!
@@ -329,7 +325,6 @@ extension MockTransportSessionTeamTests {
 // MARK: - Members
 
 extension MockTransportSessionTeamTests {
-
     func testMembersPayload() {
         // Given
         var member: MockMember!

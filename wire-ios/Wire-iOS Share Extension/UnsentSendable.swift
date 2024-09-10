@@ -75,7 +75,6 @@ extension UnsentSendable {
 }
 
 class UnsentSendableBase {
-
     let conversation: WireShareEngine.Conversation
     let sharingSession: SharingSession
 
@@ -91,7 +90,6 @@ class UnsentSendableBase {
 
 /// `UnsentSendable` implementation to send text messages
 final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
-
     private var text: String
     private let attachment: NSItemProvider?
 
@@ -118,7 +116,6 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         needsPreparation = false
 
         if let attachment = self.attachment, attachment.hasURL {
-
             self.attachment?.fetchURL(completion: { _ in
                 completion()
             })
@@ -130,7 +127,6 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
 /// `UnsentSendable` implementation to send image messages
 final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
-
     private let attachment: NSItemProvider
     private var imageData: Data?
 
@@ -176,7 +172,6 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                 completion()
 
             } else {
-
                 // if it fails, it will attach the content directly
 
                 self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] image, error in
@@ -203,7 +198,6 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
 /// `UnsentSendable` implementation to send file messages
 class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
-
     static let passkitUTI = "com.apple.pkpass"
     private let attachment: NSItemProvider
     private var metadata: ZMFileMetadata?
@@ -303,7 +297,6 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                                         data: data,
                                         completion: prepareColsure)
             } else if let dataURL = data as? URL {
-
                 guard dataURL.fileSize ?? .max <= AccountManager.fileSizeLimitInBytes else {
                     self?.error = .fileSizeTooBig
                     return completion()

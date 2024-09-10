@@ -21,7 +21,6 @@ import WireDataModel
 import WireTransport
 
 final class FetchMLSSubconversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSSubconversationGroupInfoAction> {
-
     override func request(for action: FetchMLSSubconversationGroupInfoAction, apiVersion: APIVersion) -> ZMTransportRequest? {
         var action = action
 

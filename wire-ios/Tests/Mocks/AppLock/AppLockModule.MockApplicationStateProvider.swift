@@ -20,9 +20,7 @@ import Foundation
 @testable import Wire
 
 extension AppLockModule {
-
     final class MockApplicationStateProvider: ApplicationStateProvider {
-
         var applicationState = UIApplication.State.active
     }
 }

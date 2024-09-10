@@ -17,7 +17,6 @@
 //
 
 fileprivate extension Notification {
-
     var contextDidSaveData: [AnyHashable: AnyObject] {
         guard let info = userInfo else { return [:] }
         var changes = [AnyHashable: AnyObject]()
@@ -35,7 +34,6 @@ fileprivate extension Notification {
 /// This class is used to persist `NSManagedObjectContext` change
 /// notifications in order to merge them into the main app contexts.
 @objcMembers public class ContextDidSaveNotificationPersistence: NSObject {
-
     private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 
     public required init(accountContainer url: URL) {
@@ -56,7 +54,6 @@ fileprivate extension Notification {
 }
 
 @objcMembers public class StorableTrackingEvent: NSObject {
-
     private static let eventNameKey = "eventName"
     private static let eventAttributesKey = "eventAttributes"
 
@@ -116,7 +113,6 @@ class SharedObjectTestClass: NSObject, NSCoding {
 
 /// This class is used to persist objects in a shared directory
 public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
-
     private let directory: URL
     private let url: URL
     private let fileManager = FileManager.default

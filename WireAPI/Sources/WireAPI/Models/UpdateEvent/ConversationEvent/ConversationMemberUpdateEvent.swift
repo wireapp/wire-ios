@@ -21,7 +21,6 @@ import Foundation
 /// An event where some metadata changed for a member in a conversation.
 
 public struct ConversationMemberUpdateEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

@@ -92,7 +92,6 @@ extension AddParticipantsViewController.Context {
 }
 
 final class AddParticipantsViewController: UIViewController {
-
     enum CreateAction {
         case updatedUsers(UserSet)
         case create
@@ -443,7 +442,6 @@ final class AddParticipantsViewController: UIViewController {
 }
 
 extension AddParticipantsViewController: UserSelectionObserver {
-
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType) {
         updateSelectionValues()
     }
@@ -458,7 +456,6 @@ extension AddParticipantsViewController: UserSelectionObserver {
 }
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
-
     @objc func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
         if case .add(let conversation) = viewModel.context {
             self.dismiss(animated: true) {
@@ -473,7 +470,6 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
 }
 
 extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate {
-
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         return UIModalPresentationStyle.overFullScreen
     }
@@ -501,7 +497,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
-
         guard case let .add(conversation) = viewModel.context else { return }
 
         let detail = ServiceDetailViewController(

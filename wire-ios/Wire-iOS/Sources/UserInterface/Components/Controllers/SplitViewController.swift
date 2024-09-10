@@ -338,7 +338,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     /// - Parameters:
     ///   - traitCollection: the new traitCollection
     private func updateLayoutSize(for traitCollection: UITraitCollection) {
-
         switch (isiOSAppOnMac, traitCollection.horizontalSizeClass, UIWindow.interfaceOrientation?.isPortrait) {
         case (true, _, true), (false, .regular, false):
             layoutSize = .regularLandscape
@@ -447,7 +446,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     // MARK: - constraints
 
     private func setupInitialConstraints() {
-
         leftViewLeadingConstraint = leftView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         leftViewLeadingConstraint.priority = UILayoutPriority.defaultHigh
         rightViewLeadingConstraint = rightView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
@@ -502,7 +500,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     @objc
     func onHorizontalPan(_ gestureRecognizer: UIPanGestureRecognizer?) {
-
         guard layoutSize != .regularLandscape,
             delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
             isConversationViewVisible,
@@ -547,7 +544,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 }
 
 extension SplitViewController: UIGestureRecognizerDelegate {
-
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if layoutSize == .regularLandscape {
             return false

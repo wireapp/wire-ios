@@ -20,7 +20,6 @@
 import XCTest
 
 class UserPropertyRequestStrategyTests: MessagingTestBase {
-
     var applicationStatus: MockApplicationStatus!
     var sut: UserPropertyRequestStrategy!
 
@@ -100,7 +99,6 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
 
     func testThatItUpdatesPropertyFromUpdateEvent_delete() {
         self.syncMOC.performGroupedAndWait {
-
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false

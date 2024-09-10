@@ -21,7 +21,6 @@ import Foundation
 /// An event concerning teams.
 
 public enum TeamEvent: Equatable, Codable {
-
     /// The self team was deleted.
 
     case delete

@@ -19,7 +19,6 @@
 import Foundation
 
 public extension TimeInterval {
-
     static let fourWeeks = 4 * oneWeek
     static let oneWeek = 7 * oneDay
     static let oneDay = 24 * oneHour

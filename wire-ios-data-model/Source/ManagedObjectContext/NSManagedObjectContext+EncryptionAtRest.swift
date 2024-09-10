@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 
 extension Sequence where Element: NSManagedObject {
-
     /// Perform changes on a sequence of NSManagedObjects and save at a regular interval and fault
     /// objects in order to keep memory consumption low.
     ///
@@ -53,7 +52,6 @@ extension Sequence where Element: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-
     public var isLocked: Bool {
         guard encryptMessagesAtRest else { return false }
         return databaseKey == nil
@@ -62,7 +60,6 @@ extension NSManagedObjectContext {
     // MARK: - Migration
 
     enum MigrationError: LocalizedError {
-
         case missingDatabaseKey
         case failedToMigrateInstances(type: ZMManagedObject.Type, reason: String)
 
@@ -192,7 +189,6 @@ extension NSManagedObjectContext {
     // MARK: - Encryption / Decryption
 
     enum EncryptionError: LocalizedError {
-
         case missingDatabaseKey
         case missingContextData
         case cryptobox(error: ChaCha20Poly1305.AEADEncryption.EncryptionError)
@@ -309,7 +305,6 @@ private typealias MigratableEntity = ZMManagedObject & EncryptionAtRestMigratabl
 /// A type that needs to be migrated when encryption at rest is enabled / disabled.
 
 protocol EncryptionAtRestMigratable {
-
     /// The predicate to use to fetch specific instances for migration.
 
     static var predicateForObjectsNeedingMigration: NSPredicate? { get }

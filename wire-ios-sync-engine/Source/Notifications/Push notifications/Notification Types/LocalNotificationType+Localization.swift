@@ -77,7 +77,6 @@ private let NoConversationNameKey = "noconversationname"
 private let NoUserNameKey = "nousername"
 
 extension LocalNotificationType {
-
     fileprivate var baseKey: String {
         switch self {
         case .message(let contentType):
@@ -175,7 +174,6 @@ extension LocalNotificationType {
     }
 
     func titleText(selfUser: ZMUser, conversation: ZMConversation? = nil) -> String? {
-
         if case .message(let contentType) = self {
             switch contentType {
             case .ephemeral:
@@ -300,7 +298,6 @@ extension LocalNotificationType {
 }
 
 extension String {
-
     internal var pushFormatString: String {
         return Bundle(for: ZMUserSession.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
     }

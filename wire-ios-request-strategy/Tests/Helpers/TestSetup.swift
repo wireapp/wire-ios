@@ -21,7 +21,6 @@ import WireTransport
 import WireTransportSupport
 
 final class TestSetup: NSObject {
-
     override init() {
         super.init()
 

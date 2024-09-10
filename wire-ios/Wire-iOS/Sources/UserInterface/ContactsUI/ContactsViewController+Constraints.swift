@@ -19,7 +19,6 @@
 import UIKit
 
 extension ContactsViewController {
-
     func setupLayout() {
         [searchHeaderViewController.view,
          separatorView,

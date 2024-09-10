@@ -23,7 +23,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class VoIPPushHelperTests: XCTestCase {
-
     private let userDefaultsSuiteName = "VoIPPushHelperTests"
 
     // MARK: - Set up

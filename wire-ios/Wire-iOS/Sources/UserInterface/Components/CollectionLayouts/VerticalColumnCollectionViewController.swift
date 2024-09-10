@@ -23,7 +23,6 @@ import UIKit
  */
 
 struct AdaptiveColumnCount {
-
     /// The number of columns when the container has a compact horizontal size class.
     let compact: Int
 
@@ -43,7 +42,6 @@ struct AdaptiveColumnCount {
  */
 
 class VerticalColumnCollectionViewController: UICollectionViewController, VerticalColumnCollectionViewLayoutDelegate {
-
     fileprivate let layout: VerticalColumnCollectionViewLayout
     fileprivate let columnCount: AdaptiveColumnCount
 

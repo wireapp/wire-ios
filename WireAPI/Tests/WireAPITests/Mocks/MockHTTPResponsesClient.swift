@@ -21,7 +21,6 @@ import Foundation
 @testable import WireAPI
 
 final class MockHTTPResponsesClient: HTTPClient {
-
     private(set) var receivedRequests: [HTTPRequest] = []
 
     var httpResponses: [HTTPResponse] = []

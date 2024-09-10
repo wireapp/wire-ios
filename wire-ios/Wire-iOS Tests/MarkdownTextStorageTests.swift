@@ -21,7 +21,6 @@ import Down
 import XCTest
 
 final class MarkdownTextStorageTests: XCTestCase {
-
     var sut: MarkdownTextStorage!
 
     override func setUp() {

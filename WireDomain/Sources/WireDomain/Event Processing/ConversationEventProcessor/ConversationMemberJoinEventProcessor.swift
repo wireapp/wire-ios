@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation member join events.
 
 protocol ConversationMemberJoinEventProcessorProtocol {
-
     /// Process a conversation member join event.
     ///
     /// - Parameter event: A conversation member join event.
@@ -30,7 +29,6 @@ protocol ConversationMemberJoinEventProcessorProtocol {
 }
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
-
     func processEvent(_: ConversationMemberJoinEvent) async throws {
         // TODO: [WPB-10168]
         assertionFailure("not implemented yet")

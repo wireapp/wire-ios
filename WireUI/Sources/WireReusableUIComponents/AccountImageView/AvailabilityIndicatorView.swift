@@ -36,7 +36,6 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 // MARK: -
 
 final class AvailabilityIndicatorView: UIView {
-
     // MARK: - Properties
 
     var availability: Availability? {
@@ -150,7 +149,6 @@ final class AvailabilityIndicatorView: UIView {
 // MARK: AvailabilityIndicatorView + init(availability:)
 
 extension AvailabilityIndicatorView {
-
     public convenience init(availability: Availability) {
         self.init()
         self.availability = availability
@@ -172,7 +170,6 @@ extension AvailabilityIndicatorView {
 }
 
 private struct AvailabilityIndicatorViewRepresentable: UIViewRepresentable {
-
     @State private(set) var availability: Availability?
 
     func makeUIView(context: Context) -> AvailabilityIndicatorView { .init() }

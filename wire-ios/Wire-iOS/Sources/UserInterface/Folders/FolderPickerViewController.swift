@@ -26,7 +26,6 @@ protocol FolderPickerViewControllerDelegate: AnyObject {
 }
 
 final class FolderPickerViewController: UIViewController {
-
     var delegate: FolderPickerViewControllerDelegate?
 
     private var conversationDirectory: ConversationDirectoryType
@@ -106,7 +105,6 @@ final class FolderPickerViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         view.addSubview(collectionView)
         view.addSubview(hintLabel)
 
@@ -129,7 +127,6 @@ final class FolderPickerViewController: UIViewController {
 // MARK: - Table View
 
 extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -139,7 +136,6 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
         let item = items[indexPath.row]
         cell.title = item.name
@@ -172,7 +168,6 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
 }
 
 extension FolderPickerViewController: FolderCreationControllerDelegate {
-
     func folderController(_ controller: FolderCreationController, didCreateFolder folder: LabelType) {
         pickFolder(folder)
     }

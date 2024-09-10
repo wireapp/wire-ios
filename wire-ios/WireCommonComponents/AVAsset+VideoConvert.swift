@@ -61,9 +61,7 @@ extension AVAsset {
 public typealias ConvertVideoCompletion = (URL?, AVURLAsset?, Error?) -> Void
 
 extension AVURLAsset {
-
     enum ConversionFailure: Error {
-
         case missingVideoTrack
         case exportSessionUnavailable
     }
@@ -150,7 +148,6 @@ extension AVURLAsset {
 }
 
 extension AVAssetExportSession {
-
     func exportVideo(
         exportURL: URL,
         completion: @escaping (URL?, Error?) -> Void

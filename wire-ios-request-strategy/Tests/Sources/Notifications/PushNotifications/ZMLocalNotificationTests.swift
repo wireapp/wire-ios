@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMLocalNotificationTests: MessagingTestBase {
-
     typealias ZMLocalNotification = WireRequestStrategy.ZMLocalNotification
 
     var sender: ZMUser!
@@ -210,7 +209,6 @@ class ZMLocalNotificationTests: MessagingTestBase {
                                        senderID: UUID = UUID.create(),
                                        timer: Int64 = 31536000000,
                                        timestamp: Date = Date()) -> ZMUpdateEvent {
-
        let payload: [String: Any] = [
         "from": senderID.transportString(),
         "conversation": conversationID.transportString(),

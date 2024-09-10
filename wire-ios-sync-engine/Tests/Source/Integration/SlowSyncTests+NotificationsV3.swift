@@ -24,7 +24,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class SlowSyncTests_NotificationsV3: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

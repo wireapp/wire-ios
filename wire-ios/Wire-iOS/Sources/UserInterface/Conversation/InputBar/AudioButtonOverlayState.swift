@@ -44,7 +44,6 @@ enum AudioButtonOverlayState {
 // MARK: Animation
 
 extension AudioButtonOverlayState {
-
     var animatable: Bool {
         if case .hidden = self {
             return false

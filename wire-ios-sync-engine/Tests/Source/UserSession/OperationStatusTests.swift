@@ -21,7 +21,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class OperationStatusTests: MessagingTest {
-
     fileprivate var sut: OperationStatus!
 
     override func setUp() {
@@ -62,7 +61,6 @@ final class OperationStatusTests: MessagingTest {
     }
 
     func testThatBackgroundTaskIsUpdatingOperationState() {
-
         // given
         sut.isInBackground = true
         let handlerCalled = customExpectation(description: "background task handler called")
@@ -84,7 +82,6 @@ final class OperationStatusTests: MessagingTest {
     }
 
     func testThatBackgroundFetchIsUpdatingOperationState() {
-
         // given
         sut.isInBackground = true
         let handlerCalled = customExpectation(description: "background fetch handler called")
@@ -107,7 +104,6 @@ final class OperationStatusTests: MessagingTest {
     }
 
     func testThatStartingMultipleBackgroundTasksFail() {
-
         let successHandler = customExpectation(description: "background task handler called with success result")
         let failureHandler = customExpectation(description: "background task handler called with failure result")
 
@@ -131,7 +127,6 @@ final class OperationStatusTests: MessagingTest {
     }
 
     func testThatStartingMultipleBackgroundFetchesFail() {
-
         let successHandler = customExpectation(description: "background fetch handler called with success result")
         let failureHandler = customExpectation(description: "background fetch handler called with failure result")
 

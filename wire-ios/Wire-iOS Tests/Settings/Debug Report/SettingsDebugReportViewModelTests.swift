@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 class SettingsDebugReportViewModelTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: SettingsDebugReportViewModel!

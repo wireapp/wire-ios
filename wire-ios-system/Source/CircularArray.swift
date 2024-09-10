@@ -22,7 +22,6 @@ import Foundation
 /// new elements that are inserted will overwrite the oldest elements, allowing
 /// for inserting an infinite amount of elements (at the cost of discarding the old ones)
 public struct CircularArray<Element> {
-
     /// Max size
     private let size: Int
 

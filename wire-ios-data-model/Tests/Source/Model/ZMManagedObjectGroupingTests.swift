@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class ZMManagedObjectGroupingTests: DatabaseBaseTest {
-
     var mocs: CoreDataStack!
 
     public override func setUp() {

@@ -19,7 +19,6 @@
 @testable import WireSyncEngine
 
 extension RecurringAction {
-
     static var dummy: Self {
         .init(id: .randomAlphanumerical(length: 16), interval: .infinity) {}
     }

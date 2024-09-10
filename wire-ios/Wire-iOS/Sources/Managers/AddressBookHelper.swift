@@ -34,7 +34,6 @@ protocol AddressBookHelperProtocol: AnyObject {
 
 /// Allows access to address book for search
 final class AddressBookHelper: AddressBookHelperProtocol {
-
     /// Singleton
     static var sharedHelper: AddressBookHelperProtocol = AddressBookHelper()
 

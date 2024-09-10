@@ -25,7 +25,6 @@ import XCTest
 @testable import WireShareEngine
 
 final class OperationLoopTests: ZMTBaseTest {
-
     var coreDataStack: CoreDataStack! = nil
     var sut: OperationLoop! = nil
 
@@ -64,9 +63,7 @@ final class OperationLoopTests: ZMTBaseTest {
 }
 
 extension OperationLoopTests {
-
     func testThatItMergesUiContextInSyncContext() {
-
         let userID = UUID()
 
         var syncUser: ZMUser! = nil

@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 final class UnownedObjectTests: XCTestCase {
-
     func testThatCreatingAnUnownedObjectWithALocallyScopedObjectIsValid() {
         let nsnumber = 10 as AnyObject
         let unown = UnownedObject(nsnumber)
@@ -29,7 +28,6 @@ final class UnownedObjectTests: XCTestCase {
     }
 
     func testThatUnownedObjectIsInvalidIfValueDoesNotExistAnymore() {
-
         var array: [NSObject]? = [NSObject()]
         let unownedObject = UnownedObject(array![0] as AnyObject)
         array = nil

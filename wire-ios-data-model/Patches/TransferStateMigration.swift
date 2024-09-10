@@ -19,7 +19,6 @@
 import Foundation
 
 struct TransferStateMigration {
-
     internal enum LegacyTransferState: Int, CaseIterable {
         case uploading = 0
         case uploaded
@@ -48,7 +47,6 @@ struct TransferStateMigration {
     /// only contains a subset  of the original cases. This method will fetch and migrate all asset messages
     /// which doesn't have a valid tranferState any more.
     static func migrateLegacyTransferState(in moc: NSManagedObjectContext) {
-
         guard moc.persistentStoreCoordinator?.persistentStores.first?.type == NSSQLiteStoreType else {
             return // batch update requests are only supported on sql stores
         }

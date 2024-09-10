@@ -19,9 +19,7 @@
 import Foundation
 
 extension ZMConversation {
-
     public enum UpdateSelfConversationError: Error {
-
         case invalidConversation
         case missingLastReadTimestamp
         case missingClearedTimestamp

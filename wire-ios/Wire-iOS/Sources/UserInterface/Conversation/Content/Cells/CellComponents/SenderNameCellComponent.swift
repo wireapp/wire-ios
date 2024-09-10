@@ -19,7 +19,6 @@
 import UIKit
 
 final class SenderNameCellComponent: UIView {
-
     let label = UILabel()
     let indicatorView = UIImageView()
     private var indicatorImageViewTrailing: NSLayoutConstraint!

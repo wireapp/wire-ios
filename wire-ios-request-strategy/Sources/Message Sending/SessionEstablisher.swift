@@ -28,7 +28,6 @@ public protocol SessionEstablisherInterface {
 }
 
 public class SessionEstablisher: SessionEstablisherInterface {
-
     public init(
         context: NSManagedObjectContext,
         apiProvider: APIProviderInterface,

@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMAssetClientMessage {
-
     override open var needsReadConfirmation: Bool {
         guard let genericMessage = underlyingMessage else { return false }
         return needsReadConfirmation(genericMessage)

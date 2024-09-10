@@ -39,7 +39,6 @@ public enum MessageSendFailure: Int {
 
 @objc
 public protocol ReadReceipt {
-
     @available(*, deprecated, message: "Use `userType` instead")
     var user: ZMUser { get }
     var userType: UserType { get }
@@ -49,7 +48,6 @@ public protocol ReadReceipt {
 
 @objc
 public protocol ZMConversationMessage: NSObjectProtocol {
-
     /// Unique identifier for the message
     var nonce: UUID? { get }
 
@@ -171,7 +169,6 @@ public protocol ConversationCompositeMessage {
 }
 
 public protocol SwiftConversationMessage {
-
     /// Reason why the message has not been sent
     var failedToSendReason: MessageSendFailure? { get }
 
@@ -180,7 +177,6 @@ public protocol SwiftConversationMessage {
 }
 
 public extension ZMConversationMessage {
-
     /// Whether the given user is the sender of the message.
 
     func isUserSender(_ user: UserType) -> Bool {
@@ -212,7 +208,6 @@ public func == (lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Boo
 // MARK: - Conversation managed properties
 
 extension ZMMessage {
-
     @NSManaged public var visibleInConversation: ZMConversation?
     @NSManaged public var hiddenInConversation: ZMConversation?
 
@@ -268,7 +263,6 @@ extension ZMMessage: ZMConversationMessage {
               let conversation = self.conversation,
               let managedObjectContext = self.managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
-
                   zmLog.error("Cannot mark as unread message outside of the conversation.")
                   return
               }
@@ -306,7 +300,6 @@ extension ZMMessage: ZMConversationMessage {
 }
 
 extension ZMMessage {
-
     @NSManaged public var sender: ZMUser?
     @NSManaged public var serverTimestamp: Date?
 
@@ -399,6 +392,5 @@ extension ZMMessage {
 // MARK: - Message send failure properties
 
 extension ZMMessage {
-
     @NSManaged public var failedToSendRecipients: Set<ZMUser>?
 }

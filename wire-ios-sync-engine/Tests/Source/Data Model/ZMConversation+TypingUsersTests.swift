@@ -19,7 +19,6 @@
 @testable import WireSyncEngine
 
 class ZMConversation_TypingUsersTests: MessagingTest {
-
     private var token: Any?
 
     func testThatItCreatesANotificationWhenCallingSetTyping() {

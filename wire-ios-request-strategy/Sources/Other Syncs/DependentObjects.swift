@@ -21,7 +21,6 @@ import Foundation
 private let zmLog = ZMSLog(tag: "Dependencies")
 
 public class DependentObjects<Object: Hashable, Dependency: Hashable> {
-
     public init() {
         zmLog.debug("Initialized DependentObject for \(Object.self), \(Dependency.self)")
     }
@@ -106,7 +105,6 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
 /// This is an adapter class for Obj-c, because Obj-c can't use generics.
 /// We will remove it as soon as all the clients of this class are ported to Swift
 @objc public class DependentObjectsObjc: NSObject {
-
     let dependentObjects: DependentObjects<ZMManagedObject, ZMManagedObject>
 
     public override init() {

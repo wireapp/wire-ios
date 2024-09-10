@@ -23,12 +23,10 @@ import WireDesign
 import Ziphy
 
 protocol GiphyConfirmationViewControllerDelegate: AnyObject {
-
     func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data)
 }
 
 final class GiphyConfirmationViewController: UIViewController {
-
     typealias Giphy = L10n.Localizable.Giphy
 
     private let imagePreview = FLAnimatedImageView()
@@ -134,7 +132,6 @@ final class GiphyConfirmationViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         let widthConstraint = buttonContainer.widthAnchor.constraint(equalToConstant: 476)
 
         widthConstraint.priority = .init(700)

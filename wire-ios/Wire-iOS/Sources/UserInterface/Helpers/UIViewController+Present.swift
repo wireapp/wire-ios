@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIViewController {
-
     /// present self from the top most view controller
     ///
     /// - Parameters:

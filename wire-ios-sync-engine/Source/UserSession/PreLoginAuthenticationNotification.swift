@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMUser {
-
     @objc public var loginCredentials: LoginCredentials {
         return LoginCredentials(emailAddress: self.emailAddress,
                                 hasPassword: self.emailAddress != nil,
@@ -29,7 +28,6 @@ extension ZMUser {
 }
 
 extension LoginCredentials {
-
     /// This will be used to set user info on the NSError
     public var dictionaryRepresentation: [String: Any] {
         var userInfo: [String: Any] = [:]

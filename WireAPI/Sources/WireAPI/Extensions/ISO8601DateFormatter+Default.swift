@@ -19,7 +19,6 @@
 import Foundation
 
 extension ISO8601DateFormatter {
-
     /// ISO8601 date formatter for internet date time.
 
     static let internetDateTime = {

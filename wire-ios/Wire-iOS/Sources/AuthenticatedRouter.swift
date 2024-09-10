@@ -33,7 +33,6 @@ protocol AuthenticatedRouterProtocol: AnyObject {
 }
 
 final class AuthenticatedRouter {
-
     // MARK: - Private Property
 
     private let builder: AuthenticatedWireFrame
@@ -184,14 +183,12 @@ struct AuthenticatedWireFrame {
 }
 
 private extension UIViewController {
-
     func presentAlert(_ alert: UIAlertController) {
         present(alert, animated: true, completion: nil)
     }
 }
 
 protocol FeatureRepositoryProvider {
-
     var featureRepository: FeatureRepository { get }
 }
 

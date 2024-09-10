@@ -28,7 +28,6 @@ protocol UserClientTypeAttributedString {
 private let UserClientIdentifierMinimumLength = 16
 
 extension Sequence where Element: UserClientType {
-
     func sortedByRelevance() -> [UserClientType] {
         sorted { lhs, rhs -> Bool in
 
@@ -44,7 +43,6 @@ extension Sequence where Element: UserClientType {
 }
 
 extension UserClientType {
-
     func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
         let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
@@ -75,7 +73,6 @@ extension UserClientType {
 }
 
 extension DeviceType {
-
     typealias DeviceTypeLocale = L10n.Localizable.Device.`Type`
 
     var localizedDescription: String {
@@ -93,7 +90,6 @@ extension DeviceType {
 }
 
 extension DeviceClass {
-
     typealias DeviceClassLocale = L10n.Localizable.Device.Class
 
     var localizedDescription: String {

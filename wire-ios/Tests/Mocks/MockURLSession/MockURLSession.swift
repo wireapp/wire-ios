@@ -35,7 +35,6 @@ enum MockURLSessionError: Error {
  */
 
 class MockURLSession: DataTaskSession {
-
     enum SessionError: Swift.Error {
         case noRequest, noScheduledResponse
     }
@@ -68,7 +67,6 @@ class MockURLSession: DataTaskSession {
     }
 
     func resume(dataTask: DataTask) {
-
         guard let mockTask = tasks.first(where: { $0.taskIdentifier == dataTask.taskIdentifier }) else {
             return
         }
@@ -103,9 +101,7 @@ class MockURLSession: DataTaskSession {
     // MARK: - Response
 
     private func respondToTask(_ task: MockDataTask, with data: Data, response: URLResponse) {
-
         delegateQueue.addOperation {
-
             let cachingCompletionHandler = {
                 task.response = response
                 task.completionHandler(data, response, nil)
@@ -121,7 +117,6 @@ class MockURLSession: DataTaskSession {
     }
 
     private func startCaching(data: Data, for response: URLResponse, task: DataTask, in cache: URLCache, completionHandler: @escaping () -> Void) {
-
         guard let httpResponse = response as? HTTPURLResponse,
             (200 ..< 300).contains(httpResponse.statusCode) else {
                 completionHandler()

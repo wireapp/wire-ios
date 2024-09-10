@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class TeamImageView: UIImageView {
-
     enum TeamImageViewStyle {
         case small
         case big

@@ -23,9 +23,7 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "Drag and drop images")
 
 extension ConversationInputBarViewController: UIDropInteractionDelegate {
-
     func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
-
         for dragItem in session.items {
             let itemProvider = dragItem.itemProvider
             if itemProvider.hasText() {
@@ -87,7 +85,6 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
 }
 
 private extension NSItemProvider {
-
     func hasText() -> Bool {
         // Image dragged from browser can be both NSString and UIImage
         return canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)

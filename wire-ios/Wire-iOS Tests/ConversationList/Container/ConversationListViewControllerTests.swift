@@ -27,7 +27,6 @@ import XCTest
 // MARK: - ConversationListViewControllerTests
 
 final class ConversationListViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var mockMainCoordinator: MockMainCoordinator!
@@ -43,7 +42,6 @@ final class ConversationListViewControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-
         mockMainCoordinator = .init()
         snapshotHelper = SnapshotHelper()
         accentColor = .blue

@@ -23,7 +23,6 @@ import WireTransport
 import XCTest
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
-
     var sut: UserProfileRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
@@ -572,7 +571,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 }
 
 extension Decodable {
-
     init?(_ request: ZMTransportRequest) {
         guard let payloadData = (request.payload as? String)?.data(using: .utf8) else {
             return nil

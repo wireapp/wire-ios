@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 protocol MLSClientIDsProviding {
-
     func fetchUserClients(
         for userID: QualifiedID,
         in context: NotificationContext
@@ -29,7 +28,6 @@ protocol MLSClientIDsProviding {
 }
 
 struct MLSClientIDsProvider: MLSClientIDsProviding {
-
     func fetchUserClients(
         for userID: QualifiedID,
         in context: NotificationContext

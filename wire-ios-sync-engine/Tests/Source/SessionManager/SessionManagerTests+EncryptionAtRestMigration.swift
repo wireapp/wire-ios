@@ -21,7 +21,6 @@ import LocalAuthentication
 @testable import WireSyncEngine
 
 final class SessionManagerEncryptionAtRestMigrationTests: IntegrationTest {
-
     override var useInMemoryStore: Bool {
         return false
     }

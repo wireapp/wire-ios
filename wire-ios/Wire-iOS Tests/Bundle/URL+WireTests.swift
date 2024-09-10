@@ -21,7 +21,6 @@ import WireTransport
 import XCTest
 
 final class URL_WireTests: XCTestCase {
-
     var be: BackendEnvironment!
 
     override func setUp() {

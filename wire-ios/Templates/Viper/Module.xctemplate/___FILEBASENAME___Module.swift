@@ -19,7 +19,6 @@
 import Foundation
 
 enum ___FILEBASENAMEASIDENTIFIER___: ModuleInterface {
-
     static func build() -> View {
         let interactor = Interactor()
         let presenter = Presenter()
@@ -33,9 +32,7 @@ enum ___FILEBASENAMEASIDENTIFIER___: ModuleInterface {
 }
 
 extension ___FILEBASENAMEASIDENTIFIER___ {
-
   enum Event: Equatable {
-
       case viewDidLoad
   }
 
@@ -49,32 +46,27 @@ extension ___FILEBASENAMEASIDENTIFIER___ {
 // MARK: - Interactor
 
 protocol ___VARIABLE_productName:identifier___InteractorPresenterInterface: InteractorPresenterInterface {
-
     func executeRequest(_ request: ___FILEBASENAMEASIDENTIFIER___.Request)
 }
 
 // MARK: - Presenter
 
 protocol ___VARIABLE_productName:identifier___PresenterInteractorInterface: PresenterInteractorInterface {
-
     func handleResult(_ result: ___FILEBASENAMEASIDENTIFIER___.Result)
 }
 
 protocol ___VARIABLE_productName:identifier___PresenterViewInterface: PresenterViewInterface {
-
     func processEvent(_ event: ___FILEBASENAMEASIDENTIFIER___.Event)
 }
 
 // MARK: - View
 
 protocol ___VARIABLE_productName:identifier___ViewPresenterInterface: ViewPresenterInterface {
-
     func refresh(withModel model: ___FILEBASENAMEASIDENTIFIER___.ViewModel)
 }
 
 // MARK: - Router
 
 protocol ___VARIABLE_productName:identifier___RouterPresenterInterface: RouterPresenterInterface {
-
     func performAction(_ action: ___FILEBASENAMEASIDENTIFIER___.Action)
 }

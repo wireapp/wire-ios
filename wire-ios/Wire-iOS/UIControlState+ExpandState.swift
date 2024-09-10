@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIControl.State {
-
     /// Expand UIControl.State to its contained states
     var expanded: [UIControl.State] {
         var expandedStates = [UIControl.State]()

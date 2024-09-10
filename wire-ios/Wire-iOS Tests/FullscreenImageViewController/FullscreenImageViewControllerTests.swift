@@ -20,7 +20,6 @@
 import XCTest
 
 final class FullscreenImageViewControllerTests: XCTestCase {
-
     var sut: FullscreenImageViewController!
     var userSession: UserSessionMock!
 

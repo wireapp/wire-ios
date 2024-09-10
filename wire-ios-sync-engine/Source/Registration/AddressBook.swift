@@ -23,7 +23,6 @@ import libPhoneNumberiOS
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone
 protocol AddressBookAccessor {
-
     /// Number of contacts in the address book
     var numberOfContacts: UInt {get}
 
@@ -42,7 +41,6 @@ protocol AddressBookAccessor {
 }
 
 extension AddressBookAccessor {
-
     /// Enumerates the contacts, normalized and validated, invoking the block for each contact.
     /// Non valid contacts (no email nor phone) will be excluded from the enumeration.
     /// If the block returns false, it will stop enumerating them.
@@ -76,7 +74,6 @@ extension AddressBookAccessor {
         // here we are explicitly capturing self, this is executed on a queue that is
         // never blocked indefinitely as this is the only function using it
         groupQueue.dispatchGroup?.async(on: addressBookProcessingQueue) {
-
             let range: Range<UInt> = startingContactIndex..<(startingContactIndex + maxNumberOfContacts)
             let cards = self.generateContactCards(range: range)
 
@@ -146,7 +143,6 @@ extension AddressBookAccessor {
 
 /// Common base class between iOS 8 (AddressBook framework) and iOS 9+ (Contacts framework)
 class AddressBook {
-
     /// normalizer for phone numbers
     let phoneNumberNormalizer: AddressBook.Normalizer
 
@@ -181,7 +177,6 @@ class AddressBook {
 // MARK: - Encoded address book chunk
 
 struct EncodedAddressBookChunk {
-
     /// Total number of contacts in the address book
     let numberOfTotalContacts: UInt
 
@@ -196,7 +191,6 @@ struct EncodedAddressBookChunk {
 // MARK: - Phone number and email normalization
 
 extension NBPhoneNumberUtil {
-
     /// Returns a normalized version of the phone number, or nil
     /// if the phone number was not normalizable.
     /// - note: numbers starting with "+0", a prefix that is not
@@ -221,10 +215,8 @@ extension NBPhoneNumberUtil {
 }
 
 extension String {
-
     /// Returns a normalized phone number or nil
     var validatedPhoneNumber: String? {
-
         // allow +0 numbers
         if self.hasPrefix("+0") {
             return "+" + (self
@@ -258,7 +250,6 @@ extension String {
 let addressBookContactsSearchLimit = 2000
 
 extension String {
-
     /// Returns the base64 encoded string of the SHA hash of the string
     var base64EncodedSHADigest: String {
         return Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
@@ -269,15 +260,12 @@ extension String {
 let addressBookProcessingQueue = DispatchQueue(label: "Address book processing", attributes: [])
 
 extension Sequence {
-
     /// Returns the elements of the sequence in the positions indicated by the range
     func elements(_ range: Range<UInt>) -> AnyIterator<Self.Iterator.Element> {
-
         var generator = self.makeIterator()
         var count: UInt = 0
 
         return AnyIterator {
-
             while count < range.lowerBound {
                 if generator.next() != nil {
                     count += 1
@@ -297,7 +285,6 @@ extension Sequence {
 
 // Generic contactto abstract actual address book framework details
 protocol ContactRecord {
-
     var rawEmails: [String] { get }
     var rawPhoneNumbers: [String] { get }
     var firstName: String { get }
@@ -309,7 +296,6 @@ protocol ContactRecord {
 }
 
 extension ContactRecord {
-
     var displayName: String {
         return [self.firstName, self.middleName, self.lastName]
             .filter { $0 != "" }
@@ -318,7 +304,6 @@ extension ContactRecord {
 }
 
 extension ZMAddressBookContact {
-
     convenience init?(contact: ContactRecord,
                       phoneNumberNormalizer: AddressBook.Normalizer) {
         self.init()

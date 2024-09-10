@@ -27,7 +27,6 @@ enum Anchor {
 }
 
 extension UIView {
-
     /// fit self in a container view
     /// - Parameters:
     ///   - view: the container view to fit in

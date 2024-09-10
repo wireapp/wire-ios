@@ -24,7 +24,6 @@ import Foundation
 
 @objcMembers
 public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
-
     private let managedObjectContext: NSManagedObjectContext
     private let clientRegistrationStatus: ZMClientRegistrationStatus
     private let clientUpdateStatus: ClientUpdateStatus

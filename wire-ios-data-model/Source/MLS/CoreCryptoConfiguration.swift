@@ -21,7 +21,6 @@ import WireCoreCrypto
 import WireSystem
 
 public struct CoreCryptoConfiguration {
-
     public let path: String
     public let key: String
     public let clientID: String
@@ -32,7 +31,6 @@ public struct CoreCryptoConfiguration {
 }
 
 public class CoreCryptoConfigProvider {
-
     // MARK: - Properties
 
     private let coreCryptoKeyProvider: CoreCryptoKeyProvider
@@ -50,7 +48,6 @@ public class CoreCryptoConfigProvider {
         selfUser: ZMUser,
         createKeyIfNeeded: Bool
     ) throws -> CoreCryptoConfiguration {
-
         let qualifiedClientID = try clientID(of: selfUser)
 
         let initialConfig = try createInitialConfiguration(
@@ -71,7 +68,6 @@ public class CoreCryptoConfigProvider {
         userID: UUID,
         createKeyIfNeeded: Bool
     ) throws -> (path: String, key: String) {
-
         let accountDirectory = CoreDataStack.accountDataFolder(
             accountIdentifier: userID,
             applicationContainer: sharedContainerURL
@@ -110,7 +106,6 @@ public class CoreCryptoConfigProvider {
 }
 
 public extension ClientId {
-
     init?(from string: String) {
         guard let data = string.data(using: .utf8) else {
             return nil

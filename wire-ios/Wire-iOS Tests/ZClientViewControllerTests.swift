@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
-
     private var coreDataFixture: CoreDataFixture!
     private var imageTransformer: MockImageTransformer!
     private var sut: ZClientViewController!

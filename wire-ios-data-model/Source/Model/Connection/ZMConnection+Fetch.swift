@@ -21,7 +21,6 @@ import Foundation
 extension ZMConnection {
     @objc(connectionsInManagedObjectContext:)
     class func connections(inManagedObjectContext moc: NSManagedObjectContext) -> [NSFetchRequestResult] {
-
         let request = sortedFetchRequest()
 
         let result = moc.fetchOrAssert(request: request)
@@ -62,7 +61,6 @@ extension ZMConnection {
                               domain: String?,
                               searchingLocalDomain: Bool,
                               in context: NSManagedObjectContext) -> ZMConnection? {
-
         let predicate: NSPredicate
         if searchingLocalDomain {
             if let domain {

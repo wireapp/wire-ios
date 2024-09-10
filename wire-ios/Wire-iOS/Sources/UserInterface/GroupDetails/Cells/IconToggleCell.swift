@@ -19,7 +19,6 @@
 import UIKit
 
 class IconToggleCell: DetailsCollectionViewCell {
-
     // MARK: - Properties
 
     var isOn: Bool {

@@ -17,7 +17,6 @@
 //
 
 public enum SetAllowGuestsAndServicesUseCaseError: Error {
-
     case invalidOperation
     case contextUnavailable
     case networkError(Error)
@@ -25,7 +24,6 @@ public enum SetAllowGuestsAndServicesUseCaseError: Error {
 
 // sourcery: AutoMockable
 public protocol SetAllowGuestAndServicesUseCaseProtocol {
-
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
@@ -35,7 +33,6 @@ public protocol SetAllowGuestAndServicesUseCaseProtocol {
 }
 
 struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol {
-
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,

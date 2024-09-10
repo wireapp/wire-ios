@@ -26,7 +26,6 @@ protocol CallActionsViewDelegate: AnyObject {
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
 final class CallActionsView: UIView {
-
     weak var delegate: CallActionsViewDelegate?
 
     private let verticalStackView = UIStackView(axis: .vertical)

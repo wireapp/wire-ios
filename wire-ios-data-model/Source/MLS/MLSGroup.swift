@@ -24,7 +24,6 @@ import Foundation
 
 @objcMembers
 public class MLSGroup: ZMManagedObject {
-
     public override static func entityName() -> String {
         return "MLSGroup"
     }

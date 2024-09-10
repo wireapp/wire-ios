@@ -34,7 +34,6 @@ enum MockZiphyRequesterError: Error {
 
 /// An object that mocks performing requests to the Giphy API.
 final class MockZiphyRequester: ZiphyURLRequester {
-
     private let networkQueue = DispatchQueue(label: "MockZiphyRequester.Network")
     private var completionHandler: MockZiphyRequesterCompletionHandler?
     private var cancellations: Int = 0

@@ -37,7 +37,6 @@ protocol CallDegradationControllerDelegate: AnyObject {
 }
 
 final class CallDegradationController: UIViewController {
-
     weak var delegate: CallDegradationControllerDelegate?
     weak var targetViewController: UIViewController?
     var visibleAlertController: UIAlertController?

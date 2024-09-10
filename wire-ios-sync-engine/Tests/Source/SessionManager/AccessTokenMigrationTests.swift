@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class AccessTokenRenewerMock: AccessTokenRenewing {
-
     struct Calls {
         var setAccessTokenRenewalObserver = [AccessTokenRenewalObserver]()
         var renewAccessToken = [String]()
@@ -46,7 +45,6 @@ class AccessTokenRenewerMock: AccessTokenRenewing {
 }
 
 class AccessTokenMigrationTests: XCTestCase {
-
     func test_itSetsObserver_AndRenewsAccessToken() async throws {
         // Given
         let sut = AccessTokenMigration()

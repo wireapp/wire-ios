@@ -19,7 +19,6 @@
 import UIKit
 
 final class ConversationCreateNameCell: UICollectionViewCell {
-
     let textField = SimpleTextField()
 
     override init(frame: CGRect) {

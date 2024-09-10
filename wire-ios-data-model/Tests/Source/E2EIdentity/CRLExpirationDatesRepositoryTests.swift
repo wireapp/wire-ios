@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 class CRLExpirationDatesRepositoryTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: CRLExpirationDatesRepository!

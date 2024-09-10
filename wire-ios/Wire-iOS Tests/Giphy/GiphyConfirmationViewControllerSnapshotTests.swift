@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
-
     var sut: GiphyConfirmationViewController!
     private var snapshotHelper: SnapshotHelper!
 

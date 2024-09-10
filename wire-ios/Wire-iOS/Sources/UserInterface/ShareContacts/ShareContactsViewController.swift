@@ -23,9 +23,7 @@ import WireDesign
 // MARK: - String Extension
 
 extension String {
-
     func withCustomParagraphSpacing() -> NSMutableAttributedString {
-
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 10
 
@@ -39,7 +37,6 @@ extension String {
 // MARK: - ShareContactsViewController
 
 final class ShareContactsViewController: UIViewController {
-
     // MARK: - Properties
 
     typealias RegistrationShareContacts = L10n.Localizable.Registration.ShareContacts
@@ -115,7 +112,6 @@ final class ShareContactsViewController: UIViewController {
     // MARK: - Setup
 
     private func setupViews() {
-
         view.addSubview(shareContactsContainerView)
 
         shareContactsContainerView.addSubview(heroLabel)
@@ -133,7 +129,6 @@ final class ShareContactsViewController: UIViewController {
     }
 
     private func createConstraints() {
-
         shareContactsContainerView.translatesAutoresizingMaskIntoConstraints = false
         addressBookAccessDeniedViewController.view.translatesAutoresizingMaskIntoConstraints = false
         heroLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -205,7 +200,6 @@ final class ShareContactsViewController: UIViewController {
 // MARK: - ShareContactsViewController Extension
 
 extension ShareContactsViewController: PermissionDeniedViewControllerDelegate {
-
     func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController) {
         delegate?.shareContactsViewControllerDidSkip(self)
     }

@@ -19,7 +19,6 @@
 import Foundation
 
 class FeatureConfigsAPIV6: FeatureConfigsAPIV5 {
-
     override var apiVersion: APIVersion {
         .v6
     }
@@ -42,7 +41,6 @@ class FeatureConfigsAPIV6: FeatureConfigsAPIV5 {
 }
 
 struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
-
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
     let conferenceCalling: FeatureWithConfig<FeatureConfigResponse.ConferenceCallingV6>
@@ -116,14 +114,12 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
 }
 
 extension FeatureConfigResponse {
-
     struct MLSMigrationV6: Decodable {
         let startTime: UTCTime?
         let finaliseRegardlessAfter: UTCTime?
     }
 
     struct EndToEndIdentityV6: Decodable {
-
         let acmeDiscoveryUrl: String?
         let verificationExpiration: UInt
         let crlProxy: String? /// Starting api v6
@@ -131,7 +127,6 @@ extension FeatureConfigResponse {
     }
 
     struct ConferenceCallingV6: Decodable {
-
         let useSFTForOneToOneCalls: Bool
     }
 }

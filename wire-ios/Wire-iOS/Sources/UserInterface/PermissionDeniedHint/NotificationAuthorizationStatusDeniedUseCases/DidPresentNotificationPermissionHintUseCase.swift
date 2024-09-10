@@ -21,7 +21,6 @@ import WireSystem
 
 struct DidPresentNotificationPermissionHintUseCase<DateProvider>: DidPresentNotificationPermissionHintUseCaseProtocol
 where DateProvider: CurrentDateProviding {
-
     var currentDateProvider: DateProvider
     var userDefaults: UserDefaults
 
@@ -33,7 +32,6 @@ where DateProvider: CurrentDateProviding {
 // MARK: - DidPresentNotificationPermissionHintUseCase + init()
 
 extension DidPresentNotificationPermissionHintUseCase where DateProvider == SystemDateProvider {
-
     init(
         currentDateProvider: SystemDateProvider = .init(),
         userDefaults: UserDefaults = .standard

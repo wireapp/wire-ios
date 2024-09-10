@@ -32,7 +32,6 @@ struct MLSConferenceParticipantsInfo {
 }
 
 extension WireCallCenterV3 {
-
     /// Publishes an event when the participants in a MLS call change.
     ///
     /// - Parameter subconversationID: The ID of the subconversation the call is taking place in.
@@ -68,7 +67,6 @@ extension WireCallCenterV3 {
         callSnapshot: CallSnapshot?
     ) {
         switch callState {
-
         case .terminating:
             cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshot)
             leaveStaleConferenceIfNeeded(conversationID: conversationID)
@@ -236,7 +234,6 @@ extension WireCallCenterV3 {
 }
 
 extension CallParticipantState {
-
     var isConnected: Bool {
         switch self {
         case .connected:

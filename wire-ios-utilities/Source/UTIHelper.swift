@@ -25,7 +25,6 @@ import UniformTypeIdentifiers
 
 @objc
 public final class UTIHelper: NSObject {
-
     private static func conformsTo(uti: String, type: UTType) -> Bool {
         guard let utType = UTType(uti) else {
             return false

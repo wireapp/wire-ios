@@ -20,12 +20,10 @@ import Foundation
 
 @objc
 public protocol CallNotificationStyleProvider: AnyObject {
-
     var callNotificationStyle: CallNotificationStyle { get }
 }
 
 @objc extension ZMUserSession: CallNotificationStyleProvider {
-
     public var callCenter: WireCallCenterV3? {
         return managedObjectContext.zm_callCenter
     }

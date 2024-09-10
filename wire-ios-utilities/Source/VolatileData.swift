@@ -31,7 +31,6 @@ import Foundation
 /// will only be zeroed-out if the copies are never written to. See: https://en.wikipedia.org/wiki/Copy-on-write
 
 public final class VolatileData {
-
     // MARK: - Properties
 
     /// The underlying storage.
@@ -63,7 +62,6 @@ public final class VolatileData {
 }
 
 extension VolatileData: Equatable {
-
     public static func == (lhs: VolatileData, rhs: VolatileData) -> Bool {
         return lhs._storage == rhs._storage
     }

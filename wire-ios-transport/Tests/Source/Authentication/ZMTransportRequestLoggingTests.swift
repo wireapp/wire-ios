@@ -21,9 +21,7 @@ import WireTesting
 import XCTest
 
 final class ZMTransportRequestLoggingTests: ZMTBaseTest {
-
     func testThatItObfuscatesPasswordsInLogs() {
-
         // given
         let password = "secret"
 

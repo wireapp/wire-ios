@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
-
     func formattedOriginalReceivedDate() -> String? {
         guard let timestamp = self.serverTimestamp else {
             return nil

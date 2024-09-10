@@ -22,7 +22,6 @@ import WireNotificationEngine
 import XCTest
 
 final class LegacyNotificationServiceTests: XCTestCase {
-
     private var sut: LegacyNotificationService!
     private var request: UNNotificationRequest!
     private var notificationContent: UNNotificationContent!
@@ -188,7 +187,6 @@ final class LegacyNotificationServiceTests: XCTestCase {
 // MARK: - CallEventHandlerMock
 
 private final class CallEventHandlerMock: CallEventHandlerProtocol {
-
     var reportIncomingVoIPCallCalled: Bool = false
 
     func reportIncomingVoIPCall(_ payload: [String: Any]) {

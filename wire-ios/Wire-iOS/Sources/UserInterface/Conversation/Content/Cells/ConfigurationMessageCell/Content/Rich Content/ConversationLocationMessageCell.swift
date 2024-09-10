@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
-
     struct Configuration {
         let location: LocationMessageData
         let message: ZMConversationMessage

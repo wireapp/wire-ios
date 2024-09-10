@@ -21,7 +21,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
-
     override func setUp() {
         super.setUp()
 

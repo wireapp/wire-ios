@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 final class OptionalComparisonTests: XCTestCase {
-
     // MARK: OptionalComparison
 
     func testPrependingNilAscending_given0And1() {

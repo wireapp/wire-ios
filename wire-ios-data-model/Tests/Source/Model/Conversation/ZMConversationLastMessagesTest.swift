@@ -22,7 +22,6 @@ import WireTesting
 import XCTest
 
 class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
-
     override class func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto

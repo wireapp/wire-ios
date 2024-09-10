@@ -22,7 +22,6 @@ import WireSyncEngine
 
 // sourcery: AutoMockable
 protocol SettingsDebugReportViewModelProtocol {
-
     /// Send a debug report via email or shows fallback alert if email is not available
     func sendReport(sender: UIView)
 
@@ -31,7 +30,6 @@ protocol SettingsDebugReportViewModelProtocol {
 }
 
 class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
-
     // MARK: - Properties
 
     private let router: SettingsDebugReportRouterProtocol
@@ -69,7 +67,6 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
     }
 
     func shareReport() {
-
         do {
             let conversations = fetchShareableConversations.invoke()
             let logsURL = try logsProvider.generateLogFilesZip()

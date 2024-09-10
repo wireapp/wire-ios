@@ -22,7 +22,6 @@ import WireSyncEngine
 
 /// An object that provides information of changes to the user’s network conditions.
 struct NetworkInfo {
-
     private let cellularNetworkInfo = CTTelephonyNetworkInfo()
     private let serverConnection: ServerConnection
 

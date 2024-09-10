@@ -19,7 +19,6 @@
 import Foundation
 
 extension Team {
-
     // When moving from the initial teams implementation (multiple teams tied to one account) to
     // a multi account setup, we need to delete all local teams. Members will be deleted due to the cascade
     // deletion rule (Team → Member). Conversations will be preserved but their teams realtion will be nullified.

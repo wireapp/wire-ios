@@ -20,7 +20,6 @@
 import XCTest
 
 final class TeamMetadataRefresherTests: XCTestCase {
-
     private var mockSelfUser: MockUserType!
 
     private var mockSelfUserProvider: MockSelfUserProvider!

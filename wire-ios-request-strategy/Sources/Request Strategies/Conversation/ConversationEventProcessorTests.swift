@@ -23,7 +23,6 @@ import XCTest
 import WireTransport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
-
     var sut: ConversationEventProcessor!
     var conversationService: MockConversationServiceInterface!
     var mockMLSEventProcessor: MockMLSEventProcessing!
@@ -121,7 +120,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let message = "welcome message"
 
         try await syncMOC.perform {
-
             let event = Payload.UpdateConversationMLSWelcome(
                 id: self.groupConversation.remoteIdentifier!,
                 qualifiedID: self.groupConversation.qualifiedID,
@@ -262,7 +260,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
 
         await syncMOC.perform {
-
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
             let payload = Payload.Conversation.stub(
                 qualifiedID: qualifiedID,
@@ -705,7 +702,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         var newRole: Role!
 
         await syncMOC.perform {
-
             let userId = UUID.create()
 
             user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -754,7 +750,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         var selfUser: ZMUser!
 
         await syncMOC.perform {
-
             selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID.create()
 
@@ -810,7 +805,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 }
 
 private extension Encodable {
-
     func toTransportDictionary() throws -> ZMTransportData {
         return try toDictionary() as ZMTransportData
     }

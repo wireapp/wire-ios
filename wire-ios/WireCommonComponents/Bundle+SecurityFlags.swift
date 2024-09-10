@@ -19,7 +19,6 @@
 import Foundation
 
 public enum SecurityFlags {
-
     case generateLinkPreviews
     case forceConstantBitRateCalls
     case customBackend

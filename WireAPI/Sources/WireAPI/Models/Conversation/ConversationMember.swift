@@ -19,11 +19,9 @@
 import Foundation
 
 public extension Conversation {
-
     /// Represents a conversation's member.
 
     struct Member: Equatable, Codable {
-
         public let qualifiedID: QualifiedID?
         public let id: UUID?
         public let qualifiedTarget: QualifiedID?
@@ -38,7 +36,6 @@ public extension Conversation {
         public let mutedReference: Date?
 
         enum CodingKeys: String, CodingKey {
-
             case qualifiedID = "qualified_id"
             case id
             case qualifiedTarget = "qualified_target"

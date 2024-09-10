@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class CallEventStatusTests: ZMTBaseTest {
-
     var sut: CallEventStatus!
 
     override func setUp() {
@@ -39,7 +38,6 @@ class CallEventStatusTests: ZMTBaseTest {
     }
 
     func testThatWaitForCallEventCompleteImmediatelyIfNoCallEventsAreScheduled() {
-
         // expect
         let processingDidComplete = customExpectation(description: "processingDidComplete")
 
@@ -53,7 +51,6 @@ class CallEventStatusTests: ZMTBaseTest {
     }
 
     func testThatWaitForCallEventCompleteWhenScheduledCallEventIsProcessed() {
-
         // given
         sut.scheduledCallEventForProcessing()
 
@@ -70,7 +67,6 @@ class CallEventStatusTests: ZMTBaseTest {
     }
 
     func testThatWaitForCallEventCompleteWhenScheduledCallEventIsProcessedWhenTimeoutTimerIsStillRunning() {
-
         // given
         sut.scheduledCallEventForProcessing()
         sut.finishedProcessingCallEvent()

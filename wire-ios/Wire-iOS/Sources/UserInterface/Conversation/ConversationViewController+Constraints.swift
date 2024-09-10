@@ -20,7 +20,6 @@ import UIKit
 
 extension ConversationViewController {
     func updateOutgoingConnectionVisibility() {
-
         let outgoingConnection: Bool = conversation.relatedConnectionState == .sent
         contentViewController.tableView.isScrollEnabled = !outgoingConnection
 
@@ -87,7 +86,6 @@ extension ConversationViewController {
             if let screenRect: CGRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
                 let currentFirstResponder = UIResponder.currentFirst,
             let height = currentFirstResponder.inputAccessoryView?.bounds.size.height {
-
                 let keyboardSize = CGSize(width: screenRect.size.width, height: height)
                 UIView.setLastKeyboardSize(keyboardSize)
             }

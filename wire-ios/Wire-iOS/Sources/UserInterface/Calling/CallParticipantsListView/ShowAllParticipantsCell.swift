@@ -24,7 +24,6 @@ import WireDesign
 // MARK: - ShowAllParticipantsCell
 
 final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
-
     // MARK: - Properties
 
     typealias Participants = L10n.Localizable.Call.Participants
@@ -144,7 +143,6 @@ extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
 }
 
 extension ShowAllParticipantsCell {
-
     func configure(
         totalParticipantsCount: Int,
         conversation: GroupDetailsConversationType,

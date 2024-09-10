@@ -19,7 +19,6 @@
 import Foundation
 
 enum ViewConstants {
-
     enum Padding {
         static let small = 4.0
         static let medium = 8.0

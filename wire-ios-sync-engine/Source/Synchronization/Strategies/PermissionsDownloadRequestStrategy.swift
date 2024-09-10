@@ -25,9 +25,7 @@ struct MembershipListPayload: Decodable {
 }
 
 struct MembershipPayload: Decodable {
-
     struct PermissionsPayload: Decodable {
-
         private enum CodingKeys: String, CodingKey {
             case copyPermissions = "copy"
             case selfPermissions = "self"
@@ -51,7 +49,6 @@ struct MembershipPayload: Decodable {
 }
 
 extension MembershipPayload {
-
     @discardableResult
     func createOrUpdateMember(team: Team, in managedObjectContext: NSManagedObjectContext) -> Member? {
         let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: managedObjectContext)
@@ -70,12 +67,10 @@ extension MembershipPayload {
 }
 
 fileprivate extension Member {
-
     static let predicateForObjectsNeedingToBeUpdated = NSPredicate(format: "%K == YES", #keyPath(Member.needsToBeUpdatedFromBackend))
 }
 
 public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
-
     fileprivate var sync: ZMDownstreamObjectSync!
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {

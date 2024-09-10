@@ -19,7 +19,6 @@
 import Foundation
 
 class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
-
     let httpClient: any HTTPClient
 
     init(httpClient: any HTTPClient) {
@@ -49,7 +48,6 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
 }
 
 struct SelfUserV0: Decodable, ToAPIModelConvertible {
-
     let accentID: Int
     let assets: [UserAsset]?
     let deleted: Bool?
@@ -116,7 +114,6 @@ enum ManagedByV0: String, Decodable, ToAPIModelConvertible {
 }
 
 struct SSOIDV0: Decodable, ToAPIModelConvertible {
-
     let scimExternalId: String
     let subject: String
     let tenant: String

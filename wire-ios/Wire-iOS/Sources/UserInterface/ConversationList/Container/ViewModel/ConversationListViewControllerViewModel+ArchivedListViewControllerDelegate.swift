@@ -19,7 +19,6 @@
 import WireDataModel
 
 extension ConversationListViewController.ViewModel: ArchivedListViewControllerDelegate {
-
     func archivedListViewControllerWantsToDismiss(_ controller: ArchivedListViewController) {
         viewController?.setState(.conversationList, animated: true, completion: nil)
     }

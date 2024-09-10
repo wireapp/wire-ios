@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension PermissionDeniedViewController {
-
     class func addressBookAccessDeniedViewController() -> PermissionDeniedViewController {
         // MARK: - Properties
 

@@ -20,7 +20,6 @@ import Foundation
 
 // Sign a PDF document
 public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-
     // MARK: - Private Property
 
     private let syncContext: NSManagedObjectContext
@@ -37,7 +36,6 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     @objc
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                          applicationStatus: ApplicationStatus) {
-
         syncContext = managedObjectContext
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -154,7 +152,6 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     }
 
     private func makeRetrieveSignatureRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
-
         guard let responseID = signatureResponse?.responseID else {
             return nil
         }

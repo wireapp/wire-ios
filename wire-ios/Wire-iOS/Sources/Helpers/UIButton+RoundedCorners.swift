@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIButton {
-
     enum Edge {
         case leading
         case top

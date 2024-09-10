@@ -19,7 +19,6 @@
 import Foundation
 
 class MockTransportSessionAssetsTests: MockTransportSessionTests {
-
     func testThatInsertingAnAssetCreatesOne() {
         // given
         let id = UUID.create()

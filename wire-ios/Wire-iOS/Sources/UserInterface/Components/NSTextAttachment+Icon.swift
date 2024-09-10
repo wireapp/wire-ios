@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension NSTextAttachment {
-
     convenience init(imageResource: ImageResource) {
         self.init(image: .init(resource: imageResource))
     }
@@ -33,7 +32,6 @@ extension NSTextAttachment {
         verticalCorrection: CGFloat = 0,
         insets: UIEdgeInsets? = nil
     ) -> NSTextAttachment {
-
         let image: UIImage
         if let insets {
             image = icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!

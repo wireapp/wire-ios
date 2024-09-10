@@ -24,7 +24,6 @@ public enum EnqueueResult {
 }
 
 public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
-
     func enqueueOneTime(_ request: ZMTransportRequest)
     func enqueueRequest(withGenerator generator: ZMTransportRequestGenerator) -> EnqueueResult
     func tearDown()
@@ -53,7 +52,6 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 /// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
 /// to create a regular transport session with it.
 public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
-
     private let maximumNumberOfRequests: Int = 3
     private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
     private let baseURL: URL
@@ -186,7 +184,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 // MARK: - SSL Pinning
 
 extension UnauthenticatedTransportSession: URLSessionDelegate {
-
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         let protectionSpace = challenge.protectionSpace
         if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
@@ -200,7 +197,6 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
 // MARK: - Request Configuration
 
 extension NSMutableURLRequest {
-
     @objc(configureWithRequest:) func configure(with request: ZMTransportRequest) {
         httpMethod = request.methodAsString
         request.setAcceptedResponseMediaTypeOnHTTP(self)
@@ -226,7 +222,6 @@ private enum UserKey: String {
 }
 
 extension ZMTransportResponse {
-
     /// Extracts the wire cookie data from the response.
     /// - returns: The encrypted cookie data (using the cookies key) if there is any.
     private func extractCookieData() -> Data? {
@@ -248,7 +243,6 @@ extension ZMTransportResponse {
 }
 
 extension HTTPCookie {
-
     static func cookies(from string: String, for url: URL) -> [HTTPCookie] {
         let headers = [HeaderKey.cookie.rawValue: string]
         return HTTPCookie.cookies(withResponseHeaderFields: headers, for: url)

@@ -19,7 +19,6 @@
 import Foundation
 
 class HotFix_PendingChangesTests: IntegrationTestBase {
-
     // MARK: – HotFix 62.3.1
 
     func testThatItReportsPendingHotFixChangesWhenTheSelfUserNeedsToBeUpdated() {

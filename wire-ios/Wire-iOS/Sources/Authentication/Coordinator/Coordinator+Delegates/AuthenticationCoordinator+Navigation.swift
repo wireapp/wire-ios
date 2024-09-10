@@ -19,7 +19,6 @@
 import UIKit
 
 extension AuthenticationCoordinator: UINavigationControllerDelegate {
-
     /**
      * Called when the navigation stack changes.
      *

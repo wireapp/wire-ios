@@ -19,7 +19,6 @@
 import Foundation
 
 final class ConversationTests: ZMConversationTestsBase {
-
     @discardableResult
     private func insertMockGroupConversation(userDefinedName: String) -> ZMConversation {
         let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -190,7 +189,6 @@ extension ConversationTests {
     func testThatItRemovesTheMessageWhenItReceivesAHidingMessage() throws {
         // given
         try syncMOC.performGroupedAndWait {
-
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
@@ -227,7 +225,6 @@ extension ConversationTests {
     func testThatItRemovesImageAssetsWhenItReceivesADeletionMessage() throws {
         // given
         try syncMOC.performGroupedAndWait {
-
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
@@ -276,7 +273,6 @@ extension ConversationTests {
     func testThatItRemovesFileAssetsWhenItReceivesADeletionMessage() throws {
         // given
         try syncMOC.performGroupedAndWait {
-
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
@@ -329,7 +325,6 @@ extension ConversationTests {
 
     func testThatItDoesNotRemovesANonExistingMessageWhenItReceivesADeletionMessage() throws {
         try syncMOC.performGroupedAndWait {
-
             // given
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
             XCTAssertNotNil(selfUserID)
@@ -366,7 +361,6 @@ extension ConversationTests {
     func testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotFromSelfUser() throws {
         // given
         try syncMOC.performGroupedAndWait {
-
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier
@@ -404,7 +398,6 @@ extension ConversationTests {
     func testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotInTheSelfConversation() throws {
         // given
         try syncMOC.performGroupedAndWait {
-
             // given
             let messageID = UUID.create()
             let selfUserID = ZMUser.selfUser(in: syncMOC).remoteIdentifier

@@ -20,7 +20,6 @@ import CoreData
 import WireSystem
 
 extension NSManagedObjectContext: GroupQueue {
-
     @objc
     public var dispatchGroup: ZMSDispatchGroup? {
         dispatchGroupContext?.groups.first
@@ -39,7 +38,6 @@ extension NSManagedObjectContext: GroupQueue {
 }
 
 extension NSManagedObjectContext {
-
     @objc
     public var pendingSaveCounter: Int {
         get { objc_getAssociatedObject(self, &AssociatedPendingSaveCountKey) as? Int ?? 0 }

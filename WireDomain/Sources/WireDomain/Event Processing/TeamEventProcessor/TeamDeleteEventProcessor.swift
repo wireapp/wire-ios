@@ -21,14 +21,12 @@ import WireAPI
 /// Process team delete events.
 
 protocol TeamDeleteEventProcessorProtocol {
-
     /// Process a team delete event.
 
     func processEvent() async throws
 }
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
-
     func processEvent() async throws {
         // TODO: [WPB-10184]
         assertionFailure("not implemented yet")

@@ -21,7 +21,6 @@ import WireCryptobox
 import XCTest
 
 class UserClientKeysStoreTests: OtrBaseTest {
-
     var sut: UserClientKeysStore!
     var accountID: UUID!
     var accountFolder: URL!

@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct DeviceMLSView: View {
-
     @ObservedObject var viewModel: DeviceInfoViewModel
 
     var body: some View {

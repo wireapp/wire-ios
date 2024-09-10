@@ -22,7 +22,6 @@ import LocalAuthentication
 import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
-
     var selfUser: ZMUser!
 
     private var mockAuthenticationContext: MockAuthenticationContextProtocol!
@@ -406,7 +405,6 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 // MARK: - Helpers
 
 extension AppLockControllerTests {
-
     typealias Input = (passcodePreference: AppLockPasscodePreference, canEvaluate: Bool, biometricsChanged: Bool)
     typealias Output = AppLockAuthenticationResult
 
@@ -459,7 +457,6 @@ extension AppLockControllerTests {
     }
 
     class Delegate: AppLockDelegate {
-
         var didCallAppLockDidOpen = false
 
         func appLockDidOpen(_ appLock: AppLockType) {

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPI
 
 class ConnectionsAPITests: XCTestCase {
-
     /// Verifies generation of request for each API versions
     func testGetConnectionsRequest() async throws {
         // given

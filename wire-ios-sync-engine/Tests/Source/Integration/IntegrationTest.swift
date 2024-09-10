@@ -28,7 +28,6 @@ import WireUtilitiesSupport
 @testable import WireSyncEngineSupport
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
-
     let transportSession: TransportSessionType
 
     init(
@@ -103,7 +102,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 }
 
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
-
     let transportSession: UnauthenticatedTransportSessionProtocol
 
     init(transportSession: UnauthenticatedTransportSessionProtocol,
@@ -143,7 +141,6 @@ extension IntegrationTest {
 
     @objc
     func _setUp() {
-
         PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
@@ -333,7 +330,6 @@ extension IntegrationTest {
 
     @objc
     func createSelfUserAndConversation() {
-
         mockTransportSession.performRemoteChanges({ session in
             let selfUser = session.insertSelfUser(withName: "The Self User")
             selfUser.email = IntegrationTest.SelfUserEmail
@@ -357,7 +353,6 @@ extension IntegrationTest {
 
     @objc
     func createExtraUsersAndConversations() {
-
         mockTransportSession.performRemoteChanges({ session in
             let user1 = session.insertUser(withName: "Extra User1")
             user1.email = "user1@example.com"
@@ -561,7 +556,6 @@ extension IntegrationTest {
 }
 
 extension IntegrationTest {
-
     @discardableResult
     @objc(createSentConnectionFromUserWithName:uuid:)
     func createSentConnection(fromUserWithName name: String, uuid: UUID) -> MockUser {
@@ -617,7 +611,6 @@ extension IntegrationTest {
     func simulateNotificationStreamInterruption(
         changesBeforeInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil,
         changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
-
         closePushChannelAndWaitUntilClosed()
         changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
         mockTransportSession.performRemoteChanges { session in
@@ -717,7 +710,6 @@ extension IntegrationTest {
 }
 
 extension IntegrationTest: SessionManagerDelegate {
-
     public var isInAuthenticatedAppState: Bool {
         return appState == "authenticated"
     }

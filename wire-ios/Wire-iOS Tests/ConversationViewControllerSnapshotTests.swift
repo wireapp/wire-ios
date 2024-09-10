@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
-
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationViewController!
     private var mockConversation: ZMConversation!
@@ -90,7 +89,6 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
 // MARK: - Disable / Enable search in conversations
 
 extension ConversationViewControllerSnapshotTests {
-
     func testThatTheSearchButtonIsDisabledIfMessagesAreEncryptedInTheDataBase() {
         // given
 
@@ -115,7 +113,6 @@ extension ConversationViewControllerSnapshotTests {
 // MARK: - Guests bar controller
 
 extension ConversationViewControllerSnapshotTests {
-
     func testThatGuestsBarControllerIsVisibleIfExternalsArePresent() {
         // given
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier

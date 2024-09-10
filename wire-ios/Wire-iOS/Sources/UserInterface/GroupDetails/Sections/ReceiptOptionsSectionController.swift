@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 final class ReceiptOptionsSectionController: GroupDetailsSectionController {
-
     private let emptySectionHeaderHeight: CGFloat = 24
 
     let cellReuseIdentifier: String = GroupDetailsReceiptOptionsCell.zm_reuseIdentifier
@@ -117,7 +116,6 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
     // MARK: - Footer
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-
         footerView.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
         footerView.size(fittingWidth: collectionView.bounds.width)
         return footerView.bounds.size

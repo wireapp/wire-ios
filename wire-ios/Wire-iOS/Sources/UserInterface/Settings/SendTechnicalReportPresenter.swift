@@ -27,7 +27,6 @@ protocol SendTechnicalReportPresenter: MFMailComposeViewControllerDelegate {
 }
 
 extension SendTechnicalReportPresenter where Self: UIViewController {
-
     @MainActor
     func presentMailComposer(fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration) {
         let mailRecipient = WireEmail.shared.callingSupportEmail

@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 
 class FileManagerProtectionTests: XCTestCase {
-
     var fileManager: FileManagerThatRecordsFileProtectionAttributes!
 
     override func setUp() {
@@ -37,9 +36,7 @@ class FileManagerProtectionTests: XCTestCase {
 // MARK: - Create and protect
 
 extension FileManagerProtectionTests {
-
     func testThatItCreatesAndProtectedFolder() throws {
-
         // GIVEN
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.testFolder.path))
 
@@ -53,7 +50,6 @@ extension FileManagerProtectionTests {
     }
 
     func testThatItCreatesAndProtectsAnAlreadyExistingFolder() throws {
-
         // GIVEN
         try self.createTestFolder()
 
@@ -69,9 +65,7 @@ extension FileManagerProtectionTests {
 // MARK: - Backup exclusion
 
 extension FileManagerProtectionTests {
-
     func testThatItCreatesAndExcludesAFolderFromBackup() throws {
-
         // GIVEN
         try self.createTestFolder()
 
@@ -83,7 +77,6 @@ extension FileManagerProtectionTests {
     }
 
     func testThatItDetectsExcludedFromBackup() throws {
-
         // GIVEN
         try self.fileManager.createAndProtectDirectory(at: self.testFolder)
 
@@ -96,7 +89,6 @@ extension FileManagerProtectionTests {
     }
 
     func testThatNonExcludedFolderIsNotExcludedFromBackup() throws {
-
         // GIVEN
         try self.createTestFolder()
 
@@ -108,9 +100,7 @@ extension FileManagerProtectionTests {
 // MARK: - Protection until unlocked
 
 extension FileManagerProtectionTests {
-
     func testThatItProtectsAFolder() throws {
-
         // GIVEN
         try self.createTestFolder()
 
@@ -125,7 +115,6 @@ extension FileManagerProtectionTests {
 // MARK: - Helpers
 
 extension FileManagerProtectionTests {
-
     func createTestFolder() throws {
         try self.fileManager.createDirectory(at: self.testFolder, withIntermediateDirectories: true)
     }
@@ -147,7 +136,6 @@ extension FileManagerProtectionTests {
 /// This helper class is needed as the default file system will not report the value
 /// of the `FileAttributeKey.protectionKey` when reading file attributes
 final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
-
     var recordedAttributes: [String: FileProtectionType] = [:]
 
     override func setAttributes(_ attributes: [FileAttributeKey: Any], ofItemAtPath path: String) throws {

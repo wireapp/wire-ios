@@ -26,7 +26,6 @@ protocol ArchivedListViewModelDelegate: AnyObject {
 }
 
 final class ArchivedListViewModel: NSObject {
-
     weak var delegate: ArchivedListViewModelDelegate?
     private(set) var archivedConversationListObserverToken: NSObjectProtocol?
     private(set) var archivedConversations = [ZMConversation]()
@@ -55,7 +54,6 @@ final class ArchivedListViewModel: NSObject {
 }
 
 extension ArchivedListViewModel: ZMConversationListObserver {
-
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         guard changeInfo.conversationList == userSession.archivedConversationsInUserSession() else { return }
         delegate?.archivedListViewModel(self, didUpdateArchivedConversationsWithChange: changeInfo) { [weak self] in

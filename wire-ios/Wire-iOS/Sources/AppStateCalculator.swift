@@ -63,7 +63,6 @@ enum AppState: Equatable {
 }
 
 extension AppState: CustomDebugStringConvertible {
-
     var debugDescription: String {
         switch self {
         case .retryStart:
@@ -131,7 +130,6 @@ protocol AppStateCalculatorDelegate: AnyObject {
 }
 
 final class AppStateCalculator {
-
     init() {
         setupApplicationNotifications()
     }

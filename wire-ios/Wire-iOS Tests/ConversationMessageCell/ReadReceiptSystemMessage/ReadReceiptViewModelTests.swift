@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ReadReceiptViewModelTests: XCTestCase {
-
     var sut: ReadReceiptViewModel!
     var mockMessage: MockMessage!
 

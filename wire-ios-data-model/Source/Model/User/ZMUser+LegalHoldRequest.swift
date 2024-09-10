@@ -28,7 +28,6 @@ public typealias SelfUserLegalHoldable = UserType & EditableUserType & SelfLegal
  */
 
 public protocol SelfLegalHoldSubject {
-
     /// The current legal hold status of the user.
     var legalHoldStatus: UserLegalHoldStatus { get }
 
@@ -72,13 +71,11 @@ public enum UserLegalHoldStatus: Equatable {
  */
 
 public struct LegalHoldRequest: Codable, Hashable {
-
     /**
      * Represents a prekey in the legal hold request.
      */
 
     public struct Prekey: Codable, Hashable {
-
         /// The ID of the key.
         public let id: Int
 
@@ -96,7 +93,6 @@ public struct LegalHoldRequest: Codable, Hashable {
      */
 
     private struct Client: Codable, Hashable {
-
         /// The ID of the client
         let id: String
     }
@@ -152,7 +148,6 @@ extension ZMUserKeys {
 }
 
 extension ZMUser: SelfLegalHoldSubject {
-
     // MARK: - Legal Hold Status
 
     /// The keys that affect the legal hold status for the user.

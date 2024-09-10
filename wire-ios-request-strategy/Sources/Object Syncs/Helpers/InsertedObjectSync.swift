@@ -19,7 +19,6 @@
 import Foundation
 
 protocol InsertedObjectSyncTranscoder: AnyObject {
-
     associatedtype Object: ZMManagedObject
 
     /// Called when the `InsertedObjectSync` request an object to be synchronized
@@ -41,7 +40,6 @@ protocol InsertedObjectSyncTranscoder: AnyObject {
  by the `insertPredicate` if supplied.
  */
 class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
-
     let insertPredicate: NSPredicate
     var pending: Set<Transcoder.Object> = Set()
 

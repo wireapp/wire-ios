@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 final class SetPasswordStepDescription: DefaultValidatingStepDescription {
-
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

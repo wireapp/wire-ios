@@ -27,7 +27,6 @@ protocol CallConversationProvider {
 extension ZMUserSession: CallConversationProvider { }
 
 extension ZMUserSession {
-
     var priorityCallConversation: ZMConversation? {
         guard let callNotificationStyle = SessionManager.shared?.callNotificationStyle else { return nil }
         guard let callCenter = self.callCenter else { return nil }

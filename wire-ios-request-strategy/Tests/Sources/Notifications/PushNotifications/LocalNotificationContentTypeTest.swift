@@ -20,7 +20,6 @@
 import XCTest
 
 class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
-
     private typealias Sut = LocalNotificationContentType
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheLocationMessage() {

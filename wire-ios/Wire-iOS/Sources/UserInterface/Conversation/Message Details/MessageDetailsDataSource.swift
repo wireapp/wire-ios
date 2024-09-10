@@ -42,7 +42,6 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
  */
 
 final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving {
-
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
     /// The presented message.

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationCreateGuestsCell: IconToggleCell {
-
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "toggle.newgroup.allowguests"

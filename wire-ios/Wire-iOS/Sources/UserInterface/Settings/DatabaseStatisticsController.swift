@@ -21,7 +21,6 @@ import WireDesign
 import WireSyncEngine
 
 final class DatabaseStatisticsController: UIViewController {
-
     let stackView = UIStackView()
     let spinner = UIActivityIndicatorView()
 
@@ -48,7 +47,6 @@ final class DatabaseStatisticsController: UIViewController {
     }
 
     func rowWith(title: String, contents: String) -> UIView {
-
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.textColor = SemanticColors.Label.textDefault

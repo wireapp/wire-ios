@@ -22,7 +22,6 @@ import WireTransport
 import XCTest
 
 final class APSSignalingKeyStoreTests: MessagingTest {
-
     override func setUp() {
         super.setUp()
         var flag = DeveloperFlag.proteusViaCoreCrypto

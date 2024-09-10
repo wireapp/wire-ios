@@ -21,14 +21,12 @@ import WireSyncEngine
 import WireSystem
 
 protocol E2EINotificationActions {
-
     func getCertificate() async
     func updateCertificate() async
     func snoozeReminder() async
 }
 
 final class E2EINotificationActionsHandler: E2EINotificationActions {
-
     enum Failure: Error {
         case getCertificateError
     }
@@ -231,7 +229,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 }
 
 extension UIAlertController {
-
     static func getCertificateFailed(
         canCancel: Bool,
         isUpdateMode: Bool,

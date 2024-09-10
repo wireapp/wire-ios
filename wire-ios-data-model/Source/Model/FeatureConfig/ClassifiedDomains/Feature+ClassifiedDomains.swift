@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct ClassifiedDomains: Codable {
-
         // MARK: - Properties
 
         /// If `enabled` then the user must consider classified domains.
@@ -45,7 +43,6 @@ public extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-
             /// The list of domains that are trusted by the self backend and are considered
             /// to be safe for classified communication.
 

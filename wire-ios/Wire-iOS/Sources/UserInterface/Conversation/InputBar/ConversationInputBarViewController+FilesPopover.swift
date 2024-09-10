@@ -21,16 +21,13 @@ import UniformTypeIdentifiers
 import WireSyncEngine
 
 extension ConversationInputBarViewController: UIDocumentPickerDelegate {
-
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         uploadFiles(at: urls)
     }
 }
 
 extension ConversationInputBarViewController {
-
     func createFileUploadActionSheet(sender: UIButton) -> UIAlertController {
-
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         // Alert actions  for debugging

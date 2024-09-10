@@ -20,7 +20,6 @@
 import XCTest
 
 final class E2ETests: XCTestCase {
-
     func testThatItParsesSampleDataTwitter() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Twitter", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.twitterData()
@@ -149,7 +148,6 @@ final class E2ETests: XCTestCase {
     private func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData,
                                                 expected: OpenGraphDataExpectation?,
                                                 line: UInt = #line) {
-
         // given
         let completionExpectation = expectation(description: "It should parse the data")
         let sut = PreviewDownloader(resultsQueue: .main, parsingQueue: .main)

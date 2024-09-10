@@ -19,11 +19,9 @@
 import XCTest
 
 class ZMTExpectationTests: ZMTBaseTest {
-
     let notificationName = "ZMTFooBar"
 
     func testNotificationExpectationNotSent() {
-
         var handlerIsCalled = false
         self.customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: { _ in
             handlerIsCalled = true
@@ -36,7 +34,6 @@ class ZMTExpectationTests: ZMTBaseTest {
     }
 
     func testNotificationExpectationSent() {
-
         var handlerIsCalled = false
         self.customExpectation(forNotification: NSNotification.Name(rawValue: notificationName), object: nil, handler: { _ in
             handlerIsCalled = true

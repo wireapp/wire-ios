@@ -20,7 +20,6 @@
 import XCTest
 
 final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
-
     var sut: TeamMembersDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
@@ -89,7 +88,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCreatesRequestToFetchTeamMembers() {
-
         syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
@@ -108,7 +106,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItFinishSyncStep_IfSelfUserDoesntBelongToTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing
@@ -124,7 +121,6 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItFinishSyncStep_OnSuccessfulResponse() {
-
         syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .slowSyncing

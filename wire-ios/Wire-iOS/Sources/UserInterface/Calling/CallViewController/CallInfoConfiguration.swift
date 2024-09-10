@@ -217,7 +217,6 @@ extension CallParticipantState {
 }
 
 fileprivate extension VoiceChannel {
-
     func canUpgradeToVideo(selfUser: UserType) -> Bool {
         guard !isConferenceCall else {
             return true

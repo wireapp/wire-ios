@@ -29,7 +29,6 @@ protocol TokenizedTextViewDelegate: AnyObject {
 // TODO: as a inner class of TokenField
 
 class TokenizedTextView: TextView {
-
     weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
 
     private lazy var tapSelectionGestureRecognizer: UITapGestureRecognizer = {
@@ -119,7 +118,6 @@ class TokenizedTextView: TextView {
             }
 
             if nsstring.character(at: i) == NSTextAttachment.character {
-
                 if let tokenAttachemnt = attributedText?.attribute(.attachment, at: i, effectiveRange: nil) as? TokenTextAttachment {
                     string += tokenAttachemnt.token.title
                     if i < NSMaxRange(range) - 1 {

@@ -23,7 +23,6 @@ import WireCoreCrypto
 /// end-to-end-encryption protocol.
 
 public final class ProteusService: ProteusServiceInterface {
-
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -180,7 +179,6 @@ public final class ProteusService: ProteusServiceInterface {
     // MARK: - proteusDecrypt
 
     public enum DecryptionError: Error, Equatable {
-
         case failedToDecryptData(ProteusError)
         case failedToEstablishSessionFromMessage(ProteusError)
 
@@ -349,7 +347,6 @@ public final class ProteusService: ProteusServiceInterface {
 }
 
 private extension CoreCryptoProtocol {
-
     var lastProteusError: ProteusError {
         return ProteusError(proteusCode: proteusLastErrorCode())
     }

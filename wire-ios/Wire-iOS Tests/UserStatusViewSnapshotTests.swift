@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngineSupport
 
 final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

@@ -22,7 +22,6 @@ import XCTest
 
 @available(iOS 15.0, *)
 final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
-
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let teamId = UUID()
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_TeamUniqueness/")

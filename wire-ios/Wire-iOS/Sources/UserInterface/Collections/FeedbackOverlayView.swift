@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class FeedbackOverlayView: UIView {
-
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .smallSemiboldFont

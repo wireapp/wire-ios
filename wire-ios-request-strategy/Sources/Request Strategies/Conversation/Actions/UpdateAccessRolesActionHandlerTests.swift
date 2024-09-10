@@ -20,7 +20,6 @@
 import XCTest
 
 final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
-
     var sut: UpdateAccessRolesActionHandler!
     var conversation: ZMConversation!
     var accessMode: ConversationAccessMode!

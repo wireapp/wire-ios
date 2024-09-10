@@ -24,13 +24,11 @@ import UIKit
 /// Note: For tablets with a `UIRequiresFullScreen` value of `false` the `UIViewControllers`' `supportedInterfaceOrientations`
 /// property isn't read and therefore in this project this class is only relevant when running on phones.
 public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: UISplitViewControllerDelegate {
-
     public init() {}
 
     public func splitViewControllerSupportedInterfaceOrientations(
         _ splitViewController: UISplitViewController
     ) -> UIInterfaceOrientationMask {
-
         // This implementation is a quick-fix for the purpose of preventing some screens of
         // the app from rotating on phones. It's fragile and and might need to be revisited.
 
@@ -53,10 +51,8 @@ public final class SupportedOrientationsDelegatingSplitViewControllerDelegate: U
 // MARK: - Associated Object
 
 public extension SupportedOrientationsDelegatingSplitViewControllerDelegate {
-
     /// By setting the instance as delegate and retained associated object we don't need to subclass the split view controller in order to achieve the desired behavior.
     func setAsDelegateAndNontomicRetainedAssociatedObject(_ splitViewController: UISplitViewController) {
-
         guard splitViewController.viewController(for: .compact) == nil else {
             fatalError("This implementation does not support `.compact` columns. Extend it if needed.")
         }

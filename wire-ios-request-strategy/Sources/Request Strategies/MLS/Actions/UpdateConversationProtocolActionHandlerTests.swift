@@ -20,7 +20,6 @@
 import XCTest
 
 final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
-
     var uuidString: String!
 
     override func setUp() {

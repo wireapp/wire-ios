@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 final class AssetColletionBatchedTests: ModelObjectsTests {
-
     var sut: AssetCollectionBatched!
     var delegate: MockAssetCollectionDelegate!
     var conversation: ZMConversation!
@@ -200,7 +199,6 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         uiMOC.registeredObjects.forEach { uiMOC.refresh($0, mergeChanges: false) }
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-
             // when
             self.startMeasuring()
             self.sut = AssetCollectionBatched(conversation: self.conversation, matchingCategories: [self.defaultMatchPair], delegate: self.delegate)

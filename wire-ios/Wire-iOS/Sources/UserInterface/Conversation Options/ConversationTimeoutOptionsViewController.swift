@@ -46,7 +46,6 @@ extension ZMConversation {
 }
 
 final class ConversationTimeoutOptionsViewController: UIViewController {
-
     private let conversation: ZMConversation
     private var items: [Item] = []
     private let userSession: ZMUserSession
@@ -94,7 +93,6 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     }
 
     private func configureSubviews() {
-
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.backgroundColor = SemanticColors.View.backgroundDefault
@@ -107,7 +105,6 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -118,7 +115,6 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 // MARK: - Table View
 
 extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -133,7 +129,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
 

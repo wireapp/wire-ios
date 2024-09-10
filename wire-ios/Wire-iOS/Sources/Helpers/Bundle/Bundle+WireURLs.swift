@@ -25,7 +25,6 @@ import WireSystem
 /// link with the same key in the existing URL configuration files.
 /// Failure to do so may cause the application to crash.
 struct WireURLs: Codable {
-
     /// Link to the app on the App store.
     let appOnItunes: URL
 

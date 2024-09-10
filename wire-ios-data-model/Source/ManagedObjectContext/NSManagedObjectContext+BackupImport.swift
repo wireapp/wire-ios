@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSManagedObjectContext {
-
     /// Prepare a backed up database for being imported, deleting self client, push token etc.
     func prepareToImportBackup() {
         setPersistentStoreMetadata(nil as Data?, key: ZMPersistedClientIdKey)

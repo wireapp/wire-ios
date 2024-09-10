@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class AvailabilityLabelTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

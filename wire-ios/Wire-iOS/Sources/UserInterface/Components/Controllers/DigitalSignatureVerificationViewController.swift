@@ -29,7 +29,6 @@ enum DigitalSignatureVerificationError: Error {
 }
 
 final class DigitalSignatureVerificationViewController: UIViewController {
-
     typealias DigitalSignatureCompletion = ((_ result: Result<Void, Error>) -> Void)
 
     // MARK: - Private Property

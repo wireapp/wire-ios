@@ -20,7 +20,6 @@ import Foundation
 import WireSystem
 
 enum Logging {
-
     static let messageProcessing = ZMSLog(tag: "message-processing")
     static let backendEnvironment = ZMSLog(tag: "backend-environment")
 }

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSystem
 
 final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCTestCase {
-
     private var sut: SupportedOrientationsDelegatingSplitViewControllerDelegate!
 
     override func setUp() async throws {
@@ -35,7 +34,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 
     @MainActor
     func testAllOrientationsSupported() {
-
         // Given
         let splitViewController = UISplitViewController(style: .doubleColumn)
         splitViewController.setViewController(ViewController(), for: .primary)
@@ -50,7 +48,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 
     @MainActor
     func testOnlyUpsideDownSupported() {
-
         // Given
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.setViewController(ViewController([.portrait, .portraitUpsideDown]), for: .primary)
@@ -66,7 +63,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 
     @MainActor
     func testAllSupportedWhenNoViewControllers() {
-
         // Given
         let splitViewController = UISplitViewController(style: .tripleColumn)
 
@@ -79,7 +75,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 
     @MainActor
     func testDelegateIsSet() {
-
         // Given
         let splitViewController = UISplitViewController(style: .tripleColumn)
 
@@ -92,7 +87,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 
     @MainActor
     func testDelegateIsRetained() {
-
         // Given
         let splitViewController = UISplitViewController(style: .tripleColumn)
 
@@ -111,7 +105,6 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
 // MARK: - ViewController
 
 private final class ViewController: UIViewController {
-
     private let interfaceOrientations: UIInterfaceOrientationMask
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask { interfaceOrientations }
 

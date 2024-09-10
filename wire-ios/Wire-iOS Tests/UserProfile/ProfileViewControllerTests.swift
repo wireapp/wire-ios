@@ -23,7 +23,6 @@ import XCTest
 import WireTestingPackage
 
 final class ProfileViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ProfileViewController!

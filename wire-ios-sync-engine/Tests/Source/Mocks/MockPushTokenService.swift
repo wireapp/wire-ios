@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 final class MockPushTokenService: NSObject, PushTokenServiceInterface {
-
     // MARK: - Properties
 
     var localToken: PushToken?

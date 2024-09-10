@@ -20,7 +20,6 @@ import AVFoundation
 import Foundation
 
 enum CallVideoPlaceholderState {
-
     case hidden
     case statusTextHidden
     case statusTextDisplayed

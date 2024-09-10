@@ -20,7 +20,6 @@ import Foundation
 import WireTesting
 
 class DatabaseTest: ZMTBaseTest {
-
     let accountId = UUID()
     var coreDataStack: CoreDataStack?
 

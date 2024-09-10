@@ -24,7 +24,6 @@ private let log = ZMSLog(tag: "Accounts")
 public let AccountManagerDidUpdateAccountsNotificationName = Notification.Name("AccountManagerDidUpdateAccountsNotification")
 
 fileprivate extension UserDefaults {
-
     private var selectedAccountKey: String { "AccountManagerSelectedAccountKey" }
 
     /// The identifier of the currently selected `Account` or `nil` if there is none.
@@ -36,7 +35,6 @@ fileprivate extension UserDefaults {
 
 /// Class used to safely access and change stored accounts and the current selected account.
 public final class AccountManager: NSObject {
-
     private let defaults = UserDefaults.shared()
     private(set) public var accounts = [Account]()
     private(set) public var selectedAccount: Account? // The currently selected account or `nil` in case there is none
@@ -101,7 +99,6 @@ public final class AccountManager: NSObject {
     /// This method should be called each time accounts are added or
     /// removed, or when the selectedAccountIdentifier has been changed.
     private func updateAccounts() {
-
         // since some objects (eg. AccountView) observe changes in the account, we must
         // make sure their object addresses are maintained after updating, i.e if
         // exisiting objects need to be updated from the account store, we just update

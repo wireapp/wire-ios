@@ -21,7 +21,6 @@ import Foundation
 /// Represents the identifer for an MLS group.
 
 public struct MLSGroupID: Equatable, Hashable {
-
     // MARK: - Properties
 
     public let data: Data
@@ -41,7 +40,6 @@ public struct MLSGroupID: Equatable, Hashable {
 // MARK: -
 
 extension MLSGroupID: CustomStringConvertible {
-
     public var description: String {
         data.base64EncodedString()
     }
@@ -50,7 +48,6 @@ extension MLSGroupID: CustomStringConvertible {
 // MARK: -
 
 extension MLSGroupID: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         data.readableHash
     }

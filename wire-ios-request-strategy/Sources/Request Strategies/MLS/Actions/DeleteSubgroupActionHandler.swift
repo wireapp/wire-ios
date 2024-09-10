@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
-
     // MARK: - Request
 
     override func request(

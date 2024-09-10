@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class FederationSectionController: SearchSectionController {
-
     var users = [ZMSearchUser]()
 
     weak var delegate: SearchSectionControllerDelegate?

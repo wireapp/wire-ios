@@ -32,7 +32,6 @@ final class ZiphHelper {
     }
 
     static func createZiph(id: String, url: URL, imagesList: [ZiphyImageType: ZiphyAnimatedImage]) -> Ziph {
-
         let ziph = Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
 
         return ziph

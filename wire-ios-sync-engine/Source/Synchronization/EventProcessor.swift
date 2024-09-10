@@ -21,7 +21,6 @@ import WireRequestStrategy
 import WireUtilities
 
 actor EventProcessor: UpdateEventProcessor {
-
     private static let logger = Logger(subsystem: "VoIP Push", category: "EventProcessor")
 
     private let syncContext: NSManagedObjectContext
@@ -250,7 +249,6 @@ actor EventProcessor: UpdateEventProcessor {
 }
 
 extension Notification.Name {
-
     static let calculateBadgeCount = Self(rawValue: "calculateBadgeCountNotication")
 
     /// Published before the first event is processed.
@@ -261,7 +259,6 @@ extension Notification.Name {
 }
 
 private actor ProcessedEventList {
-
     private var hashes = Set<Int64>()
 
     // A full list would contain approx 80kB.

@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

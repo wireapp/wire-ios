@@ -23,7 +23,6 @@ import WireLinkPreview
 @testable import WireDataModel
 
 class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
-
     override func setUp() {
         super.setUp()
         deletionTimer?.isTesting = true
@@ -58,7 +57,6 @@ class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
 // MARK: Sending
 
 extension ZMClientMessageTests_Ephemeral {
-
     func testThatItCreateAEphemeralMessageWhenAutoDeleteTimeoutIs_SetToBiggerThanZero_OnConversation() {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
@@ -358,7 +356,6 @@ extension ZMClientMessageTests_Ephemeral {
 // MARK: Receiving
 
 extension ZMClientMessageTests_Ephemeral {
-
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser() {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
@@ -425,7 +422,6 @@ extension ZMClientMessageTests_Ephemeral {
 }
 
 extension ZMClientMessageTests_Ephemeral {
-
     func hasDeleteMessage(for message: ZMMessage) -> Bool {
          for enumeratedMessage in conversation.hiddenMessages {
             if let clientMessage = enumeratedMessage as? ZMClientMessage,

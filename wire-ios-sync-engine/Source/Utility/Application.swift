@@ -26,7 +26,6 @@ public protocol NotificationSettingsRegistrable {
 
 /// An abstraction of the application (UIApplication, NSApplication)
 @objc public protocol ZMApplication: NSObjectProtocol {
-
     /// The current application state
     var applicationState: UIApplication.State { get }
 
@@ -62,7 +61,6 @@ public protocol NotificationSettingsRegistrable {
 }
 
 extension UIApplication: ZMApplication {
-
     public func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {
         NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didBecomeActiveNotification, object: nil)
     }

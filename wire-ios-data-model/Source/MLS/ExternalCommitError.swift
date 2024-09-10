@@ -19,13 +19,11 @@
 import Foundation
 
 enum ExternalCommitError: Error, Equatable {
-
     case failedToSendCommit(recovery: RecoveryStrategy, cause: SendCommitBundleAction.Failure)
     case failedToMergePendingGroup
     case failedToClearPendingGroup
 
     enum RecoveryStrategy {
-
         /// Retry the action from the beginning
         case retry
 
@@ -35,7 +33,6 @@ enum ExternalCommitError: Error, Equatable {
 }
 
 extension ExternalCommitError.RecoveryStrategy {
-
     /// Whether the pending group should be cleared
 
     var shouldClearPendingGroup: Bool {

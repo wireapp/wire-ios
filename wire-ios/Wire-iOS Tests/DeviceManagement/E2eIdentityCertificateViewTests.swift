@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class E2eIdentityCertificateViewTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!

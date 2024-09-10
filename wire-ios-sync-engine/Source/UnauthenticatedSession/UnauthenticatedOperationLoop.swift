@@ -23,7 +23,6 @@ import WireTransport
 private let log = ZMSLog(tag: "Network")
 
 class UnauthenticatedOperationLoop: NSObject {
-
     let transportSession: UnauthenticatedTransportSessionProtocol
     let requestStrategies: [RequestStrategy]
     weak var operationQueue: GroupQueue?
@@ -53,7 +52,6 @@ extension UnauthenticatedOperationLoop: TearDownCapable {
 }
 
 extension UnauthenticatedOperationLoop: RequestAvailableObserver {
-
     func newRequestsAvailable() {
         var enqueueMore = true
         while enqueueMore, shouldEnqueue {

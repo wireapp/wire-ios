@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMOTRMessage {
-
     private static let deliveryConfirmationDayThreshold = 7
 
     @NSManaged dynamic var expectsReadConfirmation: Bool

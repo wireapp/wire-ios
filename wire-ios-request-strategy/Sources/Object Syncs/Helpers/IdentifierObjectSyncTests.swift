@@ -38,7 +38,6 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
 }
 
 class IdentifierObjectSyncTests: ZMTBaseTest {
-
     var moc: NSManagedObjectContext!
     var transcoder: MockTranscoder!
     var sut: IdentifierObjectSync<MockTranscoder>!

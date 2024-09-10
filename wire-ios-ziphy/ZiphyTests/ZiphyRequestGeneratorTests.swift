@@ -20,7 +20,6 @@ import XCTest
 @testable import Ziphy
 
 class ZiphyRequestGeneratorTests: XCTestCase {
-
     var generator: ZiphyRequestGenerator!
 
     override func setUp() {

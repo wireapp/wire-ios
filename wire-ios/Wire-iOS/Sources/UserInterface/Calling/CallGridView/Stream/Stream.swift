@@ -21,7 +21,6 @@ import Foundation
 import WireSyncEngine
 
 struct Stream: Equatable {
-
     let streamId: AVSClient
     let user: UserType?
     let callParticipantState: CallParticipantState

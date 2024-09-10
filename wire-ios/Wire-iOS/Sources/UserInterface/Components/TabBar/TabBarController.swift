@@ -40,7 +40,6 @@ extension UIViewController {
 }
 
 final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UIScrollViewDelegate {
-
     weak var delegate: TabBarControllerDelegate?
 
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
@@ -234,7 +233,6 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
 }
 
 extension TabBarController: TabBarDelegate {
-
     func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
         selectIndex(index, animated: tabBar.animatesTransition)
     }

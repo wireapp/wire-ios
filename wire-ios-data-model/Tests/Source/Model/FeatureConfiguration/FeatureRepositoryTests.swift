@@ -20,7 +20,6 @@
 import XCTest
 
 class FeatureRepositoryTests: ZMBaseManagedObjectTest {
-
     override func setUp() {
         super.setUp()
         deleteFeatureIfNeeded(name: .appLock)
@@ -931,7 +930,6 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
 }
 
 private extension Data {
-
     func decode<T: Decodable>(as type: T.Type) -> T? {
         return try? JSONDecoder().decode(type, from: self)
     }

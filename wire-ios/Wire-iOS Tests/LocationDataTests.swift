@@ -22,7 +22,6 @@ import WireDataModel
 import XCTest
 
 final class LocationDataTests: XCTestCase {
-
     override func tearDown() {
         Settings.shared.reset()
         super.tearDown()

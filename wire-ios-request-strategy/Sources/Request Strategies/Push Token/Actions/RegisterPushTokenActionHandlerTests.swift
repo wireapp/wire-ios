@@ -20,7 +20,6 @@ import Foundation
 @testable import WireRequestStrategy
 
 class RegisterPushTokenActionHandlerTests: MessagingTestBase {
-
     // MARK: - Helpers
 
     let pushToken = PushToken(

@@ -21,7 +21,6 @@ import WireDataModel
 
 /// A target of sharing content
 public protocol SharingTarget {
-
     /// Appends a text message in the conversation
     func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable?
 

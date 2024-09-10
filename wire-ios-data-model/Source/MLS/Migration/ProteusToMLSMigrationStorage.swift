@@ -24,7 +24,6 @@ protocol ProteusToMLSMigrationStorageInterface {
 }
 
 class ProteusToMLSMigrationStorage: ProteusToMLSMigrationStorageInterface {
-
     // MARK: - Properties
 
     private let storage: PrivateUserDefaults<Key>

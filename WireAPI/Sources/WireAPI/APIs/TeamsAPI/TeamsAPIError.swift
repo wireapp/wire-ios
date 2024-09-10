@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `TeamsAPI`.
 
 public enum TeamsAPIError: Error {
-
     /// A supplied team id is not valid.
 
     case invalidTeamID

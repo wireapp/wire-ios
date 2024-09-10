@@ -27,7 +27,6 @@ protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
-
     func conversationServicesOptionsViewModel(
         _ viewModel: ConversationServicesOptionsViewModel,
         didUpdateState state: ConversationServicesOptionsViewModel.State

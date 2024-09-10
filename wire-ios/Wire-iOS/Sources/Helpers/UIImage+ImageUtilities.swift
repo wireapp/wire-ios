@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension UIImage {
-
     func imageScaled(with scaleFactor: CGFloat) -> UIImage? {
         let size = self.size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let scale: CGFloat = 0 // Automatically use scale factor of main screens
@@ -85,7 +84,6 @@ extension UIImage {
     }
 
     private class func size(for source: CGImageSource) -> CGSize {
-
         let options = [
             kCGImageSourceShouldCache: kCFBooleanTrue
         ] as CFDictionary
@@ -139,7 +137,6 @@ extension UIImage {
 }
 
 extension UIImage {
-
     func resize(for size: StyleKitIcon.Size) -> UIImage {
         UIGraphicsImageRenderer(size: size.cgSize).image { _ in
             draw(in: CGRect(origin: .zero, size: size.cgSize))

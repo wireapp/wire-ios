@@ -19,7 +19,6 @@
 import Foundation
 
 class ConversationTests_Guests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

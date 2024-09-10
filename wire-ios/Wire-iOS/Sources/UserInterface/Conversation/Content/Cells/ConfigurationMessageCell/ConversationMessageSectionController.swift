@@ -53,7 +53,6 @@ extension ZMConversationMessage {
  */
 
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
-
     /// The view descriptor of the section.
     var cellDescriptions: [AnyConversationMessageCellDescription] = []
 
@@ -129,7 +128,6 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     // MARK: - Content Types
 
     private func addContent(context: ConversationMessageContext, isSenderVisible: Bool) {
-
         messageCellIndex = cellDescriptions.count
 
         let contentCellDescriptions: [AnyConversationMessageCellDescription]

@@ -19,7 +19,6 @@
 @testable import WireSyncEngine
 
 class TypingUsersTests: MessagingTest {
-
     private typealias TypingUsers = WireSyncEngine.TypingUsers
 
     private var sut: TypingUsers!

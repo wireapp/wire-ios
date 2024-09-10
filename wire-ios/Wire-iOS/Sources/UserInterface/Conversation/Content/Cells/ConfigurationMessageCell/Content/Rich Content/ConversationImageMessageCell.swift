@@ -23,7 +23,6 @@ import WireDesign
 final class ConversationImageMessageCell: UIView,
                                           ConversationMessageCell,
                                           ContextMenuDelegate {
-
     struct Configuration {
         let image: ZMImageMessageData
         let message: ZMConversationMessage
@@ -164,7 +163,6 @@ final class ConversationImageMessageCell: UIView,
 }
 
 final class ConversationImageMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationImageMessageCell
     let configuration: View.Configuration
 

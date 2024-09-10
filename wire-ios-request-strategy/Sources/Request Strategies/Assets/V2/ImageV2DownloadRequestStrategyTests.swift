@@ -22,7 +22,6 @@ import WireDataModel
 import XCTest
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
-
     fileprivate var applicationStatus: MockApplicationStatus!
 
     fileprivate var sut: ImageV2DownloadRequestStrategy!

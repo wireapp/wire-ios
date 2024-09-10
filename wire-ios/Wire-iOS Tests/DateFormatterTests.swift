@@ -20,7 +20,6 @@
 import XCTest
 
 final class DateFormatterTests: XCTestCase {
-
     override func tearDown() {
         XCTestCase.resetDayFormatter()
 

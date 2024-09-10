@@ -102,14 +102,12 @@ private extension Notification {
 }
 
 extension Notification {
-
     var alertType: PrivacyWarningChecker.AlertType? {
         userInfo?["alertType"] as? PrivacyWarningChecker.AlertType
     }
 }
 
 private extension Notification {
-
     static func privacyWarningConfirm(sendAnyway: Bool) -> Notification {
         Notification(name: .privacyWarningConfirm, object: nil, userInfo: ["sendAnyway": sendAnyway])
     }

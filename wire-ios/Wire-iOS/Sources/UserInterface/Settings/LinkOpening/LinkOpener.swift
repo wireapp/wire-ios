@@ -23,7 +23,6 @@ import WireSystem
 private let log = ZMSLog(tag: "link opening")
 
 extension URL {
-
     @discardableResult
     func open() -> Bool {
         let opened = openAsTweet() || openAsLink()
@@ -58,7 +57,6 @@ protocol LinkOpeningOption {
 }
 
 extension LinkOpeningOption {
-
     static var storedPreference: ApplicationOptionEnum {
         if let openingRawValue: ApplicationOptionEnum.RawValue = Settings.shared[settingKey],
             let openingOption: ApplicationOptionEnum = ApplicationOptionEnum.init(rawValue: openingRawValue) {
@@ -78,7 +76,6 @@ extension LinkOpeningOption {
 }
 
 extension UIApplication {
-
     func canHandleScheme(_ scheme: String) -> Bool {
         return URL(string: scheme).map(canOpenURL) ?? false
     }

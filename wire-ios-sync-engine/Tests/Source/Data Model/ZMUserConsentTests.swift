@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMUserConsentTests: DatabaseTest {
-
     var mockTransportSession: MockTransportSession!
 
     override func setUp() {

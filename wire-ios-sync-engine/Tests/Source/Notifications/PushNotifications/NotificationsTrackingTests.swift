@@ -20,7 +20,6 @@
 import XCTest
 
 final class NotificationsTrackerTests: XCTestCase {
-
     var sut: NotificationsTracker!
     var mockAnalytics: MockAnalytics!
 

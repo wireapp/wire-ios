@@ -23,7 +23,6 @@ import XCTest
 import WireTransport
 
 final class MessageSenderTests: MessagingTestBase {
-
     override func setUp() {
         super.setUp()
 
@@ -553,7 +552,6 @@ final class MessageSenderTests: MessagingTestBase {
     }
 
     struct Arrangement {
-
         struct Scaffolding {
             static let groupID = MLSGroupID(.init([1, 2, 3]))
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
@@ -652,7 +650,6 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withBroadcastProteusMessage(returning result: Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
-
             switch result {
             case .success(let value):
                 messageApi.broadcastProteusMessageMessage_MockValue = value
@@ -663,7 +660,6 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withSendProteusMessage(returning result: Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
-
             switch result {
             case .success(let value):
                 messageApi.sendProteusMessageMessageConversationID_MockValue = value
@@ -674,7 +670,6 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withSendMlsMessage(returning result: Result<(Payload.MLSMessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
-
             switch result {
             case .success(let value):
                 messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockValue = value

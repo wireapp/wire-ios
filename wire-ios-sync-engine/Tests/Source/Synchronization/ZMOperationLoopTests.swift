@@ -20,7 +20,6 @@ import WireTransport
 import XCTest
 
 extension ZMOperationLoopTests {
-
     // MARK: - BackendInfo Helpers
 
     @objc

@@ -19,7 +19,6 @@
 import Foundation
 
 class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
-
     var team: MockTeam!
     var selfUser: MockUser!
     var conversation: MockConversation!
@@ -76,7 +75,6 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
     }
 
     func testThatSettingAccessModeReturnsCorrectDataInPayload() {
-
         let role = "team"
         let access = ["invite", "code"]
         let accessRoleV2 = ["team_member", "non_team_member", "guest"]

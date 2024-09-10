@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIView {
-
     func updateVisibleViews(_ views: [UIView], visibleViews: [UIView], animated: Bool) {
         if animated {
             UIView.transition(with: self, duration: 0.35, options: .transitionCrossDissolve, animations: {

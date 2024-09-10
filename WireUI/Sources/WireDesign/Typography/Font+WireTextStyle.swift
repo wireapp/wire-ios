@@ -19,7 +19,6 @@
 import SwiftUI
 
 public extension Font {
-
     /// Creates a font from the given text style.
     ///
     /// - Parameter textStyle: The text style to use to create the Font.

@@ -21,7 +21,6 @@ import WireDesign
 import WireSystem
 
 final class SearchResultLabel: UILabel, Copyable {
-
     convenience init(instance: SearchResultLabel) {
         self.init()
         self.font = instance.font

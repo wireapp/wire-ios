@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol UpdateEventProcessor: AnyObject {
-
     /// Buffer events in-memory until the next call to `processBufferedEvents`
     ///
     /// - Parameters:

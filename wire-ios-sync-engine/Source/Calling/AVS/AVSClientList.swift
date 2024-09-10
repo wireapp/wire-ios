@@ -19,6 +19,5 @@
 import Foundation
 
 struct AVSClientList: Codable {
-
     let clients: [AVSClient]
 }

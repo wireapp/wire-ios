@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class MediaBarSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: MediaBar!

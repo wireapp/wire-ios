@@ -19,7 +19,6 @@
 import UIKit
 
 final class KeyboardHeight: NSObject {
-
     /// The height of the system keyboard with the prediction row
     static var current: CGFloat {
         switch UIDevice.current.userInterfaceIdiom {

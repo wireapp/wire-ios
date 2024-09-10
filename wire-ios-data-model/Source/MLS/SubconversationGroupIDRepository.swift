@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SubconversationGroupIDRepositoryInterface {
-
     /// Stores the group ID of a subconversation in relation to their type and parent group.
     ///
     /// - Parameters:
@@ -66,7 +65,6 @@ public protocol SubconversationGroupIDRepositoryInterface {
 /// It is used to keep track of which subconversation is associated with which conversation.
 
 public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface {
-
     // MARK: - Properties
 
     private var storage = [MLSGroupID: [SubgroupType: MLSGroupID]]()
@@ -100,7 +98,6 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
     public func findSubgroupTypeAndParentID(
         for targetGroupID: MLSGroupID
     ) -> (parentID: MLSGroupID, type: SubgroupType)? {
-
         for (parentID, subgroupIDsByType) in storage {
             if let entry = subgroupIDsByType.first(where: { _, subgroupID in
                 subgroupID == targetGroupID

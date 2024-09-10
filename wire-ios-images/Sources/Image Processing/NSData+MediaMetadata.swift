@@ -27,7 +27,6 @@ public enum MetadataError: Error {
 }
 
 public extension NSData {
-
     private static let nullMetadataProperties: CFDictionary = {
         var swiftMetadataProperties: [String: AnyObject] = [:]
         swiftMetadataProperties[String(kCGImagePropertyExifDictionary)] = kCFNull
@@ -95,7 +94,6 @@ public extension NSData {
 }
 
 public extension Data {
-
     // Removes the privacy-related metadata tags from the binary image (see nullMetadataProperties).
     // Supports JPEG, TIFF, PNG and other image (container) formats/types.
     // @throws MetadataError

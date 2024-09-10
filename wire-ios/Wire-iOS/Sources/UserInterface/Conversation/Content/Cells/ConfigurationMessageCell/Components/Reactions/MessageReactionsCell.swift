@@ -22,7 +22,6 @@ import WireDataModel
 // MARK: - Reaction
 
 struct MessageReactionMetadata: Equatable {
-
     let emoji: Emoji.ID
     let count: UInt
     let isSelfUserReacting: Bool
@@ -35,7 +34,6 @@ struct MessageReactionMetadata: Equatable {
 // MARK: - MessageReactionsCell
 
 final class MessageReactionsCell: UIView, ConversationMessageCell {
-
     // MARK: - Properties
 
     var isSelected = false

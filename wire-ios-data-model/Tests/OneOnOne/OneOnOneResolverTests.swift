@@ -21,7 +21,6 @@
 import XCTest
 
 final class OneOnOneResolverTests: XCTestCase {
-
     private var coreDataStackHelper: CoreDataStackHelper!
     private var modelHelper: ModelHelper!
 

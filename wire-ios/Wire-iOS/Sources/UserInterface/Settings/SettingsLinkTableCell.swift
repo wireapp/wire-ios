@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class SettingsLinkTableCell: SettingsTableCellProtocol {
-
     // MARK: - Properties
 
     private let cellLinkLabel = CopyableLabel()

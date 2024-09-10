@@ -20,7 +20,6 @@
 import XCTest
 
 class Conversation_DeletionTests: DatabaseTest {
-
     var mockTransportSession: MockTransportSession!
 
     override func setUp() {
@@ -35,7 +34,6 @@ class Conversation_DeletionTests: DatabaseTest {
     }
 
     func testThatItParsesAllKnownConversationDeletionErrorResponses() {
-
         let errorResponses: [(ConversationDeletionError, ZMTransportResponse)] = [
             (ConversationDeletionError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (ConversationDeletionError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))

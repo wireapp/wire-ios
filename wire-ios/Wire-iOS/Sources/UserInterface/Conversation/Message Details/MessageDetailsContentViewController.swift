@@ -25,7 +25,6 @@ import WireSyncEngine
 // MARK: - MessageDetailsSectionDescription
 
 struct MessageDetailsSectionDescription {
-
     var headerText: String?
     var items: [MessageDetailsCellDescription]
 }
@@ -35,7 +34,6 @@ struct MessageDetailsSectionDescription {
  */
 
 final class MessageDetailsContentViewController: UIViewController {
-
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
     /// The type of the displayed content.
@@ -292,7 +290,6 @@ final class MessageDetailsContentViewController: UIViewController {
 // MARK: - UICollectionViewDataSource
 
 extension MessageDetailsContentViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return sections[section].items.count
     }
@@ -418,7 +415,6 @@ extension MessageDetailsContentViewController: ProfileViewControllerDelegate {
 // MARK: - Adaptive Presentation
 
 extension MessageDetailsContentViewController {
-
     /// Presents a profile view controller as a popover or a modal depending on the context.
     fileprivate func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
         let presentedController = controller.wrapInNavigationController()

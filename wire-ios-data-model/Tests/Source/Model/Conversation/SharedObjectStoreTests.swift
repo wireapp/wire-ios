@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 fileprivate extension Notification {
-
     init(inserted: [NSManagedObject] = [], updated: [NSManagedObject] = [], deleted: [NSManagedObject] = []) {
         self.init(name: .NSManagedObjectContextDidSave, userInfo: [
             NSInsertedObjectsKey: Set<NSManagedObject>(inserted),
@@ -30,7 +29,6 @@ fileprivate extension Notification {
 }
 
 class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
-
     var sut: ContextDidSaveNotificationPersistence!
 
     override func setUp() {
@@ -120,7 +118,6 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 }
 
 class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
-
     var sut: ShareExtensionAnalyticsPersistence!
 
     override func setUp() {

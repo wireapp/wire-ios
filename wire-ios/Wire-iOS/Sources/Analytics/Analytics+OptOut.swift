@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension Analytics {
-
     /// Opt the user out of sending analytics data
     var isOptedOut: Bool {
         get {

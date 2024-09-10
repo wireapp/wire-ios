@@ -20,9 +20,7 @@ import Foundation
 @testable import Wire
 
 extension ___VARIABLE_productName:identifier___Module {
-
     final class MockView: ___VARIABLE_productName:identifier___ViewPresenterInterface {
-
         // MARK: - Metrics
 
         var models = [ViewModel]()

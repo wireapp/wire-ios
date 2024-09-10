@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-
     // MARK: - Properties
 
     private var sut: ClientListViewController!

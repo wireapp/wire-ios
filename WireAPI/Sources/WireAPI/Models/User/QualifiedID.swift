@@ -21,7 +21,6 @@ import Foundation
 /// Fully qualified identifier in a federated environment.
 
 public struct QualifiedID: Codable, Hashable, Equatable {
-
     public let uuid: UUID
     public let domain: String
 

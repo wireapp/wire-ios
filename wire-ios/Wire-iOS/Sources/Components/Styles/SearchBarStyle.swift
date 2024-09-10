@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 struct SearchBarStyle {
-
     typealias SearchBarColors = SemanticColors.SearchBar
 
     var borderColorSelected: UIColor {
@@ -39,9 +38,7 @@ struct SearchBarStyle {
 }
 
 extension UITextView: Stylable {
-
     func applyStyle(_ style: SearchBarStyle) {
-
         textColor = style.textColor
         backgroundColor = style.backgroundColor
 

@@ -19,7 +19,6 @@
 import Foundation
 
 protocol ExpiringActivityInterface {
-
     func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void)
 }
 
@@ -43,7 +42,6 @@ public func withExpiringActivity(reason: String, block: @escaping () async throw
 }
 
 actor ExpiringActivityManager {
-
     let api: ExpiringActivityInterface
     var task: Task<Void, Error>?
 

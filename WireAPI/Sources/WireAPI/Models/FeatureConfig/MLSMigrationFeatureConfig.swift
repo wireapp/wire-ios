@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *MLS Migration* feature.
 
 public struct MLSMigrationFeatureConfig: Equatable, Codable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus

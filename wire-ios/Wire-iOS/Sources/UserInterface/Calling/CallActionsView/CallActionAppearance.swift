@@ -21,7 +21,6 @@ import UIKit
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: - [AGIS] Clean this up
 enum CallActionAppearance: Equatable {
-
     case light, dark(blurred: Bool)
 
     var showBlur: Bool {

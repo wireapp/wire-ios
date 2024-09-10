@@ -31,7 +31,6 @@ enum CallStatusViewState: Equatable {
 }
 
 final class CallStatusView: UIView {
-
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()
     private let bitrateLabel = BitRateLabel(fontSpec: .smallSemiboldFont, color: SemanticColors.Label.textDefaultWhite)

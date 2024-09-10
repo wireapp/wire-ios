@@ -20,7 +20,6 @@
 import XCTest
 
 class MetaStreamContainerTests: XCTestCase {
-
     var sut: MetaStreamContainer! = nil
 
     override func setUp() {

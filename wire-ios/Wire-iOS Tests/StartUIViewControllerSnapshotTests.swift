@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
-
     var isAddressBookAccessDisabled: Bool = false
 
     var accessStatusDidChangeToGranted: Bool = true
@@ -48,7 +47,6 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
 }
 
 final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

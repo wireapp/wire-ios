@@ -19,7 +19,6 @@
 import Foundation
 
 class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
-
     var selfUser: MockUser!
     var conversation: MockConversation!
 

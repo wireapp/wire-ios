@@ -27,7 +27,6 @@ protocol VerticalColumnCollectionViewLayoutDelegate: AnyObject {
  */
 
 class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
-
     // MARK: - Configuration
 
     /// The object providing size information to the layout.

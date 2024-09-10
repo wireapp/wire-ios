@@ -19,7 +19,6 @@
 import Foundation
 
 public extension String {
-
     static func randomChar() -> UnicodeScalar {
         let string = "abcdefghijklmnopqrstuvxyz"
         let chars = Array(string.unicodeScalars)
@@ -42,7 +41,6 @@ public extension String {
 }
 
 public extension GenericMessage {
-
     func obfuscatedMessage() -> GenericMessage? {
         guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else { return nil }
         guard case .ephemeral? = self.content else { return nil }
@@ -94,7 +92,6 @@ extension ImageAsset {
 }
 
 extension LinkPreview {
-
     func obfuscated(originalURL: String) -> LinkPreview {
         let obfTitle = hasTitle ? title.obfuscated() : ""
         let obfSummary = hasSummary ? summary.obfuscated() : ""

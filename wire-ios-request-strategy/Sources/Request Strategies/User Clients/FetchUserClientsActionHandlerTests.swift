@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClientsAction, FetchUserClientsActionHandler> {
-
     typealias RequestPayload = FetchUserClientsActionHandler.RequestPayload
     typealias ResponsePayload = FetchUserClientsActionHandler.ResponsePayload
 

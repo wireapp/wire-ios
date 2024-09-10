@@ -38,7 +38,6 @@ extension MockShareViewControllerConversation: StableRandomParticipantsProvider 
 
 // TODO: [WPB-10223] Fix the snapshots
 final class ShareViewControllerTests: XCTestCase {
-
     private var groupConversation: MockShareViewControllerConversation!
     private var oneToOneConversation: MockShareViewControllerConversation!
     private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!

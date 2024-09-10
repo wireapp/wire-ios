@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMTransportResponse {
-
     static func teamNotFound(apiVersion: APIVersion) -> ZMTransportResponse {
         return ZMTransportResponse(payload: ["label": "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
@@ -273,7 +272,6 @@ extension MockTransportSession {
 
     @objc(pushEventsForLegalHoldWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
     public func pushEventsForLegalHold(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
-
         guard shouldSendEventsToSelfUser else { return [] }
 
         return inserted

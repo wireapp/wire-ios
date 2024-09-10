@@ -24,7 +24,6 @@ enum IncomingConnectionAction: UInt {
 }
 
 final class IncomingConnectionViewController: UIViewController {
-
     fileprivate var connectionView: IncomingConnectionView!
 
     let userSession: ZMUserSession?
@@ -61,7 +60,6 @@ final class IncomingConnectionViewController: UIViewController {
 }
 
 final class UserConnectionViewController: UIViewController {
-
     fileprivate var userConnectionView: UserConnectionView!
 
     let userSession: ZMUserSession

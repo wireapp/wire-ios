@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
-
     public enum Recipients {
         case conversationParticipants
         case users(Set<ZMUser>)
@@ -82,9 +81,7 @@ public func == (lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
 }
 
 extension GenericMessageEntity: EncryptedPayloadGenerator {
-
     public func encryptForTransport() async -> EncryptedPayloadGenerator.Payload? {
-
         switch targetRecipients {
         case .conversationParticipants:
             guard let conversation else { return nil }

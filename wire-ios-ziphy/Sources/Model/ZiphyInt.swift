@@ -24,7 +24,6 @@ import Foundation
  */
 
 public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
-
     /// The integer value wrapped by the object
     public let rawValue: Int
 

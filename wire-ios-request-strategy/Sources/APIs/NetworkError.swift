@@ -19,7 +19,6 @@
 import Foundation
 
 public enum NetworkError: Error, Equatable {
-
     case errorEncodingRequest
     case errorDecodingResponse(ZMTransportResponse)
     case errorDecodingURLResponse(URLResponse)

@@ -20,7 +20,6 @@
 import XCTest
 
 final class PayloadUpdateConversationProtocolChangeTests: XCTestCase {
-
     func testEventType() throws {
         // given
         // when

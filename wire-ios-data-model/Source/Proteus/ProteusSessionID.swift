@@ -19,7 +19,6 @@
 import Foundation
 
 public struct ProteusSessionID: Hashable, Equatable {
-
     // MARK: - Properties
 
     public let userID: String
@@ -66,7 +65,6 @@ public struct ProteusSessionID: Hashable, Equatable {
 }
 
 extension ProteusSessionID: SafeForLoggingStringConvertible {
-
     public var safeForLoggingDescription: String {
         return "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
     }

@@ -25,7 +25,6 @@ public enum SSOSettingsError: Error, Equatable {
 }
 
 public struct SSOSettings: Codable, Equatable {
-
     public let ssoCode: UUID?
 
     private enum CodingKeys: String, CodingKey {
@@ -48,7 +47,6 @@ public struct SSOSettings: Codable, Equatable {
 }
 
 extension UnauthenticatedSession {
-
     /// Fetch the SSO settings for the backend.
     ///
     /// This is only interesting if you run against a custom backend.

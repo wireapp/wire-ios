@@ -20,7 +20,6 @@
 import XCTest
 
 class AssetV3UploadRequestStrategyTests: MessagingTestBase {
-
     var sut: AssetV3UploadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
 
@@ -33,7 +32,6 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     }
 
     override func tearDown() {
-
         sut = nil
         mockApplicationStatus = nil
 

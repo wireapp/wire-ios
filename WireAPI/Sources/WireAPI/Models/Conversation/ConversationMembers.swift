@@ -17,11 +17,9 @@
 //
 
 public extension Conversation {
-
     /// Represents all conversation's members including self.
 
     struct Members: Equatable, Codable {
-
         /// The particiants excluding the self user.
 
         public let others: [Member]
@@ -31,7 +29,6 @@ public extension Conversation {
         public let selfMember: Member
 
         enum CodingKeys: String, CodingKey {
-
             case others
             case selfMember = "self"
         }

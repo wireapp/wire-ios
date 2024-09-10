@@ -20,7 +20,6 @@
 import WireTesting
 
 class TeamRolesDownloadRequestStrategyTests: MessagingTest {
-
     var sut: TeamRolesDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!
@@ -167,7 +166,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItUpdatesSyncStepDuringSync() {
-
         self.mockSyncStatus.mockPhase = .fetchingTeamRoles
 
         syncMOC.performGroupedAndWait {
@@ -191,7 +189,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotUpdatesSyncStepOutsideOfSync() {
-
         syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -213,7 +210,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItFinishedSyncStepIfNoTeam() {
-
         syncMOC.performGroupedAndWait {
             // given
             self.mockSyncStatus.mockPhase = .fetchingTeamRoles

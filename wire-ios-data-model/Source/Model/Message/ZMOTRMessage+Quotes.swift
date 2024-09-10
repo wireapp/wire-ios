@@ -19,9 +19,7 @@
 import Foundation
 
 extension ZMOTRMessage {
-
     func establishRelationshipsForInsertedQuote(_ quote: Quote) {
-
         guard let managedObjectContext,
               let conversation,
               let quotedMessageId = UUID(uuidString: quote.quotedMessageID),

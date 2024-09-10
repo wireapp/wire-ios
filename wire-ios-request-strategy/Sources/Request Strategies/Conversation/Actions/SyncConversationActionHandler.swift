@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class SyncConversationActionHandler: ActionHandler<SyncConversationAction> {
-
     private lazy var processor = ConversationEventPayloadProcessor(
         mlsEventProcessor: MLSEventProcessor(context: context),
         removeLocalConversation: RemoveLocalConversationUseCase()

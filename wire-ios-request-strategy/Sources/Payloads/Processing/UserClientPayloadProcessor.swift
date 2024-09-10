@@ -19,7 +19,6 @@
 import Foundation
 
 final class UserClientPayloadProcessor {
-
     func createOrUpdateClients(
         from payloads: [Payload.UserClient],
         for user: ZMUser,

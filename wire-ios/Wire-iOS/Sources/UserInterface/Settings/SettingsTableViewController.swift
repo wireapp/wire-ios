@@ -21,7 +21,6 @@ import WireDesign
 import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController {
-
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()
     let footerSeparator = OverflowSeparatorView()
@@ -134,7 +133,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
-
     let group: SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
@@ -292,7 +290,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
 }
 
 extension SettingsTableViewController {
-
     @objc
     func applicationDidBecomeActive() {
         refreshData()

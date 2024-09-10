@@ -39,7 +39,6 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItProcessesConversationsWithLocalModifications_LastRead() {
-
         self.syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -65,7 +64,6 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItProcessesConversationsWithLocalModifications_Cleared() {
-
         self.syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -91,7 +89,6 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItDeletesOlderMessages_Cleared() {
-
         self.syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)

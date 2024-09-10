@@ -19,7 +19,6 @@
 import Foundation
 
 final class UserTests_swift: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

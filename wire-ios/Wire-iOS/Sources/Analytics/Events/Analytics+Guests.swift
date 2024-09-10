@@ -21,7 +21,6 @@ import WireDataModel
 
 extension Analytics {
     func guestAttributes(in conversation: ZMConversation) -> [String: Any] {
-
         let numGuests = conversation.sortedActiveParticipants.filter({
             $0.isGuest(in: conversation)
             }).count
@@ -46,7 +45,6 @@ protocol Event {
 }
 
 extension Analytics {
-
     func tag(_ event: Event) {
         tagEvent(event.name, attributes: event.attributes as? [String: NSObject] ?? [:])
     }

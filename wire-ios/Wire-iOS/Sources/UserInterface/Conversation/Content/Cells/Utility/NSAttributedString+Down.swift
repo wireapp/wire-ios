@@ -20,7 +20,6 @@ import Down
 import Foundation
 
 extension NSAttributedString {
-
     @objc
     static func markdown(from text: String, style: DownStyle) -> NSMutableAttributedString {
         let down = Down(markdownString: text)
@@ -45,7 +44,6 @@ extension NSAttributedString {
 }
 
 extension NSAttributedString {
-
     /// Trim the NSAttributedString to given number of line limit and add an ellipsis at the end if necessary
     ///
     /// - Parameter numberOfLinesLimit: number of line reserved

@@ -20,7 +20,6 @@
 import XCTest
 
 final class EmoticonSubstitutionConfigurationTests: XCTestCase {
-
     func testThatParsingFileReturnsAConfiguration() {
         // Given
 

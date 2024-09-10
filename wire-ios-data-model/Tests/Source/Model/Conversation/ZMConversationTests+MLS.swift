@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMConversationTests_MLS: ZMConversationTestsBase {
-
     override func tearDown() {
         BackendInfo.isFederationEnabled = false
         super.tearDown()
@@ -81,7 +80,6 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
 // MARK: - Migration releated fetch requests
 
 final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
-
     func test_fetchAllTeamGroupConversations_messageProtocolProteus() async throws {
         // Given
         let conversations = try await syncMOC.perform { [syncMOC] in
@@ -154,7 +152,6 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
 // MARK: - MLSGroupID Helper
 
 extension MLSGroupID {
-
     fileprivate func createConversation(in managedObjectContext: NSManagedObjectContext) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: managedObjectContext)
         conversation.remoteIdentifier = NSUUID.create()

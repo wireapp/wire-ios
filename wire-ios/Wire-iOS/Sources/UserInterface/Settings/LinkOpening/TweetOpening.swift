@@ -50,7 +50,6 @@ enum TweetOpeningOption: Int, LinkOpeningOption {
 }
 
 extension URL {
-
     func openAsTweet() -> Bool {
         log.debug("Trying to open \"\(self)\" as tweet, isTweet: \(isTweet)")
         guard isTweet else { return false }
@@ -77,7 +76,6 @@ extension URL {
 // MARK: - Private
 
 fileprivate extension UIApplication {
-
     var tweetbotInstalled: Bool {
         return canHandleScheme("tweetbot://")
     }
@@ -88,14 +86,12 @@ fileprivate extension UIApplication {
 }
 
 extension URL {
-
     var isTweet: Bool {
         return absoluteString.contains("twitter.com") && absoluteString.contains("status")
     }
 }
 
 fileprivate extension URL {
-
     var tweetbotURL: URL? {
         guard isTweet else { return nil }
 
@@ -124,7 +120,6 @@ fileprivate extension URL {
 }
 
 private extension String {
-
     func replacingWithTweetbotURLScheme(_ string: String) -> String {
         return replacingOccurrences(of: string, with: "tweetbot://")
     }

@@ -112,7 +112,6 @@ public extension WireProtos.Asset {
 }
 
 public extension WireProtos.Asset.Original {
-
     init(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: WireProtos.Asset.ImageMetaData? = nil) {
         self = WireProtos.Asset.Original.with {
             $0.size = size
@@ -143,7 +142,6 @@ public extension WireProtos.Asset.Original {
 
     /// Returns the normalized loudness as floats between 0 and 1
     var normalizedLoudnessLevels: [Float] {
-
         guard audio.hasNormalizedLoudness else { return [] }
         guard audio.normalizedLoudness.count > 0 else { return [] }
 
@@ -162,7 +160,6 @@ public extension WireProtos.Asset.Original {
 }
 
 public extension WireProtos.Asset.Preview {
-
     init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
         self = WireProtos.Asset.Preview.with({
             $0.size = size

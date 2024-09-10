@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
-
     // MARK: - Life cycle
 
     init() {}

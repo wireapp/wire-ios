@@ -84,7 +84,6 @@ public final class Role: ZMManagedObject {
     static public func create(managedObjectContext: NSManagedObjectContext,
                               name: String,
                               teamOrConversation: TeamOrConversation) -> Role {
-
         let entry = Role.insertNewObject(in: managedObjectContext)
         entry.name = name
         switch teamOrConversation {

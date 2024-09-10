@@ -27,7 +27,6 @@ import WireSyncEngineSupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-
     var userProfile: UserProfile
 
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
@@ -368,7 +367,6 @@ final class UserSessionMock: UserSession {
 // MARK: - UserSessionMock + ContextProvider
 
 extension UserSessionMock: ContextProvider {
-
     var account: Account { contextProvider.account }
     var viewContext: NSManagedObjectContext { contextProvider.viewContext }
     var syncContext: NSManagedObjectContext { contextProvider.syncContext }

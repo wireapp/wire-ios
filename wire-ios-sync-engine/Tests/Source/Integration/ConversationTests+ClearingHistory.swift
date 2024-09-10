@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_ClearingHistory: ConversationTestsBase {
-
     func loginAndFillConversationWithMessages(mockConversation: MockConversation, messagesCount: UInt) {
         XCTAssertTrue(login())
 
@@ -33,7 +32,6 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         self.mockTransportSession.performRemoteChanges { _ in
             // If the client is not registered yet we need to account for the added System Message
             for i in 0..<(Int(messagesCount) - conversation!.allMessages.count) {
-
                 let message = GenericMessage(content: Text(content: "foo" + String(i), mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
                 mockConversation.encryptAndInsertData(from: fromClient,
                                                       to: toClient,

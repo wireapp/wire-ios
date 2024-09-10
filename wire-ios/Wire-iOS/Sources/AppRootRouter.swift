@@ -25,7 +25,6 @@ import WireSyncEngine
 // MARK: - AppRootRouter
 
 final class AppRootRouter {
-
     // MARK: - Private Property
 
     private let appStateCalculator: AppStateCalculator
@@ -555,7 +554,6 @@ extension AppRootRouter {
 // MARK: - URLActionRouterDelegate
 
 extension AppRootRouter: URLActionRouterDelegate {
-
     func urlActionRouterWillShowCompanyLoginError() {
         authenticationCoordinator?.cancelCompanyLogin()
     }
@@ -573,7 +571,6 @@ extension AppRootRouter: URLActionRouterDelegate {
 // MARK: - ApplicationStateObserving
 
 extension AppRootRouter: ApplicationStateObserving {
-
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
     }

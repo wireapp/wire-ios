@@ -20,14 +20,12 @@ import Foundation
 import WireDataModel
 
 private extension Availability {
-
     var dontRemindMeUserDefaultsKey: String {
         "dont_remind_me_\(localizedName)"
     }
 }
 
 extension Settings {
-
     func shouldRemindUserWhenChanging(_ availability: Availability) -> Bool {
         defaults.bool(forKey: availability.dontRemindMeUserDefaultsKey) != true
     }

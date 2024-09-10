@@ -38,7 +38,6 @@ struct PinnedKeysData: Decodable {
 }
 
 extension SecTrust {
-
     static func trustWithChain(certificateData: [Data], file: StaticString = #file, line: UInt = #line) -> SecTrust? {
         let policy = SecPolicyCreateBasicX509()
         let certificates: [SecCertificate] = certificateData.compactMap {
@@ -53,7 +52,6 @@ extension SecTrust {
 }
 
 class BackendTrustProviderTests: XCTestCase {
-
     var pinnedHosts: [String]!
     var certificates: CertificateData!
     var pinnedKeys: PinnedKeysData!

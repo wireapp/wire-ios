@@ -21,7 +21,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
-
     private var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     private var stack: CoreDataStack!
     private var sut: E2EIdentityCertificateUpdateStatusUseCase!

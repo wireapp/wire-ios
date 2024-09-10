@@ -20,7 +20,6 @@ import Foundation
 import MobileCoreServices
 
 extension NSExtensionContext {
-
     /// Get all the attachments to this post.
     var attachments: [NSItemProvider] {
         guard let items = inputItems as? [NSExtensionItem] else { return [] }
@@ -31,7 +30,6 @@ extension NSExtensionContext {
 // MARK: - Sorting
 
 extension Array where Element == NSItemProvider {
-
     /// Returns the attachments sorted by type.
     var sorted: [AttachmentType: [NSItemProvider]] {
         var attachments: [AttachmentType: [NSItemProvider]] = [:]

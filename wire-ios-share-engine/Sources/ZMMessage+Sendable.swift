@@ -20,14 +20,12 @@ import Foundation
 import WireDataModel
 
 private extension ZMMessage {
-
     var reportsProgress: Bool {
         return fileMessageData != nil || imageMessageData != nil
     }
 }
 
 extension ZMMessage: Sendable {
-
     public var blockedBecauseOfMissingClients: Bool {
         guard let message = self as? ZMOTRMessage else {
             return false
@@ -54,7 +52,6 @@ extension ZMMessage: Sendable {
     }
 
     public func cancel() {
-
         if let asset = self.fileMessageData {
             asset.cancelTransfer()
             return

@@ -20,7 +20,6 @@ import Foundation
 import WireSystem
 
 extension CBoxResult: Error {
-
     /// Throw if self represents an error
     func throwIfError() throws {
         guard self == CBOX_SUCCESS else {

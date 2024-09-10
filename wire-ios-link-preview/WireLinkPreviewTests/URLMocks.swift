@@ -19,7 +19,6 @@
 @testable import WireLinkPreview
 
 final class MockURLSessionDataTask: URLSessionDataTaskType {
-
     var taskIdentifier = 0
     var resumeCallCount = 0
     var cancelCallCount = 0
@@ -42,7 +41,6 @@ final class MockURLSessionDataTask: URLSessionDataTaskType {
 }
 
 final class MockURLSession: URLSessionType {
-
     var dataTaskWithURLCallCount = 0
     var dataTaskWithURLParameters = [URLRequest]()
     var dataTaskWithURLClosureCallCount = 0

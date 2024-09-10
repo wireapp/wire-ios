@@ -21,7 +21,6 @@ import WireDesign
 import WireReusableUIComponents
 
 final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable {
-
     private let spinner = ProgressSpinner()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

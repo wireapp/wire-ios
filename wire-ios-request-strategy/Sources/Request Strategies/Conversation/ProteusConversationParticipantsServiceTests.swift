@@ -21,7 +21,6 @@ import WireDataModelSupport
 import XCTest
 
 class ProteusConversationParticipantsServiceTests: MessagingTestBase {
-
     // MARK: - Properties
 
     var sut: ProteusConversationParticipantsService!

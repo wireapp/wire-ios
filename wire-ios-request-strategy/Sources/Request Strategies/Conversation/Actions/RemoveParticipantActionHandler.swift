@@ -19,7 +19,6 @@
 import Foundation
 
 extension ConversationRemoveParticipantError {
-
     public init?(response: ZMTransportResponse) {
        switch (response.httpStatus, response.payloadLabel()) {
        case (403, "invalid-op"?): self = .invalidOperation
@@ -31,7 +30,6 @@ extension ConversationRemoveParticipantError {
 }
 
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
-
     private lazy var eventProcessor = ConversationEventProcessor(context: context)
 
     override func request(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {

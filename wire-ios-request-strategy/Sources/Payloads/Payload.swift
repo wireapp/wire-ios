@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public enum Payload {
-
     public typealias UserClients = [Payload.UserClient]
     public typealias UserClientByUserID = [String: UserClients]
     public typealias UserClientByDomain = [String: UserClientByUserID]
@@ -42,7 +41,6 @@ public enum Payload {
     }
 
     struct QualifiedUserIDList: Codable, Hashable {
-
         enum CodingKeys: String, CodingKey {
             case qualifiedIDs = "qualified_ids"
         }
@@ -61,7 +59,6 @@ public enum Payload {
     }
 
     struct PrekeyByQualifiedUserIDV4: Codable {
-
         enum CodingKeys: String, CodingKey {
             case prekeyByQualifiedUserID = "qualified_user_client_prekeys"
             case failed = "failed_to_list"
@@ -72,7 +69,6 @@ public enum Payload {
     }
 
     struct Location: Codable, Equatable {
-
         enum CodingKeys: String, CodingKey {
             case longitude = "lon"
             case latitide = "lat"
@@ -83,7 +79,6 @@ public enum Payload {
     }
 
     public struct UserClient: Codable, Equatable {
-
         enum CodingKeys: String, CodingKey {
             case id
             case type
@@ -120,7 +115,6 @@ public enum Payload {
     }
 
     struct Asset: Codable {
-
         enum AssetSize: String, Codable {
             case preview
             case complete
@@ -141,7 +135,6 @@ public enum Payload {
     }
 
     struct SSOID: Codable {
-
         enum CodingKeys: String, CodingKey {
             case tenant
             case subject
@@ -161,7 +154,6 @@ public enum Payload {
     }
 
     struct UserProfilesV4: Codable {
-
         enum CodingKeys: String, CodingKey {
             case found
             case failed
@@ -172,9 +164,7 @@ public enum Payload {
     }
 
     public struct UserProfile: Codable {
-
         enum MessageProtocol: String, Codable {
-
             case proteus
             case mls
         }
@@ -239,7 +229,6 @@ public enum Payload {
              legalholdStatus: LegalholdStatus? = nil,
              supportedProtocols: Set<MessageProtocol>? = nil,
              updatedKeys: Set<CodingKeys>? = nil) {
-
             self.id = id
             self.qualifiedID = qualifiedID
             self.teamID = teamID
@@ -282,11 +271,9 @@ public enum Payload {
     }
 
     public struct ResponseFailure: Codable, Equatable {
-
         /// Endpoints involving federated calls to other domains can return some extra failure responses.
         /// The error response contains the following extra fields:
         public struct FederationFailure: Codable, Equatable {
-
             public enum FailureType: String, Codable, Equatable {
                 case federation
                 case unknown
@@ -346,7 +333,6 @@ public enum Payload {
     }
 
     public struct MessageSendingStatusV0: Codable {
-
         enum CodingKeys: String, CodingKey {
             case time
             case missing
@@ -369,7 +355,6 @@ public enum Payload {
     }
 
     public struct MessageSendingStatusV1: Codable, Equatable {
-
         enum CodingKeys: String, CodingKey {
             case time
             case missing
@@ -408,7 +393,6 @@ public enum Payload {
     }
 
     public struct MessageSendingStatusV4: Codable, Equatable {
-
         enum CodingKeys: String, CodingKey {
             case time
             case missing
@@ -451,7 +435,6 @@ public enum Payload {
     }
 
     public struct MessageSendingStatus: Equatable {
-
         public init(
             time: Date,
             missing: ClientListByQualifiedUserID,
@@ -490,7 +473,6 @@ public enum Payload {
     }
 
     public struct MLSMessageSendingStatus: Codable {
-
         enum CodingKeys: String, CodingKey {
             case time
             case events
@@ -514,7 +496,6 @@ public enum Payload {
     }
 
     struct PaginationStatus: Codable {
-
         enum CodingKeys: String, CodingKey {
             case pagingState = "paging_state"
             case size
@@ -531,7 +512,6 @@ public enum Payload {
 }
 
 extension Payload.ResponseFailure {
-
     func updateExpirationReason(for message: OTREntity, with reason: MessageSendFailure) {
         message.expirationReasonCode = NSNumber(value: reason.rawValue)
     }

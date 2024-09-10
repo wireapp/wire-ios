@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 final class MessageDestructionTimeoutValueTests: XCTestCase {
-
     func testThatItReturnsTheCorrectTimeouts() {
         XCTAssertEqual(MessageDestructionTimeoutValue.none.rawValue, 0)
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.rawValue, 10)
@@ -47,7 +46,6 @@ final class MessageDestructionTimeoutValueTests: XCTestCase {
 
 // Tests for displayString of MessageDestructionTimeoutValue
 extension MessageDestructionTimeoutValueTests {
-
     func testThatItReturnsTheCorrectShortDisplayString() {
         XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, NSLocalizedString("input.ephemeral.timeout.none", comment: ""))
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.shortDisplayString, "10")
@@ -68,7 +66,6 @@ extension MessageDestructionTimeoutValueTests {
 }
 
 class ZMConversationTests_Ephemeral: BaseZMMessageTests {
-
     func testThatItAllowsSettingTimeoutsOnGroupConversations() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

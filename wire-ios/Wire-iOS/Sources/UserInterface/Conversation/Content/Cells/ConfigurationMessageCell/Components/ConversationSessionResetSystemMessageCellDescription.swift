@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationSessionResetSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
 
     var message: ZMConversationMessage?

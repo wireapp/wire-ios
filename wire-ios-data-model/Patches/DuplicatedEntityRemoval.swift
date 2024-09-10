@@ -21,7 +21,6 @@ import Foundation
 private let zmLog = ZMSLog(tag: "DuplicateEntity")
 
 enum DuplicatedEntityRemoval {
-
     static func removeDuplicated(in moc: NSManagedObjectContext) {
         // will skip this during test unless on disk
         guard moc.persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else { return }
@@ -41,7 +40,6 @@ enum DuplicatedEntityRemoval {
 }
 
 extension UserClient {
-
     static func merge(_ clients: [UserClient]) {
         guard let firstClient = clients.first, let context = firstClient.managedObjectContext, clients.count > 1 else {
             return

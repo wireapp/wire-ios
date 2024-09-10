@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMPersistentCookieStorage {
-
     /// Returns true if `self` has an authentication cookie that can be **decrypted**.
     ///
     /// - note: This should generally be used in favor of `ZMPersistentCookieStorage.authenticationCookieData` which

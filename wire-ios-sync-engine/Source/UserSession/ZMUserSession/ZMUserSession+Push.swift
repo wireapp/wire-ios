@@ -75,7 +75,6 @@ struct PushTokenMetadata {
 // MARK: - Register current push token
 
 extension ZMUserSession {
-
     @objc public static let registerCurrentPushTokenNotificationName = Notification.Name(rawValue: "ZMUserSessionResetPushTokensNotification")
 
     public func registerForRegisteringPushTokenNotification() {
@@ -92,7 +91,6 @@ extension ZMUserSession {
 // MARK: - Register, delete and update push token
 
 extension ZMUserSession {
-
     /// Generates the local push token if needed, then syncs it with the backend.
 
     public func validatePushToken() {
@@ -101,7 +99,6 @@ extension ZMUserSession {
 }
 
 extension ZMUserSession {
-
     public func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
         WireLogger.notifications.debug("Received push notification with payload: \(payload)")
 
@@ -128,7 +125,6 @@ extension ZMUserSession {
  * to forward the method calls to the appropriate user session.
  */
 extension ZMUserSession: UNUserNotificationCenterDelegate {
-
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
     public func userNotificationCenter(_ center: UNUserNotificationCenter,

@@ -22,7 +22,6 @@ import WireDataModel
 
 // used by tests to fake errors on genrating pre keys
 public class SpyUserClientKeyStore: UserClientKeysStore {
-
     public var failToGeneratePreKeys: Bool = false
     public var failToGenerateLastPreKey: Bool = false
 
@@ -30,7 +29,6 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
     public var lastGeneratedLastPrekey: String?
 
     override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
-
         if self.failToGeneratePreKeys {
             let error = NSError(domain: "cryptobox.error", code: 0, userInfo: ["reason": "using fake store with simulated fail"])
             throw error

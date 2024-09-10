@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class MessageObserverTests: NotificationDispatcherTestBase {
-
     var messageObserver: MessageObserver!
 
     override func setUp() {
@@ -49,10 +48,8 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         expectedChangedFields: Set<String>,
         customAffectedKeys: AffectedKeys? = nil
         ) {
-
         // given
         withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
-
             self.uiMOC.saveOrRollback()
 
             // when
@@ -262,7 +259,6 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
-
         // given
         let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         self.uiMOC.saveOrRollback()
@@ -322,7 +318,6 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesConversationWhenMessageGenericDataIsChanged() throws {
-
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
         let genericMessage = GenericMessage(content: Text(content: "foo"), nonce: nonce)

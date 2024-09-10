@@ -26,7 +26,6 @@ import WireSyncEngine
  */
 
 final class ProfileDetailsViewController: UIViewController {
-
     /// The user whose profile is displayed.
     let user: UserType
 
@@ -71,7 +70,6 @@ final class ProfileDetailsViewController: UIViewController {
         context: ProfileViewControllerContext,
         userSession: UserSession
     ) {
-
         var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideTeamName]
 
         // The availability status has been moved to the left of the user name, so now we can always hide this status in the user's profile.
@@ -179,7 +177,6 @@ final class ProfileDetailsViewController: UIViewController {
 // MARK: - ProfileDetailsContentController
 
 extension ProfileDetailsViewController: ProfileDetailsContentControllerDelegate {
-
     func profileGroupRoleDidChange(isAdminRole: Bool) {
         self.isAdminRole = isAdminRole
     }

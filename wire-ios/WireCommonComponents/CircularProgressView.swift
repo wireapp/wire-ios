@@ -19,7 +19,6 @@
 import UIKit
 
 public class CircularProgressView: UIView {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setup()

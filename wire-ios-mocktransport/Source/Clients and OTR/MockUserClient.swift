@@ -20,7 +20,6 @@ import CoreData
 import Foundation
 
 @objc public class MockUserClient: NSManagedObject {
-
     /// User that owns the client
     @NSManaged public var user: MockUser?
 
@@ -65,7 +64,6 @@ import Foundation
 }
 
 extension MockUserClient {
-
     /// Identifier for the session in Cryptobox
     public var sessionIdentifier: EncryptionSessionIdentifier? {
         guard let identifier = self.identifier, let userIdentifier = self.user?.identifier else {
@@ -85,7 +83,6 @@ extension MockUserClient {
 // MARK: - Legal Hold
 
 extension MockUserClient {
-
     public var isLegalHoldDevice: Bool {
         return type == "legalhold" || deviceClass == "legalhold"
     }
@@ -94,10 +91,8 @@ extension MockUserClient {
 // MARK: - JSON de/serialization
 
 @objc extension MockUserClient {
-
     /// Creates a new client from JSON payload
     public static func insertClient(payload: [String: Any], context: NSManagedObjectContext) -> MockUserClient? {
-
         let label = payload["label"] as? String
         let deviceClass = payload["class"] as? String
         let model = payload["model"] as? String
@@ -176,7 +171,6 @@ extension MockUserClient {
 
     /// JSON representation
     public var transportData: ZMTransportData {
-
         var data = [String: Any]()
         data["id"] = self.identifier
         if self.label != nil {
@@ -204,7 +198,6 @@ extension MockUserClient {
 // MARK: - Encryption and sessions
 
 @objc extension MockUserClient {
-
     public static var mockEncryptionSessionDirectory: URL {
         return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
     }

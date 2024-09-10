@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct ScreenCurtainView: View {
-
     var body: some View {
         VStack {
             Spacer()

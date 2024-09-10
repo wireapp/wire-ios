@@ -19,7 +19,6 @@
 import Foundation
 
 public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-
     let userProfileUpdateStatus: UserProfileUpdateStatus
 
     fileprivate var passwordUpdateSync: ZMSingleRequestSync! = nil
@@ -59,7 +58,6 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
     }
 
     @objc public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-
         if self.userProfileUpdateStatus.currentlySettingEmail ||
             self.userProfileUpdateStatus.currentlyChangingEmail {
             self.emailUpdateSync.readyForNextRequestIfNotBusy()
@@ -93,7 +91,6 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch sync {
-
         case self.passwordUpdateSync:
             let payload: NSDictionary = [
                 "new_password": self.userProfileUpdateStatus.passwordToSet!

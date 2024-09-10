@@ -17,6 +17,5 @@
 //
 
 enum URLRequestBuilderError: Error {
-
     case invalidPath(String)
 }

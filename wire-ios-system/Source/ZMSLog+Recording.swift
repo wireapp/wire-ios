@@ -21,7 +21,6 @@ import Foundation
 private var recordingToken: LogHookToken?
 
 extension ZMSLog {
-
     /// Start recording
     @objc public static func startRecording(isInternal: Bool = true) {
         logQueue.sync {

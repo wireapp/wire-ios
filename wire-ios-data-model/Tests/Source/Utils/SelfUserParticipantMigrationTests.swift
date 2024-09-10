@@ -21,9 +21,7 @@ import Foundation
 import XCTest
 
 class SelfUserParticipantMigrationTests: DiskDatabaseTest {
-
     func testMigrationIsSelfAnActiveMemberToTheParticipantRoles() {
-
         // Given
         let oldKey = "isSelfAnActiveMember"
         let conversation = createConversation()

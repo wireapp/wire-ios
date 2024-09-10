@@ -19,7 +19,6 @@
 import Foundation
 
 struct AcmeDirectoriesResponse: Codable, Equatable {
-
     var newNonce: String
     var newAccount: String
     var newOrder: String
@@ -28,14 +27,12 @@ struct AcmeDirectoriesResponse: Codable, Equatable {
 }
 
 public struct ACMEResponse: Equatable {
-
     var nonce: String
     var location: String
     var response: Data
 }
 
 public struct ACMEAuthorizationResponse: Equatable {
-
     var nonce: String
     var location: String
     var response: Data
@@ -43,7 +40,6 @@ public struct ACMEAuthorizationResponse: Equatable {
 }
 
 enum AuthorizationChallengeType: String, Decodable {
-
     case DPoP = "wire-dpop-01"
     case OIDC = "wire-oidc-01"
 }

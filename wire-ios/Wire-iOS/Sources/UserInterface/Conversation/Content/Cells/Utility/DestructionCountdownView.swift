@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class DestructionCountdownView: UIView {
-
     // MARK: - Properties
 
     typealias IconColors = SemanticColors.Icon
@@ -115,7 +114,6 @@ final class DestructionCountdownView: UIView {
     }
 
     func startAnimating(duration: TimeInterval, currentProgress: CGFloat) {
-
         let elapsedTimeAnimation = CABasicAnimation(keyPath: #keyPath(CAShapeLayer.strokeEnd))
         elapsedTimeAnimation.duration = duration
         elapsedTimeAnimation.fromValue = currentProgress

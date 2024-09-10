@@ -28,7 +28,6 @@ import Foundation
 /// This ensures that they can be retrieved later for processing.
 
 public final class StoredUpdateEventEnvelope: NSManagedObject {
-
     /// The name of the associated Core Data entity.
 
     public static let entityName = "StoredUpdateEventEnvelope"

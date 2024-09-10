@@ -20,7 +20,6 @@
 import XCTest
 
 final class SelfUserRequestStrategyTests: MessagingTestBase {
-
     var sut: SelfUserRequestStrategy!
     var applicationStatus: MockApplicationStatus!
 

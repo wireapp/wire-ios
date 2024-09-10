@@ -21,7 +21,6 @@ import WireCryptobox
 
 @objc(ZMGenericMessageData)
 @objcMembers public class ZMGenericMessageData: ZMManagedObject {
-
     // MARK: - Static
 
     override open class func entityName() -> String {
@@ -133,9 +132,7 @@ import WireCryptobox
 // MARK: - Encryption Error
 
 extension ZMGenericMessageData {
-
     enum ProcessingError: LocalizedError {
-
         case missingManagedObjectContext
         case failedToSerializeMessage
         case failedToEncrypt(reason: NSManagedObjectContext.EncryptionError)
@@ -157,7 +154,6 @@ extension ZMGenericMessageData {
 }
 
 extension ZMGenericMessageData: EncryptionAtRestMigratable {
-
     static let predicateForObjectsNeedingMigration: NSPredicate? = nil
 
     func migrateTowardEncryptionAtRest(

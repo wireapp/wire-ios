@@ -21,7 +21,6 @@ import Foundation
 /// The current message protocol used in a conversation.
 
 public enum ConversationMessageProtocol: String, Codable {
-
     /// The Proteus messaging protocol.
 
     case proteus

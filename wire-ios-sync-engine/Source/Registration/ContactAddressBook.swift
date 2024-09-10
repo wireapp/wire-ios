@@ -23,12 +23,10 @@ private let zmLog = ZMSLog(tag: "ContactAddressBook")
 
 /// iOS Contacts-based address book
 final class ContactAddressBook: AddressBook {
-
     let store = CNContactStore()
 }
 
 extension ContactAddressBook: AddressBookAccessor {
-
     /// Gets a specific address book user by the local address book indentifier
     internal func contact(identifier: String) -> ContactRecord? {
         return try? store.unifiedContact(withIdentifier: identifier, keysToFetch: ContactAddressBook.keysToFetch)
@@ -79,7 +77,6 @@ extension ContactAddressBook: AddressBookAccessor {
 }
 
 extension CNContact: ContactRecord {
-
     var rawEmails: [String] {
         return self.emailAddresses.map { $0.value as String }
     }
@@ -106,7 +103,6 @@ extension CNContact: ContactRecord {
 }
 
 extension ZMAddressBookContact {
-
     convenience init?(contact: CNContact,
                       phoneNumberNormalizer: @escaping AddressBook.Normalizer,
                       emailNormalizer: @escaping AddressBook.Normalizer) {

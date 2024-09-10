@@ -21,7 +21,6 @@ import Foundation
 /// An object that facilitates mocking url requests and responses.
 
 final class URLProtocolMock: URLProtocol {
-
     static var mockHandler: ((URLRequest) throws -> (Data?, URLResponse))?
 
     override static func canInit(with request: URLRequest) -> Bool {

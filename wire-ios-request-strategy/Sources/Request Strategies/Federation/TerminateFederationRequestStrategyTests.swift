@@ -20,7 +20,6 @@
 import XCTest
 
 class TerminateFederationRequestStrategyTests: MessagingTestBase {
-
     // MARK: - Properties
 
     var sut: TerminateFederationRequestStrategy!
@@ -93,7 +92,6 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
 }
 
 class MockFederationTerminationManager: FederationTerminationManagerInterface {
-
     var didCallHandleFederationTerminationWith: Bool = false
     var didCallhandleFederationTerminationBetween: Bool = false
 

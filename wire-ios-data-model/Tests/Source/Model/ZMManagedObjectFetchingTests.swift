@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 
 class ZMManagedObjectFetchingTests: DatabaseBaseTest {
-
     var mocs: CoreDataStack!
 
     public override func setUp() {
@@ -219,7 +218,6 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
                                   entityDomain: String?,
                                   searchDomain: String?,
                                   fetched: Bool) {
-
         // given
         let selfUser = ZMUser.selfUser(in: mocs.viewContext)
         selfUser.domain = selfUserDomain

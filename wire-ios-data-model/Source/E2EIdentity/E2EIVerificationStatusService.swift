@@ -21,12 +21,10 @@ import WireCoreCrypto
 
 // sourcery: AutoMockable
 public protocol E2EIVerificationStatusServiceInterface {
-
     func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus
 }
 
 public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceInterface {
-
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -45,7 +43,6 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
     // MARK: - Error
 
     public enum E2EIVerificationStatusError: Error {
-
         case missingConversation
         case failedToFetchVerificationStatus
     }
@@ -77,7 +74,6 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
 }
 
 private extension WireCoreCrypto.E2eiConversationState {
-
     func toMLSVerificationStatus() -> MLSVerificationStatus {
         switch self {
         case .verified:

@@ -21,7 +21,6 @@ import Foundation
 /// A configuration for the *App Lock* feature.
 
 public struct AppLockFeatureConfig: Codable, Equatable {
-
     /// The feature's status.
 
     public let status: FeatureConfigStatus

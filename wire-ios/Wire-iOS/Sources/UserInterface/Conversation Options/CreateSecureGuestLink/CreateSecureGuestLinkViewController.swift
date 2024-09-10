@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
-
     // MARK: - Properties
 
     typealias ViewColors = SemanticColors.View
@@ -394,7 +393,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 
     func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel) {
-
         UIAlertController.presentPasswordCopiedAlert(
             on: self,
             title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
@@ -417,7 +415,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 // MARK: - ValidatedTextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
-
     func buttonPressed(_ sender: UIButton) {
         securedGuestLinkPasswordTextfield.isSecureTextEntry.toggle()
         securedGuestLinkPasswordTextfield.updatePasscodeIcon()
@@ -429,7 +426,6 @@ extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
 // MARK: - UITextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: UITextFieldDelegate {
-
     @objc
     func textFieldDidChange(_ textField: UITextField) {
         evaluateTextfieldsAndToggleCreateLinkButtonState()

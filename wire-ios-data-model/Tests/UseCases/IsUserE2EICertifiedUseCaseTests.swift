@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
-
     private var sut: IsUserE2EICertifiedUseCase!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockSafeCoreCrypto: MockSafeCoreCrypto!
@@ -372,7 +371,6 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 }
 
 extension WireIdentity {
-
     fileprivate static func with(clientID: String, status: DeviceStatus) -> Self {
         .init(
             clientId: clientID,

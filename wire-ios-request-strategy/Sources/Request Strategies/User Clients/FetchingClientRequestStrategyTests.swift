@@ -25,7 +25,6 @@ import WireTransport
 @testable import WireRequestStrategy
 
 final class FetchClientRequestStrategyTests: MessagingTestBase {
-
     var sut: FetchingClientRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
 
@@ -498,7 +497,6 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
     // MARK: - Fetching other user's clients / RemoteIdentifierObjectSync
 
     func testThatItDoesNotDeleteAnObjectWhenResponseContainsRemoteID() {
-
         // GIVEN
         var payload: ZMTransportData!
         self.syncMOC.performGroupedAndWait {

@@ -24,7 +24,6 @@ import WireSyncEngine
  */
 
 final class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {

@@ -20,9 +20,7 @@ import Foundation
 @testable import Wire
 
 extension AppLockModule {
-
     final class MockRouter: AppLockRouterPresenterInterface {
-
         // MARK: - Metrics
 
         var actions = [Action]()

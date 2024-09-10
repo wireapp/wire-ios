@@ -23,18 +23,15 @@ import XCTest
 // MARK: - AccessoryTextFieldValidationTests
 
 final class AccessoryTextFieldValidationTests: XCTestCase {
-
     // MARK: - MockViewController
 
     final class MockViewController: UIViewController, TextFieldValidationDelegate {
-
         var errorCounter = 0
         var successCounter = 0
 
         var lastError: TextFieldValidator.ValidationError?
 
         func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
-
             if error == .none {
                 successCounter += 1
             } else {

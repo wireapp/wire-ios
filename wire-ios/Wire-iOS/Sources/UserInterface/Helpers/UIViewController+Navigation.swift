@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIViewController {
-
     func hideDefaultButtonTitle() {
         guard navigationItem.backBarButtonItem == nil else { return }
 

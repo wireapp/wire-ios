@@ -21,9 +21,7 @@ import WireTransport
 import XCTest
 
 class MockTransportSessionCancellationTests: MockTransportSessionTests {
-
     func testThatItCallsTheTaskCreationCallback() {
-
         // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo", apiVersion: APIVersion.v0.rawValue)
         var identifier: ZMTaskIdentifier?
@@ -42,7 +40,6 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
     }
 
     func testThatItCanCancelARequestThatIsNotCompletedYet() {
-
         // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo", apiVersion: APIVersion.v0.rawValue)
         var requestCompleted = false
@@ -80,7 +77,6 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
     }
 
     func testThatItDoesNotCancelARequestThatIsAlreadyCompleted() {
-
         // GIVEN
         let request = ZMTransportRequest(getFromPath: "Foo", apiVersion: APIVersion.v0.rawValue)
         var requestCompletedCount = 0

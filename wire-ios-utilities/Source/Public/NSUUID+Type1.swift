@@ -19,7 +19,6 @@
 import Foundation
 
 public extension NSUUID {
-
     /// Returns whether this UUID is of Type 1
     @objc var isType1UUID: Bool {
         // looking at most significant bits of #7, as defined in: https://tools.ietf.org/html/rfc4122

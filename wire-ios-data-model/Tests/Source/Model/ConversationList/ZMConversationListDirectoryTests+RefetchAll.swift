@@ -21,7 +21,6 @@ import Foundation
 import WireDataModelSupport
 
 final class ZMConversationListDirectoryTests_RefetchAll: XCTestCase {
-
     private var coreDataStack: CoreDataStack!
     private var sut: ZMConversationListDirectory!
     private var team: Team!

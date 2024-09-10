@@ -20,9 +20,7 @@
 import XCTest
 
 class CircularArrayTests: XCTestCase {
-
     func testThatItReturnsContentWhenNotWrapping() {
-
         // GIVEN
         var sut = CircularArray<String>(size: 5)
 
@@ -35,7 +33,6 @@ class CircularArrayTests: XCTestCase {
     }
 
     func testThatItReturnsContentWhenWrapping() {
-
         // GIVEN
         var sut = CircularArray<Int>(size: 3)
 

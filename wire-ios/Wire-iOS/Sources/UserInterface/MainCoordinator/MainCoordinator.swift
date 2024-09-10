@@ -20,7 +20,6 @@ import WireDataModel
 import WireSystem
 
 struct MainCoordinator: MainCoordinating {
-
     weak var zClientViewController: ZClientViewController?
 
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {

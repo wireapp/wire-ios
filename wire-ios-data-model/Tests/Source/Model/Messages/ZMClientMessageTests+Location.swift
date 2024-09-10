@@ -21,7 +21,6 @@ import Foundation
 @testable import WireDataModel
 
 class ClientMessageTests_Location: BaseZMMessageTests {
-
     func testThatItReturnsLocationMessageDataWhenPresent() throws {
         // given
         let (latitude, longitude): (Float, Float) = (48.53775, 9.041169)

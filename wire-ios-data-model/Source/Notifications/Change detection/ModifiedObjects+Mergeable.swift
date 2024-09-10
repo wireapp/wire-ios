@@ -19,7 +19,6 @@
 import Foundation
 
 extension ModifiedObjects: Mergeable {
-
     func merged(with other: ModifiedObjects) -> ModifiedObjects {
         return ModifiedObjects(
             updated: updated.union(other.updated),

@@ -21,7 +21,6 @@ import Foundation
 extension ZMAuthenticationStatus: NotificationContext {}
 
 extension ZMAuthenticationStatus: ZMCredentialProvider {
-
     public func credentialsMayBeCleared() {
         if self.currentPhase == ZMAuthenticationPhase.authenticated {
             self.resetLoginAndRegistrationStatus()

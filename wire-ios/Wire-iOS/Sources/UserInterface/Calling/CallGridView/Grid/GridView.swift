@@ -32,7 +32,6 @@ protocol GridViewDelegate: AnyObject {
 /// orientation, columns and rows are swapped.
 
 final class GridView: UICollectionView {
-
     // MARK: - Properties
 
     var layoutDirection: UICollectionView.ScrollDirection = .vertical {
@@ -109,15 +108,12 @@ private extension GridView {
 // MARK: - Segment calculation
 
 private extension GridView {
-
     enum SegmentType {
-
         case row
         case column
     }
 
     enum ParticipantAmount {
-
         case moreThanTwo
         case twoOrLess
 
@@ -127,7 +123,6 @@ private extension GridView {
     }
 
     enum SplitType {
-
         case middleSplit
         case proportionalSplit
 
@@ -193,9 +188,7 @@ private extension GridView {
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension GridView: UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
         return sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
     }
 
@@ -227,7 +220,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int) -> UIEdgeInsets {
-
             return .zero
         }
 
@@ -235,7 +227,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-
             return 1.0
         }
 
@@ -243,7 +234,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-
             return 1.0
         }
 
@@ -251,7 +241,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int) -> CGSize {
-
             return .zero
         }
 }
@@ -259,7 +248,6 @@ extension GridView: UICollectionViewDelegateFlowLayout {
 // MARK: - UIScrollViewDelegate
 
 extension GridView: UIScrollViewDelegate {
-
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         var page: CGFloat
 

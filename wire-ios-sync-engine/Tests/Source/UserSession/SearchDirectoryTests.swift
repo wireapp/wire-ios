@@ -22,7 +22,6 @@ import Foundation
 @testable import WireSyncEngineSupport
 
 final class SearchDirectoryTests: DatabaseTest {
-
     private var mockCache: SearchUsersCache!
     private var mockTransport: MockTransportSession!
 

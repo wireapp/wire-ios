@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 final class AccentColorChangeHandler: UserObserving {
-
     typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: NSObjectProtocol?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
     private var observer: NSObjectProtocol?

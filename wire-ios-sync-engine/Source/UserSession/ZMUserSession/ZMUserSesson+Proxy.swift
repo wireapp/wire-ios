@@ -24,10 +24,8 @@ public enum ProxiedRequestType: Int {
 }
 
 extension ZMUserSession {
-
     @objc(proxiedRequestWithPath:method:type:callback:) @discardableResult
     public func proxiedRequest(path: String, method: ZMTransportRequestMethod, type: ProxiedRequestType, callback: ProxyRequestCallback?) -> ProxyRequest {
-
         let request = ProxyRequest(type: type, path: path, method: method, callback: callback)
 
         syncManagedObjectContext.performGroupedBlock {

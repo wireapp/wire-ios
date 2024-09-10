@@ -123,7 +123,6 @@ extension UserProperty {
 }
 
 public class UserPropertyRequestStrategy: AbstractRequestStrategy {
-
     var modifiedSync: ZMUpstreamModifiedObjectSync!
     var downstreamSync: ZMSingleRequestSync!
     fileprivate var propertiesToFetch: Set<UserProperty> = Set()
@@ -131,7 +130,6 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
 
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                          applicationStatus: ApplicationStatus) {
-
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let allProperties = UserProperty.allCases.map(\.propertyName)
@@ -162,7 +160,6 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
 }
 
 extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
-
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let selfUser = managedObject as? ZMUser else { return nil }
 
@@ -223,7 +220,6 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
 }
 
 extension UserPropertyRequestStrategy: ZMContextChangeTrackerSource {
-
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [modifiedSync]
     }
@@ -251,7 +247,6 @@ extension UserPropertyRequestStrategy: ZMEventConsumer {
 }
 
 extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
-
     fileprivate func initializePropertiesToFetch() {
         propertiesToFetch = Set(UserProperty.allCases)
     }

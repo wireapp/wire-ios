@@ -23,14 +23,12 @@ import WireDataModel
 /// Facilitate access to conversation labels related domain objects.
 
 protocol ConversationLabelsRepositoryProtocol {
-
     /// Pull conversation labels from the server and store locally
 
     func pullConversationLabels() async throws
 }
 
 final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
-
     private let userPropertiesAPI: any UserPropertiesAPI
     private let context: NSManagedObjectContext
 

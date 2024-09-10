@@ -19,7 +19,6 @@
 import Foundation
 
 public enum ZMAccountDeletedReason: Int {
-
     /// The user account was deleted by the user.
 
     case userInitiated = 0

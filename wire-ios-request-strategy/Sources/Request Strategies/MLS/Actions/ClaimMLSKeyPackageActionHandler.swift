@@ -19,7 +19,6 @@
 import Foundation
 
 class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
-
     // MARK: - Methods
 
     override func request(for action: ClaimMLSKeyPackageAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -89,7 +88,6 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
 }
 
 extension ClaimMLSKeyPackageActionHandler {
-
     // MARK: - Payload
 
     struct ResponsePayload: Codable {

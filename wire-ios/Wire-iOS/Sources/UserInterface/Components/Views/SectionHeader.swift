@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class SectionHeaderView: UIView {
-
     let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
                                       color: SemanticColors.Label.textSectionHeader)
 
@@ -55,7 +54,6 @@ final class SectionHeaderView: UIView {
 }
 
 final class SectionHeader: UICollectionReusableView {
-
     let headerView = SectionHeaderView()
 
     var titleLabel: UILabel {
@@ -76,7 +74,6 @@ final class SectionHeader: UICollectionReusableView {
 }
 
 final class SectionTableHeader: UITableViewHeaderFooterView {
-
     let headerView = SectionHeaderView()
 
     var titleLabel: UILabel {

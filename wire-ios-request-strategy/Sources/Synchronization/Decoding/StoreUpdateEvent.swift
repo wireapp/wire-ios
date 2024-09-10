@@ -21,7 +21,6 @@ import Foundation
 
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
-
     private static let entityName = "StoredUpdateEvent"
     private static let SortIndexKey = "sortIndex"
 
@@ -247,7 +246,6 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     struct EventBatch {
-
         var eventsToProcess = [ZMUpdateEvent]()
         var eventsToDelete = [StoredUpdateEvent]()
     }
@@ -293,7 +291,6 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     enum ExtractionFailure: Error {
-
         case temporary
         case permanent
     }
@@ -389,7 +386,6 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     enum DecryptionFailure: Error {
-
         case payloadMissing
         case privateKeyUnavailable
         case decryptionError

@@ -22,7 +22,6 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "FileLocation")
 
 public extension FileManager {
-
     /// Returns the URL for the sharedContainerDirectory of the app
     @objc(sharedContainerDirectoryForAppGroupIdentifier:)
     static func sharedContainerDirectory(for appGroupIdentifier: String) -> URL {

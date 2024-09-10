@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class MessageLogAttributesBuilderTests: XCTestCase {
-
     // add more tests for supported types, but some are difficult to mock.
 
     private var coreDataStackHelper: CoreDataStackHelper!

@@ -26,7 +26,6 @@ protocol SearchHeaderViewControllerDelegate: AnyObject {
 }
 
 final class SearchHeaderViewController: UIViewController {
-
     let tokenFieldContainer = UIView()
     let tokenField = TokenField()
     let searchIcon = UIImageView()
@@ -139,7 +138,6 @@ final class SearchHeaderViewController: UIViewController {
 }
 
 extension SearchHeaderViewController: UserSelectionObserver {
-
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {
         // this is triggered by the TokenField itself so we should ignore it here
     }
@@ -157,7 +155,6 @@ extension SearchHeaderViewController: UserSelectionObserver {
 }
 
 extension SearchHeaderViewController: TokenFieldDelegate {
-
     func tokenField(_ tokenField: TokenField, changedTokensTo tokens: [Token<NSObjectProtocol>]) {
         userSelection.replace(tokens.compactMap { $0.representedObject.value as? UserType })
         updateClearIndicator(for: tokenField)

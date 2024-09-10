@@ -20,7 +20,6 @@ import Foundation
 import PushKit
 
 extension SessionManager {
-
     /* Which pushes do we use?
      *
      * iOS 15 and later:

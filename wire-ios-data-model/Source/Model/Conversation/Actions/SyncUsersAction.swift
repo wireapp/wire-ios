@@ -19,11 +19,9 @@
 /// Fetches users locally and stores them in the database.
 
 public final class SyncUsersAction: EntityAction {
-
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {
-
         case invalidBody
         case invalidResponsePayload
         case endpointUnavailable

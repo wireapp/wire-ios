@@ -19,7 +19,6 @@
 import Foundation
 
 class ConversationTests_Ephemeral: ConversationTestsBase {
-
     var obfuscationTimer: ZMMessageDestructionTimer? {
         return userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
     }

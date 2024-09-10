@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIModalPresentationStyle: CustomDebugStringConvertible {
-
     public var debugDescription: String {
         switch self {
         case .fullScreen:

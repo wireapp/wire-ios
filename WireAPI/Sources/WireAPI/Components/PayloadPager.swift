@@ -22,7 +22,6 @@ import Foundation
 /// an api endpoint.
 
 public struct PayloadPager<Payload>: AsyncSequence {
-
     public typealias Element = [Payload]
     public typealias PageFetcher = (String?) async throws -> Page
 
@@ -45,7 +44,6 @@ public struct PayloadPager<Payload>: AsyncSequence {
     }
 
     public struct Page {
-
         public let element: Element
         public let hasMore: Bool
         public let nextStart: String
@@ -62,7 +60,6 @@ public struct PayloadPager<Payload>: AsyncSequence {
     }
 
     public struct Iterator: AsyncIteratorProtocol {
-
         private var start: String?
         private var hasMore = true
         private let fetchPage: PageFetcher

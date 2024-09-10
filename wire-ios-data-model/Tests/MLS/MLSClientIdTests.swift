@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class MLSClientIdTests: ZMConversationTestsBase {
-
     func test_itCreatesALowercasedClientId() {
         // GIVEN
         let userID = "57ce2cb2-601f-11ed-9b6a-0242ac120002"

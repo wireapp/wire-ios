@@ -21,7 +21,6 @@ import WireMockTransport
 import XCTest
 
 class APNSTests_Swift: APNSTestsBase {
-
     func testThatItUpdatesApplicationBadgeCount_WhenReceivingATextMessage() {
         // GIVEN
         XCTAssertTrue(login())

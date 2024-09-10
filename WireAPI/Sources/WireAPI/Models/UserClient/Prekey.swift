@@ -21,7 +21,6 @@ import Foundation
 /// A Proteus client prekey used to establish a Proteus session.
 
 public struct Prekey: Equatable, Codable {
-
     /// The prekey id.
 
     public let id: Int

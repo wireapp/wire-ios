@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIApplication {
-
     func openSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString), canOpenURL(url) {
             open(url, options: [:], completionHandler: nil)

@@ -19,9 +19,7 @@
 import Foundation
 
 extension ZMMessage {
-
     public enum ProcessingError: LocalizedError {
-
         case missingManagedObjectContext
         case failedToProcessMessageData(reason: String)
 

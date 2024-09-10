@@ -26,7 +26,6 @@ enum CoreDataStackError: Error {
     case noDatabaseActivity
 }
 extension CoreDataStackError: LocalizedError {
-
     var errorDescription: String? {
         switch self {
         case .simulateDatabaseLoadingFailure:
@@ -39,7 +38,6 @@ extension CoreDataStackError: LocalizedError {
 
 @objc
 public protocol ContextProvider {
-
     var account: Account { get }
 
     var viewContext: NSManagedObjectContext { get }
@@ -49,7 +47,6 @@ public protocol ContextProvider {
 }
 
 extension URL {
-
     /// Appends a suffix to the last path (e.g. from `/foo/bar` to `/foo/bar_1`)
     func appendingSuffixToLastPathComponent(suffix: String) -> URL {
         let modifiedComponent = lastPathComponent + suffix
@@ -89,7 +86,6 @@ extension URL {
 }
 
 public extension NSURL {
-
     /// Returns the location of the persistent store file in the given account folder
     @objc func URLByAppendingPersistentStoreLocation() -> URL {
         return (self as URL).appendingPersistentStoreLocation()
@@ -100,7 +96,6 @@ public extension NSURL {
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
-
     public let account: Account
 
     public var viewContext: NSManagedObjectContext {
@@ -136,7 +131,6 @@ public class CoreDataStack: NSObject, ContextProvider {
                 applicationContainer: URL,
                 inMemoryStore: Bool = false,
                 dispatchGroup: ZMSDispatchGroup? = nil) {
-
         ExtendedSecureUnarchiveFromData.register()
 
         self.applicationContainer = applicationContainer
@@ -296,7 +290,6 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public func loadStores(completionHandler: @escaping (Error?) -> Void) {
-
         let dispatchGroup = DispatchGroup()
         var loadingStoreError: Error?
 
@@ -525,7 +518,6 @@ public class CoreDataStack: NSObject, ContextProvider {
 // MARK: -
 
 class PersistentContainer: NSPersistentContainer {
-
     var storeURL: URL? {
         return persistentStoreDescriptions.first?.url
     }
@@ -562,7 +554,6 @@ class PersistentContainer: NSPersistentContainer {
 // MARK: -
 
 extension NSPersistentStoreCoordinator {
-
     /// Returns the set of options that need to be passed to the persistent sotre
     static func persistentStoreOptions(supportsMigration: Bool) -> [String: Any] {
         return [

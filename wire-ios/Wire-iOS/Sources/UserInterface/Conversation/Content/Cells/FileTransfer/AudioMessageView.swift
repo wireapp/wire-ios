@@ -25,7 +25,6 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "UI")
 
 final class AudioMessageView: UIView, TransferView {
-
     typealias AudioMessage = L10n.Accessibility.AudioMessage
     var fileMessage: ZMConversationMessage?
     weak var delegate: TransferViewDelegate?
@@ -240,7 +239,6 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func updateTimeLabel() {
-
         var duration: Int? = .none
 
         if isOwnTrackPlayingInAudioPlayer() {
@@ -471,7 +469,6 @@ final class AudioMessageView: UIView, TransferView {
 // MARK: - WireCallCenterCallStateObserver
 
 extension AudioMessageView: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState,
                              conversation: ZMConversation,
                              caller: UserType,

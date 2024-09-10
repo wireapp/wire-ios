@@ -23,7 +23,6 @@ import WireTesting
 import XCTest
 
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
-
     // MARK: - Text Messages
 
     // MARK: Helpers
@@ -39,7 +38,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func textNotification(_ conversation: ZMConversation, sender: ZMUser, text: String? = nil, mentionedUser: UserType? = nil, quotedUser: ZMUser? = nil, isEphemeral: Bool = false) -> ZMLocalNotification? {
-
         let expiresAfter: TimeInterval = isEphemeral ? 200 : 0
 
         let mention = mentionedUser.map { Mention(range: NSRange(location: 0, length: 8), user: $0) }
@@ -75,7 +73,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: Tests
 
     func testThatItShowsDefaultAlertBodyWhenHidePreviewSettingIsTrue() {
-
         // given
         syncMOC.performGroupedAndWait {
             self.sender.name = "Super User"
@@ -132,7 +129,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testItCreatesMessageNotificationsCorrectly() {
-
         //    "push.notification.add.message.oneonone" = "%1$@";
         //    "push.notification.add.message.group" = "%1$@: %2$@";
         //    "push.notification.add.message.group.noconversationname" = "%1$@ in a conversation: %2$@";
@@ -166,7 +162,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheSenderOfANotification() {
-
         // given
         syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)!
@@ -177,7 +172,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheConversationOfANotification() {
-
         // given
         syncMOC.performGroupedAndWait {
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)!
@@ -188,7 +182,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheMessageNonce() {
-
         // given
         syncMOC.performGroupedAndWait {
             let event = self.createUpdateEvent(UUID.create(),
@@ -206,7 +199,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilenced() {
-
         // given
         syncMOC.performGroupedAndWait {
             self.groupConversation.mutedMessageTypes = .all
@@ -496,7 +488,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: Misc
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-
         // given
         syncMOC.performGroupedAndWait {
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -530,7 +521,6 @@ final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 // MARK: - Image Asset Messages
 
 extension ZMLocalNotificationTests_Message {
-
     // MARK: Helpers
 
     func imageNote(_ conversation: ZMConversation, sender: ZMUser, text: String? = nil, isEphemeral: Bool = false) -> ZMLocalNotification? {
@@ -608,7 +598,6 @@ enum FileType {
 }
 
 extension ZMLocalNotificationTests_Message {
-
     // MARK: Helpers
 
     func assetNote(_ fileType: FileType, conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> ZMLocalNotification? {
@@ -698,7 +687,6 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - Knock Messages
 
 extension ZMLocalNotificationTests_Message {
-
     // MARK: Helpers
 
     func knockNote(_ conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> ZMLocalNotification? {
@@ -748,7 +736,6 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - Editing Message
 
 extension ZMLocalNotificationTests_Message {
-
     func editNote(_ message: ZMOTRMessage, sender: ZMUser, text: String) -> ZMLocalNotification? {
         let editTextMessage = GenericMessage(content: MessageEdit(replacingMessageID: message.nonce!, text: Text(content: text)), nonce: UUID.create())
 
@@ -778,7 +765,6 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - Categories
 
 extension ZMLocalNotificationTests_Message {
-
     func testThatItGeneratesTheNotificationWithoutMuteInTheTeam() {
         // GIVEN
         syncMOC.performGroupedAndWait {

@@ -24,7 +24,6 @@ extension Notification.Name {
 }
 
 final class ColorSchemeController: NSObject {
-
     var userObserverToken: Any?
 
     init(userSession: UserSession) {

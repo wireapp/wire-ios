@@ -22,7 +22,6 @@ import Foundation
 
 @objcMembers
 public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
-
     public var processedEvents: [ZMUpdateEvent] = []
     public var bufferedEvents: [ZMUpdateEvent] = []
 

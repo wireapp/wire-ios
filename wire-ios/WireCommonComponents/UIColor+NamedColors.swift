@@ -19,9 +19,7 @@
 import UIKit
 
 extension UIColor {
-
     public struct Wire {
-
         public static var primaryLabel: UIColor {
             label
         }

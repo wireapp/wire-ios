@@ -21,7 +21,6 @@ import WireCryptobox
 import XCTest
 
 class CryptoBoxTest: OtrBaseTest {
-
     func testThatCryptoBoxFolderIsForbiddenFromBackup() {
         // when
         let accountId = UUID()

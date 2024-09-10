@@ -26,7 +26,6 @@ public protocol GetMLSFeatureUseCaseProtocol {
 }
 
 public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
-
     private let featureRepository: FeatureRepositoryInterface
 
     public init(featureRepository: FeatureRepositoryInterface) {

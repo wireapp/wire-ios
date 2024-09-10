@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SessionManagerAppLockTests: IntegrationTest {
-
     private var appLock: MockAppLock!
 
     override func setUp() {

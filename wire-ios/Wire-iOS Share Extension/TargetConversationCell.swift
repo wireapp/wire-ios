@@ -20,7 +20,6 @@ import UIKit
 import WireShareEngine
 
 final class TargetConversationCell: UITableViewCell {
-
     let conversationNameLabel = UILabel()
     let stateAccessoryView = ConversationStateAccessoryView()
 

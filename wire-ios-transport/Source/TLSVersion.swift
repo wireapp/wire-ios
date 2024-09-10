@@ -19,7 +19,6 @@
 import Foundation
 
 public enum TLSVersion {
-
     case v1_2
     case v1_3
 

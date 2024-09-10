@@ -33,7 +33,6 @@ extension UIAlertController {
         enrollButtonText: String = MLSE2EIStrings.Button.getCertificate,
         canRemindLater: Bool = true,
         handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
-
             let controller = UIAlertController(
                 title: title,
                 message: message,

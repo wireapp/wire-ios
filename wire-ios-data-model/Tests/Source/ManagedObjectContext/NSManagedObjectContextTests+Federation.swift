@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
-
     func testThatItMigratesUsersAndConversations() throws {
         // Given
         let domain = "example.domain.com"

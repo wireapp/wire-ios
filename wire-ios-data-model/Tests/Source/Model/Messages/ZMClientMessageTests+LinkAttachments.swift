@@ -19,7 +19,6 @@
 import WireTesting
 
 class ZMClientMessageTests_LinkAttachments: BaseZMClientMessageTests {
-
     func testThatItMatchesMessageNeedingUpdate() throws {
         // GIVEN
         let sender = ZMUser.insertNewObject(in: uiMOC)

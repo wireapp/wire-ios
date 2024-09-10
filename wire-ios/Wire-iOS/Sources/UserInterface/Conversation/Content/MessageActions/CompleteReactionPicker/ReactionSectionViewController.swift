@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ReactionSectionViewController: UIViewController {
-
     private var typesByButton = [ReactionCategoryButton: EmojiSectionType]()
     private var sectionButtons = [ReactionCategoryButton]()
     private let iconSize = StyleKitIcon.Size.tiny.rawValue

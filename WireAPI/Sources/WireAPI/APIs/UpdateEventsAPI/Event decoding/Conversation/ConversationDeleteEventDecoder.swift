@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationDeleteEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationDeleteEvent {

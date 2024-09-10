@@ -84,7 +84,6 @@ private extension CGFloat {
 }
 
 private extension UIImage {
-
     class func circle(filled: Bool) -> UIImage? {
         let size = CGSize(width: 12, height: 12)
         let lineWidth = 1.0

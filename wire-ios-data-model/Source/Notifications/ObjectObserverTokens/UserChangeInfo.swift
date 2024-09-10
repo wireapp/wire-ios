@@ -25,7 +25,6 @@ protocol ObjectInSnapshot {
 }
 
 extension ZMUser: ObjectInSnapshot {
-
     static public var observableKeys: Set<String> {
         return [
             #keyPath(ZMUser.name),
@@ -62,7 +61,6 @@ extension ZMUser: ObjectInSnapshot {
 }
 
 @objcMembers open class UserChangeInfo: ObjectChangeInfo {
-
     static let UserClientChangeInfoKey = "clientChanges"
 
     static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {
@@ -170,7 +168,6 @@ extension ZMUser: ObjectInSnapshot {
 }
 
 extension UserChangeInfo {
-
     // MARK: Registering UserType
 
     /// Adds an observer for a user conforming to UserType. You must hold on to the token and use it to unregister.

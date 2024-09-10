@@ -25,7 +25,6 @@ import WireSystem
  */
 
 protocol AuthenticationEventResponderChainDelegate: AnyObject {
-
     /// The object providing authentication status info.
     var statusProvider: AuthenticationStatusProvider { get }
 
@@ -49,7 +48,6 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
  */
 
 final class AuthenticationEventResponderChain {
-
     /**
      * The supported event types.
      */

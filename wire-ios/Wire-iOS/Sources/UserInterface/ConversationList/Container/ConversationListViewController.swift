@@ -30,7 +30,6 @@ enum ConversationListState {
 }
 
 final class ConversationListViewController: UIViewController {
-
     let viewModel: ViewModel
     let mainCoordinator: MainCoordinating
     weak var zClientViewController: ZClientViewController?
@@ -329,16 +328,13 @@ final class ConversationListViewController: UIViewController {
 // MARK: - ViewModel Delegate
 
 extension ConversationListViewController: ConversationListContainerViewModelDelegate {
-
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         updateTitleView()
     }
 }
 
 private extension NSAttributedString {
-
     static var attributedTextForNoConversationLabel: NSAttributedString? {
-
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
 

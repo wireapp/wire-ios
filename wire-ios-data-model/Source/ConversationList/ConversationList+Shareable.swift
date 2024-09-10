@@ -19,7 +19,6 @@
 import Foundation
 
 extension ConversationList {
-
     public func shareableConversations(
         excluding: ConversationLike? = nil
     ) -> [ZMConversation] {

@@ -20,9 +20,7 @@ import Foundation
 import UIKit
 
 extension ___VARIABLE_productName:identifier___Module {
-
     final class View: UIViewController, ViewInterface {
-
         // MARK: - Properties
 
         var presenter: ___VARIABLE_productName:identifier___PresenterViewInterface!
@@ -39,14 +37,12 @@ extension ___VARIABLE_productName:identifier___Module {
 // MARK: - View model
 
 extension ___VARIABLE_productName:identifier___Module {
-
     enum ViewModel: Equatable {}
 }
 
 // MARK: - Refresh
 
 extension ___VARIABLE_productName:identifier___Module.View: ___VARIABLE_productName:identifier___ViewPresenterInterface {
-
     func refresh(withModel model: ___VARIABLE_productName:identifier___Module.ViewModel) {
     }
 }

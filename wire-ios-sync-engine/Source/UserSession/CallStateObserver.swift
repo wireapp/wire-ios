@@ -22,7 +22,6 @@ import WireDataModel
 
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {
-
     @objc static public let CallInProgressNotification = Notification.Name(rawValue: "ZMCallInProgressNotification")
     @objc static public let CallInProgressKey = "callInProgress"
 
@@ -37,7 +36,6 @@ public final class CallStateObserver: NSObject {
     @objc public init(localNotificationDispatcher: LocalNotificationDispatcher,
                       contextProvider: ContextProvider,
                       callNotificationStyleProvider: CallNotificationStyleProvider) {
-
         self.uiContext = contextProvider.viewContext
         self.syncContext = contextProvider.syncContext
         self.notificationStyleProvider = callNotificationStyleProvider
@@ -63,7 +61,6 @@ public final class CallStateObserver: NSObject {
 }
 
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
-
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         let callerId = caller.remoteIdentifier
         let callerDomain = caller.domain

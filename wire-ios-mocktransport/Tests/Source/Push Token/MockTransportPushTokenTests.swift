@@ -19,7 +19,6 @@
 import Foundation
 
 class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
-
     func payload(token: String) -> NSDictionary {
         return [
             "app": "some.app",

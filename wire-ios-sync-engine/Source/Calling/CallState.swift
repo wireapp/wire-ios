@@ -26,7 +26,6 @@ private let zmLog = ZMSLog(tag: "calling")
  */
 
 public struct CallParticipant: Hashable {
-
     public let user: UserType
     public let clientId: String
     public let userId: AVSIdentifier
@@ -167,7 +166,6 @@ public enum ActiveSpeakerState: Hashable {
  */
 
 public enum CallState: Equatable {
-
     /// There's no call
     case none
     /// Outgoing call is pending

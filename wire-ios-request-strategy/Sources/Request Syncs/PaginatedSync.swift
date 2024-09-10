@@ -24,7 +24,6 @@ protocol Paginatable: Decodable {
 }
 
 class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
-
     typealias CompletionHandler = (Result<PayloadType, PaginatedSyncError>) -> Void
 
     enum Status: Equatable {

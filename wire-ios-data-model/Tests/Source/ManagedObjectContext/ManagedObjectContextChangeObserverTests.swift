@@ -19,7 +19,6 @@
 import Foundation
 
 class ManagedObjectContextChangeObserverTests: ZMBaseManagedObjectTest {
-
     func testThatItCallsTheCallbackWhenObjectsAreInserted() {
         // given
         let changeExpectation = customExpectation(description: "The callback should be called")

@@ -19,7 +19,6 @@
 import Foundation
 
 final class MockRegistrationStatusDelegate: RegistrationStatusDelegate {
-
     var activationCodeSentCalled = 0
     func activationCodeSent() {
         activationCodeSentCalled += 1

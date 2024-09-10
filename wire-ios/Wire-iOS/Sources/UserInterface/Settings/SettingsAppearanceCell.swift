@@ -22,7 +22,6 @@ import WireFoundation
 import WireUtilities
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
-
     // MARK: - Properties
 
     private let titleLabel: UILabel = {

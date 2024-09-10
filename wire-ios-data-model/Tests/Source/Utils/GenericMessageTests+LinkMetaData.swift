@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
-
     func testThatItCreatesAValidLinkPreview_ArticleMetadata() {
         // given
         let article = ArticleMetadata(
@@ -98,7 +97,6 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
     }
 
     func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage_Article() {
-
         // given
         let nonce = UUID()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)

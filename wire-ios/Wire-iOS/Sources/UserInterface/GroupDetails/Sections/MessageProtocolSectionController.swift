@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class MessageProtocolSectionController: GroupDetailsSectionController {
-
     typealias Cell = DetailsCollectionViewCell
 
     // MARK: - Properties
@@ -130,7 +129,6 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
 }
 
 private extension MessageProtocol {
-
     var name: String {
         switch self {
         case .proteus:

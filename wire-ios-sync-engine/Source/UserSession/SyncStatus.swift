@@ -19,7 +19,6 @@
 private let zmLog = ZMSLog(tag: "SyncStatus")
 
 extension Notification.Name {
-
     public static let initialSync = Notification.Name("ZMInitialSyncCompletedNotification")
     public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
 
@@ -27,7 +26,6 @@ extension Notification.Name {
 }
 
 @objcMembers public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
-
     private static let logger = Logger(subsystem: "VoIP Push", category: "SyncStatus")
 
     public internal (set) var currentSyncPhase: SyncPhase = .done {
@@ -160,7 +158,6 @@ extension Notification.Name {
 // MARK: Slow Sync
 
 extension SyncStatus {
-
     public func finishCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
@@ -226,7 +223,6 @@ extension SyncStatus {
 // MARK: Quick Sync
 
 extension SyncStatus {
-
     public func beganFetchingNotificationStream() {
         isFetchingNotificationStream = true
     }
@@ -243,7 +239,6 @@ extension SyncStatus {
     public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
         WireLogger.sync.debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
         if currentSyncPhase == .fetchingMissedEvents {
-
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
             // If the push channel disconnected in between we'll fetch the stream again

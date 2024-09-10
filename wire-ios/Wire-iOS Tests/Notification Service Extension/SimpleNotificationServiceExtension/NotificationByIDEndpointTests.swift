@@ -20,7 +20,6 @@
 import XCTest
 
 class NotificationByIDEndpointTests: XCTestCase {
-
     // MARK: - Request generation
 
     func test_RequestGeneration() {

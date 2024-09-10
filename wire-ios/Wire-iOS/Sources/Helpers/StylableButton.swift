@@ -19,7 +19,6 @@
 import UIKit
 
 class StylableButton: UIButton, Stylable {
-
     var buttonStyle: ButtonStyle?
 
     func applyStyle(_ style: ButtonStyle) {

@@ -20,7 +20,6 @@
 import XCTest
 
 final class DeveloperDebugActionsViewModelTests: XCTestCase {
-
     func testButtonsCount() throws {
         // given
         let viewModel = makeViewModel()

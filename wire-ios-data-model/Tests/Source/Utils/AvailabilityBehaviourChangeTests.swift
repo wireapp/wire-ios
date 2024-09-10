@@ -20,7 +20,6 @@
 import XCTest
 
 class AvailabilityBehaviourChangeTests: ModelObjectsTests {
-
     func selfUserWithTeam() -> ZMUser {
         let team = self.createTeam(in: uiMOC)
         let selfUser = ZMUser.selfUser(in: uiMOC)

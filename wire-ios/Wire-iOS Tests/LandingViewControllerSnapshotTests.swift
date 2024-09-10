@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class LandingViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: LandingViewController!
@@ -78,7 +77,6 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
 // MARK: - FakeProxySettings
 
 final class FakeProxySettings: NSObject, ProxySettingsProvider {
-
     var host: String
     var port: Int
     var needsAuthentication: Bool

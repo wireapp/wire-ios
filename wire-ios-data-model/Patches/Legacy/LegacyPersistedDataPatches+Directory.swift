@@ -19,7 +19,6 @@
 import Foundation
 
 extension LegacyPersistedDataPatch {
-
     // Important:
     // You should not add new patches here. They continue to exist for legacy reasons,
     // use `PatchApplicator` instead.

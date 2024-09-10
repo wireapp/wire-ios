@@ -21,7 +21,6 @@ import WireTransport
 import XCTest
 
 final class SyncConversationActionHandlerTests: MessagingTestBase {
-
     typealias RequestPayload = SyncConversationActionHandler.RequestPayload
     typealias ResponsePayload = SyncConversationActionHandler.ResponsePayload
 

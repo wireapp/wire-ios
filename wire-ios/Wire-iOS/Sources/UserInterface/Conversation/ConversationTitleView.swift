@@ -113,7 +113,6 @@ final class ConversationTitleView: TitleView {
 }
 
 extension NSTextAttachment {
-
     fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let shield = UIImage(resource: .verifiedShield)
@@ -144,7 +143,6 @@ extension NSTextAttachment {
 }
 
 extension ConversationLike {
-
     var displayNameWithFallback: String {
         displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }

@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSString {
-
     var uppercasedWithCurrentLocale: String {
         return uppercased(with: NSLocale.current)
     }

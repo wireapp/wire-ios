@@ -72,7 +72,6 @@ class CoreDataMigrationAction {
     }
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
-
         let container = NSPersistentContainer(
             name: dataModelName,
             managedObjectModel: model

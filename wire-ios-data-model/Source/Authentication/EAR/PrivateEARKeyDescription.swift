@@ -25,7 +25,6 @@ import LocalAuthentication
 /// with the corresponding public EAR key.
 
 public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
-
     private enum Constant {
         static let labelPrivatePrimary = "private"
         static let labelPrivateSecondary = "secondary-private"

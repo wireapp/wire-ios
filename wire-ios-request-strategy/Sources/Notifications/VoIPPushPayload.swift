@@ -21,7 +21,6 @@ import Foundation
 /// The payload of a push for call events.
 
 public struct VoIPPushPayload: Codable {
-
     // MARK: - Properties
 
     /// The id of the account that triggered this push.

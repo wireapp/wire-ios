@@ -65,7 +65,6 @@ extension AVSMediaManager {
 
         if AVSMediaManager.MediaManagerSoundConfig == nil,
            let path = Bundle.main.path(forResource: "MediaManagerConfig", ofType: "plist", inDirectory: audioDir) {
-
             let soundConfig = NSDictionary(contentsOfFile: path) as? [AnyHashable: Any]
 
             if soundConfig == nil {

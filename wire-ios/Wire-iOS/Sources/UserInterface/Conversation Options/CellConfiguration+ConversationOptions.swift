@@ -19,7 +19,6 @@
 import UIKit
 
 extension CellConfiguration {
-
     static func groupAdminToogle(
         get: @escaping () -> Bool,
         set: @escaping (Bool, UIView?) -> Void

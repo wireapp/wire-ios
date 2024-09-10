@@ -22,13 +22,11 @@ import WireUtilities
 
 struct ShouldPresentNotificationPermissionHintUseCase<DateProvider>: ShouldPresentNotificationPermissionHintUseCaseProtocol
 where DateProvider: CurrentDateProviding {
-
     var currentDateProvider: DateProvider
     var userDefaults: UserDefaults
     var userNotificationCenter: UserNotificationCenterAbstraction
 
     func invoke() async -> Bool {
-
         // show hint only if `authorizationStatus` is `.denied`
         let notificationSettings = await userNotificationCenter.notificationSettings()
         guard notificationSettings.authorizationStatus == .denied else { return false }
@@ -46,7 +44,6 @@ where DateProvider: CurrentDateProviding {
 // MARK: - ShouldPresentNotificationPermissionHintUseCase + init()
 
 extension ShouldPresentNotificationPermissionHintUseCase where DateProvider == SystemDateProvider {
-
     init(
         currentDateProvider: SystemDateProvider = .init(),
         userDefaults: UserDefaults = .standard,

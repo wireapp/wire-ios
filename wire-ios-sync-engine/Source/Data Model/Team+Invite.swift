@@ -19,7 +19,6 @@
 import Foundation
 
 extension Team {
-
     /**
      Invite someone to your team via email
      

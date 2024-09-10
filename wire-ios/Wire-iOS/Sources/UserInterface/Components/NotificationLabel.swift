@@ -19,7 +19,6 @@
 import UIKit
 
 class NotificationLabel: RoundedBlurView {
-
     private(set) var timer: Timer?
 
     private let messageLabel = UILabel(

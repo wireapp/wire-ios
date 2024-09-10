@@ -25,7 +25,6 @@ protocol AccountSelectorViewDelegate: AnyObject {
 }
 
 final class AccountSelectorView: UIView {
-
     weak var delegate: AccountSelectorViewDelegate?
 
     private let stackView = UIStackView()

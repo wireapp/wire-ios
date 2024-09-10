@@ -27,7 +27,6 @@ extension Notification.Name {
 }
 
 extension NSManagedObjectContext {
-
     static let conversationListObserverCenterKey = "ConversationListObserverCenterKey"
 
     /// Note: uses `self.userInfo` and must be accessed from NSManagedObjectContext queue!
@@ -43,7 +42,6 @@ extension NSManagedObjectContext {
 }
 
 public class ConversationListObserverCenter: NSObject, ZMConversationObserver, ChangeInfoConsumer {
-
     fileprivate var listSnapshots: [String: ConversationListSnapshot] = [:]
 
     var isTornDown: Bool = false
@@ -82,7 +80,6 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     // MARK: Forwarding updates
 
     public func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
-
         let insertedLabels = self.insertedLabels
         let deletedLabels = self.deletedLabels
         self.insertedLabels = []
@@ -226,7 +223,6 @@ extension ConversationListObserverCenter: TearDownCapable {
 }
 
 class ConversationListSnapshot: NSObject {
-
     fileprivate var state: SetSnapshot<ZMConversation>
     weak var conversationList: ConversationList?
     fileprivate var tornDown = false

@@ -19,7 +19,6 @@
 import Foundation
 
 class EntityActionSync: NSObject, ZMRequestGenerator {
-
     let actionHandlers: [ZMRequestGenerator]
 
     init(actionHandlers: [ZMRequestGenerator]) {

@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
-
     @discardableResult
     func migrateToMLS(
         userID: QualifiedID,
@@ -29,7 +28,6 @@ public protocol OneOnOneMigratorInterface {
 }
 
 public struct OneOnOneMigrator: OneOnOneMigratorInterface {
-
     // MARK: - Dependencies
 
     private let mlsService: MLSServiceInterface

@@ -48,7 +48,6 @@ enum MapsOpeningOption: Int, LinkOpeningOption {
 }
 
 extension URL {
-
     func openAsLocation() -> Bool {
         log.debug("Trying to open \"\(self)\" as location")
         let saved = MapsOpeningOption.storedPreference
@@ -67,7 +66,6 @@ extension URL {
 // MARK: - Private
 
 fileprivate extension UIApplication {
-
     var googleMapsInstalled: Bool {
         return canHandleScheme("comgooglemaps://")
     }

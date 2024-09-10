@@ -23,7 +23,6 @@ import XCTest
 @testable import WireReusableUIComponents
 
 final class AccountImageViewSnapshotTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

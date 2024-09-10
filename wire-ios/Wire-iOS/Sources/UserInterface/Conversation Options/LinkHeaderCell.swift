@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class LinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
-
     private let topSeparator = UIView()
     private let titleLabel = UILabel()
     private let subtitleLabel = UILabel()

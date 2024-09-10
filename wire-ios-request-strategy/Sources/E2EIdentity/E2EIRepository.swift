@@ -21,7 +21,6 @@ import Foundation
 import WireCoreCrypto
 
 public protocol E2EIRepositoryInterface {
-
     func fetchTrustAnchor() async throws
 
     func fetchFederationCertificates() async throws
@@ -33,7 +32,6 @@ public protocol E2EIRepositoryInterface {
 }
 
 public final class E2EIRepository: E2EIRepositoryInterface {
-
     // MARK: - Types
 
     enum Error: Swift.Error {

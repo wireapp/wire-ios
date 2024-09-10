@@ -21,7 +21,6 @@ import WireDesign
 import WireFoundation
 
 final class ReactionsCollectionView: UICollectionView {
-
     private let layout = UICollectionViewFlowLayout()
 
     init() {
@@ -41,7 +40,6 @@ final class ReactionsCollectionView: UICollectionView {
 }
 
 private extension ReactionsCollectionView {
-
     func setupLayout() {
         let currentDevice = DeviceWrapper(device: .current)
         layout.scrollDirection = .vertical

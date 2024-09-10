@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
-
     struct Configuration {
         let message: ZMConversationMessage
         var isObfuscated: Bool {

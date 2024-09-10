@@ -46,7 +46,6 @@ enum Database {
 }
 
 struct DatabaseMigrationHelper {
-
     typealias MigrationAction = (NSManagedObjectContext) throws -> Void
 
     private let bundle = WireDataModelBundle.bundle
@@ -158,7 +157,6 @@ struct DatabaseMigrationHelper {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-
         var storeFile = CoreDataStack.accountDataFolder(
             accountIdentifier: accountIdentifier,
             applicationContainer: applicationContainer
@@ -190,7 +188,6 @@ struct DatabaseMigrationHelper {
     }
 
     func databaseFixtureURL(version: String, database: Database = .messaging, file: StaticString = #file, line: UInt = #line) -> URL? {
-
         let name = database.databaseFixtureFileName(for: version)
 
         guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension) else {
@@ -268,7 +265,6 @@ extension XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws -> CoreDataStack {
-
         let account = Account(
             userName: "",
             userIdentifier: userID

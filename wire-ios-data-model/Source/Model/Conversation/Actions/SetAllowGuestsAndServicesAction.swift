@@ -17,7 +17,6 @@
 //
 
 public struct SetAllowGuestsAndServicesAction: EntityAction {
-
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {

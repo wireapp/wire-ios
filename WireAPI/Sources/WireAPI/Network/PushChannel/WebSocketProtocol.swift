@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol WebSocketProtocol {
-
     func open() throws -> AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
 
     func close()

@@ -20,7 +20,6 @@
 import XCTest
 
 final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: AudioRecordKeyboardViewController!

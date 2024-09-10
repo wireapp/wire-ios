@@ -20,12 +20,10 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol ResolveOneOnOneConversationsUseCaseProtocol {
-
     func invoke() async throws
 }
 
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
-
     let context: NSManagedObjectContext
     let supportedProtocolService: any SupportedProtocolsServiceInterface
     let resolver: any OneOnOneResolverInterface

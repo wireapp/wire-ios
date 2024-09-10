@@ -27,7 +27,6 @@ import WireDataModel
 /// as well as the possible source(s) of the models.
 
 protocol TeamRepositoryProtocol {
-
     /// Pull self team metadata from the server and store locally.
 
     func pullSelfTeam() async throws
@@ -46,7 +45,6 @@ protocol TeamRepositoryProtocol {
 }
 
 final class TeamRepository: TeamRepositoryProtocol {
-
     private let selfTeamID: UUID
     private let userRepository: any UserRepositoryProtocol
     private let teamsAPI: any TeamsAPI
@@ -235,7 +233,6 @@ final class TeamRepository: TeamRepositoryProtocol {
 }
 
 private extension ConversationAction {
-
     var name: String {
         switch self {
         case .addConversationMember:

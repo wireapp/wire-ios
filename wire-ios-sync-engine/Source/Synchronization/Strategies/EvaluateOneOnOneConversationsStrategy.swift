@@ -20,7 +20,6 @@ import Foundation
 import WireRequestStrategy
 
 final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
-
     let syncPhase: SyncPhase = .evaluate1on1ConversationsForMLS
 
     private unowned var syncProgress: SyncProgress

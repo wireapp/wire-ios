@@ -19,12 +19,10 @@
 import Foundation
 
 extension ZMUpdateEvent {
-
     private static let deliveryConfirmationDayThreshold = 7
 
     func needsDeliveryConfirmation(_ currentDate: Date = Date(),
                                    managedObjectContext: NSManagedObjectContext) -> Bool {
-
         guard
             let message = GenericMessage(from: self),
             message.needsDeliveryConfirmation,
@@ -45,7 +43,6 @@ extension ZMUpdateEvent {
 
 @objcMembers
 public final class DeliveryReceiptRequestStrategy: NSObject {
-
     private let messageSender: MessageSenderInterface
     private let managedObjectContext: NSManagedObjectContext
 
@@ -53,7 +50,6 @@ public final class DeliveryReceiptRequestStrategy: NSObject {
 
     public init(managedObjectContext: NSManagedObjectContext,
                 messageSender: MessageSenderInterface) {
-
         self.managedObjectContext = managedObjectContext
         self.messageSender = messageSender
     }
@@ -62,7 +58,6 @@ public final class DeliveryReceiptRequestStrategy: NSObject {
 // MARK: - Event Consumer
 
 extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
-
     struct DeliveryReceipt {
         let sender: ZMUser
         let conversation: ZMConversation
@@ -138,7 +133,6 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
 }
 
 private extension GenericMessage {
-
     var needsDeliveryConfirmation: Bool {
         switch content {
         case .text, .image, .asset, .knock, .external, .location, .ephemeral, .composite:

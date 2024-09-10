@@ -53,7 +53,6 @@ private final class ResponderContainer<Child: UIView>: UIView {
 }
 
 extension ResponderContainer: TextContainer where Child: TextContainer {
-
     var text: String? {
         get {
             return responder.text
@@ -95,7 +94,6 @@ extension VerificationCodeFieldDescription: ViewDescriptor {
 }
 
 extension VerificationCodeFieldDescription: CharacterInputFieldDelegate {
-
     func shouldAcceptChanges(_ inputField: CharacterInputField) -> Bool {
         return acceptsInput && inputField.text != nil
     }

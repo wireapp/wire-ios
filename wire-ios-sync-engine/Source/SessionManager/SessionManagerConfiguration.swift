@@ -23,7 +23,6 @@ import UIKit
 
 @objcMembers
 public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
-
     // MARK: - Properties
 
     /// If set to true then the session manager will delete account data instead of just asking the user to re-authenticate when the cookie or client gets invalidated.
@@ -146,9 +145,7 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
 // MARK: - Coding Key
 
 extension SessionManagerConfiguration {
-
     enum CodingKeys: String, CodingKey {
-
         case wipeOnCookieInvalid
         case blacklistDownloadInterval
         case blockOnJailbreakOrRoot

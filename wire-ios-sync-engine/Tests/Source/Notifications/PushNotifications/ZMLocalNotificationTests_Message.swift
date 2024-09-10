@@ -21,7 +21,6 @@ import WireDataModel
 import WireTesting
 
 class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
-
     // MARK: - Text Messages
 
     // MARK: Helpers
@@ -37,7 +36,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func textNotification(_ conversation: ZMConversation, sender: ZMUser, text: String? = nil, mentionedUser: UserType? = nil, quotedUser: ZMUser? = nil, isEphemeral: Bool = false) -> ZMLocalNotification? {
-
         let expiresAfter: TimeInterval = isEphemeral ? 200 : 0
 
         let mention = mentionedUser.map(papply(Mention.init, NSRange(location: 0, length: 8)))
@@ -65,7 +63,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: Tests
 
     func testThatItShowsDefaultAlertBodyWhenHidePreviewSettingIsTrue() {
-
         // given
         sender.name = "Super User"
         let note1 = textNotification(oneOnOneConversation, sender: sender)
@@ -116,7 +113,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testItCreatesMessageNotificationsCorrectly() {
-
         //    "push.notification.add.message.oneonone" = "%1$@";
         //    "push.notification.add.message.group" = "%1$@: %2$@";
         //    "push.notification.add.message.group.noconversationname" = "%1$@ in a conversation: %2$@";
@@ -141,7 +137,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheSenderOfANotification() {
-
         // given
         let note = textNotification(oneOnOneConversation, sender: sender)!
 
@@ -150,7 +145,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheConversationOfANotification() {
-
         // given
         let note = textNotification(oneOnOneConversation, sender: sender)!
 
@@ -159,7 +153,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheMessageNonce() {
-
         // given
         let event = createUpdateEvent(UUID.create(), conversationID: oneOnOneConversation.remoteIdentifier!, genericMessage: GenericMessage(content: Text(content: "Hello Hello!"), nonce: UUID.create()), senderID: sender.remoteIdentifier)
 
@@ -171,7 +164,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilenced() {
-
         // given
         groupConversation.mutedMessageTypes = .all
 
@@ -415,7 +407,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: Misc
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-
         // given
         let team = Team.insertNewObject(in: self.uiMOC)
         team.name = "Wire Amazing Team"
@@ -449,7 +440,6 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 // MARK: - Image Asset Messages
 
 extension ZMLocalNotificationTests_Message {
-
     // MARK: Helpers
 
     func imageNote(_ conversation: ZMConversation, sender: ZMUser, text: String? = nil, isEphemeral: Bool = false) -> ZMLocalNotification? {
@@ -523,7 +513,6 @@ enum FileType {
 }
 
 extension ZMLocalNotificationTests_Message {
-
     // MARK: Helpers
 
     func assetNote(_ fileType: FileType, conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> ZMLocalNotification? {
@@ -603,7 +592,6 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - Knock Messages
 
 extension ZMLocalNotificationTests_Message {
-
     // MARK: Helpers
 
     func knockNote(_ conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> ZMLocalNotification? {
@@ -649,7 +637,6 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - Editing Message
 
 extension ZMLocalNotificationTests_Message {
-
     func editNote(_ message: ZMOTRMessage, sender: ZMUser, text: String) -> ZMLocalNotification? {
         let editTextMessage = GenericMessage(content: MessageEdit(replacingMessageID: message.nonce!, text: Text(content: text)), nonce: UUID.create())
 
@@ -677,7 +664,6 @@ extension ZMLocalNotificationTests_Message {
 // MARK: - Categories
 
 extension ZMLocalNotificationTests_Message {
-
     func testThatItGeneratesTheNotificationWithoutMuteInTheTeam() {
         // GIVEN
         let team = Team.insertNewObject(in: self.uiMOC)

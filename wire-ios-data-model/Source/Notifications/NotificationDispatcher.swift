@@ -27,7 +27,6 @@ import Foundation
 /// Core Data notifications or manually for non Core Data changes.
 
 @objcMembers public class NotificationDispatcher: NSObject, TearDownCapable {
-
     static var log = ZMSLog(tag: "notifications")
 
     // MARK: - Public properties
@@ -401,7 +400,6 @@ import Foundation
 // MARK: - Helper extensions
 
 private extension LazySequenceProtocol {
-
     func collect() -> [Element] {
         return Array(self)
     }

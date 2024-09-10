@@ -51,7 +51,6 @@ extension RandomGeneratorFromData {
 
 extension Array {
     public func shuffled(with generator: RandomGenerator) -> Array {
-
         var workingCopy = Array(self)
         var result = Array()
 
@@ -110,7 +109,6 @@ extension Mode {
 }
 
 public final class ConversationListAvatarView: UIView {
-
     public var conversation: ZMConversation? = .none {
         didSet {
             guard let conversation = self.conversation else {

@@ -20,9 +20,7 @@
 import XCTest
 
 class PersistentStoreRelocatorTests: DatabaseBaseTest {
-
     func testThatItFindsPreviousStoreInCachesDirectory() {
-
         // given
         self.createLegacyStore(path: .cachesDirectory)
 
@@ -35,7 +33,6 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
     }
 
     func testThatItFindsPreviousStoreInApplicationSupportDirectory() {
-
         // given
         self.createLegacyStore(path: .applicationSupportDirectory)
 

@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 public class TypingChange: NSObject {
-
     let conversation: ZMConversation
     let typingUsers: Set<ZMUser>
 

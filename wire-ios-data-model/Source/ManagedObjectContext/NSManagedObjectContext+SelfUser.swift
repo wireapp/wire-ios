@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSManagedObjectContext {
-
     // This function setup the user info on the context, the session and self user must be initialised before end.
     func setupLocalCachedSessionAndSelfUser() {
         let request = ZMSession.sortedFetchRequest()

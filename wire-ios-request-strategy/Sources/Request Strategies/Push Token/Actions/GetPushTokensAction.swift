@@ -20,13 +20,11 @@ import Foundation
 import WireDataModel
 
 public class GetPushTokensAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = [PushToken]
 
     public enum Failure: LocalizedError, SafeForLoggingStringConvertible {
-
         case malformedResponse
         case unknown(status: Int)
 

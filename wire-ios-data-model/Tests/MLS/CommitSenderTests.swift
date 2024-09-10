@@ -24,7 +24,6 @@ import WireCoreCrypto
 import XCTest
 
 class CommitSenderTests: ZMBaseManagedObjectTest {
-
     // MARK: - Properties
 
     private var sut: CommitSender!

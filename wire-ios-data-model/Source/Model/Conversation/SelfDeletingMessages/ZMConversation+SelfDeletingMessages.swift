@@ -17,7 +17,6 @@
 //
 
 extension ZMConversation {
-
     @NSManaged var localMessageDestructionTimeout: TimeInterval
     @NSManaged var syncedMessageDestructionTimeout: TimeInterval
 
@@ -127,7 +126,6 @@ extension ZMConversation {
 }
 
 private extension Feature.SelfDeletingMessages {
-
     var isForcedOff: Bool {
         return status == .disabled
     }

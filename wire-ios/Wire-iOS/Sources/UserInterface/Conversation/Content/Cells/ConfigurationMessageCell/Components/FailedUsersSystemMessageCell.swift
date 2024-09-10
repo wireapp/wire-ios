@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
-
     typealias FailedtosendParticipants = L10n.Localizable.Content.System.FailedtosendParticipants
 
     struct Configuration {

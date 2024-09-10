@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 protocol CallGridViewControllerInput {
-
     var floatingStream: Stream? { get }
     var streams: [Stream] { get }
     var videoState: VideoState { get }
@@ -41,7 +40,6 @@ extension CallGridViewControllerInput where Self: Equatable {
 }
 
 extension CallGridViewControllerInput {
-
     var allStreamIds: Set<AVSClient> {
         let streamIds = (streams + [floatingStream]).compactMap { $0?.streamId }
         return Set(streamIds)

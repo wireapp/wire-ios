@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 extension BackendEnvironment {
-
     static let defaultsKey = "ZMBackendEnvironmentData"
 
     public convenience init?(userDefaults: UserDefaults, configurationBundle: Bundle, environmentType type: EnvironmentType? = nil) {
@@ -93,7 +92,6 @@ extension BackendEnvironment {
 }
 
 fileprivate extension UserDefaults {
-
     static func moveValue(forKey key: String, from: UserDefaults, to: UserDefaults) {
         guard let value = from.value(forKey: key) else { return }
 

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireUtilities
 
 final class NSManagedObjectContext_SwiftTests: XCTestCase {
-
     struct TestError: Error {}
 
     var sut: NSManagedObjectContext!

@@ -37,7 +37,6 @@ extension String {
 }
 
 extension AVSAudioEffectType: CustomStringConvertible {
-
     var icon: StyleKitIcon {
         switch self {
         case .none:
@@ -156,7 +155,6 @@ extension AVSAudioEffectType: CustomStringConvertible {
         }
 
         type(of: self).wr_convertQueue.async {
-
             let result = AVSAudioEffect().applyWav(nil, inFile: inPath, outFile: outPath, effect: self, nr_flag: true)
             zmLog.info("applyEffect \(self) from \(inPath) to \(outPath): \(result)")
             DispatchQueue.main.async {

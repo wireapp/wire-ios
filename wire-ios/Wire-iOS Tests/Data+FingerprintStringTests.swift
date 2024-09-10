@@ -20,7 +20,6 @@
 import XCTest
 
 final class Data_FingerprintStringTestsTests: XCTestCase {
-
     func testThatFingerPrintDataIsConvertedToSpacedString() {
         // GIVEN
         let fingerprintString = "102030405060708090a0b0c0d0e0f0708090102030405060708090"

@@ -32,7 +32,6 @@ protocol CountlyInstance {
 extension Countly: CountlyInstance {}
 
 final class AnalyticsCountlyProvider: AnalyticsProvider {
-
     typealias PendingEvent = (event: String, attribtues: [String: Any])
 
     // MARK: - Properties
@@ -268,7 +267,6 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 // MARK: - Application state observing
 
 extension AnalyticsCountlyProvider: ApplicationStateObserving {
-
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
     }
@@ -287,7 +285,6 @@ extension AnalyticsCountlyProvider: ApplicationStateObserving {
 // MARK: - Helpers
 
 extension Dictionary where Key == String, Value == Any {
-
     private func countlyValue(rawValue: Any) -> String {
         if let boolValue = rawValue as? Bool {
             return boolValue ? "True" : "False"

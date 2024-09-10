@@ -25,14 +25,12 @@ public enum EditingMode {
 }
 
 protocol Renderable: AnyObject {
-
     var bounds: CGRect { get }
 
     func draw(context: CGContext)
 }
 
 protocol Editable: Renderable {
-
     var selected: Bool { get set }
     var selectedView: UIView { get }
     var selectable: Bool { get }
@@ -44,7 +42,6 @@ protocol Editable: Renderable {
 }
 
 struct Orientation {
-
     var scale: CGFloat
     var position: CGPoint
     var rotation: CGFloat
@@ -55,12 +52,10 @@ struct Orientation {
 }
 
 public protocol CanvasDelegate: AnyObject {
-
     func canvasDidChange(_ canvas: Canvas)
 }
 
 public final class Canvas: UIView {
-
     fileprivate let minimumScale: CGFloat = 0.5
     fileprivate let maximumScale: CGFloat = 10.0
 
@@ -80,7 +75,6 @@ public final class Canvas: UIView {
 
     /// An image on which you can draw on top.
     public var referenceImage: UIImage? {
-
         didSet {
             if let referenceImage, let cgImage = referenceImage.cgImage {
                 let retinaImage = UIImage(cgImage: cgImage, scale: 2, orientation: referenceImage.imageOrientation)
@@ -289,7 +283,6 @@ public final class Canvas: UIView {
             }
 
             if let referenceObject {
-
                 let drawBounds = self.bounds.intersection(self.drawBounds)
                 let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
                 let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale * scaleFactor, y: renderScale * scaleFactor))
@@ -374,7 +367,6 @@ public final class Canvas: UIView {
 }
 
 extension Canvas: UIGestureRecognizerDelegate {
-
     func configureGestureRecognizers() {
         let tapGestureReconizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture))
         addGestureRecognizer(tapGestureReconizer)

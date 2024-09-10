@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
-
     // MARK: - Options Group
 
     var optionsGroup: SettingsCellDescriptorType {
@@ -166,7 +165,6 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var soundsSection: SettingsSectionDescriptorType {
-
         let callSoundProperty = settingsPropertyFactory.property(.callSoundName)
         let callSoundGroup = soundGroupForSetting(
             callSoundProperty,

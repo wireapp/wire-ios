@@ -19,7 +19,6 @@
 import Foundation
 
 public struct AnalyticsIdentifierProvider {
-
     public var selfUser: UserType
 
     public init(selfUser: UserType) {

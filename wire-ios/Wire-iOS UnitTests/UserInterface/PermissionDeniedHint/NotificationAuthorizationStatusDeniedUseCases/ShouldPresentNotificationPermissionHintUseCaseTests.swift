@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
-
     private var mockDateProvider: MockCurrentDateProviding!
     private var userDefaults: UserDefaults!
     private var userNotificationCenterMock: MockUserNotificationCenterAbstraction!
@@ -129,11 +128,8 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 ///     .base64EncodedString()
 /// ```
 extension UNNotificationSettings {
-
     fileprivate static func with(authorizationStatus: UNAuthorizationStatus) throws -> Self {
-
         let encoded = switch authorizationStatus {
-
         case .authorized:
             "YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q" +
             "D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGjCwwjVSRudWxs3xARDQ4PEBESExQVFhcYGRobHB0e" +

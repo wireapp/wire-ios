@@ -22,7 +22,6 @@ import WireUtilitiesSupport
 @testable import WireSyncEngine
 
 final class LocalNotificationDispatcherCallingTests: DatabaseTest {
-
     var sut: LocalNotificationDispatcher!
     var notificationCenter: UserNotificationCenterMock!
     var sender: ZMUser!
@@ -91,7 +90,6 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
     }
 
     func testThatIgnoredCallStatesDoesNotCreateCallingNotifications() {
-
         let ignoredCallStates: [CallState] = [.established, .answered(degraded: false), .outgoing(degraded: false), .none, .unknown]
 
         for ignoredCallState in ignoredCallStates {

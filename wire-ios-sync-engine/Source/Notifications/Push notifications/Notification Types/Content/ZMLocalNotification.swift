@@ -46,7 +46,6 @@ protocol NotificationBuilder {
 /// information regarding the conversation, sender, and team name.
 ///
 class ZMLocalNotification: NSObject {
-
     /// The unique identifier for this notification. Use it to later update
     /// or remove pending or scheduled notification requests.
     let id: UUID
@@ -115,7 +114,6 @@ class ZMLocalNotification: NSObject {
 // MARK: - Properties
 
 extension ZMLocalNotification {
-
     var selfUserID: UUID? { return userInfo?.selfUserID }
     var senderID: UUID? { return userInfo?.senderID }
     var messageNonce: UUID? { return userInfo?.messageNonce }
@@ -139,7 +137,6 @@ extension ZMLocalNotification {
 // MARK: - Lookup
 
 extension ZMLocalNotification {
-
     func conversation(in moc: NSManagedObjectContext) -> ZMConversation? {
         return userInfo?.conversation(in: moc)
     }
@@ -152,9 +149,7 @@ extension ZMLocalNotification {
 // MARK: - Unread Count
 
 extension ZMLocalNotification {
-
     func increaseEstimatedUnreadCount(on conversation: ZMConversation?) {
-
         if type.shouldIncreaseUnreadCount {
             conversation?.internalEstimatedUnreadCount += 1
         }
@@ -170,7 +165,6 @@ extension ZMLocalNotification {
 }
 
 extension LocalNotificationType {
-
     var shouldIncreaseUnreadCount: Bool {
         guard case LocalNotificationType.message(let contentType) = self else {
             return false

@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
-
     func assetWithImage() -> WireProtos.Asset {
         let original = WireProtos.Asset.Original.with({
             $0.size = 1000

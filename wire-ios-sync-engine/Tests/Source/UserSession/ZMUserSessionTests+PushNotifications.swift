@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
-
     typealias Category = WireSyncEngine.PushNotificationCategory
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
@@ -240,7 +239,6 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         let (originalMessage, originaMessageNonce) = try await uiMOC.perform {
-
             let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
             let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
             return (originalMessage, originaMessageNonce)
@@ -319,7 +317,6 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 }
 
 extension ZMUserSessionTests_PushNotifications {
-
     func assertHasReadConfirmationForMessage(nonce: UUID, conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
         let containsReadConfirmation = conversation.lastMessages().contains { message in
             if let clientMessage = message as? ZMClientMessage, clientMessage.underlyingMessage?.hasConfirmation == true {
@@ -356,7 +353,6 @@ extension ZMUserSessionTests_PushNotifications {
         let conversationId = UUID()
         var messageNonce: UUID?
         syncMOC.performGroupedAndWait {
-
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne
             conversation.remoteIdentifier = conversationId

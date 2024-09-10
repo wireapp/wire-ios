@@ -23,7 +23,6 @@ import WireSyncEngine
 final class OtherUserClientsListViewController: UIViewController,
                                                 UICollectionViewDelegateFlowLayout,
                                                 UICollectionViewDataSource {
-
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
     private var clients: [UserClientType]
@@ -215,7 +214,6 @@ final class OtherUserClientsListViewController: UIViewController,
 }
 
 extension OtherUserClientsListViewController: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }
 
@@ -234,7 +232,6 @@ extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegat
 }
 
 extension Array where Element: UserClientType {
-
     @MainActor
     func updateCertificates(mlsGroupId: MLSGroupID, userSession: UserSession) async -> [UserClientType] {
         guard let userClients = self as? [UserClient] else {

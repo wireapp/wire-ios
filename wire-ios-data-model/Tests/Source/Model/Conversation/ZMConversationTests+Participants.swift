@@ -21,7 +21,6 @@ import Foundation
 import WireDataModelSupport
 
 final class ConversationParticipantsTests: ZMConversationTestsBase {
-
 	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
 		// GIVEN
 		let sut = createConversation(in: uiMOC)
@@ -354,7 +353,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatAddingSelfToExistingConversationMarksItAsNeedingToUpdate() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create() // this makes it "exists"
@@ -369,7 +367,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatAddingSelfToNonExistingConversationDoesNotNeedUpdate() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = nil // this makes it as local only
@@ -386,7 +383,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     // MARK: - Sorting
 
     func testThatItSortsParticipantsByFullName() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
@@ -504,7 +500,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatItAddsParticipantsWithTheGivenRoleForAllParticipants() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
@@ -524,7 +519,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
@@ -575,7 +569,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatItUpdateParticipantWithTheGivenRole() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
@@ -605,7 +598,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatItRefetchesRolesIfNoRoles() {
-
         syncMOC.performGroupedAndWait {
             // given
 
@@ -625,7 +617,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatItRefetchesRolesIfRolesAreEmpty() {
-
         syncMOC.performGroupedAndWait {
             // given
 
@@ -646,7 +637,6 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotRefetchRolesIfRolesAreNotEmpty() {
-
         syncMOC.performGroupedAndWait {
             // given
 

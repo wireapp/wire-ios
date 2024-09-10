@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class RandomHandleGeneratorTests: XCTestCase {
-
     func testNormalizationOfString() {
         XCTAssertEqual("Maria LaRochelle".normalizedForUserHandle, "marialarochelle")
         XCTAssertEqual("Mêrié \"LaRöche'lle\"".normalizedForUserHandle, "merielarochelle")
@@ -40,7 +39,6 @@ final class RandomHandleGeneratorTests: XCTestCase {
     }
 
     func testHandleGenerationWithValidDisplayName() {
-
         // GIVEN
         let variations = 3
         let expectedNormalized = "marialarochellevonsch"
@@ -94,7 +92,6 @@ final class RandomHandleGeneratorTests: XCTestCase {
     }
 
     func testThatItSuggestsHandlesWithTwoCharacters() {
-
         // GIVEN
         let expectedFirstNormalized = "po"
 
@@ -106,7 +103,6 @@ final class RandomHandleGeneratorTests: XCTestCase {
     }
 
     func testThatItDoesNotSuggestsHandlesWithOneCharacters() {
-
         // WHEN
         let handles: [String] = WireSyncEngine.RandomHandleGenerator.generatePossibleHandles(displayName: "P", alternativeNames: 0)
 
@@ -119,7 +115,6 @@ final class RandomHandleGeneratorTests: XCTestCase {
 // MARK: - Helpers
 
 extension NSRegularExpression {
-
     /// Check if the string has a match for this regex
     fileprivate func matches(_ string: String?) -> Bool {
         guard let string else {

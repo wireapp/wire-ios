@@ -23,7 +23,6 @@ import Foundation
  */
 
 public class MockPendingLegalHoldClient: NSManagedObject {
-
     /// The user that received a legal hold request.
     @NSManaged public var user: MockUser?
 
@@ -38,7 +37,6 @@ public class MockPendingLegalHoldClient: NSManagedObject {
 }
 
 extension MockUser {
-
     /// Requests a legal hold for the user.
     public func requestLegalHold() -> Bool {
         guard let managedObjectContext = self.managedObjectContext else {

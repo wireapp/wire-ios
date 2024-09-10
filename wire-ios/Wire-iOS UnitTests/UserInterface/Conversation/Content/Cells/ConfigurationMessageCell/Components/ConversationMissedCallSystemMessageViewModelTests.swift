@@ -24,7 +24,6 @@ import WireDataModel
 import XCTest
 
 final class ConversationMissedCallSystemMessageViewModelTests: XCTestCase {
-
     func testAttributedTitle_givenInitialState() {
         // given
         let viewModel = makeViewModel()

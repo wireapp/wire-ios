@@ -19,7 +19,6 @@
 import Foundation
 
 final class OpenGraphScanner: NSObject {
-
     typealias ParserCompletion = (OpenGraphData?) -> Void
 
     let xmlString: String

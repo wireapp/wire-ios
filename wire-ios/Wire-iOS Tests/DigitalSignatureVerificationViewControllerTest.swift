@@ -20,7 +20,6 @@
 import XCTest
 
 class DigitalSignatureVerificationViewControllerTest: XCTestCase {
-
     var sut: DigitalSignatureVerificationViewController!
 
     override func setUp() {

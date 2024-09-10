@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public struct CoreDataStackHelper {
-
     private let fileManager = FileManager.default
 
     public var storageDirectory: URL {

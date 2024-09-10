@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSOrderedSet {
-
     public func toOrderedSetState<T: Hashable>() -> OrderedSetState<T> {
         guard let objects = array as? [T] else {
             fatal("Could not cast contents of NSOrderedSet \(type(of: self)) to expected type \(T.self)")
@@ -29,14 +28,12 @@ extension NSOrderedSet {
 }
 
 extension Array where Element: Hashable {
-
     public func toOrderedSetState() -> OrderedSetState<Element> {
         return OrderedSetState(array: self)
     }
 }
 
 public struct OrderedSetState<T: Hashable>: Equatable {
-
     public private(set) var array: [T]
     public private(set) var order: [T: Int]
 
@@ -88,7 +85,6 @@ public struct MovedIndex: Equatable {
 }
 
 public struct ChangedIndexes<T: Hashable> {
-
     public let startState: OrderedSetState<T>
     public let endState: OrderedSetState<T>
     public let updatedObjects: Set<T>

@@ -24,13 +24,11 @@ import Foundation
 /// send it using the `/messages` endpoint like any other message. This is an additional step required
 /// as the fan-out was previously done by the backend when uploading a v2 asset.
 public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
-
     let managedObjectContext: NSManagedObjectContext
     let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
     let messageSender: MessageSenderInterface
 
     public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
-
         self.managedObjectContext = managedObjectContext
         self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
         self.messageSender = messageSender
@@ -55,7 +53,6 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
 }
 
 extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
-
     typealias Object = ZMAssetClientMessage
 
     func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {

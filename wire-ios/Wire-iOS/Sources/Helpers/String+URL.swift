@@ -19,7 +19,6 @@
 import Foundation
 
 extension String {
-
     var containsURL: Bool {
         return URLMatchesInString.count > 0
     }

@@ -141,7 +141,6 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 }
 
 extension ConversationViewController {
-
     func presentParticipantsViewController(
         _ viewController: UIViewController,
         from sourceView: UIView

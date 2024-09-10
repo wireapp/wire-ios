@@ -19,7 +19,6 @@
 @testable import WireSyncEngine
 
 class TypingTests: MessagingTest, ZMTypingChangeObserver {
-
     private typealias Typing = WireSyncEngine.Typing
 
     private var sut: Typing!

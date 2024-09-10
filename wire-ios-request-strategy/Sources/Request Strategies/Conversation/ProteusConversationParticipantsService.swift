@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 protocol ProteusConversationParticipantsServiceInterface {
-
     func addParticipants(
         _ users: [ZMUser],
         to conversation: ZMConversation
@@ -34,7 +33,6 @@ protocol ProteusConversationParticipantsServiceInterface {
 }
 
 struct ProteusConversationParticipantsService: ProteusConversationParticipantsServiceInterface {
-
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {

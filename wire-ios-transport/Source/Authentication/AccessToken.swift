@@ -21,7 +21,6 @@ import Foundation
 // TODO-SWIFT: convert to struct
 @objc(ZMAccessToken) @objcMembers
 public final class AccessToken: NSObject {
-
     public let token: String
     public let type: String
     public let expirationDate: Date

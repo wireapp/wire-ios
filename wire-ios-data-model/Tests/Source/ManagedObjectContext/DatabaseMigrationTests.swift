@@ -21,7 +21,6 @@
 import XCTest
 
 final class DatabaseMigrationTests: DatabaseBaseTest {
-
     private let helper = DatabaseMigrationHelper()
 
     private let userPropertiesToFetch = [

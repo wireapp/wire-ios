@@ -20,14 +20,12 @@ import Foundation
 
 /// A key path (as in key-value-coding).
 public final class StringKeyPath: Hashable {
-
     public let rawValue: String
     public let count: Int
 
     static private var KeyPathCache: [String: StringKeyPath] = [:]
 
     public static func keyPathForString(_ string: String) -> StringKeyPath {
-
         if let keyPath = KeyPathCache[string] {
             return keyPath
         } else {

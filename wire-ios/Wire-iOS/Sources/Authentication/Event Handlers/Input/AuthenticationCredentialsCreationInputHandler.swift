@@ -18,7 +18,6 @@
 
 /// Handles the input of the phone number or email to register.
 final class AuthenticationCredentialsCreationInputHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {

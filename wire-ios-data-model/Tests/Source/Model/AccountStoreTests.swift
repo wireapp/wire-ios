@@ -21,7 +21,6 @@ import Foundation
 @testable import WireDataModel
 
 final class AccountStoreTests: ZMConversationTestsBase {
-
     var url: URL!
 
     override func setUp() {

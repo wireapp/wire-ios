@@ -22,7 +22,6 @@ import WireTransport
 private let zmLog = ZMSLog(tag: "Dependencies")
 
 public protocol OTREntity: AnyObject {
-
     /// NSManagedObjectContext which the OTR entity is associated with.
     var context: NSManagedObjectContext { get }
 
@@ -84,10 +83,8 @@ private let UnknownClientLabel = "unknown-client"
 private let ErrorLabel = "label"
 
 extension OTREntity {
-
     /// Which object this message depends on when sending
     public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation: ZMConversation) -> ZMManagedObject? {
-
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
         // Otherwise we end up in an endless loop receiving missing clients error

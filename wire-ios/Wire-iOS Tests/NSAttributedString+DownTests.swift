@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class NSAttributedStringDownTests: XCTestCase {
-
     func testThatItReturnsH1Character() {
         // GIVEN
         let plainTextSymbol = "#"

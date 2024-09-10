@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUser {
-
     /// **Problem:**
     /// The domain of a backend changed, so the self user has an old and invalid domain,
     /// which causes requests to federated endpoints to fail.

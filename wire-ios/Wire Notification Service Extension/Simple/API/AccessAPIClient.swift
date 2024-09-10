@@ -20,12 +20,10 @@ import Foundation
 import WireTransport
 
 protocol AccessAPIClientProtocol {
-
     func fetchAccessToken() async throws -> AccessToken
 }
 
 final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
-
     // MARK: - Properties
 
     private let networkSession: NetworkSessionProtocol
@@ -51,13 +49,11 @@ final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
 }
 
 struct AccessTokenEndpoint: Endpoint, Loggable {
-
     // MARK: - Types
 
     typealias Output = AccessToken
 
     enum Failure: Error, Equatable {
-
         case invalidResponse
         case failedToDecodePayload
         case authenticationError
@@ -76,7 +72,6 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
     // MARK: - Response
 
     private struct ResponsePayload: Codable {
-
         let access_token: String
         let expires_in: Int
         let token_type: String

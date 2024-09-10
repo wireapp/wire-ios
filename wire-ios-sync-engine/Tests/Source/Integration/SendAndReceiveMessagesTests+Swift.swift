@@ -20,7 +20,6 @@
 import XCTest
 
 class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
-
     private func uniqueText() -> String {
         return "This is a test for \(self.name): \(UUID.create())"
     }

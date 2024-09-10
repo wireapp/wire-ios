@@ -21,7 +21,6 @@ import Foundation
 /// Depending on the `mlsE2EId` feature flag configuration, we should use a CRL proxy or fetching the CRL directly.
 /// https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1147666542/2024-04-22+CRL+proxy+for+mobile+apps
 struct CRLURLBuilder {
-
     private let shouldUseProxy: Bool
     private let proxyURL: URL?
 

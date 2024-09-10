@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 enum IconStringsBuilder {
-
     /// Creates an attributed string with the title and leading and/or trailing icons.
     /// - parameter interactive: A down-arrow image will be appended.
     static func iconString(
@@ -32,7 +31,6 @@ enum IconStringsBuilder {
         color: UIColor,
         titleFont: UIFont? = nil
     ) -> NSAttributedString {
-
         var components: [NSAttributedString] = []
         components += leadingIcons.map { .init(attachment: $0) }
         components += [.init(string: title)]

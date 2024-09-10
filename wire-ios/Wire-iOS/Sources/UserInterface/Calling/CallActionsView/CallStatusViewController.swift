@@ -19,7 +19,6 @@
 import UIKit
 
 final class CallStatusViewController: UIViewController {
-
     var configuration: CallStatusViewInputType {
         didSet {
             updateState()

@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension SelfProfileViewController {
-
     func presentNewLoginAlertControllerIfNeeded() -> Bool {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
@@ -96,7 +95,6 @@ extension SelfProfileViewController {
 }
 
 extension UIAlertController {
-
     convenience init(forNewSelfClients clients: [UserClientType]) {
         var deviceNamesAndDates: [String] = []
 

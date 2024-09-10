@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     /// Returns true if this conversation was created within the same team as the self user
     public var isTeamConversation: Bool {
         guard

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class AnalyticsTests: DatabaseTest {
-
     var analytics: MockAnalytics!
 
     override func setUp() {

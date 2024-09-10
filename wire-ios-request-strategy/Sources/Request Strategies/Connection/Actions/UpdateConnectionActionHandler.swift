@@ -19,7 +19,6 @@
 import Foundation
 
 class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
-
     let decoder: JSONDecoder = .defaultDecoder
     let encoder: JSONEncoder = .defaultEncoder
 
@@ -93,11 +92,9 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: UpdateConnectionAction) {
-
         var action = action
 
         guard response.result == .success else {
-
             guard let failure = Payload.ResponseFailure(response, decoder: decoder) else {
                 action.notifyResult(.failure(.unknown))
                 return

@@ -309,7 +309,6 @@ final class SettingsValueCell: SettingsTableCell {
         }
         didSet {
             if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
-
                 NotificationCenter.default.addObserver(self,
                                                        selector: #selector(SettingsValueCell.onPropertyChanged(_:)),
                                                        name: propertyDescriptor.settingsProperty.propertyName.notificationName,
@@ -405,7 +404,6 @@ final class SettingsTextCell: SettingsTableCell,
 }
 
 final class SettingsStaticTextTableCell: SettingsTableCell {
-
     override func setup() {
         super.setup()
         cellNameLabel.numberOfLines = 0
@@ -415,7 +413,6 @@ final class SettingsStaticTextTableCell: SettingsTableCell {
 }
 
 final class SettingsProfileLinkCell: SettingsTableCell {
-
     // MARK: - Properties
 
     var label = CopyableLabel()

@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_LastRead: ConversationTestsBase {
-
     func testThatEstimatedUnreadCountIsIncreasedAfterRecevingATextMessage() {
         // login
         XCTAssertTrue(login())

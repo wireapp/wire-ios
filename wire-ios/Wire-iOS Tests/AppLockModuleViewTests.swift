@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class AppLockModuleViewTests: XCTestCase {
-
     private var sut: AppLockModule.View!
     private var presenter: AppLockModule.MockPresenter!
     private var snapshotHelper: SnapshotHelper!
@@ -137,7 +136,6 @@ final class AppLockModuleViewTests: XCTestCase {
     // MARK: - Nib Loading
 
     func test_AppLockViewIsLoaded() {
-
         // When
         let sut = AppLockView()
 

@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
-
     private var snapshotHelper: SnapshotHelper!
     private var sut: SettingsTextCell!
     private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!

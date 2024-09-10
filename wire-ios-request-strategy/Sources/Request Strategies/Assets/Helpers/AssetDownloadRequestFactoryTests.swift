@@ -22,7 +22,6 @@ import WireTransport
 import XCTest
 
 final class AssetDownloadRequestFactoryTests: XCTestCase {
-
     // MARK: - API V0
 
     func test_GenerateGetAssetRequest() throws {

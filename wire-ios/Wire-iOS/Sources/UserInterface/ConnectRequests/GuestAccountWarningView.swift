@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class GuestAccountWarningView: UIView {
-
     private let stackView = UIStackView(axis: .vertical)
     private let encryptionLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)
     private let sensitiveInfoLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: SemanticColors.Label.textDefault)

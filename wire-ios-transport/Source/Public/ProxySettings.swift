@@ -19,7 +19,6 @@
 import Foundation
 
 final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
-
     let host: String
     let port: Int
     let needsAuthentication: Bool

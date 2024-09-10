@@ -19,10 +19,8 @@
 import Foundation
 
 extension ZMMessage {
-
     /// Type of content present in the message
     public var category: MessageCategory {
-
         let category = self.categoryFromContent
         guard category != .none else {
             return .undefined
@@ -38,7 +36,6 @@ extension ZMMessage {
 
     /// A cached version of the cateogry. The getter will recalculate the category if not set already
     public var cachedCategory: MessageCategory {
-
         get {
             self.willAccessValue(forKey: ZMMessageCachedCategoryKey)
             let value = (self.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber) ?? NSNumber(value: 0)
@@ -73,7 +70,6 @@ extension ZMMessage {
     public static func fetchRequestMatching(categories: Set<MessageCategory>,
                                             excluding: MessageCategory = .none,
                                             conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
-
         let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: categories.map {
             return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
         })
@@ -91,7 +87,6 @@ extension ZMMessage {
 
     public static func fetchRequestMatching(matchPairs: [CategoryMatch],
                                             conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
-
         let categoryPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: matchPairs.map {
             if $0.excluding != .none {
                 return NSPredicate(format: "((%K & %d) = %d) && ((%K & %d) = 0)",
@@ -114,10 +109,8 @@ extension ZMMessage {
 let linkParser = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
 
 extension ZMMessage {
-
     /// Category according only to content (excluding likes)
     fileprivate var categoryFromContent: MessageCategory {
-
         guard !self.isObfuscated, !self.isZombieObject else {
             return .none
         }
@@ -222,7 +215,6 @@ extension ZMMessage {
 
 /// Type of content in a message
 public struct MessageCategory: OptionSet {
-
     public let rawValue: Int32
 
     public static let none = MessageCategory([])
@@ -247,7 +239,6 @@ public struct MessageCategory: OptionSet {
 }
 
 extension MessageCategory: CustomDebugStringConvertible {
-
     fileprivate static let descriptions: [MessageCategory: String] = [
         .undefined: "Undefined",
         .text: "Text",
@@ -278,7 +269,6 @@ extension MessageCategory: CustomDebugStringConvertible {
 }
 
 extension MessageCategory: Hashable {
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.rawValue)
     }

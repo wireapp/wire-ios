@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 final class SecurityLevelView: UIView {
-
     // MARK: - Constants
 
     private static let SecurityLevelViewHeight = 24.0
@@ -130,7 +129,6 @@ final class SecurityLevelView: UIView {
 
     private func configureCallingUI(with classification: SecurityClassification) {
         switch classification {
-
         case .classified:
             securityLevelLabel.textColor = LabelColors.textSecurityEnabled
             backgroundColor = ViewColors.backgroundSecurityEnabled
@@ -151,12 +149,10 @@ final class SecurityLevelView: UIView {
 // MARK: - SecurityClassification Extension
 
 private extension SecurityClassification {
-
     typealias SecurityClassificationLevel = L10n.Localizable.SecurityClassification.Level
 
     var levelText: String? {
         switch self {
-
         case .classified:
             SecurityClassificationLevel.bund
 
@@ -179,7 +175,6 @@ private extension SecurityClassification {
 // MARK: - Previews
 
 struct SecurityLevelView_Previews: PreviewProvider {
-
     static var previews: some View {
         Group {
             SecurityLevelViewRepresentable(classification: .classified)
@@ -191,7 +186,6 @@ struct SecurityLevelView_Previews: PreviewProvider {
 }
 
 private struct SecurityLevelViewRepresentable: UIViewRepresentable {
-
     @State var classification: SecurityClassification?
 
     func makeUIView(context: Context) -> SecurityLevelView {

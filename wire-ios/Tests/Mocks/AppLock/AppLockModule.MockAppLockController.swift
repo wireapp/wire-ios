@@ -21,9 +21,7 @@ import LocalAuthentication
 @testable import Wire
 
 extension AppLockModule {
-
     final class MockAppLockController: AppLockType {
-
         // MARK: - Metrics
 
         var methodCalls = MethodCalls()
@@ -84,9 +82,7 @@ extension AppLockModule {
 }
 
 extension AppLockModule.MockAppLockController {
-
     struct MethodCalls {
-
         typealias Preference = AppLockPasscodePreference
         typealias Callback = (AppLockModule.AuthenticationResult) -> Void
 

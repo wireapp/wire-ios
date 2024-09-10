@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 final class ConversationEncryptionInfoSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationWarningSystemMessageCell
     let configuration: View.Configuration
 

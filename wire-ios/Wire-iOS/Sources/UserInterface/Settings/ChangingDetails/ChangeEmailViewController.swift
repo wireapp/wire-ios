@@ -22,7 +22,6 @@ import WireReusableUIComponents
 import WireSyncEngine
 
 final class ChangeEmailViewController: SettingsBaseTableViewController {
-
     // MARK: - Types
 
     typealias EmailAccountSection = L10n.Localizable.Self.Settings.AccountSection.Email
@@ -151,7 +150,6 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
 // MARK: - UserProfileUpdateObserver
 
 extension ChangeEmailViewController: UserProfileUpdateObserver {
-
     func emailUpdateDidFail(_ error: Error!) {
         activityIndicator.stop()
         updateSaveButtonState()

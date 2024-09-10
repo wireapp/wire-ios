@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
-
     enum MockError: Error {
         case unmockedMethodCalled
         case coreCryptoKeyError
@@ -38,7 +37,6 @@ class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
 }
 
 class CoreCryptoConfigProviderTests: ZMConversationTestsBase {
-
     private var mockCoreCryptoKeyProvider: MockCoreCryptoKeyProvider!
     private var sut: CoreCryptoConfigProvider!
 

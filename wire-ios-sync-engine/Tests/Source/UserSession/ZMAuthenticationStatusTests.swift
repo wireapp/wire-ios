@@ -19,7 +19,6 @@
 import XCTest
 
 class ZMAuthenticationStatusTestsPhoneAndEmailVerification: XCTestCase {
-
     var sut: ZMAuthenticationStatus!
     var delegate: MockAuthenticationStatusDelegate!
     var userInfoParser: MockUserInfoParser!
@@ -36,7 +35,6 @@ class ZMAuthenticationStatusTestsPhoneAndEmailVerification: XCTestCase {
     }
 
     func testThatItCanRequestEmailVerificationCodeForLoginAfterRequestingTheCode() {
-
         // GIVEN
         let originalEmail = "test@wire.com"
         var email: Any? = originalEmail

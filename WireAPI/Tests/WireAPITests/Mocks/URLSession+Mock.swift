@@ -19,7 +19,6 @@
 import Foundation
 
 extension URLSession {
-
     /// A url session powered by `URLProtocolMock`.
     ///
     /// Set `URLProtocolMock.mockHandler` with a mocking function to

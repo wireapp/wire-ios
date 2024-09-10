@@ -19,7 +19,6 @@
 import XCTest
 
 class IteratorContainmentTests: XCTestCase {
-
     func testThatItReturnsFalseForAnyInEmptySequence() {
         XCTAssertFalse([].any { _ in return true })
     }

@@ -191,7 +191,6 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
 }
 
 public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
-
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
     public init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {

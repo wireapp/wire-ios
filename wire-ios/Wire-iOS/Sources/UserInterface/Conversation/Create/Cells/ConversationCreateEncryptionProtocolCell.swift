@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationCreateEncryptionProtocolCell: ConversationEncryptionProtocolCell {
-
     override func setUp() {
         super.setUp()
         title = L10n.Localizable.Conversation.Create.Mls.title
@@ -32,7 +31,6 @@ final class ConversationCreateEncryptionProtocolCell: ConversationEncryptionProt
 }
 
 extension ConversationCreateEncryptionProtocolCell: ConversationCreationValuesConfigurable {
-
     func configure(with values: ConversationCreationValues) {
         label.text = values.encryptionProtocol.rawValue
     }

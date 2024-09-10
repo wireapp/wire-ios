@@ -118,7 +118,6 @@ final class MessageThumbnailPreviewView: UIView {
     }
 
     private func setupConstraints() {
-
         let inset: CGFloat = 12
 
         NSLayoutConstraint.activate([
@@ -133,7 +132,6 @@ final class MessageThumbnailPreviewView: UIView {
 
         if displaySender {
             NSLayoutConstraint.activate([
-
                 senderLabel.topAnchor.constraint(equalTo: topAnchor, constant: inset),
                 senderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: inset),
                 senderLabel.trailingAnchor.constraint(equalTo: imagePreview.leadingAnchor, constant: inset),
@@ -217,7 +215,6 @@ extension MessageThumbnailPreviewView: ZMMessageObserver {
 }
 
 final class MessagePreviewView: UIView {
-
     private let senderLabel = UILabel()
     private var leftEditIconInset: CGFloat = 10
     private let contentTextView = UITextView.previewTextView()
@@ -313,7 +310,6 @@ final class MessagePreviewView: UIView {
         if let textMessageData = message.textMessageData {
             contentTextView.attributedText = NSAttributedString.formatForPreview(message: textMessageData, inputMode: true)
         } else if let location = message.locationMessageData {
-
             let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: iconColor, verticalCorrection: -1)
             let initialString = NSAttributedString(attachment: imageIcon) + "  " + (location.name ?? L10n.Localizable.Conversation.InputBar.MessagePreview.location).localizedUppercase
             contentTextView.attributedText = initialString && attributes

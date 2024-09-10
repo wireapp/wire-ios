@@ -25,7 +25,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 class MLSActionExecutorTests: ZMBaseManagedObjectTest {
-
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
@@ -643,7 +642,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     // MARK: - Decrypt Message
 
     func test_decryptMessage() async throws {
-
         // Given
         let groupID = MLSGroupID.random()
         let encryptedMessage = Data.random(byteCount: 1)

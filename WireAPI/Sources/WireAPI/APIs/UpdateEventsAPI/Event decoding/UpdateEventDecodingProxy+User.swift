@@ -19,7 +19,6 @@
 import Foundation
 
 extension UpdateEventDecodingProxy {
-
     init(
         eventType: UserEventType,
         from decoder: any Decoder

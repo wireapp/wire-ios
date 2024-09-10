@@ -40,7 +40,6 @@ private enum NotificationUserInfoKey: String {
  */
 
 public class NotificationUserInfo: NSObject, NSCoding {
-
     /// The key under which the storage property is encoded.
     private static let storageKey = "storageKey"
 
@@ -126,7 +125,6 @@ public class NotificationUserInfo: NSObject, NSCoding {
 // MARK: - Utilities
 
 extension NotificationUserInfo {
-
     fileprivate subscript(_ key: NotificationUserInfoKey) -> Any? {
         get {
             return storage[key.rawValue]
@@ -156,7 +154,6 @@ extension NotificationUserInfo {
 // MARK: - Lookup
 
 extension NotificationUserInfo {
-
     /**
      * Fetches the conversion that matches the description stored in this user info fields.
      *
@@ -207,7 +204,6 @@ extension NotificationUserInfo {
 // MARK: - Configuration
 
 extension NotificationUserInfo {
-
     func setupUserInfo(for conversation: ZMConversation, sender: ZMUser) {
         addSelfUserInfo(using: conversation)
         self.conversationID = conversation.remoteIdentifier
@@ -244,7 +240,6 @@ extension NotificationUserInfo {
 // MARK: - Accessors
 
 extension UNNotification {
-
     /// The user info describing the notification context.
     public var userInfo: NotificationUserInfo {
         return NotificationUserInfo(storage: request.content.userInfo)
@@ -252,7 +247,6 @@ extension UNNotification {
 }
 
 extension UNNotificationResponse {
-
     /// The user info describing the notification context.
     public var userInfo: NotificationUserInfo {
         return notification.userInfo

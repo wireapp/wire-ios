@@ -86,7 +86,6 @@ extension TextFieldDescription: ViewDescriptor {
 }
 
 extension TextFieldDescription: UITextFieldDelegate {
-
     @objc func confirmButtonTapped(_ sender: AnyObject) {
         guard let textField = self.textField, acceptsInput else { return }
         submitValue(with: textField.input)

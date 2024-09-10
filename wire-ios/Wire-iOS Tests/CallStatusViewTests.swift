@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 struct MockStatusViewConfiguration: CallStatusViewInputType {
-
     var state: CallStatusViewState
     var isVideoCall: Bool
     var isConstantBitRate: Bool
@@ -34,7 +33,6 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
 }
 
 final class CallStatusViewTests: XCTestCase {
-
     private var sut: CallStatusView!
     private var snapshotHelper: SnapshotHelper!
 

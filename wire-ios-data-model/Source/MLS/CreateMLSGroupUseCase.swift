@@ -19,7 +19,6 @@
 import WireCoreCrypto
 
 struct CreateMLSGroupUseCase {
-
     private let logger = WireLogger.mls
 
     private let parentGroupID: MLSGroupID?

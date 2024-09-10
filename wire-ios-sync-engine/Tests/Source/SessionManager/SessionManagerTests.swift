@@ -25,7 +25,6 @@ import WireTransportSupport
 import XCTest
 
 final class SessionManagerTests: IntegrationTest {
-
     private var sessionManagerBuilder: SessionManagerBuilder!
 
     private var tmpDirectoryPath: URL { URL(fileURLWithPath: NSTemporaryDirectory()) }
@@ -122,7 +121,6 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatItNotifiesObserverWhenCreatingAndTearingDownSession() {
-
         // GIVEN
         let account = self.createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
@@ -192,7 +190,6 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatItNotifiesDestroyedSessionObserverWhenCurrentSessionIsLoggedOut() {
-
         // GIVEN
         XCTAssertTrue(login())
         let account = sessionManager!.accountManager.selectedAccount!
@@ -392,7 +389,6 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNoPreviousBootTimeExists() {
-
         // GIVEN
         let sut = sessionManagerBuilder.build()
         sut.configuration.authenticateAfterReboot = true
@@ -412,7 +408,6 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatItDestroyedCacheDirectoryAfterLoggedOut() throws {
-
         // GIVEN
         XCTAssertTrue(login())
         let sessionManager = try XCTUnwrap(sessionManager)
@@ -438,7 +433,6 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     func testThatItDestroyedTmpDirectoryAfterLoggedOut() throws {
-
         // GIVEN
         XCTAssertTrue(login())
         let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
@@ -620,7 +614,6 @@ final class SessionManagerTests: IntegrationTest {
 }
 
 extension IntegrationTest {
-
     func createAccount() -> Account {
         return createAccount(with: currentUserIdentifier)
     }
@@ -642,7 +635,6 @@ extension IntegrationTest {
 // MARK: - Mocks
 
 class MockForegroundNotificationResponder: NSObject, ForegroundNotificationResponder {
-
     var notificationPermissionRequests: [UUID] = []
 
     func shouldPresentNotification(with userInfo: NotificationUserInfo) -> Bool {

@@ -19,7 +19,6 @@
 import Foundation
 
 class PrefillPrimaryKeyAction: CoreDataMigrationAction {
-
     private enum Keys: String {
         case primaryKey
     }

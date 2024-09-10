@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireTransport
 
 extension AuthenticationCoordinator: LandingViewControllerDelegate {
-
     func landingViewControllerDidChooseLogin() {
         if let fastloginCredentials = AutomationHelper.sharedHelper.automationEmailCredentials {
             let loginRequest = AuthenticationLoginRequest.email(address: fastloginCredentials.email, password: fastloginCredentials.password)
@@ -89,7 +88,6 @@ extension EnvironmentTypeProvider {
 }
 
 extension BackendEnvironment {
-
     var proxyCredentials: ProxyCredentials? {
         return proxy.flatMap { proxy in
             ProxyCredentials.retrieve(for: proxy)

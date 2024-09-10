@@ -24,7 +24,6 @@ import WireDesign
  */
 
 final class UserPropertyCell: SeparatorTableViewCell {
-
     private let contentStack = UIStackView()
     typealias LabelColors = SemanticColors.Label
 

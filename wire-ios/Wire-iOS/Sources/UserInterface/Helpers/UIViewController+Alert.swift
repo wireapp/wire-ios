@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIViewController {
-
     func presentLocalizedErrorAlert(_ error: LocalizedError) {
         let alertController = UIAlertController(
             title: error.localizedDescription,

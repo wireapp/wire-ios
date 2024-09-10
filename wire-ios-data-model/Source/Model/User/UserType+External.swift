@@ -19,7 +19,6 @@
 import Foundation
 
 public extension UserType {
-
     var isExternalPartner: Bool {
         return teamRole == .partner
     }

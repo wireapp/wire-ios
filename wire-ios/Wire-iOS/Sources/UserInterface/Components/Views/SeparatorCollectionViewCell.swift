@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
-
     let separator = UIView()
     var separatorInsetConstraint: NSLayoutConstraint!
 

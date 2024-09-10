@@ -24,7 +24,6 @@ import WireSyncEngine
 /// authentication from the user.
 
 enum AppLockModule: ModuleInterface {
-
     typealias PasscodePreference = AppLockPasscodePreference
     typealias AuthenticationResult = AppLockAuthenticationResult
     typealias Strings = L10n.Localizable.AppLockModule
@@ -42,9 +41,7 @@ enum AppLockModule: ModuleInterface {
 }
 
 extension AppLockModule {
-
     enum Event: Equatable {
-
         case viewDidAppear
         case applicationWillEnterForeground
         case unlockButtonTapped
@@ -55,14 +52,12 @@ extension AppLockModule {
     }
 
     enum Request: Equatable {
-
         case initiateAuthentication(requireActiveApp: Bool)
         case evaluateAuthentication
         case openAppLock
     }
 
     enum Result: Equatable {
-
         case customPasscodeCreationNeeded(shouldInform: Bool)
         case readyForAuthentication(shouldInform: Bool)
         case authenticationDenied(AuthenticationType)
@@ -71,7 +66,6 @@ extension AppLockModule {
     }
 
     enum Action: Equatable {
-
         case createPasscode(shouldInform: Bool)
         case inputPasscode
         case informUserOfConfigChange
@@ -82,32 +76,27 @@ extension AppLockModule {
 // MARK: - Interactor
 
 protocol AppLockInteractorPresenterInterface: InteractorPresenterInterface {
-
     func executeRequest(_ request: AppLockModule.Request)
 }
 
 // MARK: - Presenter
 
 protocol AppLockPresenterInteractorInterface: PresenterInteractorInterface {
-
     func handleResult(_ result: AppLockModule.Result)
 }
 
 protocol AppLockPresenterViewInterface: PresenterViewInterface {
-
     func processEvent(_ event: AppLockModule.Event)
 }
 
 // MARK: - View
 
 protocol AppLockViewPresenterInterface: ViewPresenterInterface {
-
     func refresh(withModel model: AppLockModule.ViewModel)
 }
 
 // MARK: - Router
 
 protocol AppLockRouterPresenterInterface: RouterPresenterInterface {
-
     func performAction(_ action: AppLockModule.Action)
 }

@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
-
     /// Checks if there is a one-on-one conversation ready to be used for a given user.
     /// Will return `false` if there is no conversation or if there's an `mls` conversation that isn't established
     ///
@@ -36,7 +35,6 @@ public enum CheckOneOnOneConversationIsReadyError: Error, Equatable {
 }
 
 struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReadyUseCaseProtocol {
-
     // MARK: - Properties
 
     private let context: NSManagedObjectContext

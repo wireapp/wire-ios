@@ -86,7 +86,6 @@ final class ParticipantDeviceHeaderView: UIView {
     }
 
     func attributedFingerprint(forMessage fingerprintExplanation: String) -> NSAttributedString {
-
         let textAttributes = [
             NSAttributedString.Key.foregroundColor: textColor,
             NSAttributedString.Key.font: font,
@@ -129,7 +128,6 @@ final class ParticipantDeviceHeaderView: UIView {
 }
 
 extension ParticipantDeviceHeaderView: UITextViewDelegate {
-
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         delegate?.participantsDeviceHeaderViewDidTapLearnMore(self)
 

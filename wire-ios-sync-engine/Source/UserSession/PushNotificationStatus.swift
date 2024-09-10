@@ -29,7 +29,6 @@ extension UUID {
 
 @objcMembers
 open class PushNotificationStatus: NSObject {
-
     private var eventIdRanking = NSMutableOrderedSet()
     private var completionHandlers: [UUID: () -> Void] = [:]
     private let managedObjectContext: NSManagedObjectContext

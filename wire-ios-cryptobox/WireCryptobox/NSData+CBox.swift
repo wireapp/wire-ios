@@ -19,7 +19,6 @@
 import Foundation
 
 extension Data {
-
     /// Moves from a CBoxVector to this data
     /// During this call, the CBoxVector is freed
     static func moveFromCBoxVector(_ vector: OpaquePointer?) -> Data? {

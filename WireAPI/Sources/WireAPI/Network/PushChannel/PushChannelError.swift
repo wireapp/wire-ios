@@ -19,7 +19,6 @@
 /// Errors originating from `PushChannel`.
 
 public enum PushChannelError: Error {
-
     /// An unexpected message was received.
 
     case receivedInvalidMessage

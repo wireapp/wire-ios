@@ -23,7 +23,6 @@ import WireDataModel
 /// and for notifying them when a request is allowed.
 
 public final class MLSRequestStrategy: AbstractRequestStrategy {
-
     // MARK: - Properties
 
     private let entitySync: EntityActionSync

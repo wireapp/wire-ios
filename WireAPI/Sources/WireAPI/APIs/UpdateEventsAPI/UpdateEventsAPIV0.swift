@@ -19,7 +19,6 @@
 import Foundation
 
 class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
-
     let httpClient: any HTTPClient
 
     init(httpClient: any HTTPClient) {

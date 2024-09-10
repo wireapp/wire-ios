@@ -20,7 +20,6 @@ import Foundation
 import WireProtos
 
 extension UUID {
-
     public static func isValid(object: Any?) -> Bool {
         guard let string = object as? String else { return false }
         return UUID(uuidString: string) != nil
@@ -38,9 +37,7 @@ extension UUID {
 // MARK: - String Formatting
 
 extension String {
-
     public var isValidAssetID: Bool {
-
         // Format: https://github.com/wireapp/wire-webapp/blob/dev/app/script/util/ValidationUtil.js
 
         var assetIDAllowedCharacters = CharacterSet()
@@ -53,7 +50,6 @@ extension String {
     }
 
     public var isValidBearerToken: Bool {
-
         // Format: https://github.com/wireapp/wire-webapp/blob/dev/app/script/util/ValidationUtil.js
 
         let decodedAssetToken = self.removingPercentEncoding ?? self

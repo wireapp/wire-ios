@@ -25,7 +25,6 @@ import XCTest
 // MARK: - CollectionsViewControllerTests
 
 final class CollectionsViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -220,7 +219,6 @@ final class CollectionsViewControllerTests: XCTestCase {
 }
 
 extension CollectionsViewControllerTests {
-
     // MARK: - Helper method
 
     func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {

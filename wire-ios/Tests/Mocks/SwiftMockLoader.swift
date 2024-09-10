@@ -19,7 +19,6 @@
 import Foundation
 
 final class SwiftMockLoader {
-
     static func mockUsers() -> [MockUserType] {
         return mockUsers(fromResource: "people-01.json")
     }

@@ -21,7 +21,6 @@ import CoreData
 @testable import WireDataModel
 
 final class InvalidFeatureRemovalTests: DiskDatabaseTest {
-
     private var context: NSManagedObjectContext { coreDataStack.syncContext }
 
     func testAllInstancesRemoved() throws {

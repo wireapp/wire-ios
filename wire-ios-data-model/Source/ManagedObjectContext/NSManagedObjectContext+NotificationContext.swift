@@ -24,7 +24,6 @@ public protocol NotificationContext: NSObjectProtocol { }
 extension NSPersistentStoreCoordinator: NotificationContext {}
 
 public extension NSManagedObjectContext {
-
     /// Prefer `UserSession.notificationContext` over this property.
     @objc
     var notificationContext: NotificationContext {

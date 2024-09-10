@@ -22,7 +22,6 @@ import WireDataModel
 @testable import WireSyncEngine
 
 final class CallParticipantsSnapshotTests: MessagingTest {
-
     private typealias Sut = WireSyncEngine.CallParticipantsSnapshot
 
     var mockWireCallCenterV3: WireCallCenterV3Mock!
@@ -253,7 +252,6 @@ final class CallParticipantsSnapshotTests: MessagingTest {
 }
 
 private extension AVSCallMember {
-
     func with(audioState: AudioState) -> AVSCallMember {
         return AVSCallMember(client: client,
                              audioState: audioState,

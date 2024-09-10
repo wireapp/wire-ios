@@ -21,7 +21,6 @@ import UIKit
 // TODO: [WPB-8778] remove the whole file
 
 extension UIScreen {
-
     @available(*, deprecated, message: "Use `safeAreaInsets` of UIView.")
     static var safeArea: UIEdgeInsets {
         if hasNotch {

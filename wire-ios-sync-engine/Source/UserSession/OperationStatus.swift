@@ -26,7 +26,6 @@ private let zmLog = ZMSLog(tag: "OperationStatus")
 
 @objc(ZMOperationStatusDelegate)
 public protocol OperationStatusDelegate: AnyObject {
-
     @objc(operationStatusDidChangeState:)
     func operationStatus(didChangeState state: SyncEngineOperationState)
 }
@@ -39,7 +38,6 @@ public enum BackgroundTaskResult: UInt {
 
 @objc
 public enum SyncEngineOperationState: UInt, CustomStringConvertible {
-
     /// The app is in the background.
 
     case background
@@ -82,7 +80,6 @@ public enum SyncEngineOperationState: UInt, CustomStringConvertible {
 
 @objcMembers
 public class OperationStatus: NSObject {
-
     public weak var delegate: OperationStatusDelegate?
 
     private var backgroundFetchTimer: Timer?
@@ -184,7 +181,6 @@ public class OperationStatus: NSObject {
 
     fileprivate var calculatedOperationState: SyncEngineOperationState {
         if isInBackground {
-
             if hasOngoingCall {
                 return .backgroundCall
             }

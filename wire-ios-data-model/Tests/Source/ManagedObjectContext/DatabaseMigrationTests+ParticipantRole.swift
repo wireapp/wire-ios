@@ -20,7 +20,6 @@
 import XCTest
 
 final class DatabaseMigrationTests_Conversations: XCTestCase {
-
     private let helper = DatabaseMigrationHelper()
 
     func testThatItPerformsMigrationFrom106_deleteConversationCascadesToParticipantRole() throws {

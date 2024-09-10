@@ -19,7 +19,6 @@
 // MARK: - Failed Messages
 
 extension ZMLocalNotification {
-
     convenience init?(expiredMessage: ZMMessage, moc: NSManagedObjectContext) {
         guard let conversation = expiredMessage.conversation else { return nil }
         self.init(expiredMessageIn: conversation, moc: moc)
@@ -31,7 +30,6 @@ extension ZMLocalNotification {
     }
 
     private class FailedMessageNotificationBuilder: NotificationBuilder {
-
         fileprivate let conversation: ZMConversation
         fileprivate let managedObjectContext: NSManagedObjectContext
 

@@ -19,7 +19,6 @@
 import Foundation
 
 class BackendInfoAPIImpl: BackendInfoAPI {
-
     let apiService: any APIServiceProtocol
 
     init(apiService: any APIServiceProtocol) {
@@ -44,7 +43,6 @@ class BackendInfoAPIImpl: BackendInfoAPI {
 }
 
 private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
-
     var domain: String
     var federation: Bool
     var supported: [UInt]

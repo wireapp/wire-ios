@@ -21,7 +21,6 @@
 import XCTest
 
 final class ProfileActionsFactoryTests: XCTestCase {
-
     var domain = "domain.com"
     var selfUserTeam: UUID!
     var selfUser: MockUserType!

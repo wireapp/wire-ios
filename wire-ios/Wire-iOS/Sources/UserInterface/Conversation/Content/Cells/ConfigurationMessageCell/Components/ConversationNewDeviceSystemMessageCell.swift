@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
     static let userClientURL: URL = URL(string: "settings://user-client")!
 
     var linkTarget: LinkTarget?
@@ -61,14 +60,12 @@ final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, C
 // MARK: - UITextViewDelegate
 
 extension ConversationNewDeviceSystemMessageCell {
-
     override func textView(
         _ textView: UITextView,
         shouldInteractWith url: URL,
         in characterRange: NSRange,
         interaction: UITextItemInteraction
     ) -> Bool {
-
         guard let linkTarget,
               url == type(of: self).userClientURL,
               let zClientViewController = ZClientViewController.shared else { return false }

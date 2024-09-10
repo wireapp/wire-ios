@@ -25,7 +25,6 @@ import WireDataModel
  */
 
 final class MessageDetailsCellDescription: NSObject {
-
     /// The user to display.
     let user: UserType
 
@@ -56,7 +55,6 @@ final class MessageDetailsCellDescription: NSObject {
 // MARK: - Helpers
 
 extension MessageDetailsCellDescription {
-
     typealias MessageDetails = L10n.Localizable.MessageDetails
 
     static func makeReactionCells(_ users: [UserType]) -> [MessageDetailsCellDescription] {

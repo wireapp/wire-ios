@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ImageResourceThumbnailView: RoundedView {
-
     private let imageView = ImageContentView()
     private let coverView = UIView()
     private let assetTypeBadge = UIImageView()

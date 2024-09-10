@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
-
     private var mockCache: SearchUsersCache!
 
     override func setUp() {

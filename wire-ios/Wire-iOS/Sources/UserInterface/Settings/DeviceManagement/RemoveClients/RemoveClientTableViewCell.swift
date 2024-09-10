@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class RemoveClientTableViewCell: UITableViewCell {
-
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties

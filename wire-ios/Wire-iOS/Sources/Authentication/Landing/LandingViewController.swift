@@ -33,7 +33,6 @@ protocol LandingViewControllerDelegate: AnyObject {
 
 /// Landing screen for choosing how to authenticate.
 final class LandingViewController: AuthenticationStepViewController {
-
     var backendEnvironmentProvider: () -> BackendEnvironmentProvider
 
     var backendEnvironment: BackendEnvironmentProvider {
@@ -347,7 +346,6 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func createAndAddConstraints() {
-
         topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeTopAnchor,
                                                               constant: topStackTopConstraintConstant)
 

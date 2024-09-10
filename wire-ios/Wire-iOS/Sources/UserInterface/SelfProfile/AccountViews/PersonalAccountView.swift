@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class PersonalAccountView: BaseAccountView {
-
     let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)
         avatarImageView.container.backgroundColor = SemanticColors.View.backgroundDefaultWhite
@@ -91,7 +90,6 @@ final class PersonalAccountView: BaseAccountView {
 }
 
 extension PersonalAccountView {
-
     override func userDidChange(_ changeInfo: UserChangeInfo) {
         super.userDidChange(changeInfo)
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {

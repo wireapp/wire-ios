@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `PushChannelAPI`.
 
 public struct PushChannelAPIBuilder {
-
     private let pushChannelService: PushChannelService
 
     /// Create a new builder.

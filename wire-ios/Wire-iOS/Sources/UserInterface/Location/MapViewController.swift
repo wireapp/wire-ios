@@ -22,7 +22,6 @@ import UIKit
 // MARK: - MapViewControllerDelegate
 
 protocol MapViewControllerDelegate: AnyObject {
-
     func mapViewController(_ controller: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
     func mapViewController(_ controller: MapViewController, regionDidChangeAnimated animated: Bool)
     func mapViewControllerDidFinishRenderingMap(_ controller: MapViewController, fullyRendered: Bool)
@@ -33,7 +32,6 @@ protocol MapViewControllerDelegate: AnyObject {
 /// The MapViewController class is a subclass of UIViewController that manages a map interface using MKMapView.
 /// This class is designed to handle map-related functionalities such as displaying the user’s location, adding and updating annotations, and adjusting the map’s region.
 final class MapViewController: UIViewController {
-
     // MARK: - Properties
 
     let mapView = MKMapView()
@@ -111,7 +109,6 @@ final class MapViewController: UIViewController {
 // MARK: - MKMapViewDelegate
 
 extension MapViewController: MKMapViewDelegate {
-
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
         delegate?.mapViewController(self, didUpdateUserLocation: userLocation)
     }

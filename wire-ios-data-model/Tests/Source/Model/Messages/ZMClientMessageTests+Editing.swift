@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
-
     func testThatItEditsTheMessage() throws {
         // GIVEN
         let conversationID = UUID.create()
@@ -59,9 +58,7 @@ class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
 }
 
 class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
-
     func testThatItUpdatesTheMesssageText_WhenEditing() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -77,7 +74,6 @@ class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
     }
 
     func testThatItClearReactions_WhenEditing() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -95,7 +91,6 @@ class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
     }
 
     func testThatItKeepsQuote_WhenEditing() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -116,7 +111,6 @@ class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
 // MARK: - Payload creation
 
 extension ZMClientMessageTests_Editing {
-
     private func checkThatItCanEditAMessageFrom(sameSender: Bool, shouldEdit: Bool) {
         // given
         let oldText = "Hallo"

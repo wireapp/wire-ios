@@ -19,12 +19,10 @@
 import Foundation
 
 protocol VersionedAPI {
-
     var apiVersion: APIVersion { get }
 }
 
 extension VersionedAPI {
-
     var pathPrefix: String {
         switch apiVersion {
         case .v0:

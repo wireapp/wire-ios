@@ -36,7 +36,6 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
 
 // sourcery: AutoMockable
 protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
-
     func conversationGuestOptionsViewModel(
         _ viewModel: ConversationGuestOptionsViewModel,
         didUpdateState state: ConversationGuestOptionsViewModel.State
@@ -79,7 +78,6 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
 }
 
 final class ConversationGuestOptionsViewModel {
-
     private let conversation: ZMConversation
     private let createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
@@ -169,7 +167,6 @@ final class ConversationGuestOptionsViewModel {
         }
 
         switch configuration.guestLinkFeatureStatus {
-
         case .enabled:
             if securedLink != nil {
                 rows.append(.secureLinkHeader)

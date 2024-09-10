@@ -20,7 +20,6 @@
 import XCTest
 
 final class MessageDestructionTimeoutValueTests: XCTestCase {
-
     func testThatItReturnsTheCorrectFormattedStringForNoneTimeout() {
         XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, "Off")
     }

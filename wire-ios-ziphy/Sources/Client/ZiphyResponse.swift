@@ -40,7 +40,6 @@ struct ZiphyPaginatedResponse<Object>: Codable where Object: Codable {
  */
 
 struct ZiphyPagination: Codable {
-
     let count: Int
     let totalCount: Int
     let offset: Int

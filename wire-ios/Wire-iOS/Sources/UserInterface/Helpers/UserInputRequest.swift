@@ -23,7 +23,6 @@ import UIKit
  */
 
 struct UserInputRequest {
-
     /**
      * Represents the configuration of an alert text field.
      */
@@ -73,7 +72,6 @@ struct UserInputRequest {
 // MARK: - UIAlertController + UserInputRequest
 
 extension UIAlertController {
-
     /**
      * Creates an alert controller to ask the user for input.
      * - parameter inputRequest: The description of the data the user needs to input.

@@ -20,7 +20,6 @@
 import WireTesting
 
 final class TeamTests: ZMConversationTestsBase {
-
     func testThatItCreatesANewTeamIfThereIsNone() {
         syncMOC.performGroupedAndWait {
             // given

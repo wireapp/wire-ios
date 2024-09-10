@@ -27,7 +27,6 @@ public enum DomainLookupError: Error, Equatable {
 }
 
 public struct DomainInfo: Codable, Equatable {
-
     public let configurationURL: URL
 
     private enum CodingKeys: String, CodingKey {
@@ -56,7 +55,6 @@ public struct DomainInfo: Codable, Equatable {
 }
 
 extension UnauthenticatedSession {
-
     /// Lookup a domain and fetch its configuration if it's registered in the Wire cloud.
     ///
     /// - parameter domain: Domain to look up (e.g. example.com)

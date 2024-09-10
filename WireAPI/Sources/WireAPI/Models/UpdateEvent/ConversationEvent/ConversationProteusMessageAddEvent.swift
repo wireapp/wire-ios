@@ -21,7 +21,6 @@ import Foundation
 /// An event where a proteus message was received in a conversation.
 
 public struct ConversationProteusMessageAddEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

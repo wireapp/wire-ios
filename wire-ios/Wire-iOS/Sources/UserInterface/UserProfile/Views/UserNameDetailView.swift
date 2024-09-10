@@ -26,7 +26,6 @@ private let smallBoldFont = FontSpec(.small, .medium)
 private let normalBoldFont = FontSpec(.normal, .medium)
 
 final class AddressBookCorrelationFormatter: NSObject {
-
     let lightFont, boldFont: FontSpec
     let color: UIColor
 
@@ -57,7 +56,6 @@ final class AddressBookCorrelationFormatter: NSObject {
 }
 
 final class UserNameDetailViewModel: NSObject {
-
     let title: NSAttributedString
 
     private let handleText: NSAttributedString?
@@ -117,7 +115,6 @@ final class UserNameDetailViewModel: NSObject {
 // MARK: - UserNameDetailView
 
 final class UserNameDetailView: UIView, DynamicTypeCapable {
-
     // MARK: - Properties
 
     private var model: UserNameDetailViewModel?

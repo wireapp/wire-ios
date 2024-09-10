@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class BackendEnvironmentTests: XCTestCase {
-
     var backendBundle: Bundle!
     var defaultsProd: UserDefaults!
     var defaultsCustom: UserDefaults!
@@ -74,7 +73,6 @@ class BackendEnvironmentTests: XCTestCase {
     }
 
     func testThatWeCanLoadBackendEndpoints() {
-
         guard let environment = BackendEnvironment(
             userDefaults: defaultsProd,
             configurationBundle: backendBundle
@@ -91,7 +89,6 @@ class BackendEnvironmentTests: XCTestCase {
     }
 
     func testThatWeCanLoadCustomBackendEndpointsWithProxy() {
-
         guard
             let path: String = backendBundle
                 .path(forResource: "custom", ofType: "json")

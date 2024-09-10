@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 extension ShareViewController {
-
     func createShareablePreview() {
         let shareablePreviewView = shareable.previewView()
         shareablePreviewView?.layer.cornerRadius = 4
@@ -114,7 +113,6 @@ extension ShareViewController {
     }
 
     func createConstraints() {
-
         guard let shareablePreviewWrapper,
             let shareablePreviewView else {
                 return
@@ -171,7 +169,6 @@ extension ShareViewController {
         }
 
         NSLayoutConstraint.activate([
-
             containerView.topAnchor.constraint(equalTo: view.topAnchor),
             bottomConstraint,
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

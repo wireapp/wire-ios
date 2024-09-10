@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_Reactions: ConversationTestsBase {
-
     func testThatAppendingAReactionWithReceivingAMessageWithReaction() {
         XCTAssert(login())
 

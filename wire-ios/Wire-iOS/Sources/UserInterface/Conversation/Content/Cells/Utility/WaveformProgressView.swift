@@ -19,7 +19,6 @@
 import UIKit
 
 private final class WaveformBarsView: UIView {
-
     var samples: [Float] = [] {
         didSet {
             setNeedsDisplay()
@@ -81,7 +80,6 @@ private final class WaveformBarsView: UIView {
 }
 
 final class WaveformProgressView: UIView {
-
     fileprivate let backgroundWaveform = WaveformBarsView()
     fileprivate let foregroundWaveform = WaveformBarsView()
     fileprivate var maskShape = CAShapeLayer()

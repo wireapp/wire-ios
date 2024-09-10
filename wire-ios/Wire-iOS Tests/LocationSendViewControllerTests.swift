@@ -20,7 +20,6 @@
 import XCTest
 
 final class LocationSendViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: LocationSendViewController!

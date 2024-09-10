@@ -21,9 +21,7 @@ import XCTest
 @testable import WireSystem
 
 final class TimePointTests: XCTestCase {
-
     func testThatATimePointDoesNotWarnTooEarly() {
-
         // Given
         let tp = TimePoint(interval: 1000)
 
@@ -32,7 +30,6 @@ final class TimePointTests: XCTestCase {
     }
 
     func testThatATimePointWarnsIfTooMuchTimeHasPassed() {
-
         // Given
         let tp = TimePoint(interval: 0.01)
 

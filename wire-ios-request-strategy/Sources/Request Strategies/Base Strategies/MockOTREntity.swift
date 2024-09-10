@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class MockOTREntity: OTREntity {
-
     var context: NSManagedObjectContext
     var expirationDate: Date?
     var shouldExpire: Bool = false

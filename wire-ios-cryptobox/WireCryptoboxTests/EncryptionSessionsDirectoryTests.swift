@@ -22,7 +22,6 @@ import WireSystem
 import XCTest
 
 class EncryptionSessionsDirectoryTests: XCTestCase {
-
     var contextAlice: EncryptionContext!
     var contextBob: EncryptionContext!
     var statusAlice: EncryptionSessionsDirectory!
@@ -45,9 +44,7 @@ class EncryptionSessionsDirectoryTests: XCTestCase {
 // MARK: - Session creation and encoding/decoding
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatItCanDecodeAfterInitializingWithAValidKey() throws {
-
         // GIVEN
         let plainText = Data("foo".utf8)
 
@@ -61,7 +58,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanCallCreateSessionWithTheSameKeyMultipleTimes() throws {
-
         // GIVEN
         let plainText = Data("foo".utf8)
         let prekey = try! statusBob.generatePrekey(34)
@@ -77,7 +73,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanNotCreateANewSessionWithAnInvalidKey() {
-
         // GIVEN
 
         // WHEN
@@ -92,7 +87,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanNotDecodePrekeyMessagesWithTheWrongKey() throws {
-
         // WHEN
         _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: hardcodedPrekey)
 
@@ -104,7 +98,6 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Prekeys
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatFingerprintExtractedFromPrekeyMatchesLocalFingerprint() throws {
         let prekeyId: UInt16 = 12
         let prekeyData = try statusAlice.generatePrekey(prekeyId)
@@ -114,7 +107,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItGeneratesAPrekey() {
-
         // GIVEN
         let prekeyId: UInt16 = 12
 
@@ -130,7 +122,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItGeneratesLastPrekey() {
-
         // GIVEN
         let prekeyId: UInt16 = CBOX_LAST_PREKEY_ID
 
@@ -146,7 +137,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItGeneratesARangeOfPrekeys() {
-
         // GIVEN
         let rangeStart = 3
         let rangeLength = 10
@@ -173,9 +163,7 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Local fingerprint
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatItReturnsTheLocalFingerprint() {
-
         // GIVEN
 
         // WHEN
@@ -187,7 +175,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatASessionHasAMatchingRemoteFingerprint() {
-
         // GIVEN
 
         // WHEN
@@ -205,7 +192,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatAClientWithoutSessionHasNoRemoteFingerprint() {
-
         // GIVEN
         // WHEN
         // THEN
@@ -216,9 +202,7 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Deletion
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatItDeletesASession() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
 
@@ -231,7 +215,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanDeleteASessionThatDoesNotExist() {
-
         // GIVEN
 
         // WHEN
@@ -245,9 +228,7 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Session cache management
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatCreatedSessionsAreNotSavedImmediately() {
-
         // GIVEN
 
         // WHEN
@@ -264,7 +245,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatNewlyCreatedSessionsAreSavedWhenReleasingTheStatus() {
-
         // GIVEN
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
@@ -284,7 +264,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatNewlyCreatedSessionsAreNotSavedWhenDiscarding() {
-
         // GIVEN
         establishSessionFromAliceToBob()
 
@@ -303,7 +282,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatModifiedSessionsAreNotSavedWhenDiscarding() {
-
         // GIVEN
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
@@ -328,7 +306,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanNotDecodeAfterDiscardingCache() {
-
         // GIVEN
         establishSessionFromAliceToBob()
 
@@ -340,7 +317,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItDecodeFutureMessageAfterDiscardingCacheOnTheReceivingSide() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
         checkThatAMessageCanBeSent(.Alice, saveReceiverCache: false)
@@ -353,7 +329,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanNotDecodeDuplicatedMessageIfTheCacheIsNotDiscarded() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = Data("foo".utf8)
@@ -373,7 +348,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanNotDecodeDuplicatedMessageIfTheCacheIsNotDiscardedAndReportsTheCorrectErrorInObjC() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = Data("foo".utf8)
@@ -393,7 +367,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanDecodeDuplicatedMessageIfTheCacheIsDiscarded() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = Data("foo".utf8)
@@ -412,7 +385,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanNotDecodeDuplicatedMessageIfTheCacheIsCommitted() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
         let plainText = Data("foo".utf8)
@@ -435,7 +407,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanDecodeAfterSavingCache() {
-
         // GIVEN
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
@@ -450,7 +421,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanDecodeMultipleMessagesWithoutSaving() {
-
         // GIVEN
         establishSessionBetweenAliceAndBob()
 
@@ -467,9 +437,7 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Session migration tests
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatItCanMigrateASessionAndReceive() {
-
         // GIVEN
         let oldIdentifier = "aabbccdd"
         bobIdentifierOverride = oldIdentifier
@@ -487,7 +455,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItCanMigrateASessionAndSend() {
-
         // GIVEN
         let oldIdentifier = "aabbccdd"
         bobIdentifierOverride = oldIdentifier
@@ -505,7 +472,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItWontMigrateIfNewSessionAlreadyExists() {
-
         // GIVEN
         let oldIdentifier = "aabbccdd"
 
@@ -525,7 +491,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItWontMigrateIfOldSessionDoesNotExists() {
-
         // GIVEN
         let oldIdentifier = "aabbccdd"
 
@@ -544,9 +509,7 @@ extension EncryptionSessionsDirectoryTests {
 // MARK: - Extended logging
 
 extension EncryptionSessionsDirectoryTests {
-
     func testThatItLogsEncryptionWhenExtendedLoggingIsSet() {
-
         // GIVEN
         self.recreateAliceStatus(extendedLoggingSession: Set([Person.Bob.identifier]))
         let plainText = Data("foo".utf8)
@@ -573,7 +536,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItDoesNotLogEncryptionWhenExtendedLoggingIsNotSet() {
-
         // GIVEN
         // set logging for a different identifier
         let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
@@ -595,7 +557,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItLogsDecryptionWhenExtendedLoggingIsSet_prekeyMessage() {
-
         // GIVEN
         self.recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
         let plainText = Data("foo".utf8)
@@ -623,7 +584,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItLogsDecryptionWhenExtendedLoggingIsSet_nonPrekeyMessage() {
-
         // GIVEN
 
         let plainText = Data("foo".utf8)
@@ -652,7 +612,6 @@ extension EncryptionSessionsDirectoryTests {
     }
 
     func testThatItDoesNotLogDecryptionWhenExtendedLoggingIsNotSet() {
-
         // GIVEN
         // set logging for a different identifier
         let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
@@ -682,7 +641,6 @@ extension EncryptionSessionsDirectoryTests {
 private var bobIdentifierOverride: String?
 
 extension EncryptionSessionsDirectoryTests {
-
     /// Recreate the statuses, reloading from disk. This also forces a save of the previous
     /// statuses, if any.
     func recreateStatuses(

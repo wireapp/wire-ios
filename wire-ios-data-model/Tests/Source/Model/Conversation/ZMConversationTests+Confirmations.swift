@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMConversationTests_Confirmations: ZMConversationTestsBase {
-
     func testThatConfirmUnreadMessagesAsRead_DoesntConfirmAlreadyReadMessages() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

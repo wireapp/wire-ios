@@ -13,7 +13,6 @@
 import UIKit
 
 public class WireStyleKit: NSObject {
-
     //// Cache
 
     private enum Cache {

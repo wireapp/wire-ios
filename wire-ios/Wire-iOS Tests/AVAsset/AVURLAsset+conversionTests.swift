@@ -21,7 +21,6 @@ import avs
 import XCTest
 
 final class AVURLAsset_conversionTests: XCTestCase {
-
     override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!

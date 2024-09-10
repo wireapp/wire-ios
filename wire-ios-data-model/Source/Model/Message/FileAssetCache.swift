@@ -43,7 +43,6 @@ extension NSManagedObjectContext {
 
 @objcMembers
 public final class FileAssetCache: NSObject {
-
     private let fileCache: FileCache
     private let tempCache: FileCache
 
@@ -845,7 +844,6 @@ public final class FileAssetCache: NSObject {
 // MARK: - Testing
 
 public extension FileAssetCache {
-
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
     func wipeCaches() throws {
@@ -866,7 +864,6 @@ private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?
 /// Objects purged from the cache folder by the OS are not a problem as the
 /// OS will terminate the app before purging the cache.
 private struct FileCache: Cache {
-
     private let cacheFolderURL: URL
 
     /// Create FileCahe
@@ -903,7 +900,6 @@ private struct FileCache: Cache {
     }
 
     func storeAssetData(_ data: Data, key: String, createdAt creationDate: Date = Date()) {
-
         let url = URLForKey(key)
         let coordinator = NSFileCoordinator()
 
@@ -919,7 +915,6 @@ private struct FileCache: Cache {
     }
 
     func storeAssetFromURL(_ fromUrl: URL, key: String, createdAt creationDate: Date = Date()) {
-
         guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
 
         let toUrl = URLForKey(key)
@@ -942,7 +937,6 @@ private struct FileCache: Cache {
     }
 
     func deleteAssetData(_ key: String) {
-
         let url = URLForKey(key)
         let coordinator = NSFileCoordinator()
 

@@ -21,7 +21,6 @@ import Foundation
 /// Metadata about the local backend.
 
 public struct BackendInfo: Equatable {
-
     /// The local domain.
 
     public let domain: String

@@ -20,7 +20,6 @@
 import XCTest
 
 final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
-
     func testTheAnalyticsIdentifierIsGeneratedByProvider() {
         // Given
         let selfUser = createUser(selfUser: true, inTeam: true)
@@ -119,7 +118,6 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 // MARK: - Helpers
 
 private extension AnalyticsIdentifierProviderTests {
-
     func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
         let user = selfUser ? self.selfUser! : createUser(in: uiMOC)
         guard inTeam else { return user }
@@ -129,7 +127,6 @@ private extension AnalyticsIdentifierProviderTests {
 }
 
 private extension ZMConversation {
-
     func numberOfDataTransferMessagesContaining(analyticsIdentifier: String) -> Int {
         return allMessages.lazy
             .compactMap { $0 as? ZMClientMessage }

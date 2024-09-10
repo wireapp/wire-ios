@@ -20,13 +20,11 @@ import Foundation
 import WireDataModel
 
 public protocol FederationTerminationManagerInterface {
-
     func handleFederationTerminationWith(_ domain: String)
     func handleFederationTerminationBetween(_ domain: String, otherDomain: String)
 }
 
 public final class FederationTerminationManager: FederationTerminationManagerInterface {
-
     private var context: NSManagedObjectContext
 
     public init(with context: NSManagedObjectContext) {
@@ -64,7 +62,6 @@ public final class FederationTerminationManager: FederationTerminationManagerInt
 }
 
 private extension FederationTerminationManager {
-
     func markOneToOneConversationsAsReadOnly(with domain: String) {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
@@ -127,7 +124,6 @@ private extension FederationTerminationManager {
 // MARK: - Append system messages
 
 private extension ZMConversation {
-
     func appendParticipantsRemovedSystemMessage(_ users: Set<ZMUser>) {
         guard let context = managedObjectContext else {
             return
@@ -149,7 +145,6 @@ private extension ZMConversation {
 }
 
 private extension ZMConversation {
-
     func removeParticipants(with domains: [String]) {
         let participants = localParticipants.filter { user in
             if let domain = user.domain {
@@ -171,7 +166,6 @@ private extension ZMConversation {
 }
 
 private extension NSManagedObjectContext {
-
     var selfDomain: String {
         return ZMUser.selfUser(in: self).domain ?? ""
     }

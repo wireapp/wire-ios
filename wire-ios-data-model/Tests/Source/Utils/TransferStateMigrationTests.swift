@@ -20,7 +20,6 @@
 import XCTest
 
 class TransferStateMigrationTests: DiskDatabaseTest {
-
     override func setUp() {
         super.setUp()
 

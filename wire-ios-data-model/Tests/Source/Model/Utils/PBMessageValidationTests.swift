@@ -146,7 +146,6 @@ class PBMessageValidationTests: XCTestCase {
     // MARK: Message Edit
 
     func testThatItCreatesMessageEditWithValidFields() {
-
         let messageEdit = MessageEdit.with {
             $0.text = Text.with({ $0.content = "Hello" })
             $0.replacingMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
@@ -310,11 +309,9 @@ class PBMessageValidationTests: XCTestCase {
 }
 
 class ModelValidationTests: XCTestCase {
-
     // MARK: Generic Message
 
     func testThatItCreatesGenericMessageWithValidFields() {
-
         let text = Text(content: "Hello hello hello")
         var genericMessage = GenericMessage(content: text)
         genericMessage.messageID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
@@ -324,7 +321,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateGenericMessageWithInvalidFields() {
-
         let text = Text(content: "Hieeee!")
         var genericMessage = GenericMessage(content: text)
         genericMessage.messageID = "nonce"
@@ -336,7 +332,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: Last Read
 
     func testThatItCreatesLastReadWithValidFields() {
-
         guard let uuid = UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F") else {
             XCTFail("There's no uuid")
             return
@@ -349,7 +344,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateLastReadWithInvalidFields() {
-
         let lastRead = LastRead.with {
             $0.lastReadTimestamp = 25000
         }
@@ -360,7 +354,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: Cleared
 
     func testThatItCreatesClearedWithValidFields() {
-
         let cleared = Cleared(timestamp: Date(timeIntervalSince1970: 25000), conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!)
         let message = GenericMessage(content: cleared).validatingFields()
 
@@ -368,7 +361,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateClearedWithInvalidFields() {
-
         let cleared = Cleared.with {
             $0.clearedTimestamp = 25000
             $0.conversationID = "wirewire"
@@ -381,7 +373,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: Message Hide
 
     func testThatItCreatesHideWithValidFields() {
-
         let messageHide = MessageHide(conversationId: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!, messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
         let message = GenericMessage(content: messageHide).validatingFields()
 
@@ -389,7 +380,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateHideWithInvalidFields() {
-
         let invalidConversation = MessageHide.with {
             $0.conversationID = ""
             $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
@@ -415,14 +405,12 @@ class ModelValidationTests: XCTestCase {
     // MARK: Message Delete
 
     func testThatItCreatesMessageDeleteWithValidFields() {
-
         let delete = MessageDelete(messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
         let message = GenericMessage(content: delete).validatingFields()
         XCTAssertNotNil(message)
     }
 
     func testThatItDoesNotCreateMessageDeleteWithInvalidFields() {
-
         let delete = MessageDelete.with {
             $0.messageID = "invalid"
         }
@@ -433,7 +421,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: Message Edit
 
     func testThatItCreatesMessageEditWithValidFields() {
-
         let text = Text(content: "Hello")
         let messageEdit = MessageEdit(replacingMessageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!,
                                       text: text)
@@ -442,7 +429,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateMessageEditWithInvalidFields() {
-
         let text = Text(content: "Hello")
         let messageEdit = MessageEdit.with {
             $0.replacingMessageID = "N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!"
@@ -455,7 +441,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: Message Confirmation
 
     func testThatItCreatesConfirmationWithValidFields() {
-
         let confirmation = Confirmation.with {
             $0.type = .delivered
             $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
@@ -466,7 +451,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateConfirmationWithInvalidFields() {
-
         let invalidFirstID = Confirmation.with {
             $0.type = .delivered
             $0.firstMessageID = "invalid"
@@ -487,14 +471,12 @@ class ModelValidationTests: XCTestCase {
     // MARK: Reaction
 
     func testThatItCreatesReactionWithValidFields() {
-
         let reaction = WireProtos.Reaction.createReaction(emojis: ["🤩"], messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
         let message = GenericMessage(content: reaction).validatingFields()
         XCTAssertNotNil(message)
     }
 
     func testThatItDoesNotCreateReactionWithInvalidFields() {
-
         let reaction = WireProtos.Reaction.with {
             $0.emoji = "🤩"
             $0.messageID = "Not-A-UUID"
@@ -506,14 +488,12 @@ class ModelValidationTests: XCTestCase {
     // MARK: User ID
 
     func testThatItCreatesUserIDWithValidFields() {
-
         let userId = Proteus_UserId.with { $0.uuid = NSUUID().data() }
 
         XCTAssertNotNil(userId.validatingFields())
     }
 
     func testThatItDoesNotCreateUserIDWithInvalidFields() {
-
         let userId = Proteus_UserId.with { $0.uuid = Data() }
 
         XCTAssertNil(userId.validatingFields())
@@ -522,7 +502,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: - Assets
 
     func testThatItCreatesMessageWithValidAsset() {
-
         XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token", assetDomain: "wire.com", preview: true))
         XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token=", assetDomain: "wire.com", preview: false))
 
@@ -537,7 +516,6 @@ class ModelValidationTests: XCTestCase {
     }
 
     func testThatItDoesNotCreateMessageWithInvalidAsset() {
-
         // Invalid asset ID
         XCTAssertNil(genericMessage(assetId: "asset:id", assetToken: "token", assetDomain: "wire.com", preview: true))
         XCTAssertNil(genericMessage(assetId: "asset/id", assetToken: "token", assetDomain: "wire.com", preview: false))
@@ -561,7 +539,6 @@ class ModelValidationTests: XCTestCase {
     // MARK: - Utilities
 
     private func genericMessage(assetId: String, assetToken: String?, assetDomain: String?, preview: Bool) -> GenericMessage? {
-
         var asset = WireProtos.Asset()
 
         if preview {

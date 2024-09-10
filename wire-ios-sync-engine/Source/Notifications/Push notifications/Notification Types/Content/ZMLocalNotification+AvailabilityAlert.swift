@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMLocalNotification {
-
     convenience init?(availability: Availability, managedObjectContext moc: NSManagedObjectContext) {
         let builder = AvailabilityNotificationBuilder(availability: availability, managedObjectContext: moc)
         self.init(builder: builder, moc: moc)
@@ -27,7 +26,6 @@ extension ZMLocalNotification {
 }
 
 private class AvailabilityNotificationBuilder: NotificationBuilder {
-
     let managedObjectContext: NSManagedObjectContext
     let availability: Availability
 

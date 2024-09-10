@@ -584,7 +584,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 }
 
 extension DatabaseBaseTest {
-
     func createSelfUser(in moc: NSManagedObjectContext) -> (ZMUser, ZMConversation) {
         let selfUser = ZMUser.selfUser(in: moc)
         selfUser.remoteIdentifier = UUID()

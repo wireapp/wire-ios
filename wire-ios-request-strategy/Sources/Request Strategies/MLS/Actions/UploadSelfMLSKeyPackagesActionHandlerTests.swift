@@ -20,7 +20,6 @@ import Foundation
 @testable import WireRequestStrategy
 
 class UploadSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<UploadSelfMLSKeyPackagesAction, UploadSelfMLSKeyPackagesActionHandler> {
-
     let domain = "example.com"
     let clientId = UUID().transportString()
     let keyPackages = ["a2V5IHBhY2thZ2UgZGF0YQo="]

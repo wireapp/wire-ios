@@ -32,7 +32,6 @@ private enum PushNotificationType: String {
 
 @objc
 public extension ZMOperationLoop {
-
     @objc(fetchEventsFromPushChannelPayload:completionHandler:)
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
         guard let nonce = messageNonce(fromPushChannelData: payload) else {

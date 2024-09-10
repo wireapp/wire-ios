@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public class Mention: NSObject {
-
     public let range: NSRange
     public let user: UserType
 

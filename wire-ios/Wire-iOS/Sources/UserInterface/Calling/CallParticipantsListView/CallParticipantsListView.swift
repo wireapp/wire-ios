@@ -29,7 +29,6 @@ protocol CallParticipantsListCellConfigurable: Reusable {
 }
 
 enum CallParticipantsListCellConfiguration: Hashable {
-
     case callParticipant(
         user: HashBoxUser,
         callParticipantState: CallParticipantState,
@@ -85,7 +84,6 @@ final class CallParticipantsListView: UICollectionView {
 }
 
 extension CallParticipantsListView: UICollectionViewDataSource {
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -107,7 +105,6 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 }
 
 extension UserCell: CallParticipantsListCellConfigurable {
-
     func configure(
         with configuration: CallParticipantsListCellConfiguration,
         selfUser: UserType

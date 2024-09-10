@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 extension UIAlertController {
-
     static func remove(_ user: UserType, completion: @escaping (Bool) -> Void) -> UIAlertController {
         let controller = UIAlertController(
             title: L10n.Localizable.Profile.removeDialogMessage(user.name ?? ""),

@@ -21,7 +21,6 @@ import UIKit
 import WireSyncEngine
 
 final class SelfCallParticipantView: BaseCallParticipantView {
-
     weak var previewView: AVSVideoPreview?
 
     private weak var videoContainerView: AVSVideoContainerView?

@@ -19,7 +19,6 @@
 /// Represents the status of an MLS group.
 
 public enum MLSGroupStatus: Int16 {
-
     /// The group is pending to be joined via external commit.
 
     case pendingJoin

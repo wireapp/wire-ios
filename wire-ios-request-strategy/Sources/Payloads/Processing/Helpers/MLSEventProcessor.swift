@@ -21,7 +21,6 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol MLSEventProcessing {
-
     /// Updates the conversation's `mlsStatus`
     ///
     /// - Parameters:
@@ -76,7 +75,6 @@ public protocol MLSEventProcessing {
 /// Such as updating the conversation's MLS status, handling welcome messages, or wiping MLS groups.
 
 public class MLSEventProcessor: MLSEventProcessing {
-
     // MARK: - Properties
 
     private let conversationService: ConversationServiceInterface

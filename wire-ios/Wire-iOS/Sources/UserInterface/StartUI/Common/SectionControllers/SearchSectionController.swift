@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 protocol SearchSectionControllerDelegate: AnyObject {
-
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectUser user: UserType, at indexPath: IndexPath)
 
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectConversation conversation: ZMConversation, at indexPath: IndexPath)
@@ -31,7 +30,6 @@ protocol SearchSectionControllerDelegate: AnyObject {
 }
 
 class SearchSectionController: NSObject, CollectionViewSectionController {
-
     var isHidden: Bool {
         return false
     }
@@ -68,7 +66,6 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
     }
 
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-
         // Workaround for when a cell is created inside an animation block. In this case it happens
         // when the keyboard is animating away which will change the height of the collection view
         // and therefore reveal more cells.

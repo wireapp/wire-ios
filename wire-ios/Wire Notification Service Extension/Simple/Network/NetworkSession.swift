@@ -20,7 +20,6 @@ import Foundation
 import WireTransport
 
 protocol NetworkSessionProtocol: AnyObject {
-
     var accessToken: AccessToken? { get set }
     var isAuthenticated: Bool { get }
 
@@ -28,11 +27,9 @@ protocol NetworkSessionProtocol: AnyObject {
 }
 
 final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDelegate, Loggable {
-
     // MARK: - Types
 
     enum NetworkError: Error {
-
         case invalidResponse
         case invalidRequestURL
     }
@@ -137,7 +134,6 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
 }
 
 extension AccessToken {
-
     var headerValue: String {
         return "\(type) \(token)"
     }

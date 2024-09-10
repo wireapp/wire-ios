@@ -23,7 +23,6 @@ protocol SwitchingAccountAlertPresenter {
 }
 
 final class SwitchingAccountRouter: SessionManagerSwitchingDelegate, SwitchingAccountAlertPresenter {
-
     // MARK: - SessionManagerSwitchingDelegate
 
     func confirmSwitchingAccount(completion: @escaping (Bool) -> Void) {
@@ -34,7 +33,6 @@ final class SwitchingAccountRouter: SessionManagerSwitchingDelegate, SwitchingAc
 
     @objc
     func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void) {
-
         guard let topmostController = UIApplication.shared.topmostViewController() else {
             return completion(false)
         }

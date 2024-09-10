@@ -84,7 +84,6 @@ fileprivate extension Float {
 }
 
 extension String: BigEndianDataConvertible {
-
     var asBigEndianData: Data {
         var data = Data([0xFE, 0xFF]) // Byte order marker
         data.append(self.data(using: .utf16BigEndian)!)
@@ -93,7 +92,6 @@ extension String: BigEndianDataConvertible {
 }
 
 extension Int: BigEndianDataConvertible {
-
     public var asBigEndianData: Data {
         return withUnsafePointer(to: self.bigEndian) {
             Data(bytes: $0, count: MemoryLayout.size(ofValue: self))
@@ -102,7 +100,6 @@ extension Int: BigEndianDataConvertible {
 }
 
 extension TimeInterval: BigEndianDataConvertible {
-
     public var asBigEndianData: Data {
         let long = Int64(self).bigEndian
         return withUnsafePointer(to: long) {
@@ -112,7 +109,6 @@ extension TimeInterval: BigEndianDataConvertible {
 }
 
 extension BigEndianDataConvertible {
-
     public func dataWithTimestamp(timestamp: TimeInterval) -> Data {
         var data = self.asBigEndianData
         data.append(timestamp.asBigEndianData)

@@ -25,7 +25,6 @@ enum OutgoingConnectionBottomBarAction: UInt {
 }
 
 final class OutgoingConnectionViewController: UIViewController {
-
     typealias Connection = L10n.Accessibility.Connection
 
     private let cancelButton = IconButton()

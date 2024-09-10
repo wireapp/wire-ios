@@ -20,7 +20,6 @@ import WireTesting
 @testable import WireUtilities
 
 final class DispatchGroupContextTests: ZMTBaseTest {
-
     var sut: DispatchGroupContext!
 
     override func tearDown() {

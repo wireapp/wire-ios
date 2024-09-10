@@ -20,9 +20,7 @@ import Foundation
 import XCTest
 
 class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
-
     func testThatItDoesNotReturnNonExistingUserWithIdentifier() {
-
         // GIVEN
         self.sut.performRemoteChanges { session in
             session.insertUser(withName: "Foo")
@@ -38,7 +36,6 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
     }
 
     func testThatItReturnsTheExistingUserWithIdentifier() {
-
         // GIVEN
         var identifier: String!
         self.sut.performRemoteChanges { session in
@@ -57,7 +54,6 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
     }
 
     func testThatItDoesNotReturnNonExistingClientWithIdentifier() {
-
         // GIVEN
         var user: MockUser!
         self.sut.performRemoteChanges { session in
@@ -75,7 +71,6 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
     }
 
     func testThatItReturnsTheExistingClientWithIdentifier() {
-
         // GIVEN
         var user: MockUser!
         var identifier: String!

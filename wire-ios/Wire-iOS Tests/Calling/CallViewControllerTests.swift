@@ -39,7 +39,6 @@ extension XCTestCase {
 }
 
 final class CallViewControllerTests: ZMSnapshotTestCase {
-
     var mockVoiceChannel: MockVoiceChannel!
     var conversation: ZMConversation!
     var sut: CallViewController!
@@ -84,7 +83,6 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
 
     private func createCallViewController(selfUser: UserType,
                                           mediaManager: ZMMockAVSMediaManager) -> CallViewController {
-
         let proximityManager = ProximityMonitorManager()
         let callController = CallViewController(
             voiceChannel: mockVoiceChannel,
@@ -168,7 +166,6 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         otherUser: ZMUser,
         messageProtocol: MessageProtocol
     ) -> ZMConversation {
-
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = messageProtocol
         mockConversation.addParticipantAndUpdateConversationState(user: selfUser)

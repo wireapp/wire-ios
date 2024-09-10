@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 extension ZMConversation {
-
     // MARK: Keys
 
     @objc
@@ -184,7 +183,6 @@ extension ZMConversation {
 // MARK: - Fetch by group id
 
 public extension ZMConversation {
-
     static func fetch(
         with groupID: MLSGroupID,
         in context: NSManagedObjectContext
@@ -219,7 +217,6 @@ public extension ZMConversation {
         mlsGroupStatus: MLSGroupStatus,
         in context: NSManagedObjectContext
     ) throws -> [ZMConversation] {
-
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         let matchingGroupStatus = NSPredicate(
             format: "%K == \(mlsGroupStatus.rawValue)",
@@ -283,7 +280,6 @@ public extension ZMConversation {
 // MARK: - Migration releated fetch requests
 
 public extension ZMConversation {
-
     static func fetchAllTeamGroupConversations(
         messageProtocol: MessageProtocol,
         in context: NSManagedObjectContext
@@ -310,7 +306,6 @@ public extension ZMConversation {
 // MARK: - NSPredicate Extensions
 
 private extension NSPredicate {
-
     static var isMLSConversation: NSPredicate {
         NSPredicate(
             format: "%K == %i && %K != nil",

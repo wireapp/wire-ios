@@ -20,7 +20,6 @@
 import XCTest
 
 class UserRightTests: XCTestCase {
-
     // MARK: - Properties
 
     var selfUser: MockUserType!

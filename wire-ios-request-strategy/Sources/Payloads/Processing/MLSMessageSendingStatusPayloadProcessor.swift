@@ -19,7 +19,6 @@
 import Foundation
 
 final class MLSMessageSendingStatusPayloadProcessor {
-
     func updateFailedRecipients(
         from payload: Payload.MLSMessageSendingStatus,
         for message: OTREntity

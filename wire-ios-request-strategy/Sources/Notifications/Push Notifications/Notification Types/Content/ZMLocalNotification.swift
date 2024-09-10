@@ -22,7 +22,6 @@ import UserNotifications
 /// have associated subtypes.
 ///
 public enum LocalNotificationType {
-
     public enum CallState: Equatable {
         case incomingCall(video: Bool)
         case missedCall(cancelled: Bool)
@@ -53,7 +52,6 @@ public protocol NotificationBuilder {
 /// information regarding the conversation, sender, and team name.
 ///
 public class ZMLocalNotification: NSObject {
-
     /// The unique identifier for this notification. Use it to later update
     /// or remove pending or scheduled notification requests.
     public let id: UUID
@@ -130,7 +128,6 @@ public class ZMLocalNotification: NSObject {
 // MARK: - Properties
 
 extension ZMLocalNotification {
-
     public var selfUserID: UUID? { return userInfo?.selfUserID }
     public var senderID: UUID? { return userInfo?.senderID }
     public var messageNonce: UUID? { return userInfo?.messageNonce }
@@ -154,7 +151,6 @@ extension ZMLocalNotification {
 // MARK: - Lookup
 
 extension ZMLocalNotification {
-
     public func conversation(in moc: NSManagedObjectContext) -> ZMConversation? {
         return userInfo?.conversation(in: moc)
     }
@@ -167,9 +163,7 @@ extension ZMLocalNotification {
 // MARK: - Unread Count
 
 extension ZMLocalNotification {
-
     public func increaseEstimatedUnreadCount(on conversation: ZMConversation?) {
-
         if type.shouldIncreaseUnreadCount {
             conversation?.internalEstimatedUnreadCount += 1
             WireLogger.badgeCount.info("increase internalEstimatedUnreadCount: \(String(describing: conversation?.internalEstimatedUnreadCount)) in \(String(describing: conversation?.remoteIdentifier?.uuidString)) timestamp: \(Date())")
@@ -190,7 +184,6 @@ extension ZMLocalNotification {
 }
 
 extension LocalNotificationType {
-
     var shouldIncreaseUnreadCount: Bool {
         if case LocalNotificationType.calling(.missedCall) = self {
             return true
@@ -251,7 +244,6 @@ extension LocalNotificationType {
 }
 
 extension ZMLocalNotification {
-
     public static func bundledMessages(count: Int, in context: NSManagedObjectContext) -> ZMLocalNotification? {
         let builder = BundledMessagesNotificationBuilder(messageCount: count)
         return ZMLocalNotification(builder: builder, moc: context)

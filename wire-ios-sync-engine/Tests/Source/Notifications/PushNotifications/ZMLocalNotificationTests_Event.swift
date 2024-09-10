@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
-
     // MARK: Helpers
 
     func payloadForConnectionRequest(to remoteID: UUID, status: String) -> [AnyHashable: Any] {
@@ -56,7 +55,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func alertBody(_ conversation: ZMConversation, aSender: ZMUser) -> String? {
-
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
@@ -71,7 +69,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func note(_ conversation: ZMConversation, aSender: ZMUser) -> ZMLocalNotification? {
-
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
@@ -86,7 +83,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - Group Conversation Created
 
     func testThatItCreatesConversationCreateNotification() {
-
         // "push.notification.conversation.create" = "%1$@ created a group conversation with you"
 
         // when
@@ -98,7 +94,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesConversationCreateNotification_NoUsername() {
-
         // "push.notification.conversation.create.nousername" = "Someone created a group conversation with you"
 
         // when
@@ -110,7 +105,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesntCreateConversationCreateNotification_OneToOne() {
-
         // We don't want to create a notification for fake team one-to-one conversations
 
         // when
@@ -123,7 +117,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - Group conversation deleted
 
     func testThatItCreatesConversationDeletedNotification() {
-
         // "push.notification.conversation.delete" = "%1$@ deleted the group"
 
         // when
@@ -135,7 +128,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItCreatesConversationDeletedNotification_NoUsername() {
-
         // "push.notification.conversation.delete.nousername" = "Someone deleted the group"
 
         // when
@@ -149,7 +141,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - User Connections
 
     func testThatItCreatesNewConnectionNotification() {
-
         // given
         let senderID = UUID.create()
         let payload = [
@@ -206,7 +197,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateAConnectionAcceptedNotificationForAWrongStatus() {
-
         // given
         let status = "blablabla"
 
@@ -220,7 +210,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - Reactions
 
     func testThatItCreatesANotifcationForAReaction_SelfUserIsSenderOfOriginalMessage_OtherUserSendsLike() {
-
         // given
         let event = reactionEventInOneOnOneConversation()
 
@@ -233,7 +222,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotifcationWhenTheConversationIsSilenced() {
-
         // given
         oneOnOneConversation.mutedMessageTypes = .all
         let event = reactionEventInOneOnOneConversation()
@@ -246,7 +234,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheSenderOfANotification() {
-
         // given
         let event = reactionEventInOneOnOneConversation()
 
@@ -259,7 +246,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheConversationOfANotification() {
-
         // given
         let event = reactionEventInOneOnOneConversation()
 
@@ -272,7 +258,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItSavesTheMessageNonce() {
-
         // given
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "liked", messageID: message.nonce!) as! MessageCapable)
@@ -316,7 +301,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotifcationForAnUnlikeReaction() {
-
         // given
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "", messageID: message.nonce!) as! MessageCapable)
@@ -330,7 +314,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationForAReaction_SelfUserIsSenderOfOriginalMessage_SelfUserSendsLike() {
-
         // given
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
         let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emoji: "❤️", messageID: message.nonce!) as! MessageCapable)
@@ -344,7 +327,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotCreateANotificationForAReaction_OtherUserIsSenderOfOriginalMessage_OtherUserSendsLike() {
-
         // given
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
         message.sender = otherUser1
@@ -464,7 +446,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     // MARK: - Notification title
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-
         // given
         let team = Team.insertNewObject(in: self.uiMOC)
         team.name = "Wire Amazing Team"
@@ -484,7 +465,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     }
 
     func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
-
         // when
         let note = self.note(oneOnOneConversation, aSender: sender)
 

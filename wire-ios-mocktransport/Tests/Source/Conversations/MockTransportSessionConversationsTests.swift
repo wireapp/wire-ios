@@ -22,7 +22,6 @@ import WireProtos
 @testable import WireMockTransport
 
 class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
-
     var selfUser: MockUser!
     var team: MockTeam!
 

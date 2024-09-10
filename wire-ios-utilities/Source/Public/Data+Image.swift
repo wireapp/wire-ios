@@ -20,7 +20,6 @@ import Foundation
 import ImageIO
 
 extension Data {
-
     /// get MIME type of given image data. Returns nil if the data is not a image
     public var mimeType: String? {
         guard let source = (self as NSData).imageSource,

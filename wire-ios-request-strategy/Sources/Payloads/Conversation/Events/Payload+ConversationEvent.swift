@@ -20,7 +20,6 @@ import Foundation
 
 extension Payload {
     struct ConversationEvent<T: CodableEventData>: Codable {
-
         let id: UUID?
         let data: T
         let from: UUID?

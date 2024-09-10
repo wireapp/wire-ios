@@ -30,7 +30,6 @@ typealias AuthenticationStepViewController = UIViewController & AuthenticationCo
  */
 
 final class AuthenticationInterfaceBuilder {
-
     /// The object to use when checking for features.
     let featureProvider: AuthenticationFeatureProvider
 

@@ -21,6 +21,5 @@ import Foundation
 /// A type that is able to provide an editble user.
 
 public protocol SelfUserProvider {
-
     var providedSelfUser: UserType & EditableUserType { get }
 }

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class TestAVSLogger: AVSLogger {
-
     var messages: [String] = []
 
     func log(message: String) {
@@ -31,7 +30,6 @@ class TestAVSLogger: AVSLogger {
 }
 
 class SessionManagerAVSTests: ZMTBaseTest {
-
     func testLoggersReceiveLogMessages() {
         // given
         let logMessage = "123"

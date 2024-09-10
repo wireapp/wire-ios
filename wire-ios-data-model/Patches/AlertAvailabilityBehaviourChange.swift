@@ -23,7 +23,6 @@ extension Notification.Name {
 }
 
 struct AvailabilityBehaviourChange {
-
     static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
 
     static func notifyAvailabilityBehaviourChange(in moc: NSManagedObjectContext) {

@@ -20,7 +20,6 @@ import Foundation
 @testable import WireRequestStrategy
 
 final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
-
     // MARK: - Helpers
 
     func mockResponse(status: Int, label: String) -> ZMTransportResponse {

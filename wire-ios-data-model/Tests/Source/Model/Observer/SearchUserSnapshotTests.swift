@@ -19,7 +19,6 @@
 @testable import WireDataModel
 
 final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
-
     var token: Any?
 
     override func tearDown() {

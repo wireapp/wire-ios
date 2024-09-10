@@ -24,7 +24,6 @@ protocol SearchServicesSectionDelegate: SearchSectionControllerDelegate {
 }
 
 final class SearchServicesSectionController: SearchSectionController {
-
     weak var delegate: SearchServicesSectionDelegate?
 
     var services: [ServiceUser] = []

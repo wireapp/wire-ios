@@ -21,7 +21,6 @@ import MobileCoreServices
 
 @objcMembers
 public class V2Asset: NSObject, ZMImageMessageData {
-
     public var isDownloaded: Bool {
         return hasDownloadedFile
     }
@@ -174,7 +173,6 @@ public class V2Asset: NSObject, ZMImageMessageData {
 }
 
 extension V2Asset: AssetProxyType {
-
     private var hasImageData: Bool {
         guard let cache = moc.zm_fileAssetCache else {
             return false

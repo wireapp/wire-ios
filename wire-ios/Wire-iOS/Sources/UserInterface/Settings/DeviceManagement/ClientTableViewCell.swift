@@ -24,7 +24,6 @@ import WireDataModel
 import WireDesign
 
 final class ClientTableViewCell: UITableViewCell {
-
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties

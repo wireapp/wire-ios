@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPI
 
 final class FeatureConfigsAPITests: XCTestCase {
-
     private var apiSnapshotHelper: APISnapshotHelper<any FeatureConfigsAPI>!
 
     // MARK: - Setup
@@ -199,9 +198,7 @@ final class FeatureConfigsAPITests: XCTestCase {
 }
 
 extension FeatureConfigsAPITests {
-
     enum Scaffolding {
-
         static func dateV4(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }
@@ -400,7 +397,6 @@ extension FeatureConfigsAPITests {
 }
 
 private extension APIVersion {
-
     func buildAPI(client: any HTTPClient) -> any FeatureConfigsAPI {
         let builder = FeatureConfigsAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)

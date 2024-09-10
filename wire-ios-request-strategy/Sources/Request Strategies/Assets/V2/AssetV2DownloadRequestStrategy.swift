@@ -20,7 +20,6 @@ import WireImages
 import WireTransport
 
 @objcMembers public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
-
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
@@ -46,7 +45,6 @@ import WireTransport
     }
 
     func registerForCancellationNotification() {
-
         notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
                                                                     context: self.managedObjectContext.notificationContext,
                                                                     object: nil) { [weak self] note in
@@ -91,7 +89,6 @@ import WireTransport
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-
         assetClientMessage.isDownloading = false
 
         guard response.result == .success else {
@@ -147,7 +144,6 @@ import WireTransport
         switch apiVersion {
         case .v0, .v1:
             if let assetClientMessage = object as? ZMAssetClientMessage {
-
                 let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                     assetClientMessage.associatedTaskIdentifier = taskIdentifier
                 }

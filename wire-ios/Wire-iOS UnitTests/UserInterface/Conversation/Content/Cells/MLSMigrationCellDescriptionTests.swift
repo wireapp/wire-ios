@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class MLSMigrationCellDescriptionTests: XCTestCase {
-
     var otherUser: MockUserType!
 
     override func setUp() {

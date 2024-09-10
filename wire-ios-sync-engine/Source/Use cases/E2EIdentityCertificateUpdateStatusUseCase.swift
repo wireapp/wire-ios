@@ -19,7 +19,6 @@
 import Foundation
 
 public enum E2EIdentityCertificateUpdateStatus {
-
     // Alert was already shown within snooze period, so do not remind user to update certificate
     case noAction
 
@@ -36,7 +35,6 @@ public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 }
 
 public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
-
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let comparedDate: CurrentDateProviding
@@ -61,7 +59,6 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-
         let selfMLSConversationGroupID = await context.perform {
             ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID
         }
@@ -100,7 +97,6 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         let lastAlertTimeInterval = abs(lastAlertDate.timeIntervalSinceNow)
 
         switch timeLeftUntilExpiration {
-
         case .oneDay ..< maxTimeLeft where lastAlertTimeInterval > .oneDay:
             return .reminder
 

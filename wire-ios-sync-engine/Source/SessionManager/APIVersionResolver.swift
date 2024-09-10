@@ -20,7 +20,6 @@ import Foundation
 import WireTransport
 
 final class APIVersionResolver {
-
     // MARK: - Properties
 
     weak var delegate: APIVersionResolverDelegate?
@@ -145,7 +144,6 @@ final class APIVersionResolver {
     }
 
     private struct APIVersionResponsePayload: Decodable {
-
         let supported: [Int32]
         let development: [Int32]?
         let federation: Bool
@@ -156,7 +154,6 @@ final class APIVersionResolver {
 // MARK: - Delegate
 
 protocol APIVersionResolverDelegate: AnyObject {
-
     func apiVersionResolverDetectedFederationHasBeenEnabled()
     func apiVersionResolverFailedToResolveVersion(reason: BlacklistReason)
     func apiVersionResolverDidResolve(apiVersion: APIVersion)
@@ -165,7 +162,6 @@ protocol APIVersionResolverDelegate: AnyObject {
 // MARK: - Prod/Dev versions
 
 public extension APIVersion {
-
     /// API versions considered production ready by the client.
     ///
     /// IMPORTANT: A version X should only be considered a production version

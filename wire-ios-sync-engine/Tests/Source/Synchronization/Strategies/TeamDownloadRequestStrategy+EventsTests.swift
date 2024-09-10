@@ -20,7 +20,6 @@
 import WireTesting
 
 final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
-
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncStatus: MockSyncStatus!

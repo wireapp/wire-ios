@@ -37,7 +37,6 @@ enum MediaShareRestrictionLevel {
 }
 
 class MediaShareRestrictionManager {
-
     // MARK: - Private Properties
 
     private let sessionRestriction: SessionFileRestrictionsProtocol?

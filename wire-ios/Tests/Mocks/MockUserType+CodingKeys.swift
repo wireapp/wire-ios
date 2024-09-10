@@ -19,9 +19,7 @@
 import Foundation
 
 extension MockUserType {
-
     enum CodingKeys: String, CodingKey {
-
         case name
         case displayName
         case initials

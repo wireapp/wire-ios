@@ -19,7 +19,6 @@
 import WireDataModel
 
 final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConversationProtocolAction> {
-
     typealias EventPayload = [AnyHashable: Any]
 
     // MARK: - Methods
@@ -28,7 +27,6 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         for action: Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         var action = action
 
         guard apiVersion >= .v5 else {
@@ -76,7 +74,6 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
 }
 
 extension UpdateConversationProtocolAction.Failure.APIFailure {
-
     fileprivate init?(_ statusCode: Int, _ label: String?) {
         guard let label else { return nil }
         self.init(rawValue: label)

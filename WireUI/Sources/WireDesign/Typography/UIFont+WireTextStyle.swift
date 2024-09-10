@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIFont {
-
     /// Creates a new font for the given style.
     ///
     /// - Parameter style: The desired text style.

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationListAccessoryView: UIView {
-
     // MARK: - Properties
 
     typealias ViewColors = SemanticColors.View

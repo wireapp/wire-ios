@@ -41,7 +41,6 @@ public extension UIColor {
     ///
     /// - Parameter rgba: tuple of color components
     convenience init(rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)) {
-
         self.init(red: rgba.red / 255,
                   green: rgba.green / 255,
                   blue: rgba.blue / 255,

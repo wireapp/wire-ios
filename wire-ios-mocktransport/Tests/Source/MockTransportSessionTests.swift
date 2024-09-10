@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockTransportSessionTests {
-
     func response(forAssetData assetData: Data, contentType: String, path: String, apiVersion: APIVersion) -> ZMTransportResponse? {
         let expectation = self.customExpectation(description: "Got an asset response")
 

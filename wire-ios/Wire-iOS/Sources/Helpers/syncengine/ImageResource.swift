@@ -23,7 +23,6 @@ import WireLinkPreview
 import WireSyncEngine
 
 extension ZMConversationMessage {
-
     var linkAttachmentImage: WireImageResource? {
         guard let attachment = self.linkAttachments?.first, let textMessage = self.textMessageData else {
             return nil
@@ -34,28 +33,24 @@ extension ZMConversationMessage {
 }
 
 extension TextMessageData {
-
     var linkPreviewImage: WireImageResource {
         return LinkPreviewImageResourceAdaptor(textMessageData: self)
     }
 }
 
 extension ZMFileMessageData {
-
     var thumbnailImage: PreviewableImageResource {
         return FileMessageImageResourceAdaptor(fileMesssageData: self)
     }
 }
 
 extension ZMImageMessageData {
-
     var image: PreviewableImageResource {
         return ImageMessageImageResourceAdaptor(imageMessageData: self)
     }
 }
 
 struct LinkPreviewImageResourceAdaptor: WireImageResource {
-
     let textMessageData: TextMessageData
 
     var cacheIdentifier: String? {
@@ -76,7 +71,6 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
 }
 
 struct LinkAttachmentImageResourceAdaptor: WireImageResource {
-
     let attachment: LinkAttachment
     let textMessageData: TextMessageData
     let urlSession: URLSessionProtocol
@@ -123,7 +117,6 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
 }
 
 struct FileMessageImageResourceAdaptor: PreviewableImageResource {
-
     let fileMesssageData: ZMFileMessageData
 
     var cacheIdentifier: String? {
@@ -152,7 +145,6 @@ struct FileMessageImageResourceAdaptor: PreviewableImageResource {
 }
 
 struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
-
     let imageMessageData: ZMImageMessageData
 
     var cacheIdentifier: String? {
@@ -181,7 +173,6 @@ struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
 }
 
 protocol WireImageResource {
-
     var cacheIdentifier: String? { get }
     var isAnimatedGIF: Bool { get }
 
@@ -202,7 +193,6 @@ enum ImageSizeLimit {
 }
 
 extension ImageSizeLimit {
-
     var cacheKeyExtension: String {
         switch self {
         case .none:
@@ -218,12 +208,10 @@ extension ImageSizeLimit {
 }
 
 extension WireImageResource {
-
     /// Fetch image data and calls the completion handler when it is available on the main queue.
     func fetchImage(cache: ImageCache<AnyObject> = MediaAssetCache.defaultImageCache,
                     sizeLimit: ImageSizeLimit = .deviceOptimized,
                     completion: @escaping (_ image: MediaAsset?, _ cacheHit: Bool) -> Void) {
-
         guard let cacheIdentifier = self.cacheIdentifier else {
             return completion(nil, false)
         }

@@ -38,7 +38,6 @@ final class PasscodeSetupInteractor {
 // MARK: - Interface
 
 extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
-
     func storePasscode(passcode: String) throws {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: [John] Inject the app lock controller.

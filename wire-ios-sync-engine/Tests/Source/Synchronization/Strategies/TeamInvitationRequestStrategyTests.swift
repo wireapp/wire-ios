@@ -21,7 +21,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class TeamInvitationRequestStrategyTests: MessagingTest {
-
     var applicationStatus: MockApplicationStatus!
     var teamInvitationStatus: TeamInvitationStatus!
     var team: Team!
@@ -110,7 +109,6 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
     }
 
     func testInvitationResultParsing() {
-
         let responseCases = [(201, ""),
                              (403, "too-many-team-invitations"),
                              (403, "blacklisted-email"),

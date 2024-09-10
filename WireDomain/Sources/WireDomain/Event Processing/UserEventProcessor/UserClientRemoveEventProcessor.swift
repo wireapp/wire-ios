@@ -21,7 +21,6 @@ import WireAPI
 /// Process user client remove events.
 
 protocol UserClientRemoveEventProcessorProtocol {
-
     /// Process a user client remove event.
     ///
     /// - Parameter event: A user client remove event.
@@ -30,7 +29,6 @@ protocol UserClientRemoveEventProcessorProtocol {
 }
 
 struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
-
     func processEvent(_: UserClientRemoveEvent) async throws {
         // TODO: [WPB-10190]
         assertionFailure("not implemented yet")

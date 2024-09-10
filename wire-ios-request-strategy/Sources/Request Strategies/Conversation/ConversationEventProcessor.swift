@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public class ConversationEventProcessor: NSObject, ConversationEventProcessorProtocol, ZMEventAsyncConsumer {
-
     // MARK: - Properties
 
     let context: NSManagedObjectContext

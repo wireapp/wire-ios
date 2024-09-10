@@ -18,7 +18,6 @@
 
 public typealias TeamMembership = Member
 @objcMembers public class Member: ZMManagedObject {
-
     @NSManaged public var team: Team?
     @NSManaged public var user: ZMUser?
     @NSManaged public var createdBy: ZMUser?
@@ -90,7 +89,6 @@ private enum ResponseKey: String {
 }
 
 extension Member {
-
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any], in team: Team, context: NSManagedObjectContext) -> Member? {
         guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return nil }

@@ -21,7 +21,6 @@ import WireDesign
 import WireFoundation
 
 public extension AccentColor {
-
     var uiColor: UIColor {
         switch self {
         case .blue:

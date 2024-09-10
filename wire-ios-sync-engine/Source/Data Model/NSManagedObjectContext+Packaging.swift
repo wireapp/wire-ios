@@ -18,12 +18,10 @@
 import Foundation
 
 public extension NSManagedObjectContext {
-
     private static let PackagingFeatureConfigKey = "PackagingFeatureConfigKey"
 
     @objc
     var zm_usePackagingFeatureConfig: Bool {
-
         get {
             precondition(zm_isUserInterfaceContext, "zm_usePackagingFeatureConfig can only be accessed on the ui context")
             return userInfo[NSManagedObjectContext.PackagingFeatureConfigKey] as? Bool ?? false

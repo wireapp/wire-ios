@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class MessageDetailsViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var conversation: SwiftMockConversation!

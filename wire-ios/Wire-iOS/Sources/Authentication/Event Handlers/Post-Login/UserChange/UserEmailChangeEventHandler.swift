@@ -24,7 +24,6 @@ import WireDataModel
  */
 
 final class UserEmailChangeEventHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: UserChangeInfo) -> [AuthenticationCoordinatorAction]? {

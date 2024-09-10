@@ -26,7 +26,6 @@ typealias ZiphyPaginatedFetchBlock = (_ offset: Int) -> CancelableTask?
  */
 
 final class ZiphyPaginationController {
-
     var ziphs: [Ziph] = []
     var offset = 0
     var isAtEnd: Bool = false

@@ -19,7 +19,6 @@
 import Foundation
 
 public extension NSManagedObjectContext {
-
     /// Execute an NSBatchUpdateRequest and merge the resulting changes into all contexts.
     ///
     /// - parameters:

@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
-
     var image: UIImage!
     var message: MockMessage!
 

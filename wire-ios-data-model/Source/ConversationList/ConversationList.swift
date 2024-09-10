@@ -21,7 +21,6 @@ import CoreData
 /// A collection of conversation instances with additional infos.
 @objc(ZMConversationList) @objcMembers
 public final class ConversationList: NSObject {
-
     public weak var managedObjectContext: NSManagedObjectContext?
 
     let identifier: String

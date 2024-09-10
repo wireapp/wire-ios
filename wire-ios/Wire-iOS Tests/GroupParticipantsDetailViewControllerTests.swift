@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation {
-
     var userDefinedName: String?
 
     var hasReadReceiptsEnabled: Bool = false
@@ -40,7 +39,6 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
 }
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {
-
     private var mockMainCoordinator: MockMainCoordinator!
     private var userSession: UserSessionMock!
     private var snapshotHelper: SnapshotHelper!

@@ -22,7 +22,6 @@ import WireUtilities
 import XCTest
 
 final class UserCellTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: UserCell!

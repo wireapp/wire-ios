@@ -19,7 +19,6 @@
 import Foundation
 
 struct MockJSONPayloadResource {
-
     let jsonData: Data
 
     init(name: String) throws {

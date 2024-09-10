@@ -19,14 +19,12 @@
 import Foundation
 
 class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
-
     // MARK: - Methods
 
     override func request(
         for action: ActionHandler<GetPushTokensAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         return ZMTransportRequest(
             path: "/push/tokens",
             method: .get,
@@ -73,14 +71,11 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
 }
 
 extension GetPushTokensActionHandler {
-
     struct ResponsePayload: Codable {
-
         let tokens: [Token]
     }
 
     struct Token: Codable {
-
         let app: String
         let client: String?
         let token: String

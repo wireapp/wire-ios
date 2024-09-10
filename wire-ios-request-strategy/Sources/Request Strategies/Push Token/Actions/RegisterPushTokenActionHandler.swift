@@ -19,14 +19,12 @@
 import Foundation
 
 class RegisterPushTokenActionHandler: ActionHandler<RegisterPushTokenAction> {
-
     // MARK: - Methods
 
     override func request(
         for action: ActionHandler<RegisterPushTokenAction>.Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         let payload: [String: Any] = [
             "app": action.appID,
             "token": action.token,

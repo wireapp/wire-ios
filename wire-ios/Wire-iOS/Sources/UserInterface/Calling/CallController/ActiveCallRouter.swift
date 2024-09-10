@@ -54,7 +54,6 @@ typealias PostCallAction = ((@escaping Completion) -> Void)
 
 final class ActiveCallRouter<TopOverlayPresenter>
 where TopOverlayPresenter: TopOverlayPresenting {
-
     // MARK: - Public Property
 
     var isActiveCallShown = false {
@@ -109,7 +108,6 @@ where TopOverlayPresenter: TopOverlayPresenting {
 // MARK: - ActiveCallRouterProtocol
 
 extension ActiveCallRouter: ActiveCallRouterProtocol {
-
     // MARK: - ActiveCall
 
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
@@ -290,7 +288,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 // MARK: - CallQualityRouterProtocol
 
 extension ActiveCallRouter: CallQualityRouterProtocol {
-
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
         let qualityController = buildCallQualitySurvey(with: callDuration)
 

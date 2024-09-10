@@ -19,7 +19,6 @@
 import UIKit
 
 extension BackupRestoreController {
-
     func requestRestorePassword(completion: @escaping (String?) -> Void) -> UIAlertController {
         let controller = UIAlertController(
             title: L10n.Localizable.Registration.NoHistory.RestoreBackup.Password.title,

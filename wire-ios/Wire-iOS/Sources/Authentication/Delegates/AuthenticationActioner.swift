@@ -23,7 +23,6 @@ import Foundation
  */
 
 protocol AuthenticationActioner: AnyObject {
-
     /**
      * Executes the list of actions, in the order they are stored.
      * - parameter actions: The actions to execute.
@@ -33,7 +32,6 @@ protocol AuthenticationActioner: AnyObject {
 }
 
 extension AuthenticationActioner {
-
     /**
      * Executes a single action.
      * - parameter action: The action to execute.
@@ -57,7 +55,6 @@ extension AuthenticationActioner {
  */
 
 protocol AuthenticationActionable: AnyObject {
-
     /**
      * The actioner to use to execute the actions. This variable will be set by another
      * object that owns it. It should be stored as `weak` in implementations.

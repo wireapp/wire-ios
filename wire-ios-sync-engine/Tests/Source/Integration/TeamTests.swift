@@ -21,7 +21,6 @@ import WireDataModel
 @testable import WireSyncEngine
 
 final class TestTeamObserver: NSObject, TeamObserver {
-
     var token: NSObjectProtocol!
     var observedTeam: Team?
     var notifications: [TeamChangeInfo] = []
@@ -40,7 +39,6 @@ final class TestTeamObserver: NSObject, TeamObserver {
 }
 
 class TeamTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

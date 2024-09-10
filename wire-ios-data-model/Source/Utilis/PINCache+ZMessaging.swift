@@ -35,7 +35,6 @@ extension PINCache {
 extension PINDiskCache {
     // disable backup of URL
     func makeURLSecure() {
-
         let secureBlock: (any PINCaching) -> Void = { cache in
             // exclude disk cache from backup
             guard let cache = cache as? PINDiskCache else { return }

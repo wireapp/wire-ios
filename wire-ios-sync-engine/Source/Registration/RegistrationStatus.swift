@@ -67,7 +67,6 @@ protocol RegistrationStatusProtocol: AnyObject {
  */
 
 public class RegistrationStatus: RegistrationStatusProtocol {
-
     /// The current phase of registration.
     public var phase: RegistrationPhase? = .none
 

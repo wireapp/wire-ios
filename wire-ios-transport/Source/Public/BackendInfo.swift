@@ -19,9 +19,7 @@
 import Foundation
 
 public enum BackendInfo {
-
     private enum Key: String {
-
         case selectedAPIVersion = "SelectedAPIVersion"
         case preferredAPIVersion = "PreferredAPIVersion"
         case domain = "Domain"

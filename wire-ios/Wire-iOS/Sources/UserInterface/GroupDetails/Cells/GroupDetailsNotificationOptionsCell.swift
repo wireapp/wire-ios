@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCell {
-
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.notificationsoptions"

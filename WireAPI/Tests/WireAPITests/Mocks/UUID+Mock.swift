@@ -22,7 +22,6 @@ import Foundation
 // Fixed mock ids to use in deterministic tests, such as snapshot tests.
 
 extension UUID {
-
     static let mockID1 = UUID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506")!
     static let mockID2 = UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!
     static let mockID3 = UUID(uuidString: "7e23727b-d612-4123-88c0-57e311a7e5a3")!
@@ -36,7 +35,6 @@ extension UUID {
 }
 
 extension QualifiedID {
-
     static let mockID1 = QualifiedID(uuid: .mockID1, domain: "example.com")
     static let mockID2 = QualifiedID(uuid: .mockID2, domain: "example.com")
     static let mockID3 = QualifiedID(uuid: .mockID3, domain: "example.com")

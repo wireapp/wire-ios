@@ -21,7 +21,6 @@ import Starscream
 
 @objcMembers
 final class StarscreamPushChannel: NSObject, PushChannelType {
-
     var webSocket: WebSocket?
     var workQueue: OperationQueue
     let environment: BackendEnvironmentProvider
@@ -221,7 +220,6 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
 }
 
 extension StarscreamPushChannel: ZMTimerClient {
-
     func timerDidFire(_ timer: ZMTimer!) {
         WireLogger.pushChannel.debug("Sending ping")
         webSocket?.write(ping: Data())
@@ -232,7 +230,6 @@ extension StarscreamPushChannel: ZMTimerClient {
 extension StarscreamPushChannel: WebSocketDelegate {
     func didReceive(event: WebSocketEvent, client: WebSocketClient) {
         switch event {
-
         case .connected:
             WireLogger.pushChannel.debug("Sending ping")
             onOpen()
@@ -265,7 +262,6 @@ extension StarscreamPushChannel: WebSocketDelegate {
 }
 
 final class StarscreamCertificatePinning: CertificatePinning {
-
     let environment: BackendEnvironmentProvider
 
     init(environment: BackendEnvironmentProvider) {
@@ -282,7 +278,6 @@ final class StarscreamCertificatePinning: CertificatePinning {
 }
 
 private extension TLSVersion {
-
     var starscreamValue: Starscream.TLSVersion {
         switch self {
         case .v1_2:

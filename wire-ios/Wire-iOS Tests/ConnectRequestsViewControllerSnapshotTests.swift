@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
-
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!
     var userSession: UserSessionMock!

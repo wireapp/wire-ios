@@ -23,7 +23,6 @@ import Foundation
  */
 
 public struct PasswordRuleSet: Decodable, Equatable {
-
     /// The minimum length of the password.
     let minimumLength: UInt
 

@@ -51,7 +51,6 @@ private extension ConversationActionType {
 /// which attributes. Then, given an attributed string, these attributes are
 /// applied to their corresponding component.
 private final class FormatSequence {
-
     typealias SubstringAttrs = (substring: String, attrs: Attributes)
     var string = String()
     var componentAttributes = [SubstringAttrs]()
@@ -77,7 +76,6 @@ private final class FormatSequence {
 }
 
 final class ParticipantsStringFormatter {
-
     struct NameList {
         let names: [String]
         let collapsed: Int

@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
-
     typealias ConversationAnnouncement = L10n.Accessibility.ConversationAnnouncement
 
     /// A notification should be posted when an announcement needs to be sent to VoiceOver.

@@ -21,7 +21,6 @@ import WireTransport
 import XCTest
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {
-
     var sut: ConnectionPayloadProcessor!
 
     override func setUp() {

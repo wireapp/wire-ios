@@ -25,7 +25,6 @@ protocol PasscodeTextFieldDelegate: AnyObject {
 }
 
 final class PasscodeTextField: AccessoryTextField {
-
     // MARK: - Constants
 
     private let revealButtonWidth: CGFloat = 32
@@ -64,7 +63,6 @@ final class PasscodeTextField: AccessoryTextField {
     override init(leftInset: CGFloat,
                   accessoryTrailingInset: CGFloat,
                   textFieldAttributes: Attributes) {
-
         super.init(leftInset: leftInset,
                    accessoryTrailingInset: accessoryTrailingInset,
                    textFieldAttributes: textFieldAttributes)
@@ -106,7 +104,6 @@ final class PasscodeTextField: AccessoryTextField {
 // MARK: - Private methods
 
 extension PasscodeTextField {
-
     private func updateButtonIcon() {
         revealButton.setIcon(revealButtonIcon, size: .tiny, for: .normal)
     }
@@ -115,7 +112,6 @@ extension PasscodeTextField {
 // MARK: - Helpers
 
 extension PasscodeTextField {
-
     static func createPasscodeTextField(delegate: PasscodeTextFieldDelegate?) -> PasscodeTextField {
         let textFieldAttributes = AccessoryTextField.Attributes(textFont: .normalMediumFont,
                                                                 textColor: UIColor.Team.textColor,

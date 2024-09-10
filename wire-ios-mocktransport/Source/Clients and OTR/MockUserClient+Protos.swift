@@ -24,7 +24,6 @@ public protocol OtrMessage {
 }
 
 extension MockUserClient {
-
     /// Returns an OTR message with the recipients correctly set
     /// - Parameters:
     ///   - clients: clients needed to create recipients
@@ -47,7 +46,6 @@ extension MockUserClient {
     ///   - plainText: plain text
     /// - Returns: OTR asset message
     public func otrAssetMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> Proteus_OtrAssetMeta {
-
         var message = Proteus_OtrAssetMeta()
         var sender = Proteus_ClientId()
 
@@ -96,7 +94,6 @@ extension MockUserClient {
 }
 
 extension String {
-
     /// Parses the string as if it was a hex representation of a number
     fileprivate var asHexEncodedUInt: UInt64 {
         var scannedIdentifier: UInt64 = 0

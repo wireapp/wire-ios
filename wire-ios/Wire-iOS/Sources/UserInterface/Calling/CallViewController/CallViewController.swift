@@ -27,7 +27,6 @@ protocol CallViewControllerDelegate: AnyObject {
 }
 
 final class CallViewController: UIViewController {
-
     weak var delegate: CallViewControllerDelegate?
     private var tapRecognizer: UITapGestureRecognizer!
     private let mediaManager: AVSMediaManagerInterface
@@ -145,7 +144,6 @@ final class CallViewController: UIViewController {
 
     @objc
     private func handleSingleTap(_ sender: UITapGestureRecognizer) {
-
         guard canHideOverlay else { return }
 
         if let overlay = callGridViewController.previewOverlay,
@@ -428,7 +426,6 @@ extension CallViewController: ZMConversationObserver {
 }
 
 extension CallViewController: WireCallCenterCallStateObserver {
-
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateConfiguration()
         hideOverlayAfterCallEstablishedIfNeeded()
@@ -445,7 +442,6 @@ extension CallViewController: ActiveSpeakersObserver {
 // MARK: - WireCallCenterCallParticipantObserver
 
 extension CallViewController: WireCallCenterCallParticipantObserver {
-
     func callParticipantsDidChange(conversation: ZMConversation,
                                    participants: [CallParticipant]) {
         hapticsController.updateParticipants(participants)
@@ -461,21 +457,18 @@ extension CallViewController: WireCallCenterCallParticipantObserver {
 }
 
 extension CallViewController: AVSMediaManagerClientObserver {
-
     func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification!) {
         updateConfiguration()
     }
 }
 
 extension CallViewController: MuteStateObserver {
-
     func callCenterDidChange(muted: Bool) {
         updateConfiguration()
     }
 }
 
 extension CallViewController {
-
     private func acceptCallIfPossible() {
         guard let conversation = self.conversation else {
             fatalError("Trying to accept a call for a voice channel without conversation.")
@@ -526,14 +519,12 @@ extension CallViewController {
 }
 
 extension CallViewController: ConstantBitRateAudioObserver {
-
     func callCenterDidChange(constantAudioBitRateAudioEnabled: Bool) {
         updateConfiguration()
     }
 }
 
 extension CallViewController: CallInfoRootViewControllerDelegate {
-
     func callingActionsViewPerformAction(_ action: CallAction) {
         Log.calling.debug("request to perform call action: \(action)")
         guard let userSession = userSession as? ZMUserSession else { return }
@@ -578,7 +569,6 @@ extension CallViewController: CallGridViewControllerDelegate {
 // MARK: - Hide + Show Overlay
 
 extension CallViewController {
-
     var isOverlayVisible: Bool {
         return callInfoRootViewController.view.alpha > 0
     }
@@ -669,7 +659,6 @@ extension CallViewController {
 }
 
 extension CallViewController {
-
     func proximityStateDidChange(_ raisedToEar: Bool) {
         guard voiceChannel.isVideoCall, voiceChannel.videoState != .stopped else { return }
         voiceChannel.videoState = raisedToEar ? .paused : .started

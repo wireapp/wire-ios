@@ -21,7 +21,6 @@ import WireUtilities
 
 /// An object containing the details required to create a team.
 public struct UnregisteredTeam: Equatable {
-
     public let teamName: String
     public let email: String
     public let emailCode: String

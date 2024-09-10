@@ -20,13 +20,11 @@ import Foundation
 import WireDataModel
 
 public class RegisterPushTokenAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Void
 
     public enum Failure: LocalizedError, SafeForLoggingStringConvertible {
-
         case appDoesNotExist
         case unknown(status: Int)
 

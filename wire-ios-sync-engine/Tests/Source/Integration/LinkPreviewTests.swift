@@ -19,7 +19,6 @@
 import Foundation
 
 class LinkPreviewTests: ConversationTestsBase {
-
     var mockLinkPreviewDetector: MockLinkPreviewDetector!
 
     override func setUp() {

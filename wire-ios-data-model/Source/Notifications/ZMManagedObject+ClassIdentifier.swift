@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMManagedObject {
-
     static var classIdentifier: String {
         return entityName()
     }

@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

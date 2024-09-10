@@ -120,7 +120,6 @@ class StringLengthValidatorTests: XCTestCase {
     }
 
     func testThatNilIsNotValid() {
-
         var value: AnyObject?
 
         do {
@@ -135,7 +134,6 @@ class StringLengthValidatorTests: XCTestCase {
     }
 
     func testThatItReplacesNewlinesAndTabWithSpacesInThePhoneNumber() {
-
         var phoneNumber: AnyObject? = "1234\n5678" as AnyObject
 
         do {

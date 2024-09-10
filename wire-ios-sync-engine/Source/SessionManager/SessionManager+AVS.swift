@@ -22,13 +22,11 @@ private let AVSLogMessageNotification = Notification.Name("AVSLogMessageNotifica
 
 @objc
 public protocol AVSLogger: AnyObject {
-
     @objc(logMessage:)
     func log(message: String)
 }
 
 public extension SessionManager {
-
     @objc
     static func addLogger(_ logger: AVSLogger) -> Any {
         return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: AVSLogMessageNotification, object: nil, queue: nil) { [weak logger] note in

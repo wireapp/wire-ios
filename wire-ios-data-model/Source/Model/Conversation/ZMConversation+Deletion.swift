@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     open override func prepareForDeletion() {
         super.prepareForDeletion()
 

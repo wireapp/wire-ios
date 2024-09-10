@@ -41,7 +41,6 @@ private enum LocalAuthenticationStatus {
 }
 
 final class ShareExtensionViewController: SLComposeServiceViewController {
-
     // MARK: - Elements
 
     typealias ShareExtensionConversationLocale = L10n.ShareExtension.ConversationSelection
@@ -463,7 +462,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func updateAccount(_ account: Account?) {
-
         var account = account
         let authenticated = authenticatedAccounts
 
@@ -519,7 +517,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func showChooseConversation() {
-
         guard let sharingSession else { return }
 
         let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession.writebleArchivedConversations
@@ -535,7 +532,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     func showChooseAccount() {
-
         guard let accountManager else { return }
         let accountSelectionViewController = AccountSelectionViewController(accounts: accountManager.accounts,
                                                                             current: currentAccount)
@@ -550,7 +546,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping DegradationStrategyChoice) {
-
         typealias MetaDegradedLocale = L10n.ShareExtension.Meta.Degraded
 
         let title = titleForMissingClients(causedBy: change)
@@ -560,7 +555,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func createDegradationAlert(title: String, message: String, callback: @escaping DegradationStrategyChoice) -> UIAlertController {
-
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.sendAnywayButton, style: .destructive, handler: { _ in
@@ -605,7 +599,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 // MARK: - Authentication
 
 extension ShareExtensionViewController {
-
     /// @param completion; called when authentication evaluation is completed.
     private func requireLocalAuthenticationIfNeeded(with completion: @escaping Completion) {
         guard

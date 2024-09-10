@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class ZMConversationTests_SelfConversation: ZMConversationTestsBase {
-
     private func createMLSSelfConversation() -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()

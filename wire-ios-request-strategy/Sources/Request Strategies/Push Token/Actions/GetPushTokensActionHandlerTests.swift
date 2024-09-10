@@ -20,7 +20,6 @@ import Foundation
 @testable import WireRequestStrategy
 
 class GetPushTokensActionHandlerTests: MessagingTestBase {
-
     // MARK: - Helpers
 
     typealias Payload = GetPushTokensActionHandler.ResponsePayload

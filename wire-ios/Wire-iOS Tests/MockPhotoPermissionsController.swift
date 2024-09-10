@@ -21,7 +21,6 @@ import UIKit
 import XCTest
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
-
     private var camera = false
     private var library = false
 

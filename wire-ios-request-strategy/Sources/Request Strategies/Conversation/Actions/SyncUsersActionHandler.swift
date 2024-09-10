@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
-
     private let payloadProcessor: UserProfilePayloadProcessing
 
     required init(
@@ -34,7 +33,6 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
     // MARK: - Request
 
     struct RequestPayload: Codable, Equatable {
-
         let qualified_ids: [QualifiedID]
     }
 

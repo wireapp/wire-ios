@@ -19,7 +19,6 @@
 import Foundation
 
 public enum ProteusToMLSMigrationState: String, CustomStringConvertible {
-
     case disabled
     case notStarted
     case ongoing

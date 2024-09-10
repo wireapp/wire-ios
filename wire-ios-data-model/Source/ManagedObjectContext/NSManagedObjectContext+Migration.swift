@@ -21,7 +21,6 @@ import Foundation
 // This contains some methods to pass the information through the persistence store metadata
 // that we need a slow sync after
 extension NSManagedObjectContext {
-
     private var migrationsNeedToSlowSyncKey: String {
         "migrationsNeedToSlowSync"
     }

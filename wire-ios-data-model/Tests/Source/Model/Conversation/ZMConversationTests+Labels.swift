@@ -19,7 +19,6 @@
 import Foundation
 
 class ZMConversationTests_Labels: ZMConversationTestsBase {
-
     func createFolder(name: String) -> Label {
         var created: Bool = false
         let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: uiMOC, created: &created)!

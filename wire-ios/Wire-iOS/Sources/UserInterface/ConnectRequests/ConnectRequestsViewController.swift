@@ -24,7 +24,6 @@ import WireSyncEngine
 final class ConnectRequestsViewController: UIViewController,
                                            UITableViewDataSource,
                                            UITableViewDelegate {
-
     var connectionRequests: [ConversationLike] = []
 
     private var userObserverToken: Any?

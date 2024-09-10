@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 
 class EmojiOnlyStringTests: XCTestCase {
-
     func testThatCommonEmojisAreDetected() {
         // given
         let commonEmoji = ["©️", "ℹ️", "☘️", "⏰️", "➰️", "♥️", "🀄️", "🇨🇭", "⭔", "⭕",

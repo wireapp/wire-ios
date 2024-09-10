@@ -20,7 +20,6 @@ import Foundation
 import WireProtos
 
 extension ZMConversation {
-
     func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
         let nameDescriptor = NSSortDescriptor(key: "normalizedName", ascending: true)
         let sortedUser = (users as NSSet?)?.sortedArray(using: [nameDescriptor]) as? [ZMUser]
@@ -149,7 +148,6 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     public func addParticipantsAndUpdateConversationState(usersAndRoles: [(ZMUser, Role?)]) {
-
         // Is this a new conversation, or an existing one that is being updated?
         let doesExistsOnBackend = self.remoteIdentifier != nil
 
@@ -186,7 +184,6 @@ extension ZMConversation {
     // Fetch an existing role or create a new one if needed
     // Returns whether it was created or found
     private func updateExistingOrCreateParticipantRole(for user: ZMUser, with role: Role?) -> (FetchOrCreation, ParticipantRole)? {
-
         guard let moc = self.managedObjectContext else { return nil }
 
         // If the user is already there, just change the role
@@ -251,7 +248,6 @@ extension ZMConversation {
     /// status, etc.
     @objc
     public func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
-
         guard let moc = self.managedObjectContext else { return }
         let existingUsers = Set(self.participantRoles.map { $0.user })
 
@@ -332,7 +328,6 @@ extension ZMConversation {
 }
 
 public extension Collection where Element == ZMUser {
-
     func belongingTo(domains: Set<String>) -> Set<ZMUser> {
         let result = filter { user in
             guard let domain = user.domain else { return false }

@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnapshotTestCase {
-
     // MARK: MLS Verification
 
     func test_mlsConversationVerified() {

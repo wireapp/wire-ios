@@ -19,7 +19,6 @@
 import UIKit
 
 extension String {
-
     func image(renderedWithAttributes attributes: [NSAttributedString.Key: Any]) -> UIImage? {
         let attributedString = NSAttributedString(string: self, attributes: attributes)
         let size = attributedString.size()

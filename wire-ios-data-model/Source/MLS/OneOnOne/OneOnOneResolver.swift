@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
-
     func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws
 
     @discardableResult
@@ -31,7 +30,6 @@ public protocol OneOnOneResolverInterface {
 }
 
 public final class OneOnOneResolver: OneOnOneResolverInterface {
-
     // MARK: - Dependencies
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface

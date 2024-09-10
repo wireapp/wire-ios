@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class RegistrationCredentialVerificationStrategyTests: MessagingTest {
-
     var registrationStatus: TestRegistrationStatus!
     var sut: WireSyncEngine.RegistationCredentialVerificationStrategy!
 
@@ -119,7 +118,6 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
 }
 
 extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStrategyTestHelper {
-
     func handleResponse(response: ZMTransportResponse) {
         sut.didReceive(response, forSingleRequest: sut.codeSendingSync)
     }

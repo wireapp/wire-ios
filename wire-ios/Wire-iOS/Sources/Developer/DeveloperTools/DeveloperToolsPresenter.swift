@@ -19,11 +19,9 @@
 import SwiftUI
 
 final class DeveloperToolsPresenter: NSObject {
-
     private var displayedDeveloperTools = false
 
     func presentIfNotDisplayed(with router: AppRootRouter?, from topMostViewController: @escaping @autoclosure () -> UIViewController?) {
-
         guard !displayedDeveloperTools else { return }
 
         let developerTools = UIHostingController(
@@ -46,7 +44,6 @@ final class DeveloperToolsPresenter: NSObject {
 }
 
 extension DeveloperToolsPresenter: UIAdaptivePresentationControllerDelegate {
-
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         // called when dismissed by swipe for example
         self.displayedDeveloperTools = false

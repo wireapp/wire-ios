@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 class EquatableOneOfTests: XCTestCase {
-
     func testThatItReportsContainmentVariadicFunction() {
         // Given
         let sut = 42

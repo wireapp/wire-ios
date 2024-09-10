@@ -21,7 +21,6 @@ import UIKit
 import WireDesign
 
 final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
-
     // MARK: - Properties
 
     private let imageContainer = UIView()
@@ -82,7 +81,6 @@ final class GuestLinkInfoCell: UITableViewCell, CellConfigurationConfigurable {
 }
 
 private extension DownStyle {
-
     static var labelStyle: DownStyle {
         let style = DownStyle()
         style.baseFont = UIFont.systemFont(ofSize: 14)

@@ -19,9 +19,7 @@
 import UIKit
 
 extension AppLockModule {
-
     final class View: UIViewController, ViewInterface {
-
         // MARK: - Properties
 
         var presenter: AppLockPresenterViewInterface!
@@ -67,9 +65,7 @@ extension AppLockModule {
 // MARK: - View model
 
 extension AppLockModule {
-
     enum ViewModel: Equatable {
-
         case locked(AuthenticationType)
         case authenticating
 
@@ -124,7 +120,6 @@ extension AppLockModule {
 // MARK: - Refresh
 
 extension AppLockModule.View: AppLockViewPresenterInterface {
-
     func refresh(withModel model: AppLockModule.ViewModel) {
         lockView.showReauth = model.showReauth
         lockView.message = model.message
@@ -138,7 +133,6 @@ extension AppLockModule.View: AppLockViewPresenterInterface {
 // MARK: - Delegates
 
 extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
-
     func passcodeSetupControllerDidFinish() {
         presenter.processEvent(.passcodeSetupCompleted)
     }
@@ -148,14 +142,12 @@ extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
 }
 
 extension AppLockModule.View: UnlockViewControllerDelegate {
-
     func unlockViewControllerDidUnlock() {
         presenter.processEvent(.customPasscodeVerified)
     }
 }
 
 extension AppLockModule.View: AppLockChangeWarningViewControllerDelegate {
-
     func appLockChangeWarningViewControllerDidDismiss() {
         presenter.processEvent(.configChangeAcknowledged)
     }

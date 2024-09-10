@@ -20,7 +20,6 @@
 import XCTest
 
 class WireAnalytics_DatadogTests: XCTestCase {
-
     func test_enable_isExecutedOnlyOnce() {
         // GIVEN
         var count = 0

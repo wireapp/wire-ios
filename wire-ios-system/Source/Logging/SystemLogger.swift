@@ -24,7 +24,6 @@ public protocol FileLoggerDestination {
 }
 
 struct SystemLogger: LoggerProtocol {
-
     let persistQueue = DispatchQueue(label: "persistQueue")
 
     var logFiles: [URL] {

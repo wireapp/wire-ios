@@ -23,7 +23,6 @@ import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
-
     // MARK: - Private Properties
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
@@ -92,7 +91,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
     }
 
     private func setupEventProcessingNotifications() {
-
         NotificationCenter.default
             .publisher(for: .eventProcessorDidStartProcessingEventsNotification)
             .receive(on: DispatchQueue.main)
@@ -244,7 +242,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
         if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
-
             guard
                 let payload = genericMessage.calling.content.data(using: .utf8, allowLossyConversion: false),
 
@@ -289,7 +286,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         payload: Data,
         currentTimestamp: TimeInterval,
         eventTimestamp: Date) {
-
             let identifier = !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
             let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
 
@@ -323,7 +319,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 // MARK: - Wire Call Center Transport
 
 extension CallingRequestStrategy: WireCallCenterTransport {
-
     public func send(
         data: Data,
         conversationId: AVSIdentifier,
@@ -487,7 +482,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
     }
 
     enum SFTResponseError: LocalizedError {
-
         case server(status: Int)
         case transport(error: Error)
         case missingData
@@ -517,9 +511,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 // MARK: - Client Discovery Request
 
 extension CallingRequestStrategy {
-
     struct ClientDiscoveryRequest {
-
         let conversationId: UUID
         let domain: String?
         let completion: ([AVSClient]) -> Void
@@ -628,7 +620,6 @@ extension CallingRequestStrategy {
 // MARK: - Message sending
 
 private extension GenericMessageEntity {
-
     var isRejected: Bool {
         guard
             message.hasCalling else {
@@ -640,7 +631,6 @@ private extension GenericMessageEntity {
 }
 
 private extension Calling {
-
     var isRejected: Bool {
         guard
             let payload = content.data(using: .utf8, allowLossyConversion: false),

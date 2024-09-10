@@ -20,9 +20,7 @@
 import XCTest
 
 final class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
-
     func addSelfUserToTeam() {
-
         let team = Team.insertNewObject(in: self.uiMOC)
         team.name = "Team-A"
         let user = ZMUser.selfUser(in: self.uiMOC)

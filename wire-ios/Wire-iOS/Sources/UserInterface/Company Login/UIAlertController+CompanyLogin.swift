@@ -20,9 +20,7 @@ import UIKit
 import WireSyncEngine
 
 extension UIAlertController {
-
     fileprivate enum CompanyLoginCopy: String {
-
         typealias LoginSSoAlertLocale = L10n.Localizable.Login.Sso.Alert
 
         case ssoAndEmail
@@ -74,7 +72,6 @@ extension UIAlertController {
         case unknown
 
         fileprivate func description(for copy: CompanyLoginCopy) -> String {
-
             typealias LoginSSOErrorAlertLocale = L10n.Localizable.Login.Sso.Error.Alert
 
             switch self {
@@ -109,7 +106,6 @@ extension UIAlertController {
         ssoOnly: Bool = false,
         error: CompanyLoginError? = nil,
         completion: @escaping (_ ssoCode: String?) -> Void) -> UIAlertController {
-
             let copy = CompanyLoginCopy(ssoOnly: ssoOnly)
 
             let controller = UIAlertController(

@@ -19,7 +19,6 @@
 import Foundation
 
 class UserPropertiesAPIV5: UserPropertiesAPIV4 {
-
     override var apiVersion: APIVersion {
         .v5
     }

@@ -22,7 +22,6 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
-
     private var context: NSManagedObjectContext { syncMOC }
 
     private func createUsersWithClientsOnSyncMOC(count: Int) -> [ZMUser] {
@@ -350,7 +349,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatIncreasesSecurityLevelOfCreatedGroupConversationWithAllParticipantsAlreadyTrusted() {
-
         context.performGroupedAndWait {
             // given
             let users = self.createUsersWithClientsOnSyncMOC(count: 2)
@@ -583,7 +581,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
     func testItExpiresAllMessagesAfterTheCurrentOneWhenAUserCausesDegradation() {
         context.performGroupedAndWait {
-
             // GIVEN
             self.createSelfClient()
             let conversation = ZMConversation.insertNewObject(in: context)
@@ -618,7 +615,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
     func testItExpiresAllMessagesAfterTheCurrentOneWhenAMessageCausesDegradation() {
         context.performGroupedAndWait {
-
             // GIVEN
             self.createSelfClient()
             let conversation = ZMConversation.insertNewObject(in: context)
@@ -666,7 +662,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         var message3: ZMOTRMessage! = nil
 
         context.performGroupedAndWait {
-
             // GIVEN
             self.createSelfClient()
             conversation = ZMConversation.insertNewObject(in: context)
@@ -776,7 +771,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         var message3: ZMOTRMessage! = nil
 
         context.performGroupedAndWait {
-
             // GIVEN
             self.createSelfClient()
             conversation = ZMConversation.insertNewObject(in: context)
@@ -809,7 +803,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         uiConversation.acknowledgePrivacyWarningAndResendMessages()
 
         context.performGroupedAndWait {
-
             // THEN
             XCTAssertFalse(message1.isExpired)
             XCTAssertFalse(message1.causedSecurityLevelDegradation)
@@ -856,7 +849,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     // MARK: - Add/Remove participants
 
     func simulateAdding(users: Set<ZMUser>, conversation: ZMConversation, by actionUser: ZMUser) -> ZMSystemMessage {
-
         let userIDs = users.map { $0.remoteIdentifier.transportString() }
         let data = ["user_ids": userIDs]
         let payload = self.payloadForMessage(
@@ -924,7 +916,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func setupUnverifiedUsers(count: Int) -> Set<ZMUser> {
-
         return Set((0..<count).map { _ in
             let unverifiedUser = ZMUser.insertNewObject(in: self.uiMOC)
             let unverifiedUserConnection = ZMConnection.insertNewSentConnection(to: unverifiedUser)

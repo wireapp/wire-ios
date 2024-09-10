@@ -21,7 +21,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class SearchResultTests: DatabaseTest {
-
     private var mockCache: SearchUsersCache!
 
     override func setUp() {

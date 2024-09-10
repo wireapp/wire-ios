@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockTransportSession {
-
     @objc(fetchUserWithIdentifier:)
     public func fetchUser(withIdentifier identifier: String) -> MockUser? {
         let request = MockUser.sortedFetchRequest(withPredicate: NSPredicate(format: "%K == %@", #keyPath(MockUser.identifier), identifier.lowercased()))
@@ -62,7 +61,6 @@ extension MockTransportSession {
 
     @objc(insertUserWithName:)
     public func insertUserWithName(name: String) -> MockUser {
-
         return self.insertUserWith(name: name, includeClient: true)
     }
 }

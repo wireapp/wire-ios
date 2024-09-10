@@ -21,7 +21,6 @@ import WireMockTransport
 import WireSyncEngine
 
 class OTRTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 
@@ -64,7 +63,6 @@ class OTRTests: IntegrationTest {
     }
 
     func testThatItSendsARequestToUpdateSignalingKeys() {
-
         // given
         XCTAssert(login())
         self.mockTransportSession.resetReceivedRequests()
@@ -89,7 +87,6 @@ class OTRTests: IntegrationTest {
     }
 
     func testThatItCreatesNewKeysIfReqeustToSyncSignalingKeysFailedWithBadRequest() {
-
         // given
         XCTAssert(login())
         self.mockTransportSession.resetReceivedRequests()

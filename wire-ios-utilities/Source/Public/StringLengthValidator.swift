@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 open class StringLengthValidator: NSObject {
-
     private static let controlSet: CharacterSet = {
         var controlSet = CharacterSet.controlCharacters
         controlSet.remove(Unicode.Scalar(0x200d)!)

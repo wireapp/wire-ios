@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class CharacterInputFieldSnapshotTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
     private var sut: CharacterInputField! = nil
 

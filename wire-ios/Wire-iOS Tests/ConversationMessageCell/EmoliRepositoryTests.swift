@@ -20,7 +20,6 @@
 import XCTest
 
 final class EmojiRepositoryTests: XCTestCase {
-
     var sut: EmojiRepository!
 
     // MARK: setUp

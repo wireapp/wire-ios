@@ -19,7 +19,6 @@
 import Foundation
 
 class RemoveDuplicatePreAction: CoreDataMigrationAction {
-
     private enum Keys: String {
         case needsToBeUpdatedFromBackend
         case primaryKey

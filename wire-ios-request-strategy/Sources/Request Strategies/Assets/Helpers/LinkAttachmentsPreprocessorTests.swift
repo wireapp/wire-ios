@@ -24,7 +24,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class MockAttachmentDetector: LinkAttachmentDetectorType {
-
     var nextResult = [LinkAttachment]()
     var downloadCount: Int = 0
     var excludedRanges: [NSRange] = []
@@ -37,7 +36,6 @@ final class MockAttachmentDetector: LinkAttachmentDetectorType {
 }
 
 class LinkAttachmentsPreprocessorTests: MessagingTestBase {
-
     var sut: LinkAttachmentsPreprocessor!
     var mockDetector: MockAttachmentDetector!
 
@@ -127,7 +125,6 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     func testThatItFinishesIfNoAttachmentsAreReturned() {
         var message: ZMClientMessage!
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             message = self.createMessage()
 
@@ -146,7 +143,6 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         var message: ZMClientMessage!
 
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
@@ -215,7 +211,6 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         var message: ZMClientMessage!
         var attachment: LinkAttachment!
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             attachment = self.createAttachment()
             self.mockDetector.nextResult = [attachment]

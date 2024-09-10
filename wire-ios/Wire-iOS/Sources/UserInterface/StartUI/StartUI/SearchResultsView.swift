@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class SearchResultsView: UIView {
-
     let accessoryViewMargin: CGFloat = 16.0
     let emptyResultContainer = UIView()
 
@@ -169,7 +168,6 @@ final class SearchResultsView: UIView {
     }
 
     private func updateContentInset() {
-
         if let accessoryView = self.accessoryView {
             accessoryView.layoutIfNeeded()
             let bottomInset = (UIScreen.hasNotch ? accessoryViewMargin : 0) + accessoryView.frame.height - UIScreen.safeArea.bottom

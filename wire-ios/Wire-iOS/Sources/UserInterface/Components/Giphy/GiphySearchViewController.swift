@@ -30,7 +30,6 @@ protocol GiphySearchViewControllerDelegate: AnyObject {
 }
 
 final class GiphySearchViewController: VerticalColumnCollectionViewController {
-
     typealias Giphy = L10n.Localizable.Giphy
 
     weak var delegate: GiphySearchViewControllerDelegate?
@@ -263,7 +262,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 // MARK: - Search
 
 extension GiphySearchViewController {
-
     private func performSearch() {
         cleanUpPendingTimer()
 
@@ -295,7 +293,6 @@ extension GiphySearchViewController {
 // MARK: - Pagination
 
 extension GiphySearchViewController {
-
     private func fetchMoreResults() {
         if pendingFetchTask != nil {
             return
@@ -340,7 +337,6 @@ extension GiphySearchViewController {
 // MARK: - GiphyConfirmationViewControllerDelegate
 
 extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
-
     func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data) {
         delegate?.giphySearchViewController(self, didSelectImageData: imageData, searchTerm: searchTerm)
     }

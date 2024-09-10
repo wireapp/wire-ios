@@ -23,7 +23,6 @@ import WireCoreCrypto
 /// self-user and the self-mls-conversation from a managed object context in order to pass it to
 /// the wrapped use case and provide an argument-less `invoke` method.
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
-
     private let context: NSManagedObjectContext
     private let featureRepository: FeatureRepositoryInterface
     /// The `featureRepository` operates on a context, so every operation must be dispatched
@@ -48,7 +47,6 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     }
 
     public func invoke() async throws -> Bool {
-
         let isE2EIEnabled = await featureRepositoryContext.perform {
             featureRepository.fetchE2EI().isEnabled
         }
@@ -69,7 +67,6 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
 }
 
 extension IsSelfUserE2EICertifiedUseCase {
-
     enum Error: Swift.Error {
         case failedToGetTheSelfMLSConversation
     }

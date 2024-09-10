@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 class ShareFileUseCaseTests: ZMTBaseTest {
-
     // MARK: - Properties
 
     private var sut: ShareFileUseCase!

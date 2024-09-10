@@ -94,7 +94,6 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
          icon: StyleKitIcon? = nil,
          accessoryViewMode: AccessoryViewMode = .default,
          copiableText: String?) {
-
         self.title = title
         self.destructive = isDestructive
         self.presentationStyle = presentationStyle

@@ -21,7 +21,6 @@ import WireLinkPreview
 import XCTest
 
 class Message_FormattingTests: XCTestCase {
-
     let previewURL = "http://www.example.com/1"
     let regularURL = "http://www.example.com/2"
     let giphyURL = "giphy.com"

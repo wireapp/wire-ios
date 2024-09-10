@@ -21,7 +21,6 @@ import UserNotifications
 
 /// Creates and cancels local notifications
 @objcMembers public class LocalNotificationDispatcher: NSObject {
-
     public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
     let eventNotifications: ZMLocalNotificationSet
@@ -72,7 +71,6 @@ import UserNotifications
 }
 
 extension LocalNotificationDispatcher: ZMEventConsumer {
-
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         // nop
     }
@@ -99,7 +97,6 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
             }
 
             if let receivedMessage = GenericMessage(from: event) {
-
                 if receivedMessage.hasReaction,
                    receivedMessage.reaction.emoji.isEmpty,
                    let messageID = UUID(uuidString: receivedMessage.reaction.messageID) {
@@ -125,7 +122,6 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
 // MARK: - Availability behaviour change
 
 extension LocalNotificationDispatcher {
-
     public func notifyAvailabilityBehaviourChangedIfNeeded() {
         let selfUser = ZMUser.selfUser(in: syncMOC)
         var notify = selfUser.needsToNotifyAvailabilityBehaviourChange
@@ -143,7 +139,6 @@ extension LocalNotificationDispatcher {
 // MARK: - Failed messages
 
 extension LocalNotificationDispatcher: PushMessageHandler {
-
     /// Informs the user that the message failed to send
     public func didFailToSend(_ message: ZMMessage) {
         if message.visibleInConversation == nil || message.conversation?.conversationType == .self {
@@ -165,7 +160,6 @@ extension LocalNotificationDispatcher: PushMessageHandler {
 // MARK: - Canceling notifications
 
 extension LocalNotificationDispatcher {
-
     private var allNotificationSets: [ZMLocalNotificationSet] {
         return [self.eventNotifications,
                 self.failedMessageNotifications,

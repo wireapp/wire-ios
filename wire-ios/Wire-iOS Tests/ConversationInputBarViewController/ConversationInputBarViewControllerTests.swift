@@ -27,7 +27,6 @@ import XCTest
 // instead of 2. That's because snapshot tests don't work well with maskedCorners and CI.
 // More on the issue can be found here: https://github.com/pointfreeco/swift-snapshot-testing/issues/358#issuecomment-939854566
 final class ConversationInputBarViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var mockConversation: MockInputBarConversationType!

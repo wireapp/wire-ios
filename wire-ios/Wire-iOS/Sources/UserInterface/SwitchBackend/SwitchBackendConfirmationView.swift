@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct SwitchBackendConfirmationView: View {
-
     private typealias Strings = L10n.Localizable.UrlAction.SwitchBackendConfirmation
 
     let viewModel: SwitchBackendConfirmationViewModel

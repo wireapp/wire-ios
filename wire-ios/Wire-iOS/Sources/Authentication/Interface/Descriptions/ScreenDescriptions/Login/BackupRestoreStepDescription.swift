@@ -24,7 +24,6 @@ import WireCommonComponents
  */
 
 final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
-
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
 

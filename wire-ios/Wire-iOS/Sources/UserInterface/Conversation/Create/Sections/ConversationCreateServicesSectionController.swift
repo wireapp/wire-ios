@@ -19,7 +19,6 @@
 import UIKit
 
 final class ConversationCreateServicesSectionController: ConversationCreateSectionController {
-
     typealias Cell = ConversationCreateServicesCell
 
     var toggleAction: ((Bool) -> Void)?

@@ -22,7 +22,6 @@ import WireRequestStrategy
 import WireUtilities
 
 struct ZMUserSessionBuilder {
-
     // MARK: - Properties
 
     private var analytics: (any AnalyticsType)?

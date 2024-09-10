@@ -20,7 +20,6 @@
 import XCTest
 
 class UserProfileUpdateRequestStrategyTests: MessagingTest {
-
     var sut: UserProfileUpdateRequestStrategy!
     var userProfileUpdateStatus: TestUserProfileUpdateStatus!
     var mockApplicationStatus: MockApplicationStatus!
@@ -47,9 +46,7 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
 // MARK: - Request generation
 
 extension UserProfileUpdateRequestStrategyTests {
-
     func testThatItDoesNotCreateAnyRequestWhenIdle() {
-
         // GIVEN
         // already authenticated in setup
 
@@ -58,7 +55,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToUpdatePassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -75,7 +71,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToChangeEmail() {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
@@ -96,7 +91,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToUpdateEmailAfterUpdatingPassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -114,7 +108,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToCheckHandleAvailability() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
@@ -129,7 +122,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToSetHandle() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
@@ -145,7 +137,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCreatesARequestToFindHandleSuggestion() {
-
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -179,11 +170,9 @@ extension UserProfileUpdateRequestStrategyTests {
 // MARK: - Parsing response
 
 extension UserProfileUpdateRequestStrategyTests {
-
     // MARK: - Setting email and password
 
     func testThatCallsDidUpdatePasswordSuccessfully() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -199,7 +188,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatCallsDidUpdatePasswordSuccessfullyOn403() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -215,7 +203,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatCallsDidFailPasswordUpdateOn400() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -231,7 +218,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsDidUpdateEmailSuccessfullyWhenSettingEmailAndPassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -248,7 +234,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsDidFailEmailUpdateWithInvalidEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -267,7 +252,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsDidFailEmailUpdateWithDuplicatedEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -286,7 +270,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsDidFailEmailUpdateWithUnknownError() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
         try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
@@ -307,7 +290,6 @@ extension UserProfileUpdateRequestStrategyTests {
     // MARK: - Email change
 
     func testThatItCallsDidUpdateEmailSuccessfullyWhenChangingEmail() {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
@@ -326,7 +308,6 @@ extension UserProfileUpdateRequestStrategyTests {
     // MARK: - Check handle availability
 
     func testThatItCallsDidFetchHandle() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
@@ -342,7 +323,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsDidNotFindHandle() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
@@ -358,7 +338,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsFailedToCheckHandleAvailability() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
@@ -376,7 +355,6 @@ extension UserProfileUpdateRequestStrategyTests {
     // MARK: - Setting handle
 
     func testThatItCallsSuccessSetHandle() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
@@ -392,7 +370,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsFailedToSetHandle() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
@@ -408,7 +385,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsFailedToSetHandleBecauseExisting() {
-
         // GIVEN
         let handle = "martha"
         self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
@@ -426,7 +402,6 @@ extension UserProfileUpdateRequestStrategyTests {
     // MARK: - Suggesting handles
 
     func testThatItCallsDidFinddHandleSuggestion() {
-
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -447,7 +422,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsFailedToFindHandleSuggestionIfNoHandlesAreReturned() {
-
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -462,7 +436,6 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     func testThatItCallsFailedToFindHandleSuggestionInCaseOfError() {
-
         // GIVEN
         self.userProfileUpdateStatus.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -484,7 +457,6 @@ extension UserProfileUpdateRequestStrategyTests {
 // MARK: - Helpers
 
 extension UserProfileUpdateRequestStrategyTests {
-
     func errorResponse(path: String? = nil) -> ZMTransportResponse {
         if let url = path.flatMap(URL.init) {
             return ZMTransportResponse(originalUrl: url, httpStatus: 400, error: nil)
@@ -575,7 +547,6 @@ extension UserProfileUpdateRequestStrategyTests {
 }
 
 extension ZMTransportResponse {
-
     convenience init(originalUrl: URL, httpStatus: Int, error: Error?) {
         let headers = ["Content-Type": "application/json"]
         let httpResponse = HTTPURLResponse(url: originalUrl, statusCode: httpStatus, httpVersion: nil, headerFields: headers)
@@ -584,7 +555,6 @@ extension ZMTransportResponse {
 }
 
 class TestUserProfileUpdateStatus: UserProfileUpdateStatus {
-
     var recordedDidFailEmailUpdate: [Error] = []
     var recordedDidUpdateEmailSuccessfully = 0
     var recordedDidChangePhoneSuccesfully = 0

@@ -20,7 +20,6 @@
 import XCTest
 
 final class EventPayloadDecoderTests: XCTestCase {
-
     func testDecodeData() throws {
         // given
         let decoder = EventPayloadDecoder()

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class ConversationCreationOptionsTests: ZMConversationTestsBase {
-
     func testThatItCreatesTheConversationWithOptions() {
         // given
         let user = self.createUser()
@@ -39,7 +38,6 @@ class ConversationCreationOptionsTests: ZMConversationTestsBase {
 }
 
 extension ContextProvider {
-
     func insertGroup(with options: ConversationCreationOptions) -> ZMConversation {
         return ZMConversation.insertGroupConversation(
             session: self,

@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class AuthenticationNavigationBar: DefaultNavigationBar {
-
     override func configureBackground() {
         isTranslucent = true
         setBackgroundImage(UIImage(), for: .default)
@@ -29,7 +28,6 @@ final class AuthenticationNavigationBar: DefaultNavigationBar {
 }
 
 extension AuthenticationNavigationBar {
-
     static func makeBackButton() -> IconButton {
         let button = IconButton(style: .default)
         button.setIcon(UIApplication.isLeftToRightLayout ? .backArrow : .forwardArrow, size: .tiny, for: .normal)

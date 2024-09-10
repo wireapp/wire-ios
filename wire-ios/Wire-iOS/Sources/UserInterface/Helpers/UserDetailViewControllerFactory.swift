@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
-
     /// Create a ServiceDetailViewController if the user is a serviceUser, otherwise return a ProfileViewController
     ///
     /// - Parameters:
@@ -38,7 +37,6 @@ enum UserDetailViewControllerFactory {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) -> UIViewController {
-
         if user.isServiceUser, let serviceUser = user as? ServiceUser {
             let serviceDetailViewController = ServiceDetailViewController(
                 serviceUser: serviceUser,

@@ -20,7 +20,6 @@ import CoreData
 import Foundation
 
 extension NSManagedObjectContext: ZMSynchonizableKeyValueStore {
-
     public func store(value: PersistableInMetadata?, key: String) {
         self.setPersistentStoreMetadata(value, key: key)
     }

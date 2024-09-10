@@ -42,7 +42,6 @@ public protocol EntityAction {
 }
 
 public extension EntityAction {
-
     typealias ResultHandler = (Swift.Result<Result, Failure>) -> Void
 
     static var notificationName: Notification.Name {
@@ -103,7 +102,6 @@ public extension EntityAction {
 }
 
 public extension EntityAction {
-
     /// Notify a success result.
     ///
     /// - Parameter result: The successful result.
@@ -122,7 +120,6 @@ public extension EntityAction {
 }
 
 public extension EntityAction where Result == Void {
-
     /// Notify a success result.
 
     mutating func succeed() {
@@ -133,7 +130,6 @@ public extension EntityAction where Result == Void {
 // MARK: - Async / Await
 
 public extension EntityAction {
-
     /// Perform the action with the given result handler.
     ///
     /// - Parameters:

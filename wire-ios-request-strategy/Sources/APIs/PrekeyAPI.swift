@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol PrekeyAPI {
-
     func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID
 }
 
@@ -31,7 +30,6 @@ extension Payload.PrekeyByUserID {
 }
 
 class PrekeyAPIV0: PrekeyAPI {
-
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
@@ -134,9 +132,7 @@ class PrekeyAPIV6: PrekeyAPIV5 {
 }
 
 extension Collection where Element == QualifiedClientID {
-
     var clientListByUserID: Payload.ClientListByUserID {
-
         let initial: Payload.ClientListByUserID = [:]
 
         return self.reduce(into: initial) { result, client in

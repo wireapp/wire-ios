@@ -24,7 +24,6 @@ protocol InviteTeamMemberSectionDelegate: AnyObject {
 }
 
 final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
-
     var team: Team?
     weak var delegate: InviteTeamMemberSectionDelegate?
 

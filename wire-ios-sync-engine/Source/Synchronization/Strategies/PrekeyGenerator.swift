@@ -20,7 +20,6 @@ import Foundation
 import WireCryptobox
 
 class PrekeyGenerator {
-
     // This is needed to save ~3 seconds for every unit test run
     // as generating 100 keys is an expensive operation
     static var _test_overrideNumberOfKeys: UInt16?

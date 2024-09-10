@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 extension UIAlertController {
-
     typealias DegradedCallLocale = L10n.Localizable.Call.Degraded
 
     static func makeOutgoingDegradedProteusCall(
@@ -28,7 +27,6 @@ extension UIAlertController {
         callEnded: Bool = false,
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
     ) -> UIAlertController {
-
         typealias GeneralLocale = L10n.Localizable.General
 
         let title = degradedCallTitle(forCallEnded: callEnded)
@@ -57,7 +55,6 @@ extension UIAlertController {
         callEnded: Bool = false,
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
     ) -> UIAlertController {
-
         let title = degradedCallTitle(forCallEnded: callEnded)
         let message = degradedCallMessage(forUser: degradedUser, callEnded: callEnded)
 
@@ -82,7 +79,6 @@ extension UIAlertController {
     static func makeOutgoingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
         cancelBlock: (() -> Void)? = nil) -> UIAlertController {
-
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
 
             let title = DegradedCall.title
@@ -112,7 +108,6 @@ extension UIAlertController {
     static func makeEndingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
         cancelBlock: (() -> Void)? = nil) -> UIAlertController {
-
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
 
@@ -143,7 +138,6 @@ extension UIAlertController {
     static func makeIncomingDegradedMLSCall(
         confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)
     ) -> UIAlertController {
-
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
 

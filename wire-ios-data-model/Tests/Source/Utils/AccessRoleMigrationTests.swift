@@ -21,9 +21,7 @@ import Foundation
 import XCTest
 
 class AccessRoleMigrationTests: DiskDatabaseTest {
-
     func testForcingToFetchConversationAccessRoles() {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: moc)
         let team = createTeam()

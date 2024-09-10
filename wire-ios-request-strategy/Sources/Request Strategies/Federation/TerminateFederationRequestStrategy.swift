@@ -22,7 +22,6 @@ private let zmLog = ZMSLog(tag: "terminate federation")
 
 @objcMembers
 public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
-
     // MARK: - Properties
 
     var federationTerminationManager: FederationTerminationManagerInterface
@@ -58,7 +57,6 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
 // MARK: - Event processing
 
 extension TerminateFederationRequestStrategy: ZMEventConsumer {
-
     public func processEvents(
         _ events: [ZMUpdateEvent],
         liveEvents: Bool,
@@ -92,17 +90,14 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
 }
 
 extension Payload {
-
     /// The domain that the self domain has stopped federate with.
     struct FederationDelete: Codable {
-
         let domain: String
         let type: String
     }
 
     /// The list of domains that have terminated federation with each other.
     struct ConnectionRemoved: Codable {
-
         let domains: [String]
         let type: String
     }

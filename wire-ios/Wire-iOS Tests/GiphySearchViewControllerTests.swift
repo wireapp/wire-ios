@@ -21,7 +21,6 @@ import XCTest
 import Ziphy
 
 final class GiphySearchViewControllerTests: XCTestCase {
-
     weak var sut: GiphySearchViewController!
 
     var mockConversation: MockConversation!

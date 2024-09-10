@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 extension ZMBaseManagedObjectTest {
-
     var storageDirectory: URL {
         FileManager.default.urls(for: .documentDirectory,
                                  in: .userDomainMask).first!

@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public protocol LabelType: NSObjectProtocol {
-
     var remoteIdentifier: UUID? { get }
     var kind: Label.Kind { get }
     var name: String? { get }
@@ -28,7 +27,6 @@ public protocol LabelType: NSObjectProtocol {
 
 @objcMembers
 public class Label: ZMManagedObject, LabelType {
-
     @objc
     public enum Kind: Int16 {
         case folder, favorite
@@ -98,7 +96,6 @@ public class Label: ZMManagedObject, LabelType {
 
     @discardableResult
     static func fetchOrCreateFavoriteLabel(in context: NSManagedObjectContext, create: Bool) -> Label {
-
         // Executing a fetch request is quite expensive, because it will _always_ (1) round trip through
         // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.
         // Looping through all objects in the context is way cheaper, because it does not involve (1)

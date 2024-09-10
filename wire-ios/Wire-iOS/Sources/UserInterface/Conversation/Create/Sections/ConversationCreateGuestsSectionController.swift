@@ -19,7 +19,6 @@
 import UIKit
 
 final class ConversationCreateGuestsSectionController: ConversationCreateSectionController {
-
     typealias Cell = ConversationCreateGuestsCell
 
     var toggleAction: ((Bool) -> Void)?

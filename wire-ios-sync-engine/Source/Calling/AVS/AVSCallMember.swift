@@ -24,7 +24,6 @@ import Foundation
  */
 
 public struct AVSCallMember: Hashable {
-
     /// The client used in the call.
     public let client: AVSClient
 
@@ -86,7 +85,6 @@ public struct AVSCallMember: Hashable {
 }
 
 extension AVSCallMember {
-
     init(member: AVSParticipantsChange.Member) {
         client = AVSClient(member: member)
         audioState = member.aestab

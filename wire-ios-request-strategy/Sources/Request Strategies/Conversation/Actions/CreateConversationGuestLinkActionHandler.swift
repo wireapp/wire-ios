@@ -20,14 +20,12 @@ import Foundation
 import WireDataModel
 
 final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
-
     // MARK: - Request generation
 
     override func request(
         for action: Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         let identifier = action.conversationID.transportString()
 
         switch apiVersion {
@@ -56,7 +54,6 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
     // MARK: - Request handling
 
     struct ConversationCodeInfo: Decodable {
-
         let code: String
         let has_password: Bool
         let key: String
@@ -64,7 +61,6 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: CreateConversationGuestLinkAction) {
-
         var action = action
 
         switch (response.httpStatus, response.payloadLabel()) {
@@ -75,7 +71,6 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
             guard let payload = response.payload?.asDictionary(),
                   let data = payload["data"] as? [String: Any],
                   let uri = data["uri"] as? String else {
-
                 action.fail(with: .failedToDecodePayload)
                 return
             }

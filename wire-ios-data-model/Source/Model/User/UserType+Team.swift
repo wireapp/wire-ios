@@ -19,7 +19,6 @@
 import Foundation
 
 public extension UserType {
-
     func isOnSameTeam(otherUser: UserType) -> Bool {
         return canAccessCompanyInformation(of: otherUser)
     }

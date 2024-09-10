@@ -19,7 +19,6 @@
 import Foundation
 
 protocol KeyPathObjectSyncTranscoder: AnyObject {
-
     associatedtype T: Hashable
 
     /// Called when a object needs to be synchronized. It's the transcoder's responsibillity to call the `completion` handler when the synchronization is successfull or cancel.
@@ -43,7 +42,6 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
  
  */
 class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
-
     // MARK: - Life Cycle
 
     init(entityName: String, _ keyPath: WritableKeyPath<Transcoder.T, Bool>) {

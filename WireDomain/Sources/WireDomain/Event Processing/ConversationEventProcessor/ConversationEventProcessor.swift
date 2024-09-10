@@ -21,7 +21,6 @@ import WireAPI
 /// Process conversation update events.
 
 protocol ConversationEventProcessorProtocol {
-
     /// Process a conversation update event.
     ///
     /// Processing an event is the app's only chance to consume
@@ -33,7 +32,6 @@ protocol ConversationEventProcessorProtocol {
 }
 
 struct ConversationEventProcessor {
-
     let accessUpdateEventProcessor: any ConversationAccessUpdateEventProcessorProtocol
     let codeUpdateEventProcessor: any ConversationCodeUpdateEventProcessorProtocol
     let createEventProcessor: any ConversationCreateEventProcessorProtocol

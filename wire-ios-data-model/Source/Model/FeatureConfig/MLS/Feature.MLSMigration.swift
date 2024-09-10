@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct MLSMigration: Codable {
-
         // MARK: - Properties
 
         /// Whether MLS Migration is enabled.
@@ -45,7 +43,6 @@ public extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-
             /// The starting time of the migration
 
             public let startTime: Date?

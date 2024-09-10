@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
-
     var coreDataFixture: CoreDataFixture!
     var sut: RemoveClientStepViewController!
     private var snapshotHelper: SnapshotHelper!

@@ -19,7 +19,6 @@
 import Foundation
 
 enum DebugCommand {
-
     /// Update accessRoles for existing conversations where the team is nil and accessRoles == [.teamMember]
     case repairInvalidAccessRoles
 

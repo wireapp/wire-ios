@@ -22,12 +22,10 @@ import WireDataModel
 private let zmLog = ZMSLog(tag: "rich-profile")
 
 public class UserRichProfileRequestStrategy: AbstractRequestStrategy {
-
     var modifiedSync: ZMDownstreamObjectSync!
 
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                          applicationStatus: ApplicationStatus) {
-
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         self.modifiedSync = ZMDownstreamObjectSync(transcoder: self,

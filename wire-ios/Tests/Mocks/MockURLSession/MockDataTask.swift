@@ -22,7 +22,6 @@ import Foundation
 typealias MockDataTaskCompletionHandler = (Data?, URLResponse?, Error?) -> Void
 
 class MockDataTask: DataTask {
-
     weak var session: MockURLSession?
     let taskIdentifier: Int
     let completionHandler: MockDataTaskCompletionHandler

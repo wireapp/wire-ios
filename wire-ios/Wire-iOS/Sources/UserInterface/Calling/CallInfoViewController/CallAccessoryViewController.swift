@@ -25,7 +25,6 @@ protocol CallAccessoryViewControllerDelegate: AnyObject {
 }
 
 final class CallAccessoryViewController: UIViewController, CallParticipantsListViewControllerDelegate {
-
     weak var delegate: CallAccessoryViewControllerDelegate?
     private let participantsViewController: CallParticipantsListViewController
 

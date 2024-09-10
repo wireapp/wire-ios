@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMOTRMessage {
-
     /// Whether the message caused security level degradation (from verified to unverified)
     /// in this user session (i.e. since the app was started. This will be kept in memory
     /// and not persisted). This flag can be set only from the sync context. It can be read
@@ -63,7 +62,6 @@ extension ZMOTRMessage {
 }
 
 extension ZMConversation {
-
     /// List of messages that were not sent because of security level degradation in the conversation
     /// in this user session (i.e. since the app was started. This will be kept in memory
     /// and not persisted).
@@ -89,7 +87,6 @@ private let messagesThatCausedSecurityLevelDegradationKey = "ZM_messagesThatCaus
 typealias SecurityDegradingMessagesByConversation = [NSManagedObjectID: Set<NSManagedObjectID>]
 
 extension NSManagedObjectContext {
-
     /// Non-persisted list of messages that caused security level degradation, indexed by conversation
     fileprivate(set) var messagesThatCausedSecurityLevelDegradationByConversation: SecurityDegradingMessagesByConversation {
         get {

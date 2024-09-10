@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 enum Constants {
-
     static var teamAccountViewImageInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
 }
 

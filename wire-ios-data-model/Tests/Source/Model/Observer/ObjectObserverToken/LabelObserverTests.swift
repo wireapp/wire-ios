@@ -19,7 +19,6 @@
 import Foundation
 
 final class TestLabelObserver: NSObject, LabelObserver {
-
     var notifications = [LabelChangeInfo]()
 
     func clearNotifications() {
@@ -32,7 +31,6 @@ final class TestLabelObserver: NSObject, LabelObserver {
 }
 
 final class LabelObserverTests: NotificationDispatcherTestBase {
-
     var labelObserver: TestLabelObserver!
 
     override func setUp() {
@@ -52,7 +50,6 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
     }
 
     func checkThatItNotifiesTheObserverOfAChange(_ team: Label, modifier: (Label) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
-
         // given
         self.uiMOC.saveOrRollback()
 

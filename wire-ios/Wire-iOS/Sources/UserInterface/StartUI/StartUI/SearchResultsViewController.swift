@@ -25,7 +25,6 @@ enum SearchGroup: Int {
 }
 
 extension SearchGroup {
-
     var accessible: Bool {
         switch self {
         case .people:
@@ -59,7 +58,6 @@ extension SearchGroup {
 }
 
 protocol SearchResultsViewControllerDelegate: AnyObject {
-
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnUser user: UserType, indexPath: IndexPath, section: SearchResultsViewControllerSection)
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didDoubleTapOnUser user: UserType, indexPath: IndexPath)
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation)
@@ -128,7 +126,6 @@ extension UIViewController {
 }
 
 final class SearchResultsViewController: UIViewController {
-
     lazy var searchResultsView: SearchResultsView = {
         let view = SearchResultsView()
         view.parentViewController = self
@@ -368,7 +365,6 @@ final class SearchResultsViewController: UIViewController {
     }
 
     func updateSections(withSearchResult searchResult: SearchResult) {
-
         var contacts = searchResult.contacts
         var teamContacts = searchResult.teamMembers
 
@@ -436,7 +432,6 @@ final class SearchResultsViewController: UIViewController {
 }
 
 extension SearchResultsViewController: SearchSectionControllerDelegate {
-
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectUser user: UserType, at indexPath: IndexPath) {
         if let user = user as? ZMUser {
             delegate?.searchResultsViewController(self, didTapOnUser: user, indexPath: indexPath, section: sectionFor(controller: searchSectionController))

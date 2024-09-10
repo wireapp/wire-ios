@@ -22,7 +22,6 @@ import XCTest
 @testable import WireUIFoundation
 
 final class MainTabBarControllerTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

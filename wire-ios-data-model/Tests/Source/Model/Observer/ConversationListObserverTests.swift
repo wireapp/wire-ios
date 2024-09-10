@@ -19,9 +19,7 @@
 @testable import WireDataModel
 
 class ConversationListObserverTests: NotificationDispatcherTestBase {
-
     class TestObserver: NSObject, ZMConversationListObserver {
-
         var changes: [ConversationListChangeInfo] = []
 
         func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -31,7 +29,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     var testObserver: TestObserver!
 
     class TestConversationListReloadObserver: NSObject, ZMConversationListReloadObserver {
-
         var conversationListsReloadCount = 0
 
         func conversationListsDidReload() {
@@ -41,7 +38,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     var testConversationListReloadObserver: TestConversationListReloadObserver!
 
     class TestConversationListFolderObserver: NSObject, ZMConversationListFolderObserver {
-
         var conversationListsFolderChangeCount = 0
 
         func conversationListsDidChangeFolders() {
@@ -748,7 +744,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
-
         // given
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
 
@@ -770,7 +765,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItSendsTheCorrectUpdatesWhenRegisteringAnObserverDuringInsertAndUpdate() {
-
         // given
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         var conversation: ZMConversation!

@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct SelfDeletingMessages: Codable {
-
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.
@@ -45,7 +43,6 @@ public extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-
             /// The number of seconds after which all enforced self-deleting messages
             /// will delete.
             ///

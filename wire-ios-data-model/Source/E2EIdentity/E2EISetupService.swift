@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 
 public protocol E2EISetupServiceInterface {
-
     func isTrustAnchorRegistered()  async throws -> Bool
 
     func registerTrustAnchor(_ trustAnchor: String) async throws
@@ -48,7 +47,6 @@ public protocol E2EISetupServiceInterface {
 
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2EISetupService: E2EISetupServiceInterface {
-
     // MARK: - Properties
 
     private let featureRepository: FeatureRepositoryInterface

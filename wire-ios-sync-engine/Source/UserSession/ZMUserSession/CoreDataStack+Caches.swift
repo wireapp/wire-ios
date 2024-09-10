@@ -19,7 +19,6 @@
 import WireUtilities
 
 extension CoreDataStack {
-
     func linkCaches(_ caches: UserSessionDependencies.Caches) {
         viewContext.zm_fileAssetCache = caches.fileAssets
         viewContext.zm_userImageCache = caches.userImages

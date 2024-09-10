@@ -19,7 +19,6 @@
 import Foundation
 
 enum DeveloperDebugActionsDisplayModel {
-
     struct ButtonItem: Identifiable {
         var id: String { title }
 

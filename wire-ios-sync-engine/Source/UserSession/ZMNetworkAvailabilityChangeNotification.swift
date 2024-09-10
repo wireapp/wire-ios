@@ -19,7 +19,6 @@
 import Foundation
 
 public class ZMNetworkAvailabilityChangeNotification: NSObject {
-
     static let name = Notification.Name(rawValue: "ZMNetworkAvailabilityChangeNotification")
 
     static let stateKey = "networkState"

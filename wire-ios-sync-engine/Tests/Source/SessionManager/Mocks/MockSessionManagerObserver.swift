@@ -19,7 +19,6 @@
 import Foundation
 
 final class MockSessionManagerObserver: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
-
     var createdUserSession: [ZMUserSession] = []
     var createdUnauthenticatedSession: [UnauthenticatedSession] = []
     var destroyedUserSessions: [UUID] = []

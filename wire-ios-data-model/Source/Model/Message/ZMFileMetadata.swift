@@ -25,7 +25,6 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 @objcMembers
 open class ZMFileMetadata: NSObject {
-
     public let fileURL: URL
     public let thumbnail: Data?
     public let filename: String
@@ -55,7 +54,6 @@ open class ZMFileMetadata: NSObject {
 }
 
 open class ZMAudioMetadata: ZMFileMetadata {
-
     public let duration: TimeInterval
     public let normalizedLoudness: [Float]
 
@@ -78,7 +76,6 @@ open class ZMAudioMetadata: ZMFileMetadata {
 }
 
 open class ZMVideoMetadata: ZMFileMetadata {
-
     public let duration: TimeInterval
     public let dimensions: CGSize
 
@@ -102,7 +99,6 @@ open class ZMVideoMetadata: ZMFileMetadata {
 }
 
 public extension ZMFileMetadata {
-
     var mimeType: String {
         return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
     }

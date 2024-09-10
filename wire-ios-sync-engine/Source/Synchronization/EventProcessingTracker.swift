@@ -30,7 +30,6 @@ import WireDataModel
 }
 
 @objc public class EventProcessingTracker: NSObject, EventProcessingTrackerProtocol {
-
     var eventAttributes = [String: [String: NSObject]]()
     public let eventName = "event.processing"
 

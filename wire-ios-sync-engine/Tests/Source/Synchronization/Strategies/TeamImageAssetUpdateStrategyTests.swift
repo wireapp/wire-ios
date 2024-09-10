@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class TeamImageAssetUpdateStrategyTests: MessagingTest {
-
     var sut: TeamImageAssetUpdateStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     let pictureAssetId = "blah"

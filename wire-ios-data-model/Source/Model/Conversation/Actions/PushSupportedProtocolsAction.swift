@@ -19,7 +19,6 @@
 import Foundation
 
 public final class PushSupportedProtocolsAction: EntityAction {
-
     public typealias Result = Void
 
     public enum Failure: Error, Equatable {

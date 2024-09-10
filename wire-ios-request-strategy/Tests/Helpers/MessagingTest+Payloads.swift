@@ -26,7 +26,6 @@ extension QualifiedID {
 }
 
 extension MessagingTestBase {
-
     func createConnectionPayload(_ connection: ZMConnection,
                                  status: ZMConnectionStatus = .accepted,
                                  lastUpdate: Date = Date()) -> Payload.Connection {
@@ -79,7 +78,6 @@ extension MessagingTestBase {
         senderID: QualifiedID? = nil,
         timestamp: Date? = nil
     ) -> ZMUpdateEvent {
-
         let event = conversationEventPayload(
             from: data,
             conversationID: conversationID,
@@ -96,7 +94,6 @@ extension MessagingTestBase {
         senderID: QualifiedID? = nil,
         timestamp: Date? = nil
     ) -> Payload.ConversationEvent<Event> {
-
         return Payload.ConversationEvent<Event>(
             id: conversationID?.uuid,
             data: data,

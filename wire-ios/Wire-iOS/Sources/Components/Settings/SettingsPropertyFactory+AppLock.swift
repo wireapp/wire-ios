@@ -21,7 +21,6 @@ import WireSyncEngine
 // MARK: - AppLock helper
 
 extension SettingsPropertyFactory {
-
     var isAppLockActive: Bool {
         get { userSession?.isAppLockActive ?? false }
         set { userSession?.isAppLockActive = newValue }

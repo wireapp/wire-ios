@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsRenameCell: UICollectionViewCell {
-
     let verifiedIconView = UIImageView()
     let accessoryIconView = UIImageView()
     let titleTextField = SimpleTextField()
@@ -40,7 +39,6 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
     }
 
     fileprivate func setup() {
-
         verifiedIconView.image = WireStyleKit.imageOfShieldverified
         verifiedIconView.translatesAutoresizingMaskIntoConstraints = false
         verifiedIconView.contentMode = .scaleAspectFit

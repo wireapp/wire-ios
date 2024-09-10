@@ -22,7 +22,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ResolveOneOnOneConversationsUseCase!

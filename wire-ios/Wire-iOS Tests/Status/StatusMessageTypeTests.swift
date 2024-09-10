@@ -27,7 +27,6 @@ func localizeString (stringToLocalize: String, language: String) -> String? {
 }
 
 final class StatusMessageTypeTests: XCTestCase {
-
     func testForAllLanguageIsLocalized() {
         // GIVEN
         let availableLanguages = Bundle.main.localizations
@@ -36,7 +35,6 @@ final class StatusMessageTypeTests: XCTestCase {
             if let key = statusMessageType.localizationKey {
                 availableLanguages.forEach { language in
                     if let localizationKey = localizeString(stringToLocalize: key, language: language) {
-
                         // WHEN
                         var sut = String(format: localizationKey.localized, 1)
 
@@ -61,7 +59,6 @@ final class StatusMessageTypeTests: XCTestCase {
     }
 
     func testForBaseLanguageIsLocalized() {
-
         // GIVEN
         for statusMessageType in StatusMessageType.allCases {
             // WHEN

@@ -19,7 +19,6 @@
 import Foundation
 
 class StartLoginURLActionProcessor: URLActionProcessor {
-
     private weak var delegate: UnauthenticatedSessionStatusDelegate?
     private var authenticationStatus: ZMAuthenticationStatus
 

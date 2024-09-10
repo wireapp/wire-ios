@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 class AppLockChangeWarningViewControllerTests: XCTestCase {
-
     // MARK: - Properties
 
     private var userSession: UserSessionMock!

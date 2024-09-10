@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `SelfUserAPI`.
 
 public enum SelfUserAPIError: Error {
-
     /// Self user was not found.
 
     case selfUserNotFound

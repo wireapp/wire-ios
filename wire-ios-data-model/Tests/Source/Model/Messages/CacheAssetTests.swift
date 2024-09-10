@@ -20,7 +20,6 @@
 import XCTest
 
 class CacheAssetTests: BaseZMAssetClientMessageTests {
-
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!

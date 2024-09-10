@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class AddParticipantActionHandlerTests: MessagingTestBase {
-
     typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
 
     var sut: AddParticipantActionHandler!
@@ -126,7 +125,6 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     // MARK: - Request Processing
 
     func testThatItParsesAllKnownAddParticipantErrorResponses() {
-
         let errorResponses: [(ConversationAddParticipantsError, ZMTransportResponse)] = [
             (ConversationAddParticipantsError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
             (ConversationAddParticipantsError.accessDenied, ZMTransportResponse(payload: ["label": "access-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),

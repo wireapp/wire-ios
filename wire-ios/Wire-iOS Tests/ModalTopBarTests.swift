@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ModalTopBarTests: XCTestCase {
-
     var sut: ModalTopBar! = nil
 
     override func setUp() {

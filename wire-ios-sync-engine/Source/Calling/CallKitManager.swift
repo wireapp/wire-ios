@@ -23,7 +23,6 @@ import Intents
 import WireRequestStrategy
 
 protocol CallKitManagerDelegate: AnyObject {
-
     /// Look a conversation where a call has or will take place
 
     func lookupConversation(
@@ -43,7 +42,6 @@ protocol CallKitManagerDelegate: AnyObject {
 
 @objc
 public protocol CallKitManagerInterface {
-
     var isEnabled: Bool { get set }
 
     func setDelegate(_ delegate: Any)
@@ -56,7 +54,6 @@ public protocol CallKitManagerInterface {
 
 @objc
 public class CallKitManager: NSObject, CallKitManagerInterface {
-
     // MARK: - Properties
 
     public var isEnabled: Bool {
@@ -537,7 +534,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 // MARK: - Provider delegate
 
 extension CallKitManager: CXProviderDelegate {
-
     public func providerDidBegin(_ provider: CXProvider) {
         logger.info("provider did begin")
         log("providerDidBegin: \(provider)")
@@ -802,7 +798,6 @@ extension CallKitManager: CXProviderDelegate {
 // MARK: - Callstate observer
 
 extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
-
     public func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
@@ -875,7 +870,6 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
 // MARK: - Helpers
 
 private extension Date {
-
     func clampForCallKit() -> Date {
         let twoWeeksBefore = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
         return clamp(between: twoWeeksBefore, and: Date())
@@ -893,7 +887,6 @@ private extension Date {
 }
 
 extension ZMConversation {
-
     var callHandle: CallHandle? {
         guard
             let context = managedObjectContext,
@@ -917,14 +910,12 @@ extension ZMConversation {
 }
 
 extension CXCallAction {
-
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
         return ZMConversation.fetch(with: callUUID, in: context)
     }
 }
 
 extension CallClosedReason {
-
     var CXCallEndedReason: CXCallEndedReason {
         switch self {
         case .timeout, .timeoutECONN:
@@ -942,7 +933,6 @@ extension CallClosedReason {
 }
 
 extension CallKitCallRegister {
-
     func lookupCall(by conversation: ZMConversation) -> CallKitCall? {
         guard let handle = conversation.callHandle else { return nil }
         return lookupCall(by: handle)
@@ -950,7 +940,6 @@ extension CallKitCallRegister {
 }
 
 private extension CXCallController {
-
     func existingCall(for callKitCall: CallKitCall) -> CXCall? {
         return callObserver.calls.first { $0.uuid == callKitCall.id }
     }

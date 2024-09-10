@@ -27,7 +27,6 @@ extension UserCredentials {
 }
 
 extension UnauthenticatedSession {
-
     @objc(continueAfterBackupImportStep)
     public func continueAfterBackupImportStep() {
         authenticationStatus.continueAfterBackupImportStep()

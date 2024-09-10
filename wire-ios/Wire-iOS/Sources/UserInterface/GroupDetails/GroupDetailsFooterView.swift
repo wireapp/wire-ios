@@ -24,7 +24,6 @@ protocol GroupDetailsFooterViewDelegate: AnyObject {
 }
 
 final class GroupDetailsFooterView: ConversationDetailFooterView {
-
     weak var delegate: GroupDetailsFooterViewDelegate?
 
     enum Action {

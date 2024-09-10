@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class LocalNotificationDispatcherTests: DatabaseTest {
-
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 
     var sut: LocalNotificationDispatcher!
@@ -91,7 +90,6 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
 }
 
 extension LocalNotificationDispatcherTests {
-
     func testThatItCreatesNotificationFromMessagesIfNotActive() {
         // GIVEN
         let text = UUID.create().transportString()
@@ -338,7 +336,6 @@ extension LocalNotificationDispatcherTests {
         var payload: [String: Any]!
         var text = ""
         syncMOC.performAndWait {
-
             // notification content
             text = "\(self.user1.name!) added you"
             payload = [
@@ -488,7 +485,6 @@ extension LocalNotificationDispatcherTests {
 // MARK: - Helpers
 
 extension LocalNotificationDispatcherTests {
-
     func payloadForEncryptedOTRMessage(text: String, nonce: UUID) -> [String: Any] {
         let message = GenericMessage(content: Text(content: text), nonce: nonce)
         return self.payloadForOTRAsset(with: message)

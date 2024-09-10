@@ -19,7 +19,6 @@
 import XCTest
 
 class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
-
     // MARK: New Conversation
 
     func testThatNewConversationSystemMessage_fromOtherGeneratesUnreadCount() {

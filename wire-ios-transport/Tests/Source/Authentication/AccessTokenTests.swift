@@ -23,7 +23,6 @@ import WireTesting
 import XCTest
 
 final class AccessTokenTests: ZMTBaseTest {
-
     func testThatItStoresTokenAndType() {
         // given
         let token = "MyVeryUniqueToken23423540899874"
@@ -38,7 +37,6 @@ final class AccessTokenTests: ZMTBaseTest {
     }
 
     func testThatItCalculatesExpirationDate() {
-
         // given
         let expiresIn: UInt = 15162342
 

@@ -25,7 +25,6 @@ import WireDataModel
 @testable import WireSyncEngine
 
 class MockCallKitProvider: CXProvider {
-
     public var timesSetDelegateCalled: Int = 0
     override func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?) {
         timesSetDelegateCalled += 1
@@ -67,7 +66,6 @@ class MockCallKitProvider: CXProvider {
 }
 
 class MockCallObserver: CXCallObserver {
-
     public var mockCalls: [CXCall] = []
 
     override var calls: [CXCall] {
@@ -76,7 +74,6 @@ class MockCallObserver: CXCallObserver {
 }
 
 class MockCallKitCallController: CXCallController {
-
     public override var callObserver: CXCallObserver {
         return mockCallObserver
     }
@@ -100,7 +97,6 @@ class MockCallKitCallController: CXCallController {
 }
 
 class MockCallAnswerAction: CXAnswerCallAction {
-
     var isFulfilled: Bool = false
     var hasFailed: Bool = false
 
@@ -114,7 +110,6 @@ class MockCallAnswerAction: CXAnswerCallAction {
 }
 
 class MockStartCallAction: CXStartCallAction {
-
     var isFulfilled: Bool = false
     var hasFailed: Bool = false
 
@@ -128,7 +123,6 @@ class MockStartCallAction: CXStartCallAction {
 }
 
 class MockEndCallAction: CXEndCallAction {
-
     var isFulfilled: Bool = false
     var hasFailed: Bool = false
 
@@ -142,7 +136,6 @@ class MockEndCallAction: CXEndCallAction {
 }
 
 class MockProvider: CXProvider {
-
     var connectingCalls: Set<UUID> = Set()
     var connectedCalls: Set<UUID> = Set()
 
@@ -160,7 +153,6 @@ class MockProvider: CXProvider {
 }
 
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
-
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
     func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
         if let conversation = mockConversations[handle] {
@@ -186,7 +178,6 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 }
 
 class CallKitManagerTest: DatabaseTest {
-
     var sut: WireSyncEngine.CallKitManager!
     var callKitProvider: MockCallKitProvider!
     var callKitController: MockCallKitCallController!
@@ -669,7 +660,6 @@ class CallKitManagerTest: DatabaseTest {
     // MARK: Activity & Intents
 
     func userActivityFor(contacts: [INPerson], isVideo: Bool) -> NSUserActivity {
-
         let intent = INStartCallIntent(
             callRecordFilter: .none,
             callRecordToCallBack: .none,

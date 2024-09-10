@@ -21,7 +21,6 @@ import WireAPI
 /// Errors originating from `ConversationLabelsRepository`.
 
 enum ConversationLabelsRepositoryError: Error {
-
     /// Unable to store label locally
 
     case failedToStoreLabelLocally(ConversationLabel)

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 extension UICollectionView {
-
     func setEmptyMessage(_ message: String) {
         let messageLabel = UILabel(frame: CGRect(x: 0,
                                                  y: 0,

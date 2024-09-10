@@ -25,7 +25,6 @@ extension UserClient {
 }
 
 extension UserClient: ObjectInSnapshot {
-
     static public var observableKeys: Set<String> {
         return Set([#keyPath(UserClient.trustedByClients),
                     #keyPath(UserClient.ignoredByClients),
@@ -45,7 +44,6 @@ public enum UserClientChangeInfoKey: String {
 }
 
 @objcMembers open class UserClientChangeInfo: ObjectChangeInfo {
-
     public required init(object: NSObject) {
         self.userClient = object as! UserClient
         super.init(object: object)
@@ -80,7 +78,6 @@ public enum UserClientChangeInfoKey: String {
 }
 
 extension UserClientChangeInfo {
-
     /// Adds an observer for the specified userclient
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forClient:)

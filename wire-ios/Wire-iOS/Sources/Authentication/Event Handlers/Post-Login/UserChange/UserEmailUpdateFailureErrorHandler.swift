@@ -23,7 +23,6 @@ import Foundation
  */
 
 final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: NSError) -> [AuthenticationCoordinatorAction]? {

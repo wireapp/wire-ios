@@ -45,7 +45,6 @@ enum ConversationAction {
 }
 
 public extension ZMUser {
-
     var teamRole: TeamRole {
         return TeamRole(rawPermissions: permissions?.rawValue ?? 0)
     }

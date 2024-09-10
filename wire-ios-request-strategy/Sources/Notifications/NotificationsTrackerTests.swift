@@ -20,7 +20,6 @@
 import XCTest
 
 final class NotificationsTrackerTests: MessagingTestBase {
-
     var sut: NotificationsTracker!
     var mockAnalytics: MockAnalytics!
 

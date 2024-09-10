@@ -20,9 +20,7 @@
 import XCTest
 
 class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
-
     func testThatWeIgnoreClearedEventNotSentFromSelfUser() {
-
         syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID()
@@ -40,7 +38,6 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     }
 
     func testThatWeIgnoreLastReadEventNotSentFromSelfUser() {
-
         syncMOC.performGroupedAndWait {
             // given
             guard let remoteIdentifier = self.syncConversation.remoteIdentifier else {
@@ -64,7 +61,6 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     }
 
     func testThatWeIgnoreHideMessageEventNotSentFromSelfUser() {
-
         syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID()

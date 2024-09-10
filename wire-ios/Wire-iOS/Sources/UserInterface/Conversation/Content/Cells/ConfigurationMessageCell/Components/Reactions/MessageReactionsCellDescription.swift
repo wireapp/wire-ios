@@ -22,7 +22,6 @@ import WireDataModel
 // MARK: - MessageReactionsCellDescription
 
 final class MessageReactionsCellDescription: ConversationMessageCellDescription {
-
     // MARK: - Properties
 
     typealias View = MessageReactionsCell

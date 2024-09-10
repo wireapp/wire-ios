@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class CoreDataStackTests_Backup: DatabaseBaseTest {
-
     private var migrator: MockCoreDataMessagingMigratorProtocol!
 
     override func setUp() {
@@ -76,7 +75,6 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         file: StaticString = #file,
         line: UInt = #line
     ) -> Result<URL, Error>? {
-
         var result: Result<URL, Error>?
         CoreDataStack.importLocalStorage(
             accountIdentifier: accountIdentifier,
@@ -93,7 +91,6 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
     }
 
     func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) throws -> URL {
-
         defer { clearStorageFolder() }
 
         // create populated account database

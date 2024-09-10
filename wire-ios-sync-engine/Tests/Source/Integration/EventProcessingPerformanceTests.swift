@@ -24,7 +24,6 @@ import Foundation
 /// NOTE that we are not receiving encrypted events since we are not
 /// interested in measuring decryption performance here.
 class EventProcessingPerformanceTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 
@@ -112,7 +111,6 @@ class EventProcessingPerformanceTests: IntegrationTest {
 }
 
 extension MockConversation {
-
     func insertRandomKnocks(count: Int, from users: [MockUser]) {
         (1...count).forEach { _ in
             let knock = try! GenericMessage(content: Knock.with { $0.hotKnock = false }).serializedData()

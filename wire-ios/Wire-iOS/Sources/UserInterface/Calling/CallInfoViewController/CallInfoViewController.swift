@@ -62,7 +62,6 @@ extension CallInfoViewControllerInput {
 }
 
 final class CallInfoViewController: UIViewController, CallActionsViewDelegate, CallAccessoryViewControllerDelegate {
-
     weak var delegate: CallInfoViewControllerDelegate?
 
     private let stackView = UIStackView(axis: .vertical)

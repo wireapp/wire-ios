@@ -22,7 +22,6 @@ import WireSystem
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
 extension ConversationList {
-
     func toOrderedSetState() -> OrderedSetState<ZMConversation> {
         OrderedSetState(array: items)
     }
@@ -64,12 +63,10 @@ extension ConversationList {
 }
 
 extension ConversationListChangeInfo {
-
     /// Adds a ZMConversationListObserver to the specified list
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forList:managedObjectContext:)
     public static func addListObserver(_ observer: ZMConversationListObserver, for list: ConversationList?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-
         if let list {
             zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
         } else {

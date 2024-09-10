@@ -21,7 +21,6 @@ import LocalAuthentication
 import WireDataModel
 
 extension ZMUserSession: UserSession {
-
     // MARK: Properties
 
     public var lock: SessionLock? {

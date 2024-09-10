@@ -21,7 +21,6 @@ import WireSyncEngine
 import WireTransport
 
 class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
-
     fileprivate var sut: DeleteAccountRequestStrategy!
     fileprivate var mockApplicationStatus: MockApplicationStatus!
     fileprivate let cookieStorage = ZMPersistentCookieStorage()
@@ -45,7 +44,6 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     }
 
     func testThatItGeneratesARequest() {
-
         // given
         self.uiMOC.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
 
@@ -63,7 +61,6 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     }
 
     func testThatItGeneratesARequestOnlyOnce() {
-
         // given
         self.uiMOC.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
 

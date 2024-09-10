@@ -19,7 +19,6 @@
 import Foundation
 
 struct Changes: Mergeable {
-
     // MARK: - Properties
 
     let changedKeys: Set<String>

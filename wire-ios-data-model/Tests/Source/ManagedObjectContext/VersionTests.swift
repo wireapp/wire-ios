@@ -17,7 +17,6 @@
 //
 
 final class VersionTests: XCTestCase {
-
     func testThatItComparesCorrectly() {
         let version1 = Version(string: "0.1")
         let version2 = Version(string: "1.0")

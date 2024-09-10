@@ -24,7 +24,6 @@ import XCTest
 /// XCTest makes sure to initialise it only once and we can add all global
 /// test setup code here
 final class TestSetup: NSObject {
-
     override init() {
         super.init()
 

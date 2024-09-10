@@ -21,7 +21,6 @@ import WireSystem
 import WireUtilities
 
 public enum Logging {
-
     /// For logs related to processing message data, which may included
     /// work related to `GenericMessage` profotobuf data or the `ZMClientMessage`
     /// and `ZMAssetClientMessage` container types.

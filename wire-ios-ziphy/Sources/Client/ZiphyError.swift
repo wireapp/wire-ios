@@ -23,7 +23,6 @@ import Foundation
  */
 
 public enum ZiphyError: Error {
-
     case malformedURL(String)
     case networkError(Error)
     case badResponseCode(Int)

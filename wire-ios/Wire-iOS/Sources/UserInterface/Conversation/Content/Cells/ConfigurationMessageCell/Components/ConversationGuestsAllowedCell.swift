@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
-
     // MARK: Properties
 
     typealias View = GuestsAllowedCell
@@ -57,7 +56,6 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
 // MARK: GuestAllowedCell
 
 final class GuestsAllowedCell: UIView, ConversationMessageCell {
-
     // MARK: Properties
 
     struct GuestsAllowedCellConfiguration { }

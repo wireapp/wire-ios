@@ -34,7 +34,6 @@ public protocol ClientUpdateObserver: NSObjectProtocol {
 }
 
 extension ZMUserSession {
-
     /// Fetch all selfUser clients to manage them from the settings screen
     /// The current client must be already registered
     ///
@@ -67,7 +66,6 @@ extension ZMUserSession {
 
     @objc(addClientUpdateObserver:)
     public func addClientUpdateObserver(_ observer: ClientUpdateObserver) -> NSObjectProtocol {
-
         return ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self, weak observer] type, clientObjectIDs, error in
             self?.managedObjectContext.performGroupedBlock {
                 switch type {

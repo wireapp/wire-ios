@@ -22,7 +22,6 @@ import WireDataModelSupport
 import XCTest
 
 class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
-
     private var sut: RemoveLocalConversationUseCase!
     private var mockMLSService: MockMLSServiceInterface!
 

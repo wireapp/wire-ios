@@ -20,7 +20,6 @@
 import WireTesting
 
 class AssetRequestFactoryTests: MessagingTestBase {
-
     func testThatItReturnsExpiringForRegularConversation() {
         // given
         let conversation = ZMConversation.insertNewObject(in: coreDataStack.viewContext)
@@ -69,7 +68,6 @@ class AssetRequestFactoryTests: MessagingTestBase {
     }
 
     func testThatItReturnsEternalInfrequentAccessForAConversationWithAParticipantsWithTeam() {
-
         // given
         let user = ZMUser.insertNewObject(in: coreDataStack.viewContext)
         user.remoteIdentifier = UUID()

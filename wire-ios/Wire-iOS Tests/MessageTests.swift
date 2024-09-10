@@ -20,7 +20,6 @@
 import XCTest
 
 final class MessageTests: XCTestCase {
-
     func testThatDayFormatterProduceCorrectStringForTheLastDayOfAYear() {
         // GIVEN
         var components = DateComponents()

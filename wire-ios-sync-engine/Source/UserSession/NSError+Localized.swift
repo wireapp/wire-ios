@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSError {
-
     @objc(ZMUserSessionErrorDomain)
     public static var userSessionErrorDomain = "ZMUserSession"
 

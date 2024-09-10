@@ -61,7 +61,6 @@ import XCTest
  */
 
 class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
-
     enum RelativeUserState {
         case personal
         case memberOfHostingTeam

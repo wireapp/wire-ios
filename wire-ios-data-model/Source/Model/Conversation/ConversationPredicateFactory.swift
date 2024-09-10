@@ -20,7 +20,6 @@ import Foundation
 
 @objc
 public final class ConversationPredicateFactory: NSObject {
-
     private let selfTeam: Team?
 
     @objc

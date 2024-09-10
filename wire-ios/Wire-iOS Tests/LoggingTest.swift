@@ -20,7 +20,6 @@ import WireSystem
 import XCTest
 
 class LoggingTest: XCTestCase {
-
     func testThatCurrentLogIsNotEmpty() {
         // given
         ZMSLog.clearLogs()

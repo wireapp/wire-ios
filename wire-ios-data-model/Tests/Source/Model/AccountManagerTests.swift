@@ -19,7 +19,6 @@
 import Foundation
 
 final class AccountManagerTests: ZMConversationTestsBase {
-
     var url: URL!
 
     override func setUp() {

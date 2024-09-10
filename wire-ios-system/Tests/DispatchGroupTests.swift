@@ -21,9 +21,7 @@ import XCTest
 @testable import WireSystem
 
 final class DispatchGroupTests: XCTestCase {
-
     func testThatItNotifiesWhenEnteringAndLeavingAGroupOnce() {
-
         // Given
         var notified = false
         let sut = ZMSDispatchGroup(label: "test group")
@@ -51,7 +49,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItNotifiesWhenEnteringAndLeavingAGroupThatWasInjected() {
-
         // Given
         var notified = false
         let rawGroup = DispatchGroup()
@@ -79,7 +76,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItNotifiesImmediatelyIfTheGroupWasNotEntered() {
-
         // Given
         var notified = false
         let sut = ZMSDispatchGroup(label: "test group")
@@ -97,7 +93,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItNotifiesWhenEnteringAndLeavingAGroupMultipleTimes() {
-
         // Given
         var notified = false
         let sut = ZMSDispatchGroup(label: "test group")
@@ -127,7 +122,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItNotifiesOnTheRightQueueAfterEnteringAndLeaving() {
-
         // Given
         var notified = false
         let sut = ZMSDispatchGroup(label: "test group")
@@ -162,7 +156,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItNotifiesWhenPerformingAsync() {
-
         // Given
         var notified = false
         // not been fulfilled yet without making the test fail
@@ -193,7 +186,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItWaitsAfterEnteringWithATimeoutThatExpires() {
-
         // Given
         let sut = ZMSDispatchGroup(label: "test group")
         sut.enter()
@@ -207,7 +199,6 @@ final class DispatchGroupTests: XCTestCase {
     }
 
     func testThatItWaitsAfterEnteringWithATimeoutThatDoesNotExpire() {
-
         // Given
         let sut = ZMSDispatchGroup(label: "test group")
         sut.enter()

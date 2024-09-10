@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
-
     // The mock in this place is a workaround, because somewhere down the line the test funcs call
     // `func startQuickSync()` and this calls `PushSupportedProtocolsAction`.
     // A proper solution and mocking requires a further refactoring.
@@ -75,7 +74,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     // MARK: Slow Sync
 
     func testThatObserverSystemIsDisabledDuringSlowSync() {
-
         // given
         finishSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -92,7 +90,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
     func testThatObserverSystemIsEnabledAfterSlowSync() {
-
         // given
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -107,7 +104,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
     func testThatInitialSyncIsCompletedAfterSlowSync() {
-
         // given
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -146,7 +142,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
     func testThatPerformingSyncIsStillOngoingAfterSlowSync() {
-
         // given
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -163,7 +158,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     // MARK: Quick Sync
 
     func testThatPerformingSyncIsFinishedAfterQuickSync() {
-
         // given
         startQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -180,7 +174,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     // MARK: Process events
 
     func testThatPerformingSyncIsStillOngoingAfterProcessingEvents_IfQuickSyncIsNotCompleted() {
-
         // given
         startQuickSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -195,7 +188,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
     func testThatItNotifiesOnlineSynchronzingWhileProcessingEvents() {
-
         // given
         startQuickSync()
         finishQuickSync()

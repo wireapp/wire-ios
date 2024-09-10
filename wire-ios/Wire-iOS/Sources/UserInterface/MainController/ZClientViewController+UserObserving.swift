@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 extension ZClientViewController: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             AppDelegate.shared.mainWindow?.tintColor = UIColor.accent()

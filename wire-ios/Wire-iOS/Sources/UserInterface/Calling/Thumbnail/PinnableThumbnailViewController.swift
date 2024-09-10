@@ -20,7 +20,6 @@ import UIKit
 import WireUtilities
 
 final class PinnableThumbnailViewController: UIViewController {
-
     private let thumbnailView = RoundedView()
     private let thumbnailContainerView = PassthroughTouchesView()
     private(set) var contentView: OrientableView?

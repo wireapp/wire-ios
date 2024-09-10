@@ -19,7 +19,6 @@
 import Foundation
 
 public extension ZMImageFormat {
-
     init(_ string: String) {
         switch string {
         case "preview":

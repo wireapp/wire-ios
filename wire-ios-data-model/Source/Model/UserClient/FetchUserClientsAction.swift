@@ -19,7 +19,6 @@
 import Foundation
 
 public struct QualifiedClientID: Hashable {
-
     public let userID: UUID
     public let domain: String
     public let clientID: String
@@ -35,13 +34,11 @@ public struct QualifiedClientID: Hashable {
 /// user IDs.
 
 public final class FetchUserClientsAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Set<QualifiedClientID>
 
     public enum Failure: Error, Equatable {
-
         case endpointUnavailable
         case malformdRequestPayload
         case failedToEncodeRequestPayload

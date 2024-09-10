@@ -23,7 +23,6 @@ import Foundation
  */
 
 enum PasswordCharacterClass: Hashable, Decodable {
-
     /// All unicode characters.
     case unicode
 

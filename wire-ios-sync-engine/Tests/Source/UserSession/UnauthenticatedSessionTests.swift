@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
-
     public var cookieStorage = ZMPersistentCookieStorage()
 
     var nextEnqueueResult: EnqueueResult = .nilRequest
@@ -76,7 +75,6 @@ final class MockAuthenticationStatusDelegate: NSObject, ZMAuthenticationStatusDe
 }
 
 final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSessionDelegate {
-
     var existingAccounts = [Account]()
     var existingAccountsCalled = 0
     func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool {
@@ -268,7 +266,6 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 }
 
 fileprivate extension ZMTransportResponse {
-
     convenience init(headers: [String: String], payload: [String: String]) throws {
         let httpResponse = HTTPURLResponse(url: URL(string: "/")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: headers)!
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])

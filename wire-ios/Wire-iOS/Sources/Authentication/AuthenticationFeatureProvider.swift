@@ -23,7 +23,6 @@ import Foundation
  */
 
 protocol AuthenticationFeatureProvider {
-
     /// Whether to allow only email login.
     var allowOnlyEmailLogin: Bool { get }
 
@@ -39,7 +38,6 @@ protocol AuthenticationFeatureProvider {
  */
 
 final class BuildSettingAuthenticationFeatureProvider: AuthenticationFeatureProvider {
-
     var allowOnlyEmailLogin: Bool {
         #if ALLOW_ONLY_EMAIL_LOGIN
         return true

@@ -20,12 +20,10 @@ import SwiftUI
 import WireUtilities
 
 struct DeveloperE2eiView: View {
-
     @StateObject
     var viewModel: DeveloperE2eiViewModel
 
     var body: some View {
-
         List {
             Section("E2EI Certificate Details") {
                 HStack {
@@ -66,7 +64,6 @@ struct DeveloperE2eiView: View {
             }
 
             Section("CRLs expiration dates") {
-
                 if viewModel.storedCRLExpirationDatesByURL.isEmpty {
                     Text("There are no stored expiration dates")
                         .foregroundColor(.secondary)

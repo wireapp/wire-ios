@@ -22,7 +22,6 @@ import WireAPI
 /// Process user update events.
 
 protocol UserEventProcessorProtocol {
-
     /// Process a user update event.
     ///
     /// Processing an event is the app's only chance to consume
@@ -34,7 +33,6 @@ protocol UserEventProcessorProtocol {
 }
 
 struct UserEventProcessor {
-
     let clientAddEventProcessor: any UserClientAddEventProcessorProtocol
     let clientRemoveEventProcessor: any UserClientRemoveEventProcessorProtocol
     let connectionEventProcessor: any UserConnectionEventProcessorProtocol

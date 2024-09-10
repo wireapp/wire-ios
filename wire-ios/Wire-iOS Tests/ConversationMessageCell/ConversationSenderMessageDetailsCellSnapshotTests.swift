@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

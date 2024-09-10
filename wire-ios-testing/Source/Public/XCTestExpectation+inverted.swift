@@ -19,7 +19,6 @@
 import XCTest
 
 extension XCTestExpectation {
-
     public func inverted() -> Self {
         isInverted = true
         return self

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class RemoveUserClientUseCaseTests: XCTestCase {
-
     private var sut: RemoveUserClientUseCase!
     private var stack: CoreDataStack!
     private let coreDataStackHelper = CoreDataStackHelper()

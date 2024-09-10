@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class AnalyticsTests: XCTestCase {
-
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {

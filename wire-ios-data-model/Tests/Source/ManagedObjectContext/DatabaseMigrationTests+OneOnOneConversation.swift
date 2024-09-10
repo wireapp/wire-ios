@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
-
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
     private let helper = DatabaseMigrationHelper()

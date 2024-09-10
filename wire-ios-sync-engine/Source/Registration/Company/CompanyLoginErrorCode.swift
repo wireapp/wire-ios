@@ -32,7 +32,6 @@ public enum ConmpanyLoginRequestError: Error, Equatable {
  */
 
 public enum CompanyLoginError: Error, Equatable {
-
     case unknownLabel
     case missingRequiredParameter
     case invalidCookie

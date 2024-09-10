@@ -19,7 +19,6 @@
 import Foundation
 
 class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
-
     let httpClient: any HTTPClient
 
     init(httpClient: any HTTPClient) {
@@ -144,11 +143,9 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
 }
 
 struct LabelsPayloadV0: Decodable {
-
     let labels: [Label]
 
     struct Label: Decodable {
-
         let id: UUID
         let type: Int16
         let name: String?

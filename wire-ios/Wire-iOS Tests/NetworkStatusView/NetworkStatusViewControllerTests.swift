@@ -178,7 +178,6 @@ final class NetworkStatusViewControllerTests: XCTestCase {
 
     @MainActor
     func testThatIPadRespondsToScreenSizeChanging() {
-
         // Given
         setUpSut(userInterfaceIdiom: .pad, horizontalSizeClass: .regular, orientation: .portrait)
         checkResult(listState: .online, rootState: .offlineExpanded)
@@ -203,7 +202,6 @@ final class NetworkStatusViewControllerTests: XCTestCase {
 }
 
 final class NetworkStatusViewControllerRetainTests: XCTestCase {
-
     weak var sut: NetworkStatusViewController! = nil
 
     override func tearDown() {

@@ -17,7 +17,6 @@
 //
 
 enum TeamInviteEvent: Event {
-
     enum InviteMethod: String {
         case teamCreation = "team_creation"
     }

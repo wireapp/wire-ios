@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 extension ConversationViewController {
-
     private enum PrivacyAlertAction {
         case verifyDevices
         case sendAnyway
@@ -74,7 +73,6 @@ extension ConversationViewController {
     }
 
     private func presentAlert(with alertContent: AlertContent) {
-
         let alert = UIAlertController(title: alertContent.title, message: alertContent.message, preferredStyle: .alert)
 
         for action in alertContent.actions {

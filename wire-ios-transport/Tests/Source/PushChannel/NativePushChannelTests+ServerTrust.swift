@@ -20,7 +20,6 @@
 import XCTest
 
 class MockURLProtectionSpace: URLProtectionSpace {
-
     var mockServerTrust: SecTrust?
 
     override var serverTrust: SecTrust? {
@@ -29,7 +28,6 @@ class MockURLProtectionSpace: URLProtectionSpace {
 }
 
 class NativePushChannelTests_ServerTrust: XCTestCase {
-
     var mockEnvironment: MockEnvironment!
     var mockSchedulerSession: FakeSchedulerSession!
     var certificates: CertificateData!

@@ -19,7 +19,6 @@
 import XCTest
 
 final class Date_TransportCodingTests: XCTestCase {
-
     func testThatTransportDatesCanBeParsed_0() throws {
         let date = try XCTUnwrap(Date(transportString: "2014-03-14T16:47:37.573Z"))
         let components = Calendar.current.dateComponents(in: gmt, from: date)

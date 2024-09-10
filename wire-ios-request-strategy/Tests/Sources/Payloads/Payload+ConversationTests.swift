@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class Payload_ConversationTests: MessagingTestBase {
-
     private typealias AccessRole = ConversationAccessRoleV2
 
     func test_Conversation_DecodesLegacyAccessRoles_APIVersionV2() throws {

@@ -20,7 +20,6 @@
 import XCTest
 
 final class PushTokenTests: XCTestCase {
-
     // MARK: - Set up
 
     var sut: PushToken!
@@ -135,7 +134,6 @@ final class PushTokenTests: XCTestCase {
 }
 
 struct MockOldPushToken: Encodable {
-
     public let deviceToken: Data
     public let appIdentifier: String
     public let transportType: String

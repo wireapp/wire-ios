@@ -19,7 +19,6 @@
 import Foundation
 
 extension UpdateAccessRolesError {
-
     public init?(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "invalid-op"?): self = .invalidOperation
@@ -33,13 +32,11 @@ extension UpdateAccessRolesError {
 }
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
-
     private lazy var eventProcessor = ConversationEventProcessor(context: context)
 
     // MARK: - Methods
 
     override func request(for action: UpdateAccessRolesAction, apiVersion: APIVersion) -> ZMTransportRequest? {
-
         let payload = Payload.UpdateConversationAccess(accessMode: action.accessMode, accessRoles: action.accessRoles)
 
         guard let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
@@ -50,7 +47,6 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
               }
 
         switch apiVersion {
-
         case .v0:
             return ZMTransportRequest(path: "/conversations/\(conversationID)/access",
                                       method: .put,
@@ -71,7 +67,6 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: UpdateAccessRolesAction) {
-
         var action = action
 
         switch response.httpStatus {

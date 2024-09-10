@@ -33,7 +33,6 @@ enum PreviewItem {
 }
 
 extension SLComposeServiceViewController {
-
     /**
      * Fetches the preview item of the main attachment in the background and provided the result to the UI
      * for displaying it to the user.
@@ -49,7 +48,6 @@ extension SLComposeServiceViewController {
         }
 
         DispatchQueue.global(qos: .userInitiated).async {
-
             guard let attachments = self.appendLinkFromTextIfNeeded(),
                   let (attachmentType, attachment) = attachments.main else {
                 completeTask(nil, nil)
@@ -60,7 +58,6 @@ extension SLComposeServiceViewController {
             let defaultDisplayMode: PreviewDisplayMode? = numberOfAttachments > 1 ? .mixed(numberOfAttachments, nil) : nil
 
             switch attachmentType {
-
             case .walletPass, .image:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
                     completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode))
@@ -95,7 +92,6 @@ extension SLComposeServiceViewController {
     }
 
     func appendLinkFromTextIfNeeded() -> [AttachmentType: [NSItemProvider]]? {
-
         guard let text = self.contentText,
             var attachments = self.extensionContext?.attachments else {
             return nil
@@ -169,13 +165,11 @@ extension SLComposeServiceViewController {
 // MARK: - PreviewDisplayMode.combined
 
 extension PreviewDisplayMode {
-
     /// Combines the current display mode with the current one if they're compatible.
     fileprivate static func combined(
         _ defaultDisplayMode: PreviewDisplayMode?,
         _ preferredDisplayMode: PreviewDisplayMode?
     ) -> Self? {
-
         guard let defaultDisplayMode else { return preferredDisplayMode }
         guard case .mixed(let count, _) = defaultDisplayMode else { return defaultDisplayMode }
         return .mixed(count, preferredDisplayMode)
@@ -185,7 +179,6 @@ extension PreviewDisplayMode {
 // MARK: - Attachment Main
 
 private extension Dictionary where Key == AttachmentType, Value == [NSItemProvider] {
-
     /**
      * Determines the main preview item for the post.
      *

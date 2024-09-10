@@ -17,7 +17,6 @@
 //
 
 public struct UserPropertyNormalizer: UserPropertyNormalization {
-
     public var userPropertyValidator: UserPropertyValidating
 
     public init(userPropertyValidator: UserPropertyValidating) {

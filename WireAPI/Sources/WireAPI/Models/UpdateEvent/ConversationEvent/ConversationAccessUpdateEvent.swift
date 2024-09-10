@@ -21,7 +21,6 @@ import Foundation
 /// An event where the access settings of a conversation were updated.
 
 public struct ConversationAccessUpdateEvent: Equatable, Codable {
-
     /// The id of the conversation.
 
     public let conversationID: ConversationID

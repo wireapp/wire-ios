@@ -20,12 +20,10 @@ import Foundation
 import WireTransport
 
 protocol NotificationsAPIClientProtocol {
-
     func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent
 }
 
 final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
-
     // MARK: - Properties
 
     private let networkSession: NetworkSessionProtocol
@@ -52,13 +50,11 @@ final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
 }
 
 struct NotificationByIDEndpoint: Endpoint, Loggable {
-
     // MARK: - Types
 
     typealias Output = ZMUpdateEvent
 
     enum Failure: Error, Equatable {
-
         case invalidResponse
         case failedToDecodePayload
         case notifcationNotFound

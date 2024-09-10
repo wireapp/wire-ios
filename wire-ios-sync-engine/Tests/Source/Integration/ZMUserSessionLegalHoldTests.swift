@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 final class ZMUserSessionLegalHoldTests: IntegrationTest {
-
     override func setUp() {
         super.setUp()
         createSelfUserAndConversation()

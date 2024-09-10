@@ -19,11 +19,9 @@
 import Foundation
 
 public extension ZMUserSession {
-
     /// An object used to configure a user session.
 
     final class Configuration: NSObject {
-
         // MARK: - Properties
 
         public let appLockConfig: AppLockController.LegacyConfig?
@@ -33,7 +31,6 @@ public extension ZMUserSession {
 
         public init(appLockConfig: AppLockController.LegacyConfig? = nil,
                     useLegacyPushNotifications: Bool = true) {
-
             self.appLockConfig = appLockConfig
             self.useLegacyPushNotifications = useLegacyPushNotifications
         }

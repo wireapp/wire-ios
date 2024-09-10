@@ -48,7 +48,6 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
 }
 
 final class WireCallCenterV3Tests: MessagingTest {
-
     var flowManager: FlowManagerMock!
     var mockAVSWrapper: MockAVSWrapper!
     var sut: WireCallCenterV3!
@@ -1139,7 +1138,6 @@ final class WireCallCenterV3Tests: MessagingTest {
     }
 
     func testThatTheReceivedCallHandlerPostsTheRightNotification_WithErrorUnknownProtocol() {
-
         let userId = AVSIdentifier.stub
         let clientId = "foo"
         let data = self.verySmallJPEGData()
@@ -1170,7 +1168,6 @@ final class WireCallCenterV3Tests: MessagingTest {
     }
 
     func testThatTheReceivedCallHandlerDoesntPostNotifications_WithNoError() {
-
         let userId = AVSIdentifier.stub
         let clientId = "foo"
         let data = self.verySmallJPEGData()
@@ -1416,7 +1413,6 @@ final class WireCallCenterV3Tests: MessagingTest {
 // MARK: - Muted state
 
 extension WireCallCenterV3Tests {
-
     func testThatMutedStateHandlerUpdatesTheState() {
         class MuteObserver: MuteStateObserver {
             var muted: Bool?
@@ -1733,7 +1729,6 @@ extension WireCallCenterV3Tests {
 // MARK: - Active Speakers
 
 extension WireCallCenterV3Tests {
-
     private enum ActiveSpeakerKind {
         case smoothed
         case realTime
@@ -1746,7 +1741,6 @@ extension WireCallCenterV3Tests {
         clients: [AVSClient],
         activeSpeakerKind kind: ActiveSpeakerKind = .realTime
     ) -> AVSActiveSpeakersChange {
-
         var activeSpeakers = [ActiveSpeaker]()
 
         for client in clients {
@@ -2067,7 +2061,6 @@ extension WireCallCenterV3Tests {
 // MARK: - Conversation changes
 
 extension WireCallCenterV3Tests {
-
     func test_SetClientList_WhenConversationParticipantsChange() throws {
         // Given
         let changeInfo = ConversationChangeInfo(object: groupConversation)

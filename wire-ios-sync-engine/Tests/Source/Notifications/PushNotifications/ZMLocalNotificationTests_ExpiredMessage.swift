@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
-
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 
     var userWithNoName: ZMUser!
@@ -72,7 +71,6 @@ final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
 
     func testThatItSetsTheConversationOnTheNotification() {
         syncMOC.performGroupedAndWait {
-
             // given
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.oneOnOneConversation.mutableMessages.add(message)
@@ -89,7 +87,6 @@ final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
 
     func testThatItSetsTheConversationOnTheNotification_InitWithConversation() {
         syncMOC.performGroupedAndWait {
-
             // given
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.oneOnOneConversation.mutableMessages.add(message)
@@ -106,7 +103,6 @@ final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
 
     func testThatItCreatesANotificationWithTheRightTextForFailedMessageInGroupConversation() {
         syncMOC.performGroupedAndWait {
-
             // given
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.groupConversation.mutableMessages.add(message)
@@ -123,7 +119,6 @@ final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
 
     func testThatItCreatesANotificationWithTheRightTextForFailedMessageInGroupConversation_NoConversationName() {
         syncMOC.performGroupedAndWait {
-
             // given
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.groupConversationWithoutName.mutableMessages.add(message)
@@ -140,7 +135,6 @@ final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
 
     func testThatItCreatesANotificationWithTheRightTextForFailedMessageInOneOnOneConversation() {
         syncMOC.performGroupedAndWait {
-
             // given
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.oneOnOneConversation.mutableMessages.add(message)
@@ -160,7 +154,6 @@ final class ZMLocalNotificationTests_ExpiredMessage: MessagingTest {
 
     func testThatItCreatesANotificationWithTheRightTextForFailedMessageInOneOnOneConversation_NoUserName() {
         syncMOC.performGroupedAndWait {
-
             // given
             let message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             self.oneOnOneConversation.mutableMessages.add(message)

@@ -71,7 +71,6 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
 
     var destination: D? {
         didSet {
-
             guard let destination else { return }
 
             titleLabel.text = destination.displayNameWithFallback

@@ -20,13 +20,11 @@ import Foundation
 import WireDataModel
 
 public final class GetFeatureConfigsAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Void
 
     public enum Failure: Error {
-
         case invalidResponse
         case insufficientPermissions
         case userIsNotTeamMember

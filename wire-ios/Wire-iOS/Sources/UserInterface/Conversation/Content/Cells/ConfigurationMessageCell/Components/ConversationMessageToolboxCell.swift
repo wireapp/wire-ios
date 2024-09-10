@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, MessageToolboxViewDelegate {
-
     struct Configuration: Equatable {
         let message: ZMConversationMessage
         let deliveryState: ZMDeliveryState

@@ -19,14 +19,12 @@
 import Foundation
 
 public class ClaimMLSKeyPackageAction: EntityAction {
-
     // MARK: - Types
 
     // Until we know what type is best for the result, we'll use [KeyPackage]
     public typealias Result = [KeyPackage]
 
     public enum Failure: LocalizedError, Equatable {
-
         case missingDomain
         case endpointUnavailable
         case malformedResponse
@@ -75,7 +73,6 @@ public class ClaimMLSKeyPackageAction: EntityAction {
 
 // Temporary solution until we know what we need from the result. Once we do, this should move to the action handler extension.
 public struct KeyPackage: Codable, Equatable {
-
     public let client: String
     public let domain: String
     public let keyPackage: String

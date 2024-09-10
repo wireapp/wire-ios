@@ -20,7 +20,6 @@
 import XCTest
 
 class GenericMessageHelperTests: XCTestCase {
-
     func testCreatingADataTransferMessageWithATrackingIdentifier() {
         // Given
         let id = UUID.create()

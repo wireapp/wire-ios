@@ -20,7 +20,6 @@
 import XCTest
 
 final class PayloadPagerTests: XCTestCase {
-
     func test_PagerIteratesThroughPages() async throws {
         // Given
         let sut = PayloadPager<String>(start: "first") { index in
@@ -105,6 +104,5 @@ final class PayloadPagerTests: XCTestCase {
 }
 
 private struct TestError: Error, Equatable {
-
     let message: String
 }

@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class MLSMigrationCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationSystemMessageCell
     typealias SystemMessageMLSMigrationLocalizable = L10n.Localizable.Content.System.MlsMigration
 
@@ -77,7 +76,6 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     }
 
     private static func makeFinalizedAttributedString() -> NSAttributedString? {
-
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.Finalized.done,
             style: .systemMessage
@@ -118,7 +116,6 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     }
 
     private static func makeJoinAfterwardsAttributedString() -> NSAttributedString? {
-
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.joinAfterwards,
             style: .systemMessage
@@ -131,7 +128,6 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     }
 
     private static func makePotentialGapAttributedString() -> NSAttributedString? {
-
         let text = NSMutableAttributedString.markdown(
             from: SystemMessageMLSMigrationLocalizable.potentialGap,
             style: .systemMessage

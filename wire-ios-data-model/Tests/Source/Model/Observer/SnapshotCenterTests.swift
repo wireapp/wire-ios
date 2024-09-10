@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class SnapshotCenterTests: BaseZMMessageTests {
-
     var sut: SnapshotCenter!
 
     override func setUp() {

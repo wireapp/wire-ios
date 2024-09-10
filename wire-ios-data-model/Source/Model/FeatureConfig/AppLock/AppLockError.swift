@@ -21,7 +21,6 @@ import Foundation
 /// Errors related to the app lock.
 
 public enum AppLockError: Error {
-
     /// Authentication is needed to unlock the app lock.
 
     case authenticationNeeded

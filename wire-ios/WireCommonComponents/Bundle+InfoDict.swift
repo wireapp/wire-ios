@@ -20,7 +20,6 @@ import UIKit
 import WireUtilities
 
 extension Bundle {
-
     public var appInfo: Bundle.Info {
         return Info(version: shortVersionString ?? "-", build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-")
     }

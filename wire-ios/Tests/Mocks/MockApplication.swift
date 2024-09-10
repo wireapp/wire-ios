@@ -21,7 +21,6 @@ import UIKit
 @testable import Wire
 
 final class MockApplication: ApplicationProtocol {
-
     static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void) {
         grantedHandler(true)
     }

@@ -24,7 +24,6 @@ import WireSyncEngine
 
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {
-
     // MARK: - Properties
 
     private let options: Options
@@ -130,7 +129,6 @@ final class UserStatusView: TitleView {
 }
 
 extension UserStatusView {
-
     /// The available options for this view.
     struct Options: OptionSet {
         let rawValue: Int
@@ -153,7 +151,6 @@ extension UserStatusView {
 }
 
 extension NSTextAttachment {
-
     fileprivate static var e2eiCertifiedShield: NSTextAttachment {
         let textAttachment = NSTextAttachment(imageResource: .certificateValid)
         if let imageSize = textAttachment.image?.size {

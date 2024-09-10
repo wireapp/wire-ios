@@ -25,7 +25,6 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
 }
 
 public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
-
     let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
     let sessionEstablisher: SessionEstablisherInterface

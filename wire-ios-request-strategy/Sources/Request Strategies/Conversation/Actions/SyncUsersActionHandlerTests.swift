@@ -22,7 +22,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, SyncUsersActionHandler> {
-
     // MARK: - Properties
 
     private let qualifiedIDs = QualifiedID(uuid: .create(), domain: "example.com")

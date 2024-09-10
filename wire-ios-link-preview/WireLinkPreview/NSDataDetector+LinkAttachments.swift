@@ -19,7 +19,6 @@
 import Foundation
 
 extension NSDataDetector {
-
     /**
      * Returns attachment-eligible URLs found in text together with their range in within the text.
      * - parameter text: The text in which to search for URLs.

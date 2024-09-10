@@ -21,7 +21,6 @@ import WireLinkPreview
 import XCTest
 
 final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
-
     override func tearDown() {
         super.tearDown()
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
@@ -469,7 +468,6 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
     // MARK: - Highlighting
 
     func testThatItHighlightsCellOnTouchInside_60() throws {
-
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Message contents")
         message.senderUser = MockUserType.createUser(name: "Bruno")

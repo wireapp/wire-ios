@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIAlertController {
-
     typealias ConversationCallManyParticipants = L10n.Localizable.Conversation.Call.ManyParticipantsConfirmation
     typealias OngoingCallAlert = L10n.Localizable.Call.Alert.Ongoing
 
@@ -67,7 +66,6 @@ extension UIAlertController {
         forceAlertModal: Bool,
         completion: @escaping (Bool) -> Void
     ) -> UIAlertController {
-
         let defaultStyle: UIAlertController.Style = .alert
         let effectiveStyle = forceAlertModal ? .alert : defaultStyle
 

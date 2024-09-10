@@ -23,7 +23,6 @@ import WireSyncEngineSupport
 import XCTest
 
 final class SupportedProtocolsServiceTests: XCTestCase {
-
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!
 
@@ -298,7 +297,6 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 // MARK: - MigrationState
 
 private enum MigrationState {
-
     case disabled
     case notStarted
     case ongoing

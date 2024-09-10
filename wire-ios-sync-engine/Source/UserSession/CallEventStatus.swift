@@ -25,7 +25,6 @@ private let zmLog = ZMSLog(tag: "calling")
 /// call events.
 @objcMembers
 public class CallEventStatus: NSObject, ZMTimerClient {
-
     var eventProcessingTimoutInterval: TimeInterval = 2
 
     fileprivate var observers: [() -> Void] = []

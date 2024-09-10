@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     func unarchive(userSession: ZMUserSessionInterface? = ZMUserSession.shared(),
                    completionHandler: Completion? = nil) {
         guard let userSession else { return }

@@ -20,7 +20,6 @@ import XCTest
 @testable import Ziphy
 
 class ZiphyClientTests: XCTestCase {
-
     var requester: MockZiphyRequester!
     var client: ZiphyClient!
 

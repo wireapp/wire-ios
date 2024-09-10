@@ -26,7 +26,6 @@ extension CIContext {
 typealias ProfileImageFetchableUser = UserType & ProfileImageFetchable
 
 protocol ProfileImageFetchable {
-
     func fetchProfileImage(session: ZMUserSessionInterface,
                            cache: ImageCache<UIImage>,
                            sizeLimit: Int?,
@@ -36,7 +35,6 @@ protocol ProfileImageFetchable {
 
 extension ProfileImageFetchable where Self: UserType {
     private func cacheKey(for size: ProfileImageSize, sizeLimit: Int?, desaturate: Bool) -> String? {
-
         guard let baseKey = (size == .preview ? smallProfileImageCacheKey : mediumProfileImageCacheKey) else {
             return nil
         }
@@ -59,7 +57,6 @@ extension ProfileImageFetchable where Self: UserType {
                            sizeLimit: Int? = nil,
                            desaturate: Bool = false,
                            completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void) {
-
         let screenScale = UIScreen.main.scale
         let previewSizeLimit: CGFloat = 280
         let size: ProfileImageSize

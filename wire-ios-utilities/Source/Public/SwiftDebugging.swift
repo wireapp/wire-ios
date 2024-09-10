@@ -20,7 +20,6 @@ import CoreData
 import Foundation
 
 public struct SwiftDebugging {
-
     public static func address(_ object: AnyObject) -> Int {
         return unsafeBitCast(object, to: Int.self)
     }

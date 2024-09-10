@@ -31,7 +31,6 @@ import Foundation
  - Disable(.*):            Disable some app features (debug)
  */
 public enum SettingsPropertyName: String, CustomStringConvertible {
-
     // User defaults
     case chatHeadsDisabled = "ChatHeadsDisabled"
     case notificationContentVisible = "NotificationContentVisible"

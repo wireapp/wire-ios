@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class UnknownMessageCellTests: ConversationMessageSnapshotTestCase {
-
     func testCell() {
         let systemMessage = MockMessageFactory.systemMessage(with: .invalid)
         verify(message: systemMessage!)

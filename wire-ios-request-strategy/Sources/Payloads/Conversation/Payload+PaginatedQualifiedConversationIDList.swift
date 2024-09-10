@@ -20,7 +20,6 @@ import Foundation
 
 extension Payload {
     struct PaginatedQualifiedConversationIDList: Codable, Paginatable {
-
         enum CodingKeys: String, CodingKey {
             case conversations = "qualified_conversations"
             case pagingState = "paging_state"

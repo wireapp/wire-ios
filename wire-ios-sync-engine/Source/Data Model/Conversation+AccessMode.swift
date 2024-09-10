@@ -21,7 +21,6 @@ import Foundation
 private let zmLog = ZMSLog(tag: "ConversationLink")
 
 fileprivate extension ZMConversation {
-
     struct TransportKey {
         static let data = "data"
         static let uri = "uri"
@@ -50,7 +49,6 @@ public enum WirelessLinkError: Error {
 }
 
 extension ZMConversation {
-
     /// Fetches the wireless link for accessing the conversation.
     ///
     /// - Parameters:
@@ -208,7 +206,6 @@ internal struct WirelessRequestFactory {
         let path: String
 
         switch apiVersion {
-
         case .v3, .v4, .v5, .v6:
             let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else {

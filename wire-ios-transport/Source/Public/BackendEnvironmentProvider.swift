@@ -55,7 +55,6 @@ import Foundation
 }
 
 @objc public protocol ProxySettingsProvider: NSObjectProtocol {
-
     /// Host is expressed as domain name or an IP address **without** scheme
     var host: String { get }
     var port: Int { get }

@@ -20,7 +20,6 @@
 import XCTest
 
 final class UpdateRoleActionHandlerTests: MessagingTestBase {
-
     var sut: UpdateRoleActionHandler!
     var user: ZMUser!
     var conversation: ZMConversation!

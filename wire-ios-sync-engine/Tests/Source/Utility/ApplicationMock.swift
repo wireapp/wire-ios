@@ -23,7 +23,6 @@ import WireDataModel
 
 /// A mock of Application that records the calls
 @objcMembers public final class ApplicationMock: NSObject {
-
     public var applicationState: UIApplication.State = .active
     public var deviceToken: Data?
     public var userSession: ZMUserSession?
@@ -48,7 +47,6 @@ import WireDataModel
 // MARK: - Application protocol
 
 extension ApplicationMock: ZMApplication {
-
     public func registerForRemoteNotifications() {
         self.registerForRemoteNotificationCount += 1
         self.registerForRemoteNotificationsCallback()
@@ -63,7 +61,6 @@ extension ApplicationMock: ZMApplication {
 // MARK: - Observers
 
 extension ApplicationMock {
-
     public func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {
         NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didBecomeActiveNotification, object: nil)
     }
@@ -96,7 +93,6 @@ extension ApplicationMock {
 // MARK: - Simulate application state change
 
 extension ApplicationMock {
-
     public func simulateApplicationDidBecomeActive() {
         NotificationCenter.default.post(name: UIApplication.didBecomeActiveNotification, object: nil)
     }

@@ -19,7 +19,6 @@
 import Foundation
 
 final class MockAppLock: AppLockType {
-
     // MARK: - Metrics
 
     var methodCalls = MethodCalls()
@@ -70,7 +69,6 @@ final class MockAppLock: AppLockType {
     // MARK: - Types
 
     struct MethodCalls {
-
         var beginTimer: [Void] = []
     }
 }

@@ -23,7 +23,6 @@ import ZipArchive
 
 // sourcery: AutoMockable
 protocol LogFilesProviding {
-
     /// Generates a zip file containing all log files and returns its data before removing the files
     ///
     /// - Returns: the log files archive data
@@ -56,7 +55,6 @@ protocol LogFilesProviding {
 /// In each logs archive, an extra file `info.txt` is added. It contains general information about the app.
 ///
 struct LogFilesProvider: LogFilesProviding {
-
     // MARK: - Types
 
     enum Error: Swift.Error {

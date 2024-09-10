@@ -25,7 +25,6 @@ protocol EmojiSectionViewControllerDelegate: AnyObject {
 }
 
 final class EmojiSectionViewController: UIViewController {
-
     private var typesByButton = [IconButton: EmojiSectionType]()
     private var sectionButtons = [IconButton]()
     private let iconSize = StyleKitIcon.Size.tiny.rawValue
@@ -69,7 +68,6 @@ final class EmojiSectionViewController: UIViewController {
     }
 
     private func createSectionButton(for type: EmojiSectionType) -> IconButton {
-
         let button: IconButton = {
             let button = IconButton(style: .default)
             button.setIconColor(UIColor.from(scheme: .textDimmed, variant: .dark), for: .normal)
@@ -132,7 +130,6 @@ final class EmojiSectionViewController: UIViewController {
     }
 
     private func createConstraints() {
-
         let inset: CGFloat = 16
         let count = CGFloat(sectionButtons.count)
         let fullSpacing = (view.bounds.width - 2 * inset) - iconSize

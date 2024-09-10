@@ -25,7 +25,6 @@ protocol ConversationMessageCellMenuPresenter: AnyObject {
 }
 
 extension UITableViewCell {
-
     @objc func willDisplayCell() {
         // to be overriden in subclasses
     }
@@ -36,7 +35,6 @@ extension UITableViewCell {
 }
 
 class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
-
     var cellView: C.View
     var ephemeralCountdownView: EphemeralCountdownView
 
@@ -277,7 +275,6 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 }
 
 extension UITableView {
-
     func register<C: ConversationMessageCellDescription>(cell: C.Type) {
         let reuseIdentifier = String(describing: C.self)
         register(ConversationMessageCellTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)

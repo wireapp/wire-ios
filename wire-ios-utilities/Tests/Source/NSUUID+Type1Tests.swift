@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 class NSUUIDType1Tests: XCTestCase {
-
     /// type 1 sample UUID sorted by timestamp, and corresponding unix timestamp (with accuracy up to 0.01)
     static let sortedType1UUIDStrings: [(String, TimeInterval)] = [
         ("a6526b00-000a-11e5-a837-0800200c9a66", 1432248144.48),
@@ -49,7 +48,6 @@ class NSUUIDType1Tests: XCTestCase {
     }
 
     func testThatItGetsTheRightTimestamps() {
-
         for (string, timestamp) in NSUUIDType1Tests.sortedType1UUIDStrings {
             let uuid = UUID.init(uuidString: string)!
             let date = Date(timeIntervalSince1970: timestamp)
@@ -62,7 +60,6 @@ class NSUUIDType1Tests: XCTestCase {
     }
 
     func testThatItComparesTwoUUIDsByTime() {
-
         // given
         let earlierUUID = UUID.init(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[1].0)!
         let laterUUID = UUID.init(uuidString: NSUUIDType1Tests.sortedType1UUIDStrings[3].0)!
@@ -75,7 +72,6 @@ class NSUUIDType1Tests: XCTestCase {
     }
 
     func testThatItComparesType1UUIDsByTime() {
-
         var previous: UUID?
         for uuid in NSUUIDType1Tests.sortedType1UUIDStrings.map({ UUID(uuidString: $0.0)! }) {
             defer {

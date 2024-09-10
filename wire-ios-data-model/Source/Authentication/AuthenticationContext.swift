@@ -30,7 +30,6 @@ public protocol AuthenticationContextProtocol {
 }
 
 public struct AuthenticationContext: AuthenticationContextProtocol {
-
     public var laContext: LAContext {
         storedContext()
     }

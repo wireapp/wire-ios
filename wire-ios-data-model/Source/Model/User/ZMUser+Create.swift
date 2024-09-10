@@ -17,7 +17,6 @@
 //
 
 public extension ZMUser {
-
     /// Fetch an existing user or create a new one if it doesn't already exist.
     ///
     /// - Parameters:
@@ -66,7 +65,6 @@ public extension ZMUser {
 }
 
 extension ZMUser {
-
     public var oneToOneConversation: ZMConversation? {
         guard let moc = managedObjectContext else {
             return nil

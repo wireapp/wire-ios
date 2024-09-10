@@ -20,7 +20,6 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol FeatureRepositoryInterface {
-
     func fetchAppLock() -> Feature.AppLock
     func storeAppLock(_ appLock: Feature.AppLock)
     func fetchConferenceCalling() -> Feature.ConferenceCalling
@@ -55,7 +54,6 @@ public protocol FeatureRepositoryInterface {
 /// take place on the sync context.
 
 public class FeatureRepository: FeatureRepositoryInterface {
-
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
@@ -485,14 +483,12 @@ public class FeatureRepository: FeatureRepositoryInterface {
 }
 
 extension FeatureRepository {
-
     /// A type that represents the possible changes to feature configs.
     ///
     /// These can be used by the ui layer to determine what kind of alert
     /// it needs to display to inform the user of changes.
 
     public enum FeatureChange: Equatable {
-
         case conferenceCallingIsAvailable
         case selfDeletingMessagesIsDisabled
         case selfDeletingMessagesIsEnabled(enforcedTimeout: UInt?)
@@ -514,6 +510,5 @@ extension FeatureRepository {
 }
 
 extension Notification.Name {
-
     public static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
 }

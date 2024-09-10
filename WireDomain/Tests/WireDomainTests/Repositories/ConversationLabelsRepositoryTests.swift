@@ -24,7 +24,6 @@ import WireDataModelSupport
 import XCTest
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
-
     var sut: ConversationLabelsRepository!
     var userPropertiesAPI: MockUserPropertiesAPI!
 

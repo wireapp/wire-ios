@@ -21,7 +21,6 @@ import Foundation
 /// A builder of `FeatureConfigsAPI`.
 
 public struct FeatureConfigsAPIBuilder {
-
     let httpClient: any HTTPClient
 
     /// Create a new builder.

@@ -19,7 +19,6 @@
 import Foundation
 
 enum NotificationServiceError: Error, Equatable {
-
     case invalidEnvironment
     case malformedPushPayload
     case userNotAuthenticated

@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class SearchDirectory: NSObject {
-
     let searchContext: NSManagedObjectContext
     let contextProvider: ContextProvider
     let transportSession: TransportSessionType

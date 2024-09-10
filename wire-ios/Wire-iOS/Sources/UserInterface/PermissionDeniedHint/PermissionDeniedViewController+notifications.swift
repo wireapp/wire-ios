@@ -21,9 +21,7 @@ import WireCommonComponents
 import WireDesign
 
 extension PermissionDeniedViewController {
-
     class func pushDeniedViewController() -> PermissionDeniedViewController {
-
         typealias RegistrationPushAccessDenied = L10n.Localizable.Registration.PushAccessDenied
 
         let vc = PermissionDeniedViewController()

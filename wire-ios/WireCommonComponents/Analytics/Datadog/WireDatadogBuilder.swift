@@ -23,7 +23,6 @@ import WireDatadog
 import class WireTransport.BackendEnvironment
 
 struct WireDatadogBuilder {
-
     private enum Constants {
         static let keyAppId = "DatadogAppId"
         static let keyBundleVersion = "CFBundleVersion"

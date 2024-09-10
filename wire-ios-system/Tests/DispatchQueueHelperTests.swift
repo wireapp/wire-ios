@@ -20,7 +20,6 @@ import WireSystem
 import XCTest
 
 final class DispatchQueueHelperTests: XCTestCase {
-
     func testThatItEntersAndLeavesADispatchGroup() async {
         // Given
         let group = ZMSDispatchGroup(label: name)

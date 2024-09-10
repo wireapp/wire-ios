@@ -72,7 +72,6 @@ class AnyMessage {
 // MARK: - Tests
 
 class AnyPropertyTests: XCTestCase {
-
     var textMessage: TextMessage!
     var imageMessage: ImageMessage!
 

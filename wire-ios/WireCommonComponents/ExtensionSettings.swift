@@ -20,7 +20,6 @@ import Foundation
 import WireUtilities
 
 private enum ExtensionSettingsKey: String, CaseIterable {
-
     case disableCrashSharing
     case disableAnalyticsSharing
     case disableLinkPreviews
@@ -45,7 +44,6 @@ private enum ExtensionSettingsKey: String, CaseIterable {
 }
 
 public final class ExtensionSettings: NSObject {
-
     public static let shared = ExtensionSettings(defaults: .shared()!)
 
     private let defaults: UserDefaults

@@ -28,7 +28,6 @@ import Foundation
  */
 
 public struct AnyConstantProperty<Value> {
-
     /// The block that returns the value from the erased object.
     public let getter: () -> Value
 

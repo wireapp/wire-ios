@@ -50,9 +50,7 @@ final class APIMigrationManager {
     }
 
     func migrateIfNeeded(sessions: [ZMUserSession], to apiVersion: APIVersion) async {
-
         for session in sessions {
-
             guard let clientID = clientId(for: session) else {
                 continue
             }
@@ -141,11 +139,9 @@ final class APIMigrationManager {
 }
 
 private extension UserDefaults {
-
     private var lastUsedAPIVersionKey: String { "LastUsedAPIVersionKey" }
 
     var lastUsedAPIVersion: APIVersion? {
-
         get {
             guard let value = object(forKey: lastUsedAPIVersionKey) as? Int32 else {
                 return nil

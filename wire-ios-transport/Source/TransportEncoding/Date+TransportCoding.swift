@@ -36,7 +36,6 @@ private let iso8601DateFormatter = {
 }()
 
 extension Date: TransportCoding {
-
     public func transportString() -> String {
         iso8601DateWithFractionalSecondsFormatter.string(from: self)
     }
@@ -53,7 +52,6 @@ extension Date: TransportCoding {
 }
 
 extension NSDate {
-
     @objc(transportString)
     public var transportString: String {
         (self as Date).transportString()

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
     private typealias IconColors = SemanticColors.Icon
 
     struct Configuration {

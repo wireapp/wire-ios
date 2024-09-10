@@ -20,7 +20,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class ConnectToBotURLActionProcessorTests: IntegrationTest {
-
     let serviceName = "Service ABC"
     let serviceIdentifier = UUID()
     let serviceProvider = UUID()

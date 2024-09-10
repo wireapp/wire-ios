@@ -20,7 +20,6 @@
 import XCTest
 
 class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageAction, SendMLSMessageActionHandler> {
-
     let mlsMessage = Data("mlsMessage".utf8)
 
     override func setUp() {

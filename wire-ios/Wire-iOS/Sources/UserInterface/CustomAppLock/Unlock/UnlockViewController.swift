@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 protocol UnlockViewControllerDelegate: AnyObject {
-
     func unlockViewControllerDidUnlock()
 }
 
@@ -31,7 +30,6 @@ protocol UnlockViewControllerDelegate: AnyObject {
 /// 
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
-
     typealias Unlock = L10n.Localizable.Unlock
 
     weak var delegate: UnlockViewControllerDelegate?
@@ -159,7 +157,6 @@ final class UnlockViewController: UIViewController {
     }
 
     private func createConstraints() {
-
         [
             userImageView,
             nameLabel,
@@ -225,7 +222,6 @@ final class UnlockViewController: UIViewController {
     }
 
     func showWrongPasscodeMessage() {
-
         let textAttachment = NSTextAttachment.textAttachment(for: .exclamationMarkCircle,
                                                              with: SemanticColors.Label.textErrorDefault,
                                                              iconSize: StyleKitIcon.Size.CreatePasscode.errorIconSize,

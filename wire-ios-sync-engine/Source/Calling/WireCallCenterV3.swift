@@ -30,7 +30,6 @@ private let zmLog = ZMSLog(tag: "calling")
  * called from any thread.
  */
 public class WireCallCenterV3: NSObject {
-
     static let logger = WireLogger.calling
 
     /// The maximum number of participants for a legacy video call.
@@ -137,7 +136,6 @@ public class WireCallCenterV3: NSObject {
                          flowManager: FlowManagerType,
                          analytics: AnalyticsType? = nil,
                          transport: WireCallCenterTransport) {
-
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
@@ -158,7 +156,6 @@ public class WireCallCenterV3: NSObject {
 // MARK: - Snapshots
 
 extension WireCallCenterV3 {
-
     /// Removes the participantSnapshot and remove the conversation from the list of ignored conversations.
     func clearSnapshot(conversationId: AVSIdentifier) {
         callSnapshots.removeValue(forKey: conversationId)
@@ -209,7 +206,6 @@ extension WireCallCenterV3 {
 // MARK: - State Helpers
 
 extension WireCallCenterV3 {
-
     /// All non idle conversations and their corresponding call state.
     public var nonIdleCalls: [AVSIdentifier: CallState] {
         return callSnapshots.mapValues({ $0.callState })
@@ -373,7 +369,6 @@ extension WireCallCenterV3 {
 // MARK: - Call Participants
 
 extension WireCallCenterV3 {
-
     /// Get a list of callParticipants of a given kind for a conversation
     /// - Parameters:
     ///   - conversationId: the avs identifier of the conversation
@@ -459,7 +454,6 @@ extension WireCallCenterV3 {
 // MARK: - Call ending for oneOnOne conversations
 
 extension WireCallCenterV3 {
-
     /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
     /// If the other user hangs up, we should end the call for the self user.
     /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
@@ -517,9 +511,7 @@ extension WireCallCenterV3 {
 // MARK: - Actions
 
 extension WireCallCenterV3 {
-
     public enum Failure: Error {
-
         case missingAVSIdentifier
         case missingAVSConversationType
         case missingConferencingPermission
@@ -739,7 +731,6 @@ extension WireCallCenterV3 {
                     // Set up a task to observe changes in the conference information
                     // and update AVS accordingly
                     let updateConferenceInfoTask = Task {
-
                         let onConferenceInfoChange = mlsService.onConferenceInfoChange(
                             parentGroupID: parentGroupID,
                             subConversationGroupID: subgroupID
@@ -926,7 +917,6 @@ extension WireCallCenterV3 {
 // MARK: - AVS Integration
 
 extension WireCallCenterV3 {
-
     /// Sends a call OTR message when requested by AVS through `wcall_send_h`.
     func send(token: WireCallMessageToken, conversationId: AVSIdentifier, targets: AVSClientList?, data: Data, dataLength: Int, overMLSSelfConversation: Bool = false) {
         Self.logger.info("sending call message for AVS")
@@ -1058,7 +1048,6 @@ extension WireCallCenterV3 {
         var callState = callState
 
         if case .terminating(reason: .stillOngoing) = callState {
-
             if isDegraded(conversationId: conversationId) {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
@@ -1102,7 +1091,6 @@ extension WireCallCenterV3 {
 // MARK: - Get AVS conversation type
 
 extension WireCallCenterV3 {
-
     private func getAVSConversationType(for conversation: ZMConversation) -> AVSConversationType? {
         switch (conversation.conversationType, conversation.messageProtocol) {
         case (.oneOnOne, _):

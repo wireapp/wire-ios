@@ -22,7 +22,6 @@ import WireTesting
 import XCTest
 
 final class MessageExpirationTimerTests: MessagingTestBase {
-
     var sut: MessageExpirationTimer!
     var localNotificationDispatcher: MockPushMessageHandler!
 
@@ -41,7 +40,6 @@ final class MessageExpirationTimerTests: MessagingTestBase {
 }
 
 extension MessageExpirationTimerTests {
-
     func testThatItExpireAMessageImmediately() {
         // GIVEN
         let message = self.clientMessage(expirationTime: -2)
@@ -186,7 +184,6 @@ extension MessageExpirationTimerTests {
 // MARK: - Slow sync
 
 extension MessageExpirationTimerTests {
-
     func testThatItReturnsCorrectFetchRequest() {
         // WHEN
         let request = self.sut.fetchRequestForTrackedObjects()
@@ -217,7 +214,6 @@ extension MessageExpirationTimerTests {
 // MARK: - Helpers
 
 extension MessageExpirationTimerTests {
-
     /// Creates a message with expiration time
     fileprivate func clientMessage(expirationTime: TimeInterval) -> ZMClientMessage {
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)

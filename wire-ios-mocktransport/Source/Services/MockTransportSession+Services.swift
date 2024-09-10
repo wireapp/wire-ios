@@ -19,7 +19,6 @@
 import Foundation
 
 extension MockTransportSession {
-
     func fetchWhitelistedServicesForTeam(with identifier: String?, query: [String: Any], apiVersion: APIVersion) -> ZMTransportResponse? {
         var predicate: NSPredicate?
         if let prefix = query["prefix"] as? String {
@@ -52,7 +51,6 @@ extension MockTransportSession {
     }
 
     func processServiceByIdRequest(provider: String, service: String, apiVersion: APIVersion) -> ZMTransportResponse {
-
         let predicate = NSPredicate(format: "%K = %@ AND %K = %@",
                                     #keyPath(MockService.identifier), service,
                                     #keyPath(MockService.provider), provider)
@@ -68,7 +66,6 @@ extension MockTransportSession {
     }
 
     func processProviderByIdRequest(provider: String, apiVersion: APIVersion) -> ZMTransportResponse {
-
         let predicate = NSPredicate(format: "%K = %@",
                                     #keyPath(MockService.provider), provider)
 

@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMMessage {
-
     @objc(usersFromUpdateEvent:context:)
     static func users(from updateEvent: ZMUpdateEvent, context: NSManagedObjectContext) -> [ZMUser] {
         return updateEvent.users(in: context, createIfNeeded: true)

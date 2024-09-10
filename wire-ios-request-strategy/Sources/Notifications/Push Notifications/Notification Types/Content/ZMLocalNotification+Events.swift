@@ -19,7 +19,6 @@
 import WireDataModel
 
 public extension ZMLocalNotification {
-
     static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
     convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
@@ -69,7 +68,6 @@ public extension ZMLocalNotification {
 // Base class for event notification builders. Subclass this for each
 // event type, and override the components specific for that type.
 private class EventNotificationBuilder: NotificationBuilder {
-
     let event: ZMUpdateEvent
     let moc: NSManagedObjectContext
     var sender: ZMUser?
@@ -136,7 +134,6 @@ private class EventNotificationBuilder: NotificationBuilder {
 // MARK: - Reaction Event
 
 private class ReactionEventNotificationBuilder: EventNotificationBuilder {
-
     private let emoji: String
     private let nonce: UUID
     private let message: GenericMessage
@@ -179,7 +176,6 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 // MARK: - Conversation Create Event
 
 private class ConversationCreateEventNotificationBuilder: EventNotificationBuilder {
-
     override var notificationType: LocalNotificationType {
         return LocalNotificationType.event(.conversationCreated)
     }
@@ -188,7 +184,6 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
 // MARK: - Conversation Delete Event
 
 private class ConversationDeleteEventNotificationBuilder: EventNotificationBuilder {
-
     override var notificationType: LocalNotificationType {
         return LocalNotificationType.event(.conversationDeleted)
     }
@@ -201,7 +196,6 @@ private class ConversationDeleteEventNotificationBuilder: EventNotificationBuild
 // MARK: - User Connection Event
 
 private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
-
     var eventType: LocalNotificationEventType
     var senderName: String?
 
@@ -210,7 +204,6 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
-
         if let status = (event.payload["connection"] as? [String: AnyObject] )?["status"] as? String {
             if status == "accepted" {
                 self.eventType = .connectionRequestAccepted
@@ -240,7 +233,6 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
 // MARK: - New User Event
 
 private class NewUserEventNotificationBuilder: EventNotificationBuilder {
-
     override var notificationType: LocalNotificationType {
         return LocalNotificationType.event(.newConnection)
     }
@@ -258,7 +250,6 @@ private class NewUserEventNotificationBuilder: EventNotificationBuilder {
 // MARK: - Message
 
 private class NewMessageNotificationBuilder: EventNotificationBuilder {
-
     private let message: GenericMessage
     private let contentType: LocalNotificationContentType
 

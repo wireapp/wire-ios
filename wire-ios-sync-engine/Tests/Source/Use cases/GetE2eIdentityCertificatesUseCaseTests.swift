@@ -22,7 +22,6 @@ import WireDataModelSupport
 import XCTest
 
 final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
-
     private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!
     private let modelHelper = ModelHelper()

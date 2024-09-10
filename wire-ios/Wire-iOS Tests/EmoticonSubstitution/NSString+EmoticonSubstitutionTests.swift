@@ -39,7 +39,6 @@ extension String {
 }
 
 final class NSString_EmoticonSubstitutionTests: XCTestCase {
-
     var sut: EmoticonSubstitutionConfiguration!
 
     override func tearDown() {

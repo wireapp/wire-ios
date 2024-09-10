@@ -19,7 +19,6 @@
 import Foundation
 
 public struct OAuthParameters {
-
     public let identityProvider: URL
     public let clientID: String
     public let keyauth: String
@@ -27,7 +26,6 @@ public struct OAuthParameters {
 }
 
 public struct OAuthResponse {
-
     let idToken: String
     let refreshToken: String?
 
@@ -43,13 +41,11 @@ public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
 
 // sourcery: AutoMockable
 public protocol EnrollE2EICertificateUseCaseProtocol {
-
     func invoke(authenticate: @escaping OAuthBlock) async throws -> String
 }
 
 /// This class provides an interface to issue an E2EI certificate.
 public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCaseProtocol {
-
     // MARK: - Types
 
     enum Failure: Error {

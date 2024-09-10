@@ -48,7 +48,6 @@ extension PHAssetCreationRequest: AssetCreationRequestProtocol {}
 private let log = ZMSLog(tag: "SavableImage")
 
 final class SavableImage: NSObject {
-
     enum Source {
         case gif(URL)
         case image(Data)

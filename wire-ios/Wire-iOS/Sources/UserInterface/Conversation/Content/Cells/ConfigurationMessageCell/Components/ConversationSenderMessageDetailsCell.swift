@@ -37,7 +37,6 @@ enum TeamRoleIndicator {
 // MARK: - ConversationSenderMessageDetailsCell
 
 final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
-
     struct Configuration {
         let user: UserType
         let indicator: Indicator?
@@ -136,7 +135,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
     }
 
     private func configureConstraints() {
-
         [avatar, authorLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let trailingDateLabelConstraint = dateLabel.trailingAnchor.constraint(
@@ -176,7 +174,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         )
 
         switch object.indicator {
-
         case .deleted:
             if let attachment = attachment(from: .trash, size: 8) {
                 attributedString.append(attachment)
@@ -192,7 +189,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         }
 
         switch object.teamRoleIndicator {
-
         case .guest:
             accessibilityIdentifier = "img.guest"
             if let attachment = attachment(from: .guest, size: 14) {
@@ -269,7 +265,6 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 // MARK: - ConversationSenderMessageCellDescription
 
 final class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
-
     // MARK: - Properties
 
     typealias View = ConversationSenderMessageDetailsCell

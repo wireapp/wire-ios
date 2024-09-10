@@ -19,7 +19,6 @@
 import UIKit
 
 public extension UIImage {
-
     var imageWithAlphaTrimmed: UIImage {
         let originalSize = self.size
 
@@ -35,7 +34,6 @@ public extension UIImage {
         draw(at: CGPoint.zero)
 
         if let context = UIGraphicsGetCurrentContext(), var pixelData = context.data?.assumingMemoryBound(to: UInt32.self) {
-
             let alignment = (8 - (context.width % 8)) % 8
 
             for y in 0..<context.height * 1 {

@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct DeveloperDebugActionsView: View {
-
     @ObservedObject var viewModel: DeveloperDebugActionsViewModel
 
     var body: some View {

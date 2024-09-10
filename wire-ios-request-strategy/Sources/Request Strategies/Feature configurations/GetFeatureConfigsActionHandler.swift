@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsAction> {
-
     // MARK: - Request
 
     override func request(

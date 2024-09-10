@@ -19,7 +19,6 @@
 import XCTest
 
 class String_EmojiTests: XCTestCase {
-
     func testThatItDetectsAnEmoji() {
         XCTAssertTrue("🍔".containsEmoji)
     }

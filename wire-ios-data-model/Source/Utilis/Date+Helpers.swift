@@ -19,7 +19,6 @@
 import Foundation
 
 public extension Date {
-
     /// The number of days from this date til now.
     ///
     /// If this date is in the future, the return value will be 0.

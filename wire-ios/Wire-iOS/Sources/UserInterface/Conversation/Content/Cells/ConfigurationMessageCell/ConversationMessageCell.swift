@@ -21,7 +21,6 @@ import WireDataModel
 import WireUtilities
 
 protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
-
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
     func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode)
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
@@ -74,7 +73,6 @@ protocol ConversationMessageCell: AnyObject {
 }
 
 extension ConversationMessageCell {
-
     var selectionView: UIView? {
         return nil
     }
@@ -157,7 +155,6 @@ protocol ConversationMessageCellDescription: AnyObject {
 // MARK: - Table View Dequeuing
 
 extension ConversationMessageCellDescription {
-
     func willDisplayCell() {
         _ = message?.startSelfDestructionIfNeeded()
     }
@@ -220,7 +217,6 @@ extension ConversationMessageCellDescription {
 }
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
-
     /// Default implementation of isConfigurationEqual
     ///
     /// - Parameter other: other object to compare

@@ -17,6 +17,5 @@
 //
 
 enum EARKeyRepositoryFailure: Error {
-
     case keyNotFound
 }

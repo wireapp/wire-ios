@@ -23,7 +23,6 @@ import WireSystem
 private let enabledLogsKey = "WireEnabledZMLogTags"
 
 extension Settings {
-
     /// Enable/disable a log
     func set(logTag: String, enabled: Bool) {
         ZMSLog.set(level: enabled ? .debug : .warn, tag: logTag)

@@ -24,7 +24,6 @@ import XCTest
 @testable import Wire
 
 final class AudioEffectsPickerViewControllerTests: XCTestCase {
-
     var sut: AudioEffectsPickerViewController! = .none
     private var snapshotHelper: SnapshotHelper!
 

@@ -19,7 +19,6 @@
 import XCTest
 
 class ConversationTests_Deletion: ConversationTestsBase {
-
     func testThatDeletingAConversationAlsoDeletesItLocally_OnSuccessfulResponse() {
         // GIVEN
         createTeamAndConversations()

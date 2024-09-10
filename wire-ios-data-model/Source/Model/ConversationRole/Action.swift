@@ -20,7 +20,6 @@ import Foundation
 
 @objcMembers
 public final class Action: ZMManagedObject {
-
     public static let nameKey = #keyPath(Action.name)
     public static let roleKey = #keyPath(Action.role)
 

@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 class CallEventContentTests: XCTestCase {
-
     private let decoder = JSONDecoder()
     private let remoteMute = "REMOTEMUTE"
 

@@ -19,7 +19,6 @@
 import Foundation
 
 enum UserRepositoryError: Error {
-
     /// Failed to fetch data from the server.
 
     case failedToFetchRemotely(Error)

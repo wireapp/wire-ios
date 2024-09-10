@@ -46,7 +46,6 @@ extension ConversationInputBarViewController {
 }
 
 extension ConversationInputBarViewController: LocationSelectionViewControllerDelegate {
-
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData) {
         guard let conversation = conversation as? ZMConversation else { return }
 

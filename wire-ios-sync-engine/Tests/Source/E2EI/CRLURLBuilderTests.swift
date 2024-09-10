@@ -20,7 +20,6 @@
 import XCTest
 
 final class CRLURLBuilderTests: XCTestCase {
-
     var sut: CRLURLBuilder!
     var distributionPoint: URL!
 

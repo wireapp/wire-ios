@@ -23,7 +23,6 @@ import Foundation
  */
 
 public struct Ziph: Codable {
-
     public let identifier: String
     public let images: ZiphyAnimatedImageList
     public let title: String?

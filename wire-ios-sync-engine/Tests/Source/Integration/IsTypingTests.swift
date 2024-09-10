@@ -21,7 +21,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
-
     private typealias Typing = WireSyncEngine.Typing
 
     private var oldTimeout: TimeInterval = 0

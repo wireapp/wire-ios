@@ -19,7 +19,6 @@
 import SwiftUI
 
 struct PreferredAPIVersionView: View {
-
     // MARK: - Properties
 
     @StateObject
@@ -61,7 +60,6 @@ struct PreferredAPIVersionView: View {
 // MARK: - Previews
 
 struct PreferredAPIVersionView_Previews: PreviewProvider {
-
     static var previews: some View {
         PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel())
     }

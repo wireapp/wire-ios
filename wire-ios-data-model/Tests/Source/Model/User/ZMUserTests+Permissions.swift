@@ -19,7 +19,6 @@
 import XCTest
 
 final class ZMUserTests_Permissions: ModelObjectsTests {
-
     let defaultAdminRoleName = "wire_admin"
     var team: Team!
     var conversation: ZMConversation!

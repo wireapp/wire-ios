@@ -21,9 +21,7 @@ import Foundation
 public typealias Reachability = ReachabilityProvider & TearDownCapable
 
 extension BackendEnvironmentProvider {
-
     public var reachability: ZMReachability {
-
         let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
 
         let serverNames: [String]
@@ -47,7 +45,6 @@ extension BackendEnvironmentProvider {
 
 /// Wrapper around Reachability to delay network calls if needed
 final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable {
-
     var mayBeReachable: Bool {
         safeReachability?.mayBeReachable == true
     }

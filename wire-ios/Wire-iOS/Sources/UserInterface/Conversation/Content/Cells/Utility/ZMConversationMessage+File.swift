@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
-
     func isFileDownloaded() -> Bool {
         guard let fileMessageData else { return false }
         return fileMessageData.hasLocalFileData

@@ -22,7 +22,6 @@ import XCTest
 
 @available(iOS 15.0, *)
 final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
-
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let conversationId = UUID()
     private let domain = "example.com"

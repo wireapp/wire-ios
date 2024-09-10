@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIViewController {
-
     /// Returns true if the view controller is presented inside a popover
     var isInsidePopover: Bool {
         guard let popoverPresentationController else { return false }

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireRequestStrategySupport
 
 final class ConversationServiceTests: MessagingTestBase {
-
     var sut: ConversationService!
     var mockConversationParticipantsService: MockConversationParticipantsServiceInterface!
     var user1: ZMUser!

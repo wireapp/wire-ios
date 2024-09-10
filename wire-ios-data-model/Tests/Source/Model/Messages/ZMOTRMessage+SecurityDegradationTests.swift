@@ -22,9 +22,7 @@ import WireUtilities
 import XCTest
 
 class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
-
     func testThatAtCreationAMessageIsNotCausingDegradation_UIMoc() {
-
         // GIVEN
         let convo = createConversation(moc: self.uiMOC)
 
@@ -39,7 +37,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatAtCreationAMessageIsNotCausingDegradation_SyncMoc() {
-
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -54,7 +51,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItSetsMessageAsCausingDegradation() {
-
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -72,7 +68,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItDoesNotSetDeliveryReceiptAsCausingDegradation() {
-
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -99,7 +94,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsMessageAsCausingDegradation() {
-
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
@@ -118,9 +112,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsDegradedConversationWhenRemovingAllMessages() {
-
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message1 = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -148,9 +140,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsDegradedConversationWhenClearingDegradedMessagesOnConversation() {
-
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message1 = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -170,9 +160,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsOnlyDegradedConversationWhenClearingDegradedMessagesOnThatConversation() {
-
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message1 = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -202,7 +190,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 // MARK: - Propagation across contexes
 
 extension ZMOTRMessage_SecurityDegradationTests {
-
     func testThatMessageIsNotMarkedOnUIMOCBeforeMerge() {
         // GIVEN
         let convo = createConversation(moc: self.uiMOC)
@@ -259,7 +246,6 @@ extension ZMOTRMessage_SecurityDegradationTests {
 // MARK: - Helper
 
 extension ZMOTRMessage_SecurityDegradationTests {
-
     /// Creates a group conversation with two users
     func createConversation(moc: NSManagedObjectContext) -> ZMConversation {
         let user1 = ZMUser.insertNewObject(in: moc)

@@ -35,7 +35,6 @@ public enum ReadReceiptModeError: Error {
 }
 
 extension ZMConversation {
-
     /// Enable or disable read receipts in a group conversation
     public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
@@ -49,7 +48,6 @@ extension ZMConversation {
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-
                 userSession.processConversationEvents([event]) {
                     userSession.managedObjectContext.performGroupedBlock {
                         completion(.success(()))

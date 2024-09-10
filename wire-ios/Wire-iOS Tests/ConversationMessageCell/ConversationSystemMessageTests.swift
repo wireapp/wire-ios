@@ -21,7 +21,6 @@ import SnapshotTesting
 import XCTest
 
 final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase {
-
     override func setUp() {
         super.setUp()
         SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Alice"))

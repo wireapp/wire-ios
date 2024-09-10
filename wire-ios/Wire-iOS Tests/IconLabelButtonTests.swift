@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class IconLabelButtonTests: XCTestCase {
-
     private var button: IconLabelButton!
     private var snapshotHelper: SnapshotHelper!
 
@@ -59,7 +58,6 @@ final class IconLabelButtonTests: XCTestCase {
 }
 
 struct IconLabelButtonTestCase {
-
     enum Appearance: CaseIterable {
         typealias AllCases = [Appearance]
 

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModelSupport
 
 final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
-
     var sut: EARService!
     var keyRepository: MockEARKeyRepositoryInterface!
     var keyEncryptor: MockEARKeyEncryptorInterface!
@@ -57,7 +56,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     }
 
     func createSUT(canPerformMigration: Bool = false) -> EARService {
-
         let sut = EARService(
             accountID: userIdentifier,
             keyRepository: keyRepository,
@@ -82,7 +80,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     // MARK: - Mock helpers
 
     enum MockError: Error {
-
         case cannotStoreKey
     }
 
@@ -940,14 +937,12 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 }
 
 private extension ZMGenericMessageData {
-
     var unencryptedContent: String? {
         return underlyingMessage?.text.content
     }
 }
 
 private extension NSManagedObjectContext {
-
     func fetchObjects<T: ZMManagedObject>() throws -> [T] {
         let request = NSFetchRequest<T>(entityName: T.entityName())
         request.returnsObjectsAsFaults = false
@@ -956,7 +951,6 @@ private extension NSManagedObjectContext {
 }
 
 private extension ZMConversation {
-
     var hasEncryptedDraftMessageData: Bool {
         return draftMessageData != nil && draftMessageNonce != nil
     }

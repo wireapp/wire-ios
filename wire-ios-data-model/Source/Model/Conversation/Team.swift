@@ -21,7 +21,6 @@ public extension NSNotification.Name {
 }
 
 public protocol TeamType: AnyObject {
-
     var conversations: Set<ZMConversation> { get }
     var name: String? { get }
     var pictureAssetId: String? { get }
@@ -35,7 +34,6 @@ public protocol TeamType: AnyObject {
 
 @objcMembers
 public class Team: ZMManagedObject, TeamType {
-
     @NSManaged public var conversations: Set<ZMConversation>
     @NSManaged public var members: Set<Member>
     @NSManaged public var roles: Set<Role>
@@ -89,7 +87,6 @@ public class Team: ZMManagedObject, TeamType {
 }
 
 extension Team {
-
     public func members(matchingQuery query: String) -> [Member] {
         let searchPredicate = ZMUser.predicateForAllUsers(withSearch: query)
 
@@ -107,7 +104,6 @@ extension Team {
 // MARK: - Logo Image
 
 extension Team {
-
     @objc static let pictureAssetIdKey = #keyPath(Team.pictureAssetId)
 
     public var imageData: Data? {

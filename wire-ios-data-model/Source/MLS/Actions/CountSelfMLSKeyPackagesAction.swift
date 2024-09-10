@@ -19,13 +19,11 @@
 import Foundation
 
 public final class CountSelfMLSKeyPackagesAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = Int
 
     public enum Failure: Error, Equatable {
-
         case clientNotFound
         case malformedResponse
         case invalidClientID

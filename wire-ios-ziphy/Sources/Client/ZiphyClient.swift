@@ -32,7 +32,6 @@ public typealias ZiphyImageDataCallback = (ZiphyResult<Data>) -> Void
  */
 
 public final class ZiphyClient {
-
     let host: String
     let requester: ZiphyURLRequester
     let downloadSession: ZiphyURLRequester
@@ -60,7 +59,6 @@ public final class ZiphyClient {
 // MARK: - List Requests
 
 extension ZiphyClient {
-
     /**
      * Attempts to fetch the list of trending GIF images.
      *
@@ -73,7 +71,6 @@ extension ZiphyClient {
 
     @discardableResult
     public func fetchTrending(resultsLimit: Int = 25, offset: Int, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-
         let request = requestGenerator.makeTrendingImagesRequest(resultsLimit: resultsLimit, offset: offset)
         return performPotentialZiphListRequest(request, onCompletion: onCompletion)
     }
@@ -91,13 +88,11 @@ extension ZiphyClient {
 
     @discardableResult
     public func search(term: String, resultsLimit: Int = 25, offset: Int = 0, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-
         let request = requestGenerator.makeSearchRequest(term: term, resultsLimit: resultsLimit, offset: offset)
         return performPotentialZiphListRequest(request, onCompletion: onCompletion)
     }
 
     private func performPotentialZiphListRequest(_ potentialRequest: ZiphyResult<URLRequest>, isPaginated: Bool = true, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-
         let completionHandler = makeCompletionHandler(onCompletion)
         let listTask = performDataTask(potentialRequest, errorHandler: completionHandler)
 
@@ -124,7 +119,6 @@ extension ZiphyClient {
 // MARK: - Resource Requests
 
 extension ZiphyClient {
-
     /**
      * Attempts to fetch a random GIF image post.
      *
@@ -186,7 +180,6 @@ extension ZiphyClient {
 // MARK: - Utilities
 
 extension ZiphyClient {
-
     /// Creates a wrapper around a completion handler that calls it on the specified queue.
     fileprivate func makeCompletionHandler<T>(_ onCompletion: @escaping (T) -> Void) -> (T) -> Void {
         return { value in

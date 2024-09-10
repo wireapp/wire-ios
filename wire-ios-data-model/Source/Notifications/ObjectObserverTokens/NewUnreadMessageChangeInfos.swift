@@ -25,7 +25,6 @@ import Foundation
 //////////////////////////
 
 public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
-
     public convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
@@ -40,7 +39,6 @@ public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
 }
 
 extension NewUnreadMessagesChangeInfo {
-
     /// Adds a ZMNewUnreadMessagesObserver
     /// You must hold on to the token and use it to unregister
     @objc(addNewMessageObserver:forManagedObjectContext:)
@@ -61,7 +59,6 @@ extension NewUnreadMessagesChangeInfo {
 //////////////////////////
 
 @objc public final class NewUnreadKnockMessagesChangeInfo: ObjectChangeInfo {
-
     public convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
@@ -76,7 +73,6 @@ extension NewUnreadMessagesChangeInfo {
 }
 
 extension NewUnreadKnockMessagesChangeInfo {
-
     /// Adds a ZMNewUnreadKnocksObserver
     /// You must hold on to the token and use it to unregister
     @objc(addNewKnockObserver:forManagedObjectContext:)
@@ -97,7 +93,6 @@ extension NewUnreadKnockMessagesChangeInfo {
 //////////////////////////
 
 @objc public final class NewUnreadUnsentMessageChangeInfo: ObjectChangeInfo {
-
     public required convenience init(messages: [ZMConversationMessage]) {
         self.init(object: messages as NSObject)
     }
@@ -112,7 +107,6 @@ extension NewUnreadKnockMessagesChangeInfo {
 }
 
 extension NewUnreadUnsentMessageChangeInfo {
-
     /// Adds a ZMNewUnreadUnsentMessageObserver
     /// You must hold on to the token and use it to unregister
     @objc(addNewUnreadUnsentMessageObserver:forManagedObjectContext:)

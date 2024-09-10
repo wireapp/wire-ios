@@ -20,7 +20,6 @@
 import XCTest
 
 final class ClientMessageTests: BaseZMClientMessageTests {
-
     override static func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
@@ -333,7 +332,6 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 // MARK: - CreateClientMessageFromUpdateEvent
 
 extension ClientMessageTests {
-
     func testThatItDoesNotCreateOTRMessageIfConversationIsForceReadonly() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -786,7 +784,6 @@ extension ClientMessageTests {
 // MARK: - ExternalMessage
 
 extension ClientMessageTests {
-
     func testThatItDecryptsMessageWithExternalBlobCorrectly() {
         // given
         self.syncMOC.performGroupedAndWait {

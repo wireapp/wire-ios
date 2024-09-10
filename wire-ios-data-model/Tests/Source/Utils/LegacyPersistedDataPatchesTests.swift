@@ -23,9 +23,7 @@ import XCTest
 // MARK: - Framework comparison
 
 class FrameworkVersionTests: XCTestCase {
-
     func testThatCorrectVersionsAreParsed() {
-
         // GIVEN
         let version = FrameworkVersion("13.5.3")
 
@@ -36,7 +34,6 @@ class FrameworkVersionTests: XCTestCase {
     }
 
     func testThatCorrectVersionsAreParsedWithZero() {
-
         // GIVEN
         let version = FrameworkVersion("0.5.0")
 
@@ -47,7 +44,6 @@ class FrameworkVersionTests: XCTestCase {
     }
 
     func testThatVersionsWithNoPatchAreParsed() {
-
         // GIVEN
         let version = FrameworkVersion("2.5")
 
@@ -58,7 +54,6 @@ class FrameworkVersionTests: XCTestCase {
     }
 
     func testThatVersionsWithNoMinorAreParsed() {
-
         // GIVEN
         let version = FrameworkVersion("2")
 
@@ -69,7 +64,6 @@ class FrameworkVersionTests: XCTestCase {
     }
 
     func testThatEmptyVersionIsNotParsed() {
-
         // GIVEN
         let version = FrameworkVersion("")
 
@@ -78,7 +72,6 @@ class FrameworkVersionTests: XCTestCase {
     }
 
     func testThatVersionWithTooManyIsNotParsed() {
-
         // GIVEN
         let version = FrameworkVersion("3.4.5.2")
 
@@ -87,7 +80,6 @@ class FrameworkVersionTests: XCTestCase {
     }
 
     func testThatVersionWithTextIsNotParsed() {
-
         // GIVEN
         let version = FrameworkVersion("3.4.0-alpha")
 
@@ -119,7 +111,6 @@ class FrameworkVersionTests: XCTestCase {
 // MARK: - Test patches
 
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
-
     override class func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto
@@ -140,7 +131,6 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItApplyPatchesWhenNoVersion() {
-
         // GIVEN
         var patchApplied = false
         let patch = LegacyPersistedDataPatch(version: "9999.32.32") { moc in
@@ -158,7 +148,6 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItApplyPatchesWhenPreviousVersionIsLesser() {
-
         // GIVEN
         var patchApplied = false
         let patch = LegacyPersistedDataPatch(version: "10000000.32.32") { moc in
@@ -180,7 +169,6 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItDoesNotApplyPatchesWhenPreviousVersionIsGreater() {
-
         // GIVEN
         var patchApplied = false
         let patch = LegacyPersistedDataPatch(version: "0.0.1") { _ in

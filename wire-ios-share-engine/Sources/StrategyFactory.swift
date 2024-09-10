@@ -22,7 +22,6 @@ import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
 
 final class StrategyFactory {
-
     unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatus
     let linkPreviewPreprocessor: LinkPreviewPreprocessor
@@ -106,7 +105,6 @@ final class StrategyFactory {
     // MARK: – Link Previews
 
     private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> LinkPreviewAssetUploadRequestStrategy {
-
         return LinkPreviewAssetUploadRequestStrategy(
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,

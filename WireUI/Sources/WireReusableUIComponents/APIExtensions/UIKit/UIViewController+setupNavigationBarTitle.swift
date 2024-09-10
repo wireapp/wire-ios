@@ -20,7 +20,6 @@ import SwiftUI
 import WireDesign
 
 public extension UIViewController {
-
     func setupNavigationBarTitle(_ title: String) {
         navigationItem.title = title
 

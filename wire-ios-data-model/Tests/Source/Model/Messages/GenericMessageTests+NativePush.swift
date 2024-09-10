@@ -21,7 +21,6 @@ import Foundation
 @testable import WireDataModel
 
 class GenericMessageTests_NativePush: BaseZMMessageTests {
-
     override func setUp() {
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!
         var flag = DeveloperFlag.proteusViaCoreCrypto

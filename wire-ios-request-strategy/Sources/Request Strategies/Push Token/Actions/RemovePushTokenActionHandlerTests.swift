@@ -20,7 +20,6 @@ import Foundation
 @testable import WireRequestStrategy
 
 class RemovePushTokenActionHandlerTests: MessagingTestBase {
-
     // MARK: - Helpers
 
     let deviceToken = "deviceToken"

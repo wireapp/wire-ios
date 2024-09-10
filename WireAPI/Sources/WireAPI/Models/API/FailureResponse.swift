@@ -21,7 +21,6 @@ import Foundation
 /// A object representing an error returned from the server.
 
 public struct FailureResponse: Decodable, Error {
-
     /// The http status code.
 
     public let code: Int

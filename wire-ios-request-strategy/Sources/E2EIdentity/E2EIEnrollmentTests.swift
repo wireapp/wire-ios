@@ -25,7 +25,6 @@ import WireCoreCrypto
 import WireTransport
 
 class E2EIEnrollmentTests: ZMTBaseTest {
-
     var sut: E2EIEnrollment!
     var mockAcmeApi: MockAcmeAPIInterface!
     var mockApiProvider: MockAPIProviderInterface!

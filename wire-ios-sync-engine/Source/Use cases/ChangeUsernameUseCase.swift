@@ -26,12 +26,10 @@ public enum ChangeUsernameError: Error {
 /// Change the user name of the self user
 
 public protocol ChangeUsernameUseCaseProtocol {
-
     func invoke(username: String) async throws
 }
 
 class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
-
     let userProfile: UserProfile
     var continuation: CheckedContinuation<Void, Error>?
     var token: Any?
@@ -50,7 +48,6 @@ class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
 }
 
 extension ChangeUsernameUseCase: UserProfileUpdateObserver {
-
     func didSetHandle() {
         continuation?.resume()
         continuation = nil

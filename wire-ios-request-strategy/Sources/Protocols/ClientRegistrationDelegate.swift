@@ -19,7 +19,6 @@
 import Foundation
 
 @objc public protocol ClientRegistrationDelegate: NSObjectProtocol {
-
     /// Returns true if the client is registered
     var clientIsReadyForRequests: Bool { get }
 

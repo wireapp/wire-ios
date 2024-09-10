@@ -19,7 +19,6 @@
 import Foundation
 
 public extension String {
-
     func truncated(afterCharacterCount count: Int = 25) -> String {
         if self.count > count {
             return String(

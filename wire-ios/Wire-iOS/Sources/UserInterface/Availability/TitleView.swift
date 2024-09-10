@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 class TitleView: UIView, DynamicTypeCapable {
-
     // MARK: - Properties
 
     var titleColor: UIColor?
@@ -51,7 +50,6 @@ class TitleView: UIView, DynamicTypeCapable {
     // MARK: - Private methods
 
     private func createConstraints() {
-
         stackView.fitIn(view: self)
     }
 
@@ -111,7 +109,6 @@ class TitleView: UIView, DynamicTypeCapable {
 // MARK: NSTextAttachment Extension
 
 extension NSTextAttachment {
-
     static func downArrow(color: UIColor, size: StyleKitIcon.Size = .nano) -> NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = StyleKitIcon.downArrow.makeImage(

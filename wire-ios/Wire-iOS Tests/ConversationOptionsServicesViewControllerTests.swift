@@ -44,7 +44,6 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
 }
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {
-
     private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {

@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class Tab: LegacyButton {
-
     init() {
         super.init(fontSpec: .bodyTwoSemibold)
 

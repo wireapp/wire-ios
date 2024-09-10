@@ -21,7 +21,6 @@ import WireDesign
 import WireUtilities
 
 final class NavigationController: UINavigationController {
-
     private lazy var pushTransition = NavigationTransition(operation: .push)
     private lazy var popTransition = NavigationTransition(operation: .pop)
 
@@ -136,7 +135,6 @@ extension NavigationController: UINavigationControllerDelegate {
 }
 
 extension NavigationController: UIViewControllerTransitioningDelegate {
-
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return SwizzleTransition(direction: .vertical)
     }

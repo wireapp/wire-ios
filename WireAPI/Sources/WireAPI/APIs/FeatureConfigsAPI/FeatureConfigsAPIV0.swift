@@ -19,7 +19,6 @@
 import Foundation
 
 class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
-
     let httpClient: any HTTPClient
 
     init(httpClient: any HTTPClient) {
@@ -52,26 +51,21 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
 /// A namespace for all feature config responses
 
 enum FeatureConfigResponse {
-
     struct AppLockV0: Decodable {
-
         let enforceAppLock: Bool
         let inactivityTimeoutSecs: UInt
     }
 
     struct ClassifiedDomainsV0: Decodable {
-
         let domains: Set<String>
     }
 
     struct SelfDeletingMessagesV0: Decodable {
-
         let enforcedTimeoutSeconds: UInt
     }
 }
 
 struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
-
     let appLock: FeatureWithConfig<FeatureConfigResponse.AppLockV0>
     let classifiedDomains: FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0>
     let conferenceCalling: FeatureWithoutConfig
@@ -122,7 +116,6 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
 }
 
 extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConvertible {
-
     func toAPIModel() -> AppLockFeatureConfig {
         AppLockFeatureConfig(
             status: status,
@@ -133,7 +126,6 @@ extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConverti
 }
 
 extension FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0> {
-
     func toAPIModel() -> ClassifiedDomainsFeatureConfig {
         ClassifiedDomainsFeatureConfig(
             status: status,
@@ -143,7 +135,6 @@ extension FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0> {
 }
 
 extension FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0> {
-
     func toAPIModel() -> SelfDeletingMessagesFeatureConfig {
         SelfDeletingMessagesFeatureConfig(
             status: status,

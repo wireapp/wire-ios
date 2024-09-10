@@ -25,7 +25,6 @@ import Foundation
 /// is required.
 
 struct UTCTimeMillis: Codable {
-
     let date: Date
 
     init(from decoder: any Decoder) throws {

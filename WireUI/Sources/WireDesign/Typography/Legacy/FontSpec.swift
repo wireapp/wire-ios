@@ -17,7 +17,6 @@
 //
 
 public extension FontSpec {
-
     // MARK: - Small
 
     static var smallFont: Self {

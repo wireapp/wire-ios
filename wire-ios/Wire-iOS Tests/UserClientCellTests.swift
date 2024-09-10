@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class UserClientCellTests: XCTestCase {
-
     private var sut: UserClientCell!
     private var container: UIView!
     private var snapshotHelper: SnapshotHelper!

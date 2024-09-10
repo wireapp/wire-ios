@@ -19,7 +19,6 @@
 import Foundation
 
 class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
-
     // MARK: - Receiving
 
     func testThatItProcessesEditingMessages() {

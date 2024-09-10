@@ -20,7 +20,6 @@ import Foundation
 import LocalAuthentication
 
 public struct EARKeyGenerator {
-
     public init() {}
 
     public func generatePrimaryPublicPrivateKeyPair(id: String) throws -> (publicKey: SecKey, privateKey: SecKey) {

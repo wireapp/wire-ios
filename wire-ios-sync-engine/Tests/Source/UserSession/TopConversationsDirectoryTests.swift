@@ -22,7 +22,6 @@ import WireTesting
 import XCTest
 
 class TopConversationsDirectoryTests: MessagingTest {
-
     var sut: TopConversationsDirectory!
     var topConversationsObserver: FakeTopConversationsDirectoryObserver!
     var topConversationsObserverToken: Any?
@@ -185,7 +184,6 @@ class TopConversationsDirectoryTests: MessagingTest {
     }
 
     func testThatItDoesNotReturnConversationsIfTheyAreDeleted() {
-
         // GIVEN
         let conv1 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
         let conv2 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
@@ -202,7 +200,6 @@ class TopConversationsDirectoryTests: MessagingTest {
     }
 
     func testThatItDoesNotReturnConversationsIfTheyAreBlocked() {
-
         // GIVEN
         let conv1 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
         let conv2 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
@@ -217,7 +214,6 @@ class TopConversationsDirectoryTests: MessagingTest {
     }
 
     func testThatItDoesPersistsResults() {
-
         // GIVEN
         createConversation(in: uiMOC)
         createConversation(in: uiMOC)
@@ -251,9 +247,7 @@ class TopConversationsDirectoryTests: MessagingTest {
 // MARK: - Observation
 
 extension TopConversationsDirectoryTests {
-
     func testThatItDoesNotNotifyTheObserverIfTheTopConversationsDidNotChange() {
-
         // GIVEN
         XCTAssertEqual(topConversationsObserver.topConversationsDidChangeCallCount, 0)
 
@@ -265,7 +259,6 @@ extension TopConversationsDirectoryTests {
     }
 
     func testThatItNotifiesTheObserverWhenTheTopConversationsDidChange() {
-
         // GIVEN
         XCTAssertEqual(topConversationsObserver.topConversationsDidChangeCallCount, 0)
 
@@ -278,7 +271,6 @@ extension TopConversationsDirectoryTests {
     }
 
     func testThatItNotifiesTheObserverWhenTheTopConversationsDidChangeSubsequentially() {
-
         // GIVEN
         XCTAssertEqual(topConversationsObserver.topConversationsDidChangeCallCount, 0)
 
@@ -328,7 +320,6 @@ extension TopConversationsDirectoryTests {
 // MARK: - Helpers
 
 extension TopConversationsDirectoryTests {
-
     @discardableResult
     func createConversation(
         in managedObjectContext: NSManagedObjectContext,
@@ -375,7 +366,6 @@ extension TopConversationsDirectoryTests {
 }
 
 class FakeTopConversationsDirectoryObserver: TopConversationsDirectoryObserver {
-
     var topConversationsDidChangeCallCount = 0
 
     func topConversationsDidChange() {

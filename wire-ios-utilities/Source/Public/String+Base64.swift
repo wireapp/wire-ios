@@ -19,7 +19,6 @@
 import Foundation
 
 public extension String {
-
     var utf8Data: Data? {
         return data(using: .utf8)
     }

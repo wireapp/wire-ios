@@ -19,7 +19,6 @@
 import Foundation
 
 final class IsPendingInitialFetchMigrationAction: CoreDataMigrationAction {
-
     override func execute(in context: NSManagedObjectContext) throws {
         let batchUpdate = NSBatchUpdateRequest(entityName: ZMConversation.entityName())
         batchUpdate.propertiesToUpdate = ["isPendingInitialFetch": false as NSNumber]

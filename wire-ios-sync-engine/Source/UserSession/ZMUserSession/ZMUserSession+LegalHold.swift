@@ -31,7 +31,6 @@ public enum LegalHoldActivationError: Error, Equatable {
 }
 
 extension ZMUserSession {
-
     /**
      * Sends a request to accept a legal hold request for the specified user.
      * - parameter request: The request that was accepted by the user.
@@ -41,7 +40,6 @@ extension ZMUserSession {
      */
 
     public func accept(legalHoldRequest: LegalHoldRequest, password: String?, completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void) {
-
         guard let apiVersion = BackendInfo.apiVersion else {
             return completionHandler(.missingAPIVersion)
         }

@@ -29,7 +29,6 @@ import WireUtilities
 /// we would get all notifications, even from other contexts.
 
 @objcMembers public class NotificationInContext: NSObject {
-
     static let objectInNotificationKey = "objectInNotification"
 
     /// Name of the notification
@@ -103,7 +102,6 @@ import WireUtilities
 }
 
 extension NotificationInContext {
-
     private enum UserInfoKeys: String {
         case changedKeys
         case changeInfo

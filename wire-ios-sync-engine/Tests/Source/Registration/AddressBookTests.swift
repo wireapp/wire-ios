@@ -21,7 +21,6 @@ import Foundation
 @testable import WireSyncEngine
 
 final class AddressBookTests: XCTestCase {
-
     fileprivate var addressBook: MockAddressBook!
 
     override func setUp() {
@@ -38,9 +37,7 @@ final class AddressBookTests: XCTestCase {
 // MARK: - Access to AB
 
 extension AddressBookTests {
-
     func testThatItReturnsAllContactsWhenTheyHaveValidEmailAndPhoneNumbers() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com", "janet@example.com"], phoneNumbers: ["+15550100"]),
@@ -59,7 +56,6 @@ extension AddressBookTests {
     }
 
     func testThatItReturnsAllContactsWhenTheyHaveValidEmailOrPhoneNumbers() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: []),
@@ -78,7 +74,6 @@ extension AddressBookTests {
     }
 
     func testThatItFilterlContactsThatHaveNoEmailNorPhone() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550100"]),
@@ -97,9 +92,7 @@ extension AddressBookTests {
 // MARK: - Validation/normalization
 
 extension AddressBookTests {
-
     func testThatItFilterlContactsThatHaveAnInvalidPhoneAndNoEmail() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["aabbccdd"])
@@ -113,7 +106,6 @@ extension AddressBookTests {
     }
 
     func testThatIgnoresInvalidPhones() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet@example.com"], phoneNumbers: ["aabbccdd"])
@@ -129,7 +121,6 @@ extension AddressBookTests {
     }
 
     func testThatItFilterlContactsThatHaveNoPhoneAndInvalidEmail() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: [])
@@ -143,7 +134,6 @@ extension AddressBookTests {
     }
 
     func testThatIgnoresInvalidEmails() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: ["+15550103"])
@@ -159,7 +149,6 @@ extension AddressBookTests {
     }
 
     func testThatItNormalizesPhoneNumbers() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+1 (555) 0103"])
@@ -174,7 +163,6 @@ extension AddressBookTests {
     }
 
     func testThatItNormalizesEmails() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["Olaf Karlsson <janet+1@example.com>"], phoneNumbers: [])
@@ -189,7 +177,6 @@ extension AddressBookTests {
     }
 
     func testThatItDoesNotIgnoresPhonesWithPlusZero() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+012345678"])
@@ -207,9 +194,7 @@ extension AddressBookTests {
 // MARK: - Encoding
 
 extension AddressBookTests {
-
     func testThatItEncodesUsers() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
@@ -246,7 +231,6 @@ extension AddressBookTests {
     }
 
     func testThatItCallsCompletionHandlerWithNilIfNoContacts() {
-
         // given
         self.addressBook.contacts = []
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -267,7 +251,6 @@ extension AddressBookTests {
     }
 
     func testThatItEncodesOnlyAMaximumNumberOfUsers() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
@@ -303,7 +286,6 @@ extension AddressBookTests {
     }
 
     func testThatItEncodesOnlyTheRequestedUsers() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
@@ -340,7 +322,6 @@ extension AddressBookTests {
     }
 
     func testThatItEncodesAsManyContactsAsItCanIfAskedToEncodeTooMany() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
@@ -377,7 +358,6 @@ extension AddressBookTests {
     }
 
     func testThatItEncodesNoContactIfAskedToEncodePastTheLastContact() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
@@ -409,7 +389,6 @@ extension AddressBookTests {
     }
 
     func testThatItEncodesTheSameAddressBookInTheSameWay() {
-
         // given
         self.addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),

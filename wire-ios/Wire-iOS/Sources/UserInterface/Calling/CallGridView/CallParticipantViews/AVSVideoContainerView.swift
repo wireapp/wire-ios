@@ -21,7 +21,6 @@ import struct WireSystem.WireLogger
 
 /// A placeholder container for AVSVideo to start the rendering only if the view is instantiated and setup.
 final class AVSVideoContainerView: UIView {
-
     private weak var videoView: UIView?
 
     func setupVideoView(_ view: UIView) {

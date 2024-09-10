@@ -19,7 +19,6 @@
 import Foundation
 
 extension LocalNotificationType {
-
     func category(hasTeam: Bool, encryptionAtRestEnabled: Bool) -> PushNotificationCategory {
         return PushNotificationCategory(notificationType: self)
             .addEncryptionAtRestIfNeeded(encryptionAtRestEnabled: encryptionAtRestEnabled)
@@ -51,7 +50,6 @@ extension LocalNotificationType {
 }
 
 private extension PushNotificationCategory {
-
     init(notificationType: LocalNotificationType) {
         switch notificationType {
         case .calling(let callState):

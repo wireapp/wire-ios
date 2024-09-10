@@ -51,7 +51,6 @@ public protocol AVSWrapperType {
 
 /// An object that provides an interface to the AVS APIs.
 public final class AVSWrapper: AVSWrapperType {
-
     /// The wrapped `wcall` instance.
     private let handle: UInt32
     private let encoder = JSONEncoder()
@@ -398,7 +397,6 @@ public final class AVSWrapper: AVSWrapperType {
             let isMLSConference = callCenter.conversationType(from: conversationId) == .mlsConference
 
             if !isMLSConference {
-
                 // This handler is called once per call, but the participants may be added or removed from the
                 // conversation during this time. Therefore we store the completion so that it can be re-invoked
                 // with an updated client list.

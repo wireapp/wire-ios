@@ -21,7 +21,6 @@ import UniformTypeIdentifiers
 import WireUtilities
 
 extension NSItemProvider {
-
     /// Extracts the URL from the item provider
     func fetchURL(completion: @escaping (URL?) -> Void) {
         loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { url, error in

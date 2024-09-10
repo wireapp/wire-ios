@@ -21,14 +21,12 @@ import WireDataModel
 import WireTransport
 
 extension SearchTests: UserObserving {
-
     func userDidChange(_ changeInfo: UserChangeInfo) {
         userNotifications.append(changeInfo)
     }
 }
 
 final class SearchTests: IntegrationTest {
-
     var userNotifications: [UserChangeInfo] = []
 
     override func setUp() {
@@ -181,7 +179,6 @@ final class SearchTests: IntegrationTest {
     // MARK: Profile Images
 
     func testThatItReturnsTheProfileImageForAConnectedSearchUser() {
-
         // given
         var profileImageData: Data?
         var userName: String?

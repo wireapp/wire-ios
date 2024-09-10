@@ -20,7 +20,6 @@
 import XCTest
 
 class String_StrippingTests: XCTestCase {
-
     // MARK: - Mutating method
 
     func testThatItStripsSingleCharacter() {

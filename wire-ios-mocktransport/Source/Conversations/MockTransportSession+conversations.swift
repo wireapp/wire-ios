@@ -20,7 +20,6 @@ import Foundation
 import WireProtos
 
 extension MockTransportSession {
-
     @objc(fetchConversationWithIdentifier:)
     public func fetchConversation(with identifier: String) -> MockConversation? {
         let request = MockConversation.sortedFetchRequest()
@@ -180,7 +179,6 @@ extension MockTransportSession {
 
     @objc(processGuestLinkFeatureStatusForConversation:apiVersion:)
     public func processGuestLinkFeatureStatusForConversation(for conversationId: String, apiVersion: APIVersion) -> ZMTransportResponse {
-
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }

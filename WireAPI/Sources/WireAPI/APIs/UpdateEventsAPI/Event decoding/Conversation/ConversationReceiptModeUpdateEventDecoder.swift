@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationReceiptModeUpdateEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationReceiptModeUpdateEvent {
@@ -46,11 +45,9 @@ struct ConversationReceiptModeUpdateEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let receiptMode: Int
 
         enum CodingKeys: String, CodingKey {
-
             case receiptMode = "receipt_mode"
         }
     }

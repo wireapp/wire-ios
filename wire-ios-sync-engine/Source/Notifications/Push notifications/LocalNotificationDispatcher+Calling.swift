@@ -19,7 +19,6 @@
 import Foundation
 
 extension LocalNotificationDispatcher {
-
     func process(callState: CallState, in conversation: ZMConversation, caller: ZMUser) {
         // Missed call notification are handled separately, except if call was answered
         // elsewhere for 1-1 conversations.

@@ -19,7 +19,6 @@
 import UIKit
 
 protocol ProfileFooterViewDelegate: AnyObject {
-
     /// Called when the footer wants to perform a single action, from the left button.
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction)
 
@@ -32,7 +31,6 @@ protocol ProfileFooterViewDelegate: AnyObject {
  */
 
 final class ProfileFooterView: ConversationDetailFooterView {
-
     /// The object that will perform the actions on demand.
     weak var delegate: ProfileFooterViewDelegate?
 

@@ -21,7 +21,6 @@ import XCTest
 @testable import Wire
 
 final class NetworkStatusViewTests: XCTestCase {
-
     private var sut: NetworkStatusView!
     private var mockContainer: MockNetworkStatusViewDelegate!
 
@@ -75,7 +74,6 @@ final class NetworkStatusViewTests: XCTestCase {
 // MARK: - Method Swizzling
 
 private extension UIScene {
-
     @objc var backgroundActivationState: UIScene.ActivationState {
         .background
     }

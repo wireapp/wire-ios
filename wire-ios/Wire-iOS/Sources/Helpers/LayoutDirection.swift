@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIApplication {
-
     /// Check whether that app is in left to right layout.
     static var isLeftToRightLayout: Bool {
         return UIApplication.shared.userInterfaceLayoutDirection == .leftToRight
@@ -29,7 +28,6 @@ extension UIApplication {
 // MARK: - UIEdgeInsets
 
 extension UIEdgeInsets {
-
     /// The leading insets, that respect the layout direction.
     var leading: CGFloat {
         if UIApplication.isLeftToRightLayout {

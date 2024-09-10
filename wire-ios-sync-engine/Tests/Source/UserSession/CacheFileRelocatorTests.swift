@@ -20,7 +20,6 @@
 import XCTest
 
 final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
-
     func testThatItMovesCaches() throws {
         // given
         let oldLocation = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
@@ -45,7 +44,6 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
     }
 
     func testWhitelistedFilePersistence() throws {
-
         // given
         let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
         clearFolder(at: cachesFolder)
@@ -64,7 +62,6 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
     }
 
     func testMovingOfNonWhitelistedFile() throws {
-
         // given
         let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
         clearFolder(at: cachesFolder)

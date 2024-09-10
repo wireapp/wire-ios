@@ -19,7 +19,6 @@
 import Foundation
 
 extension String {
-
     /// Creates a new string by applying the given transform.
     ///
     /// - Parameter transform: TextTransform to apply
@@ -35,7 +34,6 @@ extension String {
 }
 
 extension NSAttributedString {
-
     /**
      * Creates a new string by applying the given transform.
      */
@@ -50,7 +48,6 @@ extension NSAttributedString {
 }
 
 extension String {
-
     func trim() -> String {
         return self.trimmingCharacters(in: .whitespaces)
     }

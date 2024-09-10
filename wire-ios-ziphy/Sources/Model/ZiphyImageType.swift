@@ -23,7 +23,6 @@ import Foundation
  */
 
 public enum ZiphyImageType: String, CodingKey {
-
     case fixedHeight = "fixed_height"
     case fixedHeightDownsampled = "fixed_height_downsampled"
     case fixedHeightSmall = "fixed_height_small"

@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class IncomingConnectionView: UIView {
-
     // MARK: - Properties
 
     typealias UserAction = (UserType) -> Void

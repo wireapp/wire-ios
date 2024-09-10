@@ -25,7 +25,6 @@ import WireDesign
  */
 
 class AuthenticationStepController: AuthenticationStepViewController {
-
     /// The step to display.
     let stepDescription: AuthenticationStepDescription
 
@@ -384,7 +383,6 @@ class AuthenticationStepController: AuthenticationStepViewController {
 // MARK: - Event Handling
 
 extension AuthenticationStepController {
-
     // MARK: - AuthenticationCoordinatedViewController
 
     func displayError(_ error: Error) {

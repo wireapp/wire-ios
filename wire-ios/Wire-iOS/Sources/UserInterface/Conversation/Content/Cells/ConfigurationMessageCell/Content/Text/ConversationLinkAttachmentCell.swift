@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, HighlightableView, ContextMenuDelegate {
-
     struct Configuration {
         let attachment: LinkAttachment
         let thumbnailResource: WireImageResource?

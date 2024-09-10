@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMManagedObject {
-
     @objc public static func fetch(with remoteIdentifier: UUID, in context: NSManagedObjectContext) -> Self? {
         return internalFetch(withRemoteIdentifier: remoteIdentifier, in: context)
     }
@@ -51,7 +50,6 @@ extension ZMManagedObject {
 }
 
 public extension ZMManagedObject {
-
     static func existingObject(for id: NSManagedObjectID, in context: NSManagedObjectContext) -> Self? {
         return try? context.existingObject(with: id) as? Self
     }
@@ -70,7 +68,6 @@ public extension ZMManagedObject {
 }
 
 public extension Collection where Element == NSManagedObjectID {
-
     func existingObjects<T: ZMManagedObject>(in context: NSManagedObjectContext) -> [T]? {
         let objects = compactMap({ T.existingObject(for: $0, in: context) })
         return objects.count == self.count ? objects : nil

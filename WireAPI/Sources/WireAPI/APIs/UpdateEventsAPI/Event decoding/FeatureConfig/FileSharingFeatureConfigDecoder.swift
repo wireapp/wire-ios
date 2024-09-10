@@ -19,7 +19,6 @@
 import Foundation
 
 struct FileSharingFeatureConfigDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<FeatureConfigEventCodingKeys>
     ) throws -> FileSharingFeatureConfig {

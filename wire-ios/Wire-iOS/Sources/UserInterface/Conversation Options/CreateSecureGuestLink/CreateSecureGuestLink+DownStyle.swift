@@ -23,7 +23,6 @@ import WireDesign
 // MARK: - DownStyle
 
 extension DownStyle {
-
     static var warningLabelStyle: DownStyle {
         let paragraphStyle = NSMutableParagraphStyle()
         let style = DownStyle()

@@ -20,7 +20,6 @@ import  WireTesting
 @testable import WireTransport
 
 private final class MockTask: DataTaskProtocol {
-
     var resumeCallCount = 0
 
     func resume() {
@@ -29,7 +28,6 @@ private final class MockTask: DataTaskProtocol {
 }
 
 private final class MockURLSession: SessionProtocol {
-
     var recordedRequest: URLRequest?
     var recordedCompletionHandler: ((Data?, URLResponse?, Error?) -> Void)?
     var nextCompletionParameters: (Data?, URLResponse?, Error?)?
@@ -46,7 +44,6 @@ private final class MockURLSession: SessionProtocol {
 }
 
 private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
-
     let mayBeReachable = true
     let isMobileConnection = true
     let oldMayBeReachable = true
@@ -61,7 +58,6 @@ private final class MockReachability: NSObject, ReachabilityProvider, TearDownCa
 
 @objcMembers
 final class MockCertificateTrust: NSObject, BackendTrustProvider {
-
     var isTrustingServer: Bool = true
 
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
@@ -70,7 +66,6 @@ final class MockCertificateTrust: NSObject, BackendTrustProvider {
 }
 
 final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
-
     private var sut: UnauthenticatedTransportSession!
     private var sessionMock: MockURLSession!
     private let url = URL(string: "http://base.example.com")!

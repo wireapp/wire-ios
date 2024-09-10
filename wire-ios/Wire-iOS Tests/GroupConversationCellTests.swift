@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class GroupConversationCellTests: XCTestCase {
-
     private var sut: GroupConversationCell!
     private var otherUser: MockUserType!
     private var snapshotHelper: SnapshotHelper!
@@ -69,7 +68,6 @@ final class GroupConversationCellTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
-
         sut.configure(conversation: conversation)
 
         snapshotHelper

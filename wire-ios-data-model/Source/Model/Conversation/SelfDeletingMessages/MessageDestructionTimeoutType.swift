@@ -21,7 +21,6 @@ import Foundation
 /// A type representing all the kinds of message destruction timeouts.
 
 public enum MessageDestructionTimeoutType {
-
     /// For timeouts set (and enforced) by the team admin and apply to all members
     /// of the team. This has highest precedence.
 

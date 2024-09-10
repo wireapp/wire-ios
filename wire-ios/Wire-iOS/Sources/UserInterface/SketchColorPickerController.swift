@@ -27,7 +27,6 @@ protocol SketchColorPickerControllerDelegate: AnyObject {
 /// The color picker for the sketching
 
 final class SketchColorPickerController: UIViewController {
-
     /// Used only as fallback in case no brush width is set
     private let SketchColorPickerDefaultBrushWidth: CGFloat = 6
 
@@ -234,7 +233,6 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-
         if allItemsAreIncluded {
             // All items are included, just use the default item box
             return colorsCollectionViewLayout.itemSize
@@ -253,7 +251,6 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-
         if allItemsAreIncluded {
             // Align content in center of frame
             let horizontalInset = frameWidth - contentWidth

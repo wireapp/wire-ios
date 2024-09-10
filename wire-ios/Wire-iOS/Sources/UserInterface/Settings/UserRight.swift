@@ -24,9 +24,7 @@ protocol UserRightInterface {
 }
 
 final class UserRight: UserRightInterface {
-
     enum Permission {
-
         case resetPassword
         case editName
         case editHandle

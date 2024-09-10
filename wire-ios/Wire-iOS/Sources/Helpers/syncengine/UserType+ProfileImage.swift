@@ -30,7 +30,6 @@ extension UserType {
                            sizeLimit: Int?,
                            isDesaturated: Bool,
                            completion: @escaping ProfileImageCompletion) {
-
         let imageSize = profileImageSize(with: sizeLimit)
 
         guard let cacheKey = buildCachedImageKey(for: imageSize,

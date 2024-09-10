@@ -22,7 +22,6 @@ import WireTransport
 import XCTest
 
 class AVSIdentifierTests: XCTestCase {
-
     let uuid = UUID()
     let domain = "wire.com"
 

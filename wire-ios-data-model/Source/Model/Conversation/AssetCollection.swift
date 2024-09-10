@@ -42,7 +42,6 @@ public protocol AssetCollectionDelegate: NSObjectProtocol {
 /// It first fetches all objects that have previously categorized and then performs consecutive request of limited batch-size and categorizes them
 /// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it finished categorizing all objects
 public class AssetCollection: NSObject, ZMCollection {
-
     private unowned var delegate: AssetCollectionDelegate
     private var assets: [CategoryMatch: [ZMMessage]]?
     private var lastAssetMessage: ZMAssetClientMessage?
@@ -233,7 +232,6 @@ public class AssetCollection: NSObject, ZMCollection {
     }
 
     func messages<T: ZMMessage>(for conversation: ZMConversation, startAfter previousMessage: ZMMessage?, fetchLimit: Int) -> [T] {
-
         let request: NSFetchRequest <T> = AssetCollectionBatched.fetchRequestForUnCategorizedMessages(in: conversation)
         if let serverTimestamp = previousMessage?.serverTimestamp {
             let messagePredicate = NSPredicate(format: "serverTimestamp < %@", serverTimestamp as NSDate)

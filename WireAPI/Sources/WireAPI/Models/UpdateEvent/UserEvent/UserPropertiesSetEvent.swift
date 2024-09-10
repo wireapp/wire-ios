@@ -22,7 +22,6 @@ import Foundation
 /// properties was set.
 
 public struct UserPropertiesSetEvent: Equatable, Codable {
-
     /// The updated user property.
 
     public let property: UserProperty

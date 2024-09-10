@@ -23,7 +23,6 @@ import WireFoundation
 import WireSyncEngine
 
 struct AccentColorPicker: View {
-
     @State
     var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28

@@ -19,7 +19,6 @@
 import Foundation
 
 fileprivate extension ZMConversation {
-
     static var predicateForObjectsNeedingToDownloadRoles: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(ZMConversation.needsToDownloadRoles), ZMConversation.remoteIdentifierDataKey())
     }()
@@ -47,7 +46,6 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
 
     @objc
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
 

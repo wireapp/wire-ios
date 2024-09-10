@@ -20,7 +20,6 @@
 import XCTest
 
 class MigrateSenderClientTests: DiskDatabaseTest {
-
     func testSenderClientIDIsMigratedFromClientsSet() throws {
         // given
         let clientID = UUID().transportString()

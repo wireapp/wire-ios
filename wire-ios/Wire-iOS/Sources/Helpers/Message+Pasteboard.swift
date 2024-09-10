@@ -21,7 +21,6 @@ import UIKit
 import WireDataModel
 
 extension ZMConversationMessage {
-
     func copy(in pasteboard: UIPasteboard) {
         if self.isText {
             if let text = textMessageData?.messageText, !text.isEmpty {
@@ -29,7 +28,6 @@ extension ZMConversationMessage {
             }
         } else if isImage,
                   let imageData = imageMessageData?.imageData {
-
             let mediaAsset: MediaAsset?
             if imageMessageData?.isAnimatedGIF == true {
                 mediaAsset = FLAnimatedImage(animatedGIFData: imageData)

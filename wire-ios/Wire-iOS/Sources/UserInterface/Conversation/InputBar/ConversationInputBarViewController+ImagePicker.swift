@@ -23,14 +23,12 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "ConversationInputBarViewController - Image Picker")
 
 extension ConversationInputBarViewController {
-
     func presentImagePicker(
         sourceType: UIImagePickerController.SourceType,
         mediaTypes: [String],
         allowsEditing: Bool,
         pointToView: UIView
     ) {
-
         if !UIImagePickerController.isSourceTypeAvailable(sourceType) {
             if UIDevice.isSimulator {
                 let testFilePath = "/var/tmp/video.mp4"

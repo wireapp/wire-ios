@@ -26,7 +26,6 @@ public protocol CRLExpirationDatesRepositoryProtocol {
 }
 
 public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol {
-
     // MARK: - Types
 
     enum Key: DefaultsKey {

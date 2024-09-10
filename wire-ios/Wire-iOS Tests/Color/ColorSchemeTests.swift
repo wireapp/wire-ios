@@ -20,7 +20,6 @@
 import XCTest
 
 final class ColorSchemeTests: XCTestCase {
-
     var sut: ColorScheme!
 
     override func setUp() {

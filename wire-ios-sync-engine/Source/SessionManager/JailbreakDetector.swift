@@ -24,7 +24,6 @@ public protocol JailbreakDetectorProtocol {
 }
 
 public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
-
     private let fm = FileManager.default
 
     public func isJailbroken() -> Bool {
@@ -126,7 +125,6 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
     }
 
     private var canOpenJailbrokenStores: Bool {
-
         let jailbrokenStoresURLs: [String] = ["cydia://app",
                                               "sileo://package",
                                               "sileo://source"]
@@ -139,7 +137,6 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
 }
 
 @objcMembers public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {
-
     public var jailbroken: Bool = false
 
     @objc(initAsJailbroken:)

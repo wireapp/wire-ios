@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationAvatarViewTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ConversationAvatarView!
@@ -167,7 +166,6 @@ final class ConversationAvatarViewTests: XCTestCase {
 // MARK: - Helper method
 
 fileprivate extension UIView {
-
     func prepareForSnapshots() -> UIView {
         let container = UIView()
         container.backgroundColor = .white

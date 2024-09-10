@@ -19,7 +19,6 @@
 import Foundation
 
 extension InviteResult {
-
     init(response: ZMTransportResponse, email: String) {
         let payload = response.payload?.asDictionary()
         let label = payload?["label"] as? String
@@ -46,7 +45,6 @@ extension InviteResult {
 }
 
 public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
-
     fileprivate weak var teamInvitationStatus: TeamInvitationStatus?
 
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, teamInvitationStatus: TeamInvitationStatus) {

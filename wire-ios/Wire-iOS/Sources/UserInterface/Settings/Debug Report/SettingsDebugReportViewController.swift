@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 class SettingsDebugReportViewController: UIViewController {
-
     // MARK: - Constants
 
     private enum LayoutConstants {

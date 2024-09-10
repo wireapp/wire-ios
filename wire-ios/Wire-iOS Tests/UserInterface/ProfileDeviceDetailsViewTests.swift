@@ -21,7 +21,6 @@ import SwiftUI
 import XCTest
 
 final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
-
     var coreDataFixture: CoreDataFixture!
     var sut: UIHostingController<ProfileDeviceDetailsView>!
     var client: UserClient!
@@ -188,7 +187,6 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixture
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
-
         let viewModel = prepareViewModel(mlsThumbprint: .mockFingerPrint,
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,

@@ -20,7 +20,6 @@
 import WireTesting
 
 final class PermissionsDownloadRequestStrategyTests: MessagingTest {
-
     var sut: PermissionsDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
 

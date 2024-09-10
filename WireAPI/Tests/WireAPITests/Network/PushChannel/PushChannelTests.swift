@@ -22,7 +22,6 @@ import XCTest
 @testable import WireAPISupport
 
 final class PushChannelTests: XCTestCase {
-
     var sut: PushChannel!
     var request: URLRequest!
     var webSocket: MockWebSocketProtocol!
@@ -137,7 +136,6 @@ final class PushChannelTests: XCTestCase {
 }
 
 private enum Scaffolding {
-
     static let envelope1 = UpdateEventEnvelope(
         id: UUID(uuidString: "66c7731b-9985-4b5e-90d7-b8f8ce1cadb9")!,
         events: [

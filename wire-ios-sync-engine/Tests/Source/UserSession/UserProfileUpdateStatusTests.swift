@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class UserProfileUpdateStatusTests: MessagingTest {
-
     var observerToken: Any?
 
     var sut: UserProfileUpdateStatus! = nil
@@ -76,7 +75,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     // MARK: - Changing email
 
     func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() throws {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue(nil, forKey: #keyPath(ZMUser.emailAddress))
@@ -97,7 +95,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItPreparesForEmailChangeIfSelfUserHasEmail() throws {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
@@ -122,7 +119,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItPreparesForEmailAndPasswordChangeIfTheSelfUserHasNoEmail() throws {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         XCTAssertNil(selfUser.emailAddress)
@@ -140,7 +136,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItReturnsErrorWhenPreparingForEmailAndPasswordChangeAndUserUserHasEmail() throws {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
@@ -162,7 +157,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItCanCancelSettingEmailAndPassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -179,7 +173,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNeedsToSetEmailAfterSuccessfullySettingPassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -195,7 +188,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItCompletesAfterSuccessfullySettingPasswordAndEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -212,7 +204,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesAfterSuccessfullySettingEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -234,7 +225,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItIsNotSettingEmailAnymoreAsSoonAsTheSelfUserHasEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -250,7 +240,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItIsNotSettingPasswordAnymoreAsSoonAsTheSelfUserHasEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -267,7 +256,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItIsNotSettingEmailAndPasswordAnymoreIfItFailsToUpdatePassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -283,7 +271,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesIfItFailsToUpdatePassword() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -304,7 +291,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItIsNotSettingEmailAnymoreIfItFailsToUpdateEmail() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -322,7 +308,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesIfItFailsToUpdateEmail() {
-
         // GIVEN
         let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
@@ -347,7 +332,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     // MARK: - Credentials provider
 
     func testThatItDoesNotReturnCredentialsIfOnlyPasswordIsVerified() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
@@ -361,7 +345,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItDoesNotReturnCredentialsIfOnlyEmailIsVerified() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
@@ -375,7 +358,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItReturnsCredentialsIfEmailAndPasswordAreVerified() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
@@ -390,7 +372,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItDeletesCredentials() {
-
         // GIVEN
         let credentials = UserEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
@@ -412,7 +393,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItPreparesForCheckingHandleAvailability() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -427,7 +407,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItCompletesCheckingHandleAvailability_Available() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -442,7 +421,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItCompletesCheckingHandleAvailability_NotAvailable() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -457,7 +435,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItFailsCheckingHandleAvailability() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -472,7 +449,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItDoesCompletesCheckingHandleAvailabilityIfDifferentHandle_Available() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -487,7 +463,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItDoesCompletesCheckingHandleAvailabilityIfDifferentHandle_NotAvailable() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -502,7 +477,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItDoesCompletesCheckingHandleAvailabilityIfDifferentHandle_Failed() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -517,7 +491,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesAfterCheckingHandleAvailability_Available() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -538,7 +511,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesAfterCheckingHandleAvailability_NotAvailable() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -559,7 +531,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesAfterFailingCheckingHandleAvailability() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -584,7 +555,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItPreparesForSettingHandle() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -599,7 +569,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItSetsHandleSuccessfully() {
-
         // GIVEN
         let handle = "foobar"
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
@@ -617,7 +586,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItCancelsSetHandle() {
-
         // GIVEN
         let handle = "foobar"
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
@@ -634,7 +602,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItFailsToSetHandle() {
-
         // GIVEN
         let handle = "foobar"
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
@@ -651,7 +618,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItFailsToSetHandleBecauseExisting() {
-
         // GIVEN
         let handle = "foobar"
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
@@ -668,7 +634,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItDoesNotSetTheHandleOnSelfUserIfCompletedAfterCancelling() {
-
         // GIVEN
         let handle = "foobar"
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
@@ -684,7 +649,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifyWhenSetingHandleSuccessfully() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -705,7 +669,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifyWhenItFailsToSetHandle() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -726,7 +689,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesWhenItFailsToSetHandleBecauseExisting() {
-
         // GIVEN
         let handle = "foobar"
 
@@ -754,7 +716,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItPreparesForGeneratingHandleSuggestion() {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
         selfUser.name = "Anna Luna"
@@ -772,7 +733,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItStopsGeneratingHandleSuggestionsIfHandleIsSet() {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
         selfUser.name = "Anna Luna"
@@ -789,7 +749,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItPreparesForGeneratingHandleSuggestionWithInvalidDisplayName() {
-
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.sut.managedObjectContext)
         selfUser.name = "-"
@@ -806,7 +765,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItCompletesGeneratingHandleSuggestions() {
-
         // GIVEN
         let handle = "funkymonkey34"
         self.sut.suggestHandles()
@@ -821,7 +779,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItStopsSearchingForHandleSuggestionsIfItHasHandle() {
-
         // GIVEN
         self.sut.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -837,7 +794,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItRestatsSearchingForHandleSuggestionsAfterNotFindingAvailableOne() {
-
         // GIVEN
         self.sut.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -857,7 +813,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItFailsGeneratingHandleSuggestionsAndStopsIfItHasHandle() {
-
         // GIVEN
         self.sut.suggestHandles()
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -874,7 +829,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesAfterFindingAHandleSuggestion() {
-
         // GIVEN
         let handle = "funkymokkey34"
         self.sut.suggestHandles()
@@ -896,7 +850,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
     }
 
     func testThatIfItSuggestsAHandleAndRequestedToSuggestMoreItStartsBySuggestingTheSame() {
-
         // GIVEN
         let handle = "funkymokkey34"
         self.sut.suggestHandles()

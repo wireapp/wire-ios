@@ -21,7 +21,6 @@ import Foundation
 @testable import WireSyncEngine
 
 class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
-
     static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("MockSessionManager.accounts")
 
     var foregroundNotificationResponder: ForegroundNotificationResponder?
@@ -84,7 +83,6 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
 }
 
 class MockCallKitManager: CallKitManagerInterface {
-
     var isEnabled = false
 
     func setDelegate(_ delegate: Any) {

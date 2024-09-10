@@ -20,7 +20,6 @@
 import XCTest
 
 final class SyncStatusTests: MessagingTest {
-
     var sut: SyncStatus!
     var mockSyncDelegate: MockSyncStateDelegate!
 

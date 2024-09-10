@@ -20,7 +20,6 @@
 import XCTest
 
 final class CompanyLoginRequesterTests: XCTestCase {
-
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN
         let defaults = UserDefaults(suiteName: name)!
@@ -188,7 +187,6 @@ final class CompanyLoginRequesterTests: XCTestCase {
 // MARK: - Helper
 
 private final class MockSession: NSObject, URLSessionProtocol {
-
     class MockURLSessionDataTask: URLSessionDataTask {
         override func resume() {
             // no-op

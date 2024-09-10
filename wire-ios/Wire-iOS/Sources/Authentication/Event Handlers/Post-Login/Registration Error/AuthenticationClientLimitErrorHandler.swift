@@ -25,7 +25,6 @@ import WireSyncEngine
  */
 
 final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {

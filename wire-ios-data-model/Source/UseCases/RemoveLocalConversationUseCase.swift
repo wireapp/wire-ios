@@ -20,12 +20,10 @@ import Foundation
 import WireSystem
 
 public protocol RemoveLocalConversationUseCaseProtocol {
-
     func invoke(with conversation: ZMConversation, syncContext: NSManagedObjectContext) async throws
 }
 
 public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol {
-
     public init() {}
 
     public func invoke(

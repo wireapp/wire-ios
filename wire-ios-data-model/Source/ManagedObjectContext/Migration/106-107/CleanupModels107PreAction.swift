@@ -20,14 +20,12 @@ import Foundation
 
 /// Removes UserClient duplicates and invalid ParticipantRoles
 class CleanupModels107PreAction: CoreDataMigrationAction {
-
     private enum Keys: String {
         case conversation
         case needsToBeUpdatedFromBackend
     }
 
     override func execute(in context: NSManagedObjectContext) throws {
-
         try removeInvalidParticipantRoles(in: context)
         try removeUserClientDuplicates(in: context)
     }
@@ -46,7 +44,6 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
     }
 
     private func removeUserClientDuplicates(in context: NSManagedObjectContext) throws {
-
         WireLogger.localStorage.info("beginning duplicate clients migration", attributes: .safePublic)
 
         let duplicates: [String: [NSManagedObject]] = context.findDuplicated(

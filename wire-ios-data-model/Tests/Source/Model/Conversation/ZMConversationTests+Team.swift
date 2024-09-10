@@ -20,7 +20,6 @@ import Foundation
 @testable import WireDataModel
 
 class ConversationTests_Team: ZMConversationTestsBase {
-
     var sut: ZMConversation!
 
     override func setUp() {

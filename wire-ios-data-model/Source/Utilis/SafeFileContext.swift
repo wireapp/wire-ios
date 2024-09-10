@@ -21,7 +21,6 @@ import WireSystem
 
 /// Provides safe access to a file with lock mechanism
 public final class SafeFileContext: NSObject {
-
     let fileURL: URL
     fileprivate var fileDescriptor: CInt!
 
@@ -44,7 +43,6 @@ public final class SafeFileContext: NSObject {
 }
 
 public extension SafeFileContext {
-
     func acquireDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(self.fileURL)")

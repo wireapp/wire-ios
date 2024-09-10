@@ -22,11 +22,9 @@ import WireTesting
 import XCTest
 
 extension IntegrationTest {
-
     /// Encrypts a message from the given client to the self user.
     /// It will create a session between the two if needed
     public func encryptedMessageToSelf(message: GenericMessage, from sender: UserClient) -> Data {
-
         let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         if selfClient.user!.remoteIdentifier == nil {
             selfClient.user!.remoteIdentifier = UUID()
@@ -58,7 +56,6 @@ extension IntegrationTest {
     /// Creates a session between the self client to the given user, if it does not
     /// exists already
     public func establishSessionFromSelf(to client: UserClient) async {
-
         let context = userSession!.syncManagedObjectContext
 
         // this makes sure the client has remote identifier
@@ -100,7 +97,6 @@ extension IntegrationTest {
     /// Creates a session between the self client, and a client matching a remote client.
     /// If no such client exists locally, it creates it (and the user associated with it).
     public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) async {
-
         let mockContext = self.mockTransportSession.managedObjectContext
             // .syncManagedObjectContext
         guard let remoteUserIdentifierString = await mockContext.perform({ remoteClient.user?.identifier }),
@@ -151,7 +147,6 @@ extension IntegrationTest {
 
     /// Decrypts a message that was sent from self to a given user
     public func decryptMessageFromSelf(cypherText: Data, to client: UserClient) -> Data? {
-
         let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         var plainText: Data?
         self.encryptionContext(for: client).perform { session in
@@ -174,7 +169,6 @@ extension IntegrationTest {
 }
 
 extension IntegrationTest {
-
     /// Delete all other clients encryption contexts
     public func deleteAllOtherEncryptionContexts() {
         try?  FileManager.default.removeItem(at: self.otherClientsEncryptionContextsURL)

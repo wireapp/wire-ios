@@ -19,7 +19,6 @@
 import Foundation
 
 extension FileManager {
-
     /// Moves the content of the folder recursively to another folder.
     /// If the destionation folder does not exists, it creates it.
     /// If it exists, it moves files and folders from the first folder to the second, then

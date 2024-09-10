@@ -38,7 +38,6 @@ final class CallParticipantTests: MessagingTest {
     }
 
     func testThatHashIsSameWithDifferentState() {
-
         // GIVEN & WHEN
         let callParticipant1 = CallParticipant(user: otherUser, clientId: otherUserClientID, state: .connecting, activeSpeakerState: .inactive)
         let callParticipant2 = CallParticipant(user: otherUser, clientId: otherUserClientID, state: .unconnected, activeSpeakerState: .inactive)

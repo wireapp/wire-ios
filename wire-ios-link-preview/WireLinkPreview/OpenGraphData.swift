@@ -69,7 +69,6 @@ public struct FoursquareMetaData {
 }
 
 extension OpenGraphData {
-
     typealias PropertyMapping = [OpenGraphPropertyType: String]
 
     init?(propertyMapping mapping: PropertyMapping, resolvedURL: URL, images: [String]) {
@@ -143,7 +142,6 @@ extension InstagramPictureMetadata {
 }
 
 extension TwitterStatusMetadata {
-
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.article.rawValue, openGraphData.siteName == .twitter else { return nil }
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
@@ -167,7 +165,6 @@ extension TwitterStatusMetadata {
 }
 
 extension OpenGraphData {
-
     func linkPreview(_ originalURLString: String, offset: Int) -> LinkMetadata {
         return TwitterStatusMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset) ??
             ArticleMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset)

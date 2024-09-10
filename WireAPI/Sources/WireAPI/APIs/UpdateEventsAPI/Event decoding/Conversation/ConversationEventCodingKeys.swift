@@ -19,7 +19,6 @@
 import Foundation
 
 enum ConversationEventCodingKeys: String, CodingKey {
-
     case conversationID = "conversation"
     case senderID = "from"
     case conversationQualifiedID = "qualified_conversation"

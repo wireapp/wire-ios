@@ -19,7 +19,6 @@
 import Foundation
 
 extension Label: ObjectInSnapshot {
-
     static public var observableKeys: Set<String> {
         return [
             #keyPath(Label.name), #keyPath(Label.markedForDeletion), #keyPath(Label.conversations)
@@ -32,7 +31,6 @@ extension Label: ObjectInSnapshot {
 }
 
 @objcMembers public class LabelChangeInfo: ObjectChangeInfo {
-
     public let label: LabelType
 
     static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
@@ -64,7 +62,6 @@ extension Label: ObjectInSnapshot {
 // MARK: Registering Label observers
 
 extension LabelChangeInfo {
-
     /// Adds an observer for a label
     ///
     /// You must hold on to the token and use it to unregister

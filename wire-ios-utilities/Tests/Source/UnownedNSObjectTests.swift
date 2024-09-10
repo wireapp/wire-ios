@@ -20,7 +20,6 @@ import WireUtilities
 import XCTest
 
 final class UnownedNSObjectTests: XCTestCase {
-
     func testThatCreatingAnUnownedNSObjectWithALocallyScopedObjectIsValid() {
         let unown = UnownedNSObject(NSNumber(value: 10))
         XCTAssertTrue(unown.isValid)

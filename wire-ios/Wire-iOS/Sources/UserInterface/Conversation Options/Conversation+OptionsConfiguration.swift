@@ -26,7 +26,6 @@ enum GuestLinkFeatureStatus {
 
 extension ZMConversation {
     final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration, ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
-
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
@@ -85,7 +84,6 @@ extension ZMConversation {
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-
             userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
                 conversation: conversation,
                 allowGuests: allowGuests,
@@ -101,7 +99,6 @@ extension ZMConversation {
         }
 
         func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-
             userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
                 conversation: conversation,
                 allowGuests: conversation.allowGuests,
@@ -117,7 +114,6 @@ extension ZMConversation {
         }
 
         func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
-
             if changeInfo.allowGuestsChanged {
                 allowGuestsChangedHandler?(allowGuests)
             }

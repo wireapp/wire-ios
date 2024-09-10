@@ -19,7 +19,6 @@
 import Foundation
 
 class SelfUserAPIV3: SelfUserAPIV2 {
-
     override var apiVersion: APIVersion {
         .v3
     }

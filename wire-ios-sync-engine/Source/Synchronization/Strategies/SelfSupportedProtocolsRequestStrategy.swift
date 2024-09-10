@@ -21,7 +21,6 @@ import WireDomain
 import WireRequestStrategy
 
 public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
-
     // MARK: - Properties
 
     // Slow Sync

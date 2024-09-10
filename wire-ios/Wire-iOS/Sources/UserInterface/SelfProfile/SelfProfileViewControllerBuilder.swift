@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
-
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession

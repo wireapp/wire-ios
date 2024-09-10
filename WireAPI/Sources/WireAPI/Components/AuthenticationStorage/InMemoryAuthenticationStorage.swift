@@ -19,7 +19,6 @@
 import Foundation
 
 final class InMemoryAuthenticationStorage: AuthenticationStorage {
-
     private var accessToken: AccessToken?
     private var cookieData: Data?
 

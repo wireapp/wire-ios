@@ -21,7 +21,6 @@ import Foundation
 // MARK: JSON Decoder / Encoder
 
 extension JSONDecoder {
-
     public static var defaultDecoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in
@@ -47,7 +46,6 @@ extension JSONDecoder {
 }
 
 extension JSONEncoder {
-
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom({ date, encoder in
@@ -66,7 +64,6 @@ extension JSONEncoder {
 // MARK: Decodable / Encodable
 
 extension Decodable {
-
     /// Initialize object from JSON Data or log an error if fails
     ///
     /// - parameter payloadData: JSON data as raw bytes
@@ -106,7 +103,6 @@ extension Decodable {
 }
 
 extension Encodable {
-
     /// Encode object to binary payload and log an error if it fails
     ///
     /// - Parameters:
@@ -154,7 +150,6 @@ extension Encodable {
 }
 
 enum JSONEncodingFailure: Error {
-
     case failedToEncode(Error)
 }
 
@@ -171,7 +166,6 @@ protocol EncodableAPIVersionAware: Encodable {
 protocol CodableAPIVersionAware: EncodableAPIVersionAware & DecodableAPIVersionAware {}
 
 extension DecodableAPIVersionAware {
-
     init(from decoder: Decoder) throws {
         guard let apiVersion = decoder.apiVersion ?? BackendInfo.apiVersion else {
             throw APIVersionAwareCodingError.missingAPIVersion
@@ -182,7 +176,6 @@ extension DecodableAPIVersionAware {
 }
 
 extension EncodableAPIVersionAware {
-
     func encode(to encoder: Encoder) throws {
         guard let apiVersion = encoder.apiVersion ?? BackendInfo.apiVersion else {
             throw APIVersionAwareCodingError.missingAPIVersion

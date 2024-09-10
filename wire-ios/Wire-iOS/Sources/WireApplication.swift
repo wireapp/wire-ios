@@ -20,7 +20,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 final class WireApplication: UIApplication {
-
     private let presenter = DeveloperToolsPresenter()
 
     override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
@@ -35,7 +34,6 @@ final class WireApplication: UIApplication {
 }
 
 extension WireApplication: NotificationSettingsRegistrable {
-
     var shouldRegisterUserNotificationSettings: Bool {
         return !(AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper.disablePushNotificationAlert)
     }

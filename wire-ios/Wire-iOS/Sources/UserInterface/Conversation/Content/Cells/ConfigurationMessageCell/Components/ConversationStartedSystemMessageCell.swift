@@ -20,7 +20,6 @@ import UIKit
 import WireDataModel
 
 final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
-
     struct Configuration {
         let title: NSAttributedString?
         let message: NSAttributedString
@@ -58,7 +57,6 @@ final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, Con
 // MARK: - UITextViewDelegate
 
 extension ConversationStartedSystemMessageCell {
-
     override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         delegate?.conversationMessageWantsToOpenParticipantsDetails(self, selectedUsers: selectedUsers, sourceView: self)
 

@@ -19,7 +19,6 @@
 import Foundation
 
 enum PreviewBlacklist {
-
     private static let blacklistedHosts = [
         "soundcloud",
         "youtube",

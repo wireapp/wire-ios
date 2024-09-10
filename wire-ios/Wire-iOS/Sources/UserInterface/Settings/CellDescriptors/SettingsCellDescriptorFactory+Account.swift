@@ -33,7 +33,6 @@ extension ZMUser {
 }
 
 extension SettingsCellDescriptorFactory {
-
     func accountGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
         var sections: [SettingsSectionDescriptorType] = [infoSection(userSession: userSession)]
 
@@ -210,7 +209,6 @@ extension SettingsCellDescriptorFactory {
             }
 
             if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {
-
                 let preview: PreviewGeneratorType = { _ in
                     guard let handleDisplayString = selfUser.handleDisplayString(withDomain: federationEnabled) else {
                         return .none
@@ -307,7 +305,6 @@ extension SettingsCellDescriptorFactory {
     }
 
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
-
         return SettingsPropertyToggleCellDescriptor(settingsProperty:
             self.settingsPropertyFactory.property(.readReceiptsEnabled),
                                                     inverse: false,

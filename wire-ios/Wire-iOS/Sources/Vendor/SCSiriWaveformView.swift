@@ -57,7 +57,6 @@ private let kDefaultPrimaryLineWidth: CGFloat = 3
 private let kDefaultSecondaryLineWidth: CGFloat = 1
 
 final class SCSiriWaveformView: UIView {
-
     /*
      * The total number of waves
      * Default: 5
@@ -118,7 +117,6 @@ final class SCSiriWaveformView: UIView {
     }
 
     private func setup() {
-
         frequency = kDefaultFrequency
 
         amplitude = kDefaultAmplitude

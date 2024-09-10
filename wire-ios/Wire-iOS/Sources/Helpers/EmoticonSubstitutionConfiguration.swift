@@ -21,7 +21,6 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "EmoticonSubstitutionConfiguration")
 
 final class EmoticonSubstitutionConfiguration {
-
     // Sorting keys is important. Longer keys should be resolved first,
     // In order to make 'O:-)' to be resolved as '😇', not a 'O😊'.
     lazy var shortcuts: [String] = {

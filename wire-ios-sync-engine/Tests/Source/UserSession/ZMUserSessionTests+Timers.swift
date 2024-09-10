@@ -20,7 +20,6 @@ import Foundation
 import XCTest
 
 final class ZMUserSessionTimersTests: ZMUserSessionTestsBase {
-
     func testThatTimersAreStartedWhenUserSessionIsCreated() {
         // then
         XCTAssertNotNil(sut.managedObjectContext.zm_messageDeletionTimer)

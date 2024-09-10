@@ -26,7 +26,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class EventDecoderDecryptionTests: MessagingTestBase {
-
     func testThatItCanDecryptOTRMessageAddEvent() async throws {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()

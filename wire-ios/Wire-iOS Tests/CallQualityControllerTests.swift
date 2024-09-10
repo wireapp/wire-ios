@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -102,7 +101,6 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     // MARK: - CallQualitySurvey Presentation Tests
 
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
-
         // GIVEN
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .normal)
@@ -119,7 +117,6 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsStillOngoing() {
-
         // GIVEN
         let establishedCallState: CallState = .established
         let terminatingCallState: CallState = .terminating(reason: .stillOngoing)
@@ -153,7 +150,6 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     func testThatCallQualitySurveyIsDismissed() {
-
         // Given
         router.dismissCallQualitySurveyCompletion_MockMethod = { _ in }
 

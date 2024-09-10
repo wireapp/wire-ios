@@ -29,7 +29,6 @@ extension Notification.Name {
 }
 
 final class MarkdownTextView: NextResponderTextView {
-
     enum ListType {
         case number, bullet
         var prefix: String { return self == .number ? "1. " : "- " }
@@ -240,7 +239,6 @@ final class MarkdownTextView: NextResponderTextView {
     /// to insert new list items in the case a newline was entered, as well as
     /// to validate any potential list items on the currently selected line.
     @objc private func textViewDidChange() {
-
         if newlineFlag {
             // flip immediately to avoid infinity
             newlineFlag = false
@@ -307,7 +305,6 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Returns the attributes for the given markdown.
     private func attributes(for markdown: Markdown) -> [NSAttributedString.Key: Any] {
-
         // the idea is to query for specific markdown & adjust the attributes
         // incrementally
 
@@ -478,7 +475,6 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Inserts a list prefix with the given type on the current line.
     private func insertListItem(type: ListType) {
-
         // remove existing list item if it exists
         removeListItem()
 
@@ -544,7 +540,6 @@ final class MarkdownTextView: NextResponderTextView {
 // MARK: - MarkdownBarViewDelegate
 
 extension MarkdownTextView: MarkdownBarViewDelegate {
-
     func markdownBarView(_ view: MarkdownBarView, didSelectMarkdown markdown: Markdown, with sender: IconButton) {
         // there must be a selection
         guard selectedRange.location != NSNotFound else { return }
@@ -704,7 +699,6 @@ extension DownStyle {
 // MARK: - Helper Extensions
 
 private extension NSRange {
-
     func textRange(in textInput: UITextInput) -> UITextRange? {
         guard
             let start = textInput.position(from: textInput.beginningOfDocument, offset: location),

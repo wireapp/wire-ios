@@ -24,7 +24,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class ZMHotFixTests_Integration: MessagingTest {
-
     func testThatAllConversationsAreUpdated_198_0_0() {
         var g1: ZMConversation!
         var g2: ZMConversation!

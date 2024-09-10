@@ -20,7 +20,6 @@
 import XCTest
 
 final class AvailabilityStringBuilderTests: XCTestCase {
-
     // MARK: - Properties
 
     var otherUser: ZMUser!

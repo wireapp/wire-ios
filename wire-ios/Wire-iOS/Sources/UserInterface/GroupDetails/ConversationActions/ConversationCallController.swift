@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class ConversationCallController: NSObject {
-
     private unowned let target: UIViewController
     private let conversation: ZMConversation
     private let confirmGroupCallParticipantsLimit = 4

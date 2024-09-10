@@ -19,7 +19,6 @@
 import Foundation
 
 struct UnreadMessages {
-
     var unsent = Set<ZMMessage>()
     var messages = Set<ZMMessage>()
     var knocks = Set<ZMMessage>()

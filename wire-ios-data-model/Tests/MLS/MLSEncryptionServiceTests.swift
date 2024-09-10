@@ -23,7 +23,6 @@ import WireCoreCrypto
 import XCTest
 
 final class MLSEncryptionServiceTests: XCTestCase {
-
     var sut: MLSEncryptionService!
     var mockCoreCrypto: MockCoreCryptoProtocol!
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
@@ -52,7 +51,6 @@ final class MLSEncryptionServiceTests: XCTestCase {
     typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
 
     func test_Encrypt_IsSuccessful() async throws {
-
         // Given
         let groupID = MLSGroupID.random()
         let unencryptedMessage = Data.random()

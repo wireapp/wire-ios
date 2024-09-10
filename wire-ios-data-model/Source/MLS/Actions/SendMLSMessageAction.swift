@@ -19,13 +19,11 @@
 import Foundation
 
 public final class SendMLSMessageAction: EntityAction {
-
     // MARK: - Types
 
     public typealias Result = [ZMUpdateEvent]
 
     public enum Failure: LocalizedError, Equatable {
-
         case endpointUnavailable
         case malformedRequest
         case malformedResponse

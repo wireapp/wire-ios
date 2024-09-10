@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 extension ZClientViewController {
-
     func presentConferenceCallingAvailableAlert() {
         typealias ConferenceCallingAlert = L10n.Localizable.FeatureConfig.Update.ConferenceCalling.Alert
         let title = ConferenceCallingAlert.title
@@ -96,7 +95,6 @@ extension ZClientViewController {
 }
 
 extension ZClientViewController: ConferenceCallingUnavailableObserver {
-
     func setUpConferenceCallingUnavailableObserver() {
         conferenceCallingUnavailableObserverToken = userSession.addConferenceCallingUnavailableObserver(self)
     }

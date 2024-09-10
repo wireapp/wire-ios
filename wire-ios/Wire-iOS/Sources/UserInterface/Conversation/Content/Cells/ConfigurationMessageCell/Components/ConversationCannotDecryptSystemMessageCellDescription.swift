@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class ConversationCannotDecryptSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationCannotDecryptSystemMessageCell
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
@@ -87,7 +86,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     private static let BaseLocalizationString = "content.system.cannot_decrypt"
 
     private static func makeAttributedString(systemMessage: ZMSystemMessageData, sender: UserType) -> NSAttributedString {
-
         let messageString = self.messageString(systemMessage.systemMessageType, sender: sender)
         let resetSessionString = self.resetSessionString()
         let errorDetailsString = self.errorDetailsString(
@@ -138,7 +136,6 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     }
 
     private static func messageString(_ systemMessageType: ZMSystemMessageType, sender: UserType) -> NSAttributedString {
-
         let name = sender.name ?? ""
         var localizationKey = self.localizationKey(systemMessageType)
 

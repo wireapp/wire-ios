@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
-
     var coreDataFixture: CoreDataFixture!
     var sut: CallController!
     var router: ActiveCallRouterProtocolMock!
@@ -186,7 +185,6 @@ extension CallControllerTests {
 // MARK: - ActiveCallRouterMock
 
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
-
     var dismissSecurityDegradedAlertIfNeededIsCalled: Bool = false
     func dismissSecurityDegradedAlertIfNeeded() {
         dismissSecurityDegradedAlertIfNeededIsCalled = true

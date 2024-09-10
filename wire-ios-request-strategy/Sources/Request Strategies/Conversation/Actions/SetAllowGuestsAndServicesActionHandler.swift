@@ -19,7 +19,6 @@
 import WireDataModel
 
 final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
-
     private lazy var eventProcessor = ConversationEventProcessor(context: context)
 
     // MARK: - Request Generation
@@ -28,7 +27,6 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         for action: SetAllowGuestsAndServicesAction,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-
         var action = action
 
         guard
@@ -84,7 +82,6 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
     // MARK: - Request Handling
 
     override func handleResponse(_ response: ZMTransportResponse, action: SetAllowGuestsAndServicesAction) {
-
         var action = action
 
         guard let payload = response.payload,

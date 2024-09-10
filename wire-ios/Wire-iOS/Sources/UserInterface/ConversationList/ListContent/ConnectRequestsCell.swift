@@ -25,7 +25,6 @@ protocol SectionListCellType: AnyObject {
 }
 
 extension SectionListCellType {
-
     var identifier: String {
         return [obfuscatedSectionName ?? sectionName, cellIdentifier]
             .compactMap { $0 }

@@ -23,7 +23,6 @@ import XCTest
 @testable import WireDataModel
 
 class FileAssetCacheTests: XCTestCase {
-
     var sut: FileAssetCache!
     var location: URL!
     var coreDataStack: CoreDataStack!
@@ -120,7 +119,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatHasDataOnDisk() {
-
         // given
         let message = createMessageForCaching()
         sut.storeOriginalFile(data: testData(), for: message)
@@ -133,7 +131,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatHasNoDataOnDiskWithWrongEncryptionFlag() {
-
         // given
         let message = createMessageForCaching()
         sut.storeOriginalFile(data: testData(), for: message)
@@ -146,7 +143,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatRetrievingMissingAssetsUUIDReturnsNil() {
-
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
@@ -160,7 +156,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatHasNoDataOnDiskWithWrongUUID() {
-
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
@@ -188,7 +183,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatItDeletesAnExistingAssetData() {
-
         // given
         let message = createMessageForCaching()
         let data = testData()
@@ -203,7 +197,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatItDeletesTheRightAssetData() {
-
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
@@ -247,7 +240,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatItDoesNotDecryptAFileThatDoesNotExistSHA256() {
-
         // given
         let message = createMessageForCaching()
         XCTAssertFalse(sut.hasEncryptedMediumImageData(for: message))
@@ -267,7 +259,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatItDoesNotDecryptAFileIfSHA256IsEmpty() {
-
         // given
         let message = createMessageForCaching()
         sut.storeEncryptedMediumImage(data: testData(), for: message)
@@ -287,7 +278,6 @@ class FileAssetCacheTests: XCTestCase {
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
     func testThatItDoesNotDecryptAndDeletesAFileWithWrongSHA256() {
-
         // given
         let message = createMessageForCaching()
         sut.storeEncryptedMediumImage(data: testData(), for: message)
@@ -309,7 +299,6 @@ class FileAssetCacheTests: XCTestCase {
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
     func testThatItDoesDecryptAFileWithTheRightSHA256() throws {
-
         // given
         let message = createMessageForCaching()
         let plainTextData = Data.secureRandomData(ofLength: 500)
@@ -333,7 +322,6 @@ class FileAssetCacheTests: XCTestCase {
     // MARK: - File encryption
 
     func testThatReturnsNilWhenEncryptingAMissingFileWithSHA256() {
-
         // given
         let message = createMessageForCaching()
 
@@ -346,7 +334,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatItCreatesTheEncryptedFileAndDeletesThePlainTextWithSHA256() {
-
         // given
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
@@ -386,7 +373,6 @@ class FileAssetCacheTests: XCTestCase {
     // MARK: - Image encryption
 
     func testThatReturnsNilWhenEncryptingAMissingImageWithSHA256() {
-
         // given
         let message = createMessageForCaching()
 
@@ -399,7 +385,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     func testThatItCreatesTheEncryptedImageAndDeletesThePlainTextWithSHA256() {
-
         // given
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
@@ -502,7 +487,6 @@ class FileAssetCacheTests: XCTestCase {
 }
 
 extension FileManager {
-
     func removeItemIfExists(at url: URL) throws {
         guard fileExists(atPath: url.path) else { return }
         try removeItem(atPath: url.path)

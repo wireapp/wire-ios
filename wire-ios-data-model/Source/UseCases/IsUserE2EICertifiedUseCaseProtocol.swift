@@ -19,7 +19,6 @@
 // sourcery: AutoMockable
 /// Determines if a user has a valid E2EI certificate on all clients.
 public protocol IsUserE2EICertifiedUseCaseProtocol {
-
     /// Returns `true` if all clients of the provided conversation's user have valid E2EI certificates.
     func invoke(
         conversation: ZMConversation,

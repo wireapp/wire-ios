@@ -19,7 +19,6 @@
 import XCTest
 
 final class ZMConversationListDirectoryTests_Labels: ZMBaseManagedObjectTest {
-
     func testThatItRefetchesAllFolders() {
         // given
         let sut = uiMOC.conversationListDirectory()

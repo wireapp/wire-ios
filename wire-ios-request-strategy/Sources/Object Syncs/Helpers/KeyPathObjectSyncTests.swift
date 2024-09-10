@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
-
     typealias T = MockEntity
 
     var objectsAskedToBeSynchronized: Set<MockEntity> = Set()
@@ -44,7 +43,6 @@ class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
 }
 
 class KeyPathObjectSyncTests: ZMTBaseTest {
-
     var moc: NSManagedObjectContext!
     var transcoder: MockKeyPathObjectSyncTranscoder!
     var sut: KeyPathObjectSync<MockKeyPathObjectSyncTranscoder>!

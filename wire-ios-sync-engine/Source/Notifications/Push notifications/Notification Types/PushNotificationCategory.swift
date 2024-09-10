@@ -24,7 +24,6 @@ import UserNotifications
  */
 
 enum PushNotificationCategory: String, CaseIterable {
-
     case incomingCall = "incomingCallCategory"
     case missedCall = "missedCallCategory"
     case conversation = "conversationCategory"

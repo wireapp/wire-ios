@@ -19,7 +19,6 @@
 import Foundation
 
 final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDescription {
-
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

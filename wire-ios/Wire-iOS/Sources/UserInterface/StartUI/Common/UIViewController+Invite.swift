@@ -20,9 +20,7 @@ import UIKit
 import WireSystem
 
 extension UIViewController {
-
     func presentInviteActivityViewController(popoverPresentationConfiguration: PopoverPresentationControllerConfiguration?) {
-
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
         let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]

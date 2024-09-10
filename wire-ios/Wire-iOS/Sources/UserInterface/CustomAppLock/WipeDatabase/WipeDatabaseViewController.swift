@@ -36,7 +36,6 @@ extension WipeDatabaseViewController: WipeDatabaseUserInterface {
 }
 
 final class WipeDatabaseViewController: UIViewController {
-
     var presenter: WipeDatabasePresenter!
 
     var confirmController: RequestPasswordController?
@@ -116,7 +115,6 @@ final class WipeDatabaseViewController: UIViewController {
     }
 
     private func createConstraints() {
-
         [stackView, confirmButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = stackView.widthAnchor.constraint(equalToConstant: CGFloat.iPhone4_7Inch.width)

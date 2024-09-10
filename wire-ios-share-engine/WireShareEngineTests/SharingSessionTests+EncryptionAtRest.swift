@@ -22,7 +22,6 @@ import WireDataModel
 import XCTest
 
 final class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
-
     // MARK: - Life Cycle
 
     override func tearDown() {

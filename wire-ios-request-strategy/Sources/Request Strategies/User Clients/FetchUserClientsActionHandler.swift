@@ -20,11 +20,9 @@ import Foundation
 import WireDataModel
 
 final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction> {
-
     // MARK: - Request
 
     struct RequestPayload: Codable, Equatable {
-
         let qualified_users: Set<QualifiedID>
     }
 
@@ -60,7 +58,6 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
     // MARK: - Response
 
     struct ResponsePayload: Codable, Equatable {
-
         let qualified_user_map: Payload.UserClientByDomain
     }
 

@@ -30,7 +30,6 @@ extension EmailPasswordTextFieldDelegate {
 }
 
 class RevisedEmailPasswordTextField: EmailPasswordTextField {
-
     override func configureConstraints() {
         [passwordField, emailField, contentStack].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
@@ -49,7 +48,6 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
 }
 
 class EmailPasswordTextField: UIView, MagicTappable {
-
     let emailField = ValidatedTextField(kind: .email, cornerRadius: 12, setNewColors: true, style: .default)
     let passwordField = ValidatedTextField(kind: .password(.nonEmpty, isNew: false), cornerRadius: 12, setNewColors: true, style: .default)
     let contentStack = UIStackView()

@@ -78,7 +78,6 @@ public final class ProxyCredentials: NSObject {
 }
 
 struct GenericPasswordKeychainItem: KeychainItem {
-
     // MARK: - Properties
 
     private let itemIdentifier: String

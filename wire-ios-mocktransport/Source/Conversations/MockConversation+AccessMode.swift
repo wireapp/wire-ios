@@ -89,7 +89,6 @@ public struct MockConversationAccessMode: OptionSet {
 }
 
 extension MockConversationAccessMode: Hashable {
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)
     }

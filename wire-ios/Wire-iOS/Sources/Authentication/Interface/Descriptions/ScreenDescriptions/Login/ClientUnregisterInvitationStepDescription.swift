@@ -23,7 +23,6 @@ import Foundation
  */
 
 final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
-
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String

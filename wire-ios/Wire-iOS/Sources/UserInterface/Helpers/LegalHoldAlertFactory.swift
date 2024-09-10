@@ -24,7 +24,6 @@ typealias ViewControllerPresenter = (UIViewController, Bool, (() -> Void)?) -> V
 typealias SuggestedStateChangeHandler = (LegalHoldDisclosureController.DisclosureState) -> Void
 
 enum LegalHoldAlertFactory {
-
     static func makeLegalHoldDeactivatedAlert(
         for user: SelfUserLegalHoldable,
         suggestedStateChangeHandler: SuggestedStateChangeHandler?
@@ -73,9 +72,7 @@ enum LegalHoldAlertFactory {
         user: SelfUserLegalHoldable,
         suggestedStateChangeHandler: SuggestedStateChangeHandler?
     ) -> UIAlertController {
-
         func handleLegalHoldActivationResult(_ error: LegalHoldActivationError?) {
-
             switch error {
             case .invalidPassword?:
                 user.acceptLegalHoldChangeAlert()
@@ -139,7 +136,6 @@ enum LegalHoldAlertFactory {
 // MARK: - SelfLegalHoldSubject + Accepting Alert
 
 extension SelfLegalHoldSubject {
-
     fileprivate func acceptLegalHoldChangeAlert() {
         ZMUserSession.shared()?.perform {
             self.acknowledgeLegalHoldStatus()

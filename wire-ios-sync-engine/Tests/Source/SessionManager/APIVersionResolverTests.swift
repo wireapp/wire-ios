@@ -22,7 +22,6 @@ import XCTest
 @testable import WireSyncEngine
 
 final class APIVersionResolverTests: ZMTBaseTest {
-
     private var transportSession: MockTransportSession!
     private var mockDelegate: MockAPIVersionResolverDelegate!
 
@@ -402,7 +401,6 @@ final class APIVersionResolverTests: ZMTBaseTest {
 // MARK: - Mocks
 
 private class MockAPIVersionResolverDelegate: APIVersionResolverDelegate {
-
     var blacklistReason: BlacklistReason?
 
     func apiVersionResolverFailedToResolveVersion(reason: BlacklistReason) {

@@ -21,7 +21,6 @@ import avs
 import XCTest
 
 class AVSBridgingTests: MessagingTest {
-
     var rawString: UnsafePointer<CChar>!
     var rawUUID: UnsafePointer<CChar>!
     var rawTrue: Int32!

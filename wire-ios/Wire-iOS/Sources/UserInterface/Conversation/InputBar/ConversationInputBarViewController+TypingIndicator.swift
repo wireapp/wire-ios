@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 extension ConversationInputBarViewController: ZMTypingChangeObserver {
-
     func typingDidChange(conversation: ZMConversation, typingUsers: [UserType]) {
         updateTypingIndicator()
     }

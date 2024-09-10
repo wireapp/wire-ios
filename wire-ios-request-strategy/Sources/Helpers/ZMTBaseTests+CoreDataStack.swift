@@ -20,7 +20,6 @@ import Foundation
 import WireTesting
 
 extension ZMTBaseTest {
-
     var sharedContainerURL: URL {
         FileManager.default.randomCacheURL!
     }

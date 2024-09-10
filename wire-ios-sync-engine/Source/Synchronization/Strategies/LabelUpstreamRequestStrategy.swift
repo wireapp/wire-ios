@@ -19,7 +19,6 @@
 import Foundation
 
 public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMSingleRequestTranscoder {
-
     fileprivate let jsonEncoder = JSONEncoder()
     fileprivate var upstreamSync: ZMSingleRequestSync!
 

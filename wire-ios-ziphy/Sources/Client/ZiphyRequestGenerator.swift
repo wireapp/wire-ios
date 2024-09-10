@@ -23,7 +23,6 @@ import Foundation
  */
 
 struct ZiphyRequestGenerator {
-
     /// The host
     let host: String
 
@@ -53,7 +52,6 @@ struct ZiphyRequestGenerator {
 // MARK: - V1 Requests
 
 extension ZiphyRequestGenerator {
-
     /**
      * Creates the request to fetch random images.
      */

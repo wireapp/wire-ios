@@ -33,7 +33,6 @@ final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate,
 }
 
 extension ZMAddressBookContact {
-
     static func canInviteLocallyWithEmail() -> Bool {
         return MFMailComposeViewController.canSendMail()
     }

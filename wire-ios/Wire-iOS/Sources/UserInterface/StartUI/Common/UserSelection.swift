@@ -22,14 +22,12 @@ import WireUtilities
 
 @objc
 protocol UserSelectionObserver: AnyObject {
-
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType)
     func userSelection(_ userSelection: UserSelection, didRemoveUser user: UserType)
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType])
 }
 
 final class UserSelection: NSObject {
-
     private(set) var users = UserSet()
     private var observers: [UnownedObject<UserSelectionObserver>] = []
 

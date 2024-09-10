@@ -21,7 +21,6 @@ import WireImages
 import WireSystem
 
 protocol Cache {
-
     /// Returns the asset data for a given key.
     ///
     /// This will probably cause I/O

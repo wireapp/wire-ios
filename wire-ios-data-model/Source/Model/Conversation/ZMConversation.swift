@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMConversation {
-
     /// Whether the conversation was deleted on the backend.
 
     @NSManaged

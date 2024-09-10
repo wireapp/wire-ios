@@ -22,7 +22,6 @@ import Foundation
 /// Protobuf string.
 
 public enum MessageContent: Equatable, Codable {
-
     /// Encrypted message content.
 
     case ciphertext(String)

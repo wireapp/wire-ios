@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsReceiptOptionsCell: IconToggleCell {
-
     override func setUp() {
         super.setUp()
 

@@ -24,7 +24,6 @@ import XCTest
 import WireTransport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
-
     var localNotificationDispatcher: MockPushMessageHandler!
     var sut: ClientMessageRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -77,11 +76,8 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 // MARK: - Request generation
 
 extension ClientMessageRequestStrategyTests {
-
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
-
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let text = "Lorem ipsum"
@@ -114,11 +110,9 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItDeletesTheConfirmationMessageWhenSentSuccessfully() {
-
         // GIVEN
         var confirmationMessage: ZMMessage!
         self.syncMOC.performGroupedAndWait {
-
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
@@ -135,7 +129,6 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItNotifiesWhenMessageCannotBeSent_MissingLegalholdConsent() {
-
         // GIVEN
         var confirmationMessage: ZMMessage!
         var token: Any?
@@ -147,7 +140,6 @@ extension ClientMessageRequestStrategyTests {
             data: nil)
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
         self.syncMOC.performGroupedAndWait {
-
             confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.mockMessageSender.sendMessageMessage_MockError = failure
@@ -174,10 +166,8 @@ extension ClientMessageRequestStrategyTests {
 // MARK: - Processing events
 
 extension ClientMessageRequestStrategyTests {
-
     func testThatANewOtrMessageIsCreatedFromAnEvent() {
         self.syncMOC.performGroupedAndWait {
-
             // GIVEN
             let text = "Everything"
             let base64Text = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="

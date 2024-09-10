@@ -19,7 +19,6 @@
 import Foundation
 
 final class WebSocket: WebSocketProtocol {
-
     typealias Stream = AsyncThrowingStream<URLSessionWebSocketTask.Message, any Error>
 
     private let connection: any URLSessionWebSocketTaskProtocol

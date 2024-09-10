@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 final class UserStatusViewController: UIViewController {
-
     weak var delegate: UserStatusViewControllerDelegate?
 
     private lazy var feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)

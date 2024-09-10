@@ -21,7 +21,6 @@ import Foundation
 /// Metadata for a conversation.
 
 public struct Conversation: Equatable, Codable {
-
     /// The unqualified conversation id.
 
     public var id: UUID?
@@ -97,7 +96,6 @@ public struct Conversation: Equatable, Codable {
     public var lastEventTime: Date?
 
     enum CodingKeys: String, CodingKey {
-
         case id
         case qualifiedID = "qualified_id"
         case teamID = "team"

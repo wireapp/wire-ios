@@ -21,7 +21,6 @@ import Foundation
 /// Supported TLS versions.
 
 public enum TLSVersion {
-
     /// TLS version 1.2
 
     case v1_2

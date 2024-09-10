@@ -23,7 +23,6 @@ import WireDataModel
 /// For playing videos in conversation
 /// Controls and observe the state of a AVPlayer instance for integration with the AVSMediaManager
 final class MediaPlayerController: NSObject {
-
     let message: ZMConversationMessage
     private let player: AVPlayer
     weak var delegate: MediaPlayerDelegate?
@@ -61,7 +60,6 @@ final class MediaPlayerController: NSObject {
 }
 
 extension MediaPlayerController: MediaPlayer {
-
     var title: String? {
         return message.fileMessageData?.filename
     }

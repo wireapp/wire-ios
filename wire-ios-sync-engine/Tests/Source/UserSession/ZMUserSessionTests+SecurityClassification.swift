@@ -20,7 +20,6 @@
 import XCTest
 
 final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
-
     func createUser(moc: NSManagedObjectContext, domain: String?) -> ZMUser {
         let user = ZMUser(context: moc)
         user.remoteIdentifier = UUID()

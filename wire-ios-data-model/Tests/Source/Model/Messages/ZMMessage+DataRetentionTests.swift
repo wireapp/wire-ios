@@ -20,7 +20,6 @@
 import XCTest
 
 class ZMMessage_DataRetentionTests: BaseZMMessageTests {
-
     func testThatDataRetentionPredicate_MatchesOlderMessages() {
         // given
         let now = Date(timeIntervalSinceNow: 0)

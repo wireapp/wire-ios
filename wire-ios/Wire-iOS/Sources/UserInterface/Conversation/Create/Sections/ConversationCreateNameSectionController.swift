@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 final class ConversationCreateNameSectionController: NSObject, CollectionViewSectionController {
-
     typealias Cell = ConversationCreateNameCell
 
     var isHidden: Bool {

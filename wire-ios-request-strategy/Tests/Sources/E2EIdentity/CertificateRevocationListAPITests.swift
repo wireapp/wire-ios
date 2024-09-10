@@ -21,7 +21,6 @@ import Foundation
 import XCTest
 
 final class CertificateRevocationListAPITests: XCTestCase {
-
     private var sut: CertificateRevocationListAPI!
     private var mockHttpClient: MockHttpClient!
 

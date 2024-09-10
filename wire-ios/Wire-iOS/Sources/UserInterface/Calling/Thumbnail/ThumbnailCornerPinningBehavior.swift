@@ -19,7 +19,6 @@
 import UIKit
 
 final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
-
     enum Corner: Int {
         case topLeft, topRight, bottomLeft, bottomRight
     }
@@ -36,7 +35,6 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     // MARK: - Initialization
 
     init(item: UIDynamicItem, edgeInsets: CGPoint) {
-
         self.item = item
         self.edgeInsets = edgeInsets
 
@@ -121,7 +119,6 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     }
 
     func updateFields(in bounds: CGRect) {
-
         guard bounds != .zero, bounds != .null else {
             return
         }

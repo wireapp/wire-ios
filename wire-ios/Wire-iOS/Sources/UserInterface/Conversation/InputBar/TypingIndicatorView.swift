@@ -21,7 +21,6 @@ import WireDataModel
 import WireDesign
 
 final class AnimatedPenView: UIView {
-
     private let WritingAnimationKey = "writing"
     private let dots = UIImageView()
     private let pen = UIImageView()
@@ -107,7 +106,6 @@ final class AnimatedPenView: UIView {
 }
 
 final class TypingIndicatorView: UIView {
-
     let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .smallLightFont
@@ -202,7 +200,6 @@ final class TypingIndicatorView: UIView {
     }
 
     func setHidden(_ hidden: Bool, animated: Bool, completion: Completion? = nil) {
-
         let collapseLine = {
             self.expandingLineWidth.constant = 0
             self.layoutIfNeeded()

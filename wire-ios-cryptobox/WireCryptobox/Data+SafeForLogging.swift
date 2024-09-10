@@ -27,7 +27,6 @@ extension Data: SafeForLoggingStringConvertible {
 // This allows for dump of data in safe logs. It's called "unsafe" because the data is
 // dumped as-is, no hashing is applied. Be aware of what you are dumping here.
 struct HexDumpUnsafeLoggingData: SafeForLoggingStringConvertible {
-
     let data: Data
 
     public var safeForLoggingDescription: String {

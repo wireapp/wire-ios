@@ -23,7 +23,6 @@ import XCTest
 @testable import WireRequestStrategy
 
 final class UserProfilePayloadProcessorTests: MessagingTestBase {
-
     var sut: UserProfilePayloadProcessor!
 
     override func setUp() {

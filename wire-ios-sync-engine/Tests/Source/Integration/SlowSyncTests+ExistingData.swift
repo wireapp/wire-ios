@@ -20,7 +20,6 @@ import WireTesting
 import XCTest
 
 class SlowSyncTests_ExistingData: IntegrationTest {
-
     override func setUp() {
         super.setUp()
 

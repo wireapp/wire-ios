@@ -73,7 +73,6 @@ public func == (lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
 // MARK: - Serialization Helper
 
 public extension BackupMetadata {
-
     func write(to url: URL) throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .formatted(.iso8601)
@@ -107,7 +106,6 @@ private extension Locale {
 // MARK: - Verification
 
 public extension BackupMetadata {
-
     enum VerificationError: Error {
         case backupFromNewerAppVersion
         case userMismatch

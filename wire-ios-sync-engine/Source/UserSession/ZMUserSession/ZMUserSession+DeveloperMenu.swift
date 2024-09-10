@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 extension ZMUserSession {
-
     public func setBogusLastEventID() {
         let uuidV1 = UUID(uuidString: "0747b970-472d-11ee-be56-0242ac120002")
         lastEventIDRepository.storeLastEventID(uuidV1)

@@ -23,7 +23,6 @@ import WireFoundation
 @testable import Wire
 
 class MockUserType: NSObject, UserType, Decodable, EditableUserType {
-
     // MARK: - Decodable
 
     required convenience init(from decoder: Decoder) throws {

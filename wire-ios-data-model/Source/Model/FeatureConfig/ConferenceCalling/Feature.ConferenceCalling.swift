@@ -19,9 +19,7 @@
 import Foundation
 
 public extension Feature {
-
     struct ConferenceCalling: Codable {
-
         // MARK: - Properties
 
         /// If `enabled` then the feature is available to the user.
@@ -45,7 +43,6 @@ public extension Feature {
         // to it will require some migration code.
 
         public struct Config: Codable, Equatable {
-
             /// If set to `true`, clients will use SFTs for 1:1 calls
 
             public let useSFTForOneToOneCalls: Bool

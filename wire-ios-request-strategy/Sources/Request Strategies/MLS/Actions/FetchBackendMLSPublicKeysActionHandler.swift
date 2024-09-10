@@ -19,7 +19,6 @@
 import Foundation
 
 class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPublicKeysAction> {
-
     // MARK: - Request
 
     override func request(
@@ -45,11 +44,9 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
     // MARK: - Response
 
     struct ResponsePayload: Codable, Equatable {
-
         let removal: MLSKeys
 
         struct MLSKeys: Codable, Equatable {
-
             enum CodingKeys: String, CodingKey {
                 case ed25519
                 case ed448

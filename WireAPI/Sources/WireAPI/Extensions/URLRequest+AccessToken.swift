@@ -19,7 +19,6 @@
 import Foundation
 
 extension URLRequest {
-
     mutating func setAccessToken(_ accessToken: AccessToken) {
         setValue(
             [accessToken.type, accessToken.token].joined(separator: " "),

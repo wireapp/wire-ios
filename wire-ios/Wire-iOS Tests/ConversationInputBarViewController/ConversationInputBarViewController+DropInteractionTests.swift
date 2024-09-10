@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
-
     private var mockUserSession: UserSessionMock!
     private var mockSecurityClassificationProviding: MockSecurityClassificationProviding!
 
@@ -80,7 +79,6 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
 // MARK: - Helpers
 
 private final class MediaShareRestrictionManagerMock: MediaShareRestrictionManager {
-
     let canFilesBeShared: Bool
 
     init(canFilesBeShared: Bool) {

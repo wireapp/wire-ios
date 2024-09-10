@@ -19,7 +19,6 @@
 import Foundation
 
 class ZMConversationVoiceChannelTests: MessagingTest {
-
     private var oneToOneconversation: ZMConversation!
     private var groupConversation: ZMConversation!
 

@@ -20,7 +20,6 @@ import Foundation
 import WireCoreCrypto
 
 extension NSManagedObjectContext {
-
     private static let mlsServiceUserInfoKey = "MLSServiceUserInfoKey"
 
     public var mlsService: MLSServiceInterface? {

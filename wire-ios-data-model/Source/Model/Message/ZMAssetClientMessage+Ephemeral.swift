@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMAssetClientMessage {
-
     @objc override public var isEphemeral: Bool {
         return destructionDate != nil
             || ephemeral != nil

@@ -25,7 +25,6 @@ protocol EmojiPickerViewControllerDelegate: AnyObject {
 }
 
 final class EmojiKeyboardViewController: UIViewController {
-
     weak var delegate: EmojiPickerViewControllerDelegate?
     fileprivate var emojiDataSource: EmojiDataSource!
     fileprivate let collectionView = EmojiCollectionView()
@@ -126,7 +125,6 @@ final class EmojiKeyboardViewController: UIViewController {
 }
 
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
-
     func sectionViewControllerDidSelectType(_ type: EmojiSectionType, scrolling: Bool) {
         guard let section = emojiDataSource.sectionIndex(for: type) else { return }
         let indexPath = IndexPath(item: 0, section: section)
@@ -135,7 +133,6 @@ extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
 }
 
 extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
-
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         let emoji = emojiDataSource[indexPath]
@@ -162,7 +159,6 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
 }
 
 final class EmojiCollectionViewCell: UICollectionViewCell {
-
     let titleLabel = UILabel()
 
     override init(frame: CGRect) {
@@ -220,7 +216,6 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
 }
 
 final class EmojiCollectionView: UICollectionView {
-
     private let layout = UICollectionViewFlowLayout()
 
     init() {

@@ -21,7 +21,6 @@ import WireSyncEngine
 
 /// A window used to obfuscate the main content window when the app is inactive.
 final class ScreenCurtainWindow: UIWindow {
-
     // MARK: - Properties
 
     weak var userSession: UserSession?

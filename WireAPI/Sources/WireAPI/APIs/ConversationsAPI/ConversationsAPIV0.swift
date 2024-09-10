@@ -19,7 +19,6 @@
 import Foundation
 
 class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
-
     // MARK: - Constants
 
     enum Constants {
@@ -105,7 +104,6 @@ struct GetConversationsParametersV0: Encodable {
 // MARK: - Decodables
 
 private struct PaginatedConversationIDsV0: Decodable, ToAPIModelConvertible {
-
     enum CodingKeys: String, CodingKey {
         case conversationIdentifiers = "conversations"
         case pagingState = "paging_state"

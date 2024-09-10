@@ -107,7 +107,6 @@ public extension ZMConversation {
 }
 
 extension ZMUser {
-
     var mutedMessagesTypes: MutedMessageTypes {
         switch availability {
         case .available, .none:

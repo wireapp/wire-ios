@@ -22,7 +22,6 @@ import WireDesign
 import WireShareEngine
 
 final class ConversationStateAccessoryView: UIView {
-
     private let contentStack = UIStackView()
     private let legalHoldImageView = UIImageView()
     private let verifiedImageView = UIImageView()

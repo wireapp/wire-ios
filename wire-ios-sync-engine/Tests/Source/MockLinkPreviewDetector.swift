@@ -20,7 +20,6 @@ import Foundation
 import WireLinkPreview
 
 class MockLinkPreviewDetector: LinkPreviewDetectorType {
-
     fileprivate let mockImageURL = URL(string: "http://reallifepic.com/s0m3cHucKN0rR1sp1C.jpg")!
     fileprivate let mockImageData: Data = Data(repeating: 0x41, count: 10)
 
@@ -38,7 +37,6 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
     }
 
     func linkMetaData(_ linkPreviewURL: LinkPreviewURL) -> LinkMetadata {
-
         switch linkPreviewURL {
         case .article:
             let buffer = LinkPreview(withOriginalURL: linkPreviewURL.rawValue,

@@ -30,7 +30,6 @@ protocol LocationSendViewControllerDelegate: AnyObject {
 // MARK: - LocationSendViewController
 
 final class LocationSendViewController: UIViewController {
-
     // MARK: - Properties
 
     private let sendButton = ZMButton(

@@ -25,7 +25,6 @@ import WireTransport
 }
 
 @objc final class ZMLocalNotificationSet: NSObject {
-
     let archivingKey: String
     let keyValueStore: ZMSynchonizableKeyValueStore
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
@@ -124,7 +123,6 @@ import WireTransport
 
 // Event Notifications
 extension ZMLocalNotificationSet {
-
     func cancelNotificationForIncomingCall(_ conversation: ZMConversation) {
         let toRemove = notifications.filter {
             $0.conversationID == conversation.remoteIdentifier && $0.isCallingNotification

@@ -18,7 +18,6 @@
 
 /// Handles the success of credentials verification.
 final class RegistrationCredentialsVerifiedEventHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {

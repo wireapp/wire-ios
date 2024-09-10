@@ -20,7 +20,6 @@ import Foundation
 
 /// Describes how the user should be notified about a change.
 public struct NotificationMethod: OptionSet {
-
     public let rawValue: Int
 
     public init(rawValue: Int) {
@@ -36,7 +35,6 @@ public struct NotificationMethod: OptionSet {
 }
 
 extension ZMUser {
-
     /// The set of all users to receive an availability status broadcast message.
     ///
     /// Broadcast messages are expensive for large teams. Therefore it is necessary broadcast to

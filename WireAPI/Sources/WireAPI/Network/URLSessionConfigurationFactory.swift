@@ -19,7 +19,6 @@
 import Foundation
 
 struct URLSessionConfigurationFactory {
-
     let minTLSVersion: TLSVersion
 
     func makeRESTAPISessionConfiguration() -> URLSessionConfiguration {

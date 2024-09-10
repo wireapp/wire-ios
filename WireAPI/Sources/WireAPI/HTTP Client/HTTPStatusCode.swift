@@ -21,7 +21,6 @@ import Foundation
 /// A list of HTTP status codes (https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#successful_responses)
 
 enum HTTPStatusCode: Int {
-
     // MARK: Success - 2xx
 
     /// ok - 200

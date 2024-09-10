@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class BackButtonDescription {
-
     var buttonTapped: (() -> Void)?
     var accessibilityIdentifier: String? = "backButton"
 }

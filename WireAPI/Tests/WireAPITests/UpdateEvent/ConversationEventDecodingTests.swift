@@ -20,7 +20,6 @@
 import XCTest
 
 final class ConversationEventDecodingTests: XCTestCase {
-
     private var decoder: JSONDecoder!
 
     override func setUp() {
@@ -289,7 +288,6 @@ final class ConversationEventDecodingTests: XCTestCase {
     }
 
     private enum Scaffolding {
-
         static func fractionalDate(from string: String) -> Date {
             ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
         }

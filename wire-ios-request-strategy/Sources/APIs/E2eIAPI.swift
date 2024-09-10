@@ -20,14 +20,12 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol E2eIAPI {
-
     func getWireNonce(clientId: String) async throws -> String
 
     func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse
 }
 
 class E2eIAPIV5: E2eIAPI {
-
     let httpClient: HttpClient
 
     open var apiVersion: APIVersion {

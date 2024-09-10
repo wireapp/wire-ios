@@ -19,7 +19,6 @@
 import Foundation
 
 enum CoreDataMessagingMigrationVersion: String, CoreDataMigrationVersion {
-
     private enum Constant {
         static let dataModelPrefix = "zmessaging"
         static let modelDirectory = "zmessaging.momd"

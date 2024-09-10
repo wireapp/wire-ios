@@ -35,7 +35,6 @@ private let zmLog = ZMSLog(tag: "userClientRS")
 
 @objcMembers
 public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder, ZMSingleRequestTranscoder, RequestStrategy {
-
     weak var clientRegistrationStatus: ZMClientRegistrationStatus?
     weak var clientUpdateStatus: ClientUpdateStatus?
 
@@ -366,7 +365,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
         if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             if response.httpStatus == 400, let label = response.payloadLabel(), label == "bad-request" {
-
                 if didRetryUpdatingCapabilities {
                     (managedObject as? UserClient)?.needsToUpdateCapabilities = false
                     managedObjectContext?.saveOrRollback()
@@ -401,7 +399,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
         if let client = managedObject as? UserClient {
-
             guard
                 let payload = response.payload as? [String: AnyObject],
                 let remoteIdentifier = payload["id"] as? String
@@ -443,7 +440,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     public func errorFromFailedInsertResponse(_ response: ZMTransportResponse!) -> NSError {
         var errorCode: UserSessionErrorCode = .unknownError
         if let moc = self.managedObjectContext, let response, response.result == .permanentError {
-
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
                 switch errorLabel {
                 case "missing-auth":
@@ -467,7 +463,6 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-
         switch response.result {
         case .success:
             if let payload = response.payload?.asArray() as? [[String: AnyObject]] {

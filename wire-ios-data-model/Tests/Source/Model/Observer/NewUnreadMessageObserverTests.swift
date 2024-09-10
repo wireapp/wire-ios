@@ -19,7 +19,6 @@
 import Foundation
 
 @objc class UnreadMessageTestObserver: NSObject, ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObserver {
-
     var unreadMessageNotes: [NewUnreadMessagesChangeInfo] = []
     var unreadKnockNotes: [NewUnreadKnockMessagesChangeInfo] = []
 
@@ -42,7 +41,6 @@ import Foundation
 }
 
 class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
-
     func processPendingChangesAndClearNotifications() {
         self.uiMOC.saveOrRollback()
         self.testObserver?.clearNotifications()
@@ -69,7 +67,6 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesObserversWhenAMessageMoreRecentThanTheLastReadIsInserted() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.lastReadServerTimeStamp = Date()
@@ -97,7 +94,6 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItDoesNotNotifyObserversWhenAMessageOlderThanTheLastReadIsInserted() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.lastReadServerTimeStamp = Date().addingTimeInterval(30)
@@ -115,7 +111,6 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesObserversWhenTheConversationHasNoLastRead() {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         self.processPendingChangesAndClearNotifications()
@@ -132,7 +127,6 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItDoesNotNotifyObserversWhenItHasNoConversation() {
-
         // when
         let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         msg1.serverTimestamp = Date()
@@ -144,7 +138,6 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
     }
 
     func testThatItNotifiesObserversWhenANewOTRKnockMessageIsInserted() throws {
-
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.lastReadServerTimeStamp = Date()

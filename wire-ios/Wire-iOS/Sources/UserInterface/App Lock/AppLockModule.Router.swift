@@ -20,9 +20,7 @@ import UIKit
 import WireSyncEngine
 
 extension AppLockModule {
-
     final class Router: RouterInterface {
-
         // MARK: - Properties
 
         weak var view: View!
@@ -37,7 +35,6 @@ extension AppLockModule {
 // MARK: - Perform action
 
 extension AppLockModule.Router: AppLockRouterPresenterInterface {
-
     func performAction(_ action: AppLockModule.Action) {
         switch action {
         case let .createPasscode(shouldInform):

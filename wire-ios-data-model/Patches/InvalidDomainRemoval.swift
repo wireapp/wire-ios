@@ -19,7 +19,6 @@
 import Foundation
 
 enum InvalidDomainRemoval {
-
     /// We had a situation where we were creating duplicate users and conversations where the UUID would
     /// be duplicated but the domain would be different.
     ///

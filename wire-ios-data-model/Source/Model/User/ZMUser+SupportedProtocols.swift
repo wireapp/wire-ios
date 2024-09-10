@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUser {
-
     @objc
     public static let supportedProtocolsKey = "supportedProtocols"
 

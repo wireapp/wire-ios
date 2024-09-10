@@ -20,12 +20,10 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
-
     func invoke(clientId: String, password: String) async throws
 }
 
 class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
-
     // MARK: - Properties
 
     private let userClientAPI: UserClientAPI
@@ -104,7 +102,6 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 }
 
 public enum RemoveUserClientError: Error {
-
     case clientToDeleteNotFound
     case clientDoesNotExistLocally
     case invalidCredentials

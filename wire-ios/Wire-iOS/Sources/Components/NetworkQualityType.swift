@@ -17,7 +17,6 @@
 //
 
 enum NetworkQualityType: Int, Comparable {
-
     case unknown = 0
     case type2G
     case type3G

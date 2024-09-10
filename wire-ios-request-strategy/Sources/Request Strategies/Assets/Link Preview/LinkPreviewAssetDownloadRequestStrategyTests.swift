@@ -23,7 +23,6 @@ import WireTransport
 import XCTest
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
-
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var oneToOneconversationOnSync: ZMConversation!
@@ -112,7 +111,6 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 }
 
 extension LinkPreviewAssetDownloadRequestStrategyTests {
-
     // MARK: - Request Generation
 
     func testThatItGeneratesAnExpectedV3RequestForAWhitelistedMessageWithNoImageInCache() {
@@ -293,7 +291,6 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     // MARK: - Response Handling
 
     func testThatItStoresTheEncryptedImageDataInTheRequestResponse() throws {
-
         let assetID = UUID.create().transportString()
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
@@ -309,7 +306,6 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         var message: ZMMessage!
 
         syncMOC.performGroupedAndWait {
-
             message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
@@ -342,7 +338,6 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
         syncMOC.performGroupedAndWait {
-
             message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 

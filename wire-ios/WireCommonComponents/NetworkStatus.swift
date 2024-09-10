@@ -37,14 +37,12 @@ extension Notification.Name {
 // sourcery: AutoMockable
 /// Abstracts network status observation.
 public protocol NetworkStatusObservable {
-
     /// Determines if the server is reachable.
     var reachability: ServerReachability { get }
 }
 
 /// This class monitors the reachability of backend. It emits notifications to its observers if the status changes.
 public final class NetworkStatus: NetworkStatusObservable {
-
     private let reachabilityRef: SCNetworkReachability
 
     init() {
@@ -100,7 +98,6 @@ public final class NetworkStatus: NetworkStatusObservable {
         var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags()
 
         if SCNetworkReachabilityGetFlags(reachabilityRef, &flags) {
-
             let reachable: Bool = flags.contains(.reachable)
             let connectionRequired: Bool = flags.contains(.connectionRequired)
 

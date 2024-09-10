@@ -19,7 +19,6 @@
 @testable import Wire
 
 final class MockCallGridHintNotificationLabel: CallGridHintNotificationLabel {
-
     var hint: CallGridHintKind?
     override func show(hint: CallGridHintKind) {
         self.hint = hint

@@ -19,12 +19,10 @@
 import Foundation
 
 public extension NSNotification.Name {
-
     static let requestAvailableNotification = RequestAvailableNotification.name
 }
 
 @objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver: NSObjectProtocol {
-
     func newRequestsAvailable()
 }
 
@@ -32,7 +30,6 @@ public extension NSNotification.Name {
 /// there are new potential requests available to process.
 @objc(ZMRequestAvailableNotification)
 public final class RequestAvailableNotification: NSObject {
-
     @objc
     public static let name = NSNotification.Name(rawValue: "RequestAvailableNotification")
 

@@ -19,14 +19,12 @@
 import CoreGraphics
 
 public extension StyleKitIcon {
-
     /**
      * Represents the target size of an icon. You can either use standard values,
      * or use a raw CGFloat value, without needing to add another case.
      */
 
     enum Size: ExpressibleByIntegerLiteral, RawRepresentable {
-
         /// 8pt
         case nano
         /// 16pt.
@@ -71,7 +69,6 @@ public extension StyleKitIcon {
 }
 
 public extension StyleKitIcon.Size {
-
     var cgSize: CGSize {
         .init(width: rawValue, height: rawValue)
     }

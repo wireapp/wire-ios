@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ClientTableViewCellTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: ClientTableViewCell!
@@ -241,7 +240,6 @@ final class ClientTableViewCellTests: XCTestCase {
 }
 
 extension ClientTableViewCellModel {
-
     typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
     private static let mockProteusId: String = "abcdefghijklmnop"

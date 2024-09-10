@@ -22,7 +22,6 @@ import WireCommonComponents
 import WireSystem
 
 extension MFMailComposeViewController {
-
     func prefilledBody(withMessage message: String = "") -> String {
         let date = Date()
         let device = UIDevice.current.zm_model()

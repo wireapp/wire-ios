@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUserSession: AccessTokenRenewing {
-
     func renewAccessToken(with clientID: String) {
         transportSession.renewAccessToken(with: clientID)
     }

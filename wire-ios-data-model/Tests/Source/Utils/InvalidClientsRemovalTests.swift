@@ -21,7 +21,6 @@ import WireTesting
 import XCTest
 
 class InvalidClientsRemovalTests: DiskDatabaseTest {
-
     override class func setUp() {
         super.setUp()
         DeveloperFlag.storage = UserDefaults(suiteName: UUID().uuidString)!

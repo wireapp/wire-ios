@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMUserSession {
-
     /// Whether the user completed the registration on this device
 
     @objc
@@ -117,7 +116,6 @@ extension ZMUserSession {
     }
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
-
         var errorCode: UserSessionErrorCode
         switch response.result {
         case .permanentError:

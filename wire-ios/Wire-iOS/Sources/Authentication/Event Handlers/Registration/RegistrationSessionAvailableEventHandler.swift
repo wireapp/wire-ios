@@ -23,7 +23,6 @@ import Foundation
  */
 
 final class RegistrationSessionAvailableEventHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {

@@ -19,14 +19,12 @@
 import Foundation
 
 protocol KeychainItemProtocol {
-
     var id: String { get }
     var getQuery: [CFString: Any] { get }
     func setQuery<T>(value: T) -> [CFString: Any]
 }
 
 public enum KeychainManager {
-
     // MARK: - Keychain access
 
     static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
@@ -76,7 +74,6 @@ public enum KeychainManager {
     }
 
     enum AccessLevel {
-
         case moreRestrictive
         case lessRestrictive
     }
@@ -154,9 +151,7 @@ public enum KeychainManager {
 }
 
 public extension KeychainManager {
-
     enum Error: LocalizedError {
-
         case failedToStoreItemInKeychain(OSStatus)
         case failedToFetchItemFromKeychain(OSStatus)
         case failedToDeleteItemFromKeychain(OSStatus)

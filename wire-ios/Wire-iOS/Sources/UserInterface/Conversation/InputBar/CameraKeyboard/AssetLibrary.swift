@@ -73,7 +73,6 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     }
 
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-
         guard let fetch = self.fetch else {
             return
         }
@@ -89,7 +88,6 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     fileprivate var fetch: PHFetchResult<PHAsset>?
 
     fileprivate func notifyChangeToDelegate() {
-
         let completion = {
             self.delegate?.assetLibraryDidChange(self)
             self.fetchingAssets = false

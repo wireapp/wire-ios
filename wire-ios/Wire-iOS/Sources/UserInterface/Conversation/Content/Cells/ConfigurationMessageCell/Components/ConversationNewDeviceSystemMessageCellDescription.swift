@@ -23,7 +23,6 @@ import WireDesign
 import WireSyncEngine
 
 final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessageCellDescription {
-
     typealias View = ConversationNewDeviceSystemMessageCell
     typealias LabelColors = SemanticColors.Label
 
@@ -69,7 +68,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         for systemMessage: ZMSystemMessageData,
         in conversation: ZMConversation
     ) -> View.Configuration {
-
         let textAttributes = TextAttributes(
             boldFont: .mediumSemiboldFont,
             normalFont: .mediumFont,
@@ -110,7 +108,6 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         clients: [UserClientType],
         attributes: TextAttributes
     ) -> View.Configuration {
-
         let displayNamesOfOthers = users.filter { !$0.isSelfUser }.compactMap { $0.name }
         let firstTwoNames = displayNamesOfOthers.prefix(2)
         let senderNames = firstTwoNames.joined(separator: ", ")

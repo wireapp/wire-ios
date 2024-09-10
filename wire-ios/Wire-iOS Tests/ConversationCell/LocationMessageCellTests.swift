@@ -20,7 +20,6 @@
 import XCTest
 
 final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
-
     typealias CellConfiguration = (MockMessage) -> Void
 
     var mockSelfUser: MockUserType!

@@ -61,7 +61,6 @@ enum TestTyping {
 }
 
 final class TypingStrategyTests: MessagingTest {
-
     var sut: TypingStrategy!
     var originalTimeout: TimeInterval = 0.0
     var typing: MockTyping!
@@ -612,7 +611,6 @@ final class TypingStrategyTests: MessagingTest {
 // MARK: - Sending multiple requests
 
 extension TypingStrategyTests {
-
     func requestsForSendingNotifications(isTyping: [Bool], delay: TestTyping) throws -> (ZMConversation, [ZMTransportRequest?]) {
         var result = [ZMTransportRequest?]()
         let conversation = insertUIConversation()
@@ -764,7 +762,6 @@ extension TypingStrategyTests {
 }
 
 class TypingEventTests: MessagingTest {
-
     var originalTimeout: TimeInterval = 0.0
 
     override func setUp() {

@@ -19,7 +19,6 @@
 import Foundation
 
 class CallKitCall {
-
     let id: UUID
     let handle: CallHandle
     let observer = CallObserver()

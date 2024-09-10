@@ -26,7 +26,6 @@ import UIKit
  */
 
 final class DecodeImageOperation: Operation {
-
     /// The initial data of the image.
     let imageData: Data
 
@@ -41,7 +40,6 @@ final class DecodeImageOperation: Operation {
     // MARK: - Decoding
 
     override func main() {
-
         guard !isCancelled else {
             return
         }

@@ -21,7 +21,6 @@ import Foundation
 /// A message that can be sent in an mls group.
 
 public protocol MLSMessage: OTREntity, MLSEncryptedPayloadGenerator {
-
     /// Messages can expire, e.g. if network conditions are too slow to send.
     var shouldExpire: Bool { get }
 
@@ -34,7 +33,6 @@ extension ZMClientMessage: MLSMessage {}
 extension ZMAssetClientMessage: MLSMessage {}
 
 extension GenericMessageEntity: MLSMessage {
-
     // Just required for protocol conformance.
     public var shouldExpire: Bool { false }
 

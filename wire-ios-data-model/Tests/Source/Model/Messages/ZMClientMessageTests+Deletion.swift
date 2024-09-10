@@ -22,7 +22,6 @@ import XCTest
 // MARK: - Sending
 
 class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
-
     func testThatItDeletesAMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -278,7 +277,6 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
 // MARK: - System Messages
 
 extension ZMClientMessageTests_Deletion {
-
     func testThatItDoesNotInsertASystemMessageIfTheMessageDoesNotExist() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -316,7 +314,6 @@ extension ZMClientMessageTests_Deletion {
 // MARK: - Receiving
 
 extension ZMClientMessageTests_Deletion {
-
     func testThatAMessageCanNotBeDeletedByAUserThatDidNotInitiallySentIt() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -465,7 +462,6 @@ extension ZMClientMessageTests_Deletion {
 // MARK: - Ephemeral
 
 extension ZMClientMessageTests_Deletion {
-
     func testThatItStopsDeletionTimerForEphemeralMessages() {
         // given
         conversation.setMessageDestructionTimeoutValue(.custom(1000), for: .selfUser)
@@ -551,7 +547,6 @@ extension ZMClientMessageTests_Deletion {
 // MARK: - Helper
 
 extension ZMClientMessageTests_Deletion {
-
     func createMessageDeletedUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create()) -> ZMUpdateEvent {
         let genericMessage = GenericMessage(content: MessageDelete(messageId: nonce))
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
@@ -593,7 +588,6 @@ extension ZMClientMessageTests_Deletion {
 }
 
 final private class AssetDeletionNotificationObserver: NSObject {
-
     private(set) var deletedIdentifiers = [String]()
 
     override init() {

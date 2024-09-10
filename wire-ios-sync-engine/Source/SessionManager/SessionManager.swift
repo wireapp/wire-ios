@@ -71,7 +71,6 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
 
 @objc
 public protocol SessionManagerType: AnyObject {
-
     var accountManager: AccountManager { get }
 
     weak var foregroundNotificationResponder: ForegroundNotificationResponder? { get }
@@ -181,7 +180,6 @@ public protocol ForegroundNotificationResponder: AnyObject {
 
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
-
     static let logger = Logger(subsystem: "VoIP Push", category: "SessionManager")
 
     public enum AccountError: Error {
@@ -221,7 +219,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
         didSet {
             if let session = self.unauthenticatedSession {
-
                 NotificationInContext(name: sessionManagerCreatedUnauthenticatedSessionNotificationName, context: self, object: session).post()
             }
         }
@@ -996,7 +993,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
-
         let selfUser = ZMUser.selfUser(inUserSession: session)
         let teamObserver = TeamChangeInfo.add(observer: self, for: nil, managedObjectContext: session.managedObjectContext)
         let selfObserver = UserChangeInfo.add(observer: self, for: selfUser, in: session.managedObjectContext)
@@ -1183,7 +1179,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else { return }
 
         if jailbreakDetector?.isJailbroken() == true {
-
             if configuration.wipeOnJailbreakOrRoot {
                 deleteAllAccounts(reason: .jailbreakDetected)
             }
@@ -1286,7 +1281,6 @@ extension SessionManager: UserObserving {
 // MARK: - UnauthenticatedSessionDelegate
 
 extension SessionManager {
-
     /// Needs to be called before we try to register another device because API requires password
     public func update(credentials: UserCredentials) -> Bool {
         guard let userSession = activeUserSession, let emailCredentials = credentials as? UserEmailCredentials else { return false }
@@ -1298,7 +1292,6 @@ extension SessionManager {
 }
 
 extension SessionManager: UnauthenticatedSessionDelegate {
-
     public func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
         return accountManager.accounts.count < maxNumberAccounts
     }
@@ -1393,9 +1386,7 @@ extension SessionManager {
 // MARK: - Unread Conversation Count
 
 extension SessionManager: ZMConversationListObserver {
-
     public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
-
         // find which account/session the conversation list belongs to & update count
         guard let moc = changeInfo.conversationList.managedObjectContext else { return }
 
@@ -1433,7 +1424,6 @@ extension SessionManager: ZMConversationListObserver {
 }
 
 extension SessionManager: WireCallCenterCallStateObserver {
-
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         guard let moc = conversation.managedObjectContext else { return }
 
@@ -1449,7 +1439,6 @@ extension SessionManager: WireCallCenterCallStateObserver {
 }
 
 extension SessionManager {
-
     /// The SSO code provided by the user when clicking their company link. Points to a UUID object.
     public static var companyLoginCodeKey: String {
         return "WireCompanyLoginCode"
@@ -1464,7 +1453,6 @@ extension SessionManager {
 // MARK: - End-to-end Identity
 
 extension SessionManager {
-
     public func didEnrollCertificateSuccessfully() {
         delegate?.sessionManagerDidEnrollCertificate(for: activeUserSession)
     }
@@ -1506,7 +1494,6 @@ private let sessionManagerCreatedSessionNotificationName = Notification.Name(raw
 private let sessionManagerDestroyedSessionNotificationName = Notification.Name(rawValue: "ZMSessionManagerDestroyedSessionNotification")
 
 extension SessionManager: NotificationContext {
-
     public func addUnauthenticatedSessionManagerCreatedSessionObserver(_ observer: SessionManagerCreatedSessionObserver) -> Any {
         return NotificationInContext.addObserver(
             name: sessionManagerCreatedUnauthenticatedSessionNotificationName,
@@ -1556,7 +1543,6 @@ extension SessionManager {
 }
 
 extension SessionManager {
-
     public func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
         guard
             let switchingDelegate,
@@ -1579,7 +1565,6 @@ extension SessionManager {
 // MARK: - AVS Logging
 
 extension SessionManager {
-
     public static func startAVSLogging() {
         avsLogObserver = AVSLogObserver()
     }

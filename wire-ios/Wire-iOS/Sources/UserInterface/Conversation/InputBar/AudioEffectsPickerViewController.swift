@@ -27,7 +27,6 @@ protocol AudioEffectsPickerDelegate: AnyObject {
 }
 
 final class AudioEffectsPickerViewController: UIViewController {
-
     let recordingPath: String
     private let duration: TimeInterval
     private let fileMetadataGenerator = FileMetaDataGenerator()
@@ -66,7 +65,6 @@ final class AudioEffectsPickerViewController: UIViewController {
             setState(.playing, animated: true)
 
             if let audioPlayerController, oldValue == selectedAudioEffect {
-
                 if audioPlayerController.state == .playing {
                     audioPlayerController.stop()
                 } else {
@@ -330,19 +328,16 @@ extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollecti
 }
 
 extension AudioEffectsPickerViewController: AudioPlayerControllerDelegate {
-
     func audioPlayerControllerDidFinishPlaying() {
         setState(.time, animated: true)
     }
 }
 
 private protocol AudioPlayerControllerDelegate: AnyObject {
-
     func audioPlayerControllerDidFinishPlaying()
 }
 
 private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
-
     let player: AVAudioPlayer
     weak var delegate: AudioPlayerControllerDelegate?
     weak var mediaManager: MediaPlayerDelegate? = AppDelegate.shared.mediaPlaybackManager

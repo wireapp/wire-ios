@@ -24,7 +24,6 @@ public protocol StopCertificateEnrollmentSnoozerUseCaseProtocol {
 }
 
 final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol {
-
     // MARK: - Properties
 
     private let recurringActionService: RecurringActionServiceInterface

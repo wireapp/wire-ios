@@ -19,7 +19,6 @@
 import Foundation
 
 extension Notification.Name {
-
     // This notification is used to check the E2EIdentity Certificate expiry status
     public static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
 

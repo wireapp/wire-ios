@@ -19,7 +19,6 @@
 import Foundation
 
 final class ExplicitChangeDetector: ChangeDetector {
-
     private typealias ObservableChangesByObject = [ZMManagedObject: Changes]
 
     // MARK: - Properties
@@ -177,9 +176,7 @@ final class ExplicitChangeDetector: ChangeDetector {
 // MARK: - Helper extensions
 
 fileprivate extension ExplicitChangeDetector {
-
     struct UpdatedObject {
-
         let object: ZMManagedObject
         let changedKeys: Set<String>
 
@@ -190,21 +187,18 @@ fileprivate extension ExplicitChangeDetector {
 }
 
 private extension Sequence where Element: SetAlgebra {
-
     var flattened: Element {
         reduce(Element()) { $0.union($1) }
     }
 }
 
 private extension LazySequence {
-
     func collect() -> [Self.Element] {
         return Array(self)
     }
 }
 
 private extension NSManagedObject {
-
     var changedKeys: Set<String> {
         return Set(changedValues().keys)
     }
@@ -217,7 +211,6 @@ protocol Mergeable {
 }
 
 private extension Dictionary where Value: Mergeable {
-
     mutating func merge(with other: Dictionary) {
         other.forEach { key, value in
             if let currentValue = self[key] {

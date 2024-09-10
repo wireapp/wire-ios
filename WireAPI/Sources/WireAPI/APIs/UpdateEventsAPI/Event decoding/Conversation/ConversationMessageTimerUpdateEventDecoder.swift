@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationMessageTimerUpdateEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationMessageTimerUpdateEvent {
@@ -52,11 +51,9 @@ struct ConversationMessageTimerUpdateEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let messageTimer: Int64?
 
         enum CodingKeys: String, CodingKey {
-
             case messageTimer = "message_timer"
         }
     }

@@ -24,7 +24,6 @@ import Ziphy
 @testable import Wire
 
 final class GiphySearchViewControllerSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!

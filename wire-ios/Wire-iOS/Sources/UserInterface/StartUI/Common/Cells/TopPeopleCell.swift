@@ -22,7 +22,6 @@ import WireDesign
 import WireSyncEngine
 
 final class TopPeopleCell: UICollectionViewCell {
-
     // MARK: - Properties
 
     var user: UserType? {

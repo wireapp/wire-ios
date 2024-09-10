@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireSyncEngine
 
 extension UIViewController {
-
     func showAlert(for error: LocalizedError, handler: ((UIAlertAction) -> Void)? = nil) {
         let alert = UIAlertController(
             title: error.errorDescription,

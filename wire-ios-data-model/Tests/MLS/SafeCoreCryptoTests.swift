@@ -22,7 +22,6 @@ import Foundation
 import XCTest
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
-
     func test_performDoesNotBlockWithMock() async throws {
         // GIVEN
         let tempURL = createTempFolder()

@@ -24,7 +24,6 @@ import WireSyncEngineSupport
 import WireTransport
 
 class CallingRequestStrategyTests: MessagingTest {
-
     var sut: CallingRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
     var mockRegistrationDelegate: ClientRegistrationDelegate!
@@ -78,7 +77,6 @@ class CallingRequestStrategyTests: MessagingTest {
     // MARK: - Call Config
 
     func testThatItGenerateCallConfigRequestAndCallsTheCompletionHandler() {
-
         // given
         let expectedCallConfig = "{\"config\":true}"
         let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
@@ -102,7 +100,6 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesOnlyOneCallConfigRequest() {
-
         // given
         sut.requestCallConfig { _, _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -117,7 +114,6 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesCompressedCallConfigRequest() {
-
         // given
         sut.requestCallConfig { _, _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -747,7 +743,6 @@ class CallingRequestStrategyTests: MessagingTest {
 }
 
 class MockFetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
-
     var mockReturnValueForFetchUserClients = Set<QualifiedClientID>()
     var mockErrorForFetchUserClients: Error?
 

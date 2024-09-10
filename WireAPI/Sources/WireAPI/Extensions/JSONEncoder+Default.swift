@@ -19,7 +19,6 @@
 import Foundation
 
 extension JSONEncoder {
-
     /// The default encoder to use when building http requests.
 
     static var defaultEncoder: JSONEncoder {

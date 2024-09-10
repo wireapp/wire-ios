@@ -19,7 +19,6 @@
 import Foundation
 
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
-
     // MARK: - Properties
 
     // Slow Sync
@@ -108,7 +107,6 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
 // MARK: - Event processing
 
 extension FeatureConfigRequestStrategy: ZMEventConsumer {
-
     public func processEvents(
         _ events: [ZMUpdateEvent],
         liveEvents: Bool,

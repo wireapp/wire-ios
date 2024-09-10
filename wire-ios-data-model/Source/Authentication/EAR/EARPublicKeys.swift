@@ -19,7 +19,6 @@
 import class Security.SecKey
 
 public struct EARPublicKeys {
-
     public let primary: SecKey
     public let secondary: SecKey
 

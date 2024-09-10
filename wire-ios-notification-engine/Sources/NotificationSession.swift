@@ -20,7 +20,6 @@ import Foundation
 import WireRequestStrategy
 
 public enum NotificationSessionError: LocalizedError {
-
     case accountNotAuthenticated
     case noEventID
     case invalidEventID
@@ -48,7 +47,6 @@ public enum NotificationSessionError: LocalizedError {
 }
 
 public protocol NotificationSessionDelegate: AnyObject {
-
     func notificationSessionDidFailWithError(error: NotificationSessionError)
 
     func notificationSessionDidGenerateNotification(
@@ -69,12 +67,10 @@ public protocol NotificationSessionDelegate: AnyObject {
 /// for the entire lifetime.
 ///
 public final class NotificationSession {
-
     /// The failure reason of a `NotificationSession` initialization
     /// - noAccount: Account doesn't exist
 
     public enum InitializationError: Error {
-
         case noAccount
         case pendingCryptoboxMigration
         case coreDataMissingSharedContainer
@@ -390,7 +386,6 @@ public final class NotificationSession {
 }
 
 extension NotificationSession: PushNotificationStrategyDelegate {
-
     func pushNotificationStrategy(
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
@@ -566,7 +561,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 // MARK: - Converting events to localNotifications
 
 extension NotificationSession {
-
     private func notification(from event: ZMUpdateEvent, in context: NSManagedObjectContext) -> ZMLocalNotification? {
         var note: ZMLocalNotification?
 
@@ -612,7 +606,6 @@ extension NotificationSession {
 }
 
 public struct CallEventPayload {
-
     public let accountID: String
     public let conversationID: String
     public let shouldRing: Bool

@@ -97,7 +97,6 @@ extension ClientRegistrationPhase: CustomDebugStringConvertible {
 
 @objc
 public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
-
     @objc
     public weak var registrationStatusDelegate: ZMClientRegistrationStatusDelegate?
     @objc
@@ -659,7 +658,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 }
 
 extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
-
     public func didSetHandle() {
         managedObjectContext.perform { [self] in
             if needsToRegisterClient {

@@ -19,7 +19,6 @@
 import Foundation
 
 public extension String {
-
     static func randomAlphanumerical(length: UInt) -> String {
         if length == 0 {
             return String()
@@ -49,7 +48,6 @@ public extension String {
 // MARK: - Legacy
 
 public extension String {
-
     // https://github.com/wireapp/wire-ios/pull/920
     // Replacing all random strings didn't work for the some places,
     // so we reverted the change to keep the legacy random func.

@@ -21,7 +21,6 @@ import WireFoundation
 
 /// Adds an activity indicator subview to the provided `UIView` instance and disables user interaction.
 public final class BlockingActivityIndicator {
-
     // MARK: - Private Properties
 
     private weak var view: UIView?
@@ -81,7 +80,6 @@ private struct BlockingActivityIndicatorState {
 // MARK: - UIView + BlockingActivityIndicators
 
 private extension UIView {
-
     func blockAndStartAnimating(
         blockingActivityIndicator reference: BlockingActivityIndicator,
         text: String

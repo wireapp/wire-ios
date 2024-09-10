@@ -29,7 +29,6 @@ enum UserClientRequestError: Error {
 // TODO: when we should update last pre key or signaling keys?
 
 extension UserClientRequestFactory {
-
     public func registerClientRequest(
         _ client: UserClient,
         credentials: UserEmailCredentials?,
@@ -38,7 +37,6 @@ extension UserClientRequestFactory {
         lastRestortPrekey: IdPrekeyTuple,
         apiVersion: APIVersion
     ) throws -> ZMUpstreamRequest {
-
         guard let preKeysRangeMax = prekeys.map(\.id).max() else {
             throw UserClientRequestError.noPreKeys
         }
@@ -225,9 +223,7 @@ extension UserClientRequestFactory {
 }
 
 private struct MLSPublicKeyUploadPayload: Encodable {
-
     enum CodingKeys: String, CodingKey {
-
         case keys = "mls_public_keys"
     }
 

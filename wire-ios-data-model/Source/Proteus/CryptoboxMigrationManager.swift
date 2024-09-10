@@ -21,7 +21,6 @@ import WireSystem
 
 // sourcery: AutoMockable
 public protocol CryptoboxMigrationManagerInterface {
-
     func isMigrationNeeded(accountDirectory: URL) -> Bool
 
     func performMigration(
@@ -31,7 +30,6 @@ public protocol CryptoboxMigrationManagerInterface {
 }
 
 public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
-
     // MARK: - Properties
 
     let fileManager: FileManagerInterface
@@ -49,7 +47,6 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
     // MARK: - Failure
 
     enum Failure: Error {
-
         case failedToMigrateData
         case failedToDeleteLegacyData
         case proteusServiceUnavailable
@@ -96,14 +93,12 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
 
 // sourcery: AutoMockable
 protocol FileManagerInterface {
-
     func fileExists(atPath path: String) -> Bool
     func removeItem(at url: URL) throws
     func cryptoboxDirectory(in accountDirectory: URL) -> URL
 }
 
 extension FileManager: FileManagerInterface {
-
     func cryptoboxDirectory(in accountDirectory: URL) -> URL {
         return FileManager.keyStoreURL(
             accountDirectory: accountDirectory,

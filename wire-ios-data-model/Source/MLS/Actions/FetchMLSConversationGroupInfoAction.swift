@@ -19,7 +19,6 @@
 import Foundation
 
 public final class FetchMLSConversationGroupInfoAction: BaseFetchMLSGroupInfoAction {
-
     public var conversationId: UUID
     public var domain: String
 

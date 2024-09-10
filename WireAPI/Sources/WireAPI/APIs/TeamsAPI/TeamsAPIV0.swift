@@ -19,7 +19,6 @@
 import Foundation
 
 class TeamsAPIV0: TeamsAPI, VersionedAPI {
-
     let httpClient: any HTTPClient
 
     init(httpClient: any HTTPClient) {
@@ -118,7 +117,6 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
 }
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {
-
     let id: UUID
     let name: String
     let creator: UUID
@@ -127,7 +125,6 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
     let binding: Bool?
 
     enum CodingKeys: String, CodingKey {
-
         case id
         case name
         case creator
@@ -149,7 +146,6 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
 }
 
 struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
-
     let conversationRoles: [ConversationRoleResponseV0]
 
     enum CodingKeys: String, CodingKey {
@@ -162,12 +158,10 @@ struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
 }
 
 struct ConversationRoleResponseV0: Decodable {
-
     let conversationRole: String?
     let actions: [ConversationActionResponseV0]
 
     enum CodingKeys: String, CodingKey {
-
         case conversationRole = "conversation_role"
         case actions
     }
@@ -183,7 +177,6 @@ struct ConversationRoleResponseV0: Decodable {
 }
 
 enum ConversationActionResponseV0: String, Decodable {
-
     case addConversationMember = "add_conversation_member"
     case removeConversationMember = "remove_conversation_member"
     case modifyConversationName = "modify_conversation_name"
@@ -219,7 +212,6 @@ enum ConversationActionResponseV0: String, Decodable {
 }
 
 struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
-
     let hasMore: Bool
     let members: [TeamMemberResponseV0]
 
@@ -231,7 +223,6 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
 }
 
 struct TeamMemberResponseV0: Decodable {
-
     let user: UUID
     let permissions: PermissionsResponseV0?
     let createdBy: UUID?
@@ -239,7 +230,6 @@ struct TeamMemberResponseV0: Decodable {
     let legalholdStatus: LegalholdStatusV0?
 
     enum CodingKeys: String, CodingKey {
-
         case user
         case permissions
         case createdBy = "created_by"
@@ -259,7 +249,6 @@ struct TeamMemberResponseV0: Decodable {
 }
 
 struct PermissionsResponseV0: Decodable {
-
     let copy: Int64
     let `self`: Int64
 
@@ -272,7 +261,6 @@ struct PermissionsResponseV0: Decodable {
 }
 
 enum LegalholdStatusV0: String, Decodable {
-
     case enabled
     case pending
     case disabled
@@ -293,7 +281,6 @@ enum LegalholdStatusV0: String, Decodable {
 }
 
 struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
-
     let status: LegalholdStatusV0
 
     func toAPIModel() -> LegalholdStatus {

@@ -23,7 +23,6 @@ import Foundation
  */
 
 public final class ZiphySearchResultsController {
-
     public let client: ZiphyClient
     public let pageSize: Int
     public let maxImageSize: Int
@@ -57,7 +56,6 @@ public final class ZiphySearchResultsController {
 
     /// Performs a search with the given term and returns the results.
     public func search(withTerm searchTerm: String, _ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-
         self.paginationController = ZiphyPaginationController()
 
         self.paginationController?.fetchBlock = { [weak self] offset in

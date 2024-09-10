@@ -42,7 +42,6 @@ protocol RegistrationStatusStrategyTestHelper {
 }
 
 extension RegistrationStatusStrategyTestHelper {
-
     func checkResponseError(with phase: RegistrationPhase, code: UserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
         registrationStatus.phase = phase
 

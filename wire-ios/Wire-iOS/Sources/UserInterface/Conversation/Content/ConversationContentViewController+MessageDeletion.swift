@@ -21,7 +21,6 @@ import WireDataModel
 import WireSyncEngine
 
 private extension ZMConversationMessage {
-
     /// Whether the `Delete for everyone` option should be allowed and shown for this message.
     var canBeDeletedForEveryone: Bool {
         guard let sender = senderUser,
@@ -55,7 +54,6 @@ extension CollectionCell: SelectableView {
 }
 
 final class DeletionDialogPresenter: NSObject {
-
     private weak var sourceViewController: UIViewController?
 
     func deleteAlert(
@@ -68,7 +66,6 @@ final class DeletionDialogPresenter: NSObject {
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case .delete(let type) = action {
-
                 userSession.enqueue {
                     switch type {
                     case .local:
@@ -130,7 +127,6 @@ final class DeletionDialogPresenter: NSObject {
 }
 
 private enum AlertAction {
-
     enum DeletionType {
         case local
         case everywhere
@@ -161,7 +157,6 @@ private enum DeletionConfiguration {
 }
 
 private extension UIAlertController {
-
     static func forMessageDeletion(with configuration: DeletionConfiguration, selectedAction: @escaping (AlertAction, UIAlertController) -> Void) -> UIAlertController {
         let alertTitle = L10n.Localizable.Message.DeleteDialog.message
         let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)

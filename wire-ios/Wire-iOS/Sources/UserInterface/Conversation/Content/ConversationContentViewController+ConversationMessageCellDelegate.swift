@@ -21,7 +21,6 @@ import WireDataModel
 
 extension UIView {
     func targetView(for message: ZMConversationMessage!, dataSource: ConversationTableViewDataSource) -> UIView {
-
         // If the view is a tableView, search for a visible cell that contains the message and the cell is a SelectableView
         guard let tableView: UITableView = self as? UITableView else {
             return self
@@ -45,7 +44,6 @@ extension UIView {
 }
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
-
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController) {
         present(actionsController, animated: true)
     }
@@ -57,7 +55,6 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         for message: ZMConversationMessage,
         view: UIView
     ) {
-
         let actionView = view.targetView(for: message, dataSource: dataSource)
         let shouldDismissModal = action != .delete && action != .copy
         if messagePresenter.modalTargetController?.presentedViewController != nil,

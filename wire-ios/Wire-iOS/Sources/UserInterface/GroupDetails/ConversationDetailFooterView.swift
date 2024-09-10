@@ -26,7 +26,6 @@ import WireSystem
  */
 
 class ConversationDetailFooterView: UIView {
-
     // MARK: - Properties
 
     let rightButton = IconButton()

@@ -24,7 +24,6 @@ private let zmLog = ZMSLog(tag: "calling")
 // MARK: Conversation Changes
 
 extension WireCallCenterV3: ZMConversationObserver {
-
     public func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         handleSecurityLevelChange(changeInfo)
         handleActiveParticipantsChange(changeInfo)
@@ -111,7 +110,6 @@ extension WireCallCenterV3: ZMConversationObserver {
 // MARK: - AVS Callbacks
 
 extension WireCallCenterV3 {
-
     private func handleEvent(_ description: String, _ handlerBlock: @escaping () -> Void) {
         Self.logger.info("handle avs event: \(description)")
         zmLog.debug("Handle AVS event: \(description)")
@@ -236,7 +234,6 @@ extension WireCallCenterV3 {
                                            targets: AVSClientList?,
                                            data: Data,
                                            overMLSSelfConversation: Bool = false) {
-
         guard isEnabled else { return }
 
         handleEventInContext("send-call-message") { managedObjectContext in
@@ -339,7 +336,6 @@ extension WireCallCenterV3 {
         quality: NetworkQuality
     ) {
         handleEventInContext("network-quality-change") {
-
             // We ignore the `usedId` and `clientID` because we only need to know the network quality
 
             if let call = self.callSnapshots[conversationId], call.networkQuality != quality {
@@ -382,7 +378,6 @@ extension WireCallCenterV3 {
     func handleActiveSpeakersChange(conversationId: AVSIdentifier, data: String) {
         // TODO [WPB-9604]: - refactor to avoid processing call data on the UI context 
         handleEventInContext("active-speakers-change") {
-
             guard let data = data.data(using: .utf8) else {
                 WireLogger.calling.error("Invalid active speakers data", attributes: .safePublic)
                 return
@@ -404,7 +399,6 @@ extension WireCallCenterV3 {
                 let change = try self.decoder.decode(AVSActiveSpeakersChange.self, from: data)
 
                 if let call = self.callSnapshots[conversationId] {
-
                     self.callSnapshots[conversationId] = call.updateActiveSpeakers(change.activeSpeakers)
 
                     guard self.isSignificantActiveSpeakersChange(

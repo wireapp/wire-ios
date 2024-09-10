@@ -19,7 +19,6 @@
 import Foundation
 
 public struct MockPermissions: OptionSet {
-
     public let rawValue: Int64
 
     public init(rawValue: Int64) {

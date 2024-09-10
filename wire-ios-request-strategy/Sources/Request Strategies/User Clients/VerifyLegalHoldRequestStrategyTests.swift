@@ -34,7 +34,6 @@ private extension TransportDataConvertible {
 }
 
 private struct ClientUpdateResponse: Codable, TransportDataConvertible {
-
     enum ErrorLabel: String, Codable {
         case unknownClient = "unknown-client"
     }
@@ -75,7 +74,6 @@ extension Payload.MessageSendingStatusV4: TransportDataConvertible {
 }
 
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
-
     var sut: VerifyLegalHoldRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
 

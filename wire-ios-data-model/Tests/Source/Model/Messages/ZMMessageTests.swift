@@ -34,7 +34,6 @@ extension ZMMessageTests {
 
         if let remoteIdentifier = conversation?.remoteIdentifier?.transportString(),
            let data {
-
             updateEvent.payload = [
                 "conversation": remoteIdentifier,
                 "time": serverTimeStamp.transportString(),

@@ -19,7 +19,6 @@
 import Foundation
 
 public enum ConversationAddParticipantsError: Error, Equatable {
-
     case unknown
     case invalidOperation
     case accessDenied

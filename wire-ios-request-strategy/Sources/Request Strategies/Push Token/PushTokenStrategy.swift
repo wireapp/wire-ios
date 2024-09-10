@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 
 public class PushTokenStrategy: AbstractRequestStrategy, ZMEventConsumer {
-
     // MARK: - Properties
 
     private let registerPushTokenActionHandler: RegisterPushTokenActionHandler

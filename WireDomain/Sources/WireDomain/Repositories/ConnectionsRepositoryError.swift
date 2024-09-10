@@ -21,7 +21,6 @@ import Foundation
 /// Errors originating from `ConnectionsRepository`.
 
 enum ConnectionsRepositoryError: Error {
-
     /// Failed to get receiver id from api response
 
     case missingReceiverId

@@ -22,7 +22,6 @@ import WireAPI
 /// Process federation update events.
 
 protocol FederationEventProcessorProtocol {
-
     /// Process a federation update event.
     ///
     /// Processing an event is the app's only chance to consume
@@ -34,7 +33,6 @@ protocol FederationEventProcessorProtocol {
 }
 
 struct FederationEventProcessor {
-
     let connectionRemovedEventProcessor: any FederationConnectionRemovedEventProcessorProtocol
     let deleteEventProcessor: any FederationDeleteEventProcessorProtocol
 

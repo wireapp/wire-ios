@@ -21,14 +21,12 @@ import WireDesign
 import WireSyncEngine
 
 protocol FolderCreationControllerDelegate: AnyObject {
-
     func folderController(
         _ controller: FolderCreationController,
         didCreateFolder folder: LabelType)
 }
 
 final class FolderCreationController: UIViewController {
-
     private let collectionViewController = SectionCollectionViewController()
 
     private lazy var nameSection: FolderCreationNameSectionController = {
@@ -159,9 +157,7 @@ final class FolderCreationController: UIViewController {
 // MARK: - SimpleTextFieldDelegate
 
 extension FolderCreationController: SimpleTextFieldDelegate {
-
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
-
         switch value {
         case .error: navigationItem.rightBarButtonItem?.isEnabled = false
         case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty

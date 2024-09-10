@@ -22,7 +22,6 @@ import WireDesign
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController: UITabBarController {
-
     public enum Tab: Int, CaseIterable {
         case contacts, conversations, folders, archive
     }
@@ -123,7 +122,6 @@ func MainTabBarController_Preview() -> MainTabBarController {
 }
 
 private final class PlaceholderViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
 

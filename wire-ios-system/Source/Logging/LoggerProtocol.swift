@@ -17,7 +17,6 @@
 //
 
 public protocol LoggerProtocol {
-
     func debug(_ message: any LogConvertible, attributes: LogAttributes...)
     func info(_ message: any LogConvertible, attributes: LogAttributes...)
     func notice(_ message: any LogConvertible, attributes: LogAttributes...)
@@ -32,7 +31,6 @@ public protocol LoggerProtocol {
 }
 
 extension LoggerProtocol {
-
     func attributesDescription(from attributes: LogAttributes) -> String {
         var logAttributes = attributes
 

@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 struct ConversationMissedCallSystemMessageViewModel {
-
     let icon: StyleKitIcon
     let iconColor: UIColor?
     let systemMessageType: ZMSystemMessageType

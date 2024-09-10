@@ -20,7 +20,6 @@ import WireTesting
 import XCTest
 
 class DeleteMessagesTests: ConversationTestsBase {
-
     func testThatItCreatesARequestToSendADeletedMessageAndDeletesItLocally() {
         // given
         XCTAssertTrue(login())

@@ -19,7 +19,6 @@
 import Foundation
 
 struct ConversationProteusMessageAddEventDecoder {
-
     func decode(
         from container: KeyedDecodingContainer<ConversationEventCodingKeys>
     ) throws -> ConversationProteusMessageAddEvent {
@@ -55,7 +54,6 @@ struct ConversationProteusMessageAddEventDecoder {
     }
 
     private struct Payload: Decodable {
-
         let text: String
         let data: String?
         let sender: String

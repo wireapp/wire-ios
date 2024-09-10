@@ -20,9 +20,7 @@ import Foundation
 @testable import Wire
 
 extension AppLockModule {
-
     final class MockView: AppLockViewPresenterInterface {
-
         // MARK: - Metrics
 
         var models = [ViewModel]()

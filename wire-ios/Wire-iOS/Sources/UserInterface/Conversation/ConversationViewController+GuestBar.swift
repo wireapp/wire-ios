@@ -20,12 +20,10 @@ import UIKit
 import WireDataModel
 
 extension ConversationViewController {
-
     typealias ConversationBanner = L10n.Localizable.Conversation.Banner
 
     /// The state that the guest bar should adopt in the current configuration.
     var currentGuestBarState: GuestsBarController.State {
-
         let state = conversation.externalParticipantsState
 
         if state.isEmpty {

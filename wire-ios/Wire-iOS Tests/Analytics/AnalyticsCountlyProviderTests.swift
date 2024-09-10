@@ -65,7 +65,6 @@ final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper
 
     func testThatAppOpenIsStoredAndTaggedAfterSelfUserIsSet() {
         coreDataFixture.teamTest {
-
             // GIVEN
             sut = Analytics(optedOut: false)
             let analyticsCountlyProvider = AnalyticsCountlyProvider(

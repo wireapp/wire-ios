@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
-
     typealias CellColors = SemanticColors.View
 
     let separator = UIView()

@@ -21,7 +21,6 @@ import XCTest
 @testable import WireDataModel
 
 final class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
-
     func testQuoteRelationshipIsEstablishedWhenSendingMessage() {
         let quotedMessage = try! conversation.appendText(content: "I have a proposal", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID()) as! ZMClientMessage
 

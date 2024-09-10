@@ -19,9 +19,7 @@
 import Foundation
 
 extension AppLockController {
-
     enum State {
-
         /// The user has authenticated and hasn't left the private space.
 
         case unlocked

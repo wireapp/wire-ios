@@ -24,7 +24,6 @@ import XCTest
 // MARK: - MockConversationMessageCellDelegate
 
 final class MockConversationMessageCellDelegate: ConversationMessageCellDelegate {
-
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: Wire.MessageActionsViewController) {
     }
 
@@ -88,7 +87,6 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
 // MARK: - ArticleViewTests
 
 final class ArticleViewTests: XCTestCase {
-
     // MARK: - Properties
 
     var sut: ArticleView!
@@ -201,7 +199,6 @@ final class ArticleViewTests: XCTestCase {
         withImagePlaceholder: Bool,
         textMessageData: TextMessageData
     ) -> ArticleView {
-
         let sut = ArticleView(withImagePlaceholder: withImagePlaceholder)
         sut.translatesAutoresizingMaskIntoConstraints = false
         sut.configure(withTextMessageData: textMessageData, obfuscated: false)
@@ -302,7 +299,6 @@ final class ArticleViewTests: XCTestCase {
                                            file: StaticString = #file,
                                            testName: String = #function,
                                            line: UInt = #line) {
-
         verifyInAllPhoneWidths(createSut: {
             self.sut = ArticleView(withImagePlaceholder: true)
             self.sut.translatesAutoresizingMaskIntoConstraints = false

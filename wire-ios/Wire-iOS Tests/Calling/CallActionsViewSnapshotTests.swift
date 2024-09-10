@@ -62,7 +62,6 @@ extension CallStateMock {
 // MARK: - CallActionsViewSnapshotTests
 
 final class CallActionsViewSnapshotTests: XCTestCase {
-
     // MARK: - Properties
 
     private var sut: CallActionsView!

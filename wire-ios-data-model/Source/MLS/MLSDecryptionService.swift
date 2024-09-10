@@ -23,7 +23,6 @@ import WireSystem
 
 // sourcery: AutoMockable
 public protocol MLSDecryptionServiceInterface {
-
     /// Publishes an event when the epoch has changed.
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
@@ -67,13 +66,11 @@ public protocol MLSDecryptionServiceInterface {
 }
 
 public enum MLSDecryptResult: Equatable {
-
     case message(_ messageData: Data, _ senderClientID: String?)
     case proposal(_ commitDelay: UInt64)
 }
 
 protocol DecryptedMessageBundle {
-
     var message: Data? { get }
     var proposals: [WireCoreCrypto.ProposalBundle] { get }
     var isActive: Bool { get }
@@ -91,7 +88,6 @@ extension BufferedDecryptedMessage: DecryptedMessageBundle { }
 /// when the epoch changes or new CRL distribution points are found.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
-
     // MARK: - Properties
 
     private let mlsActionExecutor: MLSActionExecutorProtocol
@@ -124,7 +120,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     // MARK: - Message decryption
 
     public enum MLSMessageDecryptionError: Error {
-
         case failedToConvertMessageToBytes
         case failedToDecryptMessage
         case failedToDecodeSenderClientID
@@ -185,7 +180,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
 
             switch error {
-
             // Received messages targeting a future epoch, we might have lost messages.
             case .WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
 

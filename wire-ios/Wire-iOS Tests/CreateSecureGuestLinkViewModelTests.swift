@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 class CreateSecureGuestLinkViewModelTests: XCTestCase {
-
     // MARK: - Properties
 
     var viewModel: CreateSecureConversationGuestLinkViewModel!

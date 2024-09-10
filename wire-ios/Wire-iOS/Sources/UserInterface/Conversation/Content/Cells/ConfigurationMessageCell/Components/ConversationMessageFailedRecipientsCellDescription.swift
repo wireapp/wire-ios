@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDataModel
 
 final class ConversationMessageFailedRecipientsCellDescription: ConversationMessageCellDescription {
-
     typealias SystemContent = L10n.Localizable.Content.System
     typealias View = FailedUsersSystemMessageCell
 
@@ -101,7 +100,6 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
 }
 
 extension NSAttributedString {
-
     static var unreachableBackendLearnMoreLink: NSAttributedString {
         typealias SystemContent = L10n.Localizable.Content.System
 

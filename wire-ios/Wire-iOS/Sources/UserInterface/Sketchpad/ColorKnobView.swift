@@ -20,7 +20,6 @@ import UIKit
 import WireDesign
 
 final class ColorKnobView: UIView {
-
     // MARK: - Properties
 
     var isSelected = false {

@@ -21,7 +21,6 @@
 }
 
 extension NSManagedObjectContext: DeletableAssetIdentifierProvider {
-
     private static let assetIdentifiersToBeDeletedKey = "assetIdentifiersToBeDeleted"
 
     public var assetIdentifiersToBeDeleted: Set<String> {

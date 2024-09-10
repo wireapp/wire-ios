@@ -18,7 +18,6 @@
 
 // sourcery: AutoMockable
 public protocol SecurityClassificationProviding {
-
     func classification(
         users: [UserType],
         conversationDomain: String?

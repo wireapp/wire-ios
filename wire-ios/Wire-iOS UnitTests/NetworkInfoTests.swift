@@ -23,7 +23,6 @@ import XCTest
 @testable import Wire
 
 final class NetworkInfoTests: XCTestCase {
-
     private var mockServerConnection: MockServerConnection!
 
     // MARK: - Init

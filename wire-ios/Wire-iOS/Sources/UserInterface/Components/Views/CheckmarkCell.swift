@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class CheckmarkCell: RightIconDetailsCell {
-
     // MARK: - Properties
 
     typealias BackgroundColors = SemanticColors.View
@@ -70,7 +69,6 @@ final class CheckmarkCell: RightIconDetailsCell {
 
     /// Updates the color of the checkmark based on the state of the cell
     private func updateCheckmark() {
-
         guard showCheckmark else {
             accessory = nil
             return

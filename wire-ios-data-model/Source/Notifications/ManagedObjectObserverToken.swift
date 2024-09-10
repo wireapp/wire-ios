@@ -25,7 +25,6 @@ import Foundation
 /// In order to receive notifications a strong reference to the token maintained.
 
 public class ManagedObjectObserverToken: NSObject {
-
     // MARK: - Properties
 
     let token: Any

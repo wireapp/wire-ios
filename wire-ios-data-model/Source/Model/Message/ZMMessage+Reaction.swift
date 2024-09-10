@@ -19,7 +19,6 @@
 import Foundation
 
 extension ZMMessage {
-
     static func add(
         reaction: WireProtos.Reaction,
         senderID: UUID,

@@ -20,7 +20,6 @@ import WireLinkPreview
 
 @objc(ZMTextMessageData)
 public protocol TextMessageData: NSObjectProtocol {
-
     var messageText: String? { get }
     var linkPreview: LinkMetadata? { get }
     var mentions: [Mention] { get }

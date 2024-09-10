@@ -21,7 +21,6 @@ import WireDataModel
 
 /// Provides debug actions for UserClientDetails
 struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
-
     let userClient: UserClient
     let logger = WireLogger.system
 

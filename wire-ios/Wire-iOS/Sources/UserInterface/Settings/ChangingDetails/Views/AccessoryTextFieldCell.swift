@@ -19,7 +19,6 @@
 import UIKit
 
 final class AccessoryTextFieldCell: UITableViewCell {
-
     let textField = ValidatedTextField(style: .default)
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

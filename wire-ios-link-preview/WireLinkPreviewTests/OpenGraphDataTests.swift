@@ -20,7 +20,6 @@
 import XCTest
 
 class OpenGraphDataTests: XCTestCase {
-
     func testThatItCreatesAValidOpenGraphDataFromPropertyMapping() {
         // given
         let title = "title"

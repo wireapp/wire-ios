@@ -19,7 +19,6 @@
 import Foundation
 
 extension SessionManager {
-
     public enum SwitchBackendError: Swift.Error {
         case loggedInAccounts
         case invalidBackend

@@ -32,7 +32,6 @@ final class ConversationInputBarSendController: NSObject {
     func sendMessage(withImageData imageData: Data,
                      userSession: UserSession,
                      completion completionHandler: Completion? = nil) {
-
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()

@@ -21,7 +21,6 @@ import UserNotifications
 
 /// An object that describes the configuration for text input actions.
 struct NotificationActionTextInputMode {
-
     /// The format string for the localized title of the action/send button.
     let buttonTitleFormat: String
 
@@ -34,7 +33,6 @@ struct NotificationActionTextInputMode {
  */
 
 protocol NotificationAction {
-
     /// The identifier of the action.
     var identifier: String { get }
 
@@ -61,7 +59,6 @@ extension NotificationAction where Self: RawRepresentable, Self.RawValue == Stri
 }
 
 extension NotificationAction {
-
     /// The representation of the action that can be used with `UserNotifications` API.
     var userAction: UNNotificationAction {
         if let textInputMode = self.textInputMode {

@@ -22,7 +22,6 @@ import XCTest
 @testable import Wire
 
 final class ThumbnailCreationTests: XCTestCase {
-
     // MARK: - Properties
 
     private var snapshotHelper: SnapshotHelper!
@@ -133,7 +132,6 @@ final class ThumbnailCreationTests: XCTestCase {
 // MARK: - Helper
 
 fileprivate extension UIImage {
-
     func wrappedInImageView() -> UIImageView {
         let view = UIImageView()
         view.frame = CGRect(origin: .zero, size: size)

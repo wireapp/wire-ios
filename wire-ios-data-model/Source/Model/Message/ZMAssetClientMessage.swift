@@ -20,7 +20,6 @@ import Foundation
 
 /// An asset message (image, file, ...)
 @objcMembers public class ZMAssetClientMessage: ZMOTRMessage {
-
     /// In memory cache
     var cachedUnderlyingAssetMessage: GenericMessage?
 
@@ -28,7 +27,6 @@ import Foundation
                               nonce: UUID,
                               managedObjectContext: NSManagedObjectContext,
                               expiresAfter timeout: TimeInterval?) throws {
-
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
 
         transferState = .uploading
@@ -243,7 +241,6 @@ import Foundation
 // MARK: - Core data
 
 extension ZMAssetClientMessage {
-
     override public func awakeFromInsert() {
         super.awakeFromInsert()
         self.cachedUnderlyingAssetMessage = nil
@@ -314,7 +311,6 @@ extension ZMAssetClientMessage {
 }
 
 struct CacheAsset: AssetType {
-
     enum AssetType {
         case image, file, thumbnail
     }
@@ -499,7 +495,6 @@ struct CacheAsset: AssetType {
 }
 
 extension ZMAssetClientMessage: AssetMessage {
-
     public var assets: [AssetType] {
         guard let cache = managedObjectContext?.zm_fileAssetCache else {
             return []
@@ -545,7 +540,6 @@ extension ZMAssetClientMessage: AssetMessage {
 
 /// Exposes all the assets which are contained within a message
 public protocol AssetMessage {
-
     /// List of assets which the message contains.
     ///
     /// NOTE: The order of this list needs to be stable.
@@ -558,7 +552,6 @@ public protocol AssetMessage {
 /// Represent a single asset like file, thumbnail, image and image preview.
 /// rename to AssetType to prevent build error due to name conflict with Proto.Asset struct
 public protocol AssetType {
-
     /// True if the original unprocessed data is available on disk
     var hasOriginal: Bool { get }
 

@@ -22,7 +22,6 @@ import UniformTypeIdentifiers
 import XCTest
 
 final class UTIHelperTests: XCTestCase {
-
     func testThatConformsToVectorTypeIdentifiesSVG() {
         // given, when, then
         XCTAssert(UTIHelper.conformsToVectorType(uti: "public.svg-image"))
@@ -84,7 +83,6 @@ final class UTIHelperTests: XCTestCase {
     }
 
     func testThatConvertToUtiConvertsCommonImageTypes() {
-
         // given & when & then
         XCTAssertEqual(UTIHelper.convertToUti(mime: "image/jpeg"), "public.jpeg")
         XCTAssertEqual(UTIHelper.convertToUti(mime: "image/gif"), "com.compuserve.gif")

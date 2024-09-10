@@ -17,7 +17,6 @@
 //
 
 public enum CreateConversationGuestLinkError: Error, Equatable {
-
     case noCode
     case invalidResponse
     case invalidOperation
@@ -29,7 +28,6 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
 }
 
 public struct CreateConversationGuestLinkAction: EntityAction {
-
     public typealias Result = String?
     public typealias Failure = CreateConversationGuestLinkError
 

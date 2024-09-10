@@ -19,7 +19,6 @@
 import Foundation
 
 @objcMembers public class MockTeamMemberEvent: NSObject {
-
     public enum Kind: String {
         case leave = "team.member-leave"
     }

@@ -19,7 +19,6 @@
 import Foundation
 
 extension Date {
-
     static func today(at hour: Int, _ minutes: Int) -> Date {
         let today = Date()
         let calendar = Calendar.current

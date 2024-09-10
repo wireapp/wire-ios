@@ -21,7 +21,6 @@ import Foundation
 /// A base description of a key used for encryption at rest.
 
 open class BaseEARKeyDescription {
-
     // MARK: - Properties
 
     let id: String

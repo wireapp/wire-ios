@@ -20,7 +20,6 @@ import Foundation
 import WireSyncEngine
 
 class ProxiedRequestStrategyTests: MessagingTest {
-
     fileprivate var sut: ProxiedRequestStrategy!
     fileprivate var requestsStatus: ProxiedRequestsStatus!
     fileprivate var mockApplicationStatus: MockApplicationStatus!
@@ -44,7 +43,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesAGiphyRequest() {
-
         // given
         requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar", method: .get, callback: { _, _, _ in }))
 
@@ -62,7 +60,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesASoundcloudRequest() {
-
         // given
         requestsStatus.add(request: ProxyRequest(type: .soundcloud, path: "/foo/bar", method: .get, callback: { _, _, _ in }))
 
@@ -81,7 +78,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesAYouTubeRequest() {
-
         // given
         requestsStatus.add(request: ProxyRequest(type: .youTube, path: "/foo/bar", method: .get, callback: { _, _, _ in }))
 
@@ -99,7 +95,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesARequestOnlyOnce() {
-
         // given
         requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { _, _, _ in }))
 
@@ -113,7 +108,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCallsTheCompletionHandlerWhenTheRequestIsCompleted() {
-
         // given
         let error = NSError(domain: "ZMTransportSession", code: 10, userInfo: nil)
         let data = "Foobar".data(using: String.Encoding.utf8, allowLossyConversion: true)!
@@ -147,7 +141,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItMakesTheRequestExpireAfter20Seconds() {
-
         // given
         let ExpectedDelay: TimeInterval = 20
         requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { _, _, _ in }))
@@ -168,7 +161,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
     }
 
     func testThatItUpdateTheRequestStatusWhenTaskIsCreated() {
-
         // given
         let proxyRequest = ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { _, _, _ in })
         requestsStatus.add(request: proxyRequest)

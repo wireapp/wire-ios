@@ -23,7 +23,6 @@ import Foundation
  */
 
 final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandler {
-
     weak var statusProvider: AuthenticationStatusProvider?
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {

@@ -20,7 +20,6 @@
 import XCTest
 
 class OpenGraphScannerTests: XCTestCase {
-
     func testThatItCanParseCorrectlyStrippedSampleData_Twitter() {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.twitterData())
     }

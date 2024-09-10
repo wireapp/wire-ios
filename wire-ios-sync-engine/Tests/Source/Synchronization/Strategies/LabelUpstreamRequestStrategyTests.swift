@@ -20,7 +20,6 @@
 import XCTest
 
 class LabelUpstreamRequestStrategyTests: MessagingTest {
-
     var sut: LabelUpstreamRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
     var mockSyncStateDelegate: MockSyncStateDelegate!

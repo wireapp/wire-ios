@@ -21,7 +21,6 @@ import WireCommonComponents
 import WireDesign
 
 final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
-
     private let imageContainer = UIView()
     private let iconImageView = UIImageView()
     private let label = UILabel()
@@ -33,7 +32,6 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
     }
 
     private func setupViews() {
-
         imageContainer.addSubview(iconImageView)
         label.font = FontSpec(.normal, .semibold).font
         [imageContainer, label].forEach(contentView.addSubview)
@@ -72,7 +70,6 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
 }
 
 extension IconActionCell: IconActionCellDelegate {
-
     func updateLayout() {
         descriptor?.featureCell(self)
     }

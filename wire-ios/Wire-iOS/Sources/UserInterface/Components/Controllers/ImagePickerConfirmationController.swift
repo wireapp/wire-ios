@@ -19,7 +19,6 @@
 import UIKit
 
 extension UIImage {
-
     /// Fix the pngData method ignores orientation issue
     var flattened: UIImage {
         if imageOrientation == .up { return self }
@@ -39,7 +38,6 @@ final class ImagePickerConfirmationController: NSObject {
 }
 
 extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
-
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         presentingPickerController = picker
 

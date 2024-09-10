@@ -70,7 +70,6 @@ public extension MockTransportSession {
 // MARK: - Conversations
 
 extension MockTransportSession {
-
     func relevant(conversations: Set<NSManagedObject>) -> [MockConversation] {
         return conversations
             .compactMap { object -> MockConversation? in
@@ -126,7 +125,6 @@ extension MockTransportSession {
 }
 
 extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
-
     public func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
         let result = attemptToEnqueueSyncRequest(generator: generator)
 
@@ -153,7 +151,6 @@ public extension MockTransportSession {
 }
 
 extension MockTransportSession: TransportSessionType {
-
     public func enqueue(_ request: ZMTransportRequest, queue: GroupQueue) async -> ZMTransportResponse {
         return await withCheckedContinuation { continuation in
             request.add(ZMCompletionHandler(on: queue, block: { response in
@@ -174,7 +171,6 @@ extension MockTransportSession: TransportSessionType {
 }
 
 public extension MockTransportSession {
-
     @objc var invalidSinceParameter400: UUID {
         return UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
     }
@@ -185,7 +181,6 @@ public extension MockTransportSession {
 }
 
 public extension NSString {
-
     @objc
     func removingAPIVersion() -> NSString {
         for version in APIVersion.allCases {

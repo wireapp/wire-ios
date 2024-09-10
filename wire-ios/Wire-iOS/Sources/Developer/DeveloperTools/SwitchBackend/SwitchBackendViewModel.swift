@@ -20,18 +20,15 @@ import Foundation
 import WireTransport
 
 final class SwitchBackendViewModel: ObservableObject {
-
     // MARK: - Models
 
     struct Item: Identifiable {
-
         let id = UUID()
         let title: String
         let value: EnvironmentType
     }
 
     enum Event {
-
         case itemTapped(Item)
     }
 
@@ -46,7 +43,6 @@ final class SwitchBackendViewModel: ObservableObject {
     var alertItem: AlertItem?
 
     struct AlertItem: Identifiable {
-
         let id = UUID()
         let message: String
         let action: (() -> Void)?

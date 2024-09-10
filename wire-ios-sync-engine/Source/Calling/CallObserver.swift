@@ -19,7 +19,6 @@
 import Foundation
 
 class CallObserver: WireCallCenterCallStateObserver {
-
     typealias VoidHandler = () -> Void
     typealias Handler<T> = (T) -> Void
 

@@ -22,7 +22,6 @@ import WireDataModel
 import WireDesign
 
 final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
-
     override func setUp() {
         super.setUp()
         accessibilityIdentifier = "cell.groupdetails.timeoutoptions"
