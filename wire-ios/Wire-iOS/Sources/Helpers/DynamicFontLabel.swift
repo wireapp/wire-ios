@@ -58,6 +58,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         self.textColor = color
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

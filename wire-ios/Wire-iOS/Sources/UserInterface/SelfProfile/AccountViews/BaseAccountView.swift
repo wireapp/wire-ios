@@ -140,6 +140,7 @@ class BaseAccountView: UIView {
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

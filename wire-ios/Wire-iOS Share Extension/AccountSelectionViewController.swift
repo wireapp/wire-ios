@@ -41,6 +41,7 @@ final class AccountSelectionViewController: UITableViewController {
         definesPresentationContext = true
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

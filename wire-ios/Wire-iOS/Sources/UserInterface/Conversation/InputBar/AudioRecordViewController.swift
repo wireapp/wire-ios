@@ -68,6 +68,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     typealias ConversationInputBarAudio = L10n.Localizable.Conversation.InputBar.AudioMessage
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

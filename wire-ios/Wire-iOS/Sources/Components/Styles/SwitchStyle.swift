@@ -56,6 +56,7 @@ final class Switch: UISwitch, Stylable {
         addTarget(self, action: #selector(valueDidChange), for: .valueChanged)
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

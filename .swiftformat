@@ -23,7 +23,8 @@
     hoistAwait, \
     hoistPatternLet, \
     hoistTry, \
-    indent
+    indent, \
+    initCoderUnavailable
 
 # Options
 
