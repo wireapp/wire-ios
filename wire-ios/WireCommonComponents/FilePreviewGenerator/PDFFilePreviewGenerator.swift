@@ -22,27 +22,21 @@ import UniformTypeIdentifiers
 struct PDFFilePreviewGenerator: FilePreviewGenerator {
 
     let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
 
     func supportsPreviewGenerationForFile(at url: URL) -> Bool {
         url.uniformType?.conforms(to: .pdf) ?? false
     }
 
-    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
-
-        var result: UIImage?
-        defer {
-            callbackQueue.addOperation {
-                completion(result)
-            }
-        }
+    func generatePreviewForFile(at url: URL) async throws -> UIImage {
 
         UIGraphicsBeginImageContext(thumbnailSize)
+        defer { UIGraphicsEndImageContext() }
+
         guard let dataProvider = CGDataProvider(url: url as CFURL),
               let pdfRef = CGPDFDocument(dataProvider),
               let pageRef = pdfRef.page(at: 1),
               let contextRef = UIGraphicsGetCurrentContext() else {
-            return
+            throw PDFFilePreviewGeneratorError.failedToCreatePreview
         }
 
         contextRef.setAllowsAntialiasing(true)
@@ -51,7 +45,7 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
               cropBox.size.width < 16384,
               cropBox.size.height != 0,
               cropBox.size.height < 16384
-        else { return }
+        else { throw PDFFilePreviewGeneratorError.failedToCreatePreview }
 
         let xScale = thumbnailSize.width / cropBox.size.width
         let yScale = thumbnailSize.height / cropBox.size.height
@@ -59,7 +53,16 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
         contextRef.concatenate(CGAffineTransform(scaleX: scaleToApply, y: scaleToApply))
         contextRef.drawPDFPage(pageRef)
 
-        result = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            return image
+        } else {
+            throw PDFFilePreviewGeneratorError.failedToCreatePreview
+        }
+    }
+
+    // MARK: -
+
+    enum PDFFilePreviewGeneratorError: Error {
+        case failedToCreatePreview
     }
 }

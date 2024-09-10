@@ -17,23 +17,11 @@
 //
 
 import UIKit
-// TODO: remove
-import UniformTypeIdentifiers
 
 protocol FilePreviewGenerator {
 
-    var callbackQueue: OperationQueue { get }
     var thumbnailSize: CGSize { get }
 
     func supportsPreviewGenerationForFile(at url: URL) -> Bool
     func generatePreviewForFile(at url: URL) async throws -> UIImage
-    // TODO: second argument needed?
-    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void)
-}
-
-// TODO: remove
-extension FilePreviewGenerator {
-    func generatePreviewForFile(at url: URL) async throws -> UIImage {
-        fatalError()
-    }
 }

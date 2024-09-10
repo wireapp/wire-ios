@@ -22,32 +22,30 @@ import UniformTypeIdentifiers
 struct ImageFilePreviewGenerator: FilePreviewGenerator {
 
     let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
 
     func supportsPreviewGenerationForFile(at url: URL) -> Bool {
         url.uniformType?.conforms(to: .image) ?? false
     }
 
     func generatePreviewForFile(at url: URL) async throws -> UIImage {
-        fatalError()
-    }
 
-    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
-
-        var result: UIImage? = .none
-        defer {
-            callbackQueue.addOperation {
-                completion(result)
-            }
+        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
+            throw ImageFilePreviewGeneratorError.failedToCreatePreview
         }
-
-        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return }
         let options: [AnyHashable: Any] = [
             kCGImageSourceCreateThumbnailWithTransform as AnyHashable: true,
             kCGImageSourceCreateThumbnailFromImageAlways as AnyHashable: true,
             kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(thumbnailSize.width, thumbnailSize.height)
         ]
-        guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else { return }
-        result = UIImage(cgImage: thumbnail)
+        guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else {
+            throw ImageFilePreviewGeneratorError.failedToCreatePreview
+        }
+        return UIImage(cgImage: thumbnail)
+    }
+
+    // MARK: -
+
+    enum ImageFilePreviewGeneratorError: Error {
+        case failedToCreatePreview
     }
 }

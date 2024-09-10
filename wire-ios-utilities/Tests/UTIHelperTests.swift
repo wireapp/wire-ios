@@ -17,7 +17,6 @@
 //
 
 import CoreServices
-import UniformTypeIdentifiers
 @testable import WireUtilities
 import XCTest
 

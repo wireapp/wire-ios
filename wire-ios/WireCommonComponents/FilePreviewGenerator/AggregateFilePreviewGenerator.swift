@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import UniformTypeIdentifiers
 
 struct AggregateFilePreviewGenerator: FilePreviewGenerator {
 
@@ -39,11 +38,6 @@ struct AggregateFilePreviewGenerator: FilePreviewGenerator {
         }
 
         throw AggregateFilePreviewGeneratorError.noMatchingFilePreviewGeneratorFound
-    }
-
-    // TODO: remove
-    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
-        fatalError()
     }
 
     // MARK: -

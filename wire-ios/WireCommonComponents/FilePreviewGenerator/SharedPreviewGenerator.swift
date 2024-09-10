@@ -27,9 +27,9 @@ enum SharedPreviewGenerator {
         let thumbnailSizeDefault = CGSize(width: 120, height: 120)
         let thumbnailSizeVideo = CGSize(width: 640, height: 480)
 
-        let imageGenerator = ImageFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: callbackQueue)
-        let movieGenerator = MovieFilePreviewGenerator(thumbnailSize: thumbnailSizeVideo, callbackQueue: callbackQueue)
-        let pdfGenerator = PDFFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: callbackQueue)
+        let imageGenerator = ImageFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault)
+        let movieGenerator = MovieFilePreviewGenerator(thumbnailSize: thumbnailSizeVideo)
+        let pdfGenerator = PDFFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault)
 
         return AggregateFilePreviewGenerator(
             generators: [imageGenerator, movieGenerator, pdfGenerator],

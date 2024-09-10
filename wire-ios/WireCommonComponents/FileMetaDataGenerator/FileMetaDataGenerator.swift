@@ -20,7 +20,6 @@ import AVFoundation
 import Foundation
 import MobileCoreServices
 import WireDataModel
-import UniformTypeIdentifiers
 
 private let zmLog = ZMSLog(tag: "UI")
 

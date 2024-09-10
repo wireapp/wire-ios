@@ -17,13 +17,11 @@
 //
 
 import UIKit
-import UniformTypeIdentifiers
 import AVFoundation
 
 struct MovieFilePreviewGenerator: FilePreviewGenerator {
 
     let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
 
     func supportsPreviewGenerationForFile(at url: URL) -> Bool {
         guard let uniformType = url.uniformType else { return false }
@@ -31,17 +29,6 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
     }
 
     func generatePreviewForFile(at url: URL) async throws -> UIImage {
-        fatalError()
-    }
-
-    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
-
-        var result: UIImage? = .none
-        defer {
-            callbackQueue.addOperation {
-                completion(result)
-            }
-        }
 
         let asset = AVURLAsset(url: url)
         let generator = AVAssetImageGenerator(asset: asset)
@@ -53,7 +40,9 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
         let time = CMTimeMakeWithSeconds(asset.duration.seconds * 0.1, preferredTimescale: 60)
         var actualTime = CMTime.zero
         let cgImage = try? generator.copyCGImage(at: time, actualTime: &actualTime)
-        guard let cgImage, let colorSpace = cgImage.colorSpace else { return }
+        guard let cgImage, let colorSpace = cgImage.colorSpace else {
+            throw MovieFilePreviewGeneratorError.failedToCreatePreview
+        }
 
         let bitsPerComponent = cgImage.bitsPerComponent
         let bitmapInfo = cgImage.bitmapInfo
@@ -72,11 +61,23 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
             space: colorSpace,
             bitmapInfo: bitmapInfo.rawValue
         )
-        guard let context else { return }
+        guard let context else {
+            throw MovieFilePreviewGeneratorError.failedToCreatePreview
+        }
 
         context.interpolationQuality = CGInterpolationQuality.high
         context.draw(cgImage, in: renderRect)
-        result = context.makeImage().flatMap { .init(cgImage: $0) }
+        if let cgImage = context.makeImage() {
+            return .init(cgImage: cgImage)
+        } else {
+            throw MovieFilePreviewGeneratorError.failedToCreatePreview
+        }
+    }
+
+    // MARK: -
+
+    enum MovieFilePreviewGeneratorError: Error {
+        case failedToCreatePreview
     }
 }
 
