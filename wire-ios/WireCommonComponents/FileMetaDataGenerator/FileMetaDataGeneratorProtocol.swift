@@ -17,13 +17,11 @@
 //
 
 import Foundation
-import UniformTypeIdentifiers
 import WireDataModel
 
 // sourcery: AutoMockable
 public protocol FileMetaDataGeneratorProtocol {
 
-    // TODO: is uniformType argument needed?
     func metadataForFile(
         at url: URL,
         name: String,
